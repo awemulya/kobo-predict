@@ -84,6 +84,9 @@ urlpatterns = patterns(
         'onadata.apps.main.views.api_token'),
 
     # form specific
+    #assign
+    url(r'^(?P<username>[^/]+)/assign/(?P<id_string>[^/]+)$',
+        'onadata.apps.main.views.assign'),
     url(r'^(?P<username>[^/]+)/forms/(?P<id_string>[^/]+)$',
         'onadata.apps.main.views.show'),
     url(r'^(?P<username>[^/]+)/forms/(?P<id_string>[^/]+)/qrcode$',

@@ -18,6 +18,7 @@ from registration.models import RegistrationProfile
 
 from pyxform.xls2json_backends import csv_to_dict
 
+from onadata.apps.logger.models import XForm
 from onadata.apps.main.models import UserProfile
 from onadata.apps.viewer.models.data_dictionary import upload_to
 from onadata.libs.utils.country_field import COUNTRIES
@@ -49,6 +50,13 @@ PERM_CHOICES = (
 )
 
 
+class AssignSettingsForm(forms.ModelForm):
+    class Meta:
+        model = XForm
+        fields = ["site_users"]
+        widgets = {
+            'site_users': forms.CheckboxSelectMultiple()
+        }
 class DataLicenseForm(forms.Form):
     value = forms.ChoiceField(choices=DATA_LICENSES_CHOICES,
                               widget=forms.Select(

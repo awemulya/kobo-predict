@@ -31,7 +31,7 @@ from guardian.shortcuts import assign_perm, remove_perm, get_users_with_perms
 from onadata.apps.main.forms import UserProfileForm, FormLicenseForm,\
     DataLicenseForm, SupportDocForm, QuickConverterFile, QuickConverterURL,\
     QuickConverter, SourceForm, PermissionForm, MediaForm, MapboxLayerForm,\
-    ActivateSMSSupportFom, ExternalExportForm
+    ActivateSMSSupportFom, ExternalExportForm, AssignSettingsForm
 from onadata.apps.main.models import AuditLog, UserProfile, MetaData
 from onadata.apps.logger.models import Instance, XForm
 from onadata.apps.logger.views import enter_data
@@ -263,6 +263,26 @@ def profile(request, username):
 
     return render(request, "profile.html", data)
 
+@login_required
+def assign(request, username=None, id_string=None):
+    xform = get_object_or_404(
+        XForm, user__username=username, id_string=id_string)
+    if request.method == 'POST':
+        form = AssignSettingsForm(request.POST)
+        if form.is_valid(): # All validation rules pass
+            access_list = form.cleaned_data['site_users']
+            xform.site_users.clear()
+            xform.site_users.add(*list(access_list))
+            if not access_list:
+                messages.add_message(request, messages.WARNING, 'This Form Is assigned to None.')
+            else:
+                messages.add_message(request, messages.INFO, 'Form Assigned Suscesfully.')
+            return render(request, "assign.html", {'xform':xform,'form':form})
+    else:
+        form = AssignSettingsForm(instance=xform)
+    return render(request, "assign.html", {'xform':xform,'form':form})
+
+
 
 def members_list(request):
     if not request.user.is_staff and not request.user.is_superuser:
@@ -383,7 +403,6 @@ def set_xform_owner_data(data, xform, request, username, id_string):
 def show(request, username=None, id_string=None, uuid=None):
     if uuid:
         return redirect_to_public_link(request, uuid)
-
     xform, is_owner, can_edit, can_view = get_xform_and_perms(
         username, id_string, request)
     # no access
@@ -409,6 +428,7 @@ def show(request, username=None, id_string=None, uuid=None):
     data['media_upload'] = MetaData.media_upload(xform)
     data['mapbox_layer'] = MetaData.mapbox_layer_upload(xform)
     data['external_export'] = MetaData.external_export(xform)
+
 
     if is_owner:
         set_xform_owner_data(data, xform, request, username, id_string)

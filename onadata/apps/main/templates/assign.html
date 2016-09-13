@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block content %}
+{% load i18n %}
+
+  <section id="profile">
+      <div>Assign {{xform.title}} form To ...</div>
+      <div>
+
+      </div>
+      <div class="col-sm-12">
+          <form action="{% url 'onadata.apps.main.views.assign' xform.user.username xform.id_string %}" method="POST">
+              {% csrf_token %}
+                {{ form.as_p }}
+              <input type="submit" value="Assign">
+          </form>
+      </div>
+  </section>
+
+{% endblock %}
+
