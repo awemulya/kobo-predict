@@ -12,3 +12,6 @@ class AnonymousUserPublicFormsMixin(object):
             return self._get_public_forms_queryset()
 
         return super(AnonymousUserPublicFormsMixin, self).get_queryset()
+
+
+#Create mobile user forms mixin

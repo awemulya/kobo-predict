@@ -812,6 +812,7 @@ data (instance/submission per row)
 
         if lookup == self.public_forms_endpoint:
             self.object_list = self._get_public_forms_queryset()
+            # _get_mobile_forms_queryset()
 
             page = self.paginate_queryset(self.object_list)
             if page is not None:

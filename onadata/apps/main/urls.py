@@ -4,11 +4,13 @@ from django.views.generic import RedirectView
 
 from onadata.apps.api.urls import router
 from onadata.apps.api.urls import XFormListApi
+from onadata.apps.api.urls import AssignedXFormListApi
 from onadata.apps.api.urls import XFormSubmissionApi
 from onadata.apps.api.urls import BriefcaseApi
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+
 
 admin.autodiscover()
 
@@ -202,6 +204,8 @@ urlpatterns = patterns(
         XFormListApi.as_view({'get': 'list'}), name='form-list'),
     url(r"^(?P<username>\w+)/formList$",
         XFormListApi.as_view({'get': 'list'}), name='form-list'),
+    url(r"^assignedFormList$",
+        AssignedXFormListApi.as_view({'get': 'list'}), name='form-list'),
     url(r"^(?P<username>\w+)/xformsManifest/(?P<pk>[\d+^/]+)$",
         XFormListApi.as_view({'get': 'manifest'}),
         name='manifest-url'),
