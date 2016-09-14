@@ -72,17 +72,19 @@ class AssignedXFormListApi(viewsets.ReadOnlyModelViewSet):
         return super(AssignedXFormListApi, self).get_renderers()
 
     def filter_queryset(self, queryset):
-        if self.request.user.is_anonymous():
-            # raises a permission denied exception, forces authentication
-            self.permission_denied(self.request)
-        else:
-            # Return all the forms the currently-logged-in user can access,
-            # including those shared by other users
-            return super(AssignedXFormListApi, self).filter_queryset(queryset)
+        if self.request.user is None:
+            if self.request.user.is_anonymous():
+                # raises a permission denied exception, forces authentication
+                self.permission_denied(self.request)
+            else:
+                # Return all the forms the currently-logged-in user can access,
+                # including those shared by other users
+                return super(AssignedXFormListApi, self).filter_queryset(queryset)
 
         # Include only the forms belonging to the specified user
         # queryset = queryset.filter(user=profile.user)
-        return queryset
+        else:
+            return queryset
 
     def list(self, request, *args, **kwargs):
         self.object_list = self.filter_queryset(self.get_queryset())
