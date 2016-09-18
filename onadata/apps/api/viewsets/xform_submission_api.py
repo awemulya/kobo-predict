@@ -55,7 +55,6 @@ def create_instance_from_xml(username, request):
     xml_file_list = request.FILES.pop('xml_submission_file', [])
     xml_file = xml_file_list[0] if len(xml_file_list) else None
     media_files = request.FILES.values()
-
     return safe_create_instance(username, xml_file, media_files, None, request)
 
 
@@ -164,7 +163,6 @@ Here is some example JSON, it would replace `[the JSON]` above:
 
     def create(self, request, *args, **kwargs):
         username = self.kwargs.get('username')
-
         if self.request.user.is_anonymous():
             if username is None:
                 # raises a permission denied exception, forces authentication
@@ -189,6 +187,7 @@ Here is some example JSON, it would replace `[the JSON]` above:
 
         is_json_request = is_json(request)
 
+
         error, instance = (create_instance_from_json if is_json_request else
                            create_instance_from_xml)(username, request)
 
@@ -197,7 +196,6 @@ Here is some example JSON, it would replace `[the JSON]` above:
 
         context = self.get_serializer_context()
         serializer = SubmissionSerializer(instance, context=context)
-
         return Response(serializer.data,
                         headers=self.get_openrosa_headers(request),
                         status=status.HTTP_201_CREATED,

@@ -103,6 +103,8 @@ def get_uuid_from_submission(xml):
 
 
 def get_xform_from_submission(xml, username, uuid=None):
+        # import ipdb
+        # ipdb.set_trace()
         # check alternative form submission ids
         uuid = uuid or get_uuid_from_submission(xml)
 
@@ -220,7 +222,6 @@ def create_instance(username, xml_file, media_files,
 
         if username:
             username = username.lower()
-
         xml = xml_file.read()
         xform = get_xform_from_submission(xml, username, uuid)
         check_submission_permissions(request, xform)
