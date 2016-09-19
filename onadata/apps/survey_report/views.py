@@ -184,6 +184,9 @@ def html_export(request, username, id_string):
     limit = int(request.REQUEST.get('limit', 100))
 
     cursor = get_instances_for_user_and_form(username, id_string)
+    # for doc in cursor:
+    #     import ipdb
+    #     ipdb.set_trace()
     paginator = Paginator(cursor, limit, request=request)
 
     try:
@@ -219,6 +222,8 @@ def html_export(request, username, id_string):
 
     context['labels'] = labels
     context['data'] = make_table(data)
+    # import ipdb
+    # ipdb.set_trace()
 
     return render(request, 'survey_report/export_html.html', context)
 

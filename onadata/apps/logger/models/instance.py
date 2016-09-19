@@ -103,6 +103,7 @@ def update_xform_submission_count_delete(sender, instance, **kwargs):
 class Instance(models.Model):
     json = JSONField(default={}, null=False)
     xml = models.TextField()
+    #needs site/proj later
     user = models.ForeignKey(User, related_name='instances', null=True)
     xform = models.ForeignKey(XForm, null=True, related_name='instances')
     survey_type = models.ForeignKey(SurveyType)

@@ -223,6 +223,7 @@ def create_instance(username, xml_file, media_files,
         if username:
             username = username.lower()
         xml = xml_file.read()
+        #needs site later
         xform = get_xform_from_submission(xml, username, uuid)
         check_submission_permissions(request, xform)
 
