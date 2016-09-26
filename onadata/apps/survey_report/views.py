@@ -67,8 +67,10 @@ def build_export_context(request, username, id_string):
                'group_sep': group_sep,
                'lang': lang,
                'hierarchy_in_labels': hierarchy_in_labels,
-               'copy_fields': ('_id', '_uuid', '_submission_time'),
-               'force_index': True
+               # 'copy_fields': ('_id', '_uuid', '_submission_time''),
+               'copy_fields': ('_id','_submission_time','medias'),
+               # 'force_index': True
+               'force_index': False
                }
  
     return {
@@ -77,7 +79,7 @@ def build_export_context(request, username, id_string):
         'languages': translations,
         'headers_lang': lang,
         'formpack': formpack,
-        'xform': xform, 
+        'xform': xform,
         'group_sep': group_sep,
         'lang': lang,
         'hierarchy_in_labels': hierarchy_in_labels,
@@ -184,9 +186,13 @@ def html_export(request, username, id_string):
     limit = int(request.REQUEST.get('limit', 100))
 
     cursor = get_instances_for_user_and_form(username, id_string)
-    # for doc in cursor:
-    #     import ipdb
-    #     ipdb.set_trace()
+    cursor = list(cursor)
+    for index, doc in enumerate(cursor):
+        medias = []
+        for media in cursor[index].get('_attachments',[]):
+            if media:
+                medias.append(media.get('download_url',''))
+        cursor[index].update({'medias':medias})
     paginator = Paginator(cursor, limit, request=request)
 
     try:
@@ -225,7 +231,7 @@ def html_export(request, username, id_string):
     # import ipdb
     # ipdb.set_trace()
 
-    return render(request, 'survey_report/export_html.html', context)
+    return render(request, 'survey_report/fieldsight_export_html.html', context)
 
 
 @readable_xform_required
