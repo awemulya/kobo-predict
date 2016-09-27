@@ -1,7 +1,9 @@
 {
   "name": "formhub-js",
   "version": "0.0.1",
-  "dependencies": {},
+  "dependencies": {
+    "lightbox2": "^2.8.2"
+  },
   "devDependencies": {
     "tmp": "0.0.23",
     "bower": "1.3.6",
