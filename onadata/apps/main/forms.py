@@ -9,7 +9,7 @@ from django.contrib.sites.models import Site
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.validators import URLValidator
-from django.forms import ModelForm
+from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
 from recaptcha.client import captcha
@@ -51,12 +51,19 @@ PERM_CHOICES = (
 
 
 class AssignSettingsForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(AssignSettingsForm, self).__init__(*args, **kwargs)
+        users = User.objects.all().exclude(id=settings.ANONYMOUS_USER_ID) \
+                  .exclude(is_superuser=True)
+        self.fields['site_users'].choices = [(user.pk, user.get_full_name()) for user in users]
     class Meta:
+        fields = ['site_users']
         model = XForm
-        fields = ["site_users"]
         widgets = {
-            'site_users': forms.CheckboxSelectMultiple()
+        'site_users': forms.CheckboxSelectMultiple()
         }
+
+
 class DataLicenseForm(forms.Form):
     value = forms.ChoiceField(choices=DATA_LICENSES_CHOICES,
                               widget=forms.Select(
@@ -87,7 +94,7 @@ class PermissionForm(forms.Form):
         super(PermissionForm, self).__init__()
 
 
-class UserProfileForm(ModelForm):
+class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         # Include only `require_auth` since others are now stored in KPI
