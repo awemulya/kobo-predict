@@ -277,7 +277,7 @@ def assign(request, username=None, id_string=None):
                 messages.add_message(request, messages.WARNING, 'This Form Is assigned to None.')
             else:
                 messages.add_message(request, messages.INFO, 'Form Assigned Suscesfully.')
-            return render(request, "assign.html", {'xform':xform,'form':form})
+            return HttpResponseRedirect(reverse(profile, kwargs={'username': request.user.username}))
     else:
         form = AssignSettingsForm(instance=xform)
     return render(request, "assign.html", {'xform':xform,'form':form})
