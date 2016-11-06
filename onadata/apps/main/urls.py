@@ -9,13 +9,16 @@ from onadata.apps.api.urls import XFormSubmissionApi
 from onadata.apps.api.urls import BriefcaseApi
 
 # Uncomment the next two lines to enable the admin:
-from django.contrib import admin
+# from django.contrib import admin
 
 
-admin.autodiscover()
+# admin.autodiscover()
 
 urlpatterns = patterns(
     '',
+    # fieldsight
+    url(r'^users/', include('users.urls', namespace='users')),
+    url(r'^fieldsight/', include('fieldsight.urls', namespace='fieldsight')),
     # change Language
     (r'^i18n/', include('django.conf.urls.i18n')),
     url('^api/v1/', include(router.urls)),
@@ -25,8 +28,8 @@ urlpatterns = patterns(
 
     # django default stuff
     url(r'^accounts/', include('onadata.apps.main.registration_urls')),
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    # url(r'^admin/', include(admin.site.urls)),
+    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # oath2_provider
     url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
