@@ -17,8 +17,8 @@ from onadata.apps.api.urls import BriefcaseApi
 urlpatterns = patterns(
     '',
     # fieldsight
-    url(r'^users/', include('users.urls', namespace='users')),
-    url(r'^fieldsight/', include('fieldsight.urls', namespace='fieldsight')),
+    url(r'^users/', include('onadata.apps.users.urls', namespace='users')),
+    url(r'^fieldsight/', include('onadata.apps.fieldsight.urls', namespace='fieldsight')),
     # change Language
     (r'^i18n/', include('django.conf.urls.i18n')),
     url('^api/v1/', include(router.urls)),

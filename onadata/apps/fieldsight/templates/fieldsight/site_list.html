@@ -1,0 +1,76 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}  
+
+{% block page-title %}{% trans 'Sites' %}{% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:site-add' %}">{% trans 'New' %} {% trans 'Site' %}</a>
+{% endblock %}
+
+{% block content %}
+
+    {% load pagination_tags %}
+    {% load sorting_tags %}
+    {% load filters %}
+
+    <div class='adv-table'>
+
+        {% autosort object_list as sorted_objects %}
+        {% autopaginate object_list 25 as paginated_objects %}
+
+        <table class="table table-striped" id="dynamic-table1">
+            <thead>
+            <th>{% anchor name _('Name') %}</th>
+            <th>{% anchor address _('Address') %}</th>
+            <th>{% anchor phone _('Phone') %}</th>
+            <th>{% trans 'Location' %}</th>
+            <th>{% trans 'Central Engineer' %}</th>
+            <th>{% trans 'Site Supervisor' %}</th>
+            <th colspan="2">{% anchor is_active _('Status') %}</th>
+            </thead>
+            <tbody>
+            {% for obj in paginated_objects %}
+                <tr>
+                    <td>
+                        <a href="{% url 'fieldsight:site-edit' obj.pk %}">{{ obj.name }}</a>
+                    </td>
+                    <td>
+                        {{ obj.address }}
+                    </td>
+                    <td>
+                        {{ obj.phone }}
+                    </td>
+                    <td>
+                     {% trans 'Lat' %} :  {{ obj.location.y }},
+                       {% trans 'Long' %}: {{ obj.location.x }}
+                    </td>
+
+                     <td>
+                        {{ obj.get_central_eng }}<a class="fa fa-plus" title="Add Central Engineer"
+                                               href="{% url 'fieldsight:add_central_engineer' pk=obj.id %}"></a>
+                    </td>
+                    <td>
+                        {{ obj.get_supervisors }}<a class="fa fa-plus" title="Add Site Supervisor"
+                                               href="{% url 'fieldsight:add_supervisor' pk=obj.id %}"></a>
+                    </td>
+                    <td>
+                        {{ obj.is_active|activeness }}
+                    </td>
+                     <td>
+                        <a class="btn btn-success btn-raised" href="{% url 'fieldsight:alter_site_status' pk=obj.id %}">
+                            <!--later with js framework ko in some and angular in some-->
+                            {{ obj.is_active|alter_status }} {% trans 'Site' %}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% paginate %}
+
+    </div>
+
+
+
+{% endblock %}

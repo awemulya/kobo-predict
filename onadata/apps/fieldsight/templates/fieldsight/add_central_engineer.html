@@ -1,0 +1,28 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{% trans 'Add Central Engineer to '  %}{{obj.name}}
+
+{% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:site-list' %}">{% trans 'Sites' %}</a>
+{% endblock %}
+
+{% block content %}
+    <div class="col-sm-12 registration_field">
+        {% if obj.get_central_eng %}
+        {% trans 'Existing Central Engineers'  %}{{obj.get_central_eng}}
+        {% endif %}
+    </div>
+
+      <div class="col-sm-12 registration_field">
+          <form action="{% url 'fieldsight:add_central_engineer' pk=obj.id %}" method="POST">
+              {% csrf_token %}
+                {{ form.as_p }}
+              <input type="submit" class="btn btn-success btn-raised" value="Add Central Engineer">
+          </form>
+      </div>
+
+
+{% endblock %}

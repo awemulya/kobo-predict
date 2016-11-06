@@ -1,0 +1,62 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Users' %}{% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:user-create' %}">{% trans 'New' %} {% trans 'User' %}</a>
+{% endblock %}
+
+{% block content %}
+
+    {% load pagination_tags %}
+    {% load sorting_tags %}
+    {% load filters %}
+
+    <div class='well'>
+
+        {% autosort object_list as sorted_objects %}
+        {% autopaginate object_list 25 as paginated_objects %}
+
+        <table class="table table-striped">
+            <thead>
+            <th>{% anchor user.username _('Username') %}</th>
+            <th>{% anchor user.get_full_name _('Fullname') %}</th>
+            <th>{% anchor user.email _('Email') %}</th>
+            <th>{% anchor user.is_active _('Active') %}</th>
+            <th>Activate/Deactivate</th>
+            </thead>
+            <tbody>
+            {% for userdetail in paginated_objects %}
+                <tr>
+                    <td>
+                        <a href="#">{{ userdetail.user.username }}</a>
+                    </td>
+                    <td>
+                        {{ userdetail.user.get_full_name }}
+                    </td>
+                      <td>
+                        {{ userdetail.user.email }}
+                    </td>
+                    <td>
+                        {{ userdetail.user.is_active|activeness }}
+                    </td>
+                    <td>
+                        <a class="btn btn-success btn-raised" href="{% url 'users:alter_status' pk=userdetail.user.id %}">
+                            <!--later with js framework ko in some and angular in some-->
+                            {{ userdetail.user.is_active|alter_status }} {% trans 'User' %}</a>
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% paginate %}
+
+    </div>
+
+
+
+{% endblock %}

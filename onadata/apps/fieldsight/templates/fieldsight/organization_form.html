@@ -1,0 +1,41 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{{ scenario }} {% trans 'Organization' %}{% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:organization-list' %}">{% trans 'Organizations' %}</a>
+{% endblock %}
+
+{% block content %}
+
+    <form method="post" id='form'>
+        <div class="">
+            <div class="col-sm-12 registration_field">
+               {{ form.non_field_errors }}
+               </div>
+            
+            {% csrf_token %}
+             {{ form.media }}
+            {% for field in form %}
+               <div class="col-sm-12 registration_field">
+               {{ form.non_field_errors }}
+               </div>
+               <div class="col-sm-12 registration_field">
+                 <div class="col-sm-3"> {{ field.label }}</div>
+                 <div class="col-sm-3">      {{ field }}</div>
+                 <div class="col-sm-6">      {{ field.errors }}</div>
+               </div>
+            {% endfor %}
+        </div>
+        
+        <!-- <input type="submit" class='btn btn-info btn-raised' value="{% trans 'Save' %}"> -->
+        <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
+        {% if form.instance.id %}
+            <a href="{% url 'fieldsight:organization-delete' form.instance.id %}" class="btn btn-danger btn-raised">{% trans 'Delete' %}</a>
+        {% endif %}
+    </form>
+
+    
+
+{% endblock %}

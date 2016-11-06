@@ -1,0 +1,28 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{% trans 'Add Project Manager to '  %}{{obj.name}}
+
+{% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:project-list' %}">{% trans 'Project' %}</a>
+{% endblock %}
+
+{% block content %}
+    <div class="col-sm-12 registration_field">
+        {% if obj.get_staffs %}
+        {% trans 'Existing Project Managers '  %}{{obj.get_staffs}}
+        {% endif %}
+    </div>
+
+      <div class="col-sm-12 registration_field">
+          <form action="{% url 'fieldsight:add_proj_manager' pk=obj.id %}" method="POST">
+              {% csrf_token %}
+                {{ form.as_p }}
+              <input type="submit" class="btn btn-success btn-raised" value="Add Project Manager">
+          </form>
+      </div>
+
+
+{% endblock %}

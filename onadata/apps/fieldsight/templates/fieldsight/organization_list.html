@@ -1,0 +1,82 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Organizations' %}{% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:organization-add' %}">{% trans 'New' %} {% trans 'Organization' %}</a>
+{% endblock %}
+
+{% block content %}
+
+    {% load pagination_tags %}
+    {% load sorting_tags %}
+    {% load filters %}
+
+
+
+
+    <div class="adv-table">
+
+
+        {% autosort object_list as sorted_objects %}
+        {% autopaginate object_list 25 as paginated_objects %}
+
+        <table class="table table-striped" id="dynamic-table1">
+            <thead>
+            <th>{% anchor name _('Name') %}</th>
+            <th>{% anchor country _('Country') %}</th>
+            <th>{% anchor address _('Address') %}</th>
+            <th>{% anchor phone _('Phone') %}</th>
+            <th>{% anchor fax _('Fax') %}</th>
+            <th>{% anchor website _('Website') %}</th>
+            <th>Organization Admins</th>
+            <th>{% anchor is_active _('Status') %}</th>
+            </thead>
+            <tbody>
+            {% for obj in paginated_objects %}
+                <tr>
+                    <td>
+                        <a href="{% url 'fieldsight:organization-edit' obj.pk %}">{{ obj.name }}</a>
+                    </td>
+                    <td>
+                        {{ obj.get_country_display }}
+                    </td>
+                    <td>
+                        {{ obj.address }}
+                    </td>
+                    <td>
+                        {{ obj.phone }}
+                    </td>
+                    <td>
+                        {{ obj.fax }}
+                    </td>
+                    <td>
+                        {{ obj.website }}
+                    </td>
+                    <td>
+                        {{ obj.get_staffs }}<a class="fa fa-plus" title="Add organization Admin"
+                                               href="{% url 'fieldsight:add_org_admin' pk=obj.id %}"></a>
+                    </td>
+                    <td>
+                        {{ obj.is_active|activeness }}
+                    </td>
+                     <td>
+                        <a class="btn btn-success btn-raised" href="{% url 'fieldsight:alter_org_status' pk=obj.id %}">
+                            <!--later with js framework ko in some and angular in some-->
+                            {{ obj.is_active|alter_status }} {% trans 'Org' %}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+  
+
+        {% paginate %}
+
+    </div>
+
+
+
+{% endblock %}

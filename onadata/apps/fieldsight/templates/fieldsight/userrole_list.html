@@ -1,0 +1,73 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'User Roles' %}{% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:user-role-add' %}">{% trans 'New' %} {% trans 'User Role' %}</a>
+{% endblock %}
+
+{% block content %}
+
+    {% load pagination_tags %}
+    {% load sorting_tags %}
+    {% load filters %}
+
+    <div class='well'>
+
+        {% autosort object_list as sorted_objects %}
+        {% autopaginate object_list 25 as paginated_objects %}
+
+        <table class="table table-striped">
+            <thead>
+            <th>{% anchor user.username _('User') %}</th>
+            <th>{% anchor group.name _('Group') %}</th>
+            <th>{% anchor started_at _('Started Date') %}</th>
+            <th>{% anchor ended_at _('Ende Date') %}</th>
+            <th>{% anchor site.name _('Site') %}</th>
+            <th>{% anchor project.name _('Project') %}</th>
+            <th>{% anchor organization.name _('Organization') %}</th>
+            </thead>
+            <tbody>
+            {% for org in paginated_objects %}
+                <tr>
+
+                    <td>
+                        {% ifrole "admin" %}
+                       <a href="{% url 'fieldsight:user-role-edit' org.pk %}"> {% endrole %}{{ org.user.username }}
+                        {% ifrole "admin" %}
+                       </a>
+                         {% endrole %}
+
+                    </td>
+                    <td>
+                        {{ org.group.name }}
+                    </td>
+                    <td>
+                        {{ org.started_at }}
+                    </td>
+                    <td>
+                        {{ org.ended_at|default:"-" }}
+                    </td>
+                    <td>
+                        {{ org.site.name|default:"-" }}
+                    </td>
+                    <td>
+                        {{ org.project.name|default:"-" }}
+                    </td>
+                    <td>
+                        {{ org.organization.name|default:"-"}}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% paginate %}
+
+    </div>
+
+
+
+{% endblock %}

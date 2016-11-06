@@ -1,0 +1,28 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{% trans 'Add Organization Admin to '  %}{{obj.name}}
+
+{% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:organization-list' %}">{% trans 'Organizations' %}</a>
+{% endblock %}
+
+{% block content %}
+    <div class="col-sm-12 registration_field">
+        {% if obj.get_staffs %}
+        {% trans 'Existing admins'  %}{{obj.get_staffs}}
+        {% endif %}
+    </div>
+
+      <div class="col-sm-12 registration_field">
+          <form action="{% url 'fieldsight:add_org_admin' pk=obj.id %}" method="POST">
+              {% csrf_token %}
+                {{ form.as_p }}
+              <input type="submit" class="btn btn-success btn-raised" value="Add Admin">
+          </form>
+      </div>
+
+
+{% endblock %}
