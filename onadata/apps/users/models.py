@@ -8,7 +8,7 @@ def user_directory_path(instance, filename):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='user_profile')
     address = models.CharField(max_length=140)
     gender = models.CharField(max_length=140)
     phone = models.CharField(max_length=140)

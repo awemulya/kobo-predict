@@ -222,6 +222,8 @@ INSTALLED_APPS = (
     'onadata.apps.main',
     'onadata.apps.restservice',
     'onadata.apps.api',
+    'onadata.apps.fieldsight',
+    'onadata.apps.users',
     'guardian',
     'djcelery',
     'onadata.apps.stats',

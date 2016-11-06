@@ -124,7 +124,7 @@ def profile_update(request):
             up = form.save(commit=False)
             user = request.user
             try:
-                user_profile = user.profile
+                user_profile = user.user_profile
                 user_profile.skype = up.skype
                 user_profile.address = up.address
                 user_profile.phone = up.phone
