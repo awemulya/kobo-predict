@@ -9,12 +9,14 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from registration.backends.default.views import RegistrationView
 
+from onadata.apps.logger.models import XForm
+from onadata.apps.main.views import profile
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required)
 from .models import Organization, Project, UserRole, Site, ExtraUserDetail
 from .forms import OrganizationForm, ProjectForm, SiteForm, UserRoleForm, RegistrationForm, SetOrgAdminForm, \
-    SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm
+    SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm, AssignSettingsForm
 
 
 @login_required
@@ -263,3 +265,22 @@ class UserRoleUpdateView(LoginRequiredMixin, SuperAdminMixin, UserRoleView, Upda
 
 class UserRoleDeleteView(LoginRequiredMixin, SuperAdminMixin, UserRoleView, DeleteView):
     pass
+
+@login_required
+def assign(request, id_string=None):
+    xform = get_object_or_404(
+        XForm, id_string=id_string)
+    if request.method == 'POST':
+        form = AssignSettingsForm(request.POST)
+        if form.is_valid(): # All validation rules pass
+            access_list = form.cleaned_data['site']
+            xform.site.clear()
+            xform.site.add(*list(access_list))
+            if not access_list:
+                messages.add_message(request, messages.WARNING, 'This Form Is assigned to None.')
+            else:
+                messages.add_message(request, messages.INFO, 'Form Assigned Suscesfully.')
+            return HttpResponseRedirect(reverse(profile, kwargs={'username': request.user.username}))
+    else:
+        form = AssignSettingsForm(instance=xform)
+    return render(request, "assign.html", {'xform':xform,'form':form})

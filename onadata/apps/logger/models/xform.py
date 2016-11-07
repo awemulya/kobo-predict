@@ -21,6 +21,7 @@ from guardian.shortcuts import \
 from cStringIO import StringIO
 from taggit.managers import TaggableManager
 
+from onadata.apps.fieldsight.models import Site
 from onadata.apps.logger.xform_instance_parser import XLSFormError
 from onadata.libs.models.base_model import BaseModel
 from ....koboform.pyxform_utils import convert_csv_to_xls
@@ -56,7 +57,7 @@ class XForm(BaseModel):
     xml = models.TextField()
 
     user = models.ForeignKey(User, related_name='xforms', null=True)
-    site_users = models.ManyToManyField(User, related_name="myforms", blank=True)
+    site = models.ManyToManyField(Site, related_name="site_forms", blank=True)
     require_auth = models.BooleanField(default=False)
     shared = models.BooleanField(default=False)
     shared_data = models.BooleanField(default=False)

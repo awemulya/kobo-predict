@@ -50,20 +50,6 @@ PERM_CHOICES = (
 )
 
 
-class AssignSettingsForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(AssignSettingsForm, self).__init__(*args, **kwargs)
-        users = User.objects.all().exclude(id=settings.ANONYMOUS_USER_ID) \
-                  .exclude(is_superuser=True)
-        self.fields['site_users'].choices = [(user.pk, user.get_full_name()) for user in users]
-    class Meta:
-        fields = ['site_users']
-        model = XForm
-        widgets = {
-        'site_users': forms.CheckboxSelectMultiple()
-        }
-
-
 class DataLicenseForm(forms.Form):
     value = forms.ChoiceField(choices=DATA_LICENSES_CHOICES,
                               widget=forms.Select(

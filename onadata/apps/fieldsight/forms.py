@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from registration import forms as registration_forms
 
 from django.conf import settings
+
+from onadata.apps.logger.models import XForm
 from .models import Organization, Project, Site, UserRole
 
 USERNAME_REGEX = r'^[a-z][a-z0-9_]+$'
@@ -163,3 +165,17 @@ class UserRoleForm(forms.ModelForm):
     class Meta:
         model = UserRole
         exclude = []
+
+
+class AssignSettingsForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(AssignSettingsForm, self).__init__(*args, **kwargs)
+        # sites = Site.objects.all()
+
+    class Meta:
+        fields = ['site']
+        model = XForm
+        widgets = {
+        'site': forms.CheckboxSelectMultiple()
+        }
+

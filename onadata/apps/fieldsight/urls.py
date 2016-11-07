@@ -28,7 +28,7 @@ from .views import (
     UserRoleDeleteView,
     UserRoleUpdateView,
     UserRoleCreateView,
-)
+    assign)
 
 
 
@@ -73,4 +73,6 @@ urlpatterns = [
     url(r'^accounts/create/$', CreateUserView.as_view(
         form_class=RegistrationForm), name='user-create'),
     url(r'^userlist/$', UserListView.as_view(), name='user-list'),
+    # kobo form
+    url(r'^assign/(?P<id_string>[^/]+)$', assign, name="assign"),
 ]
