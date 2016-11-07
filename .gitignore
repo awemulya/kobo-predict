@@ -23,6 +23,7 @@ build
 /onadata/static
 
 .~lock.*
+emails/*
 .DS_Store
 .idea
 .odk

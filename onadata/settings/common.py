@@ -178,6 +178,8 @@ MIDDLEWARE_CLASSES = (
     #'django.middleware.transaction.TransactionMiddleware',
     'onadata.libs.utils.middleware.HTTPResponseNotAllowedMiddleware',
     'readonly.middleware.DatabaseReadOnlyMiddleware',
+    'linaro_django_pagination.middleware.PaginationMiddleware',
+    'webstack_django_sorting.middleware.SortingMiddleware',
     'onadata.apps.users.middleware.RoleMiddleware',
 )
 
@@ -233,6 +235,8 @@ INSTALLED_APPS = (
     'onadata.apps.survey_report',
     'onadata.apps.export',
     'pure_pagination',
+    'linaro_django_pagination',
+    'webstack_django_sorting',
 )
 
 OAUTH2_PROVIDER = {
