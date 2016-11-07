@@ -43,7 +43,8 @@ urlpatterns = patterns(
         name='google-auth-welcome'),
 
     # main website views
-    url(r'^$', 'onadata.apps.main.views.home'),
+    # url(r'^$', 'onadata.apps.main.views.home'),
+    url(r'^$', 'onadata.apps.fieldsight.views.dashboard', name='dashboard'),
     url(r'^tutorial/$', 'onadata.apps.main.views.tutorial', name='tutorial'),
     url(r'^about-us/$', 'onadata.apps.main.views.about_us', name='about-us'),
     url(r'^getting_started/$', 'onadata.apps.main.views.getting_started',

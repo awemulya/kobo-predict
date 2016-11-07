@@ -323,7 +323,7 @@
         <div class="leftside-navigation">
             <ul class="sidebar-menu" id="nav-accordion">
                 <li>
-                    <a  href="{% url 'fieldsight:dashboard' %}">
+                    <a  href="{% url 'dashboard' %}">
                         <i class="fa fa-dashboard"></i>
                         <span>{% trans 'Dashboard' %}</span>
                     </a>
@@ -398,7 +398,7 @@
                 </li>
 
                 <li>
-                    <a  href="{% url 'kpi-root' %}">
+                    <a  href="{{ koboform_url }}">
                         <i class="fa fa-file-text-o" aria-hidden="true"></i>
                         <span>{% trans 'My Forms' %}</span>
                     </a>

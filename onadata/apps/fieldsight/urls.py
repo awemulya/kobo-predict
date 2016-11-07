@@ -35,7 +35,7 @@ from .views import (
 urlpatterns = [
     # group_required('superuser')(OrgView.as_view())
     # dispatch or get_context_data to control only org admin or that orf can actions on its projects and sites.
-    url(r'^$', dashboard, name='dashboard'),
+    # url(r'^$', dashboard, name='dashboard'),
     url(r'^accounts/create/$', CreateUserView.as_view(
         form_class=RegistrationForm), name='user-create'),
 
