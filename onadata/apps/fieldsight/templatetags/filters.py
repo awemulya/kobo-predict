@@ -42,6 +42,7 @@ def alter_status(is_active):
 
 USURPERS = {
     'Site': ['Central Engineer', 'Site Supervisor', 'Data Entry'],
+    'KoboForms': ['Project Manager', 'Central Engineer'],
     'Project': ['Project Manager'],
     'Organization': ['Organization Admin'],
     'admin': ['Super Admin'],

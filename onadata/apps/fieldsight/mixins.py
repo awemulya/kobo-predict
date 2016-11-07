@@ -202,6 +202,7 @@ class SiteView(SiteRequiredMixin):
 
 USURPERS = {
     'Site': ['Central Engineer', 'Site Supervisor', 'Data Entry'],
+    'KoboForms': ['Project Manager', 'Central Engineer'],
     'Project': ['Project Manager'],
     'Organization': ['Organization Admin'],
     'admin': ['Super Admin'],
