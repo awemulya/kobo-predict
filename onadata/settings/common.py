@@ -227,6 +227,7 @@ INSTALLED_APPS = (
     'onadata.apps.api',
     'onadata.apps.fieldsight',
     'onadata.apps.users',
+    'onadata.apps.userrole',
     'guardian',
     'djcelery',
     'onadata.apps.stats',

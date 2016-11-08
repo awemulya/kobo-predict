@@ -5,7 +5,7 @@
 {% block page-title %}{% trans 'User Roles' %}{% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:user-role-add' %}">{% trans 'New' %} {% trans 'User Role' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'role:user-role-add' %}">{% trans 'New' %} {% trans 'User Role' %}</a>
 {% endblock %}
 
 {% block content %}
@@ -35,7 +35,7 @@
 
                     <td>
                         {% ifrole "admin" %}
-                       <a href="{% url 'fieldsight:user-role-edit' org.pk %}"> {% endrole %}{{ org.user.username }}
+                       <a href="{% url 'role:user-role-edit' org.pk %}"> {% endrole %}{{ org.user.username }}
                         {% ifrole "admin" %}
                        </a>
                          {% endrole %}

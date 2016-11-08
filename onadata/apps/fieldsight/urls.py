@@ -2,7 +2,6 @@ from django.conf.urls import url
 from .forms import RegistrationForm
 
 from .views import (
-    dashboard,
     OrganizationListView,
     OrganizationCreateView,
     OrganizationUpdateView,
@@ -24,10 +23,6 @@ from .views import (
     add_central_engineer,
     CreateUserView,
     UserListView,
-    UserRoleListView,
-    UserRoleDeleteView,
-    UserRoleUpdateView,
-    UserRoleCreateView,
     assign)
 
 
@@ -64,11 +59,6 @@ urlpatterns = [
     url(r'^site/alter-status/(?P<pk>\d+)/$', alter_site_status, name='alter_site_status'),
     url(r'^site/add-central-engineer/(?P<pk>\d+)/$', add_central_engineer, name='add_central_engineer'),
     url(r'^site/add-supervisor/(?P<pk>\d+)/$', add_supervisor, name='add_supervisor'),
-
-    url(r'^userroles/$', UserRoleListView.as_view(), name='user-role-list'),
-    url(r'^userroles/add/$', UserRoleCreateView.as_view(), name='user-role-add'),
-    url(r'^userroles/(?P<pk>[0-9]+)/$', UserRoleUpdateView.as_view(), name='user-role-edit'),
-    url(r'^userroles/delete/(?P<pk>\d+)/$', UserRoleDeleteView.as_view(), name='user-role-delete'),
 
     url(r'^accounts/create/$', CreateUserView.as_view(
         form_class=RegistrationForm), name='user-create'),

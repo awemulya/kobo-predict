@@ -10,18 +10,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from onadata.apps.fieldsight.mixins import UpdateView
-from onadata.apps.fieldsight.models import UserRole as Role
 from rest_framework import renderers
 from onadata.apps.users.models import UserProfile
 from onadata.apps.users.serializers import AuthCustomTokenSerializer
 from .forms import LoginForm, ProfileForm
-
-
-def set_role(request, pk):
-    role = Role.objects.get(pk=pk, user=request.user)
-    if role:
-        request.session['role'] = role.pk
-    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 def web_authenticate(username=None, password=None):

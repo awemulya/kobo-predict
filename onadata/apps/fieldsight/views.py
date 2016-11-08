@@ -11,11 +11,12 @@ from registration.backends.default.views import RegistrationView
 
 from onadata.apps.logger.models import XForm
 from onadata.apps.main.views import profile
+from onadata.apps.userrole.models import UserRole
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required)
-from .models import Organization, Project, UserRole, Site, ExtraUserDetail
-from .forms import OrganizationForm, ProjectForm, SiteForm, UserRoleForm, RegistrationForm, SetOrgAdminForm, \
+from .models import Organization, Project, Site, ExtraUserDetail
+from .forms import OrganizationForm, ProjectForm, SiteForm,RegistrationForm, SetOrgAdminForm, \
     SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm, AssignSettingsForm
 
 
@@ -46,12 +47,6 @@ class UserDetailView(object):
     model = ExtraUserDetail
     success_url = reverse_lazy('fieldsight:user-list')
     form_class = RegistrationForm
-
-
-class UserRoleView(object):
-    model = UserRole
-    success_url = reverse_lazy('fieldsight:user-role-list')
-    form_class = UserRoleForm
 
 
 class OrganizationListView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, ListView):
@@ -250,21 +245,6 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
             new_user.save()
         return new_user
 
-
-class UserRoleListView(LoginRequiredMixin, SuperAdminMixin, UserRoleView, ListView):
-    pass
-
-
-class UserRoleCreateView(LoginRequiredMixin, SuperAdminMixin, UserRoleView, CreateView):
-    pass
-
-
-class UserRoleUpdateView(LoginRequiredMixin, SuperAdminMixin, UserRoleView, UpdateView):
-    pass
-
-
-class UserRoleDeleteView(LoginRequiredMixin, SuperAdminMixin, UserRoleView, DeleteView):
-    pass
 
 @login_required
 def assign(request, id_string=None):

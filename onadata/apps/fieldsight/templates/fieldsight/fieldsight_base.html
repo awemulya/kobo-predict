@@ -282,7 +282,7 @@
                         {% for role in request.user.user_roles.all %}
                             {% if role.id != request.role.id %}
                                 <li>
-                                    <a href="{% url 'users:set_role' role.id %}">{% trans 'Use as' %} {{ role.group }}
+                                    <a href="{% url 'role:set_role' role.id %}">{% trans 'Use as' %} {{ role.group }}
                                     {% if role.site%}
                                     {% trans 'at Site' %}{{role.site}}
                                     {% endif %}
@@ -350,9 +350,9 @@
                         <span>{% trans 'Users Roles' %}</span>
                     </a>
                     <ul class="sub">
-                        <li><a href="{% url 'fieldsight:user-role-list' %}">{% trans 'Users Roles' %}</a></li>
+                        <li><a href="{% url 'role:user-role-list' %}">{% trans 'Users Roles' %}</a></li>
 
-                        <li><a href="{% url 'fieldsight:user-role-add' %}">{% trans 'Assign Roles' %}</a></li>
+                        <li><a href="{% url 'role:user-role-add' %}">{% trans 'Assign Roles' %}</a></li>
 
                     </ul>
                 </li>

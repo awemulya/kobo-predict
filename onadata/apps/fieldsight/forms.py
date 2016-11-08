@@ -2,12 +2,13 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
 from django.utils.translation import ugettext_lazy as _
-from registration import forms as registration_forms
-
 from django.conf import settings
 
+from registration import forms as registration_forms
+
 from onadata.apps.logger.models import XForm
-from .models import Organization, Project, Site, UserRole
+from .models import Organization, Project, Site
+from onadata.apps.userrole.models import UserRole
 
 USERNAME_REGEX = r'^[a-z][a-z0-9_]+$'
 USERNAME_MAX_LENGTH = 30
@@ -154,17 +155,6 @@ class SiteForm(forms.ModelForm):
     class Meta:
         model = Site
         exclude = ['project']
-
-
-class UserRoleForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(UserRoleForm, self).__init__(*args, **kwargs)
-        self.fields['group'].empty_label = None
-        self.fields['user'].empty_label = None
-
-    class Meta:
-        model = UserRole
-        exclude = []
 
 
 class AssignSettingsForm(forms.ModelForm):

@@ -1,4 +1,4 @@
-from onadata.apps.fieldsight.models import UserRole as Role
+from onadata.apps.userrole.models import UserRole as Role
 from rest_framework.authtoken.models import Token
 
 
