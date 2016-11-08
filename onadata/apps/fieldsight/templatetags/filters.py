@@ -13,9 +13,16 @@ from django.contrib.auth.models import Group
 from django.template.base import FilterExpression
 from django.template.loader import get_template
 
+
+
 from django.conf import settings
 
 register = Library()
+@register.filter
+def is_demand(obj):
+    if obj.__class__.__name__ == 'DemandRow':
+        return True
+    return False
 
 
 @register.filter
