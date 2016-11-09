@@ -20,6 +20,11 @@ class UserRole(models.Model):
     def __unicode__(self):
         return 'user: {}\'s role : {}'.format(self.user.__unicode__(), self.group.__unicode__())
 
+    def as_json(self):
+        return dict(
+            user = self.user.get_full_name(), email = self.user.email
+            )
+
     class Meta:
         unique_together = ('user', 'group', 'organization', 'project','site')
 
@@ -92,3 +97,23 @@ class UserRole(models.Model):
     @staticmethod
     def get_active_roles(user):
         return UserRole.objects.filter(user=user,ended_at=None).select_related('group', 'organization')
+
+    @staticmethod
+    def get_active_site_roles(user):
+        return UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor").\
+            select_related('group', 'site')\
+
+    @staticmethod
+    def project_managers(project):
+        return UserRole.objects.filter(project=project, ended_at=None, group__name="Project Manager").\
+            select_related('group', 'project')
+
+    @staticmethod
+    def organization_admins(organization):
+        return UserRole.objects.filter(organization=organization, ended_at=None, group__name="Organization Admin").\
+            select_related('group', 'organization')\
+
+    @staticmethod
+    def central_engineers(site):
+        return UserRole.objects.filter(site=site, ended_at=None, group__name="Central Engineer").\
+            select_related('group', 'site')

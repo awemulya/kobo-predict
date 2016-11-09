@@ -16,7 +16,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required)
 from .models import Organization, Project, Site, ExtraUserDetail
-from .forms import OrganizationForm, ProjectForm, SiteForm,RegistrationForm, SetOrgAdminForm, \
+from .forms import OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetOrgAdminForm, \
     SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm, AssignSettingsForm
 
 

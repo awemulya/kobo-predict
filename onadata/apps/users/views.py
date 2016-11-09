@@ -1,3 +1,6 @@
+import datetime
+
+from django.core import serializers
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import login
@@ -7,10 +10,13 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate
 from rest_framework import parsers
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from onadata.apps.fieldsight.mixins import UpdateView
 from rest_framework import renderers
+
+from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from onadata.apps.users.serializers import AuthCustomTokenSerializer
 from .forms import LoginForm, ProfileForm
@@ -24,6 +30,37 @@ def web_authenticate(username=None, password=None):
         except User.DoesNotExist:
             return None
 
+@api_view(['GET'])
+def current_user(request):
+    user = request.user
+    if user.is_anonymous():
+        return Response({'message': 'user is not logged in'})
+    else:
+        fieldsight_info = []
+        roles = UserRole.get_active_site_roles(user)
+        for role in roles:
+            site = role.site
+            project = site.project
+            organization = project.organization
+            central_engineers = [ob.as_json() for ob in UserRole.central_engineers(site)]
+            project_managers = [ob.as_json() for ob in UserRole.project_managers(project)]
+            organization_admins = [ob.as_json() for ob in UserRole.organization_admins(organization)]
+            site_info = {'site': {'id': site.id, 'name': site.name, 'central_engineers': central_engineers},
+                         'project': {'name': project.name, 'project_managers': project_managers},
+                         'organization': {'name': organization.name, 'organization_admins': organization_admins}}
+            fieldsight_info.append(site_info)
+
+        users_payload = {'username': user.username,
+                         'full_name': user.first_name,
+                         'email': user.email,
+                         'fieldsight_info': fieldsight_info,
+                         'server_time': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+                         'is_supervisor': True,
+                         'last_login': user.last_login,
+                         # 'languages': settings.LANGUAGES,
+                         # profile data here, role supervisor
+                         }
+        return Response(users_payload)
 
 def web_login(request):
     if request.user.is_authenticated():

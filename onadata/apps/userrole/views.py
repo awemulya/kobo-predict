@@ -13,6 +13,7 @@ def set_role(request, pk):
         request.session['role'] = role.pk
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
+
 class UserRoleView(object):
     model = UserRole
     success_url = reverse_lazy('role:user-role-list')
