@@ -46,11 +46,6 @@ def upload_to(instance, filename):
 class DuplicateUUIDError(Exception):
     pass
 
-#
-# class MyXF(models.model):
-#     xf = fk(XForm)
-#     site = models.ManyToManyField(Site, related_name="site_forms", blank=True)
-
 
 class XForm(BaseModel):
     CLONED_SUFFIX = '_cloned'
@@ -60,9 +55,7 @@ class XForm(BaseModel):
     json = models.TextField(default=u'')
     description = models.TextField(default=u'', null=True)
     xml = models.TextField()
-
     user = models.ForeignKey(User, related_name='xforms', null=True)
-    site = models.ManyToManyField(Site, related_name="site_forms", blank=True)
     require_auth = models.BooleanField(default=False)
     shared = models.BooleanField(default=False)
     shared_data = models.BooleanField(default=False)

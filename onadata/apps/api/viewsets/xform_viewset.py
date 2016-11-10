@@ -44,7 +44,6 @@ from onadata.libs.utils.string import str2bool
 
 from onadata.libs.utils.csv_import import submit_csv
 from onadata.libs.utils.viewer_tools import _get_form_url
-
 EXPORT_EXT = {
     'xls': Export.XLS_EXPORT,
     'xlsx': Export.XLS_EXPORT,

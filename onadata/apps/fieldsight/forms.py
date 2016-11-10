@@ -162,10 +162,10 @@ class AssignSettingsForm(forms.ModelForm):
         super(AssignSettingsForm, self).__init__(*args, **kwargs)
         # sites = Site.objects.all()
 
-    class Meta:
-        fields = ['site']
-        model = XForm
-        widgets = {
-        'site': forms.CheckboxSelectMultiple()
-        }
+    # class Meta:
+    #     fields = ['site']
+    #     model = FieldSightX
+    #     widgets = {
+    #     'site': forms.CheckboxSelectMultiple()
+    #     }
 
