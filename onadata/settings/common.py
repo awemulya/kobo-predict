@@ -181,7 +181,8 @@ MIDDLEWARE_CLASSES = (
     'linaro_django_pagination.middleware.PaginationMiddleware',
     'webstack_django_sorting.middleware.SortingMiddleware',
     'onadata.apps.users.middleware.RoleMiddleware',
-    'onadata.apps.api.middleware.DisableCSRFOnDebug',
+    'onadata.apps.api.middleware'
+    '.DisableCSRFOnDebug',
 )
 
 
@@ -229,6 +230,7 @@ INSTALLED_APPS = (
     'onadata.apps.fieldsight',
     'onadata.apps.users',
     'onadata.apps.userrole',
+    'onadata.apps.fsforms',
     'guardian',
     'djcelery',
     'onadata.apps.stats',
