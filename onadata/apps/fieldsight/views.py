@@ -17,7 +17,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      group_required)
 from .models import Organization, Project, Site, ExtraUserDetail
 from .forms import OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetOrgAdminForm, \
-    SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm, AssignSettingsForm
+    SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm
 
 
 @login_required
@@ -245,22 +245,3 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
             new_user.save()
         return new_user
 
-
-@login_required
-def assign(request, id_string=None):
-    xform = get_object_or_404(
-        XForm, id_string=id_string)
-    if request.method == 'POST':
-        form = AssignSettingsForm(request.POST)
-        if form.is_valid(): # All validation rules pass
-            access_list = form.cleaned_data['site']
-            xform.site.clear()
-            xform.site.add(*list(access_list))
-            if not access_list:
-                messages.add_message(request, messages.WARNING, 'This Form Is assigned to None.')
-            else:
-                messages.add_message(request, messages.INFO, 'Form Assigned Suscesfully.')
-            return HttpResponseRedirect(reverse(profile, kwargs={'username': request.user.username}))
-    else:
-        form = AssignSettingsForm(instance=xform)
-    return render(request, "assign.html", {'xform':xform,'form':form})

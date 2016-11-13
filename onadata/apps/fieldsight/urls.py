@@ -22,8 +22,7 @@ from .views import (
     add_supervisor,
     add_central_engineer,
     CreateUserView,
-    UserListView,
-    assign)
+    UserListView)
 
 
 
@@ -64,5 +63,4 @@ urlpatterns = [
         form_class=RegistrationForm), name='user-create'),
     url(r'^userlist/$', UserListView.as_view(), name='user-list'),
     # kobo form
-    url(r'^assign/(?P<id_string>[^/]+)$', assign, name="assign"),
 ]

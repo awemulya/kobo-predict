@@ -9,7 +9,7 @@
 
       </div>
       <div class="col-sm-12">
-          <form action="{% url 'fieldsight:assign' xform.id_string %}" method="POST">
+          <form action="{% url 'fsforms:assign' xform.xf.id_string %}" method="POST">
               {% csrf_token %}
                 {{ form.as_p }}
               <input type="submit" value="Assign">

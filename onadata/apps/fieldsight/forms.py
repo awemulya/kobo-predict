@@ -5,8 +5,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 from registration import forms as registration_forms
-
-from onadata.apps.logger.models import XForm
 from .models import Organization, Project, Site
 from onadata.apps.userrole.models import UserRole
 
@@ -156,16 +154,4 @@ class SiteForm(forms.ModelForm):
         model = Site
         exclude = ['project']
 
-
-class AssignSettingsForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(AssignSettingsForm, self).__init__(*args, **kwargs)
-        # sites = Site.objects.all()
-
-    # class Meta:
-    #     fields = ['site']
-    #     model = FieldSightX
-    #     widgets = {
-    #     'site': forms.CheckboxSelectMultiple()
-    #     }
 
