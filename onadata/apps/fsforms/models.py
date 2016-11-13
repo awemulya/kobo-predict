@@ -6,6 +6,12 @@ from onadata.apps.logger.models import XForm
 
 class Stages(models.Model):
     name = models.CharField(max_length=256)
+    order = models.IntegerField()
+
+class SubStage(models.Model):
+    name = models.CharField(max_length=256)
+    order_no = models.IntegerField
+    stage = models.ForeignKey(Stages, related_name="sub_stage")
 
 
 class FieldSightXF(models.Model):
@@ -14,4 +20,4 @@ class FieldSightXF(models.Model):
     scheduled = models.BooleanField(default=True)
     start = models.DateField(blank=True, null=True)
     end = models.DateField(blank=True, null=True)
-    stage = models.ForeignKey(Stages, blank=True, null=True)
+    sub_stage = models.ForeignKey(SubStage, blank=True, null=True)
