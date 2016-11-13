@@ -44,6 +44,10 @@ from onadata.libs.utils.string import str2bool
 
 from onadata.libs.utils.csv_import import submit_csv
 from onadata.libs.utils.viewer_tools import _get_form_url
+
+from onadata.apps.fsforms.models import FieldSightXF
+from onadata.apps.logger.models import XForm
+
 EXPORT_EXT = {
     'xls': Export.XLS_EXPORT,
     'xlsx': Export.XLS_EXPORT,
@@ -748,6 +752,11 @@ data (instance/submission per row)
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            xform_id_str = serializer.data.get('id_string', False)
+            if xform_id_str:
+                xf = XForm.objects.get(id_string=xform_id_str)
+                fsxf = FieldSightXF(xf=xf)
+                fsxf.save()
             headers = self.get_success_headers(serializer.data)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED,

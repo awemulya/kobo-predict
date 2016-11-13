@@ -15,9 +15,9 @@ class SubStage(models.Model):
 
 
 class FieldSightXF(models.Model):
-    xf = models.Foreignkey(XForm)
+    xf = models.ForeignKey(XForm)
     site = models.ManyToManyField(Site, related_name="site_forms", blank=True)
     scheduled = models.BooleanField(default=True)
     start = models.DateField(blank=True, null=True)
     end = models.DateField(blank=True, null=True)
-    sub_stage = models.ForeignKey(SubStage, blank=True, null=True)
+    sub_stage = models.ForeignKey(SubStage, blank=True, null=True, related_name="sub_stage")
