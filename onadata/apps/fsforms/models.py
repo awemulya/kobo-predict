@@ -42,7 +42,7 @@ class Stage(models.Model):
 #     order_no = models.IntegerField
 #     stage = models.ForeignKey(Stages, related_name="sub_stage")
 
-class Schedule():
+class Schedule(models.Model):
     name = models.CharField("Schedule Name", max_length=256)
     date_range_start = models.DateField(auto_now=True)
     date_range_end = models.DateField(auto_now=True)
@@ -59,7 +59,7 @@ class Schedule():
 
 class FieldSightXF(models.Model):
     xf = models.ForeignKey(XForm)
-    site = models.ManyToManyField(Site, related_name="site_forms", blank=True, null=True)
+    site = models.ManyToManyField(Site, related_name="site_forms")
     is_staged = models.BooleanField(default=False)
     is_scheduled = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now=True)
@@ -69,7 +69,7 @@ class FieldSightXF(models.Model):
 
     class Meta:
         db_table = 'fieldsight_forms_data'
-        unique_together = (("xf", "site"), ("xf", "is_staged", "stage"),("xf", "is_scheduled", "schedule"))
+        # unique_together = (("xf", "site"), ("xf", "is_staged", "stage"),("xf", "is_scheduled", "schedule"))
         verbose_name = ugettext_lazy("XForm")
         verbose_name_plural = ugettext_lazy("XForms")
         ordering = ("date_modified",)
