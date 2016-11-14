@@ -59,7 +59,7 @@ class Schedule(models.Model):
 
 
 class FieldSightXF(models.Model):
-    xf = models.ForeignKey(XForm)
+    xf = models.ForeignKey(XForm, related_name="field_sight_form")
     site = models.ManyToManyField(Site, related_name="site_forms")
     is_staged = models.BooleanField(default=False)
     is_scheduled = models.BooleanField(default=False)

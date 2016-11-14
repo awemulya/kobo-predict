@@ -752,11 +752,10 @@ data (instance/submission per row)
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            # xform_id_str = serializer.data.get('id_string', False)
-            # if xform_id_str:
-            #     xf = XForm.objects.get(id_string=xform_id_str)
-            #     fsxf = FieldSightXF(xf=xf)
-            #     fsxf.save()
+            xform_id_str = serializer.data.get('id_string', False)
+            if xform_id_str:
+                xf = XForm.objects.get(id_string=xform_id_str)
+                FieldSightXF.objects.create(xf=xf)
             headers = self.get_success_headers(serializer.data)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED,
