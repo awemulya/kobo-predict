@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy
@@ -73,6 +74,15 @@ class FieldSightXF(models.Model):
         verbose_name = ugettext_lazy("XForm")
         verbose_name_plural = ugettext_lazy("XForms")
         ordering = ("date_modified",)
+
+    def url(self):
+        return reverse(
+            "download_fild_sight_form",
+            kwargs={
+                "site": self.site.username,
+                "id_string": self.id_string
+            }
+        )
 
     def __unicode__(self):
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
