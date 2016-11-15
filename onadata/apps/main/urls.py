@@ -20,7 +20,7 @@ urlpatterns = patterns(
     url(r'^users/', include('onadata.apps.users.urls', namespace='users')),
     url(r'^fieldsight/', include('onadata.apps.fieldsight.urls', namespace='fieldsight')),
     url(r'^userrole/', include('onadata.apps.userrole.urls', namespace='role')),
-    url(r'^forms/', include('onadata.apps.fsforms.urls', namespace='fsforms')),
+    url(r'^forms/', include('onadata.apps.fsforms.urls', namespace='forms')),
     # change Language
     (r'^i18n/', include('django.conf.urls.i18n')),
     url('^api/v1/', include(router.urls)),

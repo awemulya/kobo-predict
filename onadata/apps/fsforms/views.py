@@ -1,10 +1,32 @@
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
-from onadata.apps.fieldsight.mixins import group_required
-from .forms import AssignSettingsForm
+from django.views.generic import ListView
+
+from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin
+from .forms import AssignSettingsForm, FSFormForm
 from .models import FieldSightXF
+
+
+class UniqueXformMixin(object):
+    def get_queryset(self):
+        return FieldSightXF.objects.order_by('xf__id').distinct('xf__id')
+
+
+class FSFormView(object):
+    model = FieldSightXF
+    success_url = reverse_lazy('forms:library-forms-list')
+    form_class = FSFormForm
+
+
+class LibraryFormsListView(FSFormView, LoginRequiredMixin, ListView, UniqueXformMixin):
+    pass
+
+class FSFormsListView(FSFormView, LoginRequiredMixin, ListView):
+    pass
 
 @login_required
 @group_required('KoboForms')
@@ -21,8 +43,8 @@ def assign(request, id_string=None):
                 messages.add_message(request, messages.WARNING, 'This Form Is assigned to None.')
             else:
                 messages.add_message(request, messages.INFO, 'Form Assigned Suscesfully.')
-            return HttpResponseRedirect(reverse(profile, kwargs={'username': request.user.username}))
+            return HttpResponseRedirect(reverse("form_fill_details", kwargs={'pk': form.instance.id}))
     else:
-        form = AssignSettingsForm(instance=xform,project=request.session['role'])
+        form = AssignSettingsForm(instance=xform, project=request.session['role'])
     return render(request, "assign.html", {'xform':xform,'form':form})
 

@@ -403,14 +403,14 @@
                         <i class="fa fa-file-text-o" aria-hidden="true"></i>
                         <span>{% trans 'Create Forms' %}</span>
                     </a>
-                    <a  href="{{ koboform_url }}">
+                    <a  href="{% url 'forms:library-forms-list' %}">
                         <i class="fa fa-file-text-o" aria-hidden="true"></i>
-                        <span>{% trans 'deployed kobo Forms' %}</span>
+                        <span>{% trans 'Forms Library' %}</span>
                     </a>
 
-                    <a  href="{{ koboform_url }}">
+                    <a  href="{% url 'forms:library-forms-list' %}">
                         <i class="fa fa-file-text-o" aria-hidden="true"></i>
-                        <span>{% trans 'Fieldsight forms(stage, scheduled)' %}</span>
+                        <span>{% trans 'My Forms' %}</span>
                     </a>
 
                 </li>

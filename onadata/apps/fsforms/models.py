@@ -1,10 +1,15 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy
 
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.logger.models import XForm
+
+@receiver(post_save, sender=XForm)
+def save_to_fieldsight_form(sender, instance, **kwargs):
+    FieldSightXF.objects.create(xf=instance)
 
 
 class Stage(models.Model):
@@ -60,7 +65,7 @@ class Schedule(models.Model):
 
 class FieldSightXF(models.Model):
     xf = models.ForeignKey(XForm, related_name="field_sight_form")
-    site = models.ManyToManyField(Site, related_name="site_forms")
+    site = models.ForeignKey(Site, related_name="site_forms", null=True, blank=True)
     is_staged = models.BooleanField(default=False)
     is_scheduled = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now=True)
@@ -73,7 +78,7 @@ class FieldSightXF(models.Model):
         # unique_together = (("xf", "site"), ("xf", "is_staged", "stage"),("xf", "is_scheduled", "schedule"))
         verbose_name = ugettext_lazy("XForm")
         verbose_name_plural = ugettext_lazy("XForms")
-        ordering = ("date_modified",)
+        ordering = ("-date_created",)
 
     def url(self):
         return reverse(
@@ -86,3 +91,5 @@ class FieldSightXF(models.Model):
 
     def __unicode__(self):
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
+
+post_save.connect(save_to_fieldsight_form, sender=XForm)

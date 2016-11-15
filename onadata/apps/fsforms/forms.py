@@ -3,6 +3,7 @@ from django import forms
 from onadata.apps.fieldsight.models import Site
 from .models import FieldSightXF
 
+
 class AssignSettingsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.project = kwargs.pop('project', None)
@@ -15,3 +16,10 @@ class AssignSettingsForm(forms.ModelForm):
         widgets = {
         'site': forms.CheckboxSelectMultiple()
         }
+
+
+class FSFormForm(forms.ModelForm):
+
+    class Meta:
+        exclude = ('site',)
+        model = FieldSightXF
