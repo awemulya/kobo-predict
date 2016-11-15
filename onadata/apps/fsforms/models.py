@@ -89,6 +89,11 @@ class FieldSightXF(models.Model):
             }
         )
 
+    def form_type(self):
+        if self.is_scheduled: return "Scheduled"
+        if self.is_staged: return "Staged"
+        if not self.is_scheduled and not self.is_staged: return "Normal"
+
     def __unicode__(self):
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
 

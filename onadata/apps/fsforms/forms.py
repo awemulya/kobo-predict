@@ -6,16 +6,30 @@ from .models import FieldSightXF
 
 class AssignSettingsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        self.project = kwargs.pop('project', None)
+        self.project_id = kwargs.pop('project', None)
         super(AssignSettingsForm, self).__init__(*args, **kwargs)
-        sites = Site.objects.filter(project__id=self.project)
+        if self.project_id:
+            sites = Site.objects.filter(project__id=self.project_id)
+        else:
+            sites = Site.objects.all()
+        self.fields['site'].empty_label = None
 
     class Meta:
         fields = ['site']
         model = FieldSightXF
-        widgets = {
-        'site': forms.CheckboxSelectMultiple()
-        }
+
+
+class FillFormDetailsSettingsForm(forms.ModelForm):
+
+    CHOICES = [('normal','Normal Form'),
+             ('is_scheduled','Schedule Form'),
+            ('is_staged','Stage Form')]
+
+    form_type = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect())
+
+    class Meta:
+        fields = ['form_type']
+        model = FieldSightXF
 
 
 class FSFormForm(forms.ModelForm):

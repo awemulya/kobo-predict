@@ -4,12 +4,12 @@
 {% load i18n %}
 
   <section id="profile">
-      <div>Choose Sites To Assign {{xform.title}} form ....</div>
+      <div> {{form.instance.xf.title}} .</div>
       <div>
 
       </div>
       <div class="col-sm-12">
-          <form action="{% url 'fsforms:assign' xform.xf.id_string %}" method="POST">
+          <form action="{% url 'forms:assign' form.instance.id %}" method="POST">
               {% csrf_token %}
                 {{ form.as_p }}
               <input type="submit" value="Assign">

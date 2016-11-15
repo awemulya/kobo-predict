@@ -1,0 +1,21 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{{ scenario }} {% trans 'Choose Stage Or Schedule form : ' %}{{form.instance.xf.title}}
+{% trans 'Of Site: ' %}{{form.instance.site}}{% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'forms:library-forms-list' %}">{% trans 'Library Forms' %}</a>
+{% endblock %}
+
+{% block content %}
+
+    <form action="{% url 'forms:assign' form.instance.id %}" method="POST">
+      {% csrf_token %}
+        {{ form.as_p }}
+      <input type="submit" value="Assign">
+    </form>
+
+{% endblock %}
+
+
