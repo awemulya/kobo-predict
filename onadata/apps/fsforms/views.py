@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectRequiredMixin, ProjectMixin
-from .forms import AssignSettingsForm, FSFormForm, FormTypeForm
+from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm
 from .models import FieldSightXF
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
@@ -58,6 +58,7 @@ def assign(request, pk=None):
         form = AssignSettingsForm(instance=field_sight_form, project=request.project.id)
     return render(request, "fsforms/assign.html", {'form': form})
 
+
 @login_required
 @group_required('KoboForms')
 def fill_form_type(request, pk=None):
@@ -82,4 +83,35 @@ def fill_form_type(request, pk=None):
     else:
         form = FormTypeForm(instance=field_sight_form)
     return render(request, "fsforms/stage_or_schedule.html", {'form': form})
+
+
+@login_required
+@group_required('KoboForms')
+def fill_details_stage(request, pk=None):
+    field_sight_form = get_object_or_404(
+        FieldSightXF, pk=pk)
+    if request.method == 'POST':
+        form = FormStageDetailsForm(request.POST, instance=field_sight_form)
+        if form.is_valid():
+            form.save()
+            messages.info(request, 'Form Stage Saved.')
+            return HttpResponseRedirect(reverse("forms:fill-details-stage", kwargs={'pk': form.instance.id}))
+    else:
+        form = FormStageDetailsForm(instance=field_sight_form)
+    return render(request, "fsforms/form_details_stage.html", {'form': form})
+
+@login_required
+@group_required('KoboForms')
+def fill_details_schedule(request, pk=None):
+    field_sight_form = get_object_or_404(
+        FieldSightXF, pk=pk)
+    if request.method == 'POST':
+        form = FormScheduleDetailsForm(request.POST, instance=field_sight_form)
+        if form.is_valid():
+            form.save()
+            messages.info(request, 'Form Schedule Saved.')
+            return HttpResponseRedirect(reverse("forms:fill-details-schedule", kwargs={'pk': form.instance.id}))
+    else:
+        form = FormScheduleDetailsForm(instance=field_sight_form)
+    return render(request, "fsforms/form_details_schedule.html", {'form': form})
 

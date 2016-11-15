@@ -21,12 +21,13 @@
 
 
         {% autosort object_list as sorted_objects %}
-        {% autopaginate object_list 25 as paginated_objects %}
+        {% autopaginate object_list 5 as paginated_objects %}
 
         <table class="table table-striped" id="dynamic-table1">
             <thead>
-            <th>{% anchor name _('Name') %}</th>
+            <th>Name</th>
             <th>Created Date</th>
+            <th>Form Type</th>
             <th colspan="2">Actions</th>
             </thead>
             <tbody>
@@ -38,14 +39,26 @@
                     <td>
                         {{ obj.date_created }}
                     </td>
+                        <td>{{obj.form_type}}</td>
+
                      <td>
                         <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}/edit">
                              {% trans 'Edit Form Questions' %}</a>
                     </td>
                     <!--if form is scheduled add link to fill schedule data or stage data or choose stage o schedule data-->
                     <td>
-                        <a class="btn btn-success btn-raised" href="{% url 'forms:assign' pk=obj.id %}">
-                             {% trans 'Assign' %}</a>
+                        {% if obj.form_type == "Normal" %}
+                        <a class="btn btn-success btn-raised" href="{% url 'forms:fill_form_type' obj.id %}">
+                             {% trans 'Stage or Schedule Form' %}</a>
+                        {% endif %}
+                        {% if obj.is_staged%}
+                        <a class="btn btn-success btn-raised" href="{% url 'forms:fill_details_stage' pk=obj.id %}">
+                             {% trans 'Select Stage' %}</a>
+                        {% endif %}
+                        {% if obj.is_scheduled%}
+                        <a class="btn btn-success btn-raised" href="{% url 'forms:fill_details_schedule' pk=obj.id %}">
+                             {% trans 'Make Schedule' %}</a>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

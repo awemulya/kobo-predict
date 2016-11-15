@@ -33,6 +33,18 @@ class FormTypeForm(forms.ModelForm):
         model = FieldSightXF
 
 
+class FormStageDetailsForm(forms.ModelForm):
+    class Meta:
+        fields = ['stage']
+        model = FieldSightXF
+
+
+class FormScheduleDetailsForm(forms.ModelForm):
+    class Meta:
+        fields = ['schedule']
+        model = FieldSightXF
+
+
 class FSFormForm(forms.ModelForm):
 
     class Meta:
