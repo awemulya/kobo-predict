@@ -1,12 +1,11 @@
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 
-from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin
+from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectRequiredMixin, ProjectMixin
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm
 from .models import FieldSightXF
 
@@ -28,7 +27,20 @@ class LibraryFormsListView(FSFormView, LoginRequiredMixin, ListView, UniqueXform
     pass
 
 
-class FSFormsListView(FSFormView, LoginRequiredMixin, ListView):
+class FormView(object):
+    model = FieldSightXF
+    success_url = reverse_lazy('forms:forms-list')
+    form_class = FSFormForm
+
+
+class MyProjectListView(ListView):
+    def get_template_names(self):
+        return ['fsforms/my_project_form_list.html']
+    def get_queryset(self):
+        return FieldSightXF.objects.filter(site__project__id= self.request.project.id)
+
+
+class FormsListView(FormView, LoginRequiredMixin, ProjectMixin, MyProjectListView):
     pass
 
 @login_required
