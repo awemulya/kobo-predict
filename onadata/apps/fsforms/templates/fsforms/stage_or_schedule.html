@@ -10,10 +10,10 @@
 
 {% block content %}
 
-    <form action="{% url 'forms:assign' form.instance.id %}" method="POST">
+    <form action="{% url 'forms:fill_form_type' form.instance.id %}" method="POST">
       {% csrf_token %}
         {{ form.as_p }}
-      <input type="submit" value="Assign">
+      <input type="submit" value="Save">
     </form>
 
 {% endblock %}

@@ -19,13 +19,14 @@ class AssignSettingsForm(forms.ModelForm):
         model = FieldSightXF
 
 
-class FillFormDetailsSettingsForm(forms.ModelForm):
+class FormTypeForm(forms.ModelForm):
 
-    CHOICES = [('normal','Normal Form'),
-             ('is_scheduled','Schedule Form'),
-            ('is_staged','Stage Form')]
+    CHOICES = [(3, 'Normal Form'),
+             (2, 'Schedule Form'),
+            (1, 'Stage Form')]
 
-    form_type = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect())
+    form_type = forms.ChoiceField(error_messages={'required': 'Please Choose Form Type !'},
+                                  choices=CHOICES, widget=forms.RadioSelect())
 
     class Meta:
         fields = ['form_type']

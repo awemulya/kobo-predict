@@ -7,8 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin
-from .forms import AssignSettingsForm, FSFormForm, FillFormDetailsSettingsForm
+from .forms import AssignSettingsForm, FSFormForm, FormTypeForm
 from .models import FieldSightXF
+
+TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
 
 class UniqueXformMixin(object):
@@ -32,44 +34,40 @@ class FSFormsListView(FSFormView, LoginRequiredMixin, ListView):
 @login_required
 @group_required('KoboForms')
 def assign(request, pk=None):
-    fsform = get_object_or_404(
+    field_sight_form = get_object_or_404(
         FieldSightXF, pk=pk)
     if request.method == 'POST':
-        form = AssignSettingsForm(request.POST, instance=fsform)
-        if form.is_valid(): # All validation rules pass
-            # access_list = form.cleaned_data['site']
-            # xform.site.clear()
-            # xform.site.add(*list(access_list))
-            # if not access_list:
-            #     messages.add_message(request, messages.WARNING, 'This Form Is assigned to None.')
-            # else:
-            import ipdb
-            ipdb.set_trace()
+        form = AssignSettingsForm(request.POST, instance=field_sight_form)
+        if form.is_valid():
             form.save()
-            messages.add_message(request, messages.INFO, 'Form Assigned Suscesfully.')
-            return HttpResponseRedirect(reverse("forms:fill_details", kwargs={'pk': form.instance.id}))
+            messages.add_message(request, messages.INFO, 'Form Assigned Successfully.')
+            return HttpResponseRedirect(reverse("forms:fill_form_type", kwargs={'pk': form.instance.id}))
     else:
-        form = AssignSettingsForm(instance=fsform, project=request.project.id)
+        form = AssignSettingsForm(instance=field_sight_form, project=request.project.id)
     return render(request, "fsforms/assign.html", {'form': form})
 
 @login_required
 @group_required('KoboForms')
-def fill_details(request, pk=None):
-    fsform = get_object_or_404(
+def fill_form_type(request, pk=None):
+    field_sight_form = get_object_or_404(
         FieldSightXF, pk=pk)
     if request.method == 'POST':
-        form = FillFormDetailsSettingsForm(request.POST, instance=fsform)
-        if form.is_valid(): # All validation rules pass
-            # access_list = form.cleaned_data['site']
-            # xform.site.clear()
-            # xform.site.add(*list(access_list))
-            # if not access_list:
-            #     messages.add_message(request, messages.WARNING, 'This Form Is assigned to None.')
-            # else:
-            form.save()
-            messages.add_message(request, messages.INFO, 'Form Assigned Suscesfully.')
-            return HttpResponseRedirect(reverse("forms:fill_details", kwargs={'pk': form.instance.id}))
+        form = FormTypeForm(request.POST, instance=field_sight_form)
+        if form.is_valid():
+            form_type = form.cleaned_data.get('form_type', '3')
+            form_type = int(form_type)
+            messages.info(request, 'Form Type Saved.')
+            if form_type == 3 :
+                return HttpResponseRedirect(reverse("forms:library-forms-list"))
+            elif form_type == 2:
+                field_sight_form.is_scheduled = True
+                field_sight_form.save()
+                return HttpResponseRedirect(reverse("forms:fill_details_schedule", kwargs={'pk': form.instance.id}))
+            else:
+                field_sight_form.is_staged = True
+                field_sight_form.save()
+                return HttpResponseRedirect(reverse("forms:fill_details_stage", kwargs={'pk': form.instance.id}))
     else:
-        form = FillFormDetailsSettingsForm(instance=fsform)
+        form = FormTypeForm(instance=field_sight_form)
     return render(request, "fsforms/stage_or_schedule.html", {'form': form})
 
