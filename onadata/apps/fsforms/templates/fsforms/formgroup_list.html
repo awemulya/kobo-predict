@@ -34,7 +34,7 @@
             {% for obj in paginated_objects %}
                 <tr>
                     <td>
-                        <a href="{% url 'forms:stage-edit' obj.pk %}">{{ obj.name }}</a>
+                        <a href="{% url 'forms:group-edit' obj.pk %}">{{ obj.name }}</a>
                     </td>
                     <td>
                         {{ obj.description }}

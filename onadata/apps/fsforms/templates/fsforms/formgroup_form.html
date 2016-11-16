@@ -29,9 +29,7 @@
         </div>
         
         <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
-        {% if form.instance.id %}
-            <a href="{% url 'forms:group-delete' form.instance.id %}" class="btn btn-danger btn-raised">{% trans 'Delete' %}</a>
-        {% endif %}
+
     </form>
 
     

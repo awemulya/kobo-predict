@@ -29,6 +29,7 @@
             <th>Site</th>
             <th>Created Date</th>
             <th>Form Type</th>
+            <th>Stage/Schedule</th>
             <th colspan="2">Actions</th>
             </thead>
             <tbody>
@@ -43,6 +44,11 @@
                     <td>
                         {{ obj.date_created }}
                     </td>
+                        <td>{{obj.form_type}}</td>
+
+                     <td>
+                         {{obj.stage_name }}
+                     </td>
                         <td>{{obj.form_type}}</td>
 
                      <td>

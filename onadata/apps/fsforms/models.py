@@ -1,9 +1,10 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import ugettext_lazy as _
 
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.logger.models import XForm
@@ -34,8 +35,8 @@ class FormGroup(models.Model):
 
     class Meta:
         db_table = 'fieldsight_forms_group'
-        verbose_name = ugettext_lazy("FieldSight Form Group")
-        verbose_name_plural = ugettext_lazy("FieldSight Form Groups")
+        verbose_name = _("FieldSight Form Group")
+        verbose_name_plural = _("FieldSight Form Groups")
         ordering = ("-date_modified",)
 
     def __unicode__(self):
@@ -54,8 +55,8 @@ class Stage(models.Model):
 
     class Meta:
         db_table = 'fieldsight_forms_stage'
-        verbose_name = ugettext_lazy("FieldSight Form Stage")
-        verbose_name_plural = ugettext_lazy("FieldSight Form Stages")
+        verbose_name = _("FieldSight Form Stage")
+        verbose_name_plural = _("FieldSight Form Stages")
         ordering = ("order",)
 
     # def save(self, *args, **kwargs):
@@ -105,8 +106,8 @@ class Schedule(models.Model):
 
     class Meta:
         db_table = 'fieldsight_forms_schedule'
-        verbose_name = ugettext_lazy("Form Schedule")
-        verbose_name_plural = ugettext_lazy("Form Schedules")
+        verbose_name = _("Form Schedule")
+        verbose_name_plural = _("Form Schedules")
         ordering = ("date_range_start",)
 
     def __unicode__(self):
@@ -127,8 +128,8 @@ class FieldSightXF(models.Model):
     class Meta:
         db_table = 'fieldsight_forms_data'
         # unique_together = (("xf", "site"), ("xf", "is_staged", "stage"),("xf", "is_scheduled", "schedule"))
-        verbose_name = ugettext_lazy("XForm")
-        verbose_name_plural = ugettext_lazy("XForms")
+        verbose_name = _("XForm")
+        verbose_name_plural = _("XForms")
         ordering = ("-date_created",)
 
     def url(self):
@@ -144,6 +145,17 @@ class FieldSightXF(models.Model):
         if self.is_scheduled: return "Scheduled"
         if self.is_staged: return "Staged"
         if not self.is_scheduled and not self.is_staged: return "Normal"
+
+    def stage_name(self):
+        if self.is_staged: return  self.stage
+
+    def clean(self):
+        if self.is_staged:
+            if Stage.objects.filter(pk=self.stage.id).exists():
+                raise ValidationError({
+                    'site': ValidationError(_('Same Form On This Stage Found.'), code='required'),
+                })
+
 
     def __unicode__(self):
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)

@@ -98,7 +98,7 @@ def stage_details(request, pk=None):
     stage = get_object_or_404(
         Stage, pk=pk)
     object_list = Stage.objects.filter(stage__id=stage.id).order_by('order')
-    return render(request, "fsforms/stage_detail.html", {'obj':stage,'object_list':object_list})
+    return render(request, "fsforms/stage_detail.html", {'obj': stage,'object_list':object_list})
 
 
 @login_required
@@ -229,7 +229,7 @@ def fill_details_stage(request, pk=None):
         if form.is_valid():
             form.save()
             messages.info(request, 'Form Stage Saved.')
-            return HttpResponseRedirect(reverse("forms:fill-details-stage", kwargs={'pk': form.instance.id}))
+            return HttpResponseRedirect(reverse("forms:stage-detail", kwargs={'pk': form.instance.stage.stage.id}))
     else:
         form = FormStageDetailsForm(instance=field_sight_form)
     return render(request, "fsforms/form_details_stage.html", {'form': form})
