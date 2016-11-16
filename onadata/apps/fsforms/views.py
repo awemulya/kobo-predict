@@ -53,8 +53,12 @@ class StageView(object):
     form_class = StageForm
 
 
+class MainSTagesOnly(ListView):
+    def get_queryset(self):
+        return Stage.objects.filter(stage= None)
 
-class StageListView(StageView, LoginRequiredMixin, ListView):
+
+class StageListView(StageView, LoginRequiredMixin, MainSTagesOnly):
     pass
 
 

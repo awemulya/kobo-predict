@@ -58,6 +58,8 @@ class StageForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(StageForm, self).__init__(*args, **kwargs)
         stage = Stage.objects.all()
+        obj_list = Stage.objects.filter(stage__isnull=True)
+        self.fields['stage'].choices = [(obj.id, obj.name) for obj in obj_list]
         self.fields['stage'].empty_label = "This Is A Main Stage"
         self.fields['group'].empty_label = None
 
@@ -65,6 +67,7 @@ class StageForm(forms.ModelForm):
     class Meta:
         exclude = []
         model = Stage
+
 
 class AddSubSTageForm(forms.ModelForm):
 

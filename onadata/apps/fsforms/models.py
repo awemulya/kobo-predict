@@ -15,6 +15,15 @@ def save_to_fieldsight_form(sender, instance, **kwargs):
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
 
 
+class IntegerRangeField(models.IntegerField):
+    def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
+        self.min_value, self.max_value = min_value, max_value
+        models.IntegerField.__init__(self, verbose_name, name, **kwargs)
+    def formfield(self, **kwargs):
+        defaults = {'min_value': self.min_value, 'max_value':self.max_value}
+        defaults.update(kwargs)
+        return super(IntegerRangeField, self).formfield(**defaults)
+
 class FormGroup(models.Model):
     name = models.CharField(max_length=256)
     description = models.TextField(blank=True, null=True)
@@ -37,7 +46,7 @@ class Stage(models.Model):
     name = models.CharField(max_length=256)
     description = models.TextField(blank=True, null=True)
     group = models.ForeignKey(FormGroup,related_name="stage")
-    order = models.IntegerField(default=0)
+    order = IntegerRangeField(min_value=0, max_value=30,default=0)
     stage = models.ForeignKey('self', blank=True, null=True, related_name="parent")
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
     date_created = models.DateTimeField(auto_now_add=True)
