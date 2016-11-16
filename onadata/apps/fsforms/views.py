@@ -5,9 +5,11 @@ from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 
-from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectRequiredMixin, ProjectMixin
-from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm
-from .models import FieldSightXF
+from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectRequiredMixin, ProjectMixin, \
+    CreateView, UpdateView, DeleteView, KoboFormsMixin
+from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
+    StageForm, ScheduleForm
+from .models import FieldSightXF, Stage, Schedule
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -42,6 +44,52 @@ class MyProjectListView(ListView):
 
 class FormsListView(FormView, LoginRequiredMixin, ProjectMixin, MyProjectListView):
     pass
+
+
+class StageView(object):
+    model = Stage
+    success_url = reverse_lazy('forms:stage-list')
+    form_class = StageForm
+
+
+
+class StageListView(StageView, LoginRequiredMixin, ListView):
+    pass
+
+
+class StageCreateView(StageView, LoginRequiredMixin, KoboFormsMixin, CreateView):
+    pass
+
+
+class StageUpdateView(StageView, LoginRequiredMixin, KoboFormsMixin, UpdateView):
+    pass
+
+
+class StageDeleteView(StageView,LoginRequiredMixin, KoboFormsMixin, DeleteView):
+    pass
+
+
+class ScheduleView(object):
+    model = Schedule
+    success_url = reverse_lazy('forms:schedule-list')
+    form_class = ScheduleForm
+
+
+class ScheduleListView(ScheduleView, LoginRequiredMixin, ListView):
+    pass
+
+
+class ScheduleCreateView(ScheduleView, LoginRequiredMixin, KoboFormsMixin, CreateView):
+    pass
+
+
+class ScheduleUpdateView(ScheduleView, LoginRequiredMixin, KoboFormsMixin, UpdateView):
+    pass
+
+
+class ScheduleDeleteView(ScheduleView,LoginRequiredMixin, KoboFormsMixin, DeleteView):
+    pass
+
 
 @login_required
 @group_required('KoboForms')

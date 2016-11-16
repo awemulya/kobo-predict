@@ -1,7 +1,7 @@
 
 from django import forms
 from onadata.apps.fieldsight.models import Site
-from .models import FieldSightXF
+from .models import FieldSightXF, Stage, Schedule
 
 
 class AssignSettingsForm(forms.ModelForm):
@@ -48,5 +48,19 @@ class FormScheduleDetailsForm(forms.ModelForm):
 class FSFormForm(forms.ModelForm):
 
     class Meta:
-        exclude = ('site',)
+        exclude = ['site']
         model = FieldSightXF
+
+
+class StageForm(forms.ModelForm):
+
+    class Meta:
+        exclude = []
+        model = Stage
+
+
+class ScheduleForm(forms.ModelForm):
+
+    class Meta:
+        exclude = []
+        model = Schedule

@@ -225,6 +225,14 @@ class ProjectMixin(object):
         raise PermissionDenied()
 
 
+class KoboFormsMixin(object):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            if request.role.group.name in USURPERS['KoboForms']:
+                return super(KoboFormsMixin, self).dispatch(request, *args, **kwargs)
+        raise PermissionDenied()
+
+
 #use in view class
 class OrganizationMixin(object):
     def dispatch(self, request, *args, **kwargs):

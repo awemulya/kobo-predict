@@ -416,9 +416,8 @@
                         <span>{% trans 'Stages' %}</span>
                     </a>
                     <ul class="sub">
-                        <li><a href="{{ koboform_url }}">{% trans 'Create New' %}</a></li>
-                        <li><a href="{% url 'forms:library-forms-list' %}">{% trans 'Main Stages' %}</a></li>
-                        <li><a href="{% url 'forms:forms-list' %}">{% trans 'My Project Forms' %}</a></li>
+                        <li><a href="{% url 'forms:stage-add' %}">{% trans 'Create New' %}</a></li>
+                        <li><a href="{% url 'forms:stage-list' %}">{% trans 'Stages' %}</a></li>
 
                     </ul>
                 </li>
@@ -428,9 +427,8 @@
                         <span>{% trans 'Schedules' %}</span>
                     </a>
                     <ul class="sub">
-                        <li><a href="{{ koboform_url }}">{% trans 'Create New' %}</a></li>
-                        <li><a href="{% url 'forms:library-forms-list' %}">{% trans 'Library Forms' %}</a></li>
-                        <li><a href="{% url 'forms:forms-list' %}">{% trans 'My Project Forms' %}</a></li>
+                         <li><a href="{% url 'forms:schedule-add' %}">{% trans 'Create New' %}</a></li>
+                        <li><a href="{% url 'forms:schedule-list' %}">{% trans 'Schedules' %}</a></li>
 
                     </ul>
                 </li>

@@ -26,6 +26,7 @@
         <table class="table table-striped" id="dynamic-table1">
             <thead>
             <th>Name</th>
+            <th>Site</th>
             <th>Created Date</th>
             <th>Form Type</th>
             <th colspan="2">Actions</th>
@@ -35,6 +36,9 @@
                 <tr>
                     <td>
                         <a href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}">{{ obj.xf.title }}</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'fieldsight:site-edit' obj.site.id %}">{{ obj.site }}</a>
                     </td>
                     <td>
                         {{ obj.date_created }}
