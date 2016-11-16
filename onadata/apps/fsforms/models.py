@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
@@ -11,11 +12,33 @@ from onadata.apps.logger.models import XForm
 def save_to_fieldsight_form(sender, instance, **kwargs):
     FieldSightXF.objects.create(xf=instance)
 
+SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
+
+
+class FormGroup(models.Model):
+    name = models.CharField(max_length=256)
+    description = models.TextField(blank=True, null=True)
+    shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    creator = models.ForeignKey(User, related_name="form_group")
+
+    class Meta:
+        db_table = 'fieldsight_forms_group'
+        verbose_name = ugettext_lazy("FieldSight Form Group")
+        verbose_name_plural = ugettext_lazy("FieldSight Form Groups")
+        ordering = ("-date_modified",)
+
 
 class Stage(models.Model):
     name = models.CharField(max_length=256)
+    description = models.TextField(blank=True, null=True)
+    group = models.ForeignKey(FormGroup,related_name="stage")
     order = models.IntegerField(default=0)
     stage = models.ForeignKey('self', blank=True, null=True, related_name="parent")
+    shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'fieldsight_forms_stage'
@@ -52,6 +75,8 @@ class Schedule(models.Model):
     name = models.CharField("Schedule Name", max_length=256)
     date_range_start = models.DateField(auto_now=True)
     date_range_end = models.DateField(auto_now=True)
+    group = models.ForeignKey(FormGroup, related_name="schedule")
+    shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
 
     class Meta:
         db_table = 'fieldsight_forms_schedule'
@@ -72,6 +97,7 @@ class FieldSightXF(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
     schedule = models.ForeignKey(Schedule, blank=True, null=True)
     stage = models.ForeignKey(Stage, blank=True, null=True)
+    shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
 
     class Meta:
         db_table = 'fieldsight_forms_data'

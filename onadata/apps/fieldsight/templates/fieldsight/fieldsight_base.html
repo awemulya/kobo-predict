@@ -398,22 +398,43 @@
                 </li>
                 {% endrole %}
                 {% ifrole "KoboForms" %}
-                <li>
-                    <a  href="{{ koboform_url }}">
-                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
-                        <span>{% trans 'Create Forms' %}</span>
+                <li class="sub-menu">
+                    <a href="javascript:;">
+                        <i class="fa a-file-text-o"></i>
+                        <span>{% trans 'Forms' %}</span>
                     </a>
-                    <a  href="{% url 'forms:library-forms-list' %}">
-                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
-                        <span>{% trans 'Forms Library' %}</span>
-                    </a>
+                    <ul class="sub">
+                        <li><a href="{{ koboform_url }}">{% trans 'Create New' %}</a></li>
+                        <li><a href="{% url 'forms:library-forms-list' %}">{% trans 'Library Forms' %}</a></li>
+                        <li><a href="{% url 'forms:forms-list' %}">{% trans 'My Project Forms' %}</a></li>
 
-                    <a  href="{% url 'forms:forms-list' %}">
-                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
-                        <span>{% trans 'My Forms' %}</span>
-                    </a>
-
+                    </ul>
                 </li>
+                <li class="sub-menu">
+                    <a href="javascript:;">
+                        <i class="fa a-file-text-o"></i>
+                        <span>{% trans 'Stages' %}</span>
+                    </a>
+                    <ul class="sub">
+                        <li><a href="{{ koboform_url }}">{% trans 'Create New' %}</a></li>
+                        <li><a href="{% url 'forms:library-forms-list' %}">{% trans 'Main Stages' %}</a></li>
+                        <li><a href="{% url 'forms:forms-list' %}">{% trans 'My Project Forms' %}</a></li>
+
+                    </ul>
+                </li>
+                <li class="sub-menu">
+                    <a href="javascript:;">
+                        <i class="fa a-file-text-o"></i>
+                        <span>{% trans 'Schedules' %}</span>
+                    </a>
+                    <ul class="sub">
+                        <li><a href="{{ koboform_url }}">{% trans 'Create New' %}</a></li>
+                        <li><a href="{% url 'forms:library-forms-list' %}">{% trans 'Library Forms' %}</a></li>
+                        <li><a href="{% url 'forms:forms-list' %}">{% trans 'My Project Forms' %}</a></li>
+
+                    </ul>
+                </li>
+
                 {% endrole %}
                 
             </ul>            </div>
