@@ -1,7 +1,8 @@
 
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 from onadata.apps.fieldsight.models import Site
-from .models import FieldSightXF, Stage, Schedule
+from .models import FieldSightXF, Stage, Schedule, FormGroup
 
 
 class AssignSettingsForm(forms.ModelForm):
@@ -54,9 +55,43 @@ class FSFormForm(forms.ModelForm):
 
 class StageForm(forms.ModelForm):
 
+    def __init__(self, *args, **kwargs):
+        super(StageForm, self).__init__(*args, **kwargs)
+        stage = Stage.objects.all()
+        self.fields['stage'].empty_label = "This Is A Main Stage"
+        self.fields['group'].empty_label = None
+
+
     class Meta:
         exclude = []
         model = Stage
+
+class AddSubSTageForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(AddSubSTageForm, self).__init__(*args, **kwargs)
+        self.fields['group'].empty_label = None
+
+    class Meta:
+        exclude = ['stage']
+        model = Stage
+
+
+class AssignFormToStageForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(AssignFormToStageForm, self).__init__(*args, **kwargs)
+        xf_list = FieldSightXF.objects.filter(site__isnull=True)
+        self.fields['xf'].choices = [(f.xf.id,f.xf.title) for f in xf_list]
+        self.fields['xf'].empty_label = None
+        self.fields['site'].empty_label = None
+
+    class Meta:
+        fields = ['xf','site']
+        model = FieldSightXF
+        labels = {
+            "xf": _("Select Form"),
+        }
 
 
 class ScheduleForm(forms.ModelForm):
@@ -64,3 +99,9 @@ class ScheduleForm(forms.ModelForm):
     class Meta:
         exclude = []
         model = Schedule
+
+class GroupForm(forms.ModelForm):
+
+    class Meta:
+        exclude = ['creator']
+        model = FormGroup

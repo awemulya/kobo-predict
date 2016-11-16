@@ -1,0 +1,61 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Groups' %}{% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'forms:group-add' %}">{% trans 'New' %} {% trans 'Group' %}</a>
+{% endblock %}
+
+{% block content %}
+
+    {% load pagination_tags %}
+    {% load sorting_tags %}
+    {% load filters %}
+
+
+
+
+    <div class="adv-table">
+
+
+        {% autosort object_list as sorted_objects %}
+        {% autopaginate object_list 10 as paginated_objects %}
+
+        <table class="table table-striped" id="dynamic-table1">
+            <thead>
+            <th>{% anchor name _('Name') %}</th>
+            <th>{% anchor description _('Description') %}</th>
+            <th>{% anchor date_created _('Created Date') %}</th>
+            <th>{% anchor creator _('Created By') %}</th>
+            </thead>
+            <tbody>
+            {% for obj in paginated_objects %}
+                <tr>
+                    <td>
+                        <a href="{% url 'forms:stage-edit' obj.pk %}">{{ obj.name }}</a>
+                    </td>
+                    <td>
+                        {{ obj.description }}
+                    </td>
+                     <td>
+                        {{ obj.date_created }}
+                    </td>
+                    <td>
+                        {{ obj.creator }}
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+        {% paginate %}
+
+    </div>
+
+
+
+{% endblock %}

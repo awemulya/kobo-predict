@@ -400,7 +400,7 @@
                 {% ifrole "KoboForms" %}
                 <li class="sub-menu">
                     <a href="javascript:;">
-                        <i class="fa a-file-text-o"></i>
+                        <i class="fa fa-file-text-o"></i>
                         <span>{% trans 'Forms' %}</span>
                     </a>
                     <ul class="sub">
@@ -412,7 +412,18 @@
                 </li>
                 <li class="sub-menu">
                     <a href="javascript:;">
-                        <i class="fa a-file-text-o"></i>
+                        <i class="fa fa-file-text-o"></i>
+                        <span>{% trans 'Stages And Schedules Group' %}</span>
+                    </a>
+                    <ul class="sub">
+                        <li><a href="{% url 'forms:group-add' %}">{% trans 'Create New' %}</a></li>
+                        <li><a href="{% url 'forms:group-list' %}">{% trans 'Groups' %}</a></li>
+
+                    </ul>
+                </li>
+                <li class="sub-menu">
+                    <a href="javascript:;">
+                        <i class="fa fa-file-text-o"></i>
                         <span>{% trans 'Stages' %}</span>
                     </a>
                     <ul class="sub">
@@ -421,9 +432,10 @@
 
                     </ul>
                 </li>
+
                 <li class="sub-menu">
                     <a href="javascript:;">
-                        <i class="fa a-file-text-o"></i>
+                        <i class="fa fa-file-text-o"></i>
                         <span>{% trans 'Schedules' %}</span>
                     </a>
                     <ul class="sub">

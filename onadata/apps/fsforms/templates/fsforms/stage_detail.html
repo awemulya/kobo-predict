@@ -2,10 +2,12 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Stages' %}{% endblock %}
+{% block page-title %}{{obj.sub_stage_count}}{% trans ' Sub Stages of ' %}{{obj.name}}
+{% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add' %}">{% trans 'New' %} {% trans 'Stage' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add-sub-stage' obj.pk %}">
+                            {% trans 'Add Sub Stage' %}</a>
 {% endblock %}
 
 {% block content %}
@@ -27,9 +29,8 @@
             <thead>
             <th>{% anchor name _('Name') %}</th>
             <th>{% trans 'Type' %} </th>
-            <th>{% trans 'Stage' %}</th>
             <th>{% anchor description _('Description') %}</th>
-            <th>{% anchor group.name _('Group') %}</th>
+              <th>{% trans 'Order' %} </th>
             <th>{% anchor date_created _('Date Created') %}</th>
             </thead>
             <tbody>
@@ -41,27 +42,24 @@
                     <td>
                         {{ obj.get_display_name }}
                     </td>
-                    <td>
-                        {% if not obj.is_main_stage %}
-                        {{ obj.stage }}
-                        {% else %}
 
-                        <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add-sub-stage' obj.pk %}">
-                            {% trans 'Add Sub Stage' %}</a>
-                        <a class="btn btn-success btn-raised" href="{% url 'forms:stage-detail' obj.pk %}">
-                            {% trans 'List Sub Stages' %}({{obj.sub_stage_count}})</a>
-                        {% endif %}
-                    </td>
                      <td>
                         {{ obj.description }}
                     </td>
                     <td>
-                        {{ obj.group }}
+                        {{ obj.order }}
                     </td>
                     <td>
                         {{ obj.date_created }}
                     </td>
-
+                    <td> {% if not obj.form_exists %}
+                        <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add-form' obj.pk %}">
+                        Assign Form
+                        </a>
+                            {% else %}
+                    {{obj.form_name}}
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>

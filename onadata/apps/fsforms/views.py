@@ -3,13 +3,14 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectRequiredMixin, ProjectMixin, \
     CreateView, UpdateView, DeleteView, KoboFormsMixin
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
-    StageForm, ScheduleForm
-from .models import FieldSightXF, Stage, Schedule
+    StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm
+from .models import FieldSightXF, Stage, Schedule, FormGroup
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -69,6 +70,53 @@ class StageDeleteView(StageView,LoginRequiredMixin, KoboFormsMixin, DeleteView):
     pass
 
 
+@login_required
+@group_required('KoboForms')
+def add_sub_stage(request, pk=None):
+    stage = get_object_or_404(
+        Stage, pk=pk)
+    if request.method == 'POST':
+        form = AddSubSTageForm(request.POST)
+        if form.is_valid():
+            child_stage = form.save()
+            child_stage.stage = stage
+            child_stage.save()
+            messages.info(request, 'Sub Stage {} Saved.'.format(child_stage.name))
+            return HttpResponseRedirect(reverse("forms:stage-detail", kwargs={'pk': stage.id}))
+    else:
+        form = AddSubSTageForm()
+    return render(request, "fsforms/add_sub_stage.html", {'form': form, 'obj':stage})
+
+
+@login_required
+@group_required('KoboForms')
+def stage_details(request, pk=None):
+    stage = get_object_or_404(
+        Stage, pk=pk)
+    object_list = Stage.objects.filter(stage__id=stage.id).order_by('order')
+    return render(request, "fsforms/stage_detail.html", {'obj':stage,'object_list':object_list})
+
+
+@login_required
+@group_required('KoboForms')
+def stage_add_form(request, pk=None):
+    stage = get_object_or_404(
+        Stage, pk=pk)
+    if request.method == 'POST':
+        form = AssignFormToStageForm(request.POST)
+        if form.is_valid():
+            fsform = form.save()
+            fsform.is_staged = True
+            fsform.is_scheduled = False
+            fsform.stage = stage
+            fsform.save()
+            messages.add_message(request, messages.INFO, 'Form Assigned Successfully.')
+            return HttpResponseRedirect(reverse("forms:stage-detail", kwargs={'pk': stage.stage.id}))
+    else:
+        form = AssignFormToStageForm()
+    return render(request, "fsforms/stage_add_form.html", {'form': form, 'obj':stage})
+
+
 class ScheduleView(object):
     model = Schedule
     success_url = reverse_lazy('forms:schedule-list')
@@ -89,6 +137,40 @@ class ScheduleUpdateView(ScheduleView, LoginRequiredMixin, KoboFormsMixin, Updat
 
 class ScheduleDeleteView(ScheduleView,LoginRequiredMixin, KoboFormsMixin, DeleteView):
     pass
+
+
+class FormGroupView(object):
+    model = FormGroup
+    success_url = reverse_lazy('forms:group-list')
+    form_class = GroupForm
+
+
+class GroupListView(FormGroupView, LoginRequiredMixin, ListView):
+    pass
+
+
+class CreateViewWithUser(CreateView):
+    def dispatch(self, *args, **kwargs):
+        return super(CreateViewWithUser, self).dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.creator = self.request.user
+        obj.save()
+        return HttpResponseRedirect(self.success_url)
+
+
+class GroupCreateView(FormGroupView, LoginRequiredMixin, CreateViewWithUser):
+    pass
+
+
+class GroupUpdateView(FormGroupView, LoginRequiredMixin, KoboFormsMixin, UpdateView):
+    pass
+
+
+class GroupDeleteView(ScheduleView,LoginRequiredMixin, KoboFormsMixin, DeleteView):
+    pass
+
 
 
 @login_required

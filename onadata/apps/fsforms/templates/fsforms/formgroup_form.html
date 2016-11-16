@@ -1,10 +1,10 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 
-{% block page-title %}{{ scenario }} {% trans 'Stage' %}{% endblock %}
+{% block page-title %}{{ scenario }} {% trans 'Groups' %}{% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'forms:stage-list' %}">{% trans 'Stages' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'forms:group-list' %}">{% trans 'Groups' %}</a>
 {% endblock %}
 
 {% block content %}
@@ -29,7 +29,9 @@
         </div>
         
         <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
-
+        {% if form.instance.id %}
+            <a href="{% url 'forms:group-delete' form.instance.id %}" class="btn btn-danger btn-raised">{% trans 'Delete' %}</a>
+        {% endif %}
     </form>
 
     

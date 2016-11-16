@@ -29,6 +29,9 @@ class FormGroup(models.Model):
         verbose_name_plural = ugettext_lazy("FieldSight Form Groups")
         ordering = ("-date_modified",)
 
+    def __unicode__(self):
+        return getattr(self, "name", "")
+
 
 class Stage(models.Model):
     name = models.CharField(max_length=256)
@@ -46,17 +49,30 @@ class Stage(models.Model):
         verbose_name_plural = ugettext_lazy("FieldSight Form Stages")
         ordering = ("order",)
 
-    def save(self, *args, **kwargs):
-        if self.parent and self.parent.parent:
-            raise Exception("SubStage Cant Have Substages")
-        else:
-            super(Stage, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     import ipdb
+    #     ipdb.set_trace()
+    #     if self.parent and self.parent.parent:
+    #         raise Exception("SubStage Cant Have Substages")
+    #     else:
+    #         super(Stage, self).save(*args, **kwargs)
 
     def get_display_name(self):
-        return "Stage" if self.stage else "SubStage"
+        return "Stage" if not self.stage  else "SubStage"
 
     def is_main_stage(self):
-        return True if self.stage else False
+        return True if not self.stage else False
+
+    def sub_stage_count(self):
+        if not self.stage:
+            return Stage.objects.filter(stage=self).count()
+        return 0
+
+    def form_exists(self):
+        return True if FieldSightXF.objects.filter(stage=self).count() > 0 else False
+
+    def form_name(self):
+        return FieldSightXF.objects.get(stage=self).xf.title
 
     def __unicode__(self):
         return getattr(self, "name", "")
