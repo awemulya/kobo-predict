@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block head %}
+<a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
     <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add-sub-stage' obj.pk %}">
                             {% trans 'Add Sub Stage' %}</a>
 {% endblock %}

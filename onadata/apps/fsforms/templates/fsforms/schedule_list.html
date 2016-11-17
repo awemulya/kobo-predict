@@ -5,7 +5,8 @@
 {% block page-title %}{% trans 'Schedules' %}{% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add' %}">{% trans 'New' %} {% trans 'Schedule' %}</a>
+    <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
+<a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add' %}">{% trans 'New' %} {% trans 'Schedule' %}</a>
 {% endblock %}
 
 {% block content %}
