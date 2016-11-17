@@ -61,11 +61,11 @@
                         <a class="btn btn-success btn-raised" href="{% url 'forms:fill_form_type' obj.id %}">
                              {% trans 'Stage or Schedule Form' %}</a>
                         {% endif %}
-                        {% if obj.is_staged%}
+                        {% if obj.is_staged and not obj.stage_name%}
                         <a class="btn btn-success btn-raised" href="{% url 'forms:fill_details_stage' pk=obj.id %}">
                              {% trans 'Select Stage' %}</a>
                         {% endif %}
-                        {% if obj.is_scheduled%}
+                        {% if obj.is_scheduled and not obj.schedule_name%}
                         <a class="btn btn-success btn-raised" href="{% url 'forms:fill_details_schedule' pk=obj.id %}">
                              {% trans 'Make Schedule' %}</a>
                         {% endif %}

@@ -59,13 +59,10 @@ class Stage(models.Model):
         verbose_name_plural = _("FieldSight Form Stages")
         ordering = ("order",)
 
-    # def save(self, *args, **kwargs):
-    #     import ipdb
-    #     ipdb.set_trace()
-    #     if self.parent and self.parent.parent:
-    #         raise Exception("SubStage Cant Have Substages")
-    #     else:
-    #         super(Stage, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if self.stage:
+            self.group = self.stage.group
+        super(Stage, self).save(*args, **kwargs)
 
     def get_display_name(self):
         return "Stage" if not self.stage  else "SubStage"
@@ -148,6 +145,9 @@ class FieldSightXF(models.Model):
 
     def stage_name(self):
         if self.is_staged: return  self.stage
+
+    def schedule_name(self):
+        if self.is_scheduled: return  self.schedule
 
     def clean(self):
         if self.is_staged:

@@ -8,11 +8,16 @@ from .models import FieldSightXF, Stage, Schedule, FormGroup
 class AssignSettingsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.project_id = kwargs.pop('project', None)
+        try:
+            self.form_site = kwargs.get('instance').site.id
+        except:
+            self.form_site = 0
         super(AssignSettingsForm, self).__init__(*args, **kwargs)
         if self.project_id:
-            sites = Site.objects.filter(project__id=self.project_id)
+            sites = Site.objects.filter(project__id=self.project_id).exclude(pk=self.form_site)
         else:
             sites = Site.objects.all()
+        self.fields['site'].choices = [(obj.id, obj.name) for obj in sites]
         self.fields['site'].empty_label = None
 
     class Meta:
@@ -79,13 +84,12 @@ class StageForm(forms.ModelForm):
 
 class AddSubSTageForm(forms.ModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super(AddSubSTageForm, self).__init__(*args, **kwargs)
-        self.fields['group'].empty_label = None
-
     class Meta:
-        exclude = ['stage']
+        exclude = ['stage','group']
         model = Stage
+        # widgets = {'stage': forms.HiddenInput(),
+        #            'group': forms.HiddenInput()
+        #            }
 
 
 class AssignFormToStageForm(forms.ModelForm):

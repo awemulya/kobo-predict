@@ -26,7 +26,12 @@ class FSFormView(object):
     form_class = FSFormForm
 
 
-class LibraryFormsListView(FSFormView, LoginRequiredMixin, ListView, UniqueXformMixin):
+class MyLibraryListView(ListView):
+    def get_queryset(self):
+        return FieldSightXF.objects.filter(stage__isnull= True)
+
+
+class LibraryFormsListView(FSFormView, LoginRequiredMixin, MyLibraryListView):
     pass
 
 
@@ -80,10 +85,11 @@ def add_sub_stage(request, pk=None):
     stage = get_object_or_404(
         Stage, pk=pk)
     if request.method == 'POST':
-        form = AddSubSTageForm(request.POST)
+        form = AddSubSTageForm(data=request.POST)
         if form.is_valid():
-            child_stage = form.save()
+            child_stage = form.save(commit=False)
             child_stage.stage = stage
+            child_stage.group = stage.group
             child_stage.save()
             messages.info(request, 'Sub Stage {} Saved.'.format(child_stage.name))
             return HttpResponseRedirect(reverse("forms:stage-detail", kwargs={'pk': stage.id}))
