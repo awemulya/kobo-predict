@@ -9,7 +9,7 @@ from django.views.generic import ListView
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectRequiredMixin, ProjectMixin, \
     CreateView, UpdateView, DeleteView, KoboFormsMixin
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
-    StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm
+    StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm
 from .models import FieldSightXF, Stage, Schedule, FormGroup
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
@@ -147,6 +147,26 @@ class ScheduleUpdateView(ScheduleView, LoginRequiredMixin, KoboFormsMixin, Updat
 
 class ScheduleDeleteView(ScheduleView,LoginRequiredMixin, KoboFormsMixin, DeleteView):
     pass
+
+
+@login_required
+@group_required('KoboForms')
+def schedule_add_form(request, pk=None):
+    schedule = get_object_or_404(
+        Schedule, pk=pk)
+    if request.method == 'POST':
+        form = AssignFormToScheduleForm(request.POST)
+        if form.is_valid():
+            fsform = form.save()
+            fsform.is_scheduled = True
+            fsform.is_staged = False
+            fsform.schedule = schedule
+            fsform.save()
+            messages.add_message(request, messages.INFO, 'Form Assigned Successfully.')
+            return HttpResponseRedirect(reverse("forms:schedule-list"))
+    else:
+        form = AssignFormToScheduleForm()
+    return render(request, "fsforms/schedule_add_form.html", {'form': form, 'obj':schedule})
 
 
 class FormGroupView(object):

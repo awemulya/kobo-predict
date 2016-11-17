@@ -99,15 +99,26 @@ class Schedule(models.Model):
     name = models.CharField("Schedule Name", max_length=256)
     date_range_start = models.DateField(default=datetime.date.today)
     date_range_end = models.DateField(default=datetime.date.today)
-    selected_days = models.ManyToManyField(Days)
+    selected_days = models.ManyToManyField(Days,related_name='days')
     group = models.ForeignKey(FormGroup, related_name="schedule")
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
+    date_created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'fieldsight_forms_schedule'
         verbose_name = _("Form Schedule")
         verbose_name_plural = _("Form Schedules")
         ordering = ("date_range_start",)
+
+    def form_exists(self):
+        return True if FieldSightXF.objects.filter(schedule=self).count() > 0 else False
+
+    def form_name(self):
+        return FieldSightXF.objects.get(schedule=self).xf.title
+
+    def site_name(self):
+        if FieldSightXF.objects.filter(schedule=self).exists():
+            return FieldSightXF.objects.get(schedule=self).site
 
     def __unicode__(self):
         return getattr(self, "name", "")

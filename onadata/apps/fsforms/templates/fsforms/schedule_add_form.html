@@ -1,0 +1,37 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{{ scenario }} {% trans 'Add Form To: ' %}{{obj.name}}{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+
+    <form method="post" id='form' action="{% url 'forms:schedule-add-form' obj.pk %}">
+        <div class="">
+            <div class="col-sm-12 registration_field">
+               {{ form.non_field_errors }}
+               </div>
+            
+            {% csrf_token %}
+            {% for field in form %}
+               <div class="col-sm-12 registration_field">
+               {{ form.non_field_errors }}
+               </div>
+               <div class="col-sm-12 registration_field">
+                 <div class="col-sm-3"> {{ field.label }}</div>
+                 <div class="col-sm-3">      {{ field }}</div>
+                 <div class="col-sm-6">      {{ field.errors }}</div>
+               </div>
+            {% endfor %}
+        </div>
+        
+        <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
+
+    </form>
+
+    
+
+{% endblock %}

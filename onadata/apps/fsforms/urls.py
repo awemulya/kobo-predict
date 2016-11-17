@@ -16,8 +16,8 @@ from .views import (
         ScheduleUpdateView,
         assign, fill_form_type,
         fill_details_stage,
-        fill_details_schedule
-        )
+        fill_details_schedule,
+        schedule_add_form)
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
         url(r'^assigned/$', FormsListView.as_view(), name='forms-list'),
@@ -36,6 +36,7 @@ urlpatterns = [
         url(r'^schedule/$', ScheduleListView.as_view(), name='schedule-list'),
         url(r'^schedule/add/$', ScheduleCreateView.as_view(), name='schedule-add'),
         url(r'^schedule/(?P<pk>[0-9]+)/$', ScheduleUpdateView.as_view(), name='schedule-edit'),
+        url(r'^schedule-add-form/(?P<pk>[0-9]+)/$', schedule_add_form, name='schedule-add-form'),
 
         url(r'^assign/(?P<pk>[0-9]+)/$', assign, name="assign"),
         url(r'^fill-form-type/(?P<pk>[0-9]+)/$', fill_form_type, name="fill_form_type"),
