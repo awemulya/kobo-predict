@@ -94,10 +94,26 @@ class Stage(models.Model):
 #     order_no = models.IntegerField
 #     stage = models.ForeignKey(Stages, related_name="sub_stage")
 
+DAY_OF_THE_WEEK = {
+    '0' : _(u'Monday'),
+    '1' : _(u'Tuesday'),
+    '2' : _(u'Wednesday'),
+    '3' : _(u'Thursday'),
+    '4' : _(u'Friday'),
+    '5' : _(u'Saturday'),
+    '6' : _(u'Sunday'),
+}
+
+
+class Days(models.Model):
+    day = models.CharField(max_length=8)
+    index = models.IntegerField()
+
 class Schedule(models.Model):
     name = models.CharField("Schedule Name", max_length=256)
     date_range_start = models.DateField(auto_now=True)
     date_range_end = models.DateField(auto_now=True)
+    selected_days = models.ManyToManyField(Days)
     group = models.ForeignKey(FormGroup, related_name="schedule")
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
 
@@ -118,7 +134,7 @@ class FieldSightXF(models.Model):
     is_scheduled = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now=True)
     date_modified = models.DateTimeField(auto_now=True)
-    schedule = models.ForeignKey(Schedule, blank=True, null=True)
+    schedule = models.ForeignKey(Schedule, blank=True, null=True) # may be many to many
     stage = models.ForeignKey(Stage, blank=True, null=True)
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
 
