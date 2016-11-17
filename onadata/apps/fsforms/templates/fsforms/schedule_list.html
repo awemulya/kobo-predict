@@ -1,10 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
 
-</body>
-</html>
+{% block page-title %}{% trans 'Schedules' %}{% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add' %}">{% trans 'New' %} {% trans 'Schedule' %}</a>
+{% endblock %}
+
+{% block content %}
+
+    {% load pagination_tags %}
+    {% load sorting_tags %}
+    {% load filters %}
+
+
+
+
+    <div class="adv-table">
+
+
+        {% autosort object_list as sorted_objects %}
+        {% autopaginate object_list 5 as paginated_objects %}
+
+        <table class="table table-striped" id="dynamic-table1">
+            <thead>
+            <th>{% anchor name _('Name') %}</th>
+            <th>{% anchor group.name _('Group') %}</th>
+            <th>{% anchor date_created _('Date Created') %}</th>
+            </thead>
+            <tbody>
+            {% for obj in paginated_objects %}
+                <tr>
+                    <td>
+                        <a href="{% url 'forms:schedule-edit' obj.pk %}">{{ obj.name }}</a>
+                    </td>
+                    <td>
+                        {{ obj.group }}
+                    </td>
+                    <td>
+                        {{ obj.date_created }}
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+  
+
+        {% paginate %}
+
+    </div>
+
+
+
+{% endblock %}

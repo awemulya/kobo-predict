@@ -1,10 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
 
-</body>
-</html>
+{% block page-title %}{{ scenario }} {% trans 'Schedules' %}{% endblock %}
+ {%block extracss %}
+<link rel="stylesheet" type="text/css" href="/media/admin/css/forms.css"/>
+<link rel="stylesheet" type="text/css" href="/media/admin/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="/media/admin/css/global.css"/>
+<link rel="stylesheet" type="text/css" href="/media/admin/css/widgets.css"/>
+    {% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'forms:schedule-list' %}">{% trans 'Schedules' %}</a>
+{% endblock %}
+
+{% block content %}
+
+    <form method="post" id='form'>
+        <div class="">
+            <div class="col-sm-12 registration_field">
+               {{ form.non_field_errors }}
+               </div>
+            
+            {% csrf_token %}
+            {{ form.media }}
+            {% for field in form %}
+               <div class="col-sm-12 registration_field">
+               {{ form.non_field_errors }}
+               </div>
+               <div class="col-sm-12 registration_field">
+                 <div class="col-sm-3"> {{ field.label }}</div>
+                 <div class="col-sm-3">      {{ field }}</div>
+                 <div class="col-sm-6">      {{ field.errors }}</div>
+               </div>
+            {% endfor %}
+        </div>
+        
+        <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
+
+    </form>
+
+    
+
+{% endblock %}
+
+{%block extrascript %}
+<script type="text/javascript" src="/my_admin/jsi18n/"></script>
+<script type="text/javascript" src="/media/admin/js/core.js"></script>
+    {% endblock %}

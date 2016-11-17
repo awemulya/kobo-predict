@@ -1,4 +1,4 @@
-
+from django.forms.extras.widgets import SelectDateWidget
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from onadata.apps.fieldsight.models import Site
@@ -108,12 +108,24 @@ class AssignFormToStageForm(forms.ModelForm):
             "xf": _("Select Form"),
         }
 
+BIRTH_YEAR_CHOICES = ('1980', '1981', '1982')
+
 
 class ScheduleForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ScheduleForm, self).__init__(*args, **kwargs)
+        self.fields['group'].empty_label = None
+
 
     class Meta:
         exclude = []
         model = Schedule
+        widgets = { 'selected_days': forms.CheckboxSelectMultiple,
+                    'date_range_start': SelectDateWidget,
+                    'date_range_end': SelectDateWidget,
+                    }
+
 
 class GroupForm(forms.ModelForm):
 

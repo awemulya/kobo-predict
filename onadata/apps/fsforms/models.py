@@ -1,3 +1,4 @@
+import datetime
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -90,11 +91,14 @@ class Days(models.Model):
     day = models.CharField(max_length=9)
     index = models.IntegerField()
 
+    def __unicode__(self):
+        return getattr(self, "day", "")
+
 
 class Schedule(models.Model):
     name = models.CharField("Schedule Name", max_length=256)
-    date_range_start = models.DateField(auto_now=True)
-    date_range_end = models.DateField(auto_now=True)
+    date_range_start = models.DateField(default=datetime.date.today)
+    date_range_end = models.DateField(default=datetime.date.today)
     selected_days = models.ManyToManyField(Days)
     group = models.ForeignKey(FormGroup, related_name="schedule")
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
@@ -116,7 +120,7 @@ class FieldSightXF(models.Model):
     is_scheduled = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now=True)
     date_modified = models.DateTimeField(auto_now=True)
-    schedule = models.ForeignKey(Schedule, blank=True, null=True) # may be many to many
+    schedule = models.ForeignKey(Schedule, blank=True, null=True)
     stage = models.ForeignKey(Stage, blank=True, null=True)
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
 
