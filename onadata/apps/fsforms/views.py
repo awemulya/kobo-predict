@@ -199,7 +199,7 @@ def fill_form_type(request, pk=None):
     field_sight_form = get_object_or_404(
         FieldSightXF, pk=pk)
     if request.method == 'POST':
-        form = FormTypeForm(request.POST, instance=field_sight_form)
+        form = FormTypeForm(request.POST)
         if form.is_valid():
             form_type = form.cleaned_data.get('form_type', '3')
             form_type = int(form_type)
@@ -209,14 +209,14 @@ def fill_form_type(request, pk=None):
             elif form_type == 2:
                 field_sight_form.is_scheduled = True
                 field_sight_form.save()
-                return HttpResponseRedirect(reverse("forms:fill_details_schedule", kwargs={'pk': form.instance.id}))
+                return HttpResponseRedirect(reverse("forms:fill_details_schedule", kwargs={'pk': field_sight_form.id}))
             else:
                 field_sight_form.is_staged = True
                 field_sight_form.save()
-                return HttpResponseRedirect(reverse("forms:fill_details_stage", kwargs={'pk': form.instance.id}))
+                return HttpResponseRedirect(reverse("forms:fill_details_stage", kwargs={'pk': field_sight_form.id}))
     else:
-        form = FormTypeForm(instance=field_sight_form)
-    return render(request, "fsforms/stage_or_schedule.html", {'form': form})
+        form = FormTypeForm()
+    return render(request, "fsforms/stage_or_schedule.html", {'form': form, 'obj':field_sight_form})
 
 
 @login_required

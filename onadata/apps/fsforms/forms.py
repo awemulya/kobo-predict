@@ -39,7 +39,7 @@ class FormStageDetailsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(FormStageDetailsForm, self).__init__(*args, **kwargs)
         obj_list = Stage.objects.filter(stage__isnull=False)
-        self.fields['stage'].choices = [(obj.id, obj.name) for obj in obj_list if not obj.form_exists]
+        self.fields['stage'].choices = [(obj.id, obj.name) for obj in obj_list if not obj.form_exists()]
         self.fields['stage'].empty_label = None
 
     class Meta:

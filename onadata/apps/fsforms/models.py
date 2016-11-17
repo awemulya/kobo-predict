@@ -151,10 +151,11 @@ class FieldSightXF(models.Model):
 
     def clean(self):
         if self.is_staged:
-            if Stage.objects.filter(pk=self.stage.id).exists():
+            if FieldSightXF.objects.filter(xf=self.xf, site=self.site, stage=self.stage).exists():
                 raise ValidationError({
-                    'site': ValidationError(_('Same Form On This Stage Found.'), code='required'),
+                    'site': ValidationError(_('Same Form On This Stage Found for This Site')),
                 })
+
 
 
     def __unicode__(self):
