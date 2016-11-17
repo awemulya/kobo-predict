@@ -25,6 +25,7 @@ class IntegerRangeField(models.IntegerField):
         defaults.update(kwargs)
         return super(IntegerRangeField, self).formfield(**defaults)
 
+
 class FormGroup(models.Model):
     name = models.CharField(max_length=256)
     description = models.TextField(blank=True, null=True)
@@ -85,29 +86,10 @@ class Stage(models.Model):
         return getattr(self, "name", "")
 
 
-#  table name in meta , consistent
-
-#  save only one sub stage depth.
-
-# class SubStage(models.Model):
-#     name = models.CharField(max_length=256)
-#     order_no = models.IntegerField
-#     stage = models.ForeignKey(Stages, related_name="sub_stage")
-
-DAY_OF_THE_WEEK = {
-    '0' : _(u'Monday'),
-    '1' : _(u'Tuesday'),
-    '2' : _(u'Wednesday'),
-    '3' : _(u'Thursday'),
-    '4' : _(u'Friday'),
-    '5' : _(u'Saturday'),
-    '6' : _(u'Sunday'),
-}
-
-
 class Days(models.Model):
-    day = models.CharField(max_length=8)
+    day = models.CharField(max_length=9)
     index = models.IntegerField()
+
 
 class Schedule(models.Model):
     name = models.CharField("Schedule Name", max_length=256)
