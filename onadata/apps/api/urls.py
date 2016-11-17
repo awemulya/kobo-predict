@@ -379,6 +379,6 @@ router.register(r'charts', ChartsViewSet, base_name='chart')
 router.register(r'metadata', MetaDataViewSet, base_name='metadata')
 router.register(r'media', AttachmentViewSet, base_name='attachment')
 router.register(r'formlist', XFormListApi, base_name='formlist')
-router.register(r'assignedFormlist', AssignedXFormListApi, base_name='assignedFormlist')
+router.register(r'assignedFormlist', AssignedXFormListApi, base_name='assignedFormlist') # mobile  forms.
 router.register(r'submissions', XFormSubmissionApi, base_name='submissions')
 router.register(r'briefcase', BriefcaseApi, base_name='briefcase')

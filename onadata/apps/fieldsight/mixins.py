@@ -201,6 +201,7 @@ class SiteView(SiteRequiredMixin):
 
 
 USURPERS = {
+    # central engineer to project , same on roles.
     'Site': ['Central Engineer', 'Site Supervisor', 'Data Entry'],
     'KoboForms': ['Project Manager', 'Central Engineer'],
     'Project': ['Project Manager'],

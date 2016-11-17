@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectRequiredMixin, ProjectMixin, \
-    CreateView, UpdateView, DeleteView, KoboFormsMixin
+    CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm
 from .models import FieldSightXF, Stage, Schedule, FormGroup
@@ -48,7 +48,19 @@ class MyProjectListView(ListView):
         return FieldSightXF.objects.filter(site__project__id= self.request.project.id)
 
 
+class AssignedFormListView(ListView):
+    def get_template_names(self):
+        return ['fsforms/assigned_form_list.html']
+    def get_queryset(self):
+        # get site from role, get only forms from that site.
+        return FieldSightXF.objects.filter(site__id= self.request.site.id)
+
+
 class FormsListView(FormView, LoginRequiredMixin, ProjectMixin, MyProjectListView):
+    pass
+
+
+class AssignedFormsListView(FormView, LoginRequiredMixin, SiteMixin, AssignedFormListView):
     pass
 
 
@@ -190,7 +202,7 @@ class CreateViewWithUser(CreateView):
         return HttpResponseRedirect(self.success_url)
 
 
-class GroupCreateView(FormGroupView, LoginRequiredMixin, CreateViewWithUser):
+class GroupCreateView(FormGroupView, LoginRequiredMixin, KoboFormsMixin, CreateViewWithUser):
     pass
 
 
@@ -270,7 +282,7 @@ def fill_details_schedule(request, pk=None):
         if form.is_valid():
             form.save()
             messages.info(request, 'Form Schedule Saved.')
-            return HttpResponseRedirect(reverse("forms:fill-details-schedule", kwargs={'pk': form.instance.id}))
+            return HttpResponseRedirect(reverse("forms:schedule-list"))
     else:
         form = FormScheduleDetailsForm(instance=field_sight_form)
     return render(request, "fsforms/form_details_schedule.html", {'form': form})

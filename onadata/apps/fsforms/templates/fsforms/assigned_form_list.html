@@ -1,0 +1,82 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'My Forms' %}{% endblock %}
+
+{% block head %}
+     {% trans 'Assigned form' %}
+{% endblock %}
+
+{% block content %}
+
+    {% load pagination_tags %}
+    {% load sorting_tags %}
+    {% load filters %}
+
+
+
+
+    <div class="adv-table">
+
+
+        {% autosort object_list as sorted_objects %}
+        {% autopaginate object_list 5 as paginated_objects %}
+
+        <table class="table table-striped" id="dynamic-table1">
+            <thead>
+            <th>Name</th>
+            <th>Site</th>
+            <th>Created Date</th>
+            <th>Form Type</th>
+            <th>Stage/Schedule</th>
+            <th colspan="2">Actions</th>
+            </thead>
+            <tbody>
+            {% for obj in paginated_objects %}
+                <tr>
+                    <td>
+                        <a href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}">{{ obj.xf.title }}</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'fieldsight:site-edit' obj.site.id %}">{{ obj.site }}</a>
+                    </td>
+                    <td>
+                        {{ obj.date_created }}
+                    </td>
+                        <td>{{obj.form_type}}</td>
+
+                     <td>
+                         {{obj.stage_name }}
+                     </td>
+                        <td>{{obj.form_type}}</td>
+
+                     <td>
+                        <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}/edit">
+                             {% trans 'Edit Form Questions' %}</a>
+                    </td>
+                    <!--if form is scheduled add link to fill schedule data or stage data or choose stage o schedule data-->
+                    <td>
+                        {% if obj.form_type == "Normal" %}
+                        <a class="btn btn-success btn-raised" href="{% url 'forms:fill_form_type' obj.id %}">
+                             {% trans 'Stage or Schedule Form' %}</a>
+                        {% endif %}
+                        {% if obj.is_staged and not obj.stage_name%}
+                        <a class="btn btn-success btn-raised" href="{% url 'forms:fill_details_stage' pk=obj.id %}">
+                             {% trans 'Select Stage' %}</a>
+                        {% endif %}
+                        {% if obj.is_scheduled and not obj.schedule_name%}
+                        <a class="btn btn-success btn-raised" href="{% url 'forms:fill_details_schedule' pk=obj.id %}">
+                             {% trans 'Make Schedule' %}</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+  
+
+        {% paginate %}
+
+    </div>
+{% endblock %}

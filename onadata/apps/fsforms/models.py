@@ -168,6 +168,11 @@ class FieldSightXF(models.Model):
                 raise ValidationError({
                     'site': ValidationError(_('Same Form On This Stage Found for This Site')),
                 })
+        if self.is_scheduled:
+            if FieldSightXF.objects.filter(xf=self.xf, site=self.site, schdule=self.schedule).exists():
+                raise ValidationError({
+                    'site': ValidationError(_('Same Form On This Schedule Found for This Site')),
+                })
 
 
 

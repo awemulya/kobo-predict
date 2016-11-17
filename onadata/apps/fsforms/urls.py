@@ -17,10 +17,12 @@ from .views import (
         assign, fill_form_type,
         fill_details_stage,
         fill_details_schedule,
-        schedule_add_form)
+        schedule_add_form, AssignedFormsListView)
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
         url(r'^assigned/$', FormsListView.as_view(), name='forms-list'),
+        # assigned form list to a user(site supervisor)
+        url(r'^assigned-form-list/$', AssignedFormsListView.as_view(), name='assigned-form-list'),
 
         url(r'^group/$', GroupListView.as_view(), name='group-list'),
         url(r'^group/add/$', GroupCreateView.as_view(), name='group-add'),
