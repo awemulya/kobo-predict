@@ -12,9 +12,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 
 from onadata.apps.api.tools import get_media_file_response
+from onadata.apps.fieldsight.models import Site
+from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.logger.models.xform import XForm
 from onadata.apps.main.models.meta_data import MetaData
 from onadata.apps.main.models.user_profile import UserProfile
+from onadata.apps.userrole.models import UserRole
 from onadata.libs import filters
 from onadata.libs.authentication import DigestAuthentication
 from onadata.libs.renderers.renderers import MediaFileContentNegotiation
@@ -39,8 +42,17 @@ class AssignedXFormListApi(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = user.myforms.all()
-        # queryset = XForm.objects.filter(downloadable=True) # user in assigned
+        queryset = []
+        try:
+            site_id = self.kwargs['site_id']
+            site_id = int(site_id)
+            site = Site.objects.get(pk=site_id)
+        except:
+            pass
+        else:
+            if UserRole.get_roles_supervisor(user, site.project.id):
+                xform_under_fs_form = FieldSightXF.get_xform_id_list(site.id)
+                queryset = XForm.objects.filter(pk__in=xform_under_fs_form)
         return queryset
 
     def __init__(self, *args, **kwargs):

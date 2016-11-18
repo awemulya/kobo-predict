@@ -174,6 +174,10 @@ class FieldSightXF(models.Model):
                     'site': ValidationError(_('Same Form On This Schedule Found for This Site')),
                 })
 
+    @staticmethod
+    def get_xform_id_list(site_id):
+        fs_form_list = FieldSightXF.objects.filter(site__id=site_id).order_by('xf__id').distinct('xf__id')
+        return [fsform.xf.pk for fsform in fs_form_list]
 
 
     def __unicode__(self):

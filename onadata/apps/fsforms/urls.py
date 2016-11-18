@@ -1,4 +1,8 @@
 from django.conf.urls import url
+
+from onadata.apps.api.urls import MultiLookupRouter
+
+# from onadata.apps.api.viewsets.assigned_xform_list_api import AssignedXFormListApi
 from .views import (
         LibraryFormsListView,
         FormsListView,
@@ -18,6 +22,8 @@ from .views import (
         fill_details_stage,
         fill_details_schedule,
         schedule_add_form, AssignedFormsListView)
+
+# router = MultiLookupRouter(trailing_slash=False)
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
         url(r'^assigned/$', FormsListView.as_view(), name='forms-list'),
@@ -47,3 +53,6 @@ urlpatterns = [
 ]
 
 
+# urlpatterns = urlpatterns + [
+#                 router.register(r'assignedFormlist', AssignedXFormListApi, base_name='assignedFormlist') # mobile  forms.
+# ]
