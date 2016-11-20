@@ -3,6 +3,7 @@ from django.conf.urls import url
 from onadata.apps.api.urls import MultiLookupRouter
 
 # from onadata.apps.api.viewsets.assigned_xform_list_api import AssignedXFormListApi
+from onadata.apps.fsforms.viewsets import AssignedXFormListApi
 from .views import (
         LibraryFormsListView,
         FormsListView,
@@ -53,6 +54,7 @@ urlpatterns = [
 ]
 
 
-# urlpatterns = urlpatterns + [
-#                 router.register(r'assignedFormlist', AssignedXFormListApi, base_name='assignedFormlist') # mobile  forms.
-# ]
+urlpatterns = urlpatterns + [
+                url(r"^assignedFormList/(?P<site_id>.+)$",
+        AssignedXFormListApi.as_view({'get': 'list'}), name='form-list'),
+]
