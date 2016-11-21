@@ -34,33 +34,38 @@ def web_authenticate(username=None, password=None):
 def current_user(request):
     user = request.user
     if user.is_anonymous():
-        return Response({'message': 'user is not logged in'})
+        return Response({'code': 401, 'message': 'Unauthorized User'})
     else:
-        fieldsight_info = []
+        site_supervisor = False
+        field_sight_info = []
         roles = UserRole.get_active_site_roles(user)
+        if roles.exists():
+            site_supervisor =True
         for role in roles:
             site = role.site
             project = site.project
             organization = project.organization
-            central_engineers = [ob.as_json() for ob in UserRole.central_engineers(site)]
-            project_managers = [ob.as_json() for ob in UserRole.project_managers(project)]
-            organization_admins = [ob.as_json() for ob in UserRole.organization_admins(organization)]
-            site_info = {'site': {'id': site.id, 'name': site.name, 'central_engineers': central_engineers},
-                         'project': {'name': project.name, 'project_managers': project_managers},
-                         'organization': {'name': organization.name, 'organization_admins': organization_admins}}
-            fieldsight_info.append(site_info)
+            # central_engineers = [ob.as_json() for ob in UserRole.central_engineers(site)]
+            # project_managers = [ob.as_json() for ob in UserRole.project_managers(project)]
+            # organization_admins = [ob.as_json() for ob in UserRole.organization_admins(organization)]
+            site_info = {'site': {'id': site.id, 'name': site.name},
+                         'project': {'name': project.name, 'id': project.id},
+                         'organization': {'name': organization.name, 'id':organization.id}}
+            field_sight_info.append(site_info)
 
         users_payload = {'username': user.username,
                          'full_name': user.first_name,
                          'email': user.email,
-                         'fieldsight_info': fieldsight_info,
+                         'my_sites': field_sight_info,
                          'server_time': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
-                         'is_supervisor': True,
+                         'is_supervisor': site_supervisor,
                          'last_login': user.last_login,
                          # 'languages': settings.LANGUAGES,
                          # profile data here, role supervisor
                          }
-        return Response(users_payload)
+        response_data = {'code':200, 'data': users_payload}
+
+        return Response(response_data)
 
 def web_login(request):
     if request.user.is_authenticated():
