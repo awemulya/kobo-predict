@@ -2,10 +2,13 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
+from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 
+from onadata.libs.utils.log import audit_log, Actions
+from onadata.libs.utils.logger_tools import response_with_mimetype_and_name
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectRequiredMixin, ProjectMixin, \
     CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
@@ -286,4 +289,28 @@ def fill_details_schedule(request, pk=None):
     else:
         form = FormScheduleDetailsForm(instance=field_sight_form)
     return render(request, "fsforms/form_details_schedule.html", {'form': form})
+
+
+# form related
+
+
+def download_xform(request, pk):
+    fsxform = get_object_or_404(FieldSightXF,
+                              pk__exact=pk)
+
+    audit = {
+        "xform": fsxform.pk
+    }
+
+    audit_log(
+        Actions.FORM_XML_DOWNLOADED, request.user, fsxform.xf.user,
+        _("Downloaded XML for form '%(pk)s'.") %
+        {
+            "pk": pk
+        }, audit, request)
+    response = response_with_mimetype_and_name('xml', pk,
+                                               show_date=False)
+    response.content = fsxform.xf.xml
+    return response
+
 

@@ -179,6 +179,12 @@ class FieldSightXF(models.Model):
         fs_form_list = FieldSightXF.objects.filter(site__id=site_id).order_by('xf__id').distinct('xf__id')
         return [fsform.xf.pk for fsform in fs_form_list]
 
+    @property
+    def site_name(self):
+        if self.site is not None:
+            return u'{}'.format(self.site.name)
+
+
 
     def __unicode__(self):
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
