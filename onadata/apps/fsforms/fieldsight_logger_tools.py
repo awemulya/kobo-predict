@@ -184,8 +184,9 @@ def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
 
 
 def same_form_submitted_again_without_schedule(fsxform):
-    "function checks same data sent again except for schedule form"
-    return False
+    if fsxform.is_scheduled:
+        return False
+    return True
 
 
 def create_instance(fsxfid, xml_file, media_files,
@@ -218,6 +219,8 @@ def create_instance(fsxfid, xml_file, media_files,
             instance = save_submission(xform, xml, media_files, new_uuid,
                                        submitted_by, status,
                                        date_created_override)
+            if instance:
+                FieldsightInstance.objects.create(fsxform=fsxform,instance=instance)
             return instance
 
     if duplicate_instances:
@@ -240,7 +243,6 @@ def safe_create_instance(fsxfid, xml_file, media_files, uuid, request):
     try:
         instance = create_instance(
             fsxfid, xml_file, media_files, uuid=uuid, request=request)
-        FieldsightInstance.objects.create(fsxform__id=fsxfid,instance=instance)
     except InstanceInvalidUserError:
         error = OpenRosaResponseBadRequest(_(u"Username or ID required."))
     except InstanceEmptyError:
