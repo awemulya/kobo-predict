@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
 from onadata.apps.fieldsight.models import Site
-from onadata.apps.logger.models import XForm
+from onadata.apps.logger.models import XForm, Instance
 
 @receiver(post_save, sender=XForm)
 def save_to_fieldsight_form(sender, instance, **kwargs):
@@ -182,7 +182,7 @@ class FieldSightXF(models.Model):
     @property
     def site_name(self):
         if self.site is not None:
-            return u'{}'.format(self.site.name)
+            return u'{}'.format(self.site.name  )
 
 
 
@@ -190,3 +190,16 @@ class FieldSightXF(models.Model):
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
 
 post_save.connect(save_to_fieldsight_form, sender=XForm)
+
+
+class FieldsightInstance(models.Model):
+    fsxform = models.ForeignKey(FieldSightXF, null=True, related_name='fs_instances')
+    instance = models.ForeignKey(Instance, null=True, related_name='fs_instances')
+
+    class Meta:
+        db_table = 'fieldsight_forms_instance'
+        # unique_together = (("xf", "site"), ("xf", "is_staged", "stage"),("xf", "is_scheduled", "schedule"))
+        verbose_name = _("FSInstance")
+        verbose_name_plural = _("FSInstances")
+        ordering = ("-fsxform",)
+

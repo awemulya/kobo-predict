@@ -1,9 +1,5 @@
 from django.conf.urls import url
-
-from onadata.apps.api.urls import MultiLookupRouter
-
-# from onadata.apps.api.viewsets.assigned_xform_list_api import AssignedXFormListApi
-from onadata.apps.fsforms.viewsets import AssignedXFormListApi
+from onadata.apps.fsforms.viewsets import AssignedXFormListApi, FSXFormSubmissionApi
 from .views import (
         LibraryFormsListView,
         FormsListView,
@@ -62,4 +58,12 @@ urlpatterns = urlpatterns + [
                 #         name="download_xform"),
                 url(r"^(?P<pk>[\d+^/]+)/form\.xml$",
                         'onadata.apps.fsforms.views.download_xform', name="download_xform"),
+
+                url(r"^(?P<pk>[\d+^/]+)/(?P<site_id>.+)$",
+                        AssignedXFormListApi.as_view({'get': 'manifest'}),
+                        name='manifest-url'),
+
+                url(r"^submission/(?P<pk>[\d+^/]+)/(?P<site_id>.+)$",
+                        FSXFormSubmissionApi.as_view({'post': 'create', 'head': 'create'}),
+                                                                name='submissions'),
 ]

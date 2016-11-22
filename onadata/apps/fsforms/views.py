@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext as _
@@ -293,8 +293,11 @@ def fill_details_schedule(request, pk=None):
 
 # form related
 
-
 def download_xform(request, pk):
+    # if request.user.is_anonymous():
+        # raises a permission denied exception, forces authentication
+        # response= JsonResponse({'code': 401, 'message': 'Unauthorized User'})
+        # return response
     fsxform = get_object_or_404(FieldSightXF,
                               pk__exact=pk)
 
@@ -310,7 +313,16 @@ def download_xform(request, pk):
         }, audit, request)
     response = response_with_mimetype_and_name('xml', pk,
                                                show_date=False)
+    # from xml.etree.cElementTree import fromstring, tostring, ElementTree as ET, Element
+    # tree = fromstring(fsxform.xf.xml)
+    # head = tree.findall("./")[0]
+    # model = head.findall("./")[1]
+    # # model.append(Element('FormID', {'id': str(fsxform.id)}))
+    # response.content = tostring(tree,encoding='utf8', method='xml')
+    # # # import ipdb
+    # # # ipdb.set_trace()
     response.content = fsxform.xf.xml
+
     return response
 
 

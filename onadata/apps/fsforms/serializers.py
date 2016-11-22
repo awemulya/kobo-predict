@@ -1,7 +1,10 @@
+from django.utils.translation import ugettext as _
+
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 from onadata.apps.fsforms.models import FieldSightXF
+from onadata.libs.serializers.data_serializer import SubmissionSerializer
 from onadata.libs.utils.decorators import check_obj
 
 
@@ -69,20 +72,35 @@ class FSXFormListSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField('get_title', read_only=True)
     descriptionText = serializers.SerializerMethodField('get_description', read_only=True)
     site_name = serializers.ReadOnlyField()
+    majorMinorVersion = serializers.SerializerMethodField()
+    version = serializers.SerializerMethodField()
+    hash = serializers.SerializerMethodField()
     downloadUrl = serializers.SerializerMethodField('get_url', read_only=True)
+    formID = serializers.SerializerMethodField('get_form_id', read_only=True)
+    manifestUrl = serializers.SerializerMethodField('get_manifest_url')
 
     class Meta:
         model = FieldSightXF
-        fields = ('id', 'site_name', 'is_staged', 'is_scheduled', 'downloadUrl', 'name',
-                  'descriptionText')
+        fields = ('id', 'site_name', 'is_staged', 'is_scheduled', 'downloadUrl', 'manifestUrl', 'name',
+                  'descriptionText','formID', 'majorMinorVersion','version', 'hash')
 
     def get_version(self, obj):
         return None
 
+    def get_majorMinorVersion(self, obj):
+        return None
+
+    @check_obj
+    def get_hash(self, obj):
+        return u"md5:%s" % obj.xf.hash
 
     @check_obj
     def get_title(self, obj):
         return u"%s" % obj.xf.title
+
+    @check_obj
+    def get_form_id(self, obj):
+        return u"%s" % obj.xf.id_string
 
     @check_obj
     def get_description(self, obj):
@@ -94,3 +112,46 @@ class FSXFormListSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
 
         return reverse('forms:download_xform', kwargs=kwargs, request=request)
+
+    @check_obj
+    def get_manifest_url(self, obj):
+        kwargs = {'pk': obj.pk, 'site_id':obj.site.id}
+        request = self.context.get('request')
+
+        return reverse('forms:manifest-url', kwargs=kwargs, request=request)
+
+
+class FieldSightSubmissionSerializer(SubmissionSerializer):
+    def to_representation(self, obj):
+        if not hasattr(obj, 'FieldSightXF'):
+            return super(FieldSightSubmissionSerializer, self).to_representation(obj)
+
+        return {
+            'message': _("Successful submission."),
+            'formid': obj.xf.xform.id_string,
+            'encrypted': obj.xf.xform.encrypted,
+            'instanceID': u'uuid:%s' % obj.xf.uuid,
+            'submissionDate': obj.date_created.isoformat(),
+            'markedAsCompleteDate': obj.date_modified.isoformat()
+        }
+
+
+class FSXFormManifestSerializer(serializers.Serializer):
+    filename = serializers.ReadOnlyField(source='data_value')
+    hash = serializers.SerializerMethodField()
+    downloadUrl = serializers.SerializerMethodField('get_url')
+
+    @check_obj
+    def get_url(self, obj):
+        kwargs = {'pk': obj.xf.xform.pk,
+                  'username': obj.xform.user.username,
+                  'metadata': obj.pk}
+        request = self.context.get('request')
+        format = obj.data_value[obj.data_value.rindex('.') + 1:]
+
+        return reverse('xform-media', kwargs=kwargs,
+                       request=request, format=format.lower())
+
+    @check_obj
+    def get_hash(self, obj):
+        return u"%s" % (obj.file_hash or 'md5:')
