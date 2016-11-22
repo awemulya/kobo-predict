@@ -189,6 +189,12 @@ def same_form_submitted_again_without_schedule(fsxform):
     return True
 
 
+def schedule_uuid_value(fsxform):
+    if not fsxform.is_scheduled or not fsxform.schedule:
+        return ""
+    return str(fsxform.schedule.id)
+
+
 def create_instance(fsxfid, xml_file, media_files,
                     status=u'submitted_via_web', uuid=None,
                     date_created_override=None, request=None):
@@ -206,7 +212,7 @@ def create_instance(fsxfid, xml_file, media_files,
         if(existing_instance_count and same_form_submitted_again_without_schedule(fsxform)):
                 raise DuplicateInstance()
 
-        new_uuid = get_uuid_from_xml(xml) + str(fsxfid)
+        new_uuid = get_uuid_from_xml(xml) + str(fsxfid)+ schedule_uuid_value(fsxform)
         duplicate_instances = Instance.objects.filter(uuid=new_uuid)
 
         if duplicate_instances:
