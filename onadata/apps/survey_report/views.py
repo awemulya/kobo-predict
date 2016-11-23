@@ -67,12 +67,10 @@ def build_export_context(request, username, id_string):
                'group_sep': group_sep,
                'lang': lang,
                'hierarchy_in_labels': hierarchy_in_labels,
-               # 'copy_fields': ('_id', '_uuid', '_submission_time''),
-               'copy_fields': ('_id','_submission_time','medias'),
-               # 'force_index': True
-               'force_index': False
+               'copy_fields': ('_id', '_uuid', '_submission_time'),
+               'force_index': True
                }
- 
+
     return {
         'username': username,
         'id_string': id_string,
@@ -111,12 +109,12 @@ def export_menu(request, username, id_string):
         lang = req.get('lang', None)
         hierarchy_in_labels = req.get('hierarchy_in_labels')
         group_sep = req.get('group_sep', '/')
-        
+
         q = QueryDict('', mutable=True)
         q['lang'] = req.get('lang')
         q['hierarchy_in_labels'] = req.get('hierarchy_in_labels')
         q['group_sep'] = req.get('group_sep', '/')
-        
+
         if export_type == "xlsx":
             url = reverse('formpack_xlsx_export', args=(username, id_string))
             return redirect(url + '?' + q.urlencode())
@@ -132,7 +130,7 @@ def export_menu(request, username, id_string):
 def autoreport_menu(request, username, id_string):
 
     user, xform, form_pack = build_formpack(username, id_string)
-    
+
     # exclude fields in repeat group
     split_by_fields = form_pack.get_fields_for_versions(data_types="select_one")
 
@@ -186,13 +184,6 @@ def html_export(request, username, id_string):
     limit = int(request.REQUEST.get('limit', 100))
 
     cursor = get_instances_for_user_and_form(username, id_string)
-    cursor = list(cursor)
-    for index, doc in enumerate(cursor):
-        medias = []
-        for media in cursor[index].get('_attachments',[]):
-            if media:
-                medias.append(media.get('download_url',''))
-        cursor[index].update({'medias':medias})
     paginator = Paginator(cursor, limit, request=request)
 
     try:
@@ -205,7 +196,7 @@ def html_export(request, username, id_string):
 
     data = [("v1", page.object_list)]
     context = build_export_context(request, username, id_string)
-    
+
     context.update({
         'page': page,
         'table': [],
@@ -216,7 +207,7 @@ def html_export(request, username, id_string):
     sections = list(export.labels.items())
     section, labels = sections[0]
     id_index = labels.index('_id')
-        
+
     # generator dublicating the "_id" to allow to make a link to each
     # submission
     def make_table(submissions):
@@ -228,8 +219,6 @@ def html_export(request, username, id_string):
 
     context['labels'] = labels
     context['data'] = make_table(data)
-    # import ipdb
-    # ipdb.set_trace()
 
     return render(request, 'survey_report/export_html.html', context)
 
