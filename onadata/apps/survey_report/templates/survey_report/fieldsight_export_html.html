@@ -140,11 +140,10 @@ h1 {
 
 <div class="sub-header-bar">
   <div>
-    <a class="sub-header__back" href="{% url "onadata.apps.main.views.show" xform.user.username xform.id_string %}"><i class="fa fa-chevron-left"></i> {% trans "Return to" %} {{ xform.title }}</a>
   </div>
 </div>
 
-<form action="{% url 'formpack_html_export' username id_string %}?page={{page}}"
+<form action="{% url 'forms:formpack_html_export' fsxfid %}?page={{page}}"
       method="get" accept-charset="utf-8">
 
   <div class="formpack_html_export__options">

@@ -18,7 +18,9 @@ from .views import (
         assign, fill_form_type,
         fill_details_stage,
         fill_details_schedule,
-        schedule_add_form, AssignedFormsListView)
+        schedule_add_form,
+        AssignedFormsListView,
+        html_export)
 
 # router = MultiLookupRouter(trailing_slash=False)
 urlpatterns = [
@@ -51,19 +53,25 @@ urlpatterns = [
 
 
 urlpatterns = urlpatterns + [
-                url(r"^assignedFormList/(?P<site_id>.+)$",
-                        AssignedXFormListApi.as_view({'get': 'list'}), name='form-list'),
-                # url(r"^(?P<pk>[\d+^/]+)/form\.xml$",
-                #         AssignedXFormListApi.as_view({'get': 'retrieve'}),
-                #         name="download_xform"),
-                url(r"^(?P<pk>[\d+^/]+)/form\.xml$",
-                        'onadata.apps.fsforms.views.download_xform', name="download_xform"),
+        url(r"^assignedFormList/(?P<site_id>[0-9]+)$",
+                AssignedXFormListApi.as_view({'get': 'list'}), name='form-list'),
+        # url(r"^(?P<pk>[\d+^/]+)/form\.xml$",
+        #         AssignedXFormListApi.as_view({'get': 'retrieve'}),
+        #         name="download_xform"),
+        url(r"^(?P<pk>[0-9]+)/form\.xml$",
+                'onadata.apps.fsforms.views.download_xform', name="download_xform"),
 
-                url(r"^(?P<pk>[\d+^/]+)/(?P<site_id>.+)$",
-                        AssignedXFormListApi.as_view({'get': 'manifest'}),
-                        name='manifest-url'),
+        url(r"^(?P<pk>[0-9]+)/(?P<site_id>[0-9]+)$",
+                AssignedXFormListApi.as_view({'get': 'manifest'}),
+                name='manifest-url'),
 
-                url(r"^submission/(?P<pk>[\d+^/]+)/(?P<site_id>.+)$",
-                        FSXFormSubmissionApi.as_view({'post': 'create', 'head': 'create'}),
-                                                                name='submissions'),
+        url(r"^submission/(?P<pk>[0-9]+)/(?P<site_id>[0-9]+]+)$",
+                FSXFormSubmissionApi.as_view({'post': 'create', 'head': 'create'}),
+                                                        name='submissions'),
+]
+
+urlpatterns = urlpatterns + [
+        url(r"reports/(?P<fsxf_id>[0-9]+)$",
+        html_export, name='formpack_html_export'),
+
 ]

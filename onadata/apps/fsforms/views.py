@@ -1,12 +1,15 @@
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.views.generic import ListView
+from django.http import HttpResponse, HttpResponseForbidden, Http404, QueryDict
 
+from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+
+from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context
 from onadata.libs.utils.log import audit_log, Actions
 from onadata.libs.utils.logger_tools import response_with_mimetype_and_name
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectRequiredMixin, ProjectMixin, \
@@ -324,5 +327,62 @@ def download_xform(request, pk):
     response.content = fsxform.xf.xml
 
     return response
+
+
+def html_export(request, fsxf_id):
+
+    limit = int(request.REQUEST.get('limit', 100))
+    fsxf_id = int(fsxf_id)
+    fsxf = FieldSightXF.objects.get(pk=fsxf_id)
+    xform = fsxf.xf
+    id_string = xform.id_string
+    cursor = get_instances_for_field_sight_form(fsxf_id)
+    cursor = list(cursor)
+    for index, doc in enumerate(cursor):
+        medias = []
+        for media in cursor[index].get('_attachments',[]):
+            if media:
+                medias.append(media.get('download_url',''))
+        cursor[index].update({'medias':medias})
+    paginator = Paginator(cursor, limit, request=request)
+
+    try:
+        page = paginator.page(request.REQUEST.get('page', 1))
+    except (EmptyPage, PageNotAnInteger):
+        try:
+            page = paginator.page(1)
+        except (EmptyPage, PageNotAnInteger):
+            raise Http404('This report has no submissions')
+
+    data = [("v1", page.object_list)]
+    context = build_export_context(request, xform, id_string)
+
+    context.update({
+        'page': page,
+        'table': [],
+        'title': id,
+    })
+
+    export = context['export']
+    sections = list(export.labels.items())
+    section, labels = sections[0]
+    id_index = labels.index('_id')
+
+    # generator dublicating the "_id" to allow to make a link to each
+    # submission
+    def make_table(submissions):
+        for chunk in export.parse_submissions(submissions):
+            for section_name, rows in chunk.items():
+                if section == section_name:
+                    for row in rows:
+                        yield row[id_index], row
+
+    context['labels'] = labels
+    context['data'] = make_table(data)
+    context['fsxfid'] = fsxf_id
+    # import ipdb
+    # ipdb.set_trace()
+
+    return render(request, 'survey_report/fieldsight_export_html.html', context)
 
 

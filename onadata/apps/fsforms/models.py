@@ -195,6 +195,7 @@ post_save.connect(save_to_fieldsight_form, sender=XForm)
 class FieldsightInstance(models.Model):
     fsxform = models.ForeignKey(FieldSightXF, null=True, related_name='fs_instances')
     instance = models.ForeignKey(Instance, null=True, related_name='fs_instances')
+    # schedule id and schedule no for unique together
 
     class Meta:
         db_table = 'fieldsight_forms_instance'
