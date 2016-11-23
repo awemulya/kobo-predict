@@ -328,7 +328,7 @@ def download_xform(request, pk):
 
     return response
 
-
+@group_required('KoboForms')
 def html_export(request, fsxf_id):
 
     limit = int(request.REQUEST.get('limit', 100))
