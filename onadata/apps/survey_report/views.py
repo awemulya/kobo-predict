@@ -231,7 +231,7 @@ def html_export(request, username, id_string):
     # import ipdb
     # ipdb.set_trace()
 
-    return render(request, 'survey_report/fieldsight_export_html.html', context)
+    return render(request, 'survey_report/export_html.html', context)
 
 
 @readable_xform_required

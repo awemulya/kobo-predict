@@ -11,6 +11,8 @@ def get_instances_for_field_sight_form(fieldsight_form_id, submission=None):
     query = {'_id': instance_id, '_deleted_at': {'$exists': False}}
     if submission:
         query['_id'] = submission
+    import ipdb
+    ipdb.set_trace()
     return settings.MONGO_DB.instances.find(query)
 
 
