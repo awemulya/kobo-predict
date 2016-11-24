@@ -4,9 +4,10 @@
 {% block content %}
 <div class="page-header">
     <h1>{% trans "Browse Form Data" %}
-        <small><a href="{% url "onadata.apps.main.views.show" username id_string %}">{{ xform.title }}</a></small>
+        <!--<small><a href="{% url 'forms:show' fsxf_id %}">{{ xform.title }}</a></small>-->
+        <small><a href="">{{ xform.title }}</a></small>
         <small> | </small>
-        <small><a href="{% url "onadata.apps.viewer.views.data_view" username id_string %}">{% trans "Data View" %}</a></small>
+        <small><a href="">{% trans "Data View" %}</a></small>
     </h1>
 </div>
 
@@ -42,9 +43,9 @@
 <script type="text/javascript" charset="utf-8" src="{{STATIC_URL}}js/sammy-plugins/sammy.meld-0.7.1.min.js"></script>
 
 <script type="text/javascript">
-var formJSONUrl = "{% url "onadata.apps.logger.views.download_jsonform" username id_string %}";
-var mongoAPIUrl = "{% url "onadata.apps.main.views.api" username id_string %}";
-var deleteAPIUrl = "{% url "onadata.apps.main.views.delete_data" username id_string %}";
+var formJSONUrl = "{% url 'forms:download_jsonform' fsxf_id %}";
+var mongoAPIUrl = "{% url 'forms:mongo_view_api'  fsxf_id %}";
+var deleteAPIUrl = "{% url 'forms:delete_data'  fsxf_id %}";
 var app; // sammy app
 var questions = {};
 var languages = [];

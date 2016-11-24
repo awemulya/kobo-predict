@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods, require_GET, require_POST
 from django.views.generic import ListView
 from django.http import HttpResponse, HttpResponseForbidden, Http404, QueryDict
 
@@ -408,10 +409,173 @@ def instance(request, fsxf_id):
         {
             'id_string': xform.id_string,
         }, audit, request)
-
     return render(request, 'fieldsight_instance.html', {
         'username': request.user,
-        'id_string': fsxf_id,
+        'fsxf_id': fsxf_id,
         'xform': xform,
         'can_edit': can_edit
     })
+
+
+@require_http_methods(["GET", "OPTIONS"])
+def api(request, fsxf_id=None):
+    return JsonResponse({'data': []})
+    pass
+    """
+    Returns all results as JSON.  If a parameter string is passed,
+    it takes the 'query' parameter, converts this string to a dictionary, an
+    that is then used as a MongoDB query string.
+
+    NOTE: only a specific set of operators are allow, currently $or and $and.
+    Please send a request if you'd like another operator to be enabled.
+
+    NOTE: Your query must be valid JSON, double check it here,
+    http://json.parser.online.fr/
+
+    E.g. api?query='{"last_name": "Smith"}'
+    """
+    # if request.method == "OPTIONS":
+    #     response = HttpResponse()
+    #     add_cors_headers(response)
+    #
+    #     return response
+    # helper_auth_helper(request)
+    # helper_auth_helper(request)
+    # xform, owner = check_and_set_user_and_form(username, id_string, request)
+    #
+    # if not xform:
+    #     return HttpResponseForbidden(_(u'Not shared.'))
+    #
+    # try:
+    #     args = {
+    #         'username': username,
+    #         'id_string': id_string,
+    #         'query': request.GET.get('query'),
+    #         'fields': request.GET.get('fields'),
+    #         'sort': request.GET.get('sort')
+    #     }
+    #     if 'start' in request.GET:
+    #         args["start"] = int(request.GET.get('start'))
+    #     if 'limit' in request.GET:
+    #         args["limit"] = int(request.GET.get('limit'))
+    #     if 'count' in request.GET:
+    #         args["count"] = True if int(request.GET.get('count')) > 0\
+    #             else False
+    #     cursor = ParsedInstance.query_mongo(**args)
+    # except ValueError as e:
+    #     return HttpResponseBadRequest(e.__str__())
+    #
+    # records = list(record for record in cursor)
+    # response_text = json_util.dumps(records)
+    #
+    # if 'callback' in request.GET and request.GET.get('callback') != '':
+    #     callback = request.GET.get('callback')
+    #     response_text = ("%s(%s)" % (callback, response_text))
+    #
+    # response = HttpResponse(response_text, content_type='application/json')
+    # add_cors_headers(response)
+    #
+    # return response
+
+
+
+@require_GET
+def show(request, fsxf_id):
+    return HttpResponse("Show form here, comming soon.")
+    pass
+    # if uuid:
+    #     return redirect_to_public_link(request, uuid)
+    # xform, is_owner, can_edit, can_view = get_xform_and_perms(
+    #     username, id_string, request)
+    # # no access
+    # if not (xform.shared or can_view or request.session.get('public_link')):
+    #     return HttpResponseRedirect(reverse(home))
+    #
+    # data = {}
+    # data['cloned'] = len(
+    #     XForm.objects.filter(user__username__iexact=request.user.username,
+    #                          id_string__exact=id_string + XForm.CLONED_SUFFIX)
+    # ) > 0
+    # data['public_link'] = MetaData.public_link(xform)
+    # data['is_owner'] = is_owner
+    # data['can_edit'] = can_edit
+    # data['can_view'] = can_view or request.session.get('public_link')
+    # data['xform'] = xform
+    # data['content_user'] = xform.user
+    # data['base_url'] = "https://%s" % request.get_host()
+    # data['source'] = MetaData.source(xform)
+    # data['form_license'] = MetaData.form_license(xform).data_value
+    # data['data_license'] = MetaData.data_license(xform).data_value
+    # data['supporting_docs'] = MetaData.supporting_docs(xform)
+    # data['media_upload'] = MetaData.media_upload(xform)
+    # data['mapbox_layer'] = MetaData.mapbox_layer_upload(xform)
+    # data['external_export'] = MetaData.external_export(xform)
+    #
+    #
+    # if is_owner:
+    #     set_xform_owner_data(data, xform, request, username, id_string)
+    #
+    # if xform.allows_sms:
+    #     data['sms_support_doc'] = get_autodoc_for(xform)
+    #
+    # return render(request, "show.html", data)
+
+
+def download_jsonform(request, fsxf_id):
+    # owner = get_object_or_404(User, username__iexact=username)
+    # xform = get_object_or_404(XForm, user__username__iexact=username,
+    #                           id_string__exact=id_string)
+    # if request.method == "OPTIONS":
+    #     response = HttpResponse()
+    #     add_cors_headers(response)
+    #     return response
+    # helper_auth_helper(request)
+    # if not has_permission(xform, owner, request, xform.shared):
+    #     response = HttpResponseForbidden(_(u'Not shared.'))
+    #     add_cors_headers(response)
+    #     return response
+    # response = response_with_mimetype_and_name('json', id_string,
+    #                                            show_date=False)
+    # if 'callback' in request.GET and request.GET.get('callback') != '':
+    #     callback = request.GET.get('callback')
+    #     response.content = "%s(%s)" % (callback, xform.json)
+    # else:
+    #     add_cors_headers(response)
+    #     response.content = xform.json
+    # return response
+    return JsonResponse({'data': []})
+
+
+@require_POST
+@login_required
+def delete_data(request, username=None, id_string=None):
+    pass
+    # xform, owner = check_and_set_user_and_form(username, id_string, request)
+    # response_text = u''
+    # if not xform or not has_edit_permission(
+    #     xform, owner, request, xform.shared
+    # ):
+    #     return HttpResponseForbidden(_(u'Not shared.'))
+    #
+    # data_id = request.POST.get('id')
+    # if not data_id:
+    #     return HttpResponseBadRequest(_(u"id must be specified"))
+    #
+    # Instance.set_deleted_at(data_id)
+    # audit = {
+    #     'xform': xform.id_string
+    # }
+    # audit_log(
+    #     Actions.SUBMISSION_DELETED, request.user, owner,
+    #     _("Deleted submission with id '%(record_id)s' "
+    #         "on '%(id_string)s'.") %
+    #     {
+    #         'id_string': xform.id_string,
+    #         'record_id': data_id
+    #     }, audit, request)
+    # response_text = json.dumps({"success": "Deleted data %s" % data_id})
+    # if 'callback' in request.GET and request.GET.get('callback') != '':
+    #     callback = request.GET.get('callback')
+    #     response_text = ("%s(%s)" % (callback, response_text))
+    #
+    # return HttpResponse(response_text, content_type='application/json')

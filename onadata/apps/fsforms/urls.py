@@ -20,7 +20,7 @@ from .views import (
         fill_details_schedule,
         schedule_add_form,
         AssignedFormsListView,
-        html_export, instance)
+        html_export, instance, show, api, download_jsonform, delete_data)
 
 # router = MultiLookupRouter(trailing_slash=False)
 urlpatterns = [
@@ -45,36 +45,49 @@ urlpatterns = [
         url(r'^schedule/(?P<pk>[0-9]+)/$', ScheduleUpdateView.as_view(), name='schedule-edit'),
         url(r'^schedule-add-form/(?P<pk>[0-9]+)/$', schedule_add_form, name='schedule-add-form'),
 
-        url(r'^assign/(?P<pk>[0-9]+)/$', assign, name="assign"),
-        url(r'^fill-form-type/(?P<pk>[0-9]+)/$', fill_form_type, name="fill_form_type"),
-        url(r'^fill-details-stage/(?P<pk>[0-9]+)/$', fill_details_stage, name="fill_details_stage"),
-        url(r'^fill-details-schedule/(?P<pk>[0-9]+)/$', fill_details_schedule, name="fill_details_schedule"),
+        url(r'^assign/(?P<pk>[0-9]+)/$', assign, name='assign'),
+        url(r'^fill-form-type/(?P<pk>[0-9]+)/$', fill_form_type, name='fill_form_type'),
+        url(r'^fill-details-stage/(?P<pk>[0-9]+)/$', fill_details_stage, name='fill_details_stage'),
+        url(r'^fill-details-schedule/(?P<pk>[0-9]+)/$', fill_details_schedule, name='fill_details_schedule'),
 ]
 
 
 urlpatterns = urlpatterns + [
-        url(r"^assignedFormList/(?P<site_id>\d+)$",
+        url(r'^assignedFormList/(?P<site_id>\[0-9]+)$',
                 AssignedXFormListApi.as_view({'get': 'list'}), name='form-list'),
-        # url(r"^(?P<pk>[\d+^/]+)/form\.xml$",
+        # url(r'^(?P<pk>[\d+^/]+)/form\.xml$',
         #         AssignedXFormListApi.as_view({'get': 'retrieve'}),
-        #         name="download_xform"),
-        url(r"^(?P<pk>\d+)/form\.xml$",
-                'onadata.apps.fsforms.views.download_xform', name="download_xform"),
+        #         name='download_xform'),
+        url(r'^(?P<pk>\[0-9]+)/form\.xml$',
+                'onadata.apps.fsforms.views.download_xform', name='download_xform'),
 
-        url(r"^(?P<pk>\d+)/(?P<site_id>\d+)$",
-                AssignedXFormListApi.as_view({'get': 'manifest'}),
-                name='manifest-url'),
+        url(r'^(?P<pk>\[0-9]+)/(?P<site_id>\d+)$', AssignedXFormListApi.as_view({'get': 'manifest'}), name='manifest-url'),
 
-        url(r"^submission/(?P<pk>\d+)/(?P<site_id>\d+)$",
-                FSXFormSubmissionApi.as_view({'post': 'create', 'head': 'create'}),
+        url(r'^submission/(?P<pk>\[0-9]+)/(?P<site_id>\d+)$',
+            FSXFormSubmissionApi.as_view({'post': 'create', 'head': 'create'}),
                                                         name='submissions'),
 ]
 
 urlpatterns = urlpatterns + [
-        url(r"reports/(?P<fsxf_id>[0-9]+)$",
-        html_export, name='formpack_html_export'),
+        url(r'reports/(?P<fsxf_id>[0-9]+)$', html_export, name='formpack_html_export'),
+        url(r'^forms/(?P<fsxf_id>[0-9]+)/instance', instance, name='instance'),
+]
 
-        url(r"^forms/(?P<fsxf_id>[0-9]+)/instance",
-                instance, name='instance'),
+urlpatterns = urlpatterns + [
+    # kobo main urls
+
+    url(r'^mongo_view_api/(?P<fsxf_id>[0-9]+)/api$', api, name='mongo_view_api'),
+    #  kobo main view
+    url(r'^show/(?P<fsxf_id>[0-9]+)$', show, name='show'),
+    url(r'^forms/(?P<fsxf_id>[0-9]+)/delete_data$', delete_data, name='delete_data'),
+#
+]
+
+urlpatterns = urlpatterns + [
+            # kobo main urls logger vies
+
+    url(r'^forms/(?P<fsxf_id>[0-9]+)/form\.json',  download_jsonform,  name='download_jsonform'),
 
 ]
+
+
