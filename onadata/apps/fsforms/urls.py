@@ -74,7 +74,7 @@ urlpatterns = urlpatterns + [
         url(r"reports/(?P<fsxf_id>[0-9]+)$",
         html_export, name='formpack_html_export'),
 
-        url(r"reports/(?P<fsxf_id>[0-9]+)/(?P<instance_id>[0-9]+)",
-        instance, name='instance'),
+        url(r"^forms/(?P<fsxf_id>[0-9]+)/instance",
+                instance, name='instance'),
 
 ]

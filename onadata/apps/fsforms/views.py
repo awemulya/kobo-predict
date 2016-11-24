@@ -386,16 +386,13 @@ def html_export(request, fsxf_id):
     return render(request, 'survey_report/fieldsight_export_html.html', context)
 
 
-def instance(request, fsxf_id, instance_id):
+def instance(request, fsxf_id):
 
     limit = int(request.REQUEST.get('limit', 100))
     fsxf_id = int(fsxf_id)
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
     id_string = xform.id_string
-    cursor = get_instance_form_data(fsxf_id,int(instance_id))
-    cursor = list(cursor)
-    # return JsonResponse({'data': cursor})
     xform, is_owner, can_edit, can_view = get_xform_and_perms(fsxf_id, request)
     # no access
     if not (xform.shared_data or can_view or
