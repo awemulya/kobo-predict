@@ -381,9 +381,9 @@ def html_export(request, fsxf_id):
     context['labels'] = labels
     context['data'] = make_table(data)
     context['fsxfid'] = fsxf_id
-    return JsonResponse({'data': cursor})
+    # return JsonResponse({'data': cursor})
 
-    # return render(request, 'survey_report/fieldsight_export_html.html', context)
+    return render(request, 'survey_report/fieldsight_export_html.html', context)
 
 
 def instance(request, fsxf_id, instance_id):
@@ -395,26 +395,26 @@ def instance(request, fsxf_id, instance_id):
     id_string = xform.id_string
     cursor = get_instance_form_data(fsxf_id,int(instance_id))
     cursor = list(cursor)
-    return JsonResponse({'data': cursor})
-    # xform, is_owner, can_edit, can_view = get_xform_and_perms(fsxf_id, request)
-    # # no access
-    # if not (xform.shared_data or can_view or
-    #         request.session.get('public_link') == xform.uuid):
-    #     return HttpResponseForbidden(_(u'Not shared.'))
-    #
-    # audit = {
-    #     "xform": xform.id_string,
-    # }
-    # audit_log(
-    #     Actions.FORM_DATA_VIEWED, request.user, xform.user,
-    #     _("Requested instance view for '%(id_string)s'.") %
-    #     {
-    #         'id_string': xform.id_string,
-    #     }, audit, request)
-    #
-    # return render(request, 'fieldsight_instance.html', {
-    #     'username': request.user,
-    #     'id_string': fsxf_id,
-    #     'xform': xform,
-    #     'can_edit': can_edit
-    # })
+    # return JsonResponse({'data': cursor})
+    xform, is_owner, can_edit, can_view = get_xform_and_perms(fsxf_id, request)
+    # no access
+    if not (xform.shared_data or can_view or
+            request.session.get('public_link') == xform.uuid):
+        return HttpResponseForbidden(_(u'Not shared.'))
+
+    audit = {
+        "xform": xform.id_string,
+    }
+    audit_log(
+        Actions.FORM_DATA_VIEWED, request.user, xform.user,
+        _("Requested instance view for '%(id_string)s'.") %
+        {
+            'id_string': xform.id_string,
+        }, audit, request)
+
+    return render(request, 'fieldsight_instance.html', {
+        'username': request.user,
+        'id_string': fsxf_id,
+        'xform': xform,
+        'can_edit': can_edit
+    })
