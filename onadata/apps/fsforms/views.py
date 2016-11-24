@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext as _
@@ -9,7 +9,8 @@ from django.http import HttpResponse, HttpResponseForbidden, Http404, QueryDict
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
-from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context
+from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
+    get_xform_and_perms, get_instance_form_data
 from onadata.libs.utils.log import audit_log, Actions
 from onadata.libs.utils.logger_tools import response_with_mimetype_and_name
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectRequiredMixin, ProjectMixin, \
@@ -380,9 +381,40 @@ def html_export(request, fsxf_id):
     context['labels'] = labels
     context['data'] = make_table(data)
     context['fsxfid'] = fsxf_id
-    # import ipdb
-    # ipdb.set_trace()
+    return JsonResponse({'data': cursor})
 
-    return render(request, 'survey_report/fieldsight_export_html.html', context)
+    # return render(request, 'survey_report/fieldsight_export_html.html', context)
 
 
+def instance(request, fsxf_id, instance_id):
+
+    limit = int(request.REQUEST.get('limit', 100))
+    fsxf_id = int(fsxf_id)
+    fsxf = FieldSightXF.objects.get(pk=fsxf_id)
+    xform = fsxf.xf
+    id_string = xform.id_string
+    cursor = get_instance_form_data(fsxf_id,int(instance_id))
+    cursor = list(cursor)
+    return JsonResponse({'data': cursor})
+    # xform, is_owner, can_edit, can_view = get_xform_and_perms(fsxf_id, request)
+    # # no access
+    # if not (xform.shared_data or can_view or
+    #         request.session.get('public_link') == xform.uuid):
+    #     return HttpResponseForbidden(_(u'Not shared.'))
+    #
+    # audit = {
+    #     "xform": xform.id_string,
+    # }
+    # audit_log(
+    #     Actions.FORM_DATA_VIEWED, request.user, xform.user,
+    #     _("Requested instance view for '%(id_string)s'.") %
+    #     {
+    #         'id_string': xform.id_string,
+    #     }, audit, request)
+    #
+    # return render(request, 'fieldsight_instance.html', {
+    #     'username': request.user,
+    #     'id_string': fsxf_id,
+    #     'xform': xform,
+    #     'can_edit': can_edit
+    # })

@@ -20,7 +20,7 @@ from .views import (
         fill_details_schedule,
         schedule_add_form,
         AssignedFormsListView,
-        html_export)
+        html_export, instance)
 
 # router = MultiLookupRouter(trailing_slash=False)
 urlpatterns = [
@@ -73,5 +73,8 @@ urlpatterns = urlpatterns + [
 urlpatterns = urlpatterns + [
         url(r"reports/(?P<fsxf_id>[0-9]+)$",
         html_export, name='formpack_html_export'),
+
+        url(r"reports/(?P<fsxf_id>[0-9]+)/(?P<instance_id>[0-9]+)",
+        instance, name='instance'),
 
 ]

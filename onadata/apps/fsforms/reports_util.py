@@ -1,6 +1,6 @@
 from django.conf import settings
 from formpack import FormPack
-from onadata.apps.fsforms.models import FieldsightInstance
+from onadata.apps.fsforms.models import FieldsightInstance, FieldSightXF
 
 
 def get_instances_for_field_sight_form(fieldsight_form_id, submission=None):
@@ -11,6 +11,12 @@ def get_instances_for_field_sight_form(fieldsight_form_id, submission=None):
     query = {'_uuid': fieldsight_form_id, '_deleted_at': {'$exists': False}}
     if submission:
         query['_id'] = submission
+    return settings.MONGO_DB.instances.find(query)
+
+
+def get_instance_form_data(fieldsight_form_id, instance_id):
+
+    query = {'_id': instance_id, '_deleted_at': {'$exists': False}}
     return settings.MONGO_DB.instances.find(query)
 
 
@@ -54,3 +60,14 @@ def build_export_context(request,xform, id_string):
         'hierarchy_in_labels': hierarchy_in_labels,
         'export': formpack.export(**options)
     }
+
+
+
+def get_xform_and_perms(fsxf_id, request):
+    fs_xform = FieldSightXF.objects.get(pk=fsxf_id)
+    xform = fs_xform.xf
+    is_owner = xform.user == request.user
+    can_edit = True
+    can_view = can_edit or\
+        request.user.has_perm('logger.view_xform', xform)
+    return [xform, is_owner, can_edit, can_view]
