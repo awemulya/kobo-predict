@@ -28,6 +28,7 @@ from pyxform.xform2json import create_survey_element_from_xml
 import sys
 
 from onadata.apps.fsforms.models import FieldSightXF, FieldsightInstance
+from onadata.apps.fsforms.utils import FIELDSIGHT_XFORM_ID
 from onadata.apps.main.models import UserProfile
 from onadata.apps.logger.models import Attachment
 from onadata.apps.logger.models import Instance
@@ -83,7 +84,9 @@ def _get_instance(xml, new_uuid, submitted_by, status, xform):
         # new submission
         instance = Instance.objects.create(
             xml=xml, user=submitted_by, status=status, xform=xform)
-
+        if instance:
+            instance.uuid = new_uuid
+            instance.save()
     return instance
 
 
@@ -207,35 +210,39 @@ def create_instance(fsxfid, xml_file, media_files,
         xml = xml_file.read()
         fsxform = FieldSightXF.objects.get(pk=fsxfid)
         xform = fsxform.xf
-        existing_instance_count = fsxform.fs_instances.count()
+        # existing_instance_count = fsxform.fs_instances.count()
 
-        if(existing_instance_count and same_form_submitted_again_without_schedule(fsxform)):
-                raise DuplicateInstance()
+        # if(existing_instance_count and same_form_submitted_again_without_schedule(fsxform)):
+        #         raise DuplicateInstance()
 
-        new_uuid = get_uuid_from_xml(xml) + str(fsxfid)+ schedule_uuid_value(fsxform)
-        duplicate_instances = Instance.objects.filter(uuid=new_uuid)
+        # new_uuid = get_uuid_from_xml(xml) + str(fsxfid)+ schedule_uuid_value(fsxform)
+        # duplicate_instances = Instance.objects.filter(uuid=new_uuid)
 
-        if duplicate_instances:
-            # ensure we have saved the extra attachments
-            for f in media_files:
-                Attachment.objects.get_or_create(
-                    instance=duplicate_instances[0],
-                    media_file=f, mimetype=f.content_type)
-        else:
-            instance = save_submission(xform, xml, media_files, new_uuid,
+        # if duplicate_instances:
+        #     # ensure we have saved the extra attachments
+        #     for f in media_files:
+        #         Attachment.objects.get_or_create(
+        #             instance=duplicate_instances[0],
+        #             media_file=f, mimetype=f.content_type)
+        # else:
+        instance = save_submission(xform, xml, media_files, fsxfid,
                                        submitted_by, status,
                                        date_created_override)
-            if instance:
-                FieldsightInstance.objects.create(fsxform=fsxform,instance=instance)
-            return instance
+            # if instance:
+            #     # FieldsightInstance.objects.create(fsxform=fsxform,instance=instance)
+            #     instance.json[FIELDSIGHT_XFORM_ID] = fsxfid
+            #     instance.save()
+            #     import ipdb
+            #     ipdb.set_trace()
+        return instance
 
-    if duplicate_instances:
-        # We are now outside the atomic block, so we can raise an exception
-        # without rolling back the extra attachments we created earlier
-        # NB: Since `ATOMIC_REQUESTS` is set at the database level, everything
-        # could still be rolled back if the calling view fails to handle an
-        # exception
-        raise DuplicateInstance()
+    # if duplicate_instances:
+    #     # We are now outside the atomic block, so we can raise an exception
+    #     # without rolling back the extra attachments we created earlier
+    #     # NB: Since `ATOMIC_REQUESTS` is set at the database level, everything
+    #     # could still be rolled back if the calling view fails to handle an
+    #     # exception
+    #     raise DuplicateInstance()
 
 
 def safe_create_instance(fsxfid, xml_file, media_files, uuid, request):

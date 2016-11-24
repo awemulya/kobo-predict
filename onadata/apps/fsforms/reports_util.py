@@ -5,14 +5,12 @@ from onadata.apps.fsforms.models import FieldsightInstance
 
 def get_instances_for_field_sight_form(fieldsight_form_id, submission=None):
 
-    instance_id = FieldsightInstance.objects.filter(fsxform__id=fieldsight_form_id)[0].instance.id\
-        if FieldsightInstance.objects.filter(fsxform__id=fieldsight_form_id).exists() else None
+    # instance_id = FieldsightInstance.objects.filter(fsxform__id=fieldsight_form_id)[0].instance.id\
+    #     if FieldsightInstance.objects.filter(fsxform__id=fieldsight_form_id).exists() else None
 
-    query = {'_id': instance_id, '_deleted_at': {'$exists': False}}
+    query = {'_uuid': fieldsight_form_id, '_deleted_at': {'$exists': False}}
     if submission:
         query['_id'] = submission
-    import ipdb
-    ipdb.set_trace()
     return settings.MONGO_DB.instances.find(query)
 
 
