@@ -12,7 +12,7 @@ from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpRespon
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
-    get_xform_and_perms, get_instance_form_data
+    get_xform_and_perms, get_instance_form_data, query_mongo
 from onadata.libs.utils.user_auth import add_cors_headers
 from onadata.libs.utils.user_auth import helper_auth_helper
 from onadata.apps.viewer.models.parsed_instance import ParsedInstance
@@ -465,7 +465,7 @@ def api(request, fsxf_id=None):
                 else False
         if xform :
             args["fsxfid"] = fsxform.id
-        cursor = ParsedInstance.query_mongo(**args)
+        cursor = query_mongo(**args)
     except ValueError as e:
         return HttpResponseBadRequest(e.__str__())
 
