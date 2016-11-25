@@ -98,7 +98,7 @@ def query_mongo(username, id_string, query, fields, sort, start=0,
 
     if fsxfid is not None:
         query.pop('_userform_id')
-        query['_uuid'] = fsxfid
+        query['_uuid'] = str(fsxfid)
     if hide_deleted:
         # display only active elements
         # join existing query with deleted_at_query on an $and

@@ -390,11 +390,10 @@ def html_export(request, fsxf_id):
 
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
-@group_required('KoboForms')
+# @group_required('KoboForms')
 def instance(request, fsxf_id):
 
     fsxf_id = int(fsxf_id)
-    fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform, is_owner, can_edit, can_view = get_xform_and_perms(fsxf_id, request)
     # no access
     if not (xform.shared_data or can_view or
@@ -465,7 +464,6 @@ def api(request, fsxf_id=None):
         cursor = query_mongo(**args)
     except ValueError as e:
         return HttpResponseBadRequest(e.__str__())
-
     records = list(record for record in cursor)
     response_text = json_util.dumps(records)
 
@@ -519,9 +517,8 @@ def show(request, fsxf_id):
     #
     # return render(request, "show.html", data)
 
-@group_required('KoboForms')
+# @group_required('KoboForms')
 def download_jsonform(request, fsxf_id):
-    owner = request.user
     fsxform = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxform.xf
 
