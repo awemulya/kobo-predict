@@ -1,6 +1,6 @@
 from bson import json_util
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext as _
@@ -12,13 +12,12 @@ from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpRespon
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
-    get_xform_and_perms, get_instance_form_data, query_mongo
+    get_xform_and_perms, query_mongo
 from onadata.libs.utils.user_auth import add_cors_headers
 from onadata.libs.utils.user_auth import helper_auth_helper
-from onadata.apps.viewer.models.parsed_instance import ParsedInstance
 from onadata.libs.utils.log import audit_log, Actions
 from onadata.libs.utils.logger_tools import response_with_mimetype_and_name
-from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectRequiredMixin, ProjectMixin, \
+from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectMixin, \
     CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm
@@ -56,16 +55,17 @@ class FormView(object):
 class MyProjectListView(ListView):
     def get_template_names(self):
         return ['fsforms/my_project_form_list.html']
+
     def get_queryset(self):
-        return FieldSightXF.objects.filter(site__project__id= self.request.project.id)
+        return FieldSightXF.objects.filter(site__project__id=self.request.project.id)
 
 
 class AssignedFormListView(ListView):
     def get_template_names(self):
         return ['fsforms/assigned_form_list.html']
+
     def get_queryset(self):
-        # get site from role, get only forms from that site.
-        return FieldSightXF.objects.filter(site__id= self.request.site.id)
+        return FieldSightXF.objects.filter(site__id=self.request.site.id)
 
 
 class FormsListView(FormView, LoginRequiredMixin, ProjectMixin, MyProjectListView):
@@ -84,7 +84,7 @@ class StageView(object):
 
 class MainSTagesOnly(ListView):
     def get_queryset(self):
-        return Stage.objects.filter(stage= None)
+        return Stage.objects.filter(stage=None)
 
 
 class StageListView(StageView, LoginRequiredMixin, MainSTagesOnly):
@@ -99,7 +99,7 @@ class StageUpdateView(StageView, LoginRequiredMixin, KoboFormsMixin, UpdateView)
     pass
 
 
-class StageDeleteView(StageView,LoginRequiredMixin, KoboFormsMixin, DeleteView):
+class StageDeleteView(StageView, LoginRequiredMixin, KoboFormsMixin, DeleteView):
     pass
 
 
@@ -119,7 +119,7 @@ def add_sub_stage(request, pk=None):
             return HttpResponseRedirect(reverse("forms:stage-detail", kwargs={'pk': stage.id}))
     else:
         form = AddSubSTageForm()
-    return render(request, "fsforms/add_sub_stage.html", {'form': form, 'obj':stage})
+    return render(request, "fsforms/add_sub_stage.html", {'form': form, 'obj': stage})
 
 
 @login_required
@@ -128,7 +128,7 @@ def stage_details(request, pk=None):
     stage = get_object_or_404(
         Stage, pk=pk)
     object_list = Stage.objects.filter(stage__id=stage.id).order_by('order')
-    return render(request, "fsforms/stage_detail.html", {'obj': stage,'object_list':object_list})
+    return render(request, "fsforms/stage_detail.html", {'obj': stage, 'object_list':object_list})
 
 
 @login_required
@@ -148,7 +148,7 @@ def stage_add_form(request, pk=None):
             return HttpResponseRedirect(reverse("forms:stage-detail", kwargs={'pk': stage.stage.id}))
     else:
         form = AssignFormToStageForm()
-    return render(request, "fsforms/stage_add_form.html", {'form': form, 'obj':stage})
+    return render(request, "fsforms/stage_add_form.html", {'form': form, 'obj': stage})
 
 
 class ScheduleView(object):
@@ -169,7 +169,7 @@ class ScheduleUpdateView(ScheduleView, LoginRequiredMixin, KoboFormsMixin, Updat
     pass
 
 
-class ScheduleDeleteView(ScheduleView,LoginRequiredMixin, KoboFormsMixin, DeleteView):
+class ScheduleDeleteView(ScheduleView, LoginRequiredMixin, KoboFormsMixin, DeleteView):
     pass
 
 
@@ -190,7 +190,7 @@ def schedule_add_form(request, pk=None):
             return HttpResponseRedirect(reverse("forms:schedule-list"))
     else:
         form = AssignFormToScheduleForm()
-    return render(request, "fsforms/schedule_add_form.html", {'form': form, 'obj':schedule})
+    return render(request, "fsforms/schedule_add_form.html", {'form': form, 'obj': schedule})
 
 
 class FormGroupView(object):
@@ -254,7 +254,7 @@ def fill_form_type(request, pk=None):
             form_type = form.cleaned_data.get('form_type', '3')
             form_type = int(form_type)
             messages.info(request, 'Form Type Saved.')
-            if form_type == 3 :
+            if form_type == 3:
                 return HttpResponseRedirect(reverse("forms:library-forms-list"))
             elif form_type == 2:
                 field_sight_form.is_scheduled = True
@@ -266,7 +266,7 @@ def fill_form_type(request, pk=None):
                 return HttpResponseRedirect(reverse("forms:fill_details_stage", kwargs={'pk': field_sight_form.id}))
     else:
         form = FormTypeForm()
-    return render(request, "fsforms/stage_or_schedule.html", {'form': form, 'obj':field_sight_form})
+    return render(request, "fsforms/stage_or_schedule.html", {'form': form, 'obj': field_sight_form})
 
 
 @login_required
@@ -283,6 +283,7 @@ def fill_details_stage(request, pk=None):
     else:
         form = FormStageDetailsForm(instance=field_sight_form)
     return render(request, "fsforms/form_details_stage.html", {'form': form})
+
 
 @login_required
 @group_required('KoboForms')
@@ -307,8 +308,7 @@ def download_xform(request, pk):
         # raises a permission denied exception, forces authentication
         # response= JsonResponse({'code': 401, 'message': 'Unauthorized User'})
         # return response
-    fsxform = get_object_or_404(FieldSightXF,
-                              pk__exact=pk)
+    fsxform = get_object_or_404(FieldSightXF, pk__exact=pk)
 
     audit = {
         "xform": fsxform.pk
@@ -334,6 +334,7 @@ def download_xform(request, pk):
 
     return response
 
+
 @group_required('KoboForms')
 def html_export(request, fsxf_id):
 
@@ -346,10 +347,10 @@ def html_export(request, fsxf_id):
     cursor = list(cursor)
     for index, doc in enumerate(cursor):
         medias = []
-        for media in cursor[index].get('_attachments',[]):
+        for media in cursor[index].get('_attachments', []):
             if media:
-                medias.append(media.get('download_url',''))
-        cursor[index].update({'medias':medias})
+                medias.append(media.get('download_url', ''))
+        cursor[index].update({'medias': medias})
     paginator = Paginator(cursor, limit, request=request)
 
     try:
@@ -389,6 +390,7 @@ def html_export(request, fsxf_id):
     # return JsonResponse({'data': cursor})
 
     return render(request, 'fsforms/fieldsight_export_html.html', context)
+
 
 # @group_required('KoboForms')
 def instance(request, fsxf_id):
@@ -459,7 +461,7 @@ def api(request, fsxf_id=None):
         if 'count' in request.GET:
             args["count"] = True if int(request.GET.get('count')) > 0\
                 else False
-        if xform :
+        if xform:
             args["fsxfid"] = fsxform.id
         cursor = query_mongo(**args)
     except ValueError as e:
@@ -516,6 +518,7 @@ def show(request, fsxf_id):
     #     data['sms_support_doc'] = get_autodoc_for(xform)
     #
     # return render(request, "show.html", data)
+
 
 # @group_required('KoboForms')
 def download_jsonform(request, fsxf_id):
