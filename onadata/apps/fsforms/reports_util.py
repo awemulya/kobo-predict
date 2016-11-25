@@ -5,7 +5,7 @@ from onadata.apps.viewer.models.parsed_instance import dict_for_mongo, _encode_f
 
 
 def get_instances_for_field_sight_form(fieldsight_form_id, submission=None):
-    query = {'_uuid': fieldsight_form_id, '_deleted_at': {'$exists': False}}
+    query = {'_uuid': { '$in': [fieldsight_form_id, str(fieldsight_form_id)] }, '_deleted_at': {'$exists': False}}
     if submission:
         query['_id'] = submission
     return settings.MONGO_DB.instances.find(query)

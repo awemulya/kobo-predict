@@ -342,7 +342,7 @@ def html_export(request, fsxf_id):
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
     id_string = xform.id_string
-    cursor = get_instances_for_field_sight_form(str(fsxf_id))
+    cursor = get_instances_for_field_sight_form(fsxf_id)
     cursor = list(cursor)
     for index, doc in enumerate(cursor):
         medias = []

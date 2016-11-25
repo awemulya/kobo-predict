@@ -206,7 +206,6 @@ def create_instance(fsxfid, xml_file, media_files,
         instance = None
         submitted_by = request.user \
             if request and request.user.is_authenticated() else None
-
         xml = xml_file.read()
         fsxform = FieldSightXF.objects.get(pk=fsxfid)
         xform = fsxform.xf
@@ -270,6 +269,8 @@ def safe_create_instance(fsxfid, xml_file, media_files, uuid, request):
         )
     except ExpatError as e:
         error = OpenRosaResponseBadRequest(_(u"Improperly formatted XML."))
+    except AttributeError as e:
+        error = OpenRosaResponseBadRequest(_(u"NO xml_submission_file."))
     except DuplicateInstance:
         response = OpenRosaResponse(_(u"Duplicate submission"))
         response.status_code = 202

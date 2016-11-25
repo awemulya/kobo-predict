@@ -1,6 +1,7 @@
 import StringIO
 
 from django.conf import settings
+from django.http import JsonResponse
 from django.utils.translation import ugettext as _
 
 from rest_framework import serializers
@@ -90,13 +91,10 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
         except:
             return self.error_response("Site Id Or Form ID Not Vaild", False, request)
 
-
         if request.method.upper() == 'HEAD':
             return Response(status=status.HTTP_204_NO_CONTENT,
                             headers=self.get_openrosa_headers(request),
                             template_name=self.template_name)
-
-
 
         error, instance = create_instance_from_xml(fsxfid, request)
         # modify create instance
