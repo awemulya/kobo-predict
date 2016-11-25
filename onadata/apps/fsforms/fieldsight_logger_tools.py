@@ -224,7 +224,7 @@ def create_instance(fsxfid, xml_file, media_files,
         #             instance=duplicate_instances[0],
         #             media_file=f, mimetype=f.content_type)
         # else:
-        instance = save_submission(xform, xml, media_files, fsxfid,
+        instance = save_submission(xform, xml, media_files, str(fsxfid),
                                        submitted_by, status,
                                        date_created_override)
             # if instance:
