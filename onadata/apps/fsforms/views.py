@@ -1,3 +1,4 @@
+from bson import json_util
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
@@ -6,12 +7,15 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
 from django.views.generic import ListView
-from django.http import HttpResponse, HttpResponseForbidden, Http404, QueryDict
+from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpResponseBadRequest
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, get_instance_form_data
+from onadata.libs.utils.user_auth import add_cors_headers
+from onadata.libs.utils.user_auth import helper_auth_helper
+from onadata.apps.viewer.models.parsed_instance import ParsedInstance
 from onadata.libs.utils.log import audit_log, Actions
 from onadata.libs.utils.logger_tools import response_with_mimetype_and_name
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectRequiredMixin, ProjectMixin, \
@@ -419,8 +423,6 @@ def instance(request, fsxf_id):
 
 @require_http_methods(["GET", "OPTIONS"])
 def api(request, fsxf_id=None):
-    return JsonResponse({'data': []})
-    pass
     """
     Returns all results as JSON.  If a parameter string is passed,
     it takes the 'query' parameter, converts this string to a dictionary, an
@@ -434,49 +436,47 @@ def api(request, fsxf_id=None):
 
     E.g. api?query='{"last_name": "Smith"}'
     """
-    # if request.method == "OPTIONS":
-    #     response = HttpResponse()
-    #     add_cors_headers(response)
-    #
-    #     return response
-    # helper_auth_helper(request)
-    # helper_auth_helper(request)
-    # xform, owner = check_and_set_user_and_form(username, id_string, request)
-    #
-    # if not xform:
-    #     return HttpResponseForbidden(_(u'Not shared.'))
-    #
-    # try:
-    #     args = {
-    #         'username': username,
-    #         'id_string': id_string,
-    #         'query': request.GET.get('query'),
-    #         'fields': request.GET.get('fields'),
-    #         'sort': request.GET.get('sort')
-    #     }
-    #     if 'start' in request.GET:
-    #         args["start"] = int(request.GET.get('start'))
-    #     if 'limit' in request.GET:
-    #         args["limit"] = int(request.GET.get('limit'))
-    #     if 'count' in request.GET:
-    #         args["count"] = True if int(request.GET.get('count')) > 0\
-    #             else False
-    #     cursor = ParsedInstance.query_mongo(**args)
-    # except ValueError as e:
-    #     return HttpResponseBadRequest(e.__str__())
-    #
-    # records = list(record for record in cursor)
-    # response_text = json_util.dumps(records)
-    #
-    # if 'callback' in request.GET and request.GET.get('callback') != '':
-    #     callback = request.GET.get('callback')
-    #     response_text = ("%s(%s)" % (callback, response_text))
-    #
-    # response = HttpResponse(response_text, content_type='application/json')
-    # add_cors_headers(response)
-    #
-    # return response
+    if request.method == "OPTIONS":
+        response = HttpResponse()
+        add_cors_headers(response)
+        return response
+    helper_auth_helper(request)
+    fsxform = FieldSightXF.objects.get(pk=fsxf_id)
+    xform = fsxform.xf
+    owner = request.user
 
+    if not xform:
+        return HttpResponseForbidden(_(u'Not shared.'))
+
+    try:
+        args = {
+            'username': request.user.username,
+            'id_string': xform.id_string,
+            'query': request.GET.get('query'),
+            'fields': request.GET.get('fields'),
+            'sort': request.GET.get('sort')
+        }
+        if 'start' in request.GET:
+            args["start"] = int(request.GET.get('start'))
+        if 'limit' in request.GET:
+            args["limit"] = int(request.GET.get('limit'))
+        if 'count' in request.GET:
+            args["count"] = True if int(request.GET.get('count')) > 0\
+                else False
+        cursor = ParsedInstance.query_mongo(**args)
+    except ValueError as e:
+        return HttpResponseBadRequest(e.__str__())
+
+    records = list(record for record in cursor)
+    response_text = json_util.dumps(records)
+
+    if 'callback' in request.GET and request.GET.get('callback') != '':
+        callback = request.GET.get('callback')
+        response_text = ("%s(%s)" % (callback, response_text))
+
+    response = HttpResponse(response_text, content_type='application/json')
+    add_cors_headers(response)
+    return response
 
 
 @require_GET
@@ -522,33 +522,29 @@ def show(request, fsxf_id):
 
 
 def download_jsonform(request, fsxf_id):
-    # owner = get_object_or_404(User, username__iexact=username)
-    # xform = get_object_or_404(XForm, user__username__iexact=username,
-    #                           id_string__exact=id_string)
-    # if request.method == "OPTIONS":
-    #     response = HttpResponse()
-    #     add_cors_headers(response)
-    #     return response
-    # helper_auth_helper(request)
-    # if not has_permission(xform, owner, request, xform.shared):
-    #     response = HttpResponseForbidden(_(u'Not shared.'))
-    #     add_cors_headers(response)
-    #     return response
-    # response = response_with_mimetype_and_name('json', id_string,
-    #                                            show_date=False)
-    # if 'callback' in request.GET and request.GET.get('callback') != '':
-    #     callback = request.GET.get('callback')
-    #     response.content = "%s(%s)" % (callback, xform.json)
-    # else:
-    #     add_cors_headers(response)
-    #     response.content = xform.json
-    # return response
-    return JsonResponse({'data': []})
+    owner = request.user
+    fsxform = FieldSightXF.objects.get(pk=fsxf_id)
+    xform = fsxform.xf
+
+    if request.method == "OPTIONS":
+        response = HttpResponse()
+        add_cors_headers(response)
+        return response
+    helper_auth_helper(request)
+    response = response_with_mimetype_and_name('json', xform.id_string,
+                                               show_date=False)
+    if 'callback' in request.GET and request.GET.get('callback') != '':
+        callback = request.GET.get('callback')
+        response.content = "%s(%s)" % (callback, xform.json)
+    else:
+        add_cors_headers(response)
+        response.content = xform.json
+    return response
 
 
 @require_POST
 @login_required
-def delete_data(request, username=None, id_string=None):
+def delete_data(request, fsxf_id=None):
     pass
     # xform, owner = check_and_set_user_and_form(username, id_string, request)
     # response_text = u''
