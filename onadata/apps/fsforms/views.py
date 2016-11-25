@@ -577,3 +577,25 @@ def delete_data(request, fsxf_id=None):
     #     response_text = ("%s(%s)" % (callback, response_text))
     #
     # return HttpResponse(response_text, content_type='application/json')
+
+
+
+def data_view(request, fsxf_id):
+    fsxform = FieldSightXF.objects.get(pk=fsxf_id)
+    xform = fsxform.xf
+    data = {
+        'fsxf_id': fsxf_id,
+        'owner': xform.user,
+        'xform': xform
+    }
+    audit = {
+        "xform": xform.id_string,
+    }
+    audit_log(
+        Actions.FORM_DATA_VIEWED, request.user, xform.user,
+        _("Requested data view for '%(id_string)s'.") %
+        {
+            'id_string': xform.id_string,
+        }, audit, request)
+
+    return render(request, "fieldsight_data_view.html", data)

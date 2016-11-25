@@ -4,10 +4,9 @@
 {% block content %}
 <div class="page-header">
     <h1>{% trans "Browse Form Data" %}
-        <!--<small><a href="{% url 'forms:show' fsxf_id %}">{{ xform.title }}</a></small>-->
-        <small><a href="">{{ xform.title }}</a></small>
+        <small><a href="{% url 'forms:formpack_html_export' fsxf_id %}">{{ xform.title }}</a></small>
         <small> | </small>
-        <small><a href="">{% trans "Data View" %}</a></small>
+        <small><a href="{% url 'forms:data_view' fsxf_id %}">{% trans "Data View" %}</a></small>
     </h1>
 </div>
 

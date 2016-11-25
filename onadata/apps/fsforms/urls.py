@@ -20,7 +20,7 @@ from .views import (
         fill_details_schedule,
         schedule_add_form,
         AssignedFormsListView,
-        html_export, instance, show, api, download_jsonform, delete_data)
+        html_export, instance, show, api, download_jsonform, delete_data, data_view)
 
 # router = MultiLookupRouter(trailing_slash=False)
 urlpatterns = [
@@ -87,6 +87,13 @@ urlpatterns = urlpatterns + [
             # kobo main urls logger vies
 
     url(r'^forms/(?P<fsxf_id>[0-9]+)/form\.json',  download_jsonform,  name='download_jsonform'),
+
+]
+
+urlpatterns = urlpatterns + [
+            # kobo main urls viewer vies
+
+    url(r'^data-view/(?P<fsxf_id>[0-9]+)$',  data_view,  name='data_view'),
 
 ]
 
