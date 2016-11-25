@@ -388,7 +388,7 @@ def html_export(request, fsxf_id):
     context['fsxfid'] = fsxf_id
     # return JsonResponse({'data': cursor})
 
-    return render(request, 'survey_report/fieldsight_export_html.html', context)
+    return render(request, 'fsforms/fieldsight_export_html.html', context)
 
 @group_required('KoboForms')
 def instance(request, fsxf_id):
