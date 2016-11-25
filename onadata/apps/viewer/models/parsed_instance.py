@@ -113,7 +113,7 @@ class ParsedInstance(models.Model):
     @classmethod
     @apply_form_field_names
     def query_mongo(cls, username, id_string, query, fields, sort, start=0,
-                    limit=DEFAULT_LIMIT, count=False, hide_deleted=True):
+                    limit=DEFAULT_LIMIT, count=False, hide_deleted=True, fsxfid=None):
         fields_to_select = {cls.USERFORM_ID: 0}
         # TODO: give more detailed error messages to 3rd parties
         # using the API when json.loads fails
@@ -124,9 +124,12 @@ class ParsedInstance(models.Model):
         query[cls.USERFORM_ID] = u'%s_%s' % (username, id_string)
 
         # check if query contains and _id and if its a valid ObjectID
-        if '_uuid' in query and ObjectId.is_valid(query['_uuid']):
-            query['_uuid'] = ObjectId(query['_uuid'])
+        # if '_uuid' in query and ObjectId.is_valid(query['_uuid']):
+        #     query['_uuid'] = ObjectId(query['_uuid'])
 
+        if fsxfid is not None:
+            query.pop('_userform_id')
+            query['_uuid'] = fsxfid
         if hide_deleted:
             # display only active elements
             # join existing query with deleted_at_query on an $and

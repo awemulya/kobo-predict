@@ -390,7 +390,7 @@ def html_export(request, fsxf_id):
 
     return render(request, 'survey_report/fieldsight_export_html.html', context)
 
-
+@group_required('KoboForms')
 def instance(request, fsxf_id):
 
     limit = int(request.REQUEST.get('limit', 100))
@@ -443,7 +443,7 @@ def api(request, fsxf_id=None):
     helper_auth_helper(request)
     fsxform = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxform.xf
-    owner = request.user
+    # owner = request.user
 
     if not xform:
         return HttpResponseForbidden(_(u'Not shared.'))
@@ -463,6 +463,8 @@ def api(request, fsxf_id=None):
         if 'count' in request.GET:
             args["count"] = True if int(request.GET.get('count')) > 0\
                 else False
+        if xform :
+            args["fsxfid"] = fsxform.id
         cursor = ParsedInstance.query_mongo(**args)
     except ValueError as e:
         return HttpResponseBadRequest(e.__str__())
@@ -520,7 +522,7 @@ def show(request, fsxf_id):
     #
     # return render(request, "show.html", data)
 
-
+@group_required('KoboForms')
 def download_jsonform(request, fsxf_id):
     owner = request.user
     fsxform = FieldSightXF.objects.get(pk=fsxf_id)
