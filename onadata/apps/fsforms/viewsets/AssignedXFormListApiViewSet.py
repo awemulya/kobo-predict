@@ -1,0 +1,53 @@
+from rest_framework import serializers
+from rest_framework.response import Response
+from rest_framework.decorators import detail_route
+
+from onadata.apps.main.models.meta_data import MetaData
+from onadata.apps.api.viewsets.xform_list_api import XFormListApi
+from onadata.apps.fsforms.models import FieldSightXF
+from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormListSerializer
+from onadata.apps.fsforms.serializers.FieldSightXformManifestSerializer import FSXFormManifestSerializer
+
+
+class AssignedXFormListApi(XFormListApi):
+    serializer_class = FSXFormListSerializer
+    queryset = FieldSightXF.objects.filter(xf__downloadable=True)
+    template_name = 'fsforms/assignedFormList.xml'
+
+    def filter_queryset(self, queryset):
+        site_id = self.kwargs.get('site_id', None)
+        if site_id is None:
+            # If no username is specified, the request must be authenticated
+            if self.request.user.is_anonymous():
+                # raises a permission denied exception, forces authentication
+                self.permission_denied(self.request)
+            else:
+                try:
+                    int(site_id)
+                except:
+                    raise serializers.ValidationError({'site': "Site Id Not Given."})
+                else:
+                    return super(AssignedXFormListApi, self).filter_queryset(queryset)
+
+                return super(AssignedXFormListApi, self).filter_queryset(queryset)
+        site_id = int(site_id)
+        queryset = queryset.filter(site__id=site_id)
+        return queryset
+
+    @detail_route(methods=['GET'])
+    def manifest(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        object_list = MetaData.objects.filter(data_type='media',
+                                              xform=self.object.xf)
+        context = self.get_serializer_context()
+        serializer = FSXFormManifestSerializer(object_list, many=True,
+                                             context=context)
+
+        return Response(serializer.data, headers=self.get_openrosa_headers())
+
+    def list(self, request, *args, **kwargs):
+        self.object_list = self.filter_queryset(self.get_queryset())
+
+        serializer = self.get_serializer(self.object_list, many=True)
+
+        return Response(serializer.data, headers=self.get_openrosa_headers())

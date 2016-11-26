@@ -1,10 +1,7 @@
-from django.utils.translation import ugettext as _
-
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 from onadata.apps.fsforms.models import FieldSightXF
-from onadata.libs.serializers.data_serializer import SubmissionSerializer
 from onadata.libs.utils.decorators import check_obj
 
 
@@ -67,7 +64,6 @@ from onadata.libs.utils.decorators import check_obj
 #
 #         return []
 
-
 class FSXFormListSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField('get_title', read_only=True)
     descriptionText = serializers.SerializerMethodField('get_description', read_only=True)
@@ -120,38 +116,3 @@ class FSXFormListSerializer(serializers.ModelSerializer):
 
         return reverse('forms:manifest-url', kwargs=kwargs, request=request)
 
-
-class FieldSightSubmissionSerializer(SubmissionSerializer):
-    def to_representation(self, obj):
-        if not hasattr(obj, 'FieldSightXF'):
-            return super(FieldSightSubmissionSerializer, self).to_representation(obj)
-
-        return {
-            'message': _("Successful submission."),
-            'formid': obj.xf.xform.id_string,
-            'encrypted': obj.xf.xform.encrypted,
-            'instanceID': u'uuid:%s' % obj.xf.uuid,
-            'submissionDate': obj.date_created.isoformat(),
-            'markedAsCompleteDate': obj.date_modified.isoformat()
-        }
-
-
-class FSXFormManifestSerializer(serializers.Serializer):
-    filename = serializers.ReadOnlyField(source='data_value')
-    hash = serializers.SerializerMethodField()
-    downloadUrl = serializers.SerializerMethodField('get_url')
-
-    @check_obj
-    def get_url(self, obj):
-        kwargs = {'pk': obj.xf.xform.pk,
-                  'username': obj.xform.user.username,
-                  'metadata': obj.pk}
-        request = self.context.get('request')
-        format = obj.data_value[obj.data_value.rindex('.') + 1:]
-
-        return reverse('xform-media', kwargs=kwargs,
-                       request=request, format=format.lower())
-
-    @check_obj
-    def get_hash(self, obj):
-        return u"%s" % (obj.file_hash or 'md5:')

@@ -1,5 +1,6 @@
 from django.conf.urls import url
-from onadata.apps.fsforms.viewsets import AssignedXFormListApi, FSXFormSubmissionApi
+from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXFormListApi
+from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSubmissionApi
 from .views import (
         LibraryFormsListView,
         FormsListView,
@@ -53,15 +54,14 @@ urlpatterns = [
 
 
 urlpatterns = urlpatterns + [
-        url(r'^assignedFormList/(?P<site_id>\d+)$',
-                AssignedXFormListApi.as_view({'get': 'list'}), name='form-list'),
+        url(r'^assignedFormList/(?P<site_id>\d+)$', AssignedXFormListApi.as_view({'get': 'list'}), name='form-list'),
         # url(r'^(?P<pk>[\d+^/]+)/form\.xml$',
         #         AssignedXFormListApi.as_view({'get': 'retrieve'}),
         #         name='download_xform'),
         url(r'^(?P<pk>\d+)/form\.xml$',
                 'onadata.apps.fsforms.views.download_xform', name='download_xform'),
 
-        url(r'^(?P<pk>\d+)/(?P<site_id>\[0-9+)$', AssignedXFormListApi.as_view({'get': 'manifest'}), name='manifest-url'),
+        url(r'^(?P<pk>\d+)/(?P<site_id>\d+)$', AssignedXFormListApi.as_view({'get': 'manifest'}), name='manifest-url'),
 
         url(r'^submission/(?P<pk>\d+)/(?P<site_id>\d+)$',
             FSXFormSubmissionApi.as_view({'post': 'create', 'head': 'create'}),
