@@ -88,6 +88,7 @@ class Organization(models.Model):
         if staffs:
             return [role.user.id for role in staffs]
         return []
+
     def get_organization_type(self):
         return self.type.name
 
