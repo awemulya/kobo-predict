@@ -1,4 +1,7 @@
 from django.conf.urls import url
+from rest_framework import routers
+
+from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
 from .forms import RegistrationForm
 
 from .views import (
@@ -24,7 +27,9 @@ from .views import (
     CreateUserView,
     UserListView)
 
-
+router = routers.SimpleRouter()
+router.register(r'api/organization-type', OrganizationTypeViewSet)
+router.register(r'api/organization', OrganizationViewSet)
 
 urlpatterns = [
     # group_required('superuser')(OrgView.as_view())
@@ -64,3 +69,5 @@ urlpatterns = [
     url(r'^userlist/$', UserListView.as_view(), name='user-list'),
     # kobo form
 ]
+
+urlpatterns += router.urls
