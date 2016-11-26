@@ -1,8 +1,7 @@
 from rest_framework import viewsets
 
 from onadata.apps.fieldsight.models import OrganizationType, Organization
-from onadata.apps.fieldsight.serializers.OrganizationSerializer import OrganizationTypeSerializer, \
-    OrganizationSerializer
+from onadata.apps.fieldsight.serializers.OrganizationSerializer import OrganizationTypeSerializer, OrganizationSerializer
 
 
 class OrganizationTypeViewSet(viewsets.ModelViewSet):

@@ -141,6 +141,12 @@ class Project(models.Model):
         #     return [role.user.id for role in staffs]
         # return []
 
+    def get_organization_name(self):
+        return self.organization.name
+
+    def get_project_type(self):
+        return self.type.name
+
 
 class Site(models.Model):
     name = models.CharField(max_length=255)
@@ -195,3 +201,12 @@ class Site(models.Model):
         if staffs:
             return [role.user.id for role in staffs]
         return []
+
+    def get_organization_name(self):
+        return self.project.organization.name
+
+    def get_project_name(self):
+        return self.project.name
+
+    def get_site_type(self):
+        return self.type.name

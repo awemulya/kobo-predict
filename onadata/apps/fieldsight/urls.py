@@ -2,6 +2,8 @@ from django.conf.urls import url
 from rest_framework import routers
 
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
+from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectViewSet
+from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet
 from .forms import RegistrationForm
 
 from .views import (
@@ -30,6 +32,9 @@ from .views import (
 router = routers.SimpleRouter()
 router.register(r'api/organization-type', OrganizationTypeViewSet)
 router.register(r'api/organization', OrganizationViewSet)
+router.register(r'api/project-type', ProjectTypeViewSet)
+router.register(r'api/project', ProjectViewSet)
+router.register(r'api/site', SiteViewSet)
 
 urlpatterns = [
     # group_required('superuser')(OrgView.as_view())

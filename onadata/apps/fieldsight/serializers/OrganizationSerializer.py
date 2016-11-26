@@ -11,7 +11,7 @@ class OrganizationTypeSerializer(serializers.ModelSerializer):
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
-    organization_type = serializers.CharField(source='get_organization_type', read_only=True)
+    type_label = serializers.CharField(source='get_organization_type', read_only=True)
 
     class Meta:
         model = Organization
