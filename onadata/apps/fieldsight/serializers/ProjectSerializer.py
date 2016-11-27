@@ -11,8 +11,8 @@ class ProjectTypeSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    type_label = serializers.CharField(source='get_project_type', read_only=True)
-    organization_label = serializers.CharField(source='get_organization_name', read_only=True)
+    type_label = serializers.ReadOnlyField(source='type.name', read_only=True)
+    organization_label = serializers.ReadOnlyField(source='organization.name', read_only=True)
 
     class Meta:
         model = Project
