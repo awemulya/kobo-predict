@@ -7,5 +7,6 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FormGroup
-        fields = ('id', 'name', 'description', 'stage')
+        fields = ('id', 'name', 'description', 'creator')
+        read_only_fields = ('creator',)
 

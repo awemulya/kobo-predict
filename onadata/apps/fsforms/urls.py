@@ -1,9 +1,10 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from rest_framework import routers
 
 from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXFormListApi
 from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSubmissionApi
 from onadata.apps.fsforms.viewsets.GroupsViewset import GroupViewSet
+from onadata.apps.fsforms.viewsets.StageViewset import StageViewSet
 from .views import (
         LibraryFormsListView,
         FormsListView,
@@ -27,12 +28,14 @@ from .views import (
         html_export, instance, show, api, download_jsonform, delete_data, data_view)
 
 # router = MultiLookupRouter(trailing_slash=False)
-router = routers.SimpleRouter()
+router = routers.DefaultRouter()
 router.register(r'api/groups', GroupViewSet)
+router.register(r'api/stage', StageViewSet)
 
 
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
+        # url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
         url(r'^assigned/$', FormsListView.as_view(), name='forms-list'),
         # assigned form list to a user(site supervisor)
         url(r'^assigned-form-list/$', AssignedFormsListView.as_view(), name='assigned-form-list'),
