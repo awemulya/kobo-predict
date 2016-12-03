@@ -116,3 +116,9 @@ class FSXFormListSerializer(serializers.ModelSerializer):
 
         return reverse('forms:manifest-url', kwargs=kwargs, request=request)
 
+
+class FSXFormSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FieldSightXF
+        exclude = ('date_created', 'date_modified')

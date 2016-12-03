@@ -1,6 +1,7 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 
+from onadata.apps.fsforms.viewsets.FieldSightXformViewset import FieldSightXFormViewSet
 from onadata.apps.fsforms.viewsets.ScheduleViewset import ScheduleViewset
 from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXFormListApi
 from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSubmissionApi
@@ -35,6 +36,7 @@ router = routers.DefaultRouter()
 router.register(r'api/groups', GroupViewSet)
 router.register(r'api/stage', StageViewSet)
 router.register(r'api/schedule', ScheduleViewset)
+router.register(r'api/fsxform', FieldSightXFormViewSet)
 
 
 urlpatterns = [
