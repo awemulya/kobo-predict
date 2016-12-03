@@ -5,10 +5,9 @@ from onadata.apps.fsforms.serializers.GroupSerializer import GroupSerializer
 
 
 class StageSerializer(serializers.ModelSerializer):
-
-    group = GroupSerializer()
+    main_stage = serializers.ReadOnlyField(source='stage.name', read_only=True)
 
     class Meta:
         model = Stage
-        exclude = ()
+        fields = ('name', 'description', 'id', 'stage', 'main_stage', 'order')
 

@@ -4,7 +4,6 @@ from rest_framework import routers
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectViewSet
 from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet
-from onadata.apps.fsforms.viewsets.GroupsViewset import GroupViewSet
 from .forms import RegistrationForm
 
 from .views import (

@@ -8,5 +8,5 @@ class StageViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing Form Groups.
     """
-    queryset = Stage.objects.all()
+    queryset = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=False)
     serializer_class = StageSerializer

@@ -1,10 +1,13 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 
+from onadata.apps.fsforms.viewsets.ScheduleViewset import ScheduleViewset
 from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXFormListApi
 from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSubmissionApi
 from onadata.apps.fsforms.viewsets.GroupsViewset import GroupViewSet
+from onadata.apps.fsforms.viewsets.SiteFormsViewset import SiteFormViewSet
 from onadata.apps.fsforms.viewsets.StageViewset import StageViewSet
+from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
 from .views import (
         LibraryFormsListView,
         FormsListView,
@@ -31,6 +34,7 @@ from .views import (
 router = routers.DefaultRouter()
 router.register(r'api/groups', GroupViewSet)
 router.register(r'api/stage', StageViewSet)
+router.register(r'api/schedule', ScheduleViewset)
 
 
 urlpatterns = [
@@ -104,6 +108,13 @@ urlpatterns = urlpatterns + [
             # kobo main urls viewer vies
 
     url(r'^data-view/(?P<fsxf_id>\d+)$',  data_view,  name='data_view'),
+
+]
+urlpatterns = urlpatterns + [
+            # urls for api
+
+    url(r'^api/site/(?P<site_id>\d+)$', SiteFormViewSet.as_view({'get': 'list'}), name='form-list'),
+    url(r'^api/xform$', XFormViewSet.as_view({'get': 'list'}), name='xform-list'),
 
 ]
 

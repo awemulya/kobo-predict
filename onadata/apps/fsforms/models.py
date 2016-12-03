@@ -125,6 +125,8 @@ class Schedule(models.Model):
         return getattr(self, "name", "")
 
 
+
+
 class FieldSightXF(models.Model):
     xf = models.ForeignKey(XForm, related_name="field_sight_form")
     site = models.ForeignKey(Site, related_name="site_forms", null=True, blank=True)
