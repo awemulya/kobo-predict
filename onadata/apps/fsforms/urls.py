@@ -2,12 +2,12 @@ from django.conf.urls import url, include
 from rest_framework import routers
 
 from onadata.apps.fsforms.viewsets.FieldSightXformViewset import FieldSightXFormViewSet
-from onadata.apps.fsforms.viewsets.ScheduleViewset import ScheduleViewset
+from onadata.apps.fsforms.viewsets.ScheduleViewset import ScheduleViewset, DayViewset
 from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXFormListApi
 from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSubmissionApi
 from onadata.apps.fsforms.viewsets.GroupsViewset import GroupViewSet
 from onadata.apps.fsforms.viewsets.SiteFormsViewset import SiteFormViewSet
-from onadata.apps.fsforms.viewsets.StageViewset import StageViewSet
+from onadata.apps.fsforms.viewsets.StageViewset import StageViewSet, MainStageViewSet
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
 from .views import (
         LibraryFormsListView,
@@ -35,7 +35,9 @@ from .views import (
 router = routers.DefaultRouter()
 router.register(r'api/groups', GroupViewSet)
 router.register(r'api/stage', StageViewSet)
+router.register(r'api/main-stages', MainStageViewSet)
 router.register(r'api/schedule', ScheduleViewset)
+router.register(r'api/day', DayViewset)
 router.register(r'api/fsxform', FieldSightXFormViewSet)
 
 

@@ -11,7 +11,7 @@ from onadata.apps.fsforms.serializers.FieldSightXformManifestSerializer import F
 
 class AssignedXFormListApi(XFormListApi):
     serializer_class = FSXFormListSerializer
-    queryset = FieldSightXF.objects.filter(xf__downloadable=True)
+    queryset = FieldSightXF.objects.all()
     template_name = 'fsforms/assignedFormList.xml'
 
     def filter_queryset(self, queryset):
@@ -28,8 +28,7 @@ class AssignedXFormListApi(XFormListApi):
                     raise serializers.ValidationError({'site': "Site Id Not Given."})
                 else:
                     return super(AssignedXFormListApi, self).filter_queryset(queryset)
-
-                return super(AssignedXFormListApi, self).filter_queryset(queryset)
+            return super(AssignedXFormListApi, self).filter_queryset(queryset)
         site_id = int(site_id)
         queryset = queryset.filter(site__id=site_id)
         return queryset

@@ -101,7 +101,6 @@ class Schedule(models.Model):
     date_range_start = models.DateField(default=datetime.date.today)
     date_range_end = models.DateField(default=datetime.date.today)
     selected_days = models.ManyToManyField(Days,related_name='days')
-    group = models.ForeignKey(FormGroup, related_name="schedule")
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -205,3 +204,14 @@ class FieldsightInstance(models.Model):
         verbose_name_plural = _("FSInstances")
         ordering = ("-fsxform",)
 
+
+#
+# class FieldSightParsedInstance(ParsedInstance):
+#     class Meta:
+#         proxy = True
+#
+#     @classmethod
+#     def query_mongo(cls, **kwargs):
+#         get necessary argument from kwargs
+#         cursor = super().query_mongo(**)
+#         cursor.
