@@ -166,12 +166,12 @@ class FieldSightXF(models.Model):
         if self.is_staged:
             if FieldSightXF.objects.filter(xf=self.xf, site=self.site, stage=self.stage).exists():
                 raise ValidationError({
-                    'site': ValidationError(_('Same Form On This Stage Found for This Site')),
+                    'stage': ValidationError(_('Same Form On This Stage Found for This Site')),
                 })
         if self.is_scheduled:
-            if FieldSightXF.objects.filter(xf=self.xf, site=self.site, schdule=self.schedule).exists():
+            if FieldSightXF.objects.filter(xf=self.xf, site=self.site, schedule=self.schedule).exists():
                 raise ValidationError({
-                    'site': ValidationError(_('Same Form On This Schedule Found for This Site')),
+                    'schedule': ValidationError(_('Same Form On This Schedule Found for This Site')),
                 })
 
     @staticmethod

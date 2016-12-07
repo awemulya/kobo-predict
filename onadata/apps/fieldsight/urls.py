@@ -43,7 +43,7 @@ urlpatterns = [
     url(r'^accounts/create/$', CreateUserView.as_view(
         form_class=RegistrationForm), name='user-create'),
 
-    url(r'^organization/$', OrganizationListView.as_view(), name='organization-list'),
+    url(r'^organization/$', OrganizationListView.as_view(), name='organizations-list'),
     url(r'^organization/add/$', OrganizationCreateView.as_view(), name='organization-add'),
     url(r'^organization/(?P<pk>[0-9]+)/$', OrganizationUpdateView.as_view(), name='organization-edit'),
     # url(r'^organization/search/$', organization_search, name='search-org'),
@@ -51,7 +51,7 @@ urlpatterns = [
     url(r'^organization/alter-status/(?P<pk>\d+)/$', alter_org_status, name='alter_org_status'),
     url(r'^organization/add-org-admin/(?P<pk>\d+)/$', add_org_admin, name='add_org_admin'),
 
-    url(r'^project/$', ProjectListView.as_view(), name='project-list'),
+    url(r'^project/$', ProjectListView.as_view(), name='projects-list'),
     url(r'^project/add/$', ProjectCreateView.as_view(), name='project-add'),
     url(r'^project/(?P<pk>[0-9]+)/$', ProjectUpdateView.as_view(), name='project-edit'),
     # url(r'^organization/search/$', organization_search, name='search-org'),
@@ -60,7 +60,7 @@ urlpatterns = [
     url(r'^project/add-proj-admin/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
 
 
-    url(r'^site/$', SiteListView.as_view(), name='site-list'),
+    url(r'^site/$', SiteListView.as_view(), name='sites-list'),
     url(r'^site/add/$', SiteCreateView.as_view(), name='site-add'),
     url(r'^site/(?P<pk>[0-9]+)/$', SiteUpdateView.as_view(), name='site-edit'),
     # url(r'^organization/search/$', organization_search, name='search-org'),

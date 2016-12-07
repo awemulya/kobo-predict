@@ -27,19 +27,19 @@ def dashboard(request):
 
 class OrganizationView(object):
     model = Organization
-    success_url = reverse_lazy('fieldsight:organization-list')
+    success_url = reverse_lazy('fieldsight:organizations-list')
     form_class = OrganizationForm
 
 
 class ProjectView(OView):
     model = Project
-    success_url = reverse_lazy('fieldsight:project-list')
+    success_url = reverse_lazy('fieldsight:projects-list')
     form_class = ProjectForm
 
 
 class SiteView(PView):
     model = Site
-    success_url = reverse_lazy('fieldsight:site-list')
+    success_url = reverse_lazy('fieldsight:sites-list')
     form_class = SiteForm
 
 

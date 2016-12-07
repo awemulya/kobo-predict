@@ -52,14 +52,14 @@ urlpatterns = [
         url(r'^group/add/$', GroupCreateView.as_view(), name='group-add'),
         url(r'^group/(?P<pk>\d+)/$', GroupUpdateView.as_view(), name='group-edit'),
 
-        url(r'^stage/$', StageListView.as_view(), name='stage-list'),
+        url(r'^stage/$', StageListView.as_view(), name='stages-list'),
         url(r'^stage/add/$', StageCreateView.as_view(), name='stage-add'),
         url(r'^stage/(?P<pk>\d+)/$', StageUpdateView.as_view(), name='stage-edit'),
         url(r'^stage-add-sub-stage/(?P<pk>\d+)/$', add_sub_stage, name='stage-add-sub-stage'),
-        url(r'^stage-detail/(?P<pk>\d+)/$', stage_details, name='stage-detail'),
+        url(r'^stage-detail/(?P<pk>\d+)/$', stage_details, name='stages-detail'),
         url(r'^stage-add-form/(?P<pk>\d+)/$', stage_add_form, name='stage-add-form'),
 
-        url(r'^schedule/$', ScheduleListView.as_view(), name='schedule-list'),
+        url(r'^schedule/$', ScheduleListView.as_view(), name='schedules-list'),
         url(r'^schedule/add/$', ScheduleCreateView.as_view(), name='schedule-add'),
         url(r'^schedule/(?P<pk>\d+)/$', ScheduleUpdateView.as_view(), name='schedule-edit'),
         url(r'^schedule-add-form/(?P<pk>\d+)/$', schedule_add_form, name='schedule-add-form'),

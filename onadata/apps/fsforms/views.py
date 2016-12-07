@@ -13,6 +13,7 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo
+from onadata.apps.logger.models import XForm
 from onadata.libs.utils.user_auth import add_cors_headers
 from onadata.libs.utils.user_auth import helper_auth_helper
 from onadata.libs.utils.log import audit_log, Actions
@@ -32,14 +33,16 @@ class UniqueXformMixin(object):
 
 
 class FSFormView(object):
-    model = FieldSightXF
+    model = XForm
     success_url = reverse_lazy('forms:library-forms-list')
     form_class = FSFormForm
 
 
 class MyLibraryListView(ListView):
+    def get_template_names(self):
+        return ['fsforms/library_form_list.html']
     def get_queryset(self):
-        return FieldSightXF.objects.filter(stage__isnull= True)
+        return XForm.objects.all()
 
 
 class LibraryFormsListView(FSFormView, LoginRequiredMixin, MyLibraryListView):
@@ -78,7 +81,7 @@ class AssignedFormsListView(FormView, LoginRequiredMixin, SiteMixin, AssignedFor
 
 class StageView(object):
     model = Stage
-    success_url = reverse_lazy('forms:stage-list')
+    success_url = reverse_lazy('forms:stages-list')
     form_class = StageForm
 
 
@@ -153,7 +156,7 @@ def stage_add_form(request, pk=None):
 
 class ScheduleView(object):
     model = Schedule
-    success_url = reverse_lazy('forms:schedule-list')
+    success_url = reverse_lazy('forms:schedules-list')
     form_class = ScheduleForm
 
 
@@ -230,15 +233,16 @@ class GroupDeleteView(ScheduleView,LoginRequiredMixin, KoboFormsMixin, DeleteVie
 @login_required
 @group_required('KoboForms')
 def assign(request, pk=None):
-    field_sight_form = get_object_or_404(
-        FieldSightXF, pk=pk)
     if request.method == 'POST':
+        field_sight_form = get_object_or_404(
+        FieldSightXF, pk=pk)
         form = AssignSettingsForm(request.POST, instance=field_sight_form)
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.INFO, 'Form Assigned Successfully.')
             return HttpResponseRedirect(reverse("forms:fill_form_type", kwargs={'pk': form.instance.id}))
     else:
+        field_sight_form = FieldSightXF.objects.create(xf=XForm.objects.get(pk=int(pk)))
         form = AssignSettingsForm(instance=field_sight_form, project=request.project.id)
     return render(request, "fsforms/assign.html", {'form': form})
 
@@ -279,7 +283,7 @@ def fill_details_stage(request, pk=None):
         if form.is_valid():
             form.save()
             messages.info(request, 'Form Stage Saved.')
-            return HttpResponseRedirect(reverse("forms:stage-detail", kwargs={'pk': form.instance.stage.stage.id}))
+            return HttpResponseRedirect(reverse("forms:stages-detail", kwargs={'pk': form.instance.stage.stage.id}))
     else:
         form = FormStageDetailsForm(instance=field_sight_form)
     return render(request, "fsforms/form_details_stage.html", {'form': form})
@@ -295,7 +299,7 @@ def fill_details_schedule(request, pk=None):
         if form.is_valid():
             form.save()
             messages.info(request, 'Form Schedule Saved.')
-            return HttpResponseRedirect(reverse("forms:schedule-list"))
+            return HttpResponseRedirect(reverse("forms:schedules-list"))
     else:
         form = FormScheduleDetailsForm(instance=field_sight_form)
     return render(request, "fsforms/form_details_schedule.html", {'form': form})
