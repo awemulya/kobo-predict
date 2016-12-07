@@ -190,7 +190,7 @@ def schedule_add_form(request, pk=None):
             fsform.schedule = schedule
             fsform.save()
             messages.add_message(request, messages.INFO, 'Form Assigned Successfully.')
-            return HttpResponseRedirect(reverse("forms:schedule-list"))
+            return HttpResponseRedirect(reverse("forms:schedules-list"))
     else:
         form = AssignFormToScheduleForm()
     return render(request, "fsforms/schedule_add_form.html", {'form': form, 'obj': schedule})

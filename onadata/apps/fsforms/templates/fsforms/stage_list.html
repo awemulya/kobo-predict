@@ -49,7 +49,7 @@
 
                         <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add-sub-stage' obj.pk %}">
                             {% trans 'Add Sub Stage' %}</a>
-                        <a class="btn btn-success btn-raised" href="{% url 'forms:stage-detail' obj.pk %}">
+                        <a class="btn btn-success btn-raised" href="{% url 'forms:stages-detail' obj.pk %}">
                             {% trans 'List Sub Stages' %}({{obj.sub_stage_count}})</a>
                         {% endif %}
                     </td>

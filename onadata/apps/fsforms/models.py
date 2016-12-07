@@ -113,12 +113,8 @@ class Schedule(models.Model):
     def form_exists(self):
         return True if FieldSightXF.objects.filter(schedule=self).count() > 0 else False
 
-    def form_name(self):
-        return FieldSightXF.objects.get(schedule=self).xf.title
-
-    def site_name(self):
-        if FieldSightXF.objects.filter(schedule=self).exists():
-            return FieldSightXF.objects.get(schedule=self).site
+    def forms(self):
+        return FieldSightXF.objects.filter(schedule=self) if self.form_exists() else []
 
     def __unicode__(self):
         return getattr(self, "name", "")
@@ -157,10 +153,10 @@ class FieldSightXF(models.Model):
         if not self.is_scheduled and not self.is_staged: return "Normal"
 
     def stage_name(self):
-        if self.is_staged: return  self.stage
+        if self.stage: return self.stage.name
 
     def schedule_name(self):
-        if self.is_scheduled: return  self.schedule
+        if self.schedule: return self.schedule.name
 
     def clean(self):
         if self.is_staged:

@@ -21,7 +21,7 @@
 
 
         {% autosort object_list as sorted_objects %}
-        {% autopaginate object_list 5 as paginated_objects %}
+        {% autopaginate object_list 25 as paginated_objects %}
 
         <table class="table table-striped" id="dynamic-table1">
             <thead>
@@ -47,11 +47,21 @@
                         <td>{{obj.form_type}}</td>
 
                      <td>
+                         {% if obj.is_scheduled %}
+                         {{obj.schedule_name }}
+                         {% endif %}
+
+                         {% if obj.is_staged %}
                          {{obj.stage_name }}
+                         {% endif %}
                      </td>
                         <td>{{obj.form_type}}</td>
 
                      <td>
+                        <a class="btn btn-info btn-raised" href="{% url 'forms:formpack_html_export' obj.id %}">
+                             {% trans 'View Data' %}</a>
+                    </td>
+                    <td>
                         <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}/edit">
                              {% trans 'Edit Form Questions' %}</a>
                     </td>

@@ -22,7 +22,7 @@
 
 
         {% autosort object_list as sorted_objects %}
-        {% autopaginate object_list 5 as paginated_objects %}
+        {% autopaginate object_list 25 as paginated_objects %}
 
         <table class="table table-striped" id="dynamic-table1">
             <thead>
@@ -58,9 +58,11 @@
                         Assign Form
                         </a>
                             {% else %}
-                    form :{{obj.form_name}}
-                    Site: {{obj.site_name}}
-                        {% endif %}
+                          {% for form in obj.forms %}
+                            {{form.xf.title}}:
+                    {{form.site}},
+                          {% endfor %}
+                          {% endif %}
                     </td>
 
                 </tr>
