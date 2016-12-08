@@ -29,7 +29,7 @@ from .views import (
         fill_details_schedule,
         schedule_add_form,
         AssignedFormsListView,
-        html_export, instance, show, api, download_jsonform, delete_data, data_view)
+        html_export, instance, show, api, download_jsonform, delete_data, data_view, site_forms)
 
 # router = MultiLookupRouter(trailing_slash=False)
 router = routers.DefaultRouter()
@@ -118,6 +118,14 @@ urlpatterns = urlpatterns + [
             # urls for api
 
     url(r'^api/site/(?P<site_id>\d+)$', SiteFormViewSet.as_view({'get': 'list'}), name='form-list'),
+    url(r'^api/xform$', XFormViewSet.as_view({'get': 'list'}), name='xform-list'),
+
+]
+
+urlpatterns = urlpatterns + [
+            # urls for angular forms
+
+    url(r'^site-forms/(?P<site_id>\d+)$', site_forms, name='site-forms'),
     url(r'^api/xform$', XFormViewSet.as_view({'get': 'list'}), name='xform-list'),
 
 ]

@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
+from django.template.response import TemplateResponse
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
@@ -228,6 +229,12 @@ class GroupUpdateView(FormGroupView, LoginRequiredMixin, KoboFormsMixin, UpdateV
 class GroupDeleteView(ScheduleView,LoginRequiredMixin, KoboFormsMixin, DeleteView):
     pass
 
+
+
+@login_required
+@group_required('KoboForms')
+def site_forms(request, site_id=None):
+    return TemplateResponse(request, "fsforms/index.html")
 
 
 @login_required

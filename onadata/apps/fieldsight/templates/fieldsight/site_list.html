@@ -36,6 +36,9 @@
                         <a href="{% url 'fieldsight:site-edit' obj.pk %}">{{ obj.name }}</a>
                     </td>
                     <td>
+                        <a href="{% url 'forms:site-forms' obj.pk %}">{% trans 'Site Forms' %}</a>
+                    </td>
+                    <td>
                         {{ obj.address }}
                     </td>
                     <td>

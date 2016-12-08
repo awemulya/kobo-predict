@@ -79,7 +79,7 @@ def alter_org_status(request, pk):
         obj.save()
     except:
         messages.info(request, 'Organization {0} not found.'.format(obj.name))
-    return HttpResponseRedirect(reverse('fieldsight:organization-list'))
+    return HttpResponseRedirect(reverse('fieldsight:organizations-list'))
 
 
 @login_required
@@ -94,7 +94,7 @@ def add_org_admin(request, pk):
         role = UserRole(user_id=user, group=group, organization=obj)
         role.save()
         messages.add_message(request, messages.INFO, 'Organization Admin Added')
-        return HttpResponseRedirect(reverse('fieldsight:organization-list'))
+        return HttpResponseRedirect(reverse('fieldsight:organizations-list'))
     else:
         form = SetOrgAdminForm(instance=obj)
     return render(request, "fieldsight/add_admin.html", {'obj':obj,'form':form})
@@ -115,7 +115,7 @@ def alter_proj_status(request, pk):
         obj.save()
     except:
         messages.info(request, 'Project {0} not found.'.format(obj.name))
-    return HttpResponseRedirect(reverse('fieldsight:project-list'))
+    return HttpResponseRedirect(reverse('fieldsight:projects-list'))
 
 
 @login_required
@@ -130,7 +130,7 @@ def add_proj_manager(request, pk):
         role = UserRole(user_id=user,group=group,project=obj)
         role.save()
         messages.add_message(request, messages.INFO, 'Project Manager Added')
-        return HttpResponseRedirect(reverse('fieldsight:project-list'))
+        return HttpResponseRedirect(reverse('fieldsight:projects-list'))
     else:
         form = SetProjectManagerForm(instance=obj)
     return render(request, "fieldsight/add_project_manager.html", {'obj':obj,'form':form})
@@ -151,7 +151,7 @@ def alter_site_status(request, pk):
         obj.save()
     except:
         messages.info(request, 'Site {0} not found.'.format(obj.name))
-    return HttpResponseRedirect(reverse('fieldsight:site-list'))
+    return HttpResponseRedirect(reverse('fieldsight:sites-list'))
 
 
 @login_required
@@ -166,7 +166,7 @@ def add_supervisor(request, pk):
         role = UserRole(user_id=user,group=group,site=obj)
         role.save()
         messages.add_message(request, messages.INFO, 'Site Supervisor Added')
-        return HttpResponseRedirect(reverse('fieldsight:site-list'))
+        return HttpResponseRedirect(reverse('fieldsight:sites-list'))
     else:
         form = SetSupervisorForm(instance=obj)
     return render(request, "fieldsight/add_supervisor.html", {'obj':obj,'form':form})
@@ -184,7 +184,7 @@ def add_central_engineer(request, pk):
         role = UserRole(user_id=user,group=group,site=obj)
         role.save()
         messages.add_message(request, messages.INFO, 'Central Engineer')
-        return HttpResponseRedirect(reverse('fieldsight:site-list'))
+        return HttpResponseRedirect(reverse('fieldsight:sites-list'))
     else:
         form = SetCentralEngForm(instance=obj)
     return render(request, "fieldsight/add_central_engineer.html", {'obj':obj,'form':form})
