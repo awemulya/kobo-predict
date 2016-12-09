@@ -77,7 +77,7 @@ class FSXFormListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FieldSightXF
-        fields = ('id', 'site_name', 'is_staged', 'is_scheduled', 'downloadUrl', 'manifestUrl', 'name',
+        fields = ('id', 'site_name', 'site','is_staged', 'is_scheduled', 'downloadUrl', 'manifestUrl', 'name',
                   'descriptionText','formID', 'majorMinorVersion','version', 'hash')
 
     def get_version(self, obj):

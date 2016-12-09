@@ -1,4 +1,5 @@
 from bson import json_util
+from django.conf import settings
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -234,7 +235,7 @@ class GroupDeleteView(ScheduleView,LoginRequiredMixin, KoboFormsMixin, DeleteVie
 @login_required
 @group_required('KoboForms')
 def site_forms(request, site_id=None):
-    return TemplateResponse(request, "fsforms/index.html")
+    return render(request, "fsforms/index.html", {'STATIC_URL': settings.STATIC_URL})
 
 
 @login_required
