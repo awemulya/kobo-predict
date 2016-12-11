@@ -1,0 +1,16 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{{ scenario }} {% trans 'Site Forms' %}{% endblock %}
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a>
+{% endblock %}
+
+
+{% block content %}
+
+   <iframe src="http://localhost:3000/forms/site-forms/{{site_id}}" width="1000" height="1200">
+   Sorry your browser does not support inline frames.
+</iframe>
+
+{% endblock %}

@@ -235,7 +235,7 @@ class GroupDeleteView(ScheduleView,LoginRequiredMixin, KoboFormsMixin, DeleteVie
 @login_required
 @group_required('KoboForms')
 def site_forms(request, site_id=None):
-    return render(request, "fsforms/index.html", {'STATIC_URL': settings.STATIC_URL})
+    return render(request, "fsforms/site_forms_ng.html", {'site_id': site_id})
 
 
 @login_required
