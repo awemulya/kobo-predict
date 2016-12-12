@@ -400,7 +400,6 @@ def html_export(request, fsxf_id):
     context['data'] = make_table(data)
     context['fsxfid'] = fsxf_id
     # return JsonResponse({'data': cursor})
-
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
 
