@@ -73,7 +73,7 @@ class Organization(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('organization-detail', kwargs={'pk': self.pk})
+        return reverse('organizations-detail', kwargs={'pk': self.pk})
 
     @property
     def get_staffs(self):
@@ -147,6 +147,9 @@ class Project(models.Model):
     def get_project_type(self):
         return self.type.name
 
+    def get_absolute_url(self):
+        return reverse('projects-detail', kwargs={'pk': self.pk})
+
 
 class Site(models.Model):
     name = models.CharField(max_length=255)
@@ -210,3 +213,7 @@ class Site(models.Model):
 
     def get_site_type(self):
         return self.type.name
+
+    @property
+    def get_absolute_url(self):
+        return reverse('sites-detail', kwargs={'pk': self.pk})

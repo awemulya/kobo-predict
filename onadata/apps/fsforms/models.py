@@ -15,6 +15,7 @@ def save_to_fieldsight_form(sender, instance, **kwargs):
     FieldSightXF.objects.create(xf=instance)
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
+FORM_STATUS = [(0, 'Outstanding'), (1, 'Flagged'), (2, 'Approved'), (3, 'Rejected'), ]
 
 
 class IntegerRangeField(models.IntegerField):
@@ -130,6 +131,7 @@ class FieldSightXF(models.Model):
     schedule = models.ForeignKey(Schedule, blank=True, null=True)
     stage = models.ForeignKey(Stage, blank=True, null=True)
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
+    form_status = models.IntegerField(default=0, choices=FORM_STATUS)
 
     class Meta:
         db_table = 'fieldsight_forms_data'

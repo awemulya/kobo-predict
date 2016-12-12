@@ -7,8 +7,11 @@ from django.template.response import TemplateResponse
 from django.views.generic import ListView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
+from django.core.serializers import serialize
+
 from registration.backends.default.views import RegistrationView
 
+from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.userrole.models import UserRole
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
@@ -24,11 +27,31 @@ def dashboard(request):
     total_organizations = Organization.objects.all().count()
     total_projects = Project.objects.all().count()
     total_sites = Site.objects.all().count()
+    geojson = serialize('geojson', Site.objects.all(), geometry_field='location',
+                        fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
+    fs_forms = FieldSightXF.objects.all()
+    fs_forms = list(fs_forms)
+    outstanding = flagged = approved = rejected = 0
+    for form in fs_forms:
+        if form.form_status == 0:
+            outstanding += 1
+        elif form.form_status == 1:
+            flagged +=1
+        elif form.form_status == 2:
+            approved +=1
+        else:
+            rejected +=1
+
     dashboard_data = {
         'total_users': total_users,
         'total_organizations': total_organizations,
         'total_projects': total_projects,
         'total_sites': total_sites,
+        'outstanding': outstanding,
+        'flagged': flagged,
+        'approved': approved,
+        'rejected': rejected,
+        'geojson': geojson,
     }
     return TemplateResponse(request, "fieldsight/fieldsight_dashboard.html", dashboard_data)
 
