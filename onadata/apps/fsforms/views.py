@@ -595,7 +595,8 @@ def data_view(request, fsxf_id):
     data = {
         'fsxf_id': fsxf_id,
         'owner': xform.user,
-        'xform': xform
+        'xform': xform,
+        'obj': fsxform
     }
     audit = {
         "xform": xform.id_string,
