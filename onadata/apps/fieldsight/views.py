@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -9,8 +9,6 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from registration.backends.default.views import RegistrationView
 
-from onadata.apps.logger.models import XForm
-from onadata.apps.main.views import profile
 from onadata.apps.userrole.models import UserRole
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
@@ -22,7 +20,17 @@ from .forms import OrganizationForm, ProjectForm, SiteForm, RegistrationForm, Se
 
 @login_required
 def dashboard(request):
-    return TemplateResponse(request, "fieldsight/fieldsight_dashboard.html")
+    total_users = User.objects.all().count()
+    total_organizations = Organization.objects.all().count()
+    total_projects = Project.objects.all().count()
+    total_sites = Site.objects.all().count()
+    dashboard_data = {
+        'total_users': total_users,
+        'total_organizations': total_organizations,
+        'total_projects': total_projects,
+        'total_sites': total_sites,
+    }
+    return TemplateResponse(request, "fieldsight/fieldsight_dashboard.html", dashboard_data)
 
 
 class OrganizationView(object):
