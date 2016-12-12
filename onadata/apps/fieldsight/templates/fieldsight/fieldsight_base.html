@@ -485,22 +485,31 @@
                          </span>
                     </header>
                     <div class="panel-body">
-                    {% if messages %}
-                        <ul class="messages">
-                            {% for message in messages %}
-                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
+                        {% if messages %}
+                            <ul class="messages">
+                                {% for message in messages %}
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
 
-                    {% block content %}
-                        This is a sample page
+                        {% block content %}
+                            This is a sample page
                         {% endblock %}
                     </div>
                 </section>
             </div>
         </div>
         <!-- page end-->
+        <div class="total_all_total">
+          {% block total_users %}           
+          {% endblock %}
+        </div>
+
+        <div class="flagged_forms_all">
+          {% block all_flagged_forms %}              
+          {% endblock %}
+        </div>
         </section>
     </section>
 

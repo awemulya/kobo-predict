@@ -13,6 +13,10 @@
       <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5164.018017222397!2d85.33073639962697!3d27.686952704309643!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb19be3e889733%3A0x5459f808e47eeccd!2sSubarna+Marg%2C+Kathmandu+44600!5e1!3m2!1sen!2snp!4v1481515899165" width="100%" height="500" frameborder="0" style="border:0" allowfullscreen></iframe>
   </div>  
 </div>
+
+{% endblock %}
+
+{% block total_users %}
 <div class="row">
     <div class="col-md-3">
         <div class="mini-stat clearfix">
@@ -51,7 +55,48 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+
+{% block all_flagged_forms %}
+  <div class="row">
+
+    <div class="col-md-3">
+        <div class="mini-flagged-forms yellow-flagged">
+            <div class="mini-stat-info">
+                <span><!-- {{flagged_forms}} -->12</span>
+                Flagged forms
+            </div>        
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="mini-flagged-forms green-flagged">
+            <div class="mini-stat-info">
+                <span><!-- {{approved_froms}} -->13</span>
+                Approved froms
+            </div>        
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="mini-flagged-forms red-flagged">
+            <div class="mini-stat-info">
+                <span><!-- {{rejected_forms}} -->14</span>
+                Rejected forms
+            </div>        
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="mini-flagged-forms purple-flagged">
+            <div class="mini-stat-info">
+                <span><!-- {{outstanding_forms}} -->15</span>
+                outstanding forms
+            </div>        
+        </div>
+    </div>  
+
+
+  </div>
+{% endblock %}
 
 
 
@@ -61,4 +106,3 @@
 
 
 
-{% endblock %}
