@@ -46,10 +46,15 @@
                     </td>
                         <td>{{obj.form_type}}</td>
 
-                     <td>
-                         {{obj.stage_name }}
-                     </td>
-                        <td>{{obj.form_type}}</td>
+                 <td>
+                 {% if obj.is_staged %}
+                 {{obj.stage_name }}
+                 {% endif %}
+
+                 {% if obj.is_scheduled %}
+                 {{obj.schedule_name }}
+                 {% endif %}
+             </td>
 
                      <td>
                         <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}/edit">

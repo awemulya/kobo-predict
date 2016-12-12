@@ -399,6 +399,7 @@ def html_export(request, fsxf_id):
     context['labels'] = labels
     context['data'] = make_table(data)
     context['fsxfid'] = fsxf_id
+    context['obj'] = fsxf
     # return JsonResponse({'data': cursor})
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 

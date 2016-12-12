@@ -138,13 +138,11 @@ h1 {
 }
 
 </style>
-
     <link href="{{STATIC_URL}}css/kobo-branding.css" rel="stylesheet">
     <link href="{{STATIC_URL}}css/published_forms.css" rel="stylesheet">
     <link href="{{STATIC_URL}}css/data_pages.css" rel="stylesheet">
     <link href="{{STATIC_URL}}css/vex.css" rel="stylesheet">
     <link href="{{STATIC_URL}}css/vex-theme-kobo.css" rel="stylesheet">
-
     <link href="{{STATIC_URL}}lightbox2/dist/css/lightbox.css" rel="stylesheet">
     <link href="{{STATIC_URL}}css/footable.css" rel="stylesheet">
 <link href="{{STATIC_URL}}lightbox2/dist/css/lightbox.css" rel="stylesheet">
@@ -159,49 +157,89 @@ h1 {
   </div>
 </div>
 
-<form action="{% url 'forms:formpack_html_export' fsxfid %}?page={{page}}"
-      method="get" accept-charset="utf-8">
+    <table class="table table-striped" id="dynamic-table1">
+            <thead>
+            <th>Name</th>
+            <th>Site</th>
+            <th>Created Date</th>
+            <th>Form Type</th>
+            <th>Stage/Schedule</th>
+            <th colspan="2">Actions</th>
+            </thead>
+<tr>
+            <td>
+                <a href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}">{{ obj.xf.title }}</a>
+            </td>
+            <td>
+                <a href="{% url 'fieldsight:site-edit' obj.site.id %}">{{ obj.site }}</a>
+            </td>
+            <td>
+                {{ obj.date_created }}
+            </td>
+                <td>{{obj.form_type}}</td>
 
-  <div class="formpack_html_export__options">
+             <td>
+                 {% if obj.is_staged %}
+                 {{obj.stage_name }}
+                 {% endif %}
 
-    <span class="select select--lang">
-      <label for="lang">{% trans "Value and header format" %}</label>
-      <select name="lang" autocomplete="off">
-        <option value="xml">
-            {% trans "XML values and headers" %}
-        </option>
+                 {% if obj.is_scheduled %}
+                 {{obj.schedule_name }}
+                 {% endif %}
+             </td>
 
-        {% for lang in languages %}
+             <td>
+                <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}/edit">
+                     {% trans 'Edit Form Questions' %}</a>
+            </td>
+            <!--if form is scheduled add link to fill schedule data or stage data or choose stage o schedule data-->
+                    </tr>
+        </table>
 
-            {% if lang == "_default" %}
-              <option value="_default" 
-                      {% if headers_lang == lang %}selected{% endif %}
-              >
-                  {% trans "Labels" %}
-              </option>
-            {% else %}
-              <option value="{{ lang }}"
-                      {% if headers_lang == lang %}selected{% endif %}
-              >
-                  {% trans lang %}
-              </option>
-            {% endif %}
 
-         {% endfor %}
-      </select>
-    </span>
+<!--<form action="{% url 'forms:formpack_html_export' fsxfid %}?page={{page}}"-->
+      <!--method="get" accept-charset="utf-8">-->
 
-    <span class="select select--group">
-      <label for="showgroup">{% trans "Include groups in headers" %}</label>
-      <input type="checkbox" name="hierarchy_in_labels" {% if hierarchy_in_labels %}checked{% endif %} />
-      <label for="groupsep">{% trans "Group separator" %}</label>
-      <input type="input" name="group_sep" value="{{ group_sep }}" />
-    </span>
+  <!--<div class="formpack_html_export__options">-->
 
-    <button>{% trans "Update Table" %}</button>
-  </div>
+    <!--<span class="select select&#45;&#45;lang">-->
+      <!--<label for="lang">{% trans "Value and header format" %}</label>-->
+      <!--<select name="lang" autocomplete="off">-->
+        <!--<option value="xml">-->
+            <!--{% trans "XML values and headers" %}-->
+        <!--</option>-->
 
-</form>
+        <!--{% for lang in languages %}-->
+
+            <!--{% if lang == "_default" %}-->
+              <!--<option value="_default"-->
+                      <!--{% if headers_lang == lang %}selected{% endif %}-->
+              <!--&gt;-->
+                  <!--{% trans "Labels" %}-->
+              <!--</option>-->
+            <!--{% else %}-->
+              <!--<option value="{{ lang }}"-->
+                      <!--{% if headers_lang == lang %}selected{% endif %}-->
+              <!--&gt;-->
+                  <!--{% trans lang %}-->
+              <!--</option>-->
+            <!--{% endif %}-->
+
+         <!--{% endfor %}-->
+      <!--</select>-->
+    <!--</span>-->
+
+    <!--<span class="select select&#45;&#45;group">-->
+      <!--<label for="showgroup">{% trans "Include groups in headers" %}</label>-->
+      <!--<input type="checkbox" name="hierarchy_in_labels" {% if hierarchy_in_labels %}checked{% endif %} />-->
+      <!--<label for="groupsep">{% trans "Group separator" %}</label>-->
+      <!--<input type="input" name="group_sep" value="{{ group_sep }}" />-->
+    <!--</span>-->
+
+    <!--<button>{% trans "Update Table" %}</button>-->
+  <!--</div>-->
+
+<!--</form>-->
 
 <table>
 
