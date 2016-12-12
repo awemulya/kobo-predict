@@ -27,7 +27,7 @@ def dashboard(request):
     total_organizations = Organization.objects.all().count()
     total_projects = Project.objects.all().count()
     total_sites = Site.objects.all().count()
-    geojson = serialize('geojson', Site.objects.all(), geometry_field='location',
+    data = serialize('geojson', Site.objects.all(), geometry_field='location',
                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
     fs_forms = FieldSightXF.objects.all()
     fs_forms = list(fs_forms)
@@ -51,7 +51,7 @@ def dashboard(request):
         'flagged': flagged,
         'approved': approved,
         'rejected': rejected,
-        'geojson': geojson,
+        'data': data,
     }
     return TemplateResponse(request, "fieldsight/fieldsight_dashboard.html", dashboard_data)
 

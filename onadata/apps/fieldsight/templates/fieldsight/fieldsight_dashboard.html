@@ -131,7 +131,8 @@
     console.log("inside ready");    
     });
     var static_url ="{{ STATIC_URL }}";
-    
+    var data = {{ data|safe}};
+
     </script>
     <script type="text/javascript">
     
@@ -180,7 +181,7 @@
         
         
         
-        geoJsonLayer = new L.geoJson(geojson, {
+        geoJsonLayer = new L.geoJson(data, {
             pointToLayer: function(feature, latlng) {
                 icon = L.icon({
                                 //iconSize: [27, 27],
