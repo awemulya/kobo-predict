@@ -28,7 +28,7 @@ from .views import (
     add_supervisor,
     add_central_engineer,
     CreateUserView,
-    UserListView)
+    UserListView, project_dashboard)
 
 router = routers.SimpleRouter()
 router.register(r'api/organization-type', OrganizationTypeViewSet)
@@ -48,6 +48,7 @@ urlpatterns = [
     url(r'^organization/add/$', OrganizationCreateView.as_view(), name='organization-add'),
     url(r'^organization/(?P<pk>[0-9]+)/$', OrganizationUpdateView.as_view(), name='organization-edit'),
     url(r'^organization-dashboard/(?P<pk>[0-9]+)/$', organization_dashboard, name='organization-dashboard'),
+    url(r'^project-dashboard/(?P<pk>[0-9]+)/$', project_dashboard, name='organization-dashboard'),
     # url(r'^organization/search/$', organization_search, name='search-org'),
     url(r'^organization/delete/(?P<pk>\d+)/$', OrganizationDeleteView.as_view(), name='organization-delete'),
     url(r'^organization/alter-status/(?P<pk>\d+)/$', alter_org_status, name='alter_org_status'),
