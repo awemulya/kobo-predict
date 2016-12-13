@@ -399,8 +399,8 @@ def html_export(request, fsxf_id):
     context['labels'] = labels
     context['data'] = make_table(data)
     context['fsxfid'] = fsxf_id
+    context['obj'] = fsxf
     # return JsonResponse({'data': cursor})
-
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
 
@@ -595,7 +595,8 @@ def data_view(request, fsxf_id):
     data = {
         'fsxf_id': fsxf_id,
         'owner': xform.user,
-        'xform': xform
+        'xform': xform,
+        'obj': fsxform
     }
     audit = {
         "xform": xform.id_string,

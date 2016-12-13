@@ -56,6 +56,43 @@ def dashboard(request):
     return TemplateResponse(request, "fieldsight/fieldsight_dashboard.html", dashboard_data)
 
 
+@login_required
+def organization_dashboard(request, pk):
+    obj = Organization.objects.get(pk=pk)
+    peoples_involved = UserRole.objects.filter(organization=obj)
+    sites = Site.objects.filter(project__organization=obj)
+    data = serialize('geojson', sites, geometry_field='location',
+                        fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
+
+    total_projects = Project.objects.filter(organization=obj).count()
+    total_sites = len(sites)
+    fs_forms = FieldSightXF.objects.filter(site__project__organization=obj.id)
+    fs_forms = list(fs_forms)
+    outstanding = flagged = approved = rejected = 0
+    for form in fs_forms:
+        if form.form_status == 0:
+            outstanding += 1
+        elif form.form_status == 1:
+            flagged +=1
+        elif form.form_status == 2:
+            approved +=1
+        else:
+            rejected +=1
+
+    dashboard_data = {
+        'obj': obj,
+        'peoples_involved': peoples_involved,
+        'total_projects': total_projects,
+        'total_sites': total_sites,
+        'outstanding': outstanding,
+        'flagged': flagged,
+        'approved': approved,
+        'rejected': rejected,
+        'data': data,
+    }
+    return TemplateResponse(request, "fieldsight/organization_dashboard.html", dashboard_data)
+
+
 class OrganizationView(object):
     model = Organization
     success_url = reverse_lazy('fieldsight:organizations-list')

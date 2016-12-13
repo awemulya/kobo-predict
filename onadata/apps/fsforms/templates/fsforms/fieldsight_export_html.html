@@ -1,10 +1,11 @@
-{% extends 'base.html' %}
-{% load i18n %}
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block page-title %}{% trans 'Form Data' %}{% endblock %}
 
-<div>
-{% block content %}
 
-<style type="text/css" media="screen">
+{%block extracss %}
+    <style type="text/css" media="screen">
 
 html, body {
   height:100%;
@@ -137,56 +138,106 @@ h1 {
 }
 
 </style>
+    <!--<link href="{{STATIC_URL}}css/kobo-branding.css" rel="stylesheet">-->
+    <!--<link href="{{STATIC_URL}}css/published_forms.css" rel="stylesheet">-->
+    <!--<link href="{{STATIC_URL}}css/data_pages.css" rel="stylesheet">-->
+    <!--<link href="{{STATIC_URL}}css/vex.css" rel="stylesheet">-->
+    <!--<link href="{{STATIC_URL}}css/vex-theme-kobo.css" rel="stylesheet">-->
+    <!--<link href="{{STATIC_URL}}lightbox2/dist/css/lightbox.css" rel="stylesheet">-->
+<!--<link href="{{STATIC_URL}}css/footable.css" rel="stylesheet">-->
+{% endblock %}
+
+{% block content %}
+
 
 <div class="sub-header-bar">
   <div>
   </div>
 </div>
+<div class="col-sm-12"> Form Details</div>
+    <table class="table table-striped" id="dynamic-table1">
+            <thead>
+            <th>Name</th>
+            <th>Site</th>
+            <th>Created Date</th>
+            <th>Form Type</th>
+            <th>Stage/Schedule</th>
+            <th colspan="2">Actions</th>
+            </thead>
+<tr>
+            <td>
+                <a href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}">{{ obj.xf.title }}</a>
+            </td>
+            <td>
+                <a href="{% url 'fieldsight:site-edit' obj.site.id %}">{{ obj.site }}</a>
+            </td>
+            <td>
+                {{ obj.date_created }}
+            </td>
+                <td>{{obj.form_type}}</td>
 
-<form action="{% url 'forms:formpack_html_export' fsxfid %}?page={{page}}"
-      method="get" accept-charset="utf-8">
+             <td>
+                 {% if obj.is_staged %}
+                 {{obj.stage_name }}
+                 {% endif %}
 
-  <div class="formpack_html_export__options">
+                 {% if obj.is_scheduled %}
+                 {{obj.schedule_name }}
+                 {% endif %}
+             </td>
 
-    <span class="select select--lang">
-      <label for="lang">{% trans "Value and header format" %}</label>
-      <select name="lang" autocomplete="off">
-        <option value="xml">
-            {% trans "XML values and headers" %}
-        </option>
+             <td>
+                <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}/edit">
+                     {% trans 'Edit Form Questions' %}</a>
+            </td>
+            <!--if form is scheduled add link to fill schedule data or stage data or choose stage o schedule data-->
+                    </tr>
+        </table>
 
-        {% for lang in languages %}
 
-            {% if lang == "_default" %}
-              <option value="_default" 
-                      {% if headers_lang == lang %}selected{% endif %}
-              >
-                  {% trans "Labels" %}
-              </option>
-            {% else %}
-              <option value="{{ lang }}"
-                      {% if headers_lang == lang %}selected{% endif %}
-              >
-                  {% trans lang %}
-              </option>
-            {% endif %}
+<!--<form action="{% url 'forms:formpack_html_export' fsxfid %}?page={{page}}"-->
+      <!--method="get" accept-charset="utf-8">-->
 
-         {% endfor %}
-      </select>
-    </span>
+  <!--<div class="formpack_html_export__options">-->
 
-    <span class="select select--group">
-      <label for="showgroup">{% trans "Include groups in headers" %}</label>
-      <input type="checkbox" name="hierarchy_in_labels" {% if hierarchy_in_labels %}checked{% endif %} />
-      <label for="groupsep">{% trans "Group separator" %}</label>
-      <input type="input" name="group_sep" value="{{ group_sep }}" />
-    </span>
+    <!--<span class="select select&#45;&#45;lang">-->
+      <!--<label for="lang">{% trans "Value and header format" %}</label>-->
+      <!--<select name="lang" autocomplete="off">-->
+        <!--<option value="xml">-->
+            <!--{% trans "XML values and headers" %}-->
+        <!--</option>-->
 
-    <button>{% trans "Update Table" %}</button>
-  </div>
+        <!--{% for lang in languages %}-->
 
-</form>
+            <!--{% if lang == "_default" %}-->
+              <!--<option value="_default"-->
+                      <!--{% if headers_lang == lang %}selected{% endif %}-->
+              <!--&gt;-->
+                  <!--{% trans "Labels" %}-->
+              <!--</option>-->
+            <!--{% else %}-->
+              <!--<option value="{{ lang }}"-->
+                      <!--{% if headers_lang == lang %}selected{% endif %}-->
+              <!--&gt;-->
+                  <!--{% trans lang %}-->
+              <!--</option>-->
+            <!--{% endif %}-->
 
+         <!--{% endfor %}-->
+      <!--</select>-->
+    <!--</span>-->
+
+    <!--<span class="select select&#45;&#45;group">-->
+      <!--<label for="showgroup">{% trans "Include groups in headers" %}</label>-->
+      <!--<input type="checkbox" name="hierarchy_in_labels" {% if hierarchy_in_labels %}checked{% endif %} />-->
+      <!--<label for="groupsep">{% trans "Group separator" %}</label>-->
+      <!--<input type="input" name="group_sep" value="{{ group_sep }}" />-->
+    <!--</span>-->
+
+    <!--<button>{% trans "Update Table" %}</button>-->
+  <!--</div>-->
+
+<!--</form>-->
 <table>
 
     <thead>
@@ -226,4 +277,22 @@ h1 {
 </div>
 
 {% endblock %}
-</div>
+
+
+{%block extrascript %}
+
+  <script type="text/javascript" src="{% url "django.views.i18n.javascript_catalog" %}"></script>
+    <script src="{{STATIC_URL}}js/jquery.min.js"></script>
+    <script src="{{STATIC_URL}}js/jquery-migrate.min.js"></script>
+    <script src="{{STATIC_URL}}js/jquery.tablesorter.min.js"></script>
+    <script src="{{STATIC_URL}}bootstrap/js/bootstrap.js"></script>
+    <script src="{{STATIC_URL}}bootstrap/js/bootstrapx-clickover.js"></script>
+    <script src="{{STATIC_URL}}bootstrap/js/bootstrapx-clickover-btns.js"></script>
+    <script src="{{STATIC_URL}}js/application.js?v=201307251039"></script>
+    <script src="{{STATIC_URL}}js/vex.combined.min.js"></script>
+    <script>vex.defaultOptions.className = 'vex-theme-kobo';</script>
+    <script src="{{STATIC_URL}}js/footable.min.js"></script>
+    <!--  -->
+    <script src="{{STATIC_URL}}js/kobo-branding.js"></script>
+    <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
+{% endblock %}
