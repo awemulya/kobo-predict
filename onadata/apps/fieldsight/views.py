@@ -64,7 +64,8 @@ def organization_dashboard(request, pk):
     data = serialize('geojson', sites, geometry_field='location',
                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
 
-    total_projects = Project.objects.filter(organization=obj).count()
+    projects = Project.objects.filter(organization=obj)
+    total_projects = len(projects)
     total_sites = len(sites)
     fs_forms = FieldSightXF.objects.filter(site__project__organization=obj.id)
     fs_forms = list(fs_forms)
@@ -81,6 +82,8 @@ def organization_dashboard(request, pk):
 
     dashboard_data = {
         'obj': obj,
+        'projects': projects,
+        'sites': sites,
         'peoples_involved': peoples_involved,
         'total_projects': total_projects,
         'total_sites': total_sites,
