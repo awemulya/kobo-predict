@@ -102,12 +102,6 @@ class OrganizationView(object):
     form_class = OrganizationForm
 
 
-class ProjectView(OView):
-    model = Project
-    success_url = reverse_lazy('fieldsight:projects-list')
-    form_class = ProjectForm
-
-
 class SiteView(PView):
     model = Site
     success_url = reverse_lazy('fieldsight:sites-list')
@@ -261,7 +255,13 @@ def add_central_engineer(request, pk):
     return render(request, "fieldsight/add_central_engineer.html", {'obj':obj,'form':form})
 
 
-class ProjectListView(ProjectView, LoginRequiredMixin, OrganizationMixin, ListView):
+class ProjectView(OView):
+    model = Project
+    success_url = reverse_lazy('fieldsight:projects-list')
+    form_class = ProjectForm
+
+
+class ProjectListView(ProjectView, OrganizationMixin, ListView):
     pass
 
 

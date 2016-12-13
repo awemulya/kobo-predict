@@ -137,10 +137,11 @@ class ProjectForm(forms.ModelForm):
         if not self.fields['location'].initial:
             self.fields['location'].initial = Point(85.3240, 27.7172,srid=4326)
         self.fields['type'].empty_label = None
+        self.fields['organization'].empty_label = None
 
     class Meta:
         model = Project
-        exclude = ['organization']
+        exclude = []
 
 
 class SiteForm(forms.ModelForm):

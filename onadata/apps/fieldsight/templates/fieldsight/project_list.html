@@ -2,8 +2,11 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Projects Under ' %}{{request.organization}}{% endblock %}
-
+{% block page-title %}
+{% if request.organization %}
+{% trans 'Projects Under ' %}{{request.organization}}
+{% endif %}
+{% endblock %}
 {% block head %}
     <a class="btn btn-success btn-raised" href="{% url 'fieldsight:project-add' %}">{% trans 'New' %} {% trans 'Project' %}</a>
 {% endblock %}
@@ -22,6 +25,7 @@
         <table class="table table-striped">
             <thead>
             <th>{% anchor name _('Name') %}</th>
+            <th>{% anchor organization _('Organization') %}</th>
             <th>{% anchor address _('Address') %}</th>
             <th>{% anchor phone _('Phone') %}</th>
             <th>{% anchor email _('Email') %}</th>
@@ -35,6 +39,9 @@
                 <tr>
                     <td>
                         <a href="{% url 'fieldsight:project-edit' obj.pk %}">{{ obj.name }}</a>
+                    </td>
+                    <td>
+                        {{ obj.organization }}
                     </td>
                     <td>
                         {{ obj.address }}

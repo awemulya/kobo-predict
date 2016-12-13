@@ -148,17 +148,22 @@ class TableObject(object):
         return context
 
 
-class OrganizationView(OrganizationRequiredMixin):
+class OrganizationView(LoginRequiredMixin):
     def form_valid(self, form):
-        form.instance.organization = self.request.organization
+        if self.request.organization:
+            form.instance.organization = self.request.organization
         return super(OrganizationView, self).form_valid(form)
 
     def get_queryset(self):
-        return super(OrganizationView, self).get_queryset().filter(organization=self.request.organization)
+        if self.request.organization:
+            return super(OrganizationView, self).get_queryset().filter(organization=self.request.organization)
+        else:
+            return super(OrganizationView, self).get_queryset()
 
     def get_form(self, *args, **kwargs):
         form = super(OrganizationView, self).get_form(*args, **kwargs)
-        form.organization = self.request.organization
+        if self.request.organization:
+            form.organization = self.request.organization
         if hasattr(form.Meta, 'organization_filters'):
             for field in form.Meta.organization_filters:
                 form.fields[field].queryset = form.fields[field].queryset.filter(organization=form.organization)
@@ -205,7 +210,7 @@ USURPERS = {
     'Site': ['Central Engineer', 'Site Supervisor', 'Data Entry'],
     'KoboForms': ['Project Manager', 'Central Engineer'],
     'Project': ['Project Manager'],
-    'Organization': ['Organization Admin'],
+    'Organization': ['Organization Admin', 'Super Admin'],
     'admin': ['Super Admin'],
 }
 
