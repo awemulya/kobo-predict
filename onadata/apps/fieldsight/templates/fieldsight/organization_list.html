@@ -83,14 +83,14 @@
         {% autopaginate object_list 25 as paginated_objects %}
         {% for obj in paginated_objects %}
         <div class="organization-list">
-            <a href="{% url 'fieldsight:organization-edit' obj.pk %}">
+            <a href="{% url 'fieldsight:organization-dashboard' obj.pk %}">
                 <div class="org-grg">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="org-logo">
                             <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />
                         </div>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-10">
                         <div class="abt-org">
                             <h3>{{ obj.name }}</h3>
                             <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
