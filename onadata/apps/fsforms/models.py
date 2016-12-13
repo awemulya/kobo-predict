@@ -12,7 +12,8 @@ from onadata.apps.logger.models import XForm, Instance
 
 @receiver(post_save, sender=XForm)
 def save_to_fieldsight_form(sender, instance, **kwargs):
-    FieldSightXF.objects.create(xf=instance)
+    if not FieldSightXF.objects.filter(xf=instance).exists():
+        FieldSightXF.objects.create(xf=instance)
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
 FORM_STATUS = [(0, 'Outstanding'), (1, 'Flagged'), (2, 'Approved'), (3, 'Rejected'), ]
