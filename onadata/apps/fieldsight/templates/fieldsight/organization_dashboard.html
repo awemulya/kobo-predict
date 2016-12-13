@@ -69,8 +69,8 @@
 			  </div>
 			  <div id="org-list-proj" class="tab-pane fade">
 			     <div class="org-site-list">
-
-                    <a href="#">
+                    {% for obj in projects %}
+                    <a href="{% url 'fieldsight:project-edit' obj.pk %}">
                         <div class="org-site">
                             <div class="col-md-2">
                                 <div class="image-org">
@@ -79,7 +79,7 @@
                             </div>    
                             <div class="col-md-10">
                                 <div class="detail-org">
-                                    <h3 class="site-title-org">South Point Boarding High School</h3>
+                                    <h3 class="site-title-org">{{obj.name}}</h3>
                                     <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
                                     <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
                                 </div>
@@ -87,13 +87,14 @@
                             <div class="clearfixx"></div>    
                         </div>
                     </a>
+                    {% endfor %}
 
                  </div>  
 			  </div>
               <div id="org-list-site" class="tab-pane fade">
                  <div class="org-site-list">
-
-                    <a href="#">
+                    {% for obj in sites %}
+                    <a href="{% url 'fieldsight:site-edit' obj.pk %}">
                         <div class="org-site">
                             <div class="col-md-2">
                                 <div class="image-org">
@@ -102,7 +103,7 @@
                             </div>    
                             <div class="col-md-10">
                                 <div class="detail-org">
-                                    <h3 class="site-title-org">South Point Boarding High School</h3>
+                                    <h3 class="site-title-org">{{obj.name}}</h3>
                                     <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
                                     <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
                                 </div>
@@ -110,7 +111,7 @@
                             <div class="clearfixx"></div>    
                         </div>
                     </a>
-
+                    {% endfor %}
                  </div>  
               </div>
 			  <div id="org-people" class="tab-pane fade">
@@ -121,7 +122,7 @@
                  </div>
                  <div class="org-site-list">
                  
-
+                    {% for role in peoples_involved %}
 
                     <a href="#">
                         <div class="org-site">
@@ -132,21 +133,20 @@
                             </div>    
                             <div class="col-md-10">
                                 <div class="detail-org">
-                                    <h3 class="pople-Name-org">South Point Boarding High School</h3>
-                                    <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
-                                    <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
+                                    <h3 class="pople-Name-org">{{role.user.email}}</h3>
+                                    <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ role.user.username }}</p>
+                                    <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ role.group.name }}</p>
                                 </div>
                             </div>
                             <div class="clearfixx"></div>    
                         </div>
                     </a>
-
+                    {% endfor %}
                  </div>    
 			  </div>
 			  <div id="org-about" class="tab-pane fade">
 			     <div class="about-organization">
-                  <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                  It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>      
+                  <p>{{obj.public_desc}}</p>      
                  </div>  
 			  </div>
 			</div>
