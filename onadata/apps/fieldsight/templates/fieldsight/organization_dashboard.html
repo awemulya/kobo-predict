@@ -1,0 +1,145 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Organizations' %}{% endblock %}
+
+
+
+{% block content %}
+
+    
+    
+	
+
+	<div class="organization-detail-page">
+
+        
+        <div class="organization-short-detail">
+            <a href="{% url 'fieldsight:organization-edit' obj.pk %}"></a>
+                <div class="org-grg">
+                    <div class="col-md-3">
+                        <div class="org-logo">
+                            <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="abt-org">
+                            <h3>{{ obj.name }}</h3>
+                            <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
+                            <p class="country"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.get_country_display }}</p>
+                            <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
+                            <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
+                            <p class="website"><span></span>{{ obj.website }}</p>
+							<p class="short-detail">{{ obj.description }}</p>
+                        </div>
+                    </div>
+                    <div class="clearfixx"></div>
+                </div>
+            
+        </div>
+        <div class="organization-long-detail">
+        	<ul class="nav nav-tabs">
+			  <li class="active"><a data-toggle="tab" href="#org-map">Map View</a></li>
+			  <li><a data-toggle="tab" href="#org-list">List View</a></li>
+			  <li><a data-toggle="tab" href="#org-people">People Involved</a></li>
+			  <li><a data-toggle="tab" href="#org-about">About Organization</a></li>
+			</ul>
+
+			<div class="tab-content">
+			  <div id="org-map" class="tab-pane fade in active">
+			    
+			  </div>
+			  <div id="org-list" class="tab-pane fade">
+			    
+			  </div>
+			  <div id="org-people" class="tab-pane fade">
+			    
+			    
+			  </div>
+			  <div id="org-about" class="tab-pane fade">
+			    
+			  </div>
+			</div>
+        </div>
+        
+        
+
+    </div>
+
+{% endblock %}    
+
+
+{% block total_users %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="mini-stat clearfix">
+            <span class="mini-stat-icon orange"><i class="fa fa-users"></i></span>
+            <div class="mini-stat-info">
+                <span>{{total_users}}</span>
+                Total Users
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="mini-stat clearfix">
+            <span class="mini-stat-icon pink"><i class="fa fa-building-o"></i></span>
+            <div class="mini-stat-info">
+                <span>{{total_projects}}</span>
+                Total Projects
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="mini-stat clearfix">
+            <span class="mini-stat-icon green"><i class="fa fa-picture-o"></i></span>
+            <div class="mini-stat-info">
+                <span>{{total_sites}}</span>
+                Total Sites
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block all_flagged_forms %}
+ <div class="row">
+
+    <div class="col-md-3">
+        <div class="mini-flagged-forms yellow-flagged">
+            <div class="mini-stat-info">
+                <span>{{flagged}}</span>
+                Flagged forms
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="mini-flagged-forms green-flagged">
+            <div class="mini-stat-info">
+                <span>{{approved}}</span>
+                Approved froms
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="mini-flagged-forms red-flagged">
+            <div class="mini-stat-info">
+                <span>{{rejected}}</span>
+                Rejected forms
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="mini-flagged-forms purple-flagged">
+            <div class="mini-stat-info">
+                <span>{{outstanding}}</span>
+                outstanding forms
+            </div>        
+        </div>
+    </div>  
+
+
+  </div>
+{% endblock %}
