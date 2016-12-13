@@ -62,7 +62,7 @@ def organization_dashboard(request, pk):
     peoples_involved = UserRole.objects.filter(organization=obj).distinct('user')
     sites = Site.objects.filter(project__organization=obj)
     data = serialize('geojson', sites, geometry_field='location',
-                        fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
+                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
 
     projects = Project.objects.filter(organization=obj)
     total_projects = len(projects)

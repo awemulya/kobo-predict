@@ -291,19 +291,13 @@
         map.addLayer(osm);
         layerswitcher = L.control.layers(baseLayers, {}, {collapsed: true}).addTo(map);
         var markers = L.markerClusterGroup();
-        
-        
-        var geojson = {"type": "FeatureCollection", "crs": {"type": "name", "properties": {"name": "EPSG:4326"}}, "features": [{"geometry": {"type": "Point", "coordinates": [85.324, 27.7172]}, "type": "Feature", "properties": {"public_desc": "boarding", "name": "SChulla chulla bes", "address": "ktm"}}, {"geometry": {"type": "Point", "coordinates": [85.324, 27.7172]}, "type": "Feature", "properties": {"public_desc": "Hospital for public", "name": "Helping Hand", "address": "chabahel"}}, {"geometry": {"type": "Point", "coordinates": [85.324, 27.7172]}, "type": "Feature", "properties": {"public_desc": "naxa", "name": "Naxa site", "address": "nagpokhari"}}, {"geometry": {"type": "Point", "coordinates": [85.324, 27.7172]}, "type": "Feature", "properties": {"public_desc": "park", "name": "Park site", "address": "fasdf"}}, {"geometry": {"type": "Point", "coordinates": [85.324, 27.7172]}, "type": "Feature", "properties": {"public_desc": "fieldsight", "name": "fieldsight sight", "address": "kathmandu"}}]};
-        
-        
-        
         geoJsonLayer = new L.geoJson(data, {
             pointToLayer: function(feature, latlng) {
                 icon = L.icon({
                                 //iconSize: [27, 27],
                                 iconAnchor: [13, 27],
                                 popupAnchor:  [1, -24],
-                                iconUrl: './css/images/marker-icon.png'
+                                iconUrl: static_url+'css/images/marker-icon.png'
                                 });
                 //console.log(icon.options);
                 var marker = L.marker(latlng, {icon: icon});
