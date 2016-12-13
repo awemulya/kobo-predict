@@ -170,17 +170,24 @@ class OrganizationView(LoginRequiredMixin):
         return form
 
 
-class ProjectView(ProjectRequiredMixin):
+class ProjectView(LoginRequiredMixin):
     def form_valid(self, form):
-        form.instance.project = self.request.project
+        if self.request.project:
+            form.instance.project = self.request.project
         return super(ProjectView, self).form_valid(form)
 
     def get_queryset(self):
-        return super(ProjectView, self).get_queryset().filter(project=self.request.project)
+        if self.request.project:
+            return super(ProjectView, self).get_queryset().filter(project=self.request.project)
+        elif self.request.organization:
+            return super(ProjectView, self).get_queryset().filter(project__organization=self.request.organization)
+        else:
+            return super(ProjectView, self).get_queryset()
 
     def get_form(self, *args, **kwargs):
         form = super(ProjectView, self).get_form(*args, **kwargs)
-        form.project = self.request.project
+        if self.request.project:
+            form.project = self.request.project
         if hasattr(form.Meta, 'project_filters'):
             for field in form.Meta.project_filters:
                 form.fields[field].queryset = form.fields[field].queryset.filter(project=form.project)
@@ -208,8 +215,8 @@ class SiteView(SiteRequiredMixin):
 USURPERS = {
     # central engineer to project , same on roles.
     'Site': ['Central Engineer', 'Site Supervisor', 'Data Entry'],
-    'KoboForms': ['Project Manager', 'Central Engineer'],
-    'Project': ['Project Manager'],
+    'KoboForms': ['Project Manager', 'Central Engineer', 'Organization Admin', 'Super Admin'],
+    'Project': ['Project Manager', 'Organization Admin', 'Super Admin'],
     'Organization': ['Organization Admin', 'Super Admin'],
     'admin': ['Super Admin'],
 }

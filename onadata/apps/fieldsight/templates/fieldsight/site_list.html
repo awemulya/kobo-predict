@@ -18,62 +18,83 @@
 
         {% autosort object_list as sorted_objects %}
         {% autopaginate object_list 25 as paginated_objects %}
+         {% for obj in paginated_objects %}
+        <!--<table class="table table-striped" id="dynamic-table1">-->
+            <!--<thead>-->
+            <!--<th>{% anchor name _('Name') %}</th>-->
+            <!--<th>{% anchor address _('Address') %}</th>-->
+            <!--<th>{% anchor phone _('Phone') %}</th>-->
+            <!--<th>{% trans 'Location' %}</th>-->
+            <!--<th>{% trans 'Central Engineer' %}</th>-->
+            <!--<th>{% trans 'Site Supervisor' %}</th>-->
+            <!--<th colspan="2">{% anchor is_active _('Status') %}</th>-->
+            <!--</thead>-->
+            <!--<tbody>-->
+            <!--{% for obj in paginated_objects %}-->
+                <!--<tr>-->
+                    <!--<td>-->
+                        <!--<a href="{% url 'fieldsight:site-edit' obj.pk %}">{{ obj.name }}</a>-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--<a href="{% url 'forms:site-forms' obj.pk %}">{% trans 'Site Forms' %}</a>-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.address }}-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.phone }}-->
+                    <!--</td>-->
+                    <!--<td>-->
+                     <!--{% trans 'Lat' %} :  {{ obj.location.y }},-->
+                       <!--{% trans 'Long' %}: {{ obj.location.x }}-->
+                    <!--</td>-->
 
-        <table class="table table-striped" id="dynamic-table1">
-            <thead>
-            <th>{% anchor name _('Name') %}</th>
-            <th>{% anchor address _('Address') %}</th>
-            <th>{% anchor phone _('Phone') %}</th>
-            <th>{% trans 'Location' %}</th>
-            <th>{% trans 'Central Engineer' %}</th>
-            <th>{% trans 'Site Supervisor' %}</th>
-            <th colspan="2">{% anchor is_active _('Status') %}</th>
-            </thead>
-            <tbody>
-            {% for obj in paginated_objects %}
-                <tr>
-                    <td>
-                        <a href="{% url 'fieldsight:site-edit' obj.pk %}">{{ obj.name }}</a>
-                    </td>
-                    <td>
-                        <a href="{% url 'forms:site-forms' obj.pk %}">{% trans 'Site Forms' %}</a>
-                    </td>
-                    <td>
-                        {{ obj.address }}
-                    </td>
-                    <td>
-                        {{ obj.phone }}
-                    </td>
-                    <td>
-                     {% trans 'Lat' %} :  {{ obj.location.y }},
-                       {% trans 'Long' %}: {{ obj.location.x }}
-                    </td>
+                     <!--<td>-->
+                        <!--{{ obj.get_central_eng }}<a class="fa fa-plus" title="Add Central Engineer"-->
+                                               <!--href="{% url 'fieldsight:add_central_engineer' pk=obj.id %}"></a>-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.get_supervisors }}<a class="fa fa-plus" title="Add Site Supervisor"-->
+                                               <!--href="{% url 'fieldsight:add_supervisor' pk=obj.id %}"></a>-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.is_active|activeness }}-->
+                    <!--</td>-->
+                     <!--<td>-->
+                        <!--<a class="btn btn-success btn-raised" href="{% url 'fieldsight:alter_site_status' pk=obj.id %}">-->
+                            <!--&lt;!&ndash;later with js framework ko in some and angular in some&ndash;&gt;-->
+                            <!--{{ obj.is_active|alter_status }} {% trans 'Site' %}</a>-->
+                    <!--</td>-->
+                <!--</tr>-->
+            <!--{% endfor %}-->
+            <!--</tbody>-->
+        <!--</table>-->
+         <div class="organization-list">
+            <!--<a href="{% url 'fieldsight:organization-dashboard' obj.pk %}">-->
+              <a href="{% url 'forms:site-forms' obj.pk %}">
+                <div class="org-grg">
+                    <div class="col-md-2">
+                        <div class="org-logo">
+                            <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="abt-org">
+                            <h3>{{ obj.name }}</h3>
+                            <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
+                            <p class="country"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.get_country_display }}</p>
+                            <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
+                            <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
+                            <p class="website"><span></span>{{ obj.website }}</p>
 
-                     <td>
-                        {{ obj.get_central_eng }}<a class="fa fa-plus" title="Add Central Engineer"
-                                               href="{% url 'fieldsight:add_central_engineer' pk=obj.id %}"></a>
-                    </td>
-                    <td>
-                        {{ obj.get_supervisors }}<a class="fa fa-plus" title="Add Site Supervisor"
-                                               href="{% url 'fieldsight:add_supervisor' pk=obj.id %}"></a>
-                    </td>
-                    <td>
-                        {{ obj.is_active|activeness }}
-                    </td>
-                     <td>
-                        <a class="btn btn-success btn-raised" href="{% url 'fieldsight:alter_site_status' pk=obj.id %}">
-                            <!--later with js framework ko in some and angular in some-->
-                            {{ obj.is_active|alter_status }} {% trans 'Site' %}</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
+                        </div>
+                    </div>
+                    <div class="clearfixx"></div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
         {% paginate %}
 
     </div>
-
-
-
 {% endblock %}

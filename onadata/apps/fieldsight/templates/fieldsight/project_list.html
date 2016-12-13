@@ -22,59 +22,83 @@
         {% autosort object_list as sorted_objects %}
         {% autopaginate object_list 25 as paginated_objects %}
 
-        <table class="table table-striped">
-            <thead>
-            <th>{% anchor name _('Name') %}</th>
-            <th>{% anchor organization _('Organization') %}</th>
-            <th>{% anchor address _('Address') %}</th>
-            <th>{% anchor phone _('Phone') %}</th>
-            <th>{% anchor email _('Email') %}</th>
-            <th>{% anchor fax _('Fax') %}</th>
-            <th>{% anchor website _('Website') %}</th>
-            <th>{% trans 'Projects Managers ' %}</th>
-            <th>{% anchor is_active _('Status') %}</th>
-            </thead>
-            <tbody>
-            {% for obj in paginated_objects %}
-                <tr>
-                    <td>
-                        <a href="{% url 'fieldsight:project-edit' obj.pk %}">{{ obj.name }}</a>
-                    </td>
-                    <td>
-                        {{ obj.organization }}
-                    </td>
-                    <td>
-                        {{ obj.address }}
-                    </td>
-                    <td>
-                        {{ obj.phone }}
-                    </td>
-                    <td>
-                        {{ obj.email }}
-                    </td>
-                    <td>
-                        {{ obj.fax }}
-                    </td>
-                    <td>
-                        {{ obj.website }}
-                    </td>
-                    <td>
-                        {{ obj.get_staffs }}<a class="fa fa-plus" title="Add Project Manager"
-                                               href="{% url 'fieldsight:add_proj_manager' pk=obj.id %}"></a>
-                    </td>
-                    <td>
-                        {{ obj.is_active|activeness }}
-                    </td>
-                     <td>
-                        <a class="btn btn-success btn-raised" href="{% url 'fieldsight:alter_proj_status' pk=obj.id %}">
-                            <!--later with js framework ko in some and angular in some-->
-                            {{ obj.is_active|alter_status }} {% trans 'Project' %}</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        <!--<table class="table table-striped">-->
+            <!--<thead>-->
+            <!--<th>{% anchor name _('Name') %}</th>-->
+            <!--<th>{% anchor organization _('Organization') %}</th>-->
+            <!--<th>{% anchor address _('Address') %}</th>-->
+            <!--<th>{% anchor phone _('Phone') %}</th>-->
+            <!--<th>{% anchor email _('Email') %}</th>-->
+            <!--<th>{% anchor fax _('Fax') %}</th>-->
+            <!--<th>{% anchor website _('Website') %}</th>-->
+            <!--<th>{% trans 'Projects Managers ' %}</th>-->
+            <!--<th>{% anchor is_active _('Status') %}</th>-->
+            <!--</thead>-->
+            <!--<tbody>-->
+            <!--{% for obj in paginated_objects %}-->
+                <!--<tr>-->
+                    <!--<td>-->
+                        <!--<a href="{% url 'fieldsight:project-edit' obj.pk %}">{{ obj.name }}</a>-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.organization }}-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.address }}-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.phone }}-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.email }}-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.fax }}-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.website }}-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.get_staffs }}<a class="fa fa-plus" title="Add Project Manager"-->
+                                               <!--href="{% url 'fieldsight:add_proj_manager' pk=obj.id %}"></a>-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.is_active|activeness }}-->
+                    <!--</td>-->
+                     <!--<td>-->
+                        <!--<a class="btn btn-success btn-raised" href="{% url 'fieldsight:alter_proj_status' pk=obj.id %}">-->
+                            <!--&lt;!&ndash;later with js framework ko in some and angular in some&ndash;&gt;-->
+                            <!--{{ obj.is_active|alter_status }} {% trans 'Project' %}</a>-->
+                    <!--</td>-->
+                <!--</tr>-->
+            <!--{% endfor %}-->
+            <!--</tbody>-->
+        <!--</table>-->
+                {% for obj in paginated_objects %}
+                <div class="organization-list">
+            <a href="{% url 'fieldsight:project-dashboard' obj.pk %}">
+                <div class="org-grg">
+                    <div class="col-md-2">
+                        <div class="org-logo">
+                            <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="abt-org">
+                            <h3>{{ obj.name }}</h3>
+                            <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
+                            <p class="country"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.get_country_display }}</p>
+                            <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
+                            <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
+                            <p class="website"><span></span>{{ obj.website }}</p>
 
+                        </div>
+                    </div>
+                    <div class="clearfixx"></div>
+                </div>
+            </a>
+        </div>
+              {% endfor %}
         {% paginate %}
 
     </div>

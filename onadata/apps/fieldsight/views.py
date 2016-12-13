@@ -102,12 +102,6 @@ class OrganizationView(object):
     form_class = OrganizationForm
 
 
-class SiteView(PView):
-    model = Site
-    success_url = reverse_lazy('fieldsight:sites-list')
-    form_class = SiteForm
-
-
 class UserDetailView(object):
     model = ExtraUserDetail
     success_url = reverse_lazy('fieldsight:user-list')
@@ -275,6 +269,12 @@ class ProjectUpdateView(ProjectView, LoginRequiredMixin, OrganizationMixin, Upda
 
 class ProjectDeleteView(ProjectView, LoginRequiredMixin, OrganizationMixin, DeleteView):
     pass
+
+
+class SiteView(PView):
+    model = Site
+    success_url = reverse_lazy('fieldsight:sites-list')
+    form_class = SiteForm
 
 
 class SiteListView(SiteView, LoginRequiredMixin, ProjectMixin, ListView):
