@@ -59,7 +59,7 @@ def dashboard(request):
 @login_required
 def organization_dashboard(request, pk):
     obj = Organization.objects.get(pk=pk)
-    peoples_involved = UserRole.objects.filter(organization=obj)
+    peoples_involved = UserRole.objects.filter(organization=obj).distinct('user')
     sites = Site.objects.filter(project__organization=obj)
     data = serialize('geojson', sites, geometry_field='location',
                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
