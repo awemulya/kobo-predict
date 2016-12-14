@@ -4,16 +4,16 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.logger.models import XForm, Instance
 
-@receiver(post_save, sender=XForm)
-def save_to_fieldsight_form(sender, instance, **kwargs):
-    if not FieldSightXF.objects.filter(xf=instance).exists():
-        FieldSightXF.objects.create(xf=instance)
+# @receiver(post_save, sender=XForm)
+# def save_to_fieldsight_form(sender, instance, **kwargs):
+#     pass
+#     if not FieldSightXF.objects.filter(xf=instance).exists():
+#         FieldSightXF.objects.create(xf=instance)
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
 FORM_STATUS = [(0, 'Outstanding'), (1, 'Flagged'), (2, 'Approved'), (3, 'Rejected'), ]
@@ -188,7 +188,7 @@ class FieldSightXF(models.Model):
     def __unicode__(self):
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
 
-post_save.connect(save_to_fieldsight_form, sender=XForm)
+# post_save.connect(save_to_fieldsight_form, sender=XForm)
 
 
 class FieldsightInstance(models.Model):
