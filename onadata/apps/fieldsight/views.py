@@ -130,6 +130,37 @@ def project_dashboard(request, pk):
     }
     return TemplateResponse(request, "fieldsight/project_dashboard.html", dashboard_data)
 
+@login_required
+def site_dashboard(request, pk):
+    obj = Site.objects.get(pk=pk)
+    peoples_involved = UserRole.objects.filter(site=obj).distinct('user')
+    data = serialize('geojson', [obj], geometry_field='location',
+                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
+
+    fs_forms = FieldSightXF.objects.filter(site=obj)
+    fs_forms = list(fs_forms)
+    outstanding = flagged = approved = rejected = 0
+    for form in fs_forms:
+        if form.form_status == 0:
+            outstanding += 1
+        elif form.form_status == 1:
+            flagged +=1
+        elif form.form_status == 2:
+            approved +=1
+        else:
+            rejected +=1
+
+    dashboard_data = {
+        'obj': obj,
+        'peoples_involved': peoples_involved,
+        'outstanding': outstanding,
+        'flagged': flagged,
+        'approved': approved,
+        'rejected': rejected,
+        'data': data,
+    }
+    return TemplateResponse(request, "fieldsight/site_dashboard.html", dashboard_data)
+
 
 class OrganizationView(object):
     model = Organization

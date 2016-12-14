@@ -2,7 +2,7 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Project' %}{% endblock %}
+{% block page-title %}{% trans 'Site Dashboard' %}{% endblock %}
 {%block extracss %}
 
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:organization-edit' obj.pk %}">{% trans 'Edit' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:site-edit' obj.pk %}">{% trans 'Edit' %}</a>
 {% endblock %}
 {% block content %}
 
@@ -38,6 +38,11 @@
                             <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
                             <p class="website"><span></span>{{ obj.website }}</p>
 							<p class="short-detail">{{ obj.description }}</p>
+                            <div class="progress progress-striped active progress-sm">
+                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+                                    <span class="sr-only">45% Complete</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="clearfixx"></div>
@@ -47,13 +52,14 @@
         <div class="organization-long-detail">
         	<ul class="nav nav-tabs">
 			  <li class="active"><a data-toggle="tab" href="#org-map">Map View</a></li>
+              <li><a data-toggle="tab" href="#org-list-proj">List of Projects</a></li>
 			  <li><a data-toggle="tab" href="#org-list-site">List of Sites</a></li>
 			  <li><a data-toggle="tab" href="#org-people">People Involved</a></li>
-			  <li><a data-toggle="tab" href="#org-about">About project</a></li>
+			  <li><a data-toggle="tab" href="#org-about">About Organization</a></li>
 			</ul>
 
 			<div class="tab-content">
-			  <div id="org-map" class="tactivab-pane fade in e">
+			  <div id="org-map" class="tab-pane fade in active">
 			     <div class="map-container-fieldsight">
                     <div id="map"></div>
                     <div class="popop-container">
@@ -172,6 +178,15 @@
 
     <div class="col-md-4">
         <div class="mini-stat clearfix">
+            <span class="mini-stat-icon pink"><i class="fa fa-building-o"></i></span>
+            <div class="mini-stat-info">
+                <span>{{total_projects}}</span>
+                Total Projects
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="mini-stat clearfix">
             <span class="mini-stat-icon green"><i class="fa fa-picture-o"></i></span>
             <div class="mini-stat-info">
                 <span>{{total_sites}}</span>
@@ -281,13 +296,19 @@
         map.addLayer(osm);
         layerswitcher = L.control.layers(baseLayers, {}, {collapsed: true}).addTo(map);
         var markers = L.markerClusterGroup();
+
+
+        var geojson = {"type": "FeatureCollection", "crs": {"type": "name", "properties": {"name": "EPSG:4326"}}, "features": [{"geometry": {"type": "Point", "coordinates": [85.324, 27.7172]}, "type": "Feature", "properties": {"public_desc": "boarding", "name": "SChulla chulla bes", "address": "ktm"}}, {"geometry": {"type": "Point", "coordinates": [85.324, 27.7172]}, "type": "Feature", "properties": {"public_desc": "Hospital for public", "name": "Helping Hand", "address": "chabahel"}}, {"geometry": {"type": "Point", "coordinates": [85.324, 27.7172]}, "type": "Feature", "properties": {"public_desc": "naxa", "name": "Naxa site", "address": "nagpokhari"}}, {"geometry": {"type": "Point", "coordinates": [85.324, 27.7172]}, "type": "Feature", "properties": {"public_desc": "park", "name": "Park site", "address": "fasdf"}}, {"geometry": {"type": "Point", "coordinates": [85.324, 27.7172]}, "type": "Feature", "properties": {"public_desc": "fieldsight", "name": "fieldsight sight", "address": "kathmandu"}}]};
+
+
+
         geoJsonLayer = new L.geoJson(data, {
             pointToLayer: function(feature, latlng) {
                 icon = L.icon({
                                 //iconSize: [27, 27],
                                 iconAnchor: [13, 27],
                                 popupAnchor:  [1, -24],
-                                iconUrl: static_url+'css/images/marker-icon.png'
+                                iconUrl: './css/images/marker-icon.png'
                                 });
                 //console.log(icon.options);
                 var marker = L.marker(latlng, {icon: icon});

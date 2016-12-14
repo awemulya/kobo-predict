@@ -18,17 +18,19 @@ from .views import (
     ProjectCreateView,
     ProjectUpdateView,
     ProjectDeleteView,
+    project_dashboard,
     alter_proj_status,
     add_proj_manager,
     SiteListView,
     SiteCreateView,
     SiteUpdateView,
     SiteDeleteView,
+    site_dashboard,
     alter_site_status,
     add_supervisor,
     add_central_engineer,
     CreateUserView,
-    UserListView, project_dashboard)
+    UserListView)
 
 router = routers.SimpleRouter()
 router.register(r'api/organization-type', OrganizationTypeViewSet)
@@ -36,6 +38,7 @@ router.register(r'api/organization', OrganizationViewSet)
 router.register(r'api/project-type', ProjectTypeViewSet)
 router.register(r'api/project', ProjectViewSet)
 router.register(r'api/site', SiteViewSet)
+
 
 urlpatterns = [
     # group_required('superuser')(OrgView.as_view())
@@ -48,7 +51,6 @@ urlpatterns = [
     url(r'^organization/add/$', OrganizationCreateView.as_view(), name='organization-add'),
     url(r'^organization/(?P<pk>[0-9]+)/$', OrganizationUpdateView.as_view(), name='organization-edit'),
     url(r'^organization-dashboard/(?P<pk>[0-9]+)/$', organization_dashboard, name='organization-dashboard'),
-    url(r'^project-dashboard/(?P<pk>[0-9]+)/$', project_dashboard, name='project-dashboard'),
     # url(r'^organization/search/$', organization_search, name='search-org'),
     url(r'^organization/delete/(?P<pk>\d+)/$', OrganizationDeleteView.as_view(), name='organization-delete'),
     url(r'^organization/alter-status/(?P<pk>\d+)/$', alter_org_status, name='alter_org_status'),
@@ -57,6 +59,9 @@ urlpatterns = [
     url(r'^project/$', ProjectListView.as_view(), name='projects-list'),
     url(r'^project/add/$', ProjectCreateView.as_view(), name='project-add'),
     url(r'^project/(?P<pk>[0-9]+)/$', ProjectUpdateView.as_view(), name='project-edit'),
+    url(r'^project-dashboard/(?P<pk>[0-9]+)/$', project_dashboard, name='project-dashboard'),
+
+
     # url(r'^organization/search/$', organization_search, name='search-org'),
     url(r'^project/delete/(?P<pk>\d+)/$', ProjectDeleteView.as_view(), name='project-delete'),
     url(r'^project/alter-status/(?P<pk>\d+)/$', alter_proj_status, name='alter_proj_status'),
@@ -66,6 +71,7 @@ urlpatterns = [
     url(r'^site/$', SiteListView.as_view(), name='sites-list'),
     url(r'^site/add/$', SiteCreateView.as_view(), name='site-add'),
     url(r'^site/(?P<pk>[0-9]+)/$', SiteUpdateView.as_view(), name='site-edit'),
+    url(r'^site-dashboard/(?P<pk>[0-9]+)/$', site_dashboard, name='site-dashboard'),
     # url(r'^organization/search/$', organization_search, name='search-org'),
     url(r'^site/delete/(?P<pk>\d+)/$', SiteDeleteView.as_view(), name='site-delete'),
     url(r'^site/alter-status/(?P<pk>\d+)/$', alter_site_status, name='alter_site_status'),
@@ -77,5 +83,4 @@ urlpatterns = [
     url(r'^userlist/$', UserListView.as_view(), name='user-list'),
     # kobo form
 ]
-
 urlpatterns += router.urls
