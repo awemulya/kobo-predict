@@ -121,4 +121,4 @@ class FSXFormSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FieldSightXF
-        exclude = ('date_created', 'date_modified')
+        exclude = ('date_created', 'date_modified', 'form_status')
