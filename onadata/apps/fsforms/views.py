@@ -127,7 +127,7 @@ def add_sub_stage(request, pk=None):
             child_stage.group = stage.group
             child_stage.save()
             messages.info(request, 'Sub Stage {} Saved.'.format(child_stage.name))
-            return HttpResponseRedirect(reverse("forms:stage-detail", kwargs={'pk': stage.id}))
+            return HttpResponseRedirect(reverse("forms:stages-detail", kwargs={'pk': stage.id}))
     else:
         form = AddSubSTageForm()
     return render(request, "fsforms/add_sub_stage.html", {'form': form, 'obj': stage})
@@ -257,7 +257,8 @@ def assign(request, pk=None):
             return HttpResponseRedirect(reverse("forms:fill_form_type", kwargs={'pk': form.instance.id}))
     else:
         field_sight_form = FieldSightXF.objects.create(xf=XForm.objects.get(pk=int(pk)))
-        form = AssignSettingsForm(instance=field_sight_form, project=request.project.id)
+        project = request.project.id if request.project is not None else None
+        form = AssignSettingsForm(instance=field_sight_form, project=project)
     return render(request, "fsforms/assign.html", {'form': form})
 
 
