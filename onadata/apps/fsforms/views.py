@@ -62,7 +62,13 @@ class MyProjectListView(ListView):
         return ['fsforms/my_project_form_list.html']
 
     def get_queryset(self):
-        return FieldSightXF.objects.filter(site__project__id=self.request.project.id)
+        if self.request.site:
+            return FieldSightXF.objects.filter(site__id=self.request.site.id)
+        elif self.request.project:
+            return FieldSightXF.objects.filter(site__project__id=self.request.project.id)
+        elif self.request.organization:
+            return FieldSightXF.objects.filter(site__project__organization__id=self.request.organization.id)
+        else: return FieldSightXF.objects.all()
 
 
 class AssignedFormListView(ListView):
@@ -73,7 +79,7 @@ class AssignedFormListView(ListView):
         return FieldSightXF.objects.filter(site__id=self.request.site.id)
 
 
-class FormsListView(FormView, LoginRequiredMixin, ProjectMixin, MyProjectListView):
+class FormsListView(FormView, LoginRequiredMixin, SiteMixin, MyProjectListView):
     pass
 
 
