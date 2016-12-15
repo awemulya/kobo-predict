@@ -19,7 +19,10 @@ class RoleMiddleware(object):
 
         if request.META.get('HTTP_AUTHORIZATION'):
             token_key = request.META.get('HTTP_AUTHORIZATION').split(' ')[-1]
-            request.user = Token.objects.get(key=token_key).user
+            try:
+                request.user = Token.objects.get(key=token_key).user
+            except:
+                pass
 
         if not request.user.is_anonymous():
 

@@ -13,7 +13,7 @@ class AssignSettingsForm(forms.ModelForm):
         except:
             self.form_site = 0
         super(AssignSettingsForm, self).__init__(*args, **kwargs)
-        if self.project_id:
+        if self.project_id is not None:
             sites = Site.objects.filter(project__id=self.project_id).exclude(pk=self.form_site)
         else:
             sites = Site.objects.all()
