@@ -11,9 +11,6 @@ UserRoleView,
 router = routers.SimpleRouter()
 router.register(r'api/contacts', UserRoleViewSet)
 
-
-
-
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^set-role/(?P<pk>[0-9]+)/$', set_role, name='set_role'),
