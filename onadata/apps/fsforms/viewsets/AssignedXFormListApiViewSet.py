@@ -15,20 +15,9 @@ class AssignedXFormListApi(XFormListApi):
     template_name = 'fsforms/assignedFormList.xml'
 
     def filter_queryset(self, queryset):
+        if self.request.user.is_anonymous():
+            self.permission_denied(self.request)
         site_id = self.kwargs.get('site_id', None)
-        if site_id is None:
-            # If no username is specified, the request must be authenticated
-            if self.request.user.is_anonymous():
-                # raises a permission denied exception, forces authentication
-                self.permission_denied(self.request)
-            else:
-                try:
-                    int(site_id)
-                except:
-                    raise serializers.ValidationError({'site': "Site Id Not Given."})
-                else:
-                    return super(AssignedXFormListApi, self).filter_queryset(queryset)
-            return super(AssignedXFormListApi, self).filter_queryset(queryset)
         site_id = int(site_id)
         queryset = queryset.filter(site__id=site_id)
         return queryset
