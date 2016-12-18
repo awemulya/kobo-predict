@@ -211,6 +211,18 @@ class SiteView(SiteRequiredMixin):
         return form
 
 
+class ProfileView(LoginRequiredMixin):
+    def form_valid(self, form):
+        if self.request.user:
+            form.instance.user = self.request.user
+        return super(ProfileView, self).form_valid(form)
+
+    def get_form(self, *args, **kwargs):
+        form = super(ProfileView, self).get_form(*args, **kwargs)
+        if self.request.user:
+            form.user = self.request.project
+        return form
+
 
 USURPERS = {
     # central engineer to project , same on roles.
