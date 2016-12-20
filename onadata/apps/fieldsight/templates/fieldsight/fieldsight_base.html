@@ -303,7 +303,7 @@
                         {% if request.user.roles.all.count > 1 %}
                             <li role="separator" class="divider"></li>
                         {% endif %}
-                <li><a href="{% url 'users:profile_update' request.user.id|profile %}"><i class=" fa fa-suitcase"></i>Profile</a></li>
+                <li><a href="{% url 'users:profile'%}"><i class=" fa fa-suitcase"></i>Profile</a></li>
                 <li><a href="{% url 'onadata.apps.main.views.profile_settings' request.user.username %}"><i class="fa fa-cog"></i> Settings</a></li>
                 <li><a href="{% url 'auth_logout' %}"><i class="fa fa-key"></i> Log Out</a></li>
             </ul>
