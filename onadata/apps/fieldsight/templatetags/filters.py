@@ -17,6 +17,8 @@ from django.template.loader import get_template
 
 from django.conf import settings
 
+from onadata.apps.users.models import UserProfile
+
 register = Library()
 @register.filter
 def is_demand(obj):
@@ -37,6 +39,11 @@ def alter_status(is_active):
     if is_active:
         return "Deactivate"
     return "Activate"
+
+
+@register.filter
+def profile(userid):
+    return UserProfile.objects.get(user__id=userid).id
 
 
 # USURPERS = {
