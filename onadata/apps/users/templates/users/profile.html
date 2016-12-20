@@ -8,5 +8,11 @@
 
 {% block content %}
 
-   {{obj.address}}
+<p>address = {{obj.address}}</p>
+<p>gender = {{obj.gender}}</p>
+<p>phone = {{obj.phone}}</p>
+<p>skype = {{obj.skype}}</p>
+<img src= "{{ obj.profile_picture.url}}" alt="image"/>
+
+
 {% endblock %}
