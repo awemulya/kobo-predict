@@ -69,8 +69,8 @@ mongo_instances = settings.MONGO_DB.instances
 def _get_instance(xml, new_uuid, submitted_by, status, xform):
     # check if its an edit submission
     # old_uuid = get_deprecated_uuid_from_xml(xml)
-    instances = Instance.objects.filter(uuid=new_uuid)
-
+    # instances = Instance.objects.filter(uuid=new_uuid)
+    instances = None
     if instances:
         # edits
         check_edit_submission_permissions(submitted_by, xform)
