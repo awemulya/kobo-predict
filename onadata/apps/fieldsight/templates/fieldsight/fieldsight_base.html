@@ -64,7 +64,7 @@
 
     <a href="#" class="logo">
         <!-- <img src="images/logo.png" alt=""> -->
-        <img src="{{request.user.user_profile.profile_picture.url}}"/>
+        <img src="{{STATIC_URL}}images/logo1.png"/>
         
     </a>
     <div class="sidebar-toggle-box">
@@ -259,7 +259,7 @@
         <!-- user login dropdown start-->
         <li class="dropdown">
             <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                <img src="{{STATIC_URL}}images/avatar1_small.jpg">
+                <img src="{{request.user.user_profile.profile_picture.url}}">
                 <span class="username"> {% trans request.user.username %}</span>
                 <b class="caret"></b>
             </a>
