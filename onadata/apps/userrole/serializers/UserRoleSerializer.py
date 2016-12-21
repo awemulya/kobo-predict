@@ -13,12 +13,13 @@ class UserRoleSerializer(serializers.ModelSerializer):
     gender = serializers.SerializerMethodField()
     phone = serializers.SerializerMethodField()
     skype = serializers.SerializerMethodField()
+    profile_picture = serializers.SerializerMethodField()
 
 
     class Meta:
         model = UserRole
-        fields = ('username','email','address','gender','phone','skype','group','site','project','organization')
-        read_only_fields = ('username','email','address','gender','phone','skype','group','site','project','organization')
+        fields = ('username','email','address','gender','phone','skype','group','site','project','organization','profile_picture')
+        read_only_fields = ('username','email','address','gender','phone','skype','group','site','project','organization','profile_picture')
 
 
     def get_username(self,obj):
@@ -66,6 +67,10 @@ class UserRoleSerializer(serializers.ModelSerializer):
     def get_skype(self,obj):
         if obj.user.user_profile:
             return obj.user.user_profile.skype
+        return None
+    def get_profile_picture(self,obj):
+        if obj.user.user_profile.profile_picture:
+            return obj.user.user_profile.profile_picture.url
         return None
 
 

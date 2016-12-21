@@ -3,10 +3,15 @@
 {% load filters %}
 {% block page-title %} {% trans 'Profile '  %}{{request.user }}{% endblock %}
 {% block head %}
-    Profile {{request.user }}
+    <a class="btn btn-success btn-raised" href="{% url 'users:profile_update' request.user.id|profile%}">{% trans 'edit' %} {% trans 'Profile' %}</a>
 {% endblock %}
 
 {% block content %}
+<p>address = {{obj.address}}</p>
+<p>gender = {{obj.gender}}</p>
+<p>phone = {{obj.phone}}</p>
+<p>skype = {{obj.skype}}</p>
+<img src= "{{ obj.profile_picture.url}}" alt="image"/>
 
-   {{obj.address}}
+
 {% endblock %}

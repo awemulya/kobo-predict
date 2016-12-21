@@ -24,7 +24,7 @@ class UserProfile(models.Model):
     gender = models.CharField(max_length=140)
     phone = models.CharField(max_length=140)
     skype = models.CharField(max_length=140)
-    profile_picture = models.ImageField(upload_to="profile_pictures", default="logo/default_image.png")
+    profile_picture = models.ImageField(upload_to=user_directory_path, default="logo/default_image.png")
 
     def __unicode__(self):
         return u'Profile of user: %s' % self.user.username
