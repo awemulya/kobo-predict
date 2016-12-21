@@ -13,7 +13,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from onadata.apps.fieldsight.mixins import UpdateView
+from onadata.apps.fieldsight.mixins import UpdateView, ProfileView
 from rest_framework import renderers
 
 from onadata.apps.userrole.models import UserRole
@@ -138,42 +138,17 @@ class ObtainAuthToken(APIView):
         return Response(content)
 
 
-class UserProfileView(object):
+class MyProfileView(ProfileView):
     model = UserProfile
-    success_url = reverse_lazy('profile')
+    success_url = reverse_lazy('users:profile')
     form_class = ProfileForm
 
 
-class ProfileUpdate(UserProfileView,UpdateView):
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.user = self.request.user
-        super(ProfileUpdate, self).save(form)
+class ProfileUpdateView(MyProfileView, UpdateView):
+    pass
 
 
-def profile_update(request):
-    if request.method == 'POST':
-        form = ProfileForm(request.POST)
-        if form.is_valid():
-            up = form.save(commit=False)
-            user = request.user
-            try:
-                user_profile = user.user_profile
-                user_profile.skype = up.skype
-                user_profile.address = up.address
-                user_profile.phone = up.phone
-                user_profile.gender = up.gender
-                user_profile.save()
-            except:
-                up.user = user
-                up.save()
-            messages.info(request, "Profile Updated")
-            return render(request, 'users/profile_update.html', {'form': form})
-        return render(request, 'users/profile_update.html', {'form': form})
-    else:
-        try:
-            instance = UserProfile.objects.get(user_id=request.user.id)
-            form = ProfileForm(instance=instance)
-        except:
-            form = ProfileForm()
-    return render(request, 'users/profile_update.html', {'form': form})
+def my_profile(request):
+    obj = UserProfile.objects.get(user=request.user)
+    return render(request, 'users/profile.html', {'obj':obj})
+

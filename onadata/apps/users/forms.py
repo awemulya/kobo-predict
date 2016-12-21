@@ -21,5 +21,7 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ['address','gender','phone', 'skype']
+        fields = ['address','gender','phone', 'skype', 'profile_picture', 'user']
+        widgets = {'user': forms.HiddenInput()}
+
 

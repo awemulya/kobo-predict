@@ -62,7 +62,13 @@ class MyProjectListView(ListView):
         return ['fsforms/my_project_form_list.html']
 
     def get_queryset(self):
-        return FieldSightXF.objects.filter(site__project__id=self.request.project.id)
+        if self.request.site:
+            return FieldSightXF.objects.filter(site__id=self.request.site.id)
+        elif self.request.project:
+            return FieldSightXF.objects.filter(site__project__id=self.request.project.id)
+        elif self.request.organization:
+            return FieldSightXF.objects.filter(site__project__organization__id=self.request.organization.id)
+        else: return FieldSightXF.objects.all()
 
 
 class AssignedFormListView(ListView):
@@ -73,7 +79,7 @@ class AssignedFormListView(ListView):
         return FieldSightXF.objects.filter(site__id=self.request.site.id)
 
 
-class FormsListView(FormView, LoginRequiredMixin, ProjectMixin, MyProjectListView):
+class FormsListView(FormView, LoginRequiredMixin, SiteMixin, MyProjectListView):
     pass
 
 
@@ -121,7 +127,7 @@ def add_sub_stage(request, pk=None):
             child_stage.group = stage.group
             child_stage.save()
             messages.info(request, 'Sub Stage {} Saved.'.format(child_stage.name))
-            return HttpResponseRedirect(reverse("forms:stage-detail", kwargs={'pk': stage.id}))
+            return HttpResponseRedirect(reverse("forms:stages-detail", kwargs={'pk': stage.id}))
     else:
         form = AddSubSTageForm()
     return render(request, "fsforms/add_sub_stage.html", {'form': form, 'obj': stage})
@@ -235,7 +241,7 @@ class GroupDeleteView(ScheduleView,LoginRequiredMixin, KoboFormsMixin, DeleteVie
 @login_required
 # @group_required('KoboForms')
 def site_forms(request, site_id=None):
-    return render(request, "fsforms/site_forms_ng.html", {'site_id': site_id})
+    return render(request, "fsforms/site_forms_ng.html", {'site_id': site_id, 'angular_url':settings.ANGULAR_URL})
 
 
 @login_required
@@ -251,7 +257,8 @@ def assign(request, pk=None):
             return HttpResponseRedirect(reverse("forms:fill_form_type", kwargs={'pk': form.instance.id}))
     else:
         field_sight_form = FieldSightXF.objects.create(xf=XForm.objects.get(pk=int(pk)))
-        form = AssignSettingsForm(instance=field_sight_form, project=request.project.id)
+        project = request.project.id if request.project is not None else None
+        form = AssignSettingsForm(instance=field_sight_form, project=project)
     return render(request, "fsforms/assign.html", {'form': form})
 
 

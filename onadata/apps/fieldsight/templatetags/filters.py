@@ -17,6 +17,8 @@ from django.template.loader import get_template
 
 from django.conf import settings
 
+from onadata.apps.users.models import UserProfile
+
 register = Library()
 @register.filter
 def is_demand(obj):
@@ -39,6 +41,11 @@ def alter_status(is_active):
     return "Activate"
 
 
+@register.filter
+def profile(userid):
+    return UserProfile.objects.get(user__id=userid).id
+
+
 # USURPERS = {
 #     'Site': ['Super Admin', 'Organization Admin', 'Project Manager', 'Central Engineer', 'Site Supervisor', 'Data Entry'],
 #     'Project': ['Super Admin', 'Organization Admin', 'Project Manager'],
@@ -48,7 +55,8 @@ def alter_status(is_active):
 
 
 USURPERS = {
-    'Site': ['Central Engineer', 'Site Supervisor', 'Data Entry'],
+    'Site': ['Central Engineer', 'Site Supervisor', 'Project Manager', 'Central Engineer', 'Organization Admin',
+             'Super Admin'],
     'KoboForms': ['Project Manager', 'Central Engineer', 'Organization Admin', 'Super Admin'],
     'Project': ['Project Manager', 'Organization Admin', 'Super Admin'],
     'Organization': ['Organization Admin', 'Super Admin'],

@@ -1,0 +1,12 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+{% load filters %}
+{% block page-title %} {% trans 'Profile '  %}{{request.user }}{% endblock %}
+{% block head %}
+    Profile {{request.user }}
+{% endblock %}
+
+{% block content %}
+
+   {{obj.address}}
+{% endblock %}

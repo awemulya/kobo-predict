@@ -1,14 +1,18 @@
-{% extends "bcss_base.html" %}
+{% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 {% load filters %}
 {% block page-title %} {% trans 'Profile '  %}{{request.user }}{% endblock %}
 {% block head %}
-    Update Profile {{request.user.full_name }}
+    Update Profile {{request.user }}
 {% endblock %}
 
 {% block content %}
 
-    <form method="post" id='form'>
+   {% if form.is_multipart %}
+    <form enctype="multipart/form-data" method="post" id='form'>
+    {% else %}
+        <form method="post">
+    {% endif %}
         <div class="">
             <div class="col-sm-12 registration_field">
                {{ form.non_field_errors }}
