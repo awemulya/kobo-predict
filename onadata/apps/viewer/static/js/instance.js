@@ -378,7 +378,7 @@ function reDraw(context, data, canEdit)
                     var src = _attachment_url(value, 'small');
                     var href = _attachment_url(value, 'medium');
                     var imgTag = $('<img/>').attr('src', src);
-                    value = $('<div>').append($('<a>').attr('href', href).attr('target', '_blank').append(imgTag)).html();
+                    value = $('<div>').append($('<a>').attr('href', href).attr('data-lightbox', 'roadtrip').append(imgTag)).html();
                 }
                 else if(questions[cleanKey].type == 'audio' || questions[cleanKey].type == 'video')
                 {
