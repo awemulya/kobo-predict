@@ -68,7 +68,7 @@ class MyProjectListView(ListView):
             return FieldSightXF.objects.filter(site__project__id=self.request.project.id)
         elif self.request.organization:
             return FieldSightXF.objects.filter(site__project__organization__id=self.request.organization.id)
-        else: return FieldSightXF.objects.all()
+        else: return FieldSightXF.objects.filter(site__isnull=False)
 
 
 class AssignedFormListView(ListView):

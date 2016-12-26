@@ -1,10 +1,13 @@
 import datetime
+from fcm.utils import get_device_model
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
+from django.dispatch import receiver
 
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.logger.models import XForm, Instance
@@ -122,6 +125,14 @@ class Schedule(models.Model):
         return getattr(self, "name", "")
 
 
+@receiver(post_save, sender=User)
+def create_messages(sender, instance, created,  **kwargs):
+    if created and instance.site is not None:
+        Device = get_device_model()
+        Device.objects.all().send_message({'message':'my test message'})
+
+
+
 class FieldSightXF(models.Model):
     xf = models.ForeignKey(XForm, related_name="field_sight_form")
     site = models.ForeignKey(Site, related_name="site_forms", null=True, blank=True)
@@ -188,7 +199,7 @@ class FieldSightXF(models.Model):
     def __unicode__(self):
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
 
-# post_save.connect(save_to_fieldsight_form, sender=XForm)
+post_save.connect(create_messages, sender=FieldSightXF)
 
 
 class FieldsightInstance(models.Model):
