@@ -18,3 +18,11 @@ class MainStageViewSet(viewsets.ModelViewSet):
     """
     queryset = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True)
     serializer_class = StageSerializer
+
+
+class SiteMainStageViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and Main Stages.
+    """
+    queryset = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True)
+    serializer_class = StageSerializer

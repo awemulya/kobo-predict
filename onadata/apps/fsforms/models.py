@@ -60,6 +60,7 @@ class Stage(models.Model):
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+    site = models.ForeignKey(Site, null=True, blank=True)
 
     class Meta:
         db_table = 'fieldsight_forms_stage'
