@@ -54,7 +54,7 @@ class FormGroup(models.Model):
 class Stage(models.Model):
     name = models.CharField(max_length=256)
     description = models.TextField(blank=True, null=True)
-    group = models.ForeignKey(FormGroup,related_name="stage")
+    group = models.ForeignKey(FormGroup,related_name="stage", null=True, blank=True)
     order = IntegerRangeField(min_value=0, max_value=30,default=0)
     stage = models.ForeignKey('self', blank=True, null=True, related_name="parent")
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
