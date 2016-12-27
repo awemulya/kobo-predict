@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Max
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
@@ -71,6 +72,7 @@ class Stage(models.Model):
     def save(self, *args, **kwargs):
         if self.stage:
             self.group = self.stage.group
+        self.order = Stage.get_order(self.site)
         super(Stage, self).save(*args, **kwargs)
 
     def get_display_name(self):
@@ -89,6 +91,15 @@ class Stage(models.Model):
 
     def form_name(self):
         return FieldSightXF.objects.get(stage=self).xf.title
+
+    @classmethod
+    def get_order(cls, site):
+        if not Stage.objects.filter(site=site).exists():
+            return 1
+        else:
+            mo = Stage.objects.filter(site=site).aggregate(Max('order'))
+            order = mo.get('order__max', 0)
+            return order + 1
 
     def __unicode__(self):
         return getattr(self, "name", "")
