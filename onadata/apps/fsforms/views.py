@@ -245,6 +245,12 @@ def site_forms(request, site_id=None):
 
 
 @login_required
+# @group_required('KoboForms')
+def site_stages(request, site_id=None):
+    return render(request, "fsforms/site_stages_ng.html", {'site_id': site_id, 'angular_url':settings.ANGULAR_URL})
+
+
+@login_required
 @group_required('KoboForms')
 def assign(request, pk=None):
     if request.method == 'POST':

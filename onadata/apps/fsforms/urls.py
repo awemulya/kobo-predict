@@ -11,26 +11,26 @@ from onadata.apps.fsforms.viewsets.StageViewset import StageViewSet, MainStageVi
         SubStageViewSet
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
 from .views import (
-        LibraryFormsListView,
-        FormsListView,
-        GroupListView,
-        GroupCreateView,
-        GroupUpdateView,
-        StageListView,
-        StageUpdateView,
-        StageCreateView,
-        add_sub_stage,
-        stage_details,
-        stage_add_form,
-        ScheduleListView,
-        ScheduleCreateView,
-        ScheduleUpdateView,
-        assign, fill_form_type,
-        fill_details_stage,
-        fill_details_schedule,
-        schedule_add_form,
-        AssignedFormsListView,
-        html_export, instance, show, api, download_jsonform, delete_data, data_view, site_forms)
+    LibraryFormsListView,
+    FormsListView,
+    GroupListView,
+    GroupCreateView,
+    GroupUpdateView,
+    StageListView,
+    StageUpdateView,
+    StageCreateView,
+    add_sub_stage,
+    stage_details,
+    stage_add_form,
+    ScheduleListView,
+    ScheduleCreateView,
+    ScheduleUpdateView,
+    assign, fill_form_type,
+    fill_details_stage,
+    fill_details_schedule,
+    schedule_add_form,
+    AssignedFormsListView,
+    html_export, instance, show, api, download_jsonform, delete_data, data_view, site_forms, site_stages)
 
 # router = MultiLookupRouter(trailing_slash=False)
 router = routers.DefaultRouter()
@@ -132,7 +132,7 @@ urlpatterns = urlpatterns + [
 
 urlpatterns = urlpatterns + [
             # urls for angular stages
-
+    url(r'^site-stage/(?P<site_id>\d+)$', site_stages, name='site-stages'),
     url(r'^api/site-main-stages/(?P<site_id>\d+)$', SiteMainStageViewSet.as_view({'get': 'list'}), name='main-stage-list'),
     url(r'^api/sub-stages/(?P<main_stage>\d+)$', SubStageViewSet.as_view({'get': 'list'}), name='sub-stage-list'),
 

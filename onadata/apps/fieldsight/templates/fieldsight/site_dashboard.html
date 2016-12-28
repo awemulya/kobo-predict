@@ -50,8 +50,9 @@
                     </div>
                     <div class="col-md-3">
                         <div class="assign-form-to-site">
-                            <a class="btn btn-primary btn-raised" href="#">
-                                Setup Stages Data
+                                <a class="btn btn-primary btn-raised" href="{% url 'forms:site-stages' obj.pk %}">
+                                    {% trans 'Setup Stages Data' %}
+
                             </a>    
                         </div>
                         <div class="assign-form-to-site">
