@@ -72,7 +72,7 @@ class Stage(models.Model):
     def save(self, *args, **kwargs):
         if self.stage:
             self.group = self.stage.group
-        self.order = Stage.get_order(self.site)
+        self.order = Stage.get_order(self.site, self.stage)
         super(Stage, self).save(*args, **kwargs)
 
     def get_display_name(self):
@@ -93,11 +93,18 @@ class Stage(models.Model):
         return FieldSightXF.objects.get(stage=self).xf.title
 
     @classmethod
-    def get_order(cls, site):
+    def get_order(cls, site, stage):
         if not Stage.objects.filter(site=site).exists():
             return 1
+        elif stage is not None:
+            if not Stage.objects.filter(stage=stage).exists():
+                return 1
+            else:
+                mo = Stage.objects.filter(stage=stage).aggregate(Max('order'))
+                order = mo.get('order__max', 0)
+                return order + 1
         else:
-            mo = Stage.objects.filter(site=site).aggregate(Max('order'))
+            mo = Stage.objects.filter(site=site, stage__isnull=True).aggregate(Max('order'))
             order = mo.get('order__max', 0)
             return order + 1
 

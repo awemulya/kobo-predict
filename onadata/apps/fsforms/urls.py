@@ -7,7 +7,8 @@ from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXF
 from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSubmissionApi
 from onadata.apps.fsforms.viewsets.GroupsViewset import GroupViewSet
 from onadata.apps.fsforms.viewsets.SiteFormsViewset import SiteFormViewSet
-from onadata.apps.fsforms.viewsets.StageViewset import StageViewSet, MainStageViewSet, SiteMainStageViewSet
+from onadata.apps.fsforms.viewsets.StageViewset import StageViewSet, MainStageViewSet, SiteMainStageViewSet, \
+        SubStageViewSet
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
 from .views import (
         LibraryFormsListView,
@@ -132,7 +133,8 @@ urlpatterns = urlpatterns + [
 urlpatterns = urlpatterns + [
             # urls for angular stages
 
-    url(r'^api/stages/(?P<site_id>\d+)$', SiteMainStageViewSet.as_view({'get': 'list'}), name='xform-list'),
+    url(r'^api/site-main-stages/(?P<site_id>\d+)$', SiteMainStageViewSet.as_view({'get': 'list'}), name='main-stage-list'),
+    url(r'^api/sub-stages/(?P<main_stage>\d+)$', SubStageViewSet.as_view({'get': 'list'}), name='sub-stage-list'),
 
 ]
 

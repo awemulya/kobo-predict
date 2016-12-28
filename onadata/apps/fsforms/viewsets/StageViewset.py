@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from onadata.apps.fsforms.models import Stage
-from onadata.apps.fsforms.serializers.StageSerializer import StageSerializer
+from onadata.apps.fsforms.serializers.StageSerializer import StageSerializer, SubStageSerializer
 
 
 class StageViewSet(viewsets.ModelViewSet):
@@ -22,7 +22,27 @@ class MainStageViewSet(viewsets.ModelViewSet):
 
 class SiteMainStageViewSet(viewsets.ModelViewSet):
     """
-    A simple ViewSet for viewing and Main Stages.
+    A simple ViewSet for viewing and site Main Stages.
     """
-    queryset = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True)
+    queryset = Stage.objects.all()
     serializer_class = StageSerializer
+
+    def filter_queryset(self, queryset):
+        site_id = self.kwargs.get('site_id', None)
+        site_id = int(site_id)
+        queryset = queryset.filter(fieldsightxf__isnull=True, stage__isnull=True,site__id=site_id)
+        return queryset
+
+
+class SubStageViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and site Main Stages.
+    """
+    queryset = Stage.objects.all()
+    serializer_class = SubStageSerializer
+
+    def filter_queryset(self, queryset):
+        main_stage = self.kwargs.get('main_stage', None)
+        main_stage = int(main_stage)
+        queryset = queryset.filter(stage__id=main_stage)
+        return queryset
