@@ -61,7 +61,7 @@ class Stage(models.Model):
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    site = models.ForeignKey(Site, null=True, blank=True)
+    site = models.ForeignKey(Site, related_name="stages", null=True, blank=True)
 
     class Meta:
         db_table = 'fieldsight_forms_stage'
@@ -122,6 +122,7 @@ class Days(models.Model):
 
 class Schedule(models.Model):
     name = models.CharField("Schedule Name", max_length=256)
+    site = models.ForeignKey(Site, related_name="schedules", null=True, blank=True)
     date_range_start = models.DateField(default=datetime.date.today)
     date_range_end = models.DateField(default=datetime.date.today)
     selected_days = models.ManyToManyField(Days,related_name='days')
