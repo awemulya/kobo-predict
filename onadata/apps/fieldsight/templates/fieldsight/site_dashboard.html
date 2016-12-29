@@ -70,7 +70,7 @@
                 <ul class="nav nav-tabs">
                   <li class="active"><a data-toggle="tab" href="#org-map">Map View</a></li>
                   <li><a data-toggle="tab" href="#org-people">People Involved</a></li>
-                  <li><a data-toggle="tab" href="#org-about">About Organization</a></li>
+                  <li><a data-toggle="tab" href="#org-about">About Site</a></li>
                   <li><a data-toggle="tab" href="#org-blueprint">Blueprint</a></li>
                 </ul>
 
@@ -131,242 +131,95 @@
             <div class="col-md-6">
                 <div class="outstanding-and-all">
                     <ul class="nav nav-tabs">
-                      <li class="active"><a data-toggle="tab" href="#out-standing">Outstanding</a></li>
-                      <li><a data-toggle="tab" href="#out-reject">Rejected</a></li>
-                      <li><a data-toggle="tab" href="#out-approved">Approved</a></li>
-                      <li><a data-toggle="tab" href="#out-flagged">Flagged</a></li>
+                      <li class="active"><a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
+                      <li><a data-toggle="tab" href="#out-reject">Rejected ({{rejected|length}})</a></li>
+                      <li><a data-toggle="tab" href="#out-approved">Approved ({{approved|length}})</a></li>
+                      <li><a data-toggle="tab" href="#out-flagged">Flagged ({{flagged|length}})</a></li>
                     </ul>
 
                     <div class="tab-content">
                       <div id="out-standing" class="tab-pane fade in active">
                         <div class="org-site-list">
                             <div class="form-list">
+                                {% for form in outstanding %}
                                 <a href="#">
                                     <div class="org-site">
                                         
                                         <div class="">
                                             <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
+                                                <h5 class="site-title-org">{{form.xf.title}}</h5>
+                                                <p class="address"><span>Form type:</span>{{ form.form_type }}</p>
+                                                <p class="contact"><span>created Date:</span>{{ form.date_created }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
                                     </div>
                                 </a>
-                                <a href="#">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="clearfixx"></div>
-                                    </div>
-                                </a>
-                                <a href="#">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="clearfixx"></div>
-                                    </div>
-                                </a>
-                                <a href="#">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="clearfixx"></div>
-                                    </div>
-                                </a>
+                                {% endfor %}
                             </div>
                         </div>
                       </div>
                       <div id="out-reject" class="tab-pane fade">
                         <div class="org-site-list">
                             <div class="form-list">
+                                {% for form in rejected %}
                                 <a href="#">
                                     <div class="org-site">
                                         
-                                        <div class="">
+                                      <div class="">
                                             <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
+                                                <h5 class="site-title-org">{{form.xf.title}}</h5>
+                                                <p class="address"><span>Form type:</span>{{ form.form_type }}</p>
+                                                <p class="contact"><span>created Date:</span>{{ form.date_created }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
                                     </div>
                                 </a>
-                                <a href="#">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="clearfixx"></div>
-                                    </div>
-                                </a>
-                                <a href="#">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="clearfixx"></div>
-                                    </div>
-                                </a>
-                                <a href="#">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="clearfixx"></div>
-                                    </div>
-                                </a>
+                                 {% endfor %}
+
                             </div>
                         </div>
                       </div>
                       <div id="out-approved" class="tab-pane fade">
                         <div class="org-site-list">
                             <div class="form-list">
+                               {% for form in approved %}
                                 <a href="#">
                                     <div class="org-site">
-                                        
-                                        <div class="">
+
+                                      <div class="">
                                             <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
+                                                <h5 class="site-title-org">{{form.xf.title}}</h5>
+                                                <p class="address"><span>Form type:</span>{{ form.form_type }}</p>
+                                                <p class="contact"><span>created Date:</span>{{ form.date_created }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
                                     </div>
                                 </a>
-                                <a href="#">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="clearfixx"></div>
-                                    </div>
-                                </a>
-                                <a href="#">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="clearfixx"></div>
-                                    </div>
-                                </a>
-                                <a href="#">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="clearfixx"></div>
-                                    </div>
-                                </a>
+                                 {% endfor %}
                             </div>
                         </div>
                       </div>
                       <div id="out-flagged" class="tab-pane fade">
                         <div class="org-site-list">
                             <div class="form-list">
+                                {% for form in flagged %}
                                 <a href="#">
                                     <div class="org-site">
-                                        
-                                        <div class="">
+
+                                      <div class="">
                                             <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
+                                                <h5 class="site-title-org">{{form.xf.title}}</h5>
+                                                <p class="address"><span>Form type:</span>{{ form.form_type }}</p>
+                                                <p class="contact"><span>created Date:</span>{{ form.date_created }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
                                     </div>
                                 </a>
-                                <a href="#">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="clearfixx"></div>
-                                    </div>
-                                </a>
-                                <a href="#">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="clearfixx"></div>
-                                    </div>
-                                </a>
-                                <a href="#">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                                <h5 class="site-title-org">{{obj.name}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ obj.address }}</p>
-                                                <p class="contact"><span>Submited Date:</span>{{ obj.phone }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="clearfixx"></div>
-                                    </div>
-                                </a>
+                                 {% endfor %}
                             </div>
                         </div>
                       </div>
@@ -391,7 +244,7 @@
     <div class="col-md-3">
         <div class="mini-flagged-forms yellow-flagged">
             <div class="mini-stat-info">
-                <span>{{flagged}}</span>
+                <span>{{flagged|length}}</span>
                 Flagged forms
             </div>
         </div>
@@ -399,7 +252,7 @@
     <div class="col-md-3">
         <div class="mini-flagged-forms green-flagged">
             <div class="mini-stat-info">
-                <span>{{approved}}</span>
+                <span>{{approved|length}}</span>
                 Approved froms
             </div>
         </div>
@@ -407,7 +260,7 @@
     <div class="col-md-3">
         <div class="mini-flagged-forms red-flagged">
             <div class="mini-stat-info">
-                <span>{{rejected}}</span>
+                <span>{{rejected|length}}</span>
                 Rejected forms
             </div>
         </div>
@@ -415,7 +268,7 @@
     <div class="col-md-3">
         <div class="mini-flagged-forms purple-flagged">
             <div class="mini-stat-info">
-                <span>{{outstanding}}</span>
+                <span>{{outstanding|length}}</span>
                 outstanding forms
             </div>
         </div>

@@ -139,16 +139,16 @@ def site_dashboard(request, pk):
 
     fs_forms = FieldSightXF.objects.filter(site=obj)
     fs_forms = list(fs_forms)
-    outstanding = flagged = approved = rejected = 0
+    outstanding, flagged, approved, rejected = [], [], [], []
     for form in fs_forms:
         if form.form_status == 0:
-            outstanding += 1
+            outstanding.append(form)
         elif form.form_status == 1:
-            flagged +=1
+            flagged.append(form)
         elif form.form_status == 2:
-            approved +=1
+            approved.append(form)
         else:
-            rejected +=1
+            rejected.append(form)
 
     dashboard_data = {
         'obj': obj,
