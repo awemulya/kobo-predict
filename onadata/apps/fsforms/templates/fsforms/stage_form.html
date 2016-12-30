@@ -1,15 +1,15 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 
-{% block page-title %}{{ scenario }} {% trans 'Stage' %}{% endblock %}
+{% block page-title %}{{ scenario }} {% trans 'Add Stage ' %}{{form.instance.order}}{% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'forms:stages-list' %}">{% trans 'Stages' %}</a>
+ <a class="btn btn-success btn-raised" href="{% url 'forms:setup-site-stages' obj.pk %}">{% trans ' Stages' %}</a>
 {% endblock %}
 
 {% block content %}
 
-    <form method="post" id='form'>
+    <form method="post" action="{% url 'forms:stage-add' obj.pk %}">
         <div class="">
             <div class="col-sm-12 registration_field">
                {{ form.non_field_errors }}

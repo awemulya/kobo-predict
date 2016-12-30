@@ -1,7 +1,7 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 
-{% block page-title %}{{ scenario }} {% trans 'Add Sub Stage ON ' %}{{obj.name}}{% endblock %}
+{% block page-title %}{{ scenario }} {% trans 'New Sub Stage  ' %}{{form.instance.order}}{% endblock %}
 
 {% block head %}
    <a class="btn btn-success btn-raised" href="{% url 'forms:stage-detail' obj.pk %}">Sub Stages</a>

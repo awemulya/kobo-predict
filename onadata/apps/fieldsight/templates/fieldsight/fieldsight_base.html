@@ -414,55 +414,7 @@
                     </ul>
                 </li>
                 {% endrole %}
-                {% ifrole "KoboForms" %}
-                <li class="sub-menu">
-                    <a href="javascript:;">
-                        <i class="fa fa-file-text-o"></i>
-                        <span>{% trans 'Stages Group' %}</span>
-                    </a>
-                    <ul class="sub">
-                        <li><a href="{% url 'forms:group-add' %}">{% trans 'Create New' %}</a></li>
-                        <li><a href="{% url 'forms:group-list' %}">{% trans 'Groups' %}</a></li>
 
-                    </ul>
-                </li>
-                <li class="sub-menu">
-                    <a href="javascript:;">
-                        <i class="fa fa-file-text-o"></i>
-                        <span>{% trans 'Stages' %}</span>
-                    </a>
-                    <ul class="sub">
-                        <li><a href="{% url 'forms:stage-add' %}">{% trans 'Create New' %}</a></li>
-                        <li><a href="{% url 'forms:stages-list' %}">{% trans 'Stages' %}</a></li>
-
-                    </ul>
-                </li>
-
-                <li class="sub-menu">
-                    <a href="javascript:;">
-                        <i class="fa fa-file-text-o"></i>
-                        <span>{% trans 'Schedules' %}</span>
-                    </a>
-                    <ul class="sub">
-                         <li><a href="{% url 'forms:schedule-add' %}">{% trans 'Create New' %}</a></li>
-                        <li><a href="{% url 'forms:schedules-list' %}">{% trans 'Schedules' %}</a></li>
-
-                    </ul>
-                </li>
-
-
-
-                <!--<li class="sub-menu">-->
-                    <!--<a href="javascript:;">-->
-                        <!--<i class="fa fa-file-text-o"></i>-->
-                        <!--<span>{% trans 'Assigned Forms' %}</span>-->
-                    <!--</a>-->
-                    <!--<ul class="sub">-->
-                         <!--<li><a href="{% url 'forms:assigned-form-list' %}">{% trans 'Assigned Form List' %}</a></li>-->
-
-                    <!--</ul>-->
-                <!--</li>-->
-                {% endrole %}
             </ul>            </div>
         <!-- sidebar menu end-->
     </div>

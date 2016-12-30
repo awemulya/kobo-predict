@@ -13,6 +13,7 @@ from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpRespon
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
+from onadata.apps.fieldsight.models import Site
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo
 from onadata.apps.logger.models import XForm
@@ -115,7 +116,7 @@ class StageDeleteView(StageView, LoginRequiredMixin, KoboFormsMixin, DeleteView)
 
 
 @login_required
-@group_required('KoboForms')
+# @group_required('KoboForms')
 def add_sub_stage(request, pk=None):
     stage = get_object_or_404(
         Stage, pk=pk)
@@ -128,9 +129,29 @@ def add_sub_stage(request, pk=None):
             child_stage.save()
             messages.info(request, 'Sub Stage {} Saved.'.format(child_stage.name))
             return HttpResponseRedirect(reverse("forms:stages-detail", kwargs={'pk': stage.id}))
-    else:
-        form = AddSubSTageForm()
+    order = Stage.objects.filter(stage=stage).count() + 1
+    instance = Stage(name="Sub Stage"+str(order), order=order)
+    form = AddSubSTageForm(instance=instance)
     return render(request, "fsforms/add_sub_stage.html", {'form': form, 'obj': stage})
+
+
+@login_required
+# @group_required('KoboForms')
+def stage_add(request, site_id=None):
+    site = get_object_or_404(
+        Site, pk=site_id)
+    if request.method == 'POST':
+        form = StageForm(data=request.POST)
+        if form.is_valid():
+            stage = form.save()
+            stage.site = site
+            stage.save()
+            messages.info(request, 'Stage {} Saved.'.format(stage.name))
+            return HttpResponseRedirect(reverse("forms:setup-site-stages", kwargs={'site_id': site.id}))
+    order = Stage.objects.filter(site=site,stage__isnull=True).count() + 1
+    instance = Stage(name="Stage"+str(order), order=order)
+    form = StageForm(instance=instance)
+    return render(request, "fsforms/stage_form.html", {'form': form, 'obj': site})
 
 
 @login_required
@@ -154,9 +175,10 @@ def stage_add_form(request, pk=None):
             fsform.is_staged = True
             fsform.is_scheduled = False
             fsform.stage = stage
+            fsform.site = stage.site
             fsform.save()
             messages.add_message(request, messages.INFO, 'Form Assigned Successfully.')
-            return HttpResponseRedirect(reverse("forms:stage-detail", kwargs={'pk': stage.stage.id}))
+            return HttpResponseRedirect(reverse("forms:stages-detail", kwargs={'pk': stage.stage.id}))
     else:
         form = AssignFormToStageForm()
     return render(request, "fsforms/stage_add_form.html", {'form': form, 'obj': stage})
@@ -324,6 +346,11 @@ def fill_details_schedule(request, pk=None):
     else:
         form = FormScheduleDetailsForm(instance=field_sight_form)
     return render(request, "fsforms/form_details_schedule.html", {'form': form})
+
+
+def setup_site_stages(request, site_id):
+    objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True,site__id=site_id)
+    return render(request, "fsforms/main_stages.html", {'objlist': objlist, 'site':Site.objects.get(pk=site_id)})
 
 
 # form related
