@@ -2,6 +2,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from onadata.apps.fieldsight.models import Site
+from onadata.apps.logger.models import XForm
 from .models import FieldSightXF, Stage, Schedule, FormGroup
 
 
@@ -67,25 +68,15 @@ class FSFormForm(forms.ModelForm):
 
 class StageForm(forms.ModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super(StageForm, self).__init__(*args, **kwargs)
-        stage = Stage.objects.all()
-        obj_list = Stage.objects.filter(stage__isnull=True)
-        choises_set = [(None, "This Is A Main Stage")] + [(obj.id, obj.name) for obj in obj_list]
-        self.fields['stage'].choices = choises_set
-        self.fields['stage'].empty_label = "This Is A Main Stage"
-        self.fields['group'].empty_label = None
-
-
     class Meta:
-        exclude = []
+        exclude = ['group', 'stage', 'site', 'shared_level']
         model = Stage
 
 
 class AddSubSTageForm(forms.ModelForm):
 
     class Meta:
-        exclude = ['stage','group']
+        exclude = ['stage','group','shared_level','site']
         model = Stage
         # widgets = {'stage': forms.HiddenInput(),
         #            'group': forms.HiddenInput()
@@ -96,13 +87,12 @@ class AssignFormToStageForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(AssignFormToStageForm, self).__init__(*args, **kwargs)
-        xf_list = FieldSightXF.objects.filter(site__isnull=True)
-        self.fields['xf'].choices = [(f.xf.id,f.xf.title) for f in xf_list]
+        xf_list = XForm.objects.all()
+        self.fields['xf'].choices = [(f.id,f.title) for f in xf_list]
         self.fields['xf'].empty_label = None
-        self.fields['site'].empty_label = None
 
     class Meta:
-        fields = ['xf','site']
+        fields = ['xf']
         model = FieldSightXF
         labels = {
             "xf": _("Select Form"),

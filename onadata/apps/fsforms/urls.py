@@ -30,7 +30,8 @@ from .views import (
     fill_details_schedule,
     schedule_add_form,
     AssignedFormsListView,
-    html_export, instance, show, api, download_jsonform, delete_data, data_view, site_forms, site_stages)
+    html_export, instance, show, api, download_jsonform, delete_data, data_view, site_forms, site_stages,
+    setup_site_stages, stage_add)
 
 # router = MultiLookupRouter(trailing_slash=False)
 router = routers.DefaultRouter()
@@ -54,7 +55,7 @@ urlpatterns = [
         url(r'^group/(?P<pk>\d+)/$', GroupUpdateView.as_view(), name='group-edit'),
 
         url(r'^stage/$', StageListView.as_view(), name='stages-list'),
-        url(r'^stage/add/$', StageCreateView.as_view(), name='stage-add'),
+        url(r'^stage/add/(?P<site_id>\d+)/$', stage_add, name='stage-add'),
         url(r'^stage/(?P<pk>\d+)/$', StageUpdateView.as_view(), name='stage-edit'),
         url(r'^stage-add-sub-stage/(?P<pk>\d+)/$', add_sub_stage, name='stage-add-sub-stage'),
         url(r'^stage-detail/(?P<pk>\d+)/$', stage_details, name='stages-detail'),
@@ -133,6 +134,7 @@ urlpatterns = urlpatterns + [
 urlpatterns = urlpatterns + [
             # urls for angular stages
     url(r'^site-stage/(?P<site_id>\d+)$', site_stages, name='site-stages'),
+    url(r'^setup-site-stage/(?P<site_id>\d+)$', setup_site_stages, name='setup-site-stages'),
     url(r'^api/site-main-stages/(?P<site_id>\d+)$', SiteMainStageViewSet.as_view({'get': 'list'}), name='main-stage-list'),
     url(r'^api/sub-stages/(?P<main_stage>\d+)$', SubStageViewSet.as_view({'get': 'list'}), name='sub-stage-list'),
 
