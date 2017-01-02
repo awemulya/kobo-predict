@@ -12,6 +12,7 @@ class Command(BaseCommand):
         Device = get_device_model()
         if Device.objects.exists():
             Device.objects.all().delete()
+            self.stdout.write('all devices deleted')
         else:
             self.stdout.write('no device is present'),
 
