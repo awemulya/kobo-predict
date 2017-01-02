@@ -138,8 +138,8 @@ class Schedule(models.Model):
     def form_exists(self):
         return True if FieldSightXF.objects.filter(schedule=self).count() > 0 else False
 
-    def forms(self):
-        return FieldSightXF.objects.filter(schedule=self) if self.form_exists() else []
+    def form(self):
+        return FieldSightXF.objects.get(schedule=self) if self.form_exists() else None
 
     def __unicode__(self):
         return getattr(self, "name", "")
@@ -147,7 +147,7 @@ class Schedule(models.Model):
 
 @receiver(post_save, sender=User)
 def create_messages(sender, instance, created,  **kwargs):
-    if created and instance.site is not None:
+    if created:
         Device = get_device_model()
         Device.objects.all().send_message({'message':'my test message'})
 

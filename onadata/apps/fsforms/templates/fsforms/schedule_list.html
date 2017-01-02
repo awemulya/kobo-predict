@@ -6,7 +6,7 @@
 
 {% block head %}
     <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
-<a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add' %}">{% trans 'New' %} {% trans 'Schedule' %}</a>
+<a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add' site.pk %}">{% trans 'New' %} {% trans 'Schedule' %}</a>
 {% endblock %}
 
 {% block content %}
@@ -27,20 +27,16 @@
         <table class="table table-striped" id="dynamic-table1">
             <thead>
             <th>{% anchor name _('Name') %}</th>
-            <th>{% anchor group.name _('Group') %}</th>
             <th>{% trans 'Range' %}</th>
             <th>{% trans 'Days' %}</th>
             <th>{% anchor date_created _('Date Created') %}</th>
-            <th>{% trans 'Assign Form' %}</th>
+            <th>{% trans 'Assigned Form' %}</th>
             </thead>
             <tbody>
             {% for obj in paginated_objects %}
                 <tr>
                     <td>
                         <a href="{% url 'forms:schedule-edit' obj.pk %}">{{ obj.name }}</a>
-                    </td>
-                    <td>
-                        {{ obj.group }}
                     </td>
                     <td>
                         {{ obj.date_range_start }} - {{ obj.date_range_end }}
@@ -58,10 +54,7 @@
                         Assign Form
                         </a>
                             {% else %}
-                          {% for form in obj.forms %}
-                            {{form.xf.title}}:
-                    {{form.site}},
-                          {% endfor %}
+                            {{obj.form.xf.title}}:
                           {% endif %}
                     </td>
 

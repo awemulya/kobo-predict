@@ -31,7 +31,7 @@ from .views import (
     schedule_add_form,
     AssignedFormsListView,
     html_export, instance, show, api, download_jsonform, delete_data, data_view, site_forms, site_stages,
-    setup_site_stages, stage_add)
+    setup_site_stages, stage_add, site_survey, create_schedule)
 
 # router = MultiLookupRouter(trailing_slash=False)
 router = routers.DefaultRouter()
@@ -61,8 +61,8 @@ urlpatterns = [
         url(r'^stage-detail/(?P<pk>\d+)/$', stage_details, name='stages-detail'),
         url(r'^stage-add-form/(?P<pk>\d+)/$', stage_add_form, name='stage-add-form'),
 
-        url(r'^schedule/$', ScheduleListView.as_view(), name='schedules-list'),
-        url(r'^schedule/add/$', ScheduleCreateView.as_view(), name='schedule-add'),
+        # url(r'^schedule/$', ScheduleListView.as_view(), name='schedules-list'),
+        url(r'^schedule/add/(?P<site_id>\d+)/$', create_schedule, name='schedule-add'),
         url(r'^schedule/(?P<pk>\d+)/$', ScheduleUpdateView.as_view(), name='schedule-edit'),
         url(r'^schedule-add-form/(?P<pk>\d+)/$', schedule_add_form, name='schedule-add-form'),
 
@@ -135,6 +135,7 @@ urlpatterns = urlpatterns + [
             # urls for angular stages
     url(r'^site-stage/(?P<site_id>\d+)$', site_stages, name='site-stages'),
     url(r'^setup-site-stage/(?P<site_id>\d+)$', setup_site_stages, name='setup-site-stages'),
+    url(r'^site-survey/(?P<site_id>\d+)$', site_survey, name='site-survey'),
     url(r'^api/site-main-stages/(?P<site_id>\d+)$', SiteMainStageViewSet.as_view({'get': 'list'}), name='main-stage-list'),
     url(r'^api/sub-stages/(?P<main_stage>\d+)$', SubStageViewSet.as_view({'get': 'list'}), name='sub-stage-list'),
 

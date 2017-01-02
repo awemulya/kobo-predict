@@ -11,8 +11,8 @@
 {% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:site-edit' obj.pk %}">{% trans 'Edit' %}</a>
-    <a class="btn btn-success btn-raised" href="{% url 'forms:setup-site-stages' obj.pk %}">{% trans 'Set up Stages' %}</a>
+    <!--<a class="btn btn-success btn-raised" href="{% url 'fieldsight:site-edit' obj.pk %}">{% trans 'Edit' %}</a>-->
+    <!--<a class="btn btn-success btn-raised" href="{% url 'forms:setup-site-stages' obj.pk %}">{% trans 'Set up Stages' %}</a>-->
     <!--<a class="btn btn-success btn-raised" href="{% url 'forms:site-forms' obj.pk %}">{% trans 'Forms' %}</a>-->
 {% endblock %}
 {% block content %}
@@ -51,13 +51,13 @@
                     </div>
                     <div class="col-md-3">
                         <div class="assign-form-to-site">
-                                <a class="btn btn-primary btn-raised" href="{% url 'forms:site-stages' obj.pk %}">
+                                <a class="btn btn-primary btn-raised" href="{% url 'forms:setup-site-stages' obj.pk %}">
                                     {% trans 'Setup Stages Data' %}
 
-                            </a>    
+                            </a>
                         </div>
                         <div class="assign-form-to-site">
-                            <a class="btn btn-success btn-raised" href="{% url 'forms:site-forms' obj.pk %}">
+                            <a class="btn btn-success btn-raised" href="{% url 'forms:site-survey' obj.pk %}">
                                 Create New Survey
                             </a>    
                         </div>

@@ -183,6 +183,21 @@ def stage_add_form(request, pk=None):
         form = AssignFormToStageForm()
     return render(request, "fsforms/stage_add_form.html", {'form': form, 'obj': stage})
 
+@login_required
+def create_schedule(request, site_id):
+    site = get_object_or_404(
+        Site, pk=site_id)
+    if request.method == 'POST':
+        form = ScheduleForm(data=request.POST)
+        if form.is_valid():
+            schedule = form.save()
+            schedule.site = site
+            schedule.save()
+            messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
+            return HttpResponseRedirect(reverse("forms:site-survey", kwargs={'site_id': site.id}))
+    form = ScheduleForm()
+    return render(request, "fsforms/schedule_form.html", {'form': form, 'obj': site})
+
 
 class ScheduleView(object):
     model = Schedule
@@ -220,7 +235,7 @@ def schedule_add_form(request, pk=None):
             fsform.schedule = schedule
             fsform.save()
             messages.add_message(request, messages.INFO, 'Form Assigned Successfully.')
-            return HttpResponseRedirect(reverse("forms:schedules-list"))
+            return HttpResponseRedirect(reverse("forms:site-survey", kwargs={'site_id': schedule.site.id}))
     else:
         form = AssignFormToScheduleForm()
     return render(request, "fsforms/schedule_add_form.html", {'form': form, 'obj': schedule})
@@ -351,6 +366,11 @@ def fill_details_schedule(request, pk=None):
 def setup_site_stages(request, site_id):
     objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True,site__id=site_id)
     return render(request, "fsforms/main_stages.html", {'objlist': objlist, 'site':Site.objects.get(pk=site_id)})
+
+
+def site_survey(request, site_id):
+    objlist = Schedule.objects.filter(site__id=site_id)
+    return render(request, "fsforms/schedule_list.html", {'object_list': objlist, 'site':Site.objects.get(pk=site_id)})
 
 
 # form related

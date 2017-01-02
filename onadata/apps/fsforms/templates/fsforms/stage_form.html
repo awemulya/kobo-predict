@@ -4,6 +4,8 @@
 {% block page-title %}{{ scenario }} {% trans 'Add Stage ' %}{{form.instance.order}}{% endblock %}
 
 {% block head %}
+<a  class="btn btn-success btn-raised" href="{% url 'fieldsight:site-dashboard' obj.pk %}">
+     {{obj.name}} {% trans 'Dashboard' %}</a>
  <a class="btn btn-success btn-raised" href="{% url 'forms:setup-site-stages' obj.pk %}">{% trans ' Stages' %}</a>
 {% endblock %}
 

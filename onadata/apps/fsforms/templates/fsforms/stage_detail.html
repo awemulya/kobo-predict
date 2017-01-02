@@ -6,6 +6,8 @@
 {% endblock %}
 
 {% block head %}
+<a  class="btn btn-success btn-raised" href="{% url 'fieldsight:site-dashboard' obj.site.pk %}">
+     {{obj.site.name}} {% trans 'Dashboard' %}</a>
 <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
 <a class="btn btn-success btn-raised" href="{% url 'forms:setup-site-stages' obj.site.pk %}">{% trans 'Main Stages' %}</a>
     <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add-sub-stage' obj.pk %}">

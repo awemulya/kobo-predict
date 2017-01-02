@@ -103,13 +103,12 @@ class AssignFormToScheduleForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(AssignFormToScheduleForm, self).__init__(*args, **kwargs)
-        xf_list = FieldSightXF.objects.filter(site__isnull=True, schedule=None, is_staged=False)
-        self.fields['xf'].choices = [(f.xf.id, f.xf.title) for f in xf_list]
+        xf_list = XForm.objects.all()
+        self.fields['xf'].choices = [(xf.id, xf.title) for xf in xf_list]
         self.fields['xf'].empty_label = None
-        self.fields['site'].empty_label = None
 
     class Meta:
-        fields = ['xf','site']
+        fields = ['xf']
         model = FieldSightXF
         labels = {
             "xf": _("Select Form"),
@@ -121,7 +120,7 @@ BIRTH_YEAR_CHOICES = ('1980', '1981', '1982')
 class ScheduleForm(forms.ModelForm):
 
     class Meta:
-        exclude = []
+        exclude = ['site']
         model = Schedule
         widgets = { 'selected_days': forms.CheckboxSelectMultiple,
                     'date_range_start': SelectDateWidget,
