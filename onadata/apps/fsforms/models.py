@@ -1,6 +1,10 @@
 import datetime
 from fcm.utils import get_device_model
 
+from onadata.apps.userrole.models import UserRole
+
+Device = get_device_model()
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -13,11 +17,6 @@ from django.dispatch import receiver
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.logger.models import XForm, Instance
 
-# @receiver(post_save, sender=XForm)
-# def save_to_fieldsight_form(sender, instance, **kwargs):
-#     pass
-#     if not FieldSightXF.objects.filter(xf=instance).exists():
-#         FieldSightXF.objects.create(xf=instance)
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
 FORM_STATUS = [(0, 'Outstanding'), (1, 'Flagged'), (2, 'Approved'), (3, 'Rejected'), ]
@@ -145,14 +144,6 @@ class Schedule(models.Model):
         return getattr(self, "name", "")
 
 
-@receiver(post_save, sender=User)
-def create_messages(sender, instance, created,  **kwargs):
-    if created:
-        Device = get_device_model()
-        Device.objects.all().send_message({'message':'my test message'})
-
-
-
 class FieldSightXF(models.Model):
     xf = models.ForeignKey(XForm, related_name="field_sight_form")
     site = models.ForeignKey(Site, related_name="site_forms", null=True, blank=True)
@@ -219,20 +210,17 @@ class FieldSightXF(models.Model):
     def __unicode__(self):
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
 
+@receiver(post_save, sender=FieldSightXF)
+def create_messages(sender, instance, created,  **kwargs):
+    if created and instance.site is not None:
+        roles = UserRole.objects.filter(site=instance.site)
+        emails = [r.user.email for r in roles]
+        # from fcm.api import FCMMessage
+        # FCMMessage().send({'message':'New Form'}, to='/topics/site-'+instance.site.id)
+        Device.objects.filter(name__in=emails).send_message({'message': 'New Form Assigned'})
+
+
 post_save.connect(create_messages, sender=FieldSightXF)
-
-
-class FieldsightInstance(models.Model):
-    fsxform = models.ForeignKey(FieldSightXF, null=True, related_name='fs_instances')
-    instance = models.ForeignKey(Instance, null=True, related_name='fs_instances')
-    # schedule id and schedule no for unique together
-
-    class Meta:
-        db_table = 'fieldsight_forms_instance'
-        # unique_together = (("xf", "site"), ("xf", "is_staged", "stage"),("xf", "is_scheduled", "schedule"))
-        verbose_name = _("FSInstance")
-        verbose_name_plural = _("FSInstances")
-        ordering = ("-fsxform",)
 
 
 #
