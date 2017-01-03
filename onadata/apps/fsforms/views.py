@@ -168,19 +168,15 @@ def stage_details(request, pk=None):
 def stage_add_form(request, pk=None):
     stage = get_object_or_404(
         Stage, pk=pk)
+    instance = FieldSightXF(site=stage.stage.site, is_staged=True, is_scheduled=False, stage=stage)
     if request.method == 'POST':
-        form = AssignFormToStageForm(request.POST)
+        form = AssignFormToStageForm(request.POST, instance=instance)
         if form.is_valid():
-            fsform = form.save()
-            fsform.is_staged = True
-            fsform.is_scheduled = False
-            fsform.stage = stage
-            fsform.site = stage.site
-            fsform.save()
+            form.save()
             messages.add_message(request, messages.INFO, 'Form Assigned Successfully.')
             return HttpResponseRedirect(reverse("forms:stages-detail", kwargs={'pk': stage.stage.id}))
     else:
-        form = AssignFormToStageForm()
+        form = AssignFormToStageForm(instance=instance)
     return render(request, "fsforms/stage_add_form.html", {'form': form, 'obj': stage})
 
 @login_required
@@ -226,18 +222,14 @@ class ScheduleDeleteView(ScheduleView, LoginRequiredMixin, KoboFormsMixin, Delet
 def schedule_add_form(request, pk=None):
     schedule = get_object_or_404(
         Schedule, pk=pk)
+    instance = FieldSightXF(site=schedule.site, is_staged=False, is_scheduled=True, schedule=schedule)
     if request.method == 'POST':
-        form = AssignFormToScheduleForm(request.POST)
+        form = AssignFormToScheduleForm(request.POST, instance=instance)
         if form.is_valid():
-            fsform = form.save()
-            fsform.is_scheduled = True
-            fsform.is_staged = False
-            fsform.schedule = schedule
-            fsform.save()
+            form.save()
             messages.add_message(request, messages.INFO, 'Form Assigned Successfully.')
             return HttpResponseRedirect(reverse("forms:site-survey", kwargs={'site_id': schedule.site.id}))
-    else:
-        form = AssignFormToScheduleForm()
+    form = AssignFormToScheduleForm(instance=instance)
     return render(request, "fsforms/schedule_add_form.html", {'form': form, 'obj': schedule})
 
 

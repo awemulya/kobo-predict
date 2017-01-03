@@ -92,11 +92,15 @@ class AssignFormToStageForm(forms.ModelForm):
         self.fields['xf'].empty_label = None
 
     class Meta:
-        fields = ['xf']
+        fields = ['xf','site','is_staged','is_scheduled','stage']
         model = FieldSightXF
         labels = {
             "xf": _("Select Form"),
         }
+        widgets = {'site': forms.HiddenInput(),
+                   'is_staged': forms.HiddenInput(),
+                   'is_scheduled': forms.HiddenInput(),
+                   'stage': forms.HiddenInput()}
 
 
 class AssignFormToScheduleForm(forms.ModelForm):
@@ -108,11 +112,15 @@ class AssignFormToScheduleForm(forms.ModelForm):
         self.fields['xf'].empty_label = None
 
     class Meta:
-        fields = ['xf']
+        fields = ['xf','site','is_staged','is_scheduled', 'schedule']
         model = FieldSightXF
         labels = {
             "xf": _("Select Form"),
         }
+        widgets = {'site': forms.HiddenInput(),
+                   'is_staged': forms.HiddenInput(),
+                   'is_scheduled': forms.HiddenInput(),
+                   'schedule': forms.HiddenInput()}
 
 BIRTH_YEAR_CHOICES = ('1980', '1981', '1982')
 

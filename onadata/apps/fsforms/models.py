@@ -1,10 +1,6 @@
 import datetime
 from fcm.utils import get_device_model
-Device = get_device_model()
-
 from onadata.apps.userrole.models import UserRole
-
-
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -217,6 +213,7 @@ def create_messages(sender, instance, created,  **kwargs):
         emails = [r.user.email for r in roles]
         # from fcm.api import FCMMessage
         # FCMMessage().send({'message':'New Form'}, to='/topics/site-'+instance.site.id)
+        Device = get_device_model()
         Device.objects.filter(name__in=emails).send_message({'message': 'New Form Assigned'})
 
 

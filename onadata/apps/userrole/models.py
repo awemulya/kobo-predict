@@ -1,6 +1,5 @@
 from datetime import datetime
 from fcm.utils import get_device_model
-Device = get_device_model()
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -50,6 +49,10 @@ class UserRole(models.Model):
         if self.group.name == 'Organization Admin' and not self.organization_id:
             raise ValidationError({
                 'organization': ValidationError(_('Missing Organization.'), code='required'),
+            })
+        if UserRole.objects.filter(user=self.user, group=self.group, site=self.site).exists():
+            raise ValidationError({
+                'user': ValidationError(_('User Role Already Exists.')),
             })
 
     def save(self, *args, **kwargs):
@@ -131,7 +134,8 @@ class UserRole(models.Model):
 
 @receiver(post_save, sender=UserRole)
 def create_messages(sender, instance, created,  **kwargs):
-    if created and instance.site is not None and instance.group in ["Site Supervisor"]:
+    if created and instance.site is not None and instance.group.name in ["Site Supervisor"]:
+        Device = get_device_model()
         Device.objects.get(name=instance.user.email).send_message({'message': 'New Role Assigned'})
 
 

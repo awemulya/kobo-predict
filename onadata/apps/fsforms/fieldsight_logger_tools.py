@@ -27,7 +27,7 @@ from pyxform.errors import PyXFormError
 from pyxform.xform2json import create_survey_element_from_xml
 import sys
 
-from onadata.apps.fsforms.models import FieldSightXF, FieldsightInstance
+from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.fsforms.utils import FIELDSIGHT_XFORM_ID
 from onadata.apps.main.models import UserProfile
 from onadata.apps.logger.models import Attachment
@@ -227,12 +227,6 @@ def create_instance(fsxfid, xml_file, media_files,
         instance = save_submission(xform, xml, media_files, str(fsxfid),
                                        submitted_by, status,
                                        date_created_override)
-            # if instance:
-            #     # FieldsightInstance.objects.create(fsxform=fsxform,instance=instance)
-            #     instance.json[FIELDSIGHT_XFORM_ID] = fsxfid
-            #     instance.save()
-            #     import ipdb
-            #     ipdb.set_trace()
         return instance
 
     # if duplicate_instances:
