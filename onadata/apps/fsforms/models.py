@@ -1,9 +1,9 @@
 import datetime
 from fcm.utils import get_device_model
+Device = get_device_model()
 
 from onadata.apps.userrole.models import UserRole
 
-Device = get_device_model()
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError

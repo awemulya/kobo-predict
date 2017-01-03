@@ -1,7 +1,11 @@
 from datetime import datetime
+from fcm.utils import get_device_model
+Device = get_device_model()
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
@@ -123,3 +127,12 @@ class UserRole(models.Model):
     def central_engineers(site):
         return UserRole.objects.filter(site=site, ended_at=None, group__name="Central Engineer").\
             select_related('group', 'site')
+
+
+@receiver(post_save, sender=UserRole)
+def create_messages(sender, instance, created,  **kwargs):
+    if created and instance.site is not None and instance.group in ["Site Supervisor"]:
+        Device.objects.get(name=instance.user.email).send_message({'message': 'New Role Assigned'})
+
+
+post_save.connect(create_messages, sender=UserRole)
