@@ -214,7 +214,12 @@ def create_messages(sender, instance, created,  **kwargs):
         # from fcm.api import FCMMessage
         # FCMMessage().send({'message':'New Form'}, to='/topics/site-'+instance.site.id)
         Device = get_device_model()
-        Device.objects.filter(name__in=emails).send_message({'message': 'New Form Assigned'})
+        message = {'message':'form',
+                   'url': 'forms/{}/form.xml'.format(instance.id),
+                   'manifiest': 'forms/{}/{}'.format(instance.id, instance.site.id),
+                   'status':instance.get_form_status_display,
+                   'site':{'name':instance.site.name, 'id':instance.site.id}}
+        Device.objects.filter(name__in=emails).send_message({'message': message})
 
 
 post_save.connect(create_messages, sender=FieldSightXF)
