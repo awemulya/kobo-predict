@@ -125,7 +125,7 @@ BIRTH_YEAR_CHOICES = ('1980', '1981', '1982')
 class ScheduleForm(forms.ModelForm):
 
     class Meta:
-        exclude = ['site']
+        exclude = ['site','project']
         model = Schedule
         widgets = { 'selected_days': forms.CheckboxSelectMultiple,
                     'date_range_start': SelectDateWidget,
