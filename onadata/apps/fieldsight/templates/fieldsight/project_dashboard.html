@@ -2,7 +2,7 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Project' %}{% endblock %}
+{% block page-title %}{% trans 'Organization' %}{{obj.organization.name}}{% trans 'Project' %}{{obj.name}}{% endblock %}
 {%block extracss %}
 
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
@@ -11,6 +11,19 @@
 {% endblock %}
 
 {% block head %}
+    <div class="col-md-3">
+        <div class="assign-form-to-site">
+                <a class="btn btn-primary btn-raised" href="{% url 'forms:setup-project-stages' obj.pk %}">
+                    {% trans 'Setup Stages Data' %}
+
+            </a>
+        </div>
+        <div class="assign-form-to-site">
+            <a class="btn btn-success btn-raised" href="{% url 'forms:project-survey' obj.pk %}">
+                Create New Survey
+            </a>
+        </div>
+    </div>
     <a class="btn btn-success btn-raised" href="{% url 'fieldsight:organization-edit' obj.pk %}">{% trans 'Edit' %}</a>
 {% endblock %}
 {% block content %}

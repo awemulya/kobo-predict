@@ -13,7 +13,7 @@ from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpRespon
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
-from onadata.apps.fieldsight.models import Site
+from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo
 from onadata.apps.logger.models import XForm
@@ -153,6 +153,24 @@ def stage_add(request, site_id=None):
     form = StageForm(instance=instance)
     return render(request, "fsforms/stage_form.html", {'form': form, 'obj': site})
 
+@login_required
+# @group_required('KoboForms')
+def project_stage_add(request, id=None):
+    project = get_object_or_404(
+        Project, pk=id)
+    if request.method == 'POST':
+        form = StageForm(data=request.POST)
+        if form.is_valid():
+            stage = form.save()
+            stage.project = project
+            stage.save()
+            messages.info(request, 'Stage {} Saved.'.format(stage.name))
+            return HttpResponseRedirect(reverse("forms:setup-project-stages", kwargs={'id': project.id}))
+    order = Stage.objects.filter(project=project,stage__isnull=True).count() + 1
+    instance = Stage(name="Stage"+str(order), order=order)
+    form = StageForm(instance=instance)
+    return render(request, "fsforms/project/stage_form.html", {'form': form, 'obj': project})
+
 
 @login_required
 @group_required('KoboForms')
@@ -164,20 +182,31 @@ def stage_details(request, pk=None):
 
 
 @login_required
-@group_required('KoboForms')
 def stage_add_form(request, pk=None):
     stage = get_object_or_404(
         Stage, pk=pk)
-    instance = FieldSightXF(site=stage.stage.site, is_staged=True, is_scheduled=False, stage=stage)
-    if request.method == 'POST':
-        form = AssignFormToStageForm(request.POST, instance=instance)
-        if form.is_valid():
-            form.save()
-            messages.add_message(request, messages.INFO, 'Form Assigned Successfully.')
-            return HttpResponseRedirect(reverse("forms:stages-detail", kwargs={'pk': stage.stage.id}))
+    if stage.stage.site:
+        instance = FieldSightXF(site=stage.stage.site, is_staged=True, is_scheduled=False, stage=stage)
+        if request.method == 'POST':
+            form = AssignFormToStageForm(request.POST, instance=instance)
+            if form.is_valid():
+                form.save()
+                messages.add_message(request, messages.INFO, 'Form Assigned Successfully.')
+                return HttpResponseRedirect(reverse("forms:stages-detail", kwargs={'pk': stage.stage.id}))
+        else:
+            form = AssignFormToStageForm(instance=instance)
+        return render(request, "fsforms/stage_add_form.html", {'form': form, 'obj': stage})
     else:
-        form = AssignFormToStageForm(instance=instance)
-    return render(request, "fsforms/stage_add_form.html", {'form': form, 'obj': stage})
+        if request.method == 'POST':
+            form = AssignFormToStageForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.add_message(request, messages.INFO, 'Form Assigned Successfully.')
+                return HttpResponseRedirect(reverse("forms:stages-detail", kwargs={'pk': stage.stage.id}))
+        else:
+            form = AssignFormToStageForm()
+        return render(request, "fsforms/stage_add_form.html", {'form': form, 'obj': stage})
+
 
 @login_required
 def create_schedule(request, site_id):
@@ -358,6 +387,12 @@ def fill_details_schedule(request, pk=None):
 def setup_site_stages(request, site_id):
     objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True,site__id=site_id)
     return render(request, "fsforms/main_stages.html", {'objlist': objlist, 'site':Site.objects.get(pk=site_id)})
+
+
+def setup_project_stages(request, id):
+    objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True,project__id=id)
+    return render(request, "fsforms/project/project_main_stages.html", {'objlist': objlist, 'obj':
+        Project.objects.get(pk=id)})
 
 
 def site_survey(request, site_id):

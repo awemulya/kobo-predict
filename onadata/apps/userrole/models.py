@@ -137,8 +137,8 @@ def create_messages(sender, instance, created,  **kwargs):
     if created and instance.site is not None and instance.group.name in ["Site Supervisor"]:
         Device = get_device_model()
         if Device.objects.filter(name=instance.user.email).exists():
-            message = {'message':'New Site to supervise', 'site':{'name':instance.site.name, 'id':instance.site.id}}
-            Device.objects.get(name=instance.user.email).send_message({'message': message})
+            message = {'notify_type':'New Site', 'site':{'name': instance.site.name, 'id': instance.site.id}}
+            Device.objects.get(name=instance.user.email).send_message(message)
 
 
 post_save.connect(create_messages, sender=UserRole)

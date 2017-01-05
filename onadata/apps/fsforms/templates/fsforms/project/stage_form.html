@@ -1,24 +1,17 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 
-{% block page-title %}{{ scenario }} {% trans 'New Sub Stage  ' %}{{form.instance.order}}{% endblock %}
+{% block page-title %}{{ scenario }} {% trans 'Add Stage ' %}{{form.instance.order}}{% endblock %}
 
 {% block head %}
-{% if obj.site.pk %}
-<a  class="btn btn-success btn-raised" href="{% url 'fieldsight:site-dashboard' obj.site.pk %}">
-     {{obj.site.name}} {% trans 'Dashboard' %}</a>
-<a class="btn btn-success btn-raised" href="{% url 'forms:setup-site-stages' obj.site.pk %}">{% trans 'Main Stages' %}</a>
-{% else %}
-<a  class="btn btn-success btn-raised" href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">
-     {{obj.site.name}} {% trans 'Dashboard' %}</a>
-<a class="btn btn-success btn-raised" href="{% url 'forms:setup-project-stages' obj.project.pk %}">{% trans 'Main Stages' %}</a>
-{% endif %}
-   <a class="btn btn-success btn-raised" href="{% url 'forms:stages-detail' obj.pk %}">Sub Stages</a>
+<a  class="btn btn-success btn-raised" href="{% url 'fieldsight:project-dashboard' obj.pk %}">
+     {{obj.name}} {% trans 'Dashboard' %}</a>
+ <a class="btn btn-success btn-raised" href="{% url 'forms:setup-project-stages' obj.pk %}">{% trans ' Stages' %}</a>
 {% endblock %}
 
 {% block content %}
 
-    <form method="post" id='form' action="{% url 'forms:stage-add-sub-stage' obj.pk %}">
+    <form method="post" action="{% url 'forms:project-stage-add' obj.pk %}">
         <div class="">
             <div class="col-sm-12 registration_field">
                {{ form.non_field_errors }}

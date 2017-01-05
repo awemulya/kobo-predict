@@ -69,18 +69,15 @@ class FSFormForm(forms.ModelForm):
 class StageForm(forms.ModelForm):
 
     class Meta:
-        exclude = ['group', 'stage', 'site', 'shared_level']
+        exclude = ['group', 'stage', 'site', 'shared_level', 'project']
         model = Stage
 
 
 class AddSubSTageForm(forms.ModelForm):
 
     class Meta:
-        exclude = ['stage','group','shared_level','site']
+        exclude = ['stage', 'group', 'shared_level', 'site', 'project']
         model = Stage
-        # widgets = {'stage': forms.HiddenInput(),
-        #            'group': forms.HiddenInput()
-        #            }
 
 
 class AssignFormToStageForm(forms.ModelForm):

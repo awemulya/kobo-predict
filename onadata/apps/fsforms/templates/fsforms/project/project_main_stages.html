@@ -2,22 +2,15 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{{obj.sub_stage_count}}{% trans ' Sub Stages of ' %}{{obj.name}}
+{% block page-title %}{% trans 'Stages of' %}  {{obj.name}}
 {% endblock %}
 
 {% block head %}
-{% if obj.site.pk %}
-<a  class="btn btn-success btn-raised" href="{% url 'fieldsight:site-dashboard' obj.site.pk %}">
-     {{obj.site.name}} {% trans 'Dashboard' %}</a>
-<a class="btn btn-success btn-raised" href="{% url 'forms:setup-site-stages' obj.site.pk %}">{% trans 'Main Stages' %}</a>
-{% else %}
-<a  class="btn btn-success btn-raised" href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">
-     {{obj.site.name}} {% trans 'Dashboard' %}</a>
-<a class="btn btn-success btn-raised" href="{% url 'forms:setup-project-stages' obj.project.pk %}">{% trans 'Main Stages' %}</a>
-{% endif %}
-    <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add-sub-stage' obj.pk %}">
-        {% trans 'Add Sub Stage' %}</a>
+ <a  class="btn btn-success btn-raised" href="{% url 'fieldsight:project-dashboard' obj.pk %}">
+     {{obj.name}} {% trans 'Dashboard' %}</a>
 <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'forms:project-stage-add' obj.pk %}">
+                            {% trans 'Add New Stage' %}</a>
 {% endblock %}
 {%block extracss %}
 <style>
@@ -105,45 +98,41 @@
     background: #296fd5 !important;
     color: #fff;
 }
-.site-forms-list-single {
+.obj-forms-list-single {
     padding: 15px 10px;
     background: #ECECEC;
     border-bottom: 1px solid #DADADA;
 }
-.site-forms-list-single p {
+.obj-forms-list-single p {
     margin-bottom: 0px;
 }
-.site-forms-list-single:hover {
+.obj-forms-list-single:hover {
     background: #237dff;
     color: #fff;
 }
 </style>
 {% endblock %}
+
 {% block content %}
 
-    {% load filters %}
-  <div class="sub-stages">
-      {% for stage in object_list %}
-    <div>
-      <div class="col-md-4">
-        <div class="substages-main-list">
-          <h3><span>Order:</span> <b>{{stage.order}}</b></h3>
-          <h4><span>Name:</span> <b>{{stage.name}}</b></h4>
-          <p><span>Description:</span>{{stage.description}}</p>
-            {% if not stage.form_exists and stage.stage.site %}
-                        <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add-form' stage.pk %}">
-                        Assign Form
-                        </a>
-                        <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'Create New' %} {% trans 'Form' %}</a>
-                            {% else %}
-                    {{stage.form_name}}
-                        {% endif %}
+{% load filters %}
 
-        </div>
-        <div class="clearfixxx"></div>
+<div class="main-stages">
+    {% for stage in objlist %}
+  <div>
+    <div class="col-md-4">
+      <div class="stages-main-list">
+        <h3><span>Stage:</span> <b>{{stage.order}}</b></h3>
+        <h4><span>Name:</span> <b>{{stage.name}}</b></h4>
+        <p><span>Description:</span>{{stage.description}}</p>
+           <a class="btn btn-success btn-raised" href="{% url 'forms:stages-detail' stage.pk %}">
+                            {% trans 'List Sub Stages' %}({{stage.sub_stage_count}})</a>
       </div>
+
     </div>
-      {% endfor %}
   </div>
+    {% endfor %}
+</div>
+
 
 {% endblock %}

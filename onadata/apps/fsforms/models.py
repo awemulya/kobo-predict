@@ -1,4 +1,6 @@
 import datetime
+import json
+
 from fcm.utils import get_device_model
 from onadata.apps.userrole.models import UserRole
 from django.contrib.auth.models import User
@@ -10,7 +12,7 @@ from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 
-from onadata.apps.fieldsight.models import Site
+from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.logger.models import XForm, Instance
 
 
@@ -57,6 +59,7 @@ class Stage(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     site = models.ForeignKey(Site, related_name="stages", null=True, blank=True)
+    project = models.ForeignKey(Project, related_name="stages", null=True, blank=True)
 
     class Meta:
         db_table = 'fieldsight_forms_stage'
@@ -118,6 +121,7 @@ class Days(models.Model):
 class Schedule(models.Model):
     name = models.CharField("Schedule Name", max_length=256)
     site = models.ForeignKey(Site, related_name="schedules", null=True, blank=True)
+    project = models.ForeignKey(Project, related_name="schedules", null=True, blank=True)
     date_range_start = models.DateField(default=datetime.date.today)
     date_range_end = models.DateField(default=datetime.date.today)
     selected_days = models.ManyToManyField(Days,related_name='days')
@@ -214,12 +218,12 @@ def create_messages(sender, instance, created,  **kwargs):
         # from fcm.api import FCMMessage
         # FCMMessage().send({'message':'New Form'}, to='/topics/site-'+instance.site.id)
         Device = get_device_model()
-        message = {'message':'form',
+        message = {'notify_type': 'Form',
                    'url': 'forms/{}/form.xml'.format(instance.id),
                    'manifiest': 'forms/{}/{}'.format(instance.id, instance.site.id),
-                   'status':instance.get_form_status_display,
+                   'status':instance.get_form_status_display(),
                    'site':{'name':instance.site.name, 'id':instance.site.id}}
-        Device.objects.filter(name__in=emails).send_message({'message': message})
+        Device.objects.filter(name__in=emails).send_message(message)
 
 
 post_save.connect(create_messages, sender=FieldSightXF)
