@@ -221,8 +221,8 @@ def create_messages(sender, instance, created,  **kwargs):
         message = {'notify_type': 'Form',
                    'url': 'forms/{}/form.xml'.format(instance.id),
                    'manifiest': 'forms/{}/{}'.format(instance.id, instance.site.id),
-                   'status':instance.get_form_status_display(),
-                   'site':{'name':instance.site.name, 'id':instance.site.id}}
+                   'status': instance.get_form_status_display(),
+                   'site':{'name': instance.site.name, 'id': instance.site.id}}
         Device.objects.filter(name__in=emails).send_message(message)
 
 
