@@ -220,6 +220,7 @@ def create_messages(sender, instance, created,  **kwargs):
         Device = get_device_model()
         message = {'notify_type': 'Form',
                    'form_id': instance.id,
+                   'form_name': instance.xf.title,
                    'url': 'forms/{}/form.xml'.format(instance.id),
                    'manifiest': 'forms/{}/{}'.format(instance.id, instance.site.id),
                    'status': instance.get_form_status_display(),
