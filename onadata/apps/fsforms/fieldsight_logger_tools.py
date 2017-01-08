@@ -27,7 +27,7 @@ from pyxform.errors import PyXFormError
 from pyxform.xform2json import create_survey_element_from_xml
 import sys
 
-from onadata.apps.fsforms.models import FieldSightXF
+from onadata.apps.fsforms.models import FieldSightXF, FieldSightParsedInstance
 from onadata.apps.fsforms.utils import FIELDSIGHT_XFORM_ID
 from onadata.apps.main.models import UserProfile
 from onadata.apps.logger.models import Attachment
@@ -157,7 +157,7 @@ def check_submission_permissions(request, xform):
 
 
 def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
-                    date_created_override):
+                    date_created_override, fxid):
     if not date_created_override:
         date_created_override = get_submission_date_from_xml(xml)
 
@@ -177,8 +177,8 @@ def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
         instance.save()
 
     if instance.xform is not None:
-        pi, created = ParsedInstance.objects.get_or_create(
-            instance=instance)
+
+         pi, created =  FieldSightParsedInstance.get_or_create(instance, update_data={'fs_uuid': new_uuid})
 
     if not created:
         pi.save(async=False)

@@ -14,7 +14,7 @@ from django.dispatch import receiver
 
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.logger.models import XForm, Instance
-
+from onadata.apps.viewer.models import ParsedInstance
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
 FORM_STATUS = [(0, 'Outstanding'), (1, 'Flagged'), (2, 'Approved'), (3, 'Rejected'), ]
@@ -155,6 +155,7 @@ class FieldSightXF(models.Model):
     stage = models.ForeignKey(Stage, blank=True, null=True)
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
     form_status = models.IntegerField(default=0, choices=FORM_STATUS)
+    # instances = models.ManyToManyField()
 
     class Meta:
         db_table = 'fieldsight_forms_data'
@@ -231,13 +232,31 @@ def create_messages(sender, instance, created,  **kwargs):
 post_save.connect(create_messages, sender=FieldSightXF)
 
 
-#
-# class FieldSightParsedInstance(ParsedInstance):
-#     class Meta:
-#         proxy = True
-#
-#     @classmethod
-#     def query_mongo(cls, **kwargs):
-#         get necessary argument from kwargs
-#         cursor = super().query_mongo(**)
-#         cursor.
+class FieldSightParsedInstance(ParsedInstance):
+    _update_fs_data = None
+    class Meta:
+        proxy = True
+
+    def save(self, *args, **kwargs):
+        self._update_fs_data = kwargs.pop('update_fs_data', {})
+        super(FieldSightParsedInstance, self).save(*args, **kwargs)
+
+    def to_dict_for_mongo(self):
+        mongo_dict = super(FieldSightParsedInstance, self).to_dict_for_mongo()
+        mongo_dict.update(self._update_fs_data)
+        return mongo_dict
+
+    @staticmethod
+    def get_or_create(instance, update_data=None):
+        if update_data is None:
+            update_data = {}
+        created = False
+        try:
+            fspi = FieldSightParsedInstance.objects.get(instance__pk=instance.pk)
+        except FieldSightParsedInstance.DoesNotExist:
+            created = True
+            fspi = FieldSightParsedInstance(instance=instance)
+            fspi.save(update_fs_data=update_data, async=False)
+        return fspi, created
+
+
