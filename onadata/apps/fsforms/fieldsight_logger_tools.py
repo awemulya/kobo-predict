@@ -161,7 +161,7 @@ def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
     if not date_created_override:
         date_created_override = get_submission_date_from_xml(xml)
 
-    instance = _get_instance(xml, new_uuid, submitted_by, status, xform)
+    instance = _get_instance(xml, fxid, submitted_by, status, xform)
 
     for f in media_files:
         Attachment.objects.get_or_create(
@@ -178,7 +178,8 @@ def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
 
     if instance.xform is not None:
 
-         pi, created =  FieldSightParsedInstance.get_or_create(instance, update_data={'fs_uuid': new_uuid})
+         pi, created = FieldSightParsedInstance.get_or_create(instance, update_data=
+         {'fs_uuid': fxid, 'fs_status': 0})
 
     if not created:
         pi.save(async=False)
@@ -224,9 +225,9 @@ def create_instance(fsxfid, xml_file, media_files,
         #             instance=duplicate_instances[0],
         #             media_file=f, mimetype=f.content_type)
         # else:
-        instance = save_submission(xform, xml, media_files, str(fsxfid),
+        instance = save_submission(xform, xml, media_files, uuid,
                                        submitted_by, status,
-                                       date_created_override)
+                                       date_created_override, str(fsxfid))
         return instance
 
     # if duplicate_instances:

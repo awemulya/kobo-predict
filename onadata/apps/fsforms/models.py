@@ -234,6 +234,7 @@ post_save.connect(create_messages, sender=FieldSightXF)
 
 class FieldSightParsedInstance(ParsedInstance):
     _update_fs_data = None
+
     class Meta:
         proxy = True
 

@@ -20,6 +20,24 @@ from django.conf import settings
 from onadata.apps.users.models import UserProfile
 
 register = Library()
+
+@register.filter
+def get_type(value):
+    return type(value)
+
+
+STATUS_DICT = {0:'Outstanding', 1: 'Flagged', 2: 'Rejected', 3: 'Approved'}
+
+def get_status_level(status=0):
+    return STATUS_DICT.get(status,"Outstanding")
+
+
+@register.filter
+def exceptlast(lst):
+    my_list = lst[:-1]
+    my_list[-1] = get_status_level(my_list[-1])
+    return my_list
+
 @register.filter
 def is_demand(obj):
     if obj.__class__.__name__ == 'DemandRow':

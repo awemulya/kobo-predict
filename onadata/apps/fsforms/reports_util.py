@@ -5,7 +5,7 @@ from onadata.apps.viewer.models.parsed_instance import dict_for_mongo, _encode_f
 
 
 def get_instances_for_field_sight_form(fieldsight_form_id, submission=None):
-    query = {'_uuid': { '$in': [fieldsight_form_id, str(fieldsight_form_id)] }, '_deleted_at': {'$exists': False}}
+    query = {'fs_uuid': { '$in': [fieldsight_form_id, str(fieldsight_form_id)] }, '_deleted_at': {'$exists': False}}
     if submission:
         query['_id'] = submission
     return settings.MONGO_DB.instances.find(query)
@@ -41,7 +41,7 @@ def build_export_context(request,xform, id_string):
                'lang': lang,
                'hierarchy_in_labels': hierarchy_in_labels,
                # 'copy_fields': ('_id', '_uuid', '_submission_time''),
-               'copy_fields': ('_id','_submission_time','medias'),
+               'copy_fields': ('_id','_submission_time','fs_uuid','fs_status','medias'),
                # 'force_index': True
                'force_index': False
                }
