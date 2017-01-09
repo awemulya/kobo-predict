@@ -282,7 +282,8 @@ h1 {
     <tbody>
     {% for submission_id, row in data  %}
         <tr>
-            <th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
+            <!--<th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>-->
+            <th><a href="{% url 'forms:instance_detail' fsxfid  submission_id %}">{% trans "Open" %}</a></th>
             <th>
                 {% with row|last as last %}
                 {% for link in last %}

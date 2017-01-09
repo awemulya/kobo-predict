@@ -38,6 +38,11 @@ def exceptlast(lst):
     my_list[-1] = get_status_level(my_list[-1])
     return my_list
 
+
+@register.filter
+def status(status=0):
+    return STATUS_DICT.get(status,"Outstanding")
+
 @register.filter
 def is_demand(obj):
     if obj.__class__.__name__ == 'DemandRow':

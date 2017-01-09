@@ -15,7 +15,7 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
-    get_xform_and_perms, query_mongo
+    get_xform_and_perms, query_mongo, get_instance
 from onadata.apps.logger.models import XForm
 from onadata.libs.utils.user_auth import add_cors_headers
 from onadata.libs.utils.user_auth import helper_auth_helper
@@ -490,6 +490,25 @@ def html_export(request, fsxf_id):
     # return JsonResponse({'data': cursor})
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
+
+def instance_detail(request, fsxf_id, instance_id):
+    fsxf = FieldSightXF.objects.get(pk=fsxf_id)
+    cursor = get_instance(instance_id)
+    cursor = list(cursor)
+    obj = cursor[0]
+    _keys = ['_notes', 'meta/instanceID', 'end', '_uuid', '_bamboo_dataset_id', '_tags', 'start',
+             '_geolocation', '_xform_id_string', '_userform_id', '_status', '__version__', 'formhub/uuid']
+    data = {}
+    medias = []
+    for key in obj.keys():
+        if key not in _keys:
+            if key == "_attachments":
+                for media in obj[key]:
+                    if media:
+                        medias.append(media.get('download_url', ''))
+            else:
+                data.update({str(key): str(obj[key])})
+    return render(request, 'fsforms/fieldsight_instance_export_html.html', {'obj':fsxf, 'data':data, 'medias':medias})
 
 # @group_required('KoboForms')
 def instance(request, fsxf_id):

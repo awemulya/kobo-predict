@@ -17,6 +17,11 @@ def get_instance_form_data(fieldsight_form_id, instance_id):
     return settings.MONGO_DB.instances.find(query)
 
 
+def get_instance(instance_id):
+    query = {'_id': int(instance_id)}
+    return settings.MONGO_DB.instances.find(query)
+
+
 def build_formpack(id_string, xform):
     schema = {
         "id_string": id_string,
