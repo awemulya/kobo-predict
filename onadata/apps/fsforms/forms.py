@@ -3,7 +3,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.logger.models import XForm
-from .models import FieldSightXF, Stage, Schedule, FormGroup
+from .models import FieldSightXF, Stage, Schedule, FormGroup, FORM_STATUS
 
 
 class AssignSettingsForm(forms.ModelForm):
@@ -138,3 +138,9 @@ class GroupForm(forms.ModelForm):
     class Meta:
         exclude = ['creator']
         model = FormGroup
+
+
+class AlterAnswerStatus(forms.Form):
+    status = forms.ChoiceField(widget = forms.Select(),
+                     choices = (FORM_STATUS), required = True,)
+

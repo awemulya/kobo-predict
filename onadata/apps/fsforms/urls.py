@@ -42,7 +42,7 @@ from .views import (
     stage_add,
     site_survey,
     create_schedule,
-    setup_project_stages, project_stage_add, instance_detail)
+    setup_project_stages, project_stage_add, instance_detail, alter_answer_status)
 
 # router = MultiLookupRouter(trailing_slash=False)
 router = routers.DefaultRouter()
@@ -104,6 +104,7 @@ urlpatterns = urlpatterns + [
         url(r'reports/(?P<fsxf_id>\d+)$', html_export, name='formpack_html_export'),
         url(r'^forms/(?P<fsxf_id>\d+)/instance', instance, name='instance'),
         url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', instance_detail, name='instance_detail'),
+        url(r'^forms/alter-answer-status/(?P<instance_id>\d+)/(?P<status>\d)/(?P<fsid>\d+)$', alter_answer_status, name='alter-answer-status'),
 ]
 
 urlpatterns = urlpatterns + [

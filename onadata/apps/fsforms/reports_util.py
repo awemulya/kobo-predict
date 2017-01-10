@@ -21,6 +21,8 @@ def get_instance(instance_id):
     query = {'_id': int(instance_id)}
     return settings.MONGO_DB.instances.find(query)
 
+def update_status(instance_id, status):
+    settings.MONGO_DB.instances.update({'_id': int(instance_id)}, {'$set': {'fs_status': status}}, upsert=False, multi=False)
 
 def build_formpack(id_string, xform):
     schema = {

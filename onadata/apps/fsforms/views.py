@@ -15,7 +15,7 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
-    get_xform_and_perms, query_mongo, get_instance
+    get_xform_and_perms, query_mongo, get_instance, update_status
 from onadata.apps.logger.models import XForm
 from onadata.libs.utils.user_auth import add_cors_headers
 from onadata.libs.utils.user_auth import helper_auth_helper
@@ -24,7 +24,8 @@ from onadata.libs.utils.logger_tools import response_with_mimetype_and_name
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectMixin, \
     CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
-    StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm
+    StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
+    AlterAnswerStatus
 from .models import FieldSightXF, Stage, Schedule, FormGroup
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
@@ -497,18 +498,36 @@ def instance_detail(request, fsxf_id, instance_id):
     cursor = list(cursor)
     obj = cursor[0]
     _keys = ['_notes', 'meta/instanceID', 'end', '_uuid', '_bamboo_dataset_id', '_tags', 'start',
-             '_geolocation', '_xform_id_string', '_userform_id', '_status', '__version__', 'formhub/uuid']
+             '_geolocation', '_xform_id_string', '_userform_id', '_status', '__version__', 'formhub/uuid', '_id']
     data = {}
     medias = []
+    status = 0
     for key in obj.keys():
         if key not in _keys:
             if key == "_attachments":
                 for media in obj[key]:
                     if media:
                         medias.append(media.get('download_url', ''))
+            elif key == "fs_status":
+                status = obj[key]
             else:
                 data.update({str(key): str(obj[key])})
-    return render(request, 'fsforms/fieldsight_instance_export_html.html', {'obj':fsxf, 'data':data, 'medias':medias})
+    return render(request, 'fsforms/fieldsight_instance_export_html.html',
+                  {'obj': fsxf, 'answer': instance_id, 'status': status, 'data': data, 'medias': medias})
+
+def alter_answer_status(request, instance_id, status, fsid):
+    if request.method == 'POST':
+        form = AlterAnswerStatus(request.POST)
+        if form.is_valid():
+            status = int(form.cleaned_data['status'])
+            update_status(instance_id, status)
+            return HttpResponseRedirect(reverse("forms:instance_detail", kwargs={'fsxf_id': fsid, 'instance_id':instance_id}))
+
+    else:
+        form = AlterAnswerStatus(initial={'status':status})
+
+    return render(request, 'fsforms/alter_answer_status.html',
+                  {'form': form, 'answer':instance_id, 'status':status, 'fsid':fsid})
 
 # @group_required('KoboForms')
 def instance(request, fsxf_id):

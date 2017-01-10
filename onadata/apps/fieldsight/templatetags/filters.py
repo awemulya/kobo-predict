@@ -26,7 +26,7 @@ def get_type(value):
     return type(value)
 
 
-STATUS_DICT = {0:'Outstanding', 1: 'Flagged', 2: 'Rejected', 3: 'Approved'}
+STATUS_DICT = {0:'Outstanding', 1: 'Flagged', 2: 'Approved', 3: 'Rejected'}
 
 def get_status_level(status=0):
     return STATUS_DICT.get(status,"Outstanding")
