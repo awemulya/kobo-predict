@@ -4,7 +4,6 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
-from django.template.response import TemplateResponse
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
@@ -16,6 +15,7 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo, get_instance, update_status
+from onadata.apps.fsforms.utils import send_message
 from onadata.apps.logger.models import XForm
 from onadata.libs.utils.user_auth import add_cors_headers
 from onadata.libs.utils.user_auth import helper_auth_helper
@@ -515,12 +515,15 @@ def instance_detail(request, fsxf_id, instance_id):
     return render(request, 'fsforms/fieldsight_instance_export_html.html',
                   {'obj': fsxf, 'answer': instance_id, 'status': status, 'data': data, 'medias': medias})
 
+
 def alter_answer_status(request, instance_id, status, fsid):
     if request.method == 'POST':
         form = AlterAnswerStatus(request.POST)
         if form.is_valid():
             status = int(form.cleaned_data['status'])
             update_status(instance_id, status)
+            fsxf = FieldSightXF.objects.get(pk=fsid)
+            send_message(fsxf, status)
             return HttpResponseRedirect(reverse("forms:instance_detail", kwargs={'fsxf_id': fsid, 'instance_id':instance_id}))
 
     else:

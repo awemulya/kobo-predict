@@ -1,6 +1,6 @@
 from django.conf import settings
 from formpack import FormPack
-from onadata.apps.fsforms.models import FieldSightXF
+from .models import FieldSightXF
 from onadata.apps.viewer.models.parsed_instance import dict_for_mongo, _encode_for_mongo, xform_instances
 
 

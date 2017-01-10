@@ -1,8 +1,4 @@
 import datetime
-import json
-
-from fcm.utils import get_device_model
-from onadata.apps.userrole.models import UserRole
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -13,7 +9,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 
 from onadata.apps.fieldsight.models import Site, Project
-from onadata.apps.logger.models import XForm, Instance
+from onadata.apps.fsforms.utils import send_message
+from onadata.apps.logger.models import XForm
 from onadata.apps.viewer.models import ParsedInstance
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
@@ -214,20 +211,7 @@ class FieldSightXF(models.Model):
 @receiver(post_save, sender=FieldSightXF)
 def create_messages(sender, instance, created,  **kwargs):
     if created and instance.site is not None:
-        roles = UserRole.objects.filter(site=instance.site)
-        emails = [r.user.email for r in roles]
-        # from fcm.api import FCMMessage
-        # FCMMessage().send({'message':'New Form'}, to='/topics/site-'+instance.site.id)
-        Device = get_device_model()
-        message = {'notify_type': 'Form',
-                   'form_id': instance.id,
-                   'form_name': instance.xf.title,
-                   'url': 'forms/{}/form.xml'.format(instance.id),
-                   'manifiest': 'forms/{}/{}'.format(instance.id, instance.site.id),
-                   'status': instance.get_form_status_display(),
-                   'site':{'name': instance.site.name, 'id': instance.site.id}}
-        Device.objects.filter(name__in=emails).send_message(message)
-
+        send_message(instance)
 
 post_save.connect(create_messages, sender=FieldSightXF)
 
