@@ -157,7 +157,7 @@ def check_submission_permissions(request, xform):
 
 
 def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
-                    date_created_override, fxid):
+                    date_created_override, fxid, site):
     if not date_created_override:
         date_created_override = get_submission_date_from_xml(xml)
 
@@ -179,7 +179,7 @@ def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
     if instance.xform is not None:
 
          pi, created = FieldSightParsedInstance.get_or_create(instance, update_data=
-         {'fs_uuid': fxid, 'fs_status': 0})
+         {'fs_uuid': fxid, 'fs_status': 0, 'fs_site':site})
 
     if not created:
         pi.save(async=False)
@@ -201,7 +201,7 @@ def schedule_uuid_value(fsxform):
 
 def create_instance(fsxfid, xml_file, media_files,
                     status=u'submitted_via_web', uuid=None,
-                    date_created_override=None, request=None):
+                    date_created_override=None, request=None, site=None):
 
     with transaction.atomic():
         instance = None
@@ -227,7 +227,7 @@ def create_instance(fsxfid, xml_file, media_files,
         # else:
         instance = save_submission(xform, xml, media_files, uuid,
                                        submitted_by, status,
-                                       date_created_override, str(fsxfid))
+                                       date_created_override, str(fsxfid), str(site))
         return instance
 
     # if duplicate_instances:
@@ -239,7 +239,7 @@ def create_instance(fsxfid, xml_file, media_files,
     #     raise DuplicateInstance()
 
 
-def safe_create_instance(fsxfid, xml_file, media_files, uuid, request):
+def safe_create_instance(fsxfid, xml_file, media_files, uuid, request, site):
     """Create an instance and catch exceptions.
 
     :returns: A list [error, instance] where error is None if there was no
@@ -249,7 +249,7 @@ def safe_create_instance(fsxfid, xml_file, media_files, uuid, request):
 
     try:
         instance = create_instance(
-            fsxfid, xml_file, media_files, uuid=uuid, request=request)
+            fsxfid, xml_file, media_files, uuid=uuid, request=request, site=site)
     except InstanceInvalidUserError:
         error = OpenRosaResponseBadRequest(_(u"Username or ID required."))
     except InstanceEmptyError:

@@ -4,7 +4,8 @@
 {% block page-title %}{% trans 'Form Submission Detail' %}{% endblock %}
 
 {% block head %}
-    {{status|status}}
+<a class="btn btn-success btn-raised" href="{% url 'forms:formpack_html_export' obj.id %}">{% trans 'All Submissions' %}</a>
+{{status|status}}
     <a class="btn btn-success btn-raised" href="{% url 'forms:alter-answer-status' answer status obj.id %}">{% trans 'Alter Status' %}</a>
 {% endblock %}
 

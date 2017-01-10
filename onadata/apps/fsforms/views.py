@@ -498,7 +498,8 @@ def instance_detail(request, fsxf_id, instance_id):
     cursor = list(cursor)
     obj = cursor[0]
     _keys = ['_notes', 'meta/instanceID', 'end', '_uuid', '_bamboo_dataset_id', '_tags', 'start',
-             '_geolocation', '_xform_id_string', '_userform_id', '_status', '__version__', 'formhub/uuid', '_id']
+             '_geolocation', '_xform_id_string', '_userform_id', '_status', '__version__', 'formhub/uuid',
+             '_id', 'fs_uuid', 'fs_site']
     data = {}
     medias = []
     status = 0
