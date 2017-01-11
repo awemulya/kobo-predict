@@ -15,7 +15,9 @@
     {% load filters %}
 
     
-    
+    {% autosort object_list as sorted_objects %}
+        {% autopaginate object_list 25 as paginated_objects %}
+
     {% for userdetail in paginated_objects %}
     <div class="col-md-3">
         <div class="person-div">
@@ -28,6 +30,7 @@
             <p class="personaddress"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{userdetail.user.user_profile.address}}</p>
             <p class="personphone"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{userdetail.user.user_profile.phone}}</p>
             <p class="personemail"><span><i class="fa fa-envelope-o" aria-hidden="true"></i></span>{{ userdetail.user.email }}</p>
+
             <div class="text-center"><p class="person-active"></span>{{ userdetail.user.is_active|activeness }}</p></div>
             
 
@@ -35,6 +38,7 @@
           <div class="person-edit-delete">
             <a href="#" title="edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
             <a href="{% url 'users:alter_status' pk=userdetail.user.id %}" title="active|in-active"><i class="fa fa-circle-o" aria-hidden="true"></i></a>
+
           </div>
         </div>
       </div>
