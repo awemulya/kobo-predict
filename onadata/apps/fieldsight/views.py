@@ -11,6 +11,7 @@ from django.core.serializers import serialize
 
 from registration.backends.default.views import RegistrationView
 
+from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.userrole.models import UserRole
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin,
@@ -137,19 +138,7 @@ def site_dashboard(request, pk):
     data = serialize('geojson', [obj], geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
 
-    fs_forms = FieldSightXF.objects.filter(site=obj)
-    fs_forms = list(fs_forms)
-    outstanding, flagged, approved, rejected = [], [], [], []
-    for form in fs_forms:
-        if form.form_status == 0:
-            outstanding.append(form)
-        elif form.form_status == 1:
-            flagged.append(form)
-        elif form.form_status == 2:
-            approved.append(form)
-        else:
-            rejected.append(form)
-
+    outstanding, flagged, approved, rejected = Submission.get_site_submission(pk)
     dashboard_data = {
         'obj': obj,
         'peoples_involved': peoples_involved,

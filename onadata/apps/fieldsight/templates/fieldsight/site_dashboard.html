@@ -148,9 +148,11 @@
                                         
                                         <div class="">
                                             <div class="detail-org">
-                                                <h5 class="site-title-org">{{form.xf.title}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ form.form_type }}</p>
-                                                <p class="contact"><span>created Date:</span>{{ form.date_created }}</p>
+                                                <h5 class="site-title-org">
+                                                    <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
+                                                        View Data</a></h5>
+                                                <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
+                                                <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
@@ -169,9 +171,11 @@
                                         
                                       <div class="">
                                             <div class="detail-org">
-                                                <h5 class="site-title-org">{{form.xf.title}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ form.form_type }}</p>
-                                                <p class="contact"><span>created Date:</span>{{ form.date_created }}</p>
+                                                 <h5 class="site-title-org">
+                                                    <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
+                                                        View Data</a></h5>
+                                                <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
+                                                <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
@@ -191,9 +195,11 @@
 
                                       <div class="">
                                             <div class="detail-org">
-                                                <h5 class="site-title-org">{{form.xf.title}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ form.form_type }}</p>
-                                                <p class="contact"><span>created Date:</span>{{ form.date_created }}</p>
+                                                 <h5 class="site-title-org">
+                                                    <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
+                                                        View Data</a></h5>
+                                                <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
+                                                <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
@@ -212,9 +218,11 @@
 
                                       <div class="">
                                             <div class="detail-org">
-                                                <h5 class="site-title-org">{{form.xf.title}}</h5>
-                                                <p class="address"><span>Form type:</span>{{ form.form_type }}</p>
-                                                <p class="contact"><span>created Date:</span>{{ form.date_created }}</p>
+                                                <h5 class="site-title-org">
+                                                    <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
+                                                        View Data</a></h5>
+                                                <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
+                                                <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
