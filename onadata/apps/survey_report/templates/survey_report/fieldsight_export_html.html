@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load data_manipulation %}
 
 <div>
 {% block content %}
@@ -208,7 +209,7 @@ h1 {
             
             <th><a href="{{ submission_url }}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
             <th>
-                {% with row|last as last %}
+                {% with row|fsmedia as last %}
                 {% for link in last %}
                  <a href="{{link}}" data-lightbox="roadtrip">View</a>
                 {% endfor %}
