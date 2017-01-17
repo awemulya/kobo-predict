@@ -40,6 +40,15 @@ def exceptlast(lst):
 
 
 @register.filter
+def fsmedia(data_list):
+    if isinstance(data_list[-1], list):
+        return data_list[-1]
+    elif isinstance(data_list[-2], list):
+        return data_list[-2]
+    return []
+
+
+@register.filter
 def status(status=0):
     return STATUS_DICT.get(status,"Outstanding")
 
