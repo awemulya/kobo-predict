@@ -7,11 +7,36 @@
 {% endblock %}
 
 {% block content %}
-<p>address = {{obj.address}}</p>
+	<div class="profile-user">
+		<div class="profile-user-pic-blur">
+			<img src= "{{ obj.profile_picture.url}}" alt="image"/>
+			<div class="profile-user-all">
+				<div class="profile-user-all-cell">
+					<div class="profile-user-table">
+						<div class="img-profile">
+							<img src= "{{ obj.profile_picture.url}}" alt="image"/>	
+						</div>
+						<div class="detail-profile">
+							<h3>{{request.user.get_full_name}}</h3>
+							<h4>{{request.user }}</h4>
+							<p><span><i class="fa fa-map-marker" aria-hidden="true"></i></span> {{obj.address}}</p>
+							<p><span><i class="fa fa-user" aria-hidden="true"></i></span>{{obj.gender}}</p>
+							<p><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{obj.phone}}</p>
+							<p><span><i class="fa fa-skype" aria-hidden="true"></i></span>{{obj.skype}}</p>
+						</div>
+					</div>
+				</div>
+			</div>	
+		</div>
+	</div>
+
+
+
+<!-- <p>address = {{obj.address}}</p>
 <p>gender = {{obj.gender}}</p>
 <p>phone = {{obj.phone}}</p>
 <p>skype = {{obj.skype}}</p>
-<img src= "{{ obj.profile_picture.url}}" alt="image"/>
+<img src= "{{ obj.profile_picture.url}}" alt="image"/> -->
 
 
 {% endblock %}
