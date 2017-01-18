@@ -356,16 +356,16 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
     def register(self, request, form, *args, **kwargs):
         ''' Save all the fields not included in the standard `RegistrationForm`
         into the JSON `data` field of an `ExtraUserDetail` object '''
-        standard_fields = set(RegistrationForm().fields.keys())
-        extra_fields = set(form.fields.keys()).difference(standard_fields)
+        # standard_fields = set(RegistrationForm().fields.keys())
+        # extra_fields = set(form.fields.keys()).difference(standard_fields)
         # Don't save the user unless we successfully store the extra data
         with transaction.atomic():
             new_user = super(CreateUserView, self).register(
                 request, form, *args, **kwargs)
             is_active = form.cleaned_data['is_active']
-            extra_data = {k: form.cleaned_data[k] for k in extra_fields if not k =='is_active'}
-            new_user.extra_details.data.update(extra_data)
-            new_user.extra_details.save()
+            # extra_data = {k: form.cleaned_data[k] for k in extra_fields if not k =='is_active'}
+            # new_user.extra_details.data.update(extra_data)
+            # new_user.extra_details.save()
             new_user.first_name = request.POST.get('name', '')
             new_user.is_active = is_active
             new_user.save()
