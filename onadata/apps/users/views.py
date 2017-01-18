@@ -19,7 +19,7 @@ from rest_framework import renderers
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from onadata.apps.users.serializers import AuthCustomTokenSerializer
-from .forms import LoginForm, ProfileForm
+from .forms import LoginForm, ProfileForm, UserEditForm
 
 
 def web_authenticate(username=None, password=None):
@@ -96,7 +96,7 @@ def web_login(request):
 
 def alter_status(request, pk):
     try:
-        user = User.objects.get(pk=int(pk))
+        user = User.objects.get(pk=pk)
             # alter status method on custom user
         if user.is_active:
             user.is_active = False
@@ -108,6 +108,33 @@ def alter_status(request, pk):
     except:
         messages.info(request, 'User {0} not found.'.format(user.get_full_name()))
     return HttpResponseRedirect(reverse('fieldsight:user-list'))
+
+
+def edit(request, pk):
+    user = User.objects.get(pk=pk)
+    profile, created = UserProfile.objects.get_or_create(user=user)
+    if request.method == 'POST':
+        form = UserEditForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            address = form.cleaned_data['address']
+            gender = form.cleaned_data['gender']
+            phone = form.cleaned_data['phone']
+            skype = form.cleaned_data['skype']
+            user.first_name = name
+            user.save()
+            profile.address = address
+            profile.gender = gender
+            profile.phone = phone
+            profile.skype = skype
+            profile.save()
+            messages.info(request, 'User Details Updated.')
+        return HttpResponseRedirect(reverse('fieldsight:user-list'))
+
+    else:
+        form = UserEditForm(initial={'name': user.first_name, 'address':profile.address,'gender':profile.gender,
+                                     'phone':profile.phone,'skype':profile.skype})
+        return render(request, 'users/user_form.html', {'form': form, 'id': pk,'name': user.first_name})
 
 
 def auth_token(request):
@@ -149,6 +176,6 @@ class ProfileUpdateView(MyProfileView, UpdateView):
 
 
 def my_profile(request):
-    obj = UserProfile.objects.get(user=request.user)
-    return render(request, 'users/profile.html', {'obj':obj})
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    return render(request, 'users/profile.html', {'obj':profile})
 

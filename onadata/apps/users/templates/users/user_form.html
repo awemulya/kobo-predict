@@ -1,15 +1,15 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 {% load filters %}
-{% block page-title %} {% trans 'Profile '  %}{{request.user }}{% endblock %}
+{% block page-title %} {% trans 'Update Details '  %}{{name }}{% endblock %}
 {% block head %}
-   {% trans 'Update Profile '  %} {{request.user }}
+   {% trans 'Update Details '  %} {{name }}
 {% endblock %}
 
 {% block content %}
 
    {% if form.is_multipart %}
-    <form enctype="multipart/form-data" method="post" id='form'>
+    <form enctype="multipart/form-data" method="post" action="{% url 'users:alter_status' pk=id %}">
     {% else %}
         <form method="post">
     {% endif %}
