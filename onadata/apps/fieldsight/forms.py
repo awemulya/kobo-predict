@@ -25,7 +25,7 @@ class RegistrationForm(registration_forms.RegistrationFormUniqueEmail):
     )
     name = forms.CharField(
         label=_('Full Name'),
-        required=False,
+        required=True,
     )
     # organization = forms.CharField(
     #     label=_('Organization name'),
