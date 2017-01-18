@@ -158,7 +158,7 @@ class OrganizationView(object):
 
 
 class UserDetailView(object):
-    model = ExtraUserDetail
+    model = User
     success_url = reverse_lazy('fieldsight:user-list')
     form_class = RegistrationForm
 
@@ -349,7 +349,10 @@ class SiteDeleteView(SiteView, LoginRequiredMixin, ProjectMixin, DeleteView):
 
 
 class UserListView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, ListView):
-    pass
+    def get_template_names(self):
+        return ['fieldsight/user_list.html']
+    def get_queryset(self):
+        return User.objects.filter(pk__gt=0)
 
 
 class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, RegistrationView):
