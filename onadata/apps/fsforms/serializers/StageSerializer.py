@@ -22,10 +22,10 @@ class SubStageSerializer(serializers.ModelSerializer):
 
     def get_assigned_form(self, obj):
         if not FieldSightXF.objects.filter(stage=obj).exists():
-            return u""
+            return None
         else:
             fsxf = FieldSightXF.objects.get(stage=obj)
             if fsxf.xf:
-                return fsxf.xf.title
-        return u""
+                return fsxf.xf.id
+        return None
 
