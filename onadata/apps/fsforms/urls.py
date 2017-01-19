@@ -44,14 +44,13 @@ from .views import (
     create_schedule,
     setup_project_stages, project_stage_add, instance_detail, alter_answer_status)
 
-# router = MultiLookupRouter(trailing_slash=False)
-router = routers.DefaultRouter()
-router.register(r'api/groups', GroupViewSet)
-router.register(r'api/stage', StageViewSet)
-router.register(r'api/main-stages', MainStageViewSet)
-router.register(r'api/schedule', ScheduleViewset)
-router.register(r'api/day', DayViewset)
-router.register(r'api/fsxform', FieldSightXFormViewSet)
+# router = routers.DefaultRouter()
+# router.register(r'api/groups', GroupViewSet)
+# router.register(r'api/stage', StageViewSet)
+# router.register(r'api/main-stages', MainStageViewSet)
+# router.register(r'api/schedule', ScheduleViewset)
+# router.register(r'api/day', DayViewset)
+# router.register(r'api/fsxform', FieldSightXFormViewSet)
 
 
 urlpatterns = [
@@ -153,11 +152,12 @@ urlpatterns = urlpatterns + [
     url(r'^site-survey/(?P<site_id>\d+)$', site_survey, name='site-survey'),
     url(r'^site-survey/(?P<site_id>\d+)$', site_survey, name='project-survey'),
     url(r'^api/site-main-stages/(?P<site_id>\d+)$', SiteMainStageViewSet.as_view({'get': 'list'}), name='main-stage-list'),
+    url(r'^api/site-schedules/(?P<site_id>\d+)$', ScheduleViewset.as_view({'get': 'list'}), name='schedule-list'),
     url(r'^api/sub-stages/(?P<main_stage>\d+)$', SubStageViewSet.as_view({'get': 'list'}), name='sub-stage-list'),
 
 ]
 
-urlpatterns += router.urls
+# urlpatterns += router.urls
 
 
 

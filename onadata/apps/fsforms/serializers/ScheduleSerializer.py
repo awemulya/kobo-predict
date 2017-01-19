@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from onadata.apps.fsforms.models import Schedule, Days
+from onadata.apps.fsforms.models import Schedule, Days, FieldSightXF
 
 
 class DaysSerializer(serializers.ModelSerializer):
@@ -17,6 +17,7 @@ class DaysSerializer(serializers.ModelSerializer):
 class ScheduleSerializer(serializers.ModelSerializer):
 
     days = serializers.SerializerMethodField('get_all_days', read_only=True)
+    form = serializers.SerializerMethodField('get_assigned_form', read_only=True)
 
     class Meta:
         model = Schedule
@@ -24,4 +25,13 @@ class ScheduleSerializer(serializers.ModelSerializer):
 
     def get_all_days(self, obj):
         return u"%s" % (", ".join(day.day for day in obj.selected_days.all()))
+
+    def get_assigned_form(self, obj):
+        if not FieldSightXF.objects.filter(schedule=obj).exists():
+            return None
+        else:
+            fsxf = FieldSightXF.objects.get(schedule=obj)
+            if fsxf.xf:
+                return fsxf.xf.id
+        return None
 
