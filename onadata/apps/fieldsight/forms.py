@@ -15,8 +15,12 @@ USERNAME_INVALID_MESSAGE = _(
     'underscores (_).'
 )
 
+organization_list = [(org.id, org.name) for org in Organization.objects.all()]
+
 
 class RegistrationForm(registration_forms.RegistrationFormUniqueEmail):
+    organization = forms.ChoiceField(widget = forms.Select(),
+                     choices = organization_list, required=True,)
     username = forms.RegexField(
         regex=USERNAME_REGEX,
         max_length=USERNAME_MAX_LENGTH,
@@ -27,10 +31,6 @@ class RegistrationForm(registration_forms.RegistrationFormUniqueEmail):
         label=_('Full Name'),
         required=True,
     )
-    # organization = forms.CharField(
-    #     label=_('Organization name'),
-    #     required=False,
-    # )
 
     is_active = forms.BooleanField(
         label=_('Active'),
@@ -45,7 +45,7 @@ class RegistrationForm(registration_forms.RegistrationFormUniqueEmail):
             'name',
             'username',
             'email',
-             # The 'password' field appears without adding it here; adding it
+            # The 'password' field appears without adding it here; adding it
             # anyway results in a duplicate
         ]
 

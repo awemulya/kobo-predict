@@ -67,29 +67,31 @@ def current_user(request):
 
         return Response(response_data)
 
-def web_login(request):
-    if request.user.is_authenticated():
-        return redirect('/dashboard/')
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            pwd = form.cleaned_data['password']
-            user = web_authenticate(username=email, password=pwd)
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return HttpResponseRedirect('/fieldsight/')
-                else:
-                    return render(request, 'registration/login.html', {'form':form, 'inactive':True})
-            else:
-                return render(request, 'registration/login.html', {'form':form, 'form_errors':True})
-        else:
-            return render(request, 'registration/login.html', {'form': form})
-    else:
-        form = LoginForm()
-
-    return render(request, 'registration/login.html', {'form': form})
+# def web_login(request):
+#
+#     if request.user.is_authenticated():
+#         return redirect('/dashboard/')
+#     if request.method == 'POST':
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+#             email = form.cleaned_data['email']
+#             pwd = form.cleaned_data['password']
+#             user = web_authenticate(username=email, password=pwd)
+#             if user is not None:
+#                 if user.is_active:
+#                     login(request, user)
+#                     # request.__class__.organization = role.organization
+#                     return HttpResponseRedirect('/fieldsight/')
+#                 else:
+#                     return render(request, 'registration/login.html', {'form':form, 'inactive':True})
+#             else:
+#                 return render(request, 'registration/login.html', {'form':form, 'form_errors':True})
+#         else:
+#             return render(request, 'registration/login.html', {'form': form})
+#     else:
+#         form = LoginForm()
+#
+#     return render(request, 'registration/login.html', {'form': form})
 
 # @group_required("admin")
 

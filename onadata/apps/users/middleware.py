@@ -29,7 +29,8 @@ class RoleMiddleware(object):
             role = None
             if request.session.get('role'):
                 try:
-                    role = Role.objects.select_related('group', 'organization').get(pk=request.session.get('role'), user=request.user)
+                    role = Role.objects.select_related('group', 'organization').get(pk=request.session.get('role'),
+                                                                                    user=request.user)
                 except Role.DoesNotExist:
                     pass
 

@@ -14,6 +14,7 @@ from registration.backends.default.views import RegistrationView
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.userrole.models import UserRole
+from onadata.apps.users.models import UserProfile
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required)
@@ -355,22 +356,24 @@ class UserListView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, ListView
         return User.objects.filter(pk__gt=0)
 
 
-class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, RegistrationView):
+class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, RegistrationView):
     def register(self, request, form, *args, **kwargs):
-        ''' Save all the fields not included in the standard `RegistrationForm`
-        into the JSON `data` field of an `ExtraUserDetail` object '''
-        # standard_fields = set(RegistrationForm().fields.keys())
-        # extra_fields = set(form.fields.keys()).difference(standard_fields)
-        # Don't save the user unless we successfully store the extra data
         with transaction.atomic():
             new_user = super(CreateUserView, self).register(
                 request, form, *args, **kwargs)
             is_active = form.cleaned_data['is_active']
-            # extra_data = {k: form.cleaned_data[k] for k in extra_fields if not k =='is_active'}
-            # new_user.extra_details.data.update(extra_data)
-            # new_user.extra_details.save()
             new_user.first_name = request.POST.get('name', '')
             new_user.is_active = is_active
             new_user.save()
+            try:
+                organization = int(request.organization)
+                org = Organization.objects.get(pk=organization)
+            except:
+                organization = int(form.cleaned_data['organization'])
+                org = Organization.objects.get(pk=organization)
+                user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org, address="ggggg")
+            else:
+                user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org, address="ffffff")
+
         return new_user
 
