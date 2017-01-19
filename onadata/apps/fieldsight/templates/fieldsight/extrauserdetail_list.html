@@ -15,35 +15,88 @@
     {% load filters %}
 
     
-    {% autosort object_list as sorted_objects %}
-        {% autopaginate object_list 25 as paginated_objects %}
+    
 
-    {% for userdetail in paginated_objects %}
-    <div class="col-md-3">
-        <div class="person-div">
-          <div class="image-of-person">
-            <img src="{{userdetail.user.user_profile.profile_picture.url}}">  
-          </div>
-          <div class="details-of-person">
-            <h4 class="personname">{{ userdetail.user.get_full_name }}</h4>
-            <h5 class="perso-usernname"><span><i class="fa fa-user" aria-hidden="true"></i></span>{{ userdetail.user.username }}</h5>
-            <p class="personaddress"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{userdetail.user.user_profile.address}}</p>
-            <p class="personphone"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{userdetail.user.user_profile.phone}}</p>
-            <p class="personemail"><span><i class="fa fa-envelope-o" aria-hidden="true"></i></span>{{ userdetail.user.email }}</p>
+    <div class="users-in-this-org">
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a data-toggle="tab" href="#grid-view" title="Grid View"><i class="fa fa-th-large" aria-hidden="true"></i></a>
+          </li>
+          <li>
+            <a data-toggle="tab" href="#table-view" title="Table View"><i class="fa fa-th-list" aria-hidden="true"></i></a>
+          </li>
+        </ul>
+        <div class="tab-content">
+            <div id="grid-view" class="tab-pane fade in active">
+                {% autosort object_list as sorted_objects %}
+                {% autopaginate object_list 25 as paginated_objects %}
 
-            <div class="text-center"><p class="person-active"></span>{{ userdetail.user.is_active|activeness }}</p></div>
-            
+                {% for userdetail in paginated_objects %}
+                <div class="col-md-3">
+                    <div class="person-div">
+                      <div class="image-of-person">
+                        <img src="{{userdetail.user.user_profile.profile_picture.url}}">  
+                      </div>
+                      <div class="details-of-person">
+                        <h4 class="personname">{{ userdetail.user.get_full_name }}</h4>
+                        <h5 class="perso-usernname"><span><i class="fa fa-user" aria-hidden="true"></i></span>{{ userdetail.user.username }}</h5>
+                        <p class="personaddress"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{userdetail.user.user_profile.address}}</p>
+                        <p class="personphone"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{userdetail.user.user_profile.phone}}</p>
+                        <p class="personemail"><span><i class="fa fa-envelope-o" aria-hidden="true"></i></span>{{ userdetail.user.email }}</p>
 
-          </div>
-          <div class="person-edit-delete">
-            <a href="#" title="edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-            <a href="{% url 'users:alter_status' pk=userdetail.user.id %}" title="active|in-active"><i class="fa fa-circle-o" aria-hidden="true"></i></a>
+                        <div class="text-center"><p class="person-active"></span>{{ userdetail.user.is_active|activeness }}</p></div>
+                        
 
-          </div>
+                      </div>
+                      <div class="person-edit-delete">
+                        <a href="#" title="edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                        <a href="{% url 'users:alter_status' pk=userdetail.user.id %}" title="active|in-active"><i class="fa fa-circle-o" aria-hidden="true"></i></a>
+
+                      </div>
+                    </div>
+                  </div>
+              
+                {% endfor %}
+                {% paginate %}       
+            </div>
+            <div id="table-view" class="tab-pane fade">
+                {% autosort object_list as sorted_objects %}
+                {% autopaginate object_list 25 as paginated_objects %}
+         
+                 <table class="table table-striped">
+                     <thead>
+                     <th>{% anchor user.username _('Username') %}</th>
+                     <th>{% anchor user.get_full_name _('Fullname') %}</th>
+                     <th>{% anchor user.email _('Email') %}</th>
+                     <th>{% anchor user.is_active _('Active') %}</th>
+                     <th>Activate/Deactivate</th>
+                     </thead>
+                     <tbody>
+                     {% for userdetail in paginated_objects %}
+                         <tr>
+                             <td>
+                                 <a href="#">{{ userdetail.user.username }}</a>
+                             </td>
+                             <td>
+                                 {{ userdetail.user.get_full_name }}
+                             </td>
+                               <td>
+                                 {{ userdetail.user.email }}
+                             </td>
+                             <td>
+                                 {{ userdetail.user.is_active|activeness }}
+                             </td>
+                             <td>
+                                 <a class="btn btn-success btn-raised" href="{% url 'users:alter_status' pk=userdetail.user.id %}">
+                                     <!--later with js framework ko in some and angular in some-->
+                                     {{ userdetail.user.is_active|alter_status }} {% trans 'User' %}</a>
+                             </td>
+         
+                         </tr>
+                     {% endfor %}
+                     </tbody>
+                 </table>
+            </div>
         </div>
-      </div>
-      
-        {% endfor %}
-        {% paginate %}
-
+    </div>
 {% endblock %}

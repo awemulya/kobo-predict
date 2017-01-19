@@ -332,7 +332,7 @@
                     </a>
                 </li>
                {% ifrole "admin" %}
-                <li class="sub-menu">
+               <!-- <li class="sub-menu">
                     <a href="javascript:;">
                         <i class="fa fa-user"></i>
                         <span>{% trans 'Users' %}</span>
@@ -344,60 +344,50 @@
 
                         
                     </ul>
+                </li> -->
+                <li class="sub-menu">
+                    <a href="{% url 'fieldsight:user-list' %}">
+                        <i class="fa fa-user"></i>
+                        <span>{% trans 'Users' %}</span>
+                    </a>
+                    
                 </li>
 
                 
-                   <li class="sub-menu">
-                    <a href="javascript:;">
+                <!-- <li class="sub-menu">
+                    <a href="{% url 'role:user-role-list' %}">
                         <i class="fa fa-users"></i>
                         <span>{% trans 'Users Roles' %}</span>
                     </a>
-                    <ul class="sub">
-                        <li><a href="{% url 'role:user-role-list' %}">{% trans 'Users Roles' %}</a></li>
-
-                        <li><a href="{% url 'role:user-role-add' %}">{% trans 'Assign Roles' %}</a></li>
-
-                    </ul>
-                </li>
+                    
+                </li> -->
 
 
                  <li class="sub-menu">
-                    <a href="javascript:;">
+                    <a href="{% url 'fieldsight:organizations-list' %}">
                         <i class="fa fa-building-o"></i>
                         <span>{% trans 'Organization' %}</span>
                     </a>
-                    <ul class="sub">
-                        <li><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization' %}</a></li>
-                        <li><a href="{% url 'fieldsight:organization-add' %}">{% trans 'Add Organization' %}</a></li>
-
-                    </ul>
+                    
                 </li>
                 {% endrole %}
                 {% ifrole "Organization" %}
                <li class="sub-menu">
-                    <a href="javascript:;">
+                    <a href="{% url 'fieldsight:projects-list' %}">
                         <i class="fa fa-building-o"></i>
                         <span>{% trans 'Projects' %}</span>
                     </a>
-                    <ul class="sub">
-                        <li><a href="{% url 'fieldsight:projects-list' %}">{% trans 'Projects' %}</a></li>
-                        <li><a href="{% url 'fieldsight:project-add' %}">{% trans 'Add Project' %}</a></li>
-
-                    </ul>
+                    
                 </li>
                 {% endrole %}
 
                 {% ifrole "Project" %}
                 <li class="sub-menu">
-                    <a href="javascript:;">
+                    <a href="{% url 'fieldsight:sites-list' %}">
                         <i class="fa fa-picture-o"></i>
                         <span>{% trans 'Sites' %}</span>
                     </a>
-                    <ul class="sub">
-                        <li><a href="{% url 'fieldsight:sites-list' %}">{% trans 'Site' %}</a></li>
-                        <li><a href="{% url 'fieldsight:site-add' %}">{% trans 'Add Site' %}</a></li>
-
-                    </ul>
+                    
                 </li>
                 {% endrole %}
                 {% ifrole "Site" %}
