@@ -17,7 +17,7 @@
     {% load sorting_tags %}
     {% load filters %}
 
-    <div class='well'>
+    
 
         {% autosort object_list as sorted_objects %}
         {% autopaginate object_list 25 as paginated_objects %}
@@ -101,7 +101,7 @@
               {% endfor %}
         {% paginate %}
 
-    </div>
+    
 
 
 

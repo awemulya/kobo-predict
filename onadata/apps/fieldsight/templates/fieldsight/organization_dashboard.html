@@ -38,6 +38,14 @@
                             <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
                             <p class="website"><span></span>{{ obj.website }}</p>
 							<p class="short-detail">{{ obj.description }}</p>
+                            <div class="manage-btn">
+                                <nav class="containerd">
+                                    <a href="#" tooltip="Create Project" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/project-background.png');"></a>
+                                    <a href="{% url 'fieldsight:add_org_admin' pk=obj.id %}" tooltip="Create User" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/user-background.png');"></a>
+                                    <a href="#" tooltip="Create Site" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/site-background.png');"></a>
+                                    <a href="#" tooltip="Setup" class="buttons-fab"><span><span class="rotate-fab"></span></span></a>
+                                </nav>
+                            </div>
                         </div>
                     </div>
                     <div class="clearfixx"></div>
