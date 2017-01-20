@@ -62,13 +62,13 @@ class Organization(models.Model):
 
     @property
     def latitude(self):
-        if self.point:
-            return self.point.y
+        if self.location:
+            return self.location.y
 
     @property
     def longitude(self):
-        if self.point:
-            return self.point.x
+        if self.location:
+            return self.location.x
 
     def __str__(self):
         return self.name
@@ -114,13 +114,13 @@ class Project(models.Model):
 
     @property
     def latitude(self):
-        if self.point:
-            return self.point.y
+        if self.location:
+            return self.location.y
 
     @property
     def longitude(self):
-        if self.point:
-            return self.point.x
+        if self.location:
+            return self.location.x
 
     def __str__(self):
         return self.name
@@ -169,13 +169,13 @@ class Site(models.Model):
 
     @property
     def latitude(self):
-        if self.point:
-            return self.point.y
+        if self.location:
+            return self.location.y
 
     @property
     def longitude(self):
-        if self.point:
-            return self.point.x
+        if self.location:
+            return self.location.x
 
     def __str__(self):
         return self.name

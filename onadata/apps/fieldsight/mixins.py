@@ -1,5 +1,7 @@
 from functools import wraps
 
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse_lazy
 from django.http import JsonResponse
 from django.views.generic.edit import UpdateView as BaseUpdateView, CreateView as BaseCreateView, DeleteView as BaseDeleteView
 from django.contrib import messages
@@ -168,6 +170,19 @@ class OrganizationView(LoginRequiredMixin):
             for field in form.Meta.organization_filters:
                 form.fields[field].queryset = form.fields[field].queryset.filter(organization=form.organization)
         return form
+
+
+class OrganizationViewFromProfile(object):
+    model = User
+    success_url = reverse_lazy('fieldsight:user-list')
+
+    def get_queryset(self):
+        if self.request.organization:
+            return super(OrganizationViewFromProfile, self).get_queryset().\
+                filter(user_profile__organization=self.request.organization)
+        else:
+            return super(OrganizationViewFromProfile, self).get_queryset().filter(pk__gt=0)
+
 
 
 class ProjectView(LoginRequiredMixin):

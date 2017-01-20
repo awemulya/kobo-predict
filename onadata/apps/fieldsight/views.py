@@ -17,7 +17,7 @@ from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
-                     group_required)
+                     group_required, OrganizationViewFromProfile)
 from .models import Organization, Project, Site, ExtraUserDetail
 from .forms import OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetOrgAdminForm, \
     SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm
@@ -349,11 +349,12 @@ class SiteDeleteView(SiteView, LoginRequiredMixin, ProjectMixin, DeleteView):
     pass
 
 
-class UserListView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, ListView):
+class UserListView(ProjectMixin, OrganizationViewFromProfile, ListView):
     def get_template_names(self):
         return ['fieldsight/user_list.html']
-    def get_queryset(self):
-        return User.objects.filter(pk__gt=0)
+
+    # def get_queryset(self):
+    #     return User.objects.filter(pk__gt=0)
 
 
 class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, RegistrationView):
@@ -366,8 +367,7 @@ class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, Registrat
             new_user.is_active = is_active
             new_user.save()
             try:
-                organization = int(request.organization)
-                org = Organization.objects.get(pk=organization)
+                org = request.organization
             except:
                 organization = int(form.cleaned_data['organization'])
                 org = Organization.objects.get(pk=organization)

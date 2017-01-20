@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 from onadata.apps.fieldsight.mixins import UpdateView, ProfileView
 from rest_framework import renderers
 
+from onadata.apps.fieldsight.models import Organization
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from onadata.apps.users.serializers import AuthCustomTokenSerializer
@@ -35,22 +36,22 @@ def current_user(request):
     user = request.user
     if user.is_anonymous():
         return Response({'code': 401, 'message': 'Unauthorized User'})
+    elif not user.user_profile.organization:
+        return Response({'code': 401, 'message': 'Not Assigned to Any Organizations Yet'})
     else:
         site_supervisor = False
         field_sight_info = []
         roles = UserRole.get_active_site_roles(user)
         if roles.exists():
-            site_supervisor =True
+            site_supervisor = True
         for role in roles:
             site = role.site
             project = site.project
-            organization = project.organization
-            # central_engineers = [ob.as_json() for ob in UserRole.central_engineers(site)]
-            # project_managers = [ob.as_json() for ob in UserRole.project_managers(project)]
-            # organization_admins = [ob.as_json() for ob in UserRole.organization_admins(organization)]
-            site_info = {'site': {'id': site.id, 'name': site.name},
-                         'project': {'name': project.name, 'id': project.id},
-                         'organization': {'name': organization.name, 'id':organization.id}}
+            site_info = {'site': {'id': site.id, 'name': site.name, 'description': site.public_desc,
+                                  'lat': site.latitude, 'lon':site.longitude},
+                         'project': {'name': project.name, 'id': project.id,
+                                     'description': project.public_desc, 'lat':project.latitude, 'lon':project.longitude},
+                         }
             field_sight_info.append(site_info)
 
         users_payload = {'username': user.username,
@@ -60,6 +61,11 @@ def current_user(request):
                          'server_time': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                          'is_supervisor': site_supervisor,
                          'last_login': user.last_login,
+                         'organization': user.user_profile.organization.name,
+                         'address': user.user_profile.address,
+                         'skype': user.user_profile.skype,
+                         'phone': user.user_profile.phone,
+                         'profile_pic': user.user_profile.profile_picture.url,
                          # 'languages': settings.LANGUAGES,
                          # profile data here, role supervisor
                          }
@@ -129,6 +135,11 @@ def edit(request, pk):
             profile.gender = gender
             profile.phone = phone
             profile.skype = skype
+            if not profile.organization:
+                organization = form.data.get("organization", False)
+                if organization:
+                    org = Organization.objects.get(pk=organization)
+                    profile.organization = org
             profile.save()
             messages.info(request, 'User Details Updated.')
         return HttpResponseRedirect(reverse('fieldsight:user-list'))
@@ -136,7 +147,11 @@ def edit(request, pk):
     else:
         form = UserEditForm(initial={'name': user.first_name, 'address':profile.address,'gender':profile.gender,
                                      'phone':profile.phone,'skype':profile.skype})
-        return render(request, 'users/user_form.html', {'form': form, 'id': pk,'name': user.first_name})
+        organization_list = []
+        if not profile.organization:
+            organization_list = Organization.objects.filter(is_active=True)
+        return render(request, 'users/user_form.html', {'form': form, 'id': pk,'name': user.first_name,
+                                                        'orglist': organization_list})
 
 
 def auth_token(request):

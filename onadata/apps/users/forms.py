@@ -1,5 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+
+from onadata.apps.fieldsight.models import Organization
 from .models import UserProfile
 
 
@@ -33,6 +35,7 @@ class ProfileForm(forms.ModelForm):
              raise forms.ValidationError(_("Couldn't read uploaded image"))
 
 
+
 class UserEditForm(forms.Form):
     name = forms.CharField(label=_("Full Name"), required=True)
     gender = forms.ChoiceField(
@@ -47,3 +50,4 @@ class UserEditForm(forms.Form):
     address = forms.CharField(label=_("Address"), required=True)
     phone = forms.CharField(label=_("Phone"), required=True)
     skype = forms.CharField(label=_("Skype"), required=True)
+
