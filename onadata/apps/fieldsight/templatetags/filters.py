@@ -17,6 +17,7 @@ from django.template.loader import get_template
 
 from django.conf import settings
 
+from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 
 register = Library()
@@ -45,6 +46,15 @@ def fsmedia(data_list):
         return data_list[-1]
     elif isinstance(data_list[-2], list):
         return data_list[-2]
+    return []
+
+
+@register.filter
+def get_org_roles(user_id, org_id):
+    if org_id is None:
+        return []
+    if org_id != "0":
+        return UserRole.objects.filter(organization__id=org_id, user__id=user_id)
     return []
 
 
