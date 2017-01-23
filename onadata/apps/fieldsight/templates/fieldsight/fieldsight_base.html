@@ -1,8 +1,8 @@
 {% load staticfiles i18n filters %}
 {% kwacro page-title %}
-   
+    {% block page-title %}{% endblock %}
 {% endkwacro %}
-{% load i18n %}
+   
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +18,13 @@
     <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}images/favicon-32x32.png" sizes="32x32">
     <link rel="shortcut icon" type="image/png" href="{{STATIC_URL}}images/favicon-16x16.png" sizes="16x16">
     <!-- <img src="{{STATIC_URL}}images/logo1.png" / > -->
-    <title>{% block title %} FieldSight {% endblock %}</title>
+    <title>
+        {% block whole_title %}
+
+            {% block title %}{% usekwacro page-title %}{% endblock %} | {% trans 'Fieldsight' %}
+
+        {% endblock %}
+    </title>
     <!--Core CSS -->
     <link rel="stylesheet" href="{% static 'bs3/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'js/jquery-ui/jquery-ui-1.10.1.custom.min.css' %}">
@@ -402,10 +408,17 @@
             <div class="col-sm-12">
                 <section class="panel">
                     <header class="panel-heading">
-                    {% block page-title %} {% trans 'Sample page title' %}{% endblock %}
+                      <ol class="breadcrumb hidden-print pull-left">
+            {% block breadcrumbs_container %}
+                <li><a href="#">{% trans 'Dashboard' %}</a></li>
+                {% block breadcrumbs %}
+                    <li>{% usekwacro page-title %}</li>{% endblock %}
+            {% endblock %}
+        </ol>
 
                         
                         <span class="tools pull-right">
+
                          {% block head %}
                            
                         {% endblock %}

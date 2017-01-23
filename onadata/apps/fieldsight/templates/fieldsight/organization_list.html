@@ -3,6 +3,9 @@
 {% load filters %}
 
 {% block page-title %}{% trans 'Organizations' %}{% endblock %}
+{% block breadcrumbs %}
+
+{% endblock %}
 
 {% block head %}
     <a class="btn btn-success btn-raised" href="{% url 'fieldsight:organization-add' %}">{% trans 'New' %} {% trans 'Organization' %}</a>

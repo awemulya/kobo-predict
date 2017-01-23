@@ -3,6 +3,11 @@
 {% load filters %}
 
 {% block page-title %}{% trans 'Organizations' %}{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'fieldsight:organization-dashboard' obj.pk %}">{% trans 'Organization Dashboard' %}</a></li>
+    <li>{{ scenario }}</li>
+{% endblock %}
 {%block extracss %}
     
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
@@ -78,7 +83,7 @@
 			  <div id="org-list-proj" class="tab-pane fade">
 			     <div class="org-site-list">
                     {% for obj in projects %}
-                    <a href="{% url 'fieldsight:project-edit' obj.pk %}">
+                    <a href="{% url 'fieldsight:project-dashboard' obj.pk %}">
                         <div class="org-site">
                             <div class="col-md-2">
                                 <div class="image-org">
@@ -102,7 +107,7 @@
               <div id="org-list-site" class="tab-pane fade">
                  <div class="org-site-list">
                     {% for obj in sites %}
-                    <a href="{% url 'fieldsight:site-edit' obj.pk %}">
+                    <a href="{% url 'fieldsight:site-dashboard' obj.pk %}">
                         <div class="org-site">
                             <div class="col-md-2">
                                 <div class="image-org">
@@ -142,7 +147,7 @@
                             <div class="col-md-10">
                                 <div class="detail-org">
                                     <h3 class="pople-Name-org">{{user.get_full_name}}</h3>
-                                    <p class="address"><span><i class="fa fa-email" aria-hidden="true"></i></span>{{ user.email }}</p>
+                                    <p class="address"><span><i class="fa fa-envelope" aria-hidden="true"></i></span>{{ user.email }}</p>
                                     <p class="address"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ user.user_profile.phone }}</p>
                                  {% with user.id|get_org_roles:obj.id as roles %}
                                     {% for role in roles %}

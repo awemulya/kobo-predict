@@ -3,6 +3,16 @@
 
 {% block page-title %}{{ scenario }} {% trans 'Organization' %}{% endblock %}
 
+{% block breadcrumbs %}
+{% if form.instance.id %}
+    <li><a href="{% url 'fieldsight:organization-dashboard' form.instance.pk %}">{% trans 'Organization Dashboard' %}</a></li>
+{% endif %}
+{% if not form.instance.id %}
+    <li><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organizations' %}</a></li>
+{% endif %}
+    <li>{{ scenario }}</li>
+{% endblock %}
+
 {% block head %}
     <a class="btn btn-success btn-raised" href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organizations' %}</a>
 {% endblock %}
