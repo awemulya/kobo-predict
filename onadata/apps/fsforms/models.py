@@ -135,7 +135,7 @@ class Schedule(models.Model):
         return True if FieldSightXF.objects.filter(schedule=self).count() > 0 else False
 
     def form(self):
-        return FieldSightXF.objects.get(schedule=self) if self.form_exists() else None
+        return FieldSightXF.objects.filter(schedule=self)[0] if self.form_exists() else None
 
     def __unicode__(self):
         return getattr(self, "name", "")

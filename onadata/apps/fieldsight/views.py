@@ -20,7 +20,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      group_required, OrganizationViewFromProfile)
 from .models import Organization, Project, Site, ExtraUserDetail
 from .forms import OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetOrgAdminForm, \
-    SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm
+    SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm, AssignOrgAdmin
 
 
 @login_required
@@ -199,9 +199,9 @@ def alter_org_status(request, pk):
 
 @login_required
 @group_required('admin')
-def add_org_admin(request, pk):
+def add_org_admin_old(request, pk):
     obj = get_object_or_404(
-        Organization, pk=int(pk))
+        Organization, id=pk)
     if request.method == 'POST':
         form = SetOrgAdminForm(request.POST)
         user = int(form.data.get('user'))
@@ -213,6 +213,27 @@ def add_org_admin(request, pk):
     else:
         form = SetOrgAdminForm(instance=obj)
     return render(request, "fieldsight/add_admin.html", {'obj':obj,'form':form})
+
+
+@login_required
+@group_required('admin')
+def add_org_admin(request, pk=None):
+    organization = get_object_or_404(Organization, id=pk)
+    group = Group.objects.get(name__exact="Organization Admin")
+    role_obj = UserRole(organization=organization,group=group)
+    scenario = 'Assign'
+    user = ''
+    if request.POST:
+        form = AssignOrgAdmin(data=request.POST, instance=role_obj, request=request)
+        if form.is_valid():
+            role_obj = form.save()
+            user_id = request.POST.get('user')
+            role_obj.user_id = int(user_id)
+            return HttpResponseRedirect(reverse("forms:setup-site-stages", kwargs={'pk': pk}))
+    else:
+        form = AssignOrgAdmin(instance=role_obj, request=request)
+    return render(request, 'fieldsight/add_admin_form.html',
+                  {'form': form, 'scenario': scenario, })
 
 
 @login_required

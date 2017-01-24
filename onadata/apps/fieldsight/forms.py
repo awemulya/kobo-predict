@@ -1,10 +1,13 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
+from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 from registration import forms as registration_forms
+
+from onadata.utils.forms import HTML5BootstrapModelForm, KOModelForm
 from .models import Organization, Project, Site
 from onadata.apps.userrole.models import UserRole
 
@@ -76,9 +79,29 @@ class SetOrgAdminForm(forms.ModelForm):
         fields = ['user']
         model = UserRole
         widgets = {
-        'users': forms.CheckboxSelectMultiple()
+        'user': forms.CheckboxSelectMultiple()
         }
 
+
+class AssignOrgAdmin(HTML5BootstrapModelForm, KOModelForm):
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        super(AssignOrgAdmin, self).__init__(*args, **kwargs)
+        role = kwargs.get('instance')
+        if org is not None:
+            old_admins = role.organization.get_staffs_id
+            users = User.objects.filter().exclude(id=settings.ANONYMOUS_USER_ID).exclude(id__in=old_admins)
+            self.fields['user'].queryset = users
+
+    class Meta:
+        fields = ['user','group','organization']
+        model = UserRole
+        widgets = {
+            'user': forms.Select(attrs={'class': 'selectize', 'data-url': reverse_lazy('userrole:user_add')}),
+            'group': forms.HiddenInput(),
+            'organization': forms.HiddenInput()
+        }
 
 class SetProjectManagerForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
