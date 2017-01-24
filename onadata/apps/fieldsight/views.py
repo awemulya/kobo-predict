@@ -368,12 +368,15 @@ class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, Registrat
             new_user.save()
             try:
                 org = request.organization
+                if not org:
+                    org = org.id
             except:
                 organization = int(form.cleaned_data['organization'])
                 org = Organization.objects.get(pk=organization)
-                user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org, address="ggggg")
+                user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org)
+
             else:
-                user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org, address="ffffff")
+                user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org)
 
         return new_user
 

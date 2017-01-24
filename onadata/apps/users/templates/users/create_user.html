@@ -1,0 +1,38 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{{ scenario }} {% trans 'User' %}{% endblock %}
+
+
+{% block content %}
+
+    <form method="post" id='form'>
+        <div>
+            {{ form.non_field_errors }}
+            {% csrf_token %}
+
+        </div>
+      {% for field in form %}
+      {% ifnotequal field.name "organization" %}
+       <div class="col-sm-12 registration_field">
+         <div class="col-sm-3"> {{ field.label }}</div>
+         <div class="col-sm-3">      {{ field }}</div>
+         <div class="col-sm-6">      {{ field.errors }}</div>
+       </div>
+       {% endifnotequal %}
+
+       {% ifequal field.name "organization" %}
+       {% if not request.organization %}
+       <div class="col-sm-12 registration_field">
+         <div class="col-sm-3"> {{ field.label }}</div>
+         <div class="col-sm-3">      {{ field }}</div>
+         <div class="col-sm-6">      {{ field.errors }}</div>
+       </div>
+       {% endif %}
+       {% endifequal %}
+     {% endfor %}
+        <input type="submit" class='btn btn-info btn-raised' value="{% trans 'Save' %}">
+
+    </form>
+
+{% endblock %}

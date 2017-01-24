@@ -1,5 +1,5 @@
 from rest_framework import routers
-from .views import UserRoleListView, UserRoleDeleteView, UserRoleUpdateView,  UserRoleCreateView, set_role
+from .views import UserRoleListView, UserRoleDeleteView, UserRoleUpdateView,  UserRoleCreateView, set_role, UserCreate
 from django.conf.urls import url, include
 from onadata.apps.userrole.viewsets.UserRoleViewsets import UserRoleViewSet
 
@@ -18,4 +18,5 @@ urlpatterns = [
     url(r'^userroles/add/$', UserRoleCreateView.as_view(), name='user-role-add'),
     url(r'^userroles/(?P<pk>[0-9]+)/$', UserRoleUpdateView.as_view(), name='user-role-edit'),
     url(r'^userroles/delete/(?P<pk>\d+)/$', UserRoleDeleteView.as_view(), name='user-role-delete'),
+    url(r'^user/add$', UserCreate.as_view(), name='user_add'),
     ]

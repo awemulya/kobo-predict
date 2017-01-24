@@ -1,0 +1,46 @@
+{#<div class="modal-header">#}
+{#    <a class="close" data-dismiss="modal">&times;</a>#}
+{##}
+<div class="modal fade" id="item_modal" tabindex="-1" role="dialog" aria-labelledby="Item">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3>{% block page-title %}{% endblock %}</h3>
+			</div>
+			<div class="modal-body">
+			{% block content %}
+
+			{% endblock %}
+      		</div>
+		</div>
+	</div>
+</div>
+{#</div>#}
+{#<div class="modal-footer">#}
+{#    <a href="#" class="btn" data-dismiss="modal">Cancel</a>#}
+{#</div>#}
+<script>
+$(document).ready(function() {
+	if ($('.modal-lg #form').length == 2) {
+		$('.modal-lg #form').last().submit(function() {
+			$('.modal').last().modal('hide');
+		});
+	} else {
+		$('.modal-lg #form').submit(function() {
+			$('.modal').modal('hide');
+		});
+
+	}
+});
+
+if ($('.modal').length == 2 ) {
+	$('.modal').last().on('hidden.bs.modal', function () {
+		$('.modal').last().remove();
+	})
+} else {
+	$('.modal').on('hidden.bs.modal', function () {
+		$('.modal').remove();
+	})
+}
+</script>
