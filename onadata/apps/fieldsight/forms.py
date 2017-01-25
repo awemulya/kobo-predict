@@ -92,6 +92,9 @@ class AssignOrgAdmin(HTML5BootstrapModelForm, KOModelForm):
         if org is not None:
             old_admins = role.organization.get_staffs_id
             users = User.objects.filter().exclude(id=settings.ANONYMOUS_USER_ID).exclude(id__in=old_admins)
+            if hasattr(self.request,"organization"):
+                if self.request.organization:
+                    users = users.filter(user_profile__organization=self.request.organization)
             self.fields['user'].queryset = users
 
     class Meta:

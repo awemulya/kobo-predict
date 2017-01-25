@@ -80,6 +80,8 @@ class AjaxableResponseMixin(object):
             else:
                 obj = self.object
             if isinstance(obj, User):
+                obj.set_password(form.cleaned_data['password'])
+                obj.save()
                 try:
                     org = self.request.organization
                     if not org:

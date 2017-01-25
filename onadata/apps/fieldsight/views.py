@@ -216,7 +216,7 @@ def add_org_admin_old(request, pk):
 
 
 @login_required
-@group_required('admin')
+@group_required('Organization')
 def add_org_admin(request, pk=None):
     organization = get_object_or_404(Organization, id=pk)
     group = Group.objects.get(name__exact="Organization Admin")
