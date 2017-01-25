@@ -46,8 +46,8 @@
                             <div class="manage-btn">
                                 <nav class="containerd">
                                     <a href="{% url 'fieldsight:project-add' %}" tooltip="{% trans 'Create Project' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/project-background.png');"></a>
-                                    <a href="{% url 'fieldsight:add_org_admin' pk=obj.id %}" tooltip="{% trans 'Create User' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/user-background.png');"></a>
-                                    <a href="#" tooltip="{% trans 'Create Project' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/site-background.png');"></a>
+                                    <a href="{% url 'fieldsight:add_org_admin' pk=obj.id %}" tooltip="{% trans 'Assign Admin' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/user-background.png');"></a>
+                                    <a href="{% url 'fieldsight:site-add' %}" tooltip="{% trans 'Create Site' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/site-background.png');"></a>
                                     <a href="#" tooltip="{% trans 'Setup' %}" class="buttons-fab"><span><span class="rotate-fab"></span></span></a>
                                 </nav>
                             </div>
@@ -128,12 +128,7 @@
                  </div>  
               </div>
 			  <div id="org-people" class="tab-pane fade">
-			     <div class="add-people">
-                    <a class="add_org_people" title="Add organization Admin"href="{% url 'fieldsight:add_org_admin' pk=obj.id %}">
-                     <span><i class="fa fa-plus" aria-hidden="true"></i> Add People</span>
-                 </a>         
-                 </div>
-                 <div class="org-site-list">
+			     <div class="org-site-list">
                  
                     {% for user in peoples_involved %}
 
@@ -275,7 +270,7 @@
     
     <script type="text/javascript">
     $(document).ready(function(){
-    console.log("inside ready");    
+    console.log("inside ready");
     });
     var static_url ="{{ STATIC_URL }}";
     var data = {{ data|safe}};
