@@ -226,14 +226,16 @@ def add_org_admin(request, pk=None):
     if request.POST:
         form = AssignOrgAdmin(data=request.POST, instance=role_obj, request=request)
         if form.is_valid():
-            role_obj = form.save()
+            role_obj = form.save(commit=False)
             user_id = request.POST.get('user')
             role_obj.user_id = int(user_id)
-            return HttpResponseRedirect(reverse("forms:setup-site-stages", kwargs={'pk': pk}))
+            role_obj.save()
+            messages.add_message(request, messages.INFO, 'Organization Admin Added')
+            return HttpResponseRedirect(reverse("fieldsight:organization-dashboard", kwargs={'pk': pk}))
     else:
         form = AssignOrgAdmin(instance=role_obj, request=request)
     return render(request, 'fieldsight/add_admin_form.html',
-                  {'form': form, 'scenario': scenario, })
+                  {'form': form, 'scenario': scenario, 'obj':organization})
 
 
 @login_required

@@ -98,7 +98,7 @@ class AssignOrgAdmin(HTML5BootstrapModelForm, KOModelForm):
         fields = ['user','group','organization']
         model = UserRole
         widgets = {
-            'user': forms.Select(attrs={'class': 'selectize', 'data-url': reverse_lazy('userrole:user_add')}),
+            'user': forms.Select(attrs={'class': 'selectize', 'data-url': reverse_lazy('role:user_add')}),
             'group': forms.HiddenInput(),
             'organization': forms.HiddenInput()
         }

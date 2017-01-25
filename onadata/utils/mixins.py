@@ -82,6 +82,9 @@ class AjaxableResponseMixin(object):
             if isinstance(obj, User):
                 try:
                     org = self.request.organization
+                    if not org:
+                        org = org.id
+
                 except:
                     organization = int(form.cleaned_data['organization'])
                     org = Organization.objects.get(pk=organization)
