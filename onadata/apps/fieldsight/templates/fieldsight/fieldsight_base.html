@@ -41,11 +41,25 @@
     <link rel="stylesheet" href="{% static 'css/owl.carousel.css' %}" />
     <link rel="stylesheet" href="{% static 'css/owl.theme.css' %}" />
     <link rel="stylesheet" href="{% static 'css/owl.transitions.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/selectize.default.css' %}">
+    <link rel="stylesheet" href="{% static 'css/selectize.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}">
+
 
     {%block extracss %}
     {% endblock %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/style-responsive.css' %}">
+
+<script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/libs/selectize.js" ></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/knockout.js" ></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/base.js" ></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/ko_lib.js" ></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/selectize.min.js" ></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap-notify.min.js" ></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/material.min.js" ></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/ripples.min.js" ></script>
     <!--clock css-->
     <!--Morris Chart CSS -->
     <!-- Custom styles for this template -->
@@ -54,8 +68,8 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/ie8-responsive-file-warning.js"></script><![endif]-->
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script type="text/javascript" src="{{ STATIC_URL }}https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <script type="text/javascript" src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script type="text/javascript" src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
    
 </head>
@@ -289,7 +303,6 @@
     </section>
 
 
-<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui/jquery-ui-1.10.1.custom.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}bs3/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.dcjqaccordion.2.7.js"></script>

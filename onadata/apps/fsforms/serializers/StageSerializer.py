@@ -26,6 +26,6 @@ class SubStageSerializer(serializers.ModelSerializer):
         else:
             fsxf = FieldSightXF.objects.get(stage=obj)
             if fsxf.xf:
-                return fsxf.xf.id
+                return fsxf.id
         return None
 

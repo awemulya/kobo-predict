@@ -20,7 +20,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      group_required, OrganizationViewFromProfile)
 from .models import Organization, Project, Site, ExtraUserDetail
 from .forms import OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetOrgAdminForm, \
-    SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm
+    SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm, AssignOrgAdmin
 
 
 @login_required
@@ -199,9 +199,9 @@ def alter_org_status(request, pk):
 
 @login_required
 @group_required('admin')
-def add_org_admin(request, pk):
+def add_org_admin_old(request, pk):
     obj = get_object_or_404(
-        Organization, pk=int(pk))
+        Organization, id=pk)
     if request.method == 'POST':
         form = SetOrgAdminForm(request.POST)
         user = int(form.data.get('user'))
@@ -213,6 +213,29 @@ def add_org_admin(request, pk):
     else:
         form = SetOrgAdminForm(instance=obj)
     return render(request, "fieldsight/add_admin.html", {'obj':obj,'form':form})
+
+
+@login_required
+@group_required('admin')
+def add_org_admin(request, pk=None):
+    organization = get_object_or_404(Organization, id=pk)
+    group = Group.objects.get(name__exact="Organization Admin")
+    role_obj = UserRole(organization=organization,group=group)
+    scenario = 'Assign'
+    user = ''
+    if request.POST:
+        form = AssignOrgAdmin(data=request.POST, instance=role_obj, request=request)
+        if form.is_valid():
+            role_obj = form.save(commit=False)
+            user_id = request.POST.get('user')
+            role_obj.user_id = int(user_id)
+            role_obj.save()
+            messages.add_message(request, messages.INFO, 'Organization Admin Added')
+            return HttpResponseRedirect(reverse("fieldsight:organization-dashboard", kwargs={'pk': pk}))
+    else:
+        form = AssignOrgAdmin(instance=role_obj, request=request)
+    return render(request, 'fieldsight/add_admin_form.html',
+                  {'form': form, 'scenario': scenario, 'obj':organization})
 
 
 @login_required
@@ -368,12 +391,15 @@ class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, Registrat
             new_user.save()
             try:
                 org = request.organization
+                if not org:
+                    org = org.id
             except:
                 organization = int(form.cleaned_data['organization'])
                 org = Organization.objects.get(pk=organization)
-                user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org, address="ggggg")
+                user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org)
+
             else:
-                user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org, address="ffffff")
+                user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org)
 
         return new_user
 

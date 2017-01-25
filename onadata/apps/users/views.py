@@ -37,7 +37,7 @@ def current_user(request):
     if user.is_anonymous():
         return Response({'code': 401, 'message': 'Unauthorized User'})
     elif not user.user_profile.organization:
-        return Response({'code': 401, 'message': 'Not Assigned to Any Organizations Yet'})
+        return Response({'code': 403, 'message': 'Not Assigned to Any Organizations Yet'})
     else:
         site_supervisor = False
         field_sight_info = []
