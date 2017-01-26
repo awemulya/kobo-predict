@@ -99,7 +99,7 @@ class UserRole(models.Model):
 
     @staticmethod
     def is_active(user,group):
-        return UserRole.objects.filter(user=user, group=group,ended_date=None).count()
+        return UserRole.objects.filter(user=user, group__name=group,ended_at=None).count()
 
     @staticmethod
     def get_active_roles(user):

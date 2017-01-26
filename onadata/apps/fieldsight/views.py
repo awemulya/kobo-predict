@@ -25,6 +25,17 @@ from .forms import OrganizationForm, ProjectForm, SiteForm, RegistrationForm, Se
 
 @login_required
 def dashboard(request):
+    if UserRole.is_active(request.user, "Super Admin"):
+        return HttpResponseRedirect(reverse("fieldsight:organizations-list"))
+    elif UserRole.is_active(request.user, "Organization Admin"):
+        org = UserRole.objects.filter(user=request.user, group__name="Organization Admin")[0].organization
+        return HttpResponseRedirect(reverse("fieldsight:organization-dashboard", kwargs={'pk': org.pk}))
+    elif UserRole.is_active(request.user, "Project Manager"):
+        project = UserRole.objects.filter(user=request.user, group__name="Project Manager")[0].project
+        return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': project.pk}))
+    elif UserRole.is_active(request.user, "Site Supervisor"):
+        site = UserRole.objects.filter(user=request.user, group__name="Site Supervisor")[0].site
+        return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': site.pk}))
     total_users = User.objects.all().count()
     total_organizations = Organization.objects.all().count()
     total_projects = Project.objects.all().count()
@@ -56,6 +67,7 @@ def dashboard(request):
         'data': data,
     }
     return TemplateResponse(request, "fieldsight/fieldsight_dashboard.html", dashboard_data)
+
 
 
 @login_required

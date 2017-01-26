@@ -258,7 +258,7 @@
                     <header class="panel-heading">
                       <ol class="breadcrumb hidden-print">
             {% block breadcrumbs_container %}
-                <li><a href="#">{% trans 'Dashboard' %}</a></li>
+                <li><a href="{% url 'dashboard' %}">{% trans 'My Dashboard' %}</a></li>
                 {% block breadcrumbs %}
                     <li>{% usekwacro page-title %}</li>{% endblock %}
             {% endblock %}
