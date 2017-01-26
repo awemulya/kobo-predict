@@ -57,6 +57,14 @@ def get_org_roles(user_id, org_id):
         return UserRole.objects.filter(organization__id=org_id, user__id=user_id)
     return []
 
+@register.filter
+def get_proj_roles(user_id, id):
+    if id is None:
+        return []
+    if id != "0":
+        return UserRole.objects.filter(project__id=id, user__id=user_id)
+    return []
+
 
 @register.filter
 def status(status=0):

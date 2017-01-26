@@ -112,7 +112,7 @@ def organization_dashboard(request, pk):
 @login_required
 def project_dashboard(request, pk):
     obj = Project.objects.get(pk=pk)
-    peoples_involved = UserRole.objects.filter(project=obj).distinct('user')
+    peoples_involved = User.objects.filter(user_profile__organization=obj.organization)
     sites = Site.objects.filter(project=obj)
     data = serialize('geojson', sites, geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
