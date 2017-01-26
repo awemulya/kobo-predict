@@ -44,7 +44,7 @@
                             <p class="personphone"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{user.user_profile.phone}}</p>
                             <p class="personemail"><span><i class="fa fa-envelope-o" aria-hidden="true"></i></span>{{ user.email }}</p>
 
-                            <div class="text-center"><p class="person-active"></span>{{ user.is_active|activeness }}</p></div>
+                            <div class="text-center"><p class="person-active">{{ user.is_active|activeness }}</p></div>
                         
 
                       </div>
@@ -66,10 +66,10 @@
          
                  <table class="table table-striped">
                      <thead>
-                     <th>{% anchor user.username _('Username') %}</th>
-                     <th>{% anchor user.get_full_name _('Fullname') %}</th>
-                     <th>{% anchor user.email _('Email') %}</th>
-                     <th>{% anchor user.is_active _('Active') %}</th>
+                     <th>{% anchor username _('Username') %}</th>
+                     <th>{% anchor first_name _('Fullname') %}</th>
+                     <th>{% anchor email _('Email') %}</th>
+                     <th>{% anchor is_active _('Active') %}</th>
                      <th>Activate/Deactivate</th>
                      </thead>
                      <tbody>
