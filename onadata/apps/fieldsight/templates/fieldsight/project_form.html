@@ -1,14 +1,14 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 
-{% block page-title %}{{ scenario }} {% trans 'Project' %}{% endblock %}
+{% block page-title %}{% trans 'Update Project' %}{% endblock %}
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:projects-list' %}">{% trans 'Projects' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:project-list' %}">{% trans 'Projects' %}</a>
 {% endblock %}
-<!-- {% block breadcrumbs %}
-    <li><a href="{% url 'project-list' %}">{% trans 'Projects' %}</a></li>
+{% block breadcrumbs %}
+    <li><a href="{% url 'fieldsight:project-list' %}">{% trans 'Projects' %}</a></li>
     <li>{{ scenario }} {{ form.instance }}</li>
-{% endblock %} -->
+{% endblock %}
 
 {% block content %}
 

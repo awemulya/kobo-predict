@@ -3,9 +3,7 @@
 {% load filters %}
 
 {% block page-title %}
-{% if request.organization %}
-{% trans 'Projects Under ' %}{{request.organization}}
-{% endif %}
+{% trans 'Projects ' %}
 {% endblock %}
 {% block head %}
     <a class="btn btn-success btn-raised" href="{% url 'fieldsight:project-add' %}">{% trans 'New' %} {% trans 'Project' %}</a>

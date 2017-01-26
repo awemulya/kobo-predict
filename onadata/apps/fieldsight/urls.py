@@ -33,11 +33,11 @@ from .views import (
     UserListView)
 
 router = routers.SimpleRouter()
-router.register(r'api/organization-type', OrganizationTypeViewSet)
-router.register(r'api/organization', OrganizationViewSet)
-router.register(r'api/project-type', ProjectTypeViewSet)
-router.register(r'api/project', ProjectViewSet)
-router.register(r'api/site', SiteViewSet)
+# router.register(r'api/organization-type', OrganizationTypeViewSet)
+# router.register(r'api/organization', OrganizationViewSet)
+# router.register(r'api/project-type', ProjectTypeViewSet)
+# router.register(r'api/project', ProjectViewSet)
+# router.register(r'api/site', SiteViewSet)
 
 
 urlpatterns = [
@@ -48,6 +48,7 @@ urlpatterns = [
         form_class=RegistrationForm), name='user-create'),
 
     url(r'^organization/$', OrganizationListView.as_view(), name='organizations-list'),
+    url(r'^organization/$', OrganizationListView.as_view(), name='organization-list'),
     url(r'^organization/add/$', OrganizationCreateView.as_view(), name='organization-add'),
     url(r'^organization/(?P<pk>[0-9]+)/$', OrganizationUpdateView.as_view(), name='organization-edit'),
     url(r'^organization-dashboard/(?P<pk>[0-9]+)/$', organization_dashboard, name='organization-dashboard'),
@@ -57,6 +58,7 @@ urlpatterns = [
     url(r'^organization/add-org-admin/(?P<pk>\d+)/$', add_org_admin, name='add_org_admin'),
 
     url(r'^project/$', ProjectListView.as_view(), name='projects-list'),
+    url(r'^project/$', ProjectListView.as_view(), name='project-list'),
     url(r'^project/add/$', ProjectCreateView.as_view(), name='project-add'),
     url(r'^project/(?P<pk>[0-9]+)/$', ProjectUpdateView.as_view(), name='project-edit'),
     url(r'^project-dashboard/(?P<pk>[0-9]+)/$', project_dashboard, name='project-dashboard'),
@@ -69,6 +71,7 @@ urlpatterns = [
 
 
     url(r'^site/$', SiteListView.as_view(), name='sites-list'),
+    url(r'^site/$', SiteListView.as_view(), name='site-list'),
     url(r'^site/add/$', SiteCreateView.as_view(), name='site-add'),
     url(r'^site/(?P<pk>[0-9]+)/$', SiteUpdateView.as_view(), name='site-edit'),
     url(r'^site-dashboard/(?P<pk>[0-9]+)/$', site_dashboard, name='site-dashboard'),

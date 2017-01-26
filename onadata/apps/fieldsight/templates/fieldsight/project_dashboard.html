@@ -2,7 +2,8 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Organization' %}{{obj.organization.name}}{% trans 'Project' %}{{obj.name}}{% endblock %}
+{% block page-title %}
+{{obj.name}}{% endblock %}
 {%block extracss %}
 
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
@@ -24,7 +25,14 @@
             </a>
         </div>
     </div>
-    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:organization-edit' obj.pk %}">{% trans 'Edit' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:project-edit' obj.pk %}">{% trans 'Edit' %}</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+ {% ifrole "Organization" %}
+    <li><a href="{% url 'fieldsight:organization-dashboard' obj.organization.pk %}">{{obj.organization.name}}</a></li>
+ {% endrole %}
+    <li>{{obj.name}}</li>
 {% endblock %}
 {% block content %}
 
