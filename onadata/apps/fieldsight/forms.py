@@ -168,6 +168,7 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         exclude = []
+        organization_filters = ['organization']
 
 
 class SiteForm(forms.ModelForm):

@@ -342,7 +342,7 @@ def add_central_engineer(request, pk):
 
 class ProjectView(OView):
     model = Project
-    success_url = reverse_lazy('fieldsight:projects-list')
+    success_url = reverse_lazy('fieldsight:project-list')
     form_class = ProjectForm
 
 
@@ -350,7 +350,7 @@ class ProjectListView(ProjectView, OrganizationMixin, ListView):
     pass
 
 
-class ProjectCreateView(ProjectView, LoginRequiredMixin,OrganizationMixin, CreateView):
+class ProjectCreateView(ProjectView, LoginRequiredMixin, OrganizationMixin, CreateView):
     pass
 
 

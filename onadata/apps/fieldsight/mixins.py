@@ -11,6 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 
+from onadata.apps.fieldsight.models import Organization
 from .helpers import json_from_object
 
 
@@ -166,9 +167,9 @@ class OrganizationView(LoginRequiredMixin):
         form = super(OrganizationView, self).get_form(*args, **kwargs)
         if self.request.organization:
             form.organization = self.request.organization
-        if hasattr(form.Meta, 'organization_filters'):
-            for field in form.Meta.organization_filters:
-                form.fields[field].queryset = form.fields[field].queryset.filter(organization=form.organization)
+            if hasattr(form.Meta, 'organization_filters'):
+                for field in form.Meta.organization_filters:
+                    form.fields[field].queryset = Organization.objects.filter(id=self.request.organization.pk)
         return form
 
 
