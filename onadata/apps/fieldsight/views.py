@@ -234,7 +234,6 @@ def add_org_admin(request, pk=None):
     group = Group.objects.get(name__exact="Organization Admin")
     role_obj = UserRole(organization=organization,group=group)
     scenario = 'Assign'
-    user = ''
     if request.POST:
         form = AssignOrgAdmin(data=request.POST, instance=role_obj, request=request)
         if form.is_valid():
@@ -247,7 +246,7 @@ def add_org_admin(request, pk=None):
     else:
         form = AssignOrgAdmin(instance=role_obj, request=request)
     return render(request, 'fieldsight/add_admin_form.html',
-                  {'form': form, 'scenario': scenario, 'obj':organization})
+                  {'form': form, 'scenario': scenario, 'obj': organization})
 
 
 @login_required
@@ -272,18 +271,22 @@ def alter_proj_status(request, pk):
 @group_required('Organization')
 def add_proj_manager(request, pk):
     obj = get_object_or_404(
-        Project, pk=int(pk))
+        Project, pk=pk)
+    group = Group.objects.get(name__exact="Project Manager")
+    role_obj = UserRole(project=obj, group=group)
+    scenario = 'Assign'
     if request.method == 'POST':
-        form = SetProjectManagerForm(request.POST)
-        user = int(form.data.get('user'))
-        group = Group.objects.get(name__exact="Project Manager")
-        role = UserRole(user_id=user,group=group,project=obj)
-        role.save()
-        messages.add_message(request, messages.INFO, 'Project Manager Added')
-        return HttpResponseRedirect(reverse('fieldsight:projects-list'))
+        form = SetProjectManagerForm(data=request.POST, instance=role_obj, request=request)
+        if form.is_valid():
+            role_obj = form.save(commit=False)
+            user_id = request.POST.get('user')
+            role_obj.user_id = int(user_id)
+            role_obj.save()
+        messages.add_message(request, messages.INFO, 'Central Engineer Added')
+        return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': obj.pk}))
     else:
-        form = SetProjectManagerForm(instance=obj)
-    return render(request, "fieldsight/add_project_manager.html", {'obj':obj,'form':form})
+        form = SetProjectManagerForm(instance=role_obj, request=request)
+    return render(request, "fieldsight/add_project_manager.html", {'obj':obj,'form':form, 'scenario':scenario})
 
 
 @login_required
@@ -291,7 +294,6 @@ def add_proj_manager(request, pk):
 def alter_site_status(request, pk):
     try:
         obj = Site.objects.get(pk=int(pk))
-            # alter status method on custom user
         if obj.is_active:
             obj.is_active = False
             messages.info(request, 'Site {0} Deactivated.'.format(obj.name))
@@ -316,7 +318,7 @@ def add_supervisor(request, pk):
         role = UserRole(user_id=user,group=group,site=obj)
         role.save()
         messages.add_message(request, messages.INFO, 'Site Supervisor Added')
-        return HttpResponseRedirect(reverse('fieldsight:sites-list'))
+        return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': obj.pk}))
     else:
         form = SetSupervisorForm(instance=obj)
     return render(request, "fieldsight/add_supervisor.html", {'obj':obj,'form':form})
@@ -326,18 +328,22 @@ def add_supervisor(request, pk):
 @group_required('Project')
 def add_central_engineer(request, pk):
     obj = get_object_or_404(
-        Site, pk=int(pk))
+        Project, pk=pk)
+    group = Group.objects.get(name__exact="Central Engineer")
+    role_obj = UserRole(project=obj, group=group)
+    scenario = 'Assign'
     if request.method == 'POST':
-        form = SetCentralEngForm(request.POST)
-        user = int(form.data.get('user'))
-        group = Group.objects.get(name__exact="Central Engineer")
-        role = UserRole(user_id=user,group=group,site=obj)
-        role.save()
-        messages.add_message(request, messages.INFO, 'Central Engineer')
-        return HttpResponseRedirect(reverse('fieldsight:sites-list'))
+        form = SetCentralEngForm(data=request.POST, instance=role_obj, request=request)
+        if form.is_valid():
+            role_obj = form.save(commit=False)
+            user_id = request.POST.get('user')
+            role_obj.user_id = int(user_id)
+            role_obj.save()
+        messages.add_message(request, messages.INFO, 'Central Engineer Added')
+        return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': obj.pk}))
     else:
-        form = SetCentralEngForm(instance=obj)
-    return render(request, "fieldsight/add_central_engineer.html", {'obj':obj,'form':form})
+        form = SetCentralEngForm(instance=role_obj, request=request)
+    return render(request, "fieldsight/add_central_engineer.html", {'obj':obj,'form':form, 'scenario':scenario})
 
 
 class ProjectView(OView):
@@ -350,15 +356,15 @@ class ProjectListView(ProjectView, OrganizationMixin, ListView):
     pass
 
 
-class ProjectCreateView(ProjectView, LoginRequiredMixin, OrganizationMixin, CreateView):
+class ProjectCreateView(ProjectView, OrganizationMixin, CreateView):
     pass
 
 
-class ProjectUpdateView(ProjectView, LoginRequiredMixin, OrganizationMixin, UpdateView):
+class ProjectUpdateView(ProjectView, OrganizationMixin, UpdateView):
     pass
 
 
-class ProjectDeleteView(ProjectView, LoginRequiredMixin, OrganizationMixin, DeleteView):
+class ProjectDeleteView(ProjectView, OrganizationMixin, DeleteView):
     pass
 
 
@@ -368,19 +374,19 @@ class SiteView(PView):
     form_class = SiteForm
 
 
-class SiteListView(SiteView, LoginRequiredMixin, ProjectMixin, ListView):
+class SiteListView(SiteView, ProjectMixin, ListView):
     pass
 
 
-class SiteCreateView(SiteView, LoginRequiredMixin, ProjectMixin, CreateView):
+class SiteCreateView(SiteView, ProjectMixin, CreateView):
     pass
 
 
-class SiteUpdateView(SiteView, LoginRequiredMixin, ProjectMixin, UpdateView):
+class SiteUpdateView(SiteView, ProjectMixin, UpdateView):
     pass
 
 
-class SiteDeleteView(SiteView, LoginRequiredMixin, ProjectMixin, DeleteView):
+class SiteDeleteView(SiteView, ProjectMixin, DeleteView):
     pass
 
 

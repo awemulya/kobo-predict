@@ -138,10 +138,20 @@ class Project(models.Model):
         if staffs.exists():
             return [role.user.id for role in staffs]
         return []
-        # staffs = list(self.project_roles.filter(group__name="Project Manager"))
-        # if staffs:
-        #     return [role.user.id for role in staffs]
-        # return []
+
+    @property
+    def get_central_eng(self):
+        staffs = list(self.project_roles.filter(group__name__exact="Central Engineer"))
+        if staffs:
+            return [str(role.user.username) for role in staffs]
+        return ""\
+
+    @property
+    def get_central_eng_id(self):
+        staffs = list(self.project_roles.filter(group__name="Central Engineer"))
+        if staffs:
+            return [role.user.id for role in staffs]
+        return []
 
     def get_organization_name(self):
         return self.organization.name
@@ -179,20 +189,6 @@ class Site(models.Model):
 
     def __str__(self):
         return self.name
-
-    @property
-    def get_central_eng(self):
-        staffs = list(self.site_roles.filter(group__name__exact="Central Engineer"))
-        if staffs:
-            return [str(role.user.username) for role in staffs]
-        return ""\
-
-    @property
-    def get_central_eng_id(self):
-        staffs = list(self.site_roles.filter(group__name="Central Engineer"))
-        if staffs:
-            return [role.user.id for role in staffs]
-        return []
 
     @property
     def get_supervisors(self):

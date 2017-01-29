@@ -36,9 +36,9 @@ class UserRole(models.Model):
             raise ValidationError({
                 'site': ValidationError(_('Missing site.'), code='required'),
             })
-        if self.group.name == 'Central Engineer' and not self.site_id:
+        if self.group.name == 'Central Engineer' and not self.project_id:
             raise ValidationError({
-                'site': ValidationError(_('Missing site.'), code='required'),
+                'site': ValidationError(_('Missing Project.'), code='required'),
             })
 
         if self.group.name == 'Project Manager' and not self.project_id:
@@ -50,7 +50,7 @@ class UserRole(models.Model):
             raise ValidationError({
                 'organization': ValidationError(_('Missing Organization.'), code='required'),
             })
-        if UserRole.objects.filter(user=self.user, group=self.group, site=self.site).exists():
+        if UserRole.objects.filter(user=self.user, group=self.group, project=self.project, site=self.site).exists():
             raise ValidationError({
                 'user': ValidationError(_('User Role Already Exists.')),
             })
@@ -63,7 +63,7 @@ class UserRole(models.Model):
         elif self.group.name == 'Organization Admin':
             self.project = None
             self.site = None
-        elif self.group.name == 'Project Manager':
+        elif self.group.name in ['Project Manager', 'Central Engineer']:
             self.site = None
             self.organization = self.project.organization
 
@@ -71,9 +71,6 @@ class UserRole(models.Model):
             self.project = self.site.project
             self.organization = self.site.project.organization
 
-        elif self.group.name == 'Central Engineer':
-            self.project = self.site.project
-            self.organization = self.site.project.organization
         super(UserRole, self).save(*args, **kwargs)
 
     def update(self, *args, **kwargs):
@@ -84,7 +81,7 @@ class UserRole(models.Model):
         elif self.group.name == 'Organization Admin':
             self.project = None
             self.site = None
-        elif self.group.name == 'Project Manager':
+        elif self.group.name in ['Project Manager', 'Central Engineer']:
             self.site = None
             self.organization = self.project.organization
 
@@ -92,9 +89,6 @@ class UserRole(models.Model):
             self.project = self.site.project
             self.organization = self.site.project.organization
 
-        elif self.group.name == 'Central Engineer':
-            self.project = self.site.project
-            self.organization = self.site.project.organization
         super(UserRole, self).update(*args, **kwargs)
 
     @staticmethod
@@ -127,9 +121,9 @@ class UserRole(models.Model):
             select_related('group', 'organization')\
 
     @staticmethod
-    def central_engineers(site):
-        return UserRole.objects.filter(site=site, ended_at=None, group__name="Central Engineer").\
-            select_related('group', 'site')
+    def central_engineers(project):
+        return UserRole.objects.filter(project=project, ended_at=None, group__name="Central Engineer").\
+            select_related('group', 'project')
 
 
 @receiver(post_save, sender=UserRole)

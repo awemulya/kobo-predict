@@ -67,7 +67,9 @@ urlpatterns = [
     # url(r'^organization/search/$', organization_search, name='search-org'),
     url(r'^project/delete/(?P<pk>\d+)/$', ProjectDeleteView.as_view(), name='project-delete'),
     url(r'^project/alter-status/(?P<pk>\d+)/$', alter_proj_status, name='alter_proj_status'),
-    url(r'^project/add-proj-admin/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
+    url(r'^project/add-proj-manager/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
+    url(r'^project/add-central-engineer/(?P<pk>\d+)/$', add_central_engineer, name='add_central_engineer'),
+
 
 
     url(r'^site/$', SiteListView.as_view(), name='sites-list'),
@@ -78,7 +80,6 @@ urlpatterns = [
     # url(r'^organization/search/$', organization_search, name='search-org'),
     url(r'^site/delete/(?P<pk>\d+)/$', SiteDeleteView.as_view(), name='site-delete'),
     url(r'^site/alter-status/(?P<pk>\d+)/$', alter_site_status, name='alter_site_status'),
-    url(r'^site/add-central-engineer/(?P<pk>\d+)/$', add_central_engineer, name='add_central_engineer'),
     url(r'^site/add-supervisor/(?P<pk>\d+)/$', add_supervisor, name='add_supervisor'),
 
     url(r'^accounts/create/$', CreateUserView.as_view(

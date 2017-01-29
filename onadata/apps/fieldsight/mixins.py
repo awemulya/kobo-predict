@@ -11,7 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 
-from onadata.apps.fieldsight.models import Organization
+from onadata.apps.fieldsight.models import Organization, Project
 from .helpers import json_from_object
 
 
@@ -185,7 +185,6 @@ class OrganizationViewFromProfile(object):
             return super(OrganizationViewFromProfile, self).get_queryset().filter(pk__gt=0)
 
 
-
 class ProjectView(LoginRequiredMixin):
     def form_valid(self, form):
         if self.request.project:
@@ -206,7 +205,11 @@ class ProjectView(LoginRequiredMixin):
             form.project = self.request.project
         if hasattr(form.Meta, 'project_filters'):
             for field in form.Meta.project_filters:
-                form.fields[field].queryset = form.fields[field].queryset.filter(project=form.project)
+                if self.request.project:
+                    form.fields[field].queryset = Project.objects.filter(id=self.request.project.pk)
+                elif self.request.organization:
+                    form.fields[field].queryset = Project.objects.filter(organization=self.request.organization)
+
         return form
 
 
@@ -245,7 +248,7 @@ USURPERS = {
     'Site': ['Central Engineer', 'Site Supervisor', 'Project Manager', 'Central Engineer',
              'Organization Admin', 'Super Admin'],
     'KoboForms': ['Project Manager', 'Central Engineer', 'Organization Admin', 'Super Admin'],
-    'Project': ['Project Manager', 'Organization Admin', 'Super Admin'],
+    'Project': ['Project Manager', 'Organization Admin', 'Super Admin', 'Central Engineer'],
     'Organization': ['Organization Admin', 'Super Admin'],
     'admin': ['Super Admin'],
 }

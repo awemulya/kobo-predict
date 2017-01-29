@@ -106,6 +106,7 @@ class AssignOrgAdmin(HTML5BootstrapModelForm, KOModelForm):
             'organization': forms.HiddenInput()
         }
 
+
 class SetProjectManagerForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(SetProjectManagerForm, self).__init__(*args, **kwargs)
@@ -140,21 +141,29 @@ class SetSupervisorForm(forms.ModelForm):
         }
 
 
-class SetCentralEngForm(forms.ModelForm):
+class SetCentralEngForm(HTML5BootstrapModelForm, KOModelForm):
+
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
         super(SetCentralEngForm, self).__init__(*args, **kwargs)
-        org = kwargs.get('instance')
+        role = kwargs.get('instance')
         if org is not None:
-            old_pm = org.get_central_eng_id
-            users = User.objects.filter().exclude(id=settings.ANONYMOUS_USER_ID).exclude(id__in=old_pm)
-            self.fields['user'].choices = [(user.pk, user.username) for user in users]
+            old_admins = role.project.get_central_eng_id
+            users = User.objects.filter().exclude(id=settings.ANONYMOUS_USER_ID).exclude(id__in=old_admins)
+            if hasattr(self.request, "organization"):
+                if self.request.organization:
+                    users = users.filter(user_profile__organization=self.request.organization)
+            self.fields['user'].queryset = users
 
     class Meta:
-        fields = ['user']
+        fields = ['user','group','project']
         model = UserRole
         widgets = {
-        'users': forms.CheckboxSelectMultiple()
+            'user': forms.Select(attrs={'class': 'selectize', 'data-url': reverse_lazy('role:user_add')}),
+            'group': forms.HiddenInput(),
+            'project': forms.HiddenInput()
         }
+
 
 
 class ProjectForm(forms.ModelForm):
@@ -182,5 +191,6 @@ class SiteForm(forms.ModelForm):
     class Meta:
         model = Site
         exclude = []
+        project_filters = ['project']
 
 
