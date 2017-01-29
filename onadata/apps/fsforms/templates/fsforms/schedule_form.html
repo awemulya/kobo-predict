@@ -10,7 +10,11 @@
     {% endblock %}
 
 {% block head %}
+{% if is_project %}
+    <a class="btn btn-success btn-raised" href="{% url 'forms:project-survey' obj.pk%}">{% trans 'Schedules' %}</a>
+{% else %}
     <a class="btn btn-success btn-raised" href="{% url 'forms:site-survey' obj.pk%}">{% trans 'Schedules' %}</a>
+{% endif %}
 {% endblock %}
 
 {% block content %}

@@ -224,6 +224,21 @@ def create_schedule(request, site_id):
     form = ScheduleForm()
     return render(request, "fsforms/schedule_form.html", {'form': form, 'obj': site})
 
+@login_required
+def project_create_schedule(request, id):
+    project = get_object_or_404(
+        Project, pk=id)
+    if request.method == 'POST':
+        form = ScheduleForm(data=request.POST)
+        if form.is_valid():
+            schedule = form.save()
+            schedule.project = project
+            schedule.save()
+            messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
+            return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'id': project.id}))
+    form = ScheduleForm()
+    return render(request, "fsforms/schedule_form.html", {'form': form, 'obj': project, 'is_project':True})
+
 
 class ScheduleView(object):
     model = Schedule
@@ -399,6 +414,11 @@ def setup_project_stages(request, id):
 def site_survey(request, site_id):
     objlist = Schedule.objects.filter(site__id=site_id)
     return render(request, "fsforms/schedule_list.html", {'object_list': objlist, 'site':Site.objects.get(pk=site_id)})
+
+
+def project_survey(request, project_id):
+    objlist = Schedule.objects.filter(project__id=project_id)
+    return render(request, "fsforms/project/schedule_list.html", {'object_list': objlist, 'project': Project(id=project_id)})
 
 
 # form related
