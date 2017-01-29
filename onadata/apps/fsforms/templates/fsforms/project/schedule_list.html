@@ -1,0 +1,73 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Schedules' %}{% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
+<a class="btn btn-success btn-raised" href="{% url 'forms:project-schedule-add' project.pk %}">{% trans 'New' %} {% trans 'Schedule' %}</a>
+{% endblock %}
+
+{% block content %}
+
+    {% load pagination_tags %}
+    {% load sorting_tags %}
+    {% load filters %}
+
+    <div class="adv-table">
+
+
+        {% autosort object_list as sorted_objects %}
+        {% autopaginate object_list 25 as paginated_objects %}
+
+        <table class="table table-striped" id="dynamic-table1">
+            <thead>
+            <th>{% anchor name _('Name') %}</th>
+            <th>{% trans 'Range' %}</th>
+            <th>{% trans 'Days' %}</th>
+            <th>{% anchor date_created _('Date Created') %}</th>
+            <th>{% trans 'Assigned Form' %}</th>
+            </thead>
+            <tbody>
+            {% for obj in paginated_objects %}
+                <tr>
+                    <td>
+                        <a href="{% url 'forms:schedule-edit' obj.pk %}">{{ obj.name }}</a>
+                    </td>
+                    <td>
+                        {{ obj.date_range_start }} - {{ obj.date_range_end }}
+                    </td>
+                    <td>
+                        {% for days in obj.selected_days.all %}
+                        {{ days.day }},
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ obj.date_created }}
+                    </td>
+                      <td> {% if not obj.form_exists %}
+                        <a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add-form' obj.pk %}">
+                        Assign Form
+                        </a>
+                            {% else %}
+                            {{obj.form.xf.title}}:
+                          {% endif %}
+                    </td>
+
+                </tr>
+            {% empty %}
+            <p> No Schedules </p>
+            {% endfor %}
+
+            </tbody>
+        </table>
+  
+
+        {% paginate %}
+
+    </div>
+
+
+
+{% endblock %}
