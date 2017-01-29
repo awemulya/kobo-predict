@@ -274,14 +274,18 @@
                          </span>
                     </header>
                     <div class="panel-body">
-                        {% if messages %}
-                            <ul class="messages">
-                                {% for message in messages %}
-                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
 
+    {% block messages %}
+        {% if messages %}
+            <script>
+                $(function () {
+                    {% for message in messages %}
+                        bsalert.message('{{ message|remove_lines|safe }}', '{{ message.tags|last_word }}');
+                    {% endfor %}
+                });
+            </script>
+        {% endif %}
+    {% endblock %}
                         {% block content %}
                             This is a sample page
                         {% endblock %}
