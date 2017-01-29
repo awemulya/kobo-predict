@@ -268,7 +268,7 @@ def alter_proj_status(request, pk):
 
 
 @login_required
-@group_required('Organization')
+@group_required('Project')
 def add_proj_manager(request, pk):
     obj = get_object_or_404(
         Project, pk=pk)
@@ -282,7 +282,7 @@ def add_proj_manager(request, pk):
             user_id = request.POST.get('user')
             role_obj.user_id = int(user_id)
             role_obj.save()
-        messages.add_message(request, messages.INFO, 'Central Engineer Added')
+        messages.add_message(request, messages.INFO, 'Project Manager Added')
         return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': obj.pk}))
     else:
         form = SetProjectManagerForm(instance=role_obj, request=request)
