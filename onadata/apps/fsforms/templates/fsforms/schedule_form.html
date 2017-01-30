@@ -1,7 +1,7 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 
-{% block page-title %}{{ scenario }} {% trans 'Schedules' %}{% endblock %}
+{% block page-title %}{{ scenario }} {% trans 'Schedules Info' %}{% endblock %}
  {%block extracss %}
 <link rel="stylesheet" type="text/css" href="/media/admin/css/forms.css"/>
 <link rel="stylesheet" type="text/css" href="/media/admin/css/base.css"/>
@@ -15,6 +15,15 @@
 {% else %}
     <a class="btn btn-success btn-raised" href="{% url 'forms:site-survey' obj.pk%}">{% trans 'Schedules' %}</a>
 {% endif %}
+{% endblock %}
+
+{% block breadcrumbs %}
+{% if is_project %}
+    <li><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{% trans 'Project Dashboard' %}</a></li>
+{% else %}
+<li><a href="{% url 'fieldsight:site-dashboard' obj.pk %}">{% trans 'Site Dashboard' %}</a></li>
+{% endif %}
+    <li>{% trans 'Schedules Info' %}</li>
 {% endblock %}
 
 {% block content %}

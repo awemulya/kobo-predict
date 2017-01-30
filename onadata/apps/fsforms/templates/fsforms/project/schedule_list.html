@@ -9,6 +9,10 @@
 <a class="btn btn-success btn-raised" href="{% url 'forms:project-schedule-add' project.pk %}">{% trans 'New' %} {% trans 'Schedule' %}</a>
 {% endblock %}
 
+{% block breadcrumbs %}
+    <li><a href="{% url 'fieldsight:project-dashboard' project.pk %}">{% trans 'Project Dashboard' %}</a></li>
+    <li>{% trans 'Schedules' %}</li>
+{% endblock %}
 {% block content %}
 
     {% load pagination_tags %}
