@@ -69,7 +69,7 @@ class FSFormForm(forms.ModelForm):
 class StageForm(forms.ModelForm):
 
     class Meta:
-        exclude = ['group', 'stage', 'site', 'shared_level', 'project']
+        exclude = ['group', 'stage', 'site', 'shared_level', 'project', 'ready']
         model = Stage
 
 

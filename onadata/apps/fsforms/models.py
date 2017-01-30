@@ -68,7 +68,7 @@ class Stage(models.Model):
     def save(self, *args, **kwargs):
         if self.stage:
             self.group = self.stage.group
-        self.order = Stage.get_order(self.site, self.stage)
+        self.order = Stage.get_order(self.site, self.project,self.stage)
         super(Stage, self).save(*args, **kwargs)
 
     def get_display_name(self):
@@ -89,20 +89,35 @@ class Stage(models.Model):
         return FieldSightXF.objects.get(stage=self).xf.title
 
     @classmethod
-    def get_order(cls, site, stage):
-        if not Stage.objects.filter(site=site).exists():
-            return 1
-        elif stage is not None:
-            if not Stage.objects.filter(stage=stage).exists():
+    def get_order(cls, site, project, stage):
+        if site:
+            if not Stage.objects.filter(site=site).exists():
                 return 1
+            elif stage is not None:
+                if not Stage.objects.filter(stage=stage).exists():
+                    return 1
+                else:
+                    mo = Stage.objects.filter(stage=stage).aggregate(Max('order'))
+                    order = mo.get('order__max', 0)
+                    return order + 1
             else:
-                mo = Stage.objects.filter(stage=stage).aggregate(Max('order'))
+                mo = Stage.objects.filter(site=site, stage__isnull=True).aggregate(Max('order'))
                 order = mo.get('order__max', 0)
                 return order + 1
         else:
-            mo = Stage.objects.filter(site=site, stage__isnull=True).aggregate(Max('order'))
-            order = mo.get('order__max', 0)
-            return order + 1
+            if not Stage.objects.filter(project=project).exists():
+                return 1
+            elif stage is not None:
+                if not Stage.objects.filter(stage=stage).exists():
+                    return 1
+                else:
+                    mo = Stage.objects.filter(stage=stage).aggregate(Max('order'))
+                    order = mo.get('order__max', 0)
+                    return order + 1
+            else:
+                mo = Stage.objects.filter(project=project, stage__isnull=True).aggregate(Max('order'))
+                order = mo.get('order__max', 0)
+                return order + 1
 
     def __unicode__(self):
         return getattr(self, "name", "")

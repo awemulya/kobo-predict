@@ -2,13 +2,10 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Stages of' %}  {{obj.name}}
+{% block page-title %}{% trans 'Main Stages' %}  {{obj.name}}
 {% endblock %}
 
 {% block head %}
- <a  class="btn btn-success btn-raised" href="{% url 'fieldsight:project-dashboard' obj.pk %}">
-     {{obj.name}} {% trans 'Dashboard' %}</a>
-<a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
     <a class="btn btn-success btn-raised" href="{% url 'forms:project-stage-add' obj.pk %}">
                             {% trans 'Add New Stage' %}</a>
 {% endblock %}
@@ -111,6 +108,11 @@
     color: #fff;
 }
 </style>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{% trans 'Project Dashboard' %}</a></li>
+    <li>{% trans 'Main Stages' %}</li>
 {% endblock %}
 
 {% block content %}

@@ -437,8 +437,7 @@ def setup_site_stages(request, site_id):
 
 def setup_project_stages(request, id):
     objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True,project__id=id)
-    return render(request, "fsforms/project/project_main_stages.html", {'objlist': objlist, 'obj':
-        Project.objects.get(pk=id)})
+    return render(request, "fsforms/project/project_main_stages.html", {'objlist': objlist, 'obj':Project(pk=id)})
 
 
 def site_survey(request, site_id):
