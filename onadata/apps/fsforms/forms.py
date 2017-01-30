@@ -123,6 +123,9 @@ BIRTH_YEAR_CHOICES = ('1980', '1981', '1982')
 
 
 class ScheduleForm(forms.ModelForm):
+    forms_list = [(obj.id, obj.title) for obj in XForm.objects.all()]
+    form = forms.ChoiceField(widget = forms.Select(),
+                     choices = forms_list, required=False,)
 
     class Meta:
         exclude = ['site','project']

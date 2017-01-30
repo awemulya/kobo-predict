@@ -33,7 +33,7 @@
             {% for obj in paginated_objects %}
                 <tr>
                     <td>
-                        <a href="{% url 'forms:schedule-edit' obj.pk %}">{{ obj.name }}</a>
+                        <a href="{% url 'forms:project-schedule-edit' obj.pk %}">{{ obj.name }}</a>
                     </td>
                     <td>
                         {{ obj.date_range_start }} - {{ obj.date_range_end }}
@@ -46,11 +46,7 @@
                     <td>
                         {{ obj.date_created }}
                     </td>
-                      <td> {% if not obj.form_exists %}
-                        <a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add-form' obj.pk %}">
-                        Assign Form
-                        </a>
-                            {% else %}
+                      <td> {% if obj.form_exists %}
                             {{obj.form.xf.title}}:
                           {% endif %}
                     </td>

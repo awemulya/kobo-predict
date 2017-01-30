@@ -57,6 +57,7 @@ class Stage(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
     site = models.ForeignKey(Site, related_name="stages", null=True, blank=True)
     project = models.ForeignKey(Project, related_name="stages", null=True, blank=True)
+    ready = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'fieldsight_forms_stage'
@@ -144,6 +145,7 @@ class Schedule(models.Model):
 class FieldSightXF(models.Model):
     xf = models.ForeignKey(XForm, related_name="field_sight_form")
     site = models.ForeignKey(Site, related_name="site_forms", null=True, blank=True)
+    project = models.ForeignKey(Project, related_name="project_forms", null=True, blank=True)
     is_staged = models.BooleanField(default=False)
     is_scheduled = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now=True)
