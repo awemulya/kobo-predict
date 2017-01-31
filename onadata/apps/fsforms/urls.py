@@ -43,7 +43,7 @@ from .views import (
     site_survey,
     create_schedule,
     setup_project_stages, project_stage_add, instance_detail, alter_answer_status, project_survey,
-    project_create_schedule, project_edit_schedule)
+    project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage)
 
 # router = routers.DefaultRouter()
 # router.register(r'api/groups', GroupViewSet)
@@ -72,6 +72,8 @@ urlpatterns = [
         url(r'^stage-add-sub-stage/(?P<pk>\d+)/$', add_sub_stage, name='stage-add-sub-stage'),
         url(r'^stage-detail/(?P<pk>\d+)/$', stage_details, name='stages-detail'),
         url(r'^stage-add-form/(?P<pk>\d+)/$', stage_add_form, name='stage-add-form'),
+        url(r'^stage-edit/(?P<stage>\d+)/(?P<id>\d+)/(?P<is_project>\d)/$', edit_main_stage, name='edit-main-stage'),
+        url(r'^sub-stage-edit/(?P<stage>\d+)/(?P<id>\d+)/(?P<is_project>\d)/$', edit_sub_stage, name='edit-sub-stage'),
 
         # url(r'^schedule/$', ScheduleListView.as_view(), name='schedules-list'),
         url(r'^schedule/add/(?P<site_id>\d+)/$', create_schedule, name='schedule-add'),

@@ -13,11 +13,11 @@
 {% block breadcrumbs %}
 {% if obj.site.pk %}
 <li><a href="{% url 'fieldsight:site-dashboard' obj.site.pk %}">
-     {{obj.site.name}} {% trans 'Dashboard' %}</a></li>
+     {{obj.site.name}} {% trans 'Site Dashboard' %}</a></li>
 <li><a href="{% url 'forms:setup-site-stages' obj.site.pk %}">{% trans 'Main Stages' %}</a></li>
 {% else %}
 <li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">
-     {{obj.site.name}} {% trans 'Dashboard' %}</a></li>
+     {{obj.site.name}} {% trans 'Project Dashboard' %}</a></li>
 <li><a href="{% url 'forms:setup-project-stages' obj.project.pk %}">{% trans 'Main Stages' %}</a></li>
 {% endif %}
     <li>{{obj.sub_stage_count}}{% trans ' Sub Stages of ' %}{{obj.name}}</li>
@@ -130,7 +130,7 @@
     <div>
       <div class="col-md-4">
         <div class="substages-main-list">
-            <a class="btn" href="#">Edit</a>
+            <a class="btn" href="{% url 'forms:edit-sub-stage' stage.pk obj.pk 0 %}">Edit</a>
           <h3><span>Order:</span> <b>{{stage.order}}</b></h3>
           <h4><span>Name:</span> <b>{{stage.name}}</b></h4>
           <p><span>Description:</span>{{stage.description}}</p>

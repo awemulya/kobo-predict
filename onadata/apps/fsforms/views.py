@@ -25,7 +25,7 @@ from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, P
     CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
-    AlterAnswerStatus
+    AlterAnswerStatus, MainStageEditForm, SubStageEditForm
 from .models import FieldSightXF, Stage, Schedule, FormGroup
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
@@ -126,6 +126,8 @@ def add_sub_stage(request, pk=None):
         if form.is_valid():
             child_stage = form.save(commit=False)
             child_stage.stage = stage
+            child_stage.project = stage.project
+            child_stage.site = stage.site
             child_stage.group = stage.group
             child_stage.save()
             form = int(form.cleaned_data.get('form',0))
@@ -217,6 +219,51 @@ def stage_add_form(request, pk=None):
             form = AssignFormToStageForm()
         return render(request, "fsforms/stage_add_form.html", {'form': form, 'obj': stage})
 
+@login_required
+def edit_main_stage(request, stage, id, is_project):
+    stage = get_object_or_404(Stage, pk=stage)
+    if request.method == 'POST':
+        form = MainStageEditForm(instance=stage, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.info(request, 'Stage Updated.')
+            if is_project:
+                return HttpResponseRedirect(reverse("forms:setup-project-stages", kwargs={'id': id}))
+            else:
+                return HttpResponseRedirect(reverse("forms:setup-site-stages", kwargs={'site_id': id}))
+    form = MainStageEditForm(instance=stage)
+    return render(request, "fsforms/main_stage_edit.html", {'form': form, 'id': id, 'is_project':is_project,'scenario':"Update"})
+
+@login_required
+def edit_sub_stage(request, stage, id, is_project):
+    stage = get_object_or_404(Stage, pk=stage)
+    if request.method == 'POST':
+        form = SubStageEditForm(instance=stage, data=request.POST)
+        if form.is_valid():
+            form.save()
+            form = int(form.cleaned_data.get('form',0))
+            if form:
+                if is_project:
+                    if FieldSightXF.objects.filter(project=stage.project, stage=stage, is_staged=True).exists():
+                        fsxform = FieldSightXF.objects.get(project=stage.project, stage=stage, is_staged=True)
+                        fsxform.xf_id = form
+                        fsxform.save()
+                    else:
+                        FieldSightXF.objects.create(xf_id=form, is_staged=True,stage=stage,project=stage.project)
+                else:
+                    if FieldSightXF.objects.filter(site=stage.site, stage=stage, is_staged=True).exists():
+                        fsxform = FieldSightXF.objects.get(site=stage.site, stage=stage, is_staged=True)
+                        fsxform.xf_id = form
+                        fsxform.save()
+                    else:
+                        FieldSightXF.objects.create(xf_id=form, is_staged=True,stage=stage,site=stage.site)
+            messages.info(request, 'Stage {} Updated.'.format(stage.name))
+            return HttpResponseRedirect(reverse("forms:stages-detail", kwargs={'pk': stage.stage.id}))
+    form = SubStageEditForm(instance=stage)
+    if FieldSightXF.objects.filter(stage=stage).exists():
+        if FieldSightXF.objects.get(stage=stage).xf:
+            form.fields['form'].initial= FieldSightXF.objects.get(stage=stage).xf.id
+    return render(request, "fsforms/sub_stage_edit.html", {'form': form, 'id': id, 'is_project':is_project,'scenario':"Update"})
 
 @login_required
 def create_schedule(request, site_id):
@@ -276,6 +323,9 @@ def project_edit_schedule(request, id):
             messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
             return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': schedule.project.id}))
     form = ScheduleForm(instance=schedule)
+    if FieldSightXF.objects.filter(schedule=schedule).exists():
+        if FieldSightXF.objects.get(schedule=schedule).xf:
+            form.fields['form'].initial= FieldSightXF.objects.get(schedule=schedule).xf.id
     return render(request, "fsforms/schedule_form.html", {'form': form, 'obj': schedule.project, 'is_project':True})
 
 

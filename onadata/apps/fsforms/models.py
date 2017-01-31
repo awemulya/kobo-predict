@@ -68,7 +68,8 @@ class Stage(models.Model):
     def save(self, *args, **kwargs):
         if self.stage:
             self.group = self.stage.group
-        self.order = Stage.get_order(self.site, self.project,self.stage)
+        # if not self.pk:
+        #     self.order = Stage.get_order(self.site, self.project,self.stage)
         super(Stage, self).save(*args, **kwargs)
 
     def get_display_name(self):
