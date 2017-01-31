@@ -311,16 +311,19 @@ def alter_site_status(request, pk):
 def add_supervisor(request, pk):
     obj = get_object_or_404(
         Site, pk=int(pk))
+    group = Group.objects.get(name__exact="Site Supervisor")
+    role_obj = UserRole(site=obj, group=group)
     if request.method == 'POST':
-        form = SetSupervisorForm(request.POST)
-        user = int(form.data.get('user'))
-        group = Group.objects.get(name__exact="Site Supervisor")
-        role = UserRole(user_id=user,group=group,site=obj)
-        role.save()
+        form = SetSupervisorForm(data=request.POST, instance=role_obj, request=request)
+        if form.is_valid():
+            role_obj = form.save(commit=False)
+            user_id = request.POST.get('user')
+            role_obj.user_id = int(user_id)
+            role_obj.save()
         messages.add_message(request, messages.INFO, 'Site Supervisor Added')
         return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': obj.pk}))
     else:
-        form = SetSupervisorForm(instance=obj)
+        form = SetSupervisorForm(instance=role_obj, request=request)
     return render(request, "fieldsight/add_supervisor.html", {'obj':obj,'form':form})
 
 

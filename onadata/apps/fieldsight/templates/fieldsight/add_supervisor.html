@@ -1,14 +1,17 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 
-{% block page-title %}{% trans 'Add Site Supervisor to '  %}{{obj.name}}
+{% block page-title %}{% trans 'Add Supervisor to '  %}{{obj.name}}
 
 {% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a>
 {% endblock %}
-
+{% block breadcrumbs %}
+    <li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">Project Dashboard</a></li>
+<li><a href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a></li>
+    <li>{% trans 'Add Supervisor to '  %}{{obj.name}}</li>
+{% endblock %}
 {% block content %}
     <div class="col-sm-12 registration_field">
         {% if obj.get_supervisors %}

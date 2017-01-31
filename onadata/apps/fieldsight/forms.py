@@ -69,9 +69,9 @@ class OrganizationForm(forms.ModelForm):
 class SetOrgAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(SetOrgAdminForm, self).__init__(*args, **kwargs)
-        org = kwargs.get('instance')
-        if org is not None:
-            old_admins = org.get_staffs_id
+        role = kwargs.get('instance')
+        if role is not None:
+            old_admins = role.get_staffs_id
             users = User.objects.filter().exclude(id=settings.ANONYMOUS_USER_ID).exclude(id__in=old_admins)
             self.fields['user'].choices = [(user.pk, user.username) for user in users]
 
@@ -89,7 +89,7 @@ class AssignOrgAdmin(HTML5BootstrapModelForm, KOModelForm):
         self.request = kwargs.pop('request')
         super(AssignOrgAdmin, self).__init__(*args, **kwargs)
         role = kwargs.get('instance')
-        if org is not None:
+        if role is not None:
             old_admins = role.organization.get_staffs_id
             users = User.objects.filter().exclude(id=settings.ANONYMOUS_USER_ID).exclude(id__in=old_admins)
             if hasattr(self.request,"organization"):
@@ -113,7 +113,7 @@ class SetProjectManagerForm(HTML5BootstrapModelForm, KOModelForm):
         self.request = kwargs.pop('request')
         super(SetProjectManagerForm, self).__init__(*args, **kwargs)
         role = kwargs.get('instance')
-        if org is not None:
+        if role is not None:
             old_admins = role.project.get_staffs_id
             users = User.objects.filter().exclude(id=settings.ANONYMOUS_USER_ID).exclude(id__in=old_admins)
             if hasattr(self.request, "organization"):
@@ -131,20 +131,26 @@ class SetProjectManagerForm(HTML5BootstrapModelForm, KOModelForm):
         }
 
 
-class SetSupervisorForm(forms.ModelForm):
+class SetSupervisorForm(HTML5BootstrapModelForm, KOModelForm):
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
         super(SetSupervisorForm, self).__init__(*args, **kwargs)
-        org = kwargs.get('instance')
-        if org is not None:
-            old_pm = org.get_supervisor_id
+        role = kwargs.get('instance')
+        if role is not None:
+            old_pm = role.site.get_supervisor_id
             users = User.objects.filter().exclude(id=settings.ANONYMOUS_USER_ID).exclude(id__in=old_pm)
-            self.fields['user'].choices = [(user.pk, user.username) for user in users]
+            if hasattr(self.request, "organization"):
+                if self.request.organization:
+                    users = users.filter(user_profile__organization=self.request.organization)
+            self.fields['user'].queryset = users
 
     class Meta:
         fields = ['user']
         model = UserRole
         widgets = {
-        'users': forms.CheckboxSelectMultiple()
+            'user': forms.Select(attrs={'class': 'selectize', 'data-url': reverse_lazy('role:user_add')}),
+            'group': forms.HiddenInput(),
+            'project': forms.HiddenInput()
         }
 
 
@@ -154,7 +160,7 @@ class SetCentralEngForm(HTML5BootstrapModelForm, KOModelForm):
         self.request = kwargs.pop('request')
         super(SetCentralEngForm, self).__init__(*args, **kwargs)
         role = kwargs.get('instance')
-        if org is not None:
+        if role is not None:
             old_admins = role.project.get_central_eng_id
             users = User.objects.filter().exclude(id=settings.ANONYMOUS_USER_ID).exclude(id__in=old_admins)
             if hasattr(self.request, "organization"):
