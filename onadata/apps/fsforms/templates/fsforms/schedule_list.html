@@ -49,13 +49,7 @@
                     <td>
                         {{ obj.date_created }}
                     </td>
-                      <td> {% if not obj.form_exists %}
-                        <a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add-form' obj.pk %}">
-                        Assign Form
-                        </a>
-                            {% else %}
-                            {{obj.form.xf.title}}:
-                          {% endif %}
+                      <td> {{obj.form.xf.title}}
                     </td>
 
                 </tr>
