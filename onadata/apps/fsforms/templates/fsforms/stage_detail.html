@@ -127,21 +127,25 @@
     <div>
       <div class="col-md-4">
         <div class="substages-main-list">
+            <a class="btn" href="#">Edit</a>
           <h3><span>Order:</span> <b>{{stage.order}}</b></h3>
           <h4><span>Name:</span> <b>{{stage.name}}</b></h4>
           <p><span>Description:</span>{{stage.description}}</p>
-            {% if not stage.form_exists and stage.stage.site %}
-                        <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add-form' stage.pk %}">
-                        Assign Form
-                        </a>
-                        <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'Create New' %} {% trans 'Form' %}</a>
-                            {% else %}
+
                     {{stage.form_name}}
-                        {% endif %}
 
         </div>
         <div class="clearfixxx"></div>
       </div>
+    </div>
+       {% empty %}
+       <div class="col-md-4">
+      <div class="stages-main-list">
+        <h3><span>Stage:</span> <b></b></h3>
+        <h4><span>Name:</span> <b></b></h4>
+        <p><span>Description:</span></p>
+      </div>
+
     </div>
       {% endfor %}
   </div>

@@ -437,7 +437,11 @@ def setup_site_stages(request, site_id):
 
 def setup_project_stages(request, id):
     objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True,project__id=id)
-    return render(request, "fsforms/project/project_main_stages.html", {'objlist': objlist, 'obj':Project(pk=id)})
+    order = Stage.objects.filter(project__id=id,stage__isnull=True).count() + 1
+    instance = Stage(name="Stage"+str(order), order=order)
+    form = StageForm(instance=instance)
+    return render(request, "fsforms/project/project_main_stages.html",
+                  {'objlist': objlist, 'obj':Project(pk=id), 'form': form,})
 
 
 def site_survey(request, site_id):
@@ -447,6 +451,8 @@ def site_survey(request, site_id):
 
 def project_survey(request, project_id):
     objlist = Schedule.objects.filter(project__id=project_id)
+    if not len(objlist):
+        return HttpResponseRedirect(reverse("forms:project-schedule-add", kwargs={'id': project_id}))
     return render(request, "fsforms/project/schedule_list.html", {'object_list': objlist, 'project': Project(id=project_id)})
 
 
@@ -574,7 +580,8 @@ def alter_answer_status(request, instance_id, status, fsid):
             update_status(instance_id, status)
             fsxf = FieldSightXF.objects.get(pk=fsid)
             send_message(fsxf, status)
-            return HttpResponseRedirect(reverse("forms:instance_detail", kwargs={'fsxf_id': fsid, 'instance_id':instance_id}))
+            return HttpResponseRedirect(reverse("forms:instance_detail",
+                                                kwargs={'fsxf_id': fsid, 'instance_id':instance_id}))
 
     else:
         form = AlterAnswerStatus(initial={'status':status})

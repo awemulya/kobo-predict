@@ -134,6 +134,26 @@
     </div>
   </div>
     {% endfor %}
+    <form method="post" action="{% url 'forms:project-stage-add' obj.pk %}">
+          <div>
+      <div>{{ form.non_field_errors }}{% csrf_token %}</div>
+    <div class="col-md-4">
+      <div class="stages-main-list">
+          {% for field in form %}
+               <div class="col-sm-12 registration_field">
+               {{ form.non_field_errors }}
+               </div>
+        <h3><span>{{ field.label }}</span> <b>{{ field }}</b>{{ field.errors }}</h3>
+            {% endfor %}
+
+           <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
+      </div>
+
+    </div>
+  </div>
+ </form>
+
+
 </div>
 
 
