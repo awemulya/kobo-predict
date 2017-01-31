@@ -505,6 +505,8 @@ def setup_project_stages(request, id):
 
 def site_survey(request, site_id):
     objlist = Schedule.objects.filter(site__id=site_id)
+    if not len(objlist):
+        return HttpResponseRedirect(reverse("forms:schedule-add", kwargs={'id': site_id}))
     return render(request, "fsforms/schedule_list.html", {'object_list': objlist, 'site':Site.objects.get(pk=site_id)})
 
 
