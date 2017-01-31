@@ -275,10 +275,21 @@ def create_schedule(request, site_id):
             schedule = form.save()
             schedule.site = site
             schedule.save()
+            form = int(form.cleaned_data.get('form',0))
+            if form:
+                FieldSightXF.objects.create(xf_id=form, is_scheduled=True,schedule=schedule,site=site)
             messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
             return HttpResponseRedirect(reverse("forms:site-survey", kwargs={'site_id': site.id}))
     form = ScheduleForm()
     return render(request, "fsforms/schedule_form.html", {'form': form, 'obj': site})
+
+@login_required
+def site_survey(request, site_id):
+    objlist = Schedule.objects.filter(site__id=site_id)
+    if not len(objlist):
+        return HttpResponseRedirect(reverse("forms:schedule-add", kwargs={'site_id': site_id}))
+    return render(request, "fsforms/schedule_list.html", {'object_list': objlist, 'site':Site.objects.get(pk=site_id)})
+
 
 @login_required
 def project_create_schedule(request, id):
@@ -501,13 +512,6 @@ def setup_project_stages(request, id):
     form = StageForm(instance=instance)
     return render(request, "fsforms/project/project_main_stages.html",
                   {'objlist': objlist, 'obj':Project(pk=id), 'form': form,})
-
-
-def site_survey(request, site_id):
-    objlist = Schedule.objects.filter(site__id=site_id)
-    if not len(objlist):
-        return HttpResponseRedirect(reverse("forms:schedule-add", kwargs={'id': site_id}))
-    return render(request, "fsforms/schedule_list.html", {'object_list': objlist, 'site':Site.objects.get(pk=site_id)})
 
 
 def project_survey(request, project_id):
