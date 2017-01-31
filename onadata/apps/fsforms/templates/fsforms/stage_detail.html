@@ -2,22 +2,25 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{{obj.sub_stage_count}}{% trans ' Sub Stages of ' %}{{obj.name}}
+{% block page-title %}{% trans ' Sub Stages of ' %}{{obj.name}}
 {% endblock %}
 
 {% block head %}
-{% if obj.site.pk %}
-<a  class="btn btn-success btn-raised" href="{% url 'fieldsight:site-dashboard' obj.site.pk %}">
-     {{obj.site.name}} {% trans 'Dashboard' %}</a>
-<a class="btn btn-success btn-raised" href="{% url 'forms:setup-site-stages' obj.site.pk %}">{% trans 'Main Stages' %}</a>
-{% else %}
-<a  class="btn btn-success btn-raised" href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">
-     {{obj.site.name}} {% trans 'Dashboard' %}</a>
-<a class="btn btn-success btn-raised" href="{% url 'forms:setup-project-stages' obj.project.pk %}">{% trans 'Main Stages' %}</a>
-{% endif %}
     <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add-sub-stage' obj.pk %}">
         {% trans 'Add Sub Stage' %}</a>
 <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
+{% endblock %}
+{% block breadcrumbs %}
+{% if obj.site.pk %}
+<li><a href="{% url 'fieldsight:site-dashboard' obj.site.pk %}">
+     {{obj.site.name}} {% trans 'Dashboard' %}</a></li>
+<li><a href="{% url 'forms:setup-site-stages' obj.site.pk %}">{% trans 'Main Stages' %}</a></li>
+{% else %}
+<li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">
+     {{obj.site.name}} {% trans 'Dashboard' %}</a></li>
+<li><a href="{% url 'forms:setup-project-stages' obj.project.pk %}">{% trans 'Main Stages' %}</a></li>
+{% endif %}
+    <li>{{obj.sub_stage_count}}{% trans ' Sub Stages of ' %}{{obj.name}}</li>
 {% endblock %}
 {%block extracss %}
 <style>
