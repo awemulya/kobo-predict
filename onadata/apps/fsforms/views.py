@@ -533,7 +533,11 @@ def fill_details_schedule(request, pk=None):
 
 def setup_site_stages(request, site_id):
     objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True,site__id=site_id)
-    return render(request, "fsforms/main_stages.html", {'objlist': objlist, 'site':Site.objects.get(pk=site_id)})
+    order = Stage.objects.filter(site__id=site_id,stage__isnull=True).count() + 1
+    instance = Stage(name="Stage"+str(order), order=order)
+    form = StageForm(instance=instance)
+    return render(request, "fsforms/main_stages.html",
+                  {'objlist': objlist, 'site':Site(pk=site_id),'form': form})
 
 
 def setup_project_stages(request, id):
@@ -542,7 +546,7 @@ def setup_project_stages(request, id):
     instance = Stage(name="Stage"+str(order), order=order)
     form = StageForm(instance=instance)
     return render(request, "fsforms/project/project_main_stages.html",
-                  {'objlist': objlist, 'obj':Project(pk=id), 'form': form,})
+                  {'objlist': objlist, 'obj':Project(pk=id), 'form': form})
 
 
 def project_survey(request, project_id):

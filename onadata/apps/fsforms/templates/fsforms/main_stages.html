@@ -6,11 +6,13 @@
 {% endblock %}
 
 {% block head %}
- <a  class="btn btn-success btn-raised" href="{% url 'fieldsight:site-dashboard' site.pk %}">
-     {{site.name}} {% trans 'Dashboard' %}</a>
 <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
     <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add' site.pk %}">
                             {% trans 'Add New Stage' %}</a>
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{% url 'fieldsight:site-dashboard' site.pk %}">{% trans 'Site Dashboard' %}</a></li>
+    <li>{% trans 'Main Stages' %}</li>
 {% endblock %}
 {%block extracss %}
 <style>
@@ -132,6 +134,24 @@
     </div>
   </div>
     {% endfor %}
+    <form method="post" action="{% url 'forms:stage-add' site.pk %}">
+          <div>
+      <div>{{ form.non_field_errors }}{% csrf_token %}</div>
+    <div class="col-md-4">
+      <div class="stages-main-list">
+          {% for field in form %}
+               <div class="col-sm-12 registration_field">
+               {{ form.non_field_errors }}
+               </div>
+        <h3><span>{{ field.label }}</span> <b>{{ field }}</b>{{ field.errors }}</h3>
+            {% endfor %}
+
+           <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
+      </div>
+
+    </div>
+  </div>
+ </form>
 </div>
 
 
