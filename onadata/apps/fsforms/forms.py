@@ -74,9 +74,11 @@ class StageForm(forms.ModelForm):
 
 
 class AddSubSTageForm(forms.ModelForm):
-
+    forms_list = [(obj.id, obj.title) for obj in XForm.objects.all()]
+    form = forms.ChoiceField(widget = forms.Select(),
+                     choices = forms_list, required=False,)
     class Meta:
-        exclude = ['stage', 'group', 'shared_level', 'site', 'project']
+        exclude = ['stage', 'group', 'shared_level', 'site', 'project', 'ready']
         model = Stage
 
 

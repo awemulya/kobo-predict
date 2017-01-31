@@ -128,6 +128,12 @@ def add_sub_stage(request, pk=None):
             child_stage.stage = stage
             child_stage.group = stage.group
             child_stage.save()
+            form = int(form.cleaned_data.get('form',0))
+            if form:
+                if stage.site:
+                    FieldSightXF.objects.create(xf_id=form, is_staged=True, stage=child_stage,site=stage.site)
+                else:
+                    FieldSightXF.objects.create(xf_id=form, is_staged=True, stage=child_stage,project=stage.project)
             messages.info(request, 'Sub Stage {} Saved.'.format(child_stage.name))
             return HttpResponseRedirect(reverse("forms:stages-detail", kwargs={'pk': stage.id}))
     order = Stage.objects.filter(stage=stage).count() + 1
@@ -179,7 +185,10 @@ def stage_details(request, pk=None):
     stage = get_object_or_404(
         Stage, pk=pk)
     object_list = Stage.objects.filter(stage__id=stage.id).order_by('order')
-    return render(request, "fsforms/stage_detail.html", {'obj': stage, 'object_list':object_list})
+    order = Stage.objects.filter(stage=stage).count() + 1
+    instance = Stage(name="Sub Stage"+str(order), order=order)
+    form = AddSubSTageForm(instance=instance)
+    return render(request, "fsforms/stage_detail.html", {'obj': stage, 'object_list':object_list, 'form':form})
 
 
 @login_required

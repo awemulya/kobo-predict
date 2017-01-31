@@ -131,23 +131,34 @@
           <h3><span>Order:</span> <b>{{stage.order}}</b></h3>
           <h4><span>Name:</span> <b>{{stage.name}}</b></h4>
           <p><span>Description:</span>{{stage.description}}</p>
+            <p><span>Fom Assigned:</span> {{stage.form_name}}</p>
 
-                    {{stage.form_name}}
 
         </div>
         <div class="clearfixxx"></div>
       </div>
     </div>
-       {% empty %}
-       <div class="col-md-4">
-      <div class="stages-main-list">
-        <h3><span>Stage:</span> <b></b></h3>
-        <h4><span>Name:</span> <b></b></h4>
-        <p><span>Description:</span></p>
-      </div>
-
-    </div>
       {% endfor %}
+          <div>
+      <div class="col-md-4">
+        <div class="substages-main-list">
+            <form method="post" id='form' action="{% url 'forms:stage-add-sub-stage' obj.pk %}">
+            <b><span>New Stage:</span></b>
+            <b><span>
+               {{ form.non_field_errors }}
+              </span> </b>
+
+            {% csrf_token %}
+            {% for field in form %}
+          <h3>{{ form.non_field_errors }}</h3>
+          <h3><span> {{ field.label }}</span> <b>{{field}}</b><b>{{ field.errors }}</b></h3>
+             {% endfor %}
+             <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
+        </form>
+        </div>
+        <div class="clearfixxx"></div>
+      </div>
+    </div>
   </div>
 
 {% endblock %}
