@@ -18,7 +18,7 @@ USERNAME_INVALID_MESSAGE = _(
     'underscores (_).'
 )
 
-organization_list = [(org.id, org.name) for org in Organization.objects.filter(is_active=True)]
+organization_list = [(org.id, org.name) for org in Organization.objects.all()]
 
 
 class RegistrationForm(registration_forms.RegistrationFormUniqueEmail):

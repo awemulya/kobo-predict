@@ -149,7 +149,7 @@ def edit(request, pk):
                                      'phone':profile.phone,'skype':profile.skype})
         organization_list = []
         if not profile.organization:
-            organization_list = Organization.objects.filter(is_active=True)
+            organization_list = Organization.objects.all()
         return render(request, 'users/user_form.html', {'form': form, 'id': pk,'name': user.first_name,
                                                         'orglist': organization_list})
 
