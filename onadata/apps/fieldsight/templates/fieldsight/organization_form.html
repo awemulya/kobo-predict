@@ -32,12 +32,12 @@
             {% csrf_token %}
              {{ form.media }}
              <div class="col-sm-12 registration_field">
-                {%  if form.instance.logo %}
+                {% ifequal scenario "Edit" %}
                  <div class="col-sm-3"> Logo</div>
                  <div class="col-sm-9">
                 <img src="{{ form.instance.logo.url }}" title="{{ form.instance.logo}}" />
                      </div>
-                        {% endif %}
+                        {% endifequal %}
                 </div>
             {% for field in form %}
                <div class="col-sm-12 registration_field">
