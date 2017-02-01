@@ -27,10 +27,10 @@ def get_type(value):
     return type(value)
 
 
-STATUS_DICT = {0:'Outstanding', 1: 'Flagged', 2: 'Approved', 3: 'Rejected'}
+FORM_STATUS = {0:'Outstanding', 1: 'Rejected', 2: 'Flagged', 3: 'Approved'}
 
 def get_status_level(status=0):
-    return STATUS_DICT.get(status, "Outstanding")
+    return FORM_STATUS.get(status, "Outstanding")
 
 
 @register.filter
@@ -68,7 +68,7 @@ def get_proj_roles(user_id, id):
 
 @register.filter
 def status(status=0):
-    return STATUS_DICT.get(status,"Outstanding")
+    return FORM_STATUS.get(status,"Outstanding")
 
 @register.filter
 def is_demand(obj):

@@ -14,7 +14,7 @@ from onadata.apps.logger.models import XForm
 from onadata.apps.viewer.models import ParsedInstance
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
-FORM_STATUS = [(0, 'Outstanding'), (1, 'Flagged'), (2, 'Approved'), (3, 'Rejected'), ]
+FORM_STATUS = [(0, 'Outstanding'), (1, 'Rejected'), (2, 'Flagged'), (3, 'Approved'), ]
 
 
 class IntegerRangeField(models.IntegerField):
