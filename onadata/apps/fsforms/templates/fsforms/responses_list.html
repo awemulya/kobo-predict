@@ -1,0 +1,99 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Forms Responses' %}{% endblock %}
+
+{% block head %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li><a href="{% url 'fieldsight:site-dashboard' site %}">Site Dashboard</a></li>
+<li><a href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a></li>
+</li>
+    <li>Responses</li>
+{% endblock %}
+{% block content %}
+
+    <div class="adv-table">
+
+
+
+        <table class="table table-striped" id="dynamic-table1">
+            <thead>
+            <th>{% trans 'Schedule Name' %}</th>
+            <th>{% trans 'Form Name' %}</th>
+            <th>{% trans 'Created Date' %}</th>
+            <th>{% trans 'Submissions' %}</th>
+            </thead>
+            <tbody>
+            {% for obj in schedules %}
+                <tr>
+                    <td>
+                        {{ obj.schedule}}</a>
+                    </td>
+                    <td>
+                        {{ obj.xf.title }}</a>
+                    </td>
+                    <td>
+                        {{ obj.date_created }}
+                    </td>
+                    <td>
+                         <a href="{% url 'forms:formpack_html_export' obj.id %}">
+                             {% trans 'View ' %}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+  
+
+    </div>
+{% for stage in stages %}
+<h3>{% trans 'Stage Name' %} {{stage.name }}
+{% trans 'Stage Order' %} {{stage.order }}</h3>
+<div class="adv-table">
+        <table class="table table-striped">
+            <thead>
+            <th>{% trans 'Sub Stage Name' %}</th>
+            <th>{% trans 'Order' %}</th>
+            <th>{% trans 'Form Name' %}</th>
+            <th>{% trans 'Created Date' %}</th>
+            <th>{% trans 'Submissions' %}</th>
+            </thead>
+            <tbody>
+            {% for obj in stage.parent.all %}
+                <tr>
+                    <td>
+                        {{ obj.name}}</a>
+                    </td>
+                    <td>
+                        {{ obj.order }}</a>
+                    </td>
+                    {% if obj.form %}
+                    <td>
+
+                        {{ obj.form.xf.title }}</a>
+                    </td>
+                    <td>
+                        {{ obj.date_created }}
+                    </td>
+                    <td>
+                         <a href="{% url 'forms:formpack_html_export' obj.form.id %}">
+                             {% trans 'View ' %}</a>
+                    </td>
+                    {% else %}
+                    <td>-</td>
+                    <td> {{ obj.date_created }}</td>
+                    <td>-</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+    </div>
+
+     {% endfor %}
+
+{% endblock %}
