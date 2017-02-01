@@ -213,6 +213,13 @@ class Site(models.Model):
     def get_site_type(self):
         return self.type.name
 
+    def progress(self):
+        stages = self.site_forms.filter(xf__isnull=False,is_staged=True)
+        approved = stages.filter(form_status=3)
+        if not approved:
+            return 0
+        return ("%.2f" % (len(approved)/(len(stages)*0.01)))
+
     @property
     def get_absolute_url(self):
         return reverse('sites-detail', kwargs={'pk': self.pk})
