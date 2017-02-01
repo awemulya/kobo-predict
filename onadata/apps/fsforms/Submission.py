@@ -27,9 +27,9 @@ class Submission():
                 if entry.status == 0:
                     outstanding.append(entry)
                 elif entry.status == 1:
-                    flagged.append(entry)
-                elif entry.status == 2:
-                    approved.append(entry)
-                else:
                     rejected.append(entry)
+                elif entry.status == 2:
+                    flagged.append(entry)
+                else:
+                    approved.append(entry)
         return outstanding, flagged, approved, rejected

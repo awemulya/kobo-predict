@@ -130,9 +130,9 @@
                 <div class="outstanding-and-all">
                     <ul class="nav nav-tabs">
                       <li class="active"><a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
-                      <li><a data-toggle="tab" href="#out-reject">Rejected ({{rejected|length}})</a></li>
-                      <li><a data-toggle="tab" href="#out-approved">Approved ({{approved|length}})</a></li>
-                      <li><a data-toggle="tab" href="#out-flagged">Flagged ({{flagged|length}})</a></li>
+                        <li><a data-toggle="tab" href="#out-reject">Rejected ({{rejected|length}})</a></li>
+                        <li><a data-toggle="tab" href="#out-flagged">Flagged ({{flagged|length}})</a></li>
+                        <li><a data-toggle="tab" href="#out-approved">Approved ({{approved|length}})</a></li>
                     </ul>
 
                     <div class="tab-content">
@@ -246,7 +246,22 @@
 
 {% block all_flagged_forms %}
  <div class="row">
-
+        <div class="col-md-3">
+        <div class="mini-flagged-forms purple-flagged">
+            <div class="mini-stat-info">
+                <span>{{outstanding|length}}</span>
+                outstanding forms
+            </div>
+        </div>
+    </div>
+     <div class="col-md-3">
+        <div class="mini-flagged-forms red-flagged">
+            <div class="mini-stat-info">
+                <span>{{rejected|length}}</span>
+                Rejected forms
+            </div>
+        </div>
+    </div>
     <div class="col-md-3">
         <div class="mini-flagged-forms yellow-flagged">
             <div class="mini-stat-info">
@@ -263,22 +278,8 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="mini-flagged-forms red-flagged">
-            <div class="mini-stat-info">
-                <span>{{rejected|length}}</span>
-                Rejected forms
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="mini-flagged-forms purple-flagged">
-            <div class="mini-stat-info">
-                <span>{{outstanding|length}}</span>
-                outstanding forms
-            </div>
-        </div>
-    </div>
+
+
 
 
   </div>

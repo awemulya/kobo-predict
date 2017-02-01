@@ -165,4 +165,6 @@ class GroupForm(forms.ModelForm):
 class AlterAnswerStatus(forms.Form):
     status = forms.ChoiceField(widget = forms.Select(),
                      choices = (FORM_STATUS), required = True,)
+    comment = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows':4, 'cols':15}))
+
 

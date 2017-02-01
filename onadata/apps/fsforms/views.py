@@ -681,7 +681,11 @@ def alter_answer_status(request, instance_id, status, fsid):
             fsxf = FieldSightXF.objects.get(pk=fsid)
             fsxf.form_status = status
             fsxf.save()
-            send_message(fsxf, status)
+            comment = form.cleaned_data['comment']
+            if comment:
+                # comment save
+                pass
+            send_message(fsxf, status, comment)
             return HttpResponseRedirect(reverse("forms:instance_detail",
                                                 kwargs={'fsxf_id': fsid, 'instance_id':instance_id}))
 

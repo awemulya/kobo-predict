@@ -221,8 +221,23 @@
 
 
 {% block all_flagged_forms %}
- <div class="row">
-
+  <div class="row">
+        <div class="col-md-3">
+        <div class="mini-flagged-forms purple-flagged">
+            <div class="mini-stat-info">
+                <span>{{outstanding}}</span>
+                outstanding forms
+            </div>
+        </div>
+    </div>
+     <div class="col-md-3">
+        <div class="mini-flagged-forms red-flagged">
+            <div class="mini-stat-info">
+                <span>{{rejected}}</span>
+                Rejected forms
+            </div>
+        </div>
+    </div>
     <div class="col-md-3">
         <div class="mini-flagged-forms yellow-flagged">
             <div class="mini-stat-info">
@@ -239,22 +254,8 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="mini-flagged-forms red-flagged">
-            <div class="mini-stat-info">
-                <span>{{rejected}}</span>
-                Rejected forms
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="mini-flagged-forms purple-flagged">
-            <div class="mini-stat-info">
-                <span>{{outstanding}}</span>
-                outstanding forms
-            </div>        
-        </div>
-    </div>  
+
+
 
 
   </div>
