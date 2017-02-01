@@ -16,7 +16,7 @@
         {% endif %}
     </div>
 
-      <div class="col-sm-12 registration_field">
+      <div class="col-sm-6 registration_field">
           <form action="{% url 'fieldsight:add_org_admin' pk=obj.id %}" method="POST">
               {% csrf_token %}
                 {{ form.as_p }}

@@ -108,9 +108,11 @@
                 </div>
             </a>
         </div>
+        {% empty %}
+        <p class="emptylist">Sorry, no athletes in this list.</p>
         {% endfor %}
         {% paginate %}
 
     </div>
-
+    <p class="emptylist">Sorry, no athletes in this list.</p>
 {% endblock %}
