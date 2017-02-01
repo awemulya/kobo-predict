@@ -162,6 +162,15 @@ def stage_add(request, site_id=None):
     form = StageForm(instance=instance)
     return render(request, "fsforms/stage_form.html", {'form': form, 'obj': site})
 
+
+@login_required
+# @group_required('KoboForms')
+def responses(request, site_id=None):
+    schedules = FieldSightXF.objects.filter(site_id=site_id, xf__isnull=False, is_scheduled=True)
+    stages = Stage.objects.filter(stage__isnull=True, site_id=site_id).order_by('order')
+    return render(request, "fsforms/responses_list.html", {'schedules': schedules, 'stages':stages, 'site': site_id})
+
+
 @login_required
 # @group_required('KoboForms')
 def project_stage_add(request, id=None):

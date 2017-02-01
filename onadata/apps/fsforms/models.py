@@ -87,7 +87,14 @@ class Stage(models.Model):
         return True if FieldSightXF.objects.filter(stage=self).count() > 0 else False
 
     def form_name(self):
-        return FieldSightXF.objects.get(stage=self).xf.title
+        if not FieldSightXF.objects.filter(stage=self).count():
+            return ""
+        return FieldSightXF.objects.filter(stage=self)[0].xf.title
+
+    def form(self):
+        if not FieldSightXF.objects.filter(stage=self).count():
+            return False
+        return FieldSightXF.objects.filter(stage=self)[0]
 
     @classmethod
     def get_order(cls, site, project, stage):

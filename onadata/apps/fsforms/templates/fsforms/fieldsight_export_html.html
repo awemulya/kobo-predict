@@ -2,8 +2,13 @@
 {% load i18n staticfiles %}
 {% load filters %}
 {% block page-title %}{% trans 'Form Data' %}{% endblock %}
-
-
+{% block breadcrumbs %}
+    <li><a href="{% url 'fieldsight:site-dashboard' obj.site.pk %}">Site Dashboard</a></li>
+<li><a href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a></li>
+<li><a href="{% url 'forms:site-responses' obj.site.pk %}">{% trans 'Responses' %}</a>
+</li>
+    <li>Submissions</li>
+{% endblock %}
 {%block extracss %}
     <style type="text/css" media="screen">
 
