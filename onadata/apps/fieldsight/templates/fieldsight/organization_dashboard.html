@@ -64,7 +64,7 @@
         	<ul class="nav nav-tabs">
 			  <li class="active"><a data-toggle="tab" href="#org-map">Map View</a></li>
               <li><a data-toggle="tab" href="#org-list-proj">List of Projects</a></li>
-			  <li><a data-toggle="tab" href="#org-list-site">List of Sites</a></li>
+			  <!--<li><a data-toggle="tab" href="#org-list-site">List of Sites</a></li>-->
 			  <li><a data-toggle="tab" href="#org-people">People Involved</a></li>
 			  <li><a data-toggle="tab" href="#org-about">About Organization</a></li>
 			</ul>
@@ -107,29 +107,29 @@
 
                  </div>  
 			  </div>
-              <div id="org-list-site" class="tab-pane fade">
-                 <div class="org-site-list">
-                    {% for obj in sites %}
-                    <a href="{% url 'fieldsight:site-dashboard' obj.pk %}">
-                        <div class="org-site">
-                            <div class="col-md-2">
-                                <div class="image-org">
-                                     <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />    
-                                </div>
-                            </div>    
-                            <div class="col-md-10">
-                                <div class="detail-org">
-                                    <h3 class="site-title-org">{{obj.name}}</h3>
-                                    <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
-                                    <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
-                                </div>
-                            </div>
-                            <div class="clearfixx"></div>    
-                        </div>
-                    </a>
-                    {% endfor %}
-                 </div>  
-              </div>
+              <!--<div id="org-list-site" class="tab-pane fade">-->
+                 <!--<div class="org-site-list">-->
+                    <!--{% for obj in sites %}-->
+                    <!--<a href="{% url 'fieldsight:site-dashboard' obj.pk %}">-->
+                        <!--<div class="org-site">-->
+                            <!--<div class="col-md-2">-->
+                                <!--<div class="image-org">-->
+                                     <!--<img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />    -->
+                                <!--</div>-->
+                            <!--</div>    -->
+                            <!--<div class="col-md-10">-->
+                                <!--<div class="detail-org">-->
+                                    <!--<h3 class="site-title-org">{{obj.name}}</h3>-->
+                                    <!--<p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>-->
+                                    <!--<p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="clearfixx"></div>    -->
+                        <!--</div>-->
+                    <!--</a>-->
+                    <!--{% endfor %}-->
+                 <!--</div>  -->
+              <!--</div>-->
 			  <div id="org-people" class="tab-pane fade">
 			     <div class="org-site-list">
                  

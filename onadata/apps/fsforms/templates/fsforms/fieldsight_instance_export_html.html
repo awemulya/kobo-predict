@@ -77,6 +77,11 @@
     {% endfor %}
 </div>
 
+<div>
+<a class="btn btn-success btn-raised" href="{% url 'forms:formpack_html_export' obj.id %}">{% trans 'All Submissions' %}</a>
+<!-- <span>{{status|status}}</span> -->
+    <a class="btn btn-success btn-raised" href="{% url 'forms:alter-answer-status' answer status obj.id %}">{% trans 'Alter Status' %}</a>
+</div>
 
 {% endblock %}
 
@@ -85,3 +90,4 @@
 
     <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
 {% endblock %}
+

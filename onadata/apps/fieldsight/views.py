@@ -26,7 +26,8 @@ from .forms import OrganizationForm, ProjectForm, SiteForm, RegistrationForm, Se
 @login_required
 def dashboard(request):
     if UserRole.is_active(request.user, "Super Admin"):
-        return HttpResponseRedirect(reverse("fieldsight:organizations-list"))
+        pass
+        # return HttpResponseRedirect(reverse("fieldsight:organizations-list"))
     elif UserRole.is_active(request.user, "Organization Admin"):
         org = UserRole.objects.filter(user=request.user, group__name="Organization Admin")[0].organization
         return HttpResponseRedirect(reverse("fieldsight:organization-dashboard", kwargs={'pk': org.pk}))

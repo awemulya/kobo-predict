@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.gis import forms as gform
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
 from django.core.urlresolvers import reverse_lazy
@@ -64,6 +65,9 @@ class OrganizationForm(forms.ModelForm):
         model = Organization
         exclude = []
         # exclude = ['organizaton']
+        widgets = {
+        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400})
+        }
 
 
 class SetOrgAdminForm(forms.ModelForm):
@@ -191,6 +195,9 @@ class ProjectForm(forms.ModelForm):
         model = Project
         exclude = []
         organization_filters = ['organization']
+        widgets = {
+        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400})
+        }
 
 
 class SiteForm(forms.ModelForm):
@@ -205,5 +212,8 @@ class SiteForm(forms.ModelForm):
         model = Site
         exclude = []
         project_filters = ['project']
+        widgets = {
+        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400})
+        }
 
 

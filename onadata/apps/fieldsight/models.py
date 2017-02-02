@@ -47,7 +47,7 @@ class Organization(models.Model):
     type = models.ForeignKey(OrganizationType, verbose_name='Type of Organization')
     public_desc = models.TextField("Public Description", blank=True, null=True)
     address = models.TextField(blank=True, null=True)
-    location = PointField(geography=True, srid=4326, blank=True, null=True)
+    location = PointField(geography=True, srid=4326, blank=True, null=True,)
     phone = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     fax = models.CharField(max_length=255, blank=True, null=True)
