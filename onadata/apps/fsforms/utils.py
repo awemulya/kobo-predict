@@ -15,8 +15,7 @@ def send_message(fsxf, status=None, comment=None):
                'form_id': fsxf.id,
                'comment': comment,
                'form_name': fsxf.xf.title,
-               'url': 'forms/{}/form.xml'.format(fsxf.id),
-               'manifiest': 'forms/{}/{}'.format(fsxf.id, fsxf.site.id),
+               'xfid': fsxf.xf.id_string,
                'status': FORM_STATUS.get(status,"Outstanding"),
                'site':{'name': fsxf.site.name, 'id': fsxf.site.id}}
     Device.objects.filter(name__in=emails).send_message(message)
