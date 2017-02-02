@@ -21,6 +21,44 @@ from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from onadata.apps.users.serializers import AuthCustomTokenSerializer
 from .forms import LoginForm, ProfileForm, UserEditForm
+from rest_framework import viewsets
+
+
+from rest_framework import serializers
+
+
+class ContactSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(source='user.username')
+    email = serializers.ReadOnlyField(source='user.email')
+    full_name = serializers.ReadOnlyField(source='user.get_full_name')
+    role = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserProfile
+        fields = ('username', 'email', 'address','gender','phone','skype', 'profile_picture', 'full_name', 'role')
+
+    def get_role(self, obj):
+        roles =  UserRole.objects.filter(user=obj.user, ended_at__isnull=True)
+        role_list =  []
+        for r in roles:
+            role_list.append({'group':str(r.group), 'project':str(r.project),'site':str(r.site)})
+        return role_list
+
+
+class ContactViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and site Main Stages.
+    """
+    queryset = UserProfile.objects.filter(organization__isnull=False)
+    serializer_class = ContactSerializer
+
+    def filter_queryset(self, queryset):
+        try:
+            org = self.request.user.user_profile.organization
+            queryset = queryset.filter(organization = org)
+        except:
+            queryset = []
+        return queryset
 
 
 def web_authenticate(username=None, password=None):
