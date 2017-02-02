@@ -35,7 +35,9 @@ class ContactSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('username', 'email', 'address','gender','phone','skype', 'profile_picture', 'full_name', 'role')
+        fields = ('username', 'email', 'address','gender','phone','skype', 'twitter','tango','hike','qq', 'google_talk',
+                  'profile_picture', 'viber', 'whatsapp', 'wechat', 'full_name', 'role', 'primary_number',
+                'secondary_number', 'office_number')
 
     def get_role(self, obj):
         roles =  UserRole.objects.filter(user=obj.user, ended_at__isnull=True)
