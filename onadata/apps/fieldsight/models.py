@@ -43,7 +43,7 @@ class ProjectType(models.Model):
 class Organization(models.Model):
     name = models.CharField(max_length=255)
     country = models.CharField(max_length=3, choices=COUNTRIES, default=u'NPL')
-    logo = models.ImageField(upload_to="logo", default="logo/default_image.png")
+    logo = models.ImageField(upload_to="logo", default="logo/default_org.png")
     type = models.ForeignKey(OrganizationType, verbose_name='Type of Organization')
     public_desc = models.TextField("Public Description", blank=True, null=True)
     address = models.TextField(blank=True, null=True)
@@ -97,7 +97,7 @@ class Organization(models.Model):
 class Project(models.Model):
     name = models.CharField(max_length=255)
     type = models.ForeignKey(ProjectType, verbose_name='Type of Project')
-    logo = models.ImageField(upload_to="logo", default="logo/default_image.png")
+    logo = models.ImageField(upload_to="logo", default="logo/default_org.png")
     donor = models.CharField(max_length=256, blank=True, null=True)
     public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
@@ -166,7 +166,7 @@ class Project(models.Model):
 class Site(models.Model):
     name = models.CharField(max_length=255)
     type = models.ForeignKey(ProjectType, verbose_name='Type of Site')
-    logo = models.ImageField(upload_to="logo", default="logo/default_image.png")
+    logo = models.ImageField(upload_to="logo", default="logo/default_site.png")
     public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
     address = models.TextField(blank=True, null=True)
