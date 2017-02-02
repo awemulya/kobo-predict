@@ -8,8 +8,7 @@
 {% block page-title %}{% trans 'Organizations' %}{% endblock %}
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'fieldsight:organization-dashboard' obj.pk %}">{% trans 'Organization Dashboard' %}</a></li>
-    <li>{{ scenario }}</li>
+    <li><a href="{% url 'fieldsight:organization-dashboard' obj.pk %}">{{obj.name}}</a></li>
 {% endblock %}
 {%block extracss %}
     

@@ -17,8 +17,7 @@
 
 {% block breadcrumbs %}
  {% ifrole "Project" %}
-    <li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">Project Dashboard</a></li>
-<li><a href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a></li>
+    <li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">{{obj.project.name}}</a></li>
  {% endrole %}
     <li>{{obj.name}}</li>
 {% endblock %}
@@ -49,7 +48,8 @@
 							<p class="short-detail">{{ obj.description }}</p>
                             <p class="progress-of-site">{% trans 'Progress' %}</p>
                             <div class="progress progress-striped active progress-sm">
-                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{obj.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{ obj.id }}%">
+                                <div class="progress-bar progress-bar-success" role="progressbar"
+                                     aria-valuenow="{{obj.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{ obj.progress }}%">
                                     <span class="sr-only">{{ obj.progress }}% Complete</span>
                                     <span class="progress-bar-value">{{ obj.progress }}%</span>
                                 </div>
