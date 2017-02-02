@@ -8,7 +8,6 @@ class UserRoleSerializer(serializers.ModelSerializer):
     group = serializers.SerializerMethodField()
     site = serializers.SerializerMethodField()
     project = serializers.SerializerMethodField()
-    organization = serializers.SerializerMethodField()
     address = serializers.SerializerMethodField()
     gender = serializers.SerializerMethodField()
     phone = serializers.SerializerMethodField()
@@ -18,8 +17,8 @@ class UserRoleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserRole
-        fields = ('username','email','address','gender','phone','skype','group','site','project','organization','profile_picture')
-        read_only_fields = ('username','email','address','gender','phone','skype','group','site','project','organization','profile_picture')
+        fields = ('username','email','address','gender','phone','skype','group','site','project', 'profile_picture')
+        read_only_fields = ('username','email','address','gender','phone','skype','group','site','project','profile_picture')
 
 
     def get_username(self,obj):
