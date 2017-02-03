@@ -33,3 +33,4 @@ class Submission():
                 else:
                     approved.append(entry)
         return outstanding, flagged, approved, rejected
+

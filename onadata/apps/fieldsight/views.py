@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
 from django.db import transaction
@@ -69,11 +70,22 @@ def dashboard(request):
     }
     return TemplateResponse(request, "fieldsight/fieldsight_dashboard.html", dashboard_data)
 
+
+def get_site_images(site_id):
+    query = {'fs_site': str(site_id), '_deleted_at': {'$exists': False}}
+    return settings.MONGO_DB.instances.find(query).sort([("_id", 1)]).limit(20)
+
+
 def site_images(request, pk):
-    from rest_framework.response import Response
-    site = Site(pk=pk)
-    url = site.logo.url
-    return JsonResponse({'images':[url,url,url]})
+    cursor = get_site_images(pk)
+    cursor = list(cursor)
+    medias = []
+    for index, doc in enumerate(cursor):
+        for media in cursor[index].get('_attachments', []):
+            if media:
+                medias.append(media.get('download_url', ''))
+
+    return JsonResponse({'images':medias[:5]})
 
 @login_required
 def organization_dashboard(request, pk):
