@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
 from django.db import transaction
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.response import TemplateResponse
 from django.views.generic import ListView
@@ -69,16 +69,19 @@ def dashboard(request):
     }
     return TemplateResponse(request, "fieldsight/fieldsight_dashboard.html", dashboard_data)
 
-
+def site_images(request, pk):
+    from rest_framework.response import Response
+    site = Site(pk=pk)
+    url = site.logo.url
+    return JsonResponse({'images':[url,url,url]})
 
 @login_required
 def organization_dashboard(request, pk):
     obj = Organization.objects.get(pk=pk)
     peoples_involved = User.objects.filter(user_profile__organization=obj)
     sites = Site.objects.filter(project__organization=obj)
-    data = serialize('geojson', sites, geometry_field='location',
-                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
-
+    data = serialize('custom_geojson', sites, geometry_field='location',
+                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
     projects = Project.objects.filter(organization=obj)
     total_projects = len(projects)
     total_sites = len(sites)
@@ -150,7 +153,7 @@ def site_dashboard(request, pk):
     obj = Site.objects.get(pk=pk)
     peoples_involved = UserRole.objects.filter(site=obj).distinct('user')
     data = serialize('geojson', [obj], geometry_field='location',
-                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
+                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'pk'))
 
     outstanding, flagged, approved, rejected = Submission.get_site_submission(pk)
     dashboard_data = {

@@ -30,7 +30,7 @@ from .views import (
     add_supervisor,
     add_central_engineer,
     CreateUserView,
-    UserListView)
+    UserListView, site_images)
 
 router = routers.SimpleRouter()
 # router.register(r'api/organization-type', OrganizationTypeViewSet)
@@ -81,6 +81,8 @@ urlpatterns = [
     url(r'^site/delete/(?P<pk>\d+)/$', SiteDeleteView.as_view(), name='site-delete'),
     url(r'^site/alter-status/(?P<pk>\d+)/$', alter_site_status, name='alter_site_status'),
     url(r'^site/add-supervisor/(?P<pk>\d+)/$', add_supervisor, name='add_supervisor'),
+    url(r'^api/site-images/(?P<pk>\d+)/$', site_images, name='site_images'),
+
 
     url(r'^accounts/create/$', CreateUserView.as_view(
         form_class=RegistrationForm), name='user-create'),
