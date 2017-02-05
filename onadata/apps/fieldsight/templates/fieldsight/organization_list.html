@@ -85,7 +85,7 @@
         {% autosort object_list as sorted_objects %}
         {% autopaginate object_list 25 as paginated_objects %}
         {% for obj in paginated_objects %}
-        <div class="organization-list">
+        <div class="organization-list {{obj.is_active|activeness}}">
             <a href="{% url 'fieldsight:organization-dashboard' obj.pk %}">
                 <div class="org-grg">
                     <div class="col-md-2">

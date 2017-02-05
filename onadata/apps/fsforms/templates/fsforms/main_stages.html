@@ -16,7 +16,7 @@
 {% endblock %}
 {%block extracss %}
 <style>
-    .stages-main-list {
+    .stages-main-block {
     background: #296fd5;
     color: #fff;
     padding: 10px;
@@ -33,7 +33,7 @@
     margin-bottom: 30px;
     text-align: center;
 }
-.stages-main-list:hover {
+.stages-main-block:hover {
     transform: translateY(-3px);
    box-shadow: 0 0 20px rgba(174,174,174,0.6);
    transition:all 0.2s ease-in-out;
@@ -112,6 +112,45 @@
     background: #237dff;
     color: #fff;
 }
+.add_circle_block {
+    height: 161px;
+    background: #296fd5;
+    color: #fff;
+    padding: 10px;
+    margin-bottom: 30px;
+    text-align: center;
+    display: table;
+    width: 100%;
+    overflow: hidden;
+}
+.add_circle_table {
+    display: table-cell;
+    vertical-align: middle;
+}
+.add-circle {
+    font-size: 40px;
+}
+.add_circle_form {
+    visibility: hidden;
+    transition:all 0.2s ease-in-out;
+    -moz-transition:all 0.2s ease-in-out;
+    -webkit-transition:all 0.2s ease-in-out;
+}
+.add_circle_block:hover .add_circle_form {
+    visibility: visible;
+    transition:all 0.2s ease-in-out;
+    -moz-transition:all 0.2s ease-in-out;
+    -webkit-transition:all 0.2s ease-in-out;
+}
+.add_circle_block:hover {
+    overflow: auto;
+}
+.add_circle_block:hover .circle_button {
+    display: none;
+    transition:all 0.2s ease-in-out;
+    -moz-transition:all 0.2s ease-in-out;
+    -webkit-transition:all 0.2s ease-in-out;
+}
 </style>
 {% endblock %}
 
@@ -121,37 +160,63 @@
 
 <div class="main-stages">
     {% for stage in objlist %}
-  <div>
+  
     <div class="col-md-4">
-      <div class="stages-main-list">
-        <h3><span>Stage:</span> <b>{{stage.order}}</b></h3>
-        <h4><span>Name:</span> <b>{{stage.name}}</b></h4>
-        <p><span>Description:</span>{{stage.description}}</p>
-           <a class="btn btn-success btn-raised" href="{% url 'forms:stages-detail' stage.pk %}">
-                            {% trans 'List Sub Stages' %}({{stage.sub_stage_count}})</a>
-      </div>
-
+        <a href="{% url 'forms:stages-detail' stage.pk %}">
+          <div class="stages-main-block">
+            <h3><span>Stage:</span> <b>{{stage.order}}</b></h3>
+            <h4><span>Name:</span> <b>{{stage.name}}</b></h4>
+            <p><span>Description:</span>{{stage.description}}</p>
+            <p class="text-center">{% trans 'List Sub Stages' %}({{stage.sub_stage_count}})</p>
+          </div>
+        </a>
     </div>
-  </div>
+  
     {% endfor %}
-    <form method="post" action="{% url 'forms:stage-add' site.pk %}">
-          <div>
-      <div>{{ form.non_field_errors }}{% csrf_token %}</div>
+    <!-- <form method="post" action="{% url 'forms:stage-add' site.pk %}">
+         
+        <div>{{ form.non_field_errors }}{% csrf_token %}</div>
+        <div class="col-md-4">
+          <div class="stages-main-block">
+                {% for field in form %}
+                   <div class="col-sm-12 registration_field">
+                   {{ form.non_field_errors }}
+                   </div>
+                    <h3><span>{{ field.label }}</span> <b>{{ field }}</b>{{ field.errors }}</h3>
+                {% endfor %}
+
+               <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
+          </div>
+
+        </div>
+  
+    </form> -->
     <div class="col-md-4">
-      <div class="stages-main-list">
-          {% for field in form %}
-               <div class="col-sm-12 registration_field">
-               {{ form.non_field_errors }}
-               </div>
-        <h3><span>{{ field.label }}</span> <b>{{ field }}</b>{{ field.errors }}</h3>
-            {% endfor %}
+        
+          <div class="add_circle_block">
+            <div class="add_circle_table">
+                    <div class="circle_button">
+                        <h3><a href=""><span class="add-circle"><i class="fa fa-plus-circle" aria-hidden="true"></i></span></a> </h3>
+                    </div>
+                    <div class="add_circle_form">
+                        <form method="post" action="{% url 'forms:stage-add' site.pk %}">
+                            <div>{{ form.non_field_errors }}{% csrf_token %}</div>
+                            
+                                    {% for field in form %}
+                                       <div class="col-sm-12 registration_field">
+                                       {{ form.non_field_errors }}
+                                       </div>
+                                        <h3><span>{{ field.label }}</span> <b>{{ field }}</b>{{ field.errors }}</h3>
+                                    {% endfor %}
 
-           <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
-      </div>
-
+                                   <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
+                        </form>
+                    </div>
+            </div>
+            
+          </div>
+        
     </div>
-  </div>
- </form>
 </div>
 
 
