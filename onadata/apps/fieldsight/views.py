@@ -224,23 +224,23 @@ def alter_org_status(request, pk):
         messages.info(request, 'Organization {0} not found.'.format(obj.name))
     return HttpResponseRedirect(reverse('fieldsight:organizations-list'))
 
-
-@login_required
-@group_required('admin')
-def add_org_admin_old(request, pk):
-    obj = get_object_or_404(
-        Organization, id=pk)
-    if request.method == 'POST':
-        form = SetOrgAdminForm(request.POST)
-        user = int(form.data.get('user'))
-        group = Group.objects.get(name__exact="Organization Admin")
-        role = UserRole(user_id=user, group=group, organization=obj)
-        role.save()
-        messages.add_message(request, messages.INFO, 'Organization Admin Added')
-        return HttpResponseRedirect(reverse('fieldsight:organizations-list'))
-    else:
-        form = SetOrgAdminForm(instance=obj)
-    return render(request, "fieldsight/add_admin.html", {'obj':obj,'form':form})
+#
+# @login_required
+# @group_required('admin')
+# def add_org_admin_old(request, pk):
+#     obj = get_object_or_404(
+#         Organization, id=pk)
+#     if request.method == 'POST':
+#         form = SetOrgAdminForm(request.POST)
+#         user = int(form.data.get('user'))
+#         group = Group.objects.get(name__exact="Organization Admin")
+#         role = UserRole(user_id=user, group=group, organization=obj)
+#         role.save()
+#         messages.add_message(request, messages.INFO, 'Organization Admin Added')
+#         return HttpResponseRedirect(reverse('fieldsight:organizations-list'))
+#     else:
+#         form = SetOrgAdminForm(instance=obj)
+#     return render(request, "fieldsight/add_admin.html", {'obj':obj,'form':form})
 
 
 @login_required

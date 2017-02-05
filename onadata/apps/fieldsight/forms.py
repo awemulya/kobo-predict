@@ -23,8 +23,13 @@ organization_list = [(org.id, org.name) for org in Organization.objects.all()]
 
 
 class RegistrationForm(registration_forms.RegistrationFormUniqueEmail):
-    organization = forms.ChoiceField(widget = forms.Select(),
-                     choices = organization_list, required=False,)
+
+    def __init__(self, *args, **kwargs):
+        super(RegistrationForm, self).__init__(*args, **kwargs)
+        self.fields['organization'].choices = [(org.id, org.name) for org in Organization.objects.all()]
+        self.fields['organization'].empty_label = None
+
+    organization = forms.ChoiceField(widget = forms.Select())
     username = forms.RegexField(
         regex=USERNAME_REGEX,
         max_length=USERNAME_MAX_LENGTH,
