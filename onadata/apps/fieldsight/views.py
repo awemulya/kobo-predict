@@ -42,8 +42,8 @@ def dashboard(request):
     total_organizations = Organization.objects.all().count()
     total_projects = Project.objects.all().count()
     total_sites = Site.objects.all().count()
-    data = serialize('geojson', Site.objects.all(), geometry_field='location',
-                        fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
+    data = serialize('custom_geojson', Site.objects.all(), geometry_field='location',
+                        fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
     fs_forms = FieldSightXF.objects.all()
     fs_forms = list(fs_forms)
     outstanding = flagged = approved = rejected = 0
@@ -130,8 +130,8 @@ def project_dashboard(request, pk):
     obj = Project.objects.get(pk=pk)
     peoples_involved = User.objects.filter(user_profile__organization=obj.organization)
     sites = Site.objects.filter(project=obj)
-    data = serialize('geojson', sites, geometry_field='location',
-                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone',))
+    data = serialize('custom_geojson', sites, geometry_field='location',
+                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
     total_sites = len(sites)
     fs_forms = FieldSightXF.objects.filter(site__project=obj.id)
@@ -164,8 +164,8 @@ def project_dashboard(request, pk):
 def site_dashboard(request, pk):
     obj = Site.objects.get(pk=pk)
     peoples_involved = UserRole.objects.filter(site=obj).distinct('user')
-    data = serialize('geojson', [obj], geometry_field='location',
-                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'pk'))
+    data = serialize('custom_geojson', [obj], geometry_field='location',
+                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
 
     outstanding, flagged, approved, rejected = Submission.get_site_submission(pk)
     dashboard_data = {
