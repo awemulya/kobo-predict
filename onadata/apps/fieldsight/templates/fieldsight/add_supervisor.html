@@ -1,5 +1,6 @@
 {% extends "fieldsight/fieldsight_base.html" %}
-{% load i18n %}
+{% load i18n staticfiles %}
+
 
 {% block page-title %}{% trans 'Add Supervisor to '  %}{{obj.name}}
 
@@ -12,6 +13,13 @@
 <li><a href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a></li>
     <li>{% trans 'Add Supervisor to '  %}{{obj.name}}</li>
 {% endblock %}
+
+{%block extracss %}
+    
+    <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}">
+    
+{% endblock %}
+
 {% block content %}
     <div class="col-sm-12 registration_field">
         {% if obj.get_supervisors %}

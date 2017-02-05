@@ -1,10 +1,14 @@
 {% extends "fieldsight/fieldsight_base.html" %}
-{% load i18n %}
+{% load i18n staticfiles %}
 
 {% block page-title %}{% trans 'Add Central Engineer to '  %}{{obj.name}}
 
 {% endblock %}
-
+{%block extracss %}
+    
+    <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}">
+    
+{% endblock %}
 {% block head %}
     <a class="btn btn-success btn-raised" href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a>
 {% endblock %}

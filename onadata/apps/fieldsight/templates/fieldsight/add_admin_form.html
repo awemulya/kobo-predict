@@ -1,13 +1,19 @@
 {% extends "fieldsight/fieldsight_base.html" %}
-{% load i18n %}
+{% load i18n staticfiles %}
+
 {% block page-title %}{{ scenario }} {% trans 'Organization Admin' %}{% endblock %}
+
 
 {% block breadcrumbs %}
     <li><a href="{% url 'fieldsight:organization-dashboard' obj.pk %}">{% trans 'Organization Dashboard' %}</a></li>
     <li>{{ scenario }}</li>
 {% endblock %}
 
-
+{%block extracss %}
+    
+    <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}">
+    
+{% endblock %}
 
 {% block content %}
    <div class="col-sm-12 registration_field">
