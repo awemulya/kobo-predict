@@ -1,5 +1,7 @@
 from django.conf import settings
 
+from onadata.apps.fsforms.models import FieldSightXF
+
 
 class Entry:
     def __init__(self, status=0, submission_time=None, submitted_by=None, fsid=None, instance=None):
@@ -8,6 +10,10 @@ class Entry:
         self.submitted_by = submitted_by
         self.fsid = fsid
         self.instance = instance
+        self.fsform = None
+        if FieldSightXF.objects.get(pk=self.fsid):
+            self.fsform = FieldSightXF.objects.get(pk=self.fsid)
+
 
 class Submission():
     @classmethod

@@ -163,11 +163,7 @@
                                                 <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
-                                                {% with form.id|get_site_roles:obj.id as roles %}
-                                                    {% for role in roles %}
-                                                <p class="address"><span>Submission Time:</span>{{ role.group }}</p>
-                                                {% endfor %}
-                                                {% endwith %}
+                                                <p class="address"><span>Form:</span>{{ form.fsform.xf.title}}</p>
                                                 <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
                                                 <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
                                             </div>
@@ -191,6 +187,7 @@
                                                  <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
+                                                <p class="address"><span>Form:</span>{{ form.fsform.xf.title}}</p>
                                                 <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
                                                 <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
                                             </div>
@@ -215,6 +212,7 @@
                                                  <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
+                                                <p class="address"><span>Form:</span>{{ form.fsform.xf.title}}</p>
                                                 <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
                                                 <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
                                             </div>
@@ -238,7 +236,7 @@
                                                 <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
-
+                                                <p class="address"><span>Form:</span>{{ form.fsform.xf.title}}</p>
                                                 <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
                                                 <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
                                             </div>
