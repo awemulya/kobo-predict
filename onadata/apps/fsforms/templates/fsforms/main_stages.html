@@ -121,7 +121,6 @@
     text-align: center;
     display: table;
     width: 100%;
-    overflow: hidden;
 }
 .add_circle_table {
     display: table-cell;
@@ -131,25 +130,37 @@
     font-size: 40px;
 }
 .add_circle_form {
-    visibility: hidden;
+    display: none;
     transition:all 0.2s ease-in-out;
     -moz-transition:all 0.2s ease-in-out;
     -webkit-transition:all 0.2s ease-in-out;
 }
 .add_circle_block:hover .add_circle_form {
-    visibility: visible;
+    display: block;
     transition:all 0.2s ease-in-out;
     -moz-transition:all 0.2s ease-in-out;
     -webkit-transition:all 0.2s ease-in-out;
-}
-.add_circle_block:hover {
-    overflow: auto;
 }
 .add_circle_block:hover .circle_button {
     display: none;
     transition:all 0.2s ease-in-out;
     -moz-transition:all 0.2s ease-in-out;
     -webkit-transition:all 0.2s ease-in-out;
+}
+.circle_button a {
+    color: #fff;
+}
+.add_circle_form textarea {
+    height: 34px !important;
+}
+.add_circle_form label {
+    margin-top: 10px;
+}
+.add_circle_form .btn-primary {
+    background-color: #296fd5;
+    border-color: #fff;
+    color: #FFFFFF;
+    margin-top: 10px;
 }
 </style>
 {% endblock %}
@@ -202,12 +213,17 @@
                         <form method="post" action="{% url 'forms:stage-add' site.pk %}">
                             <div>{{ form.non_field_errors }}{% csrf_token %}</div>
                             
-                                    {% for field in form %}
                                        <div class="col-sm-12 registration_field">
                                        {{ form.non_field_errors }}
                                        </div>
-                                        <h3><span>{{ field.label }}</span> <b>{{ field }}</b>{{ field.errors }}</h3>
-                                    {% endfor %}
+                                        {{ form.name.label_tag }}
+                                        {{ form.name }}
+                                        {{ form.name.errors }}
+
+                                        {{ form.description.label_tag }}
+                                        {{ form.description }}
+                                        {{ form.description.errors }}
+
 
                                    <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
                         </form>
