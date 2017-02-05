@@ -54,15 +54,24 @@ def get_org_roles(user_id, org_id):
     if org_id is None:
         return []
     if org_id != "0":
-        return UserRole.objects.filter(organization__id=org_id, user__id=user_id)
-    return []
+        return UserRole.objects.filter(organization__id=org_id, user__id=user_id, ended_at__isnull=False)
+    return []\
+
 
 @register.filter
 def get_proj_roles(user_id, id):
     if id is None:
         return []
     if id != "0":
-        return UserRole.objects.filter(project__id=id, user__id=user_id)
+        return UserRole.objects.filter(project__id=id, user__id=user_id,ended_at__isnull=False)
+    return []\
+
+@register.filter
+def get_site_roles(user_id, id):
+    if id is None:
+        return []
+    if id != "0":
+        return UserRole.objects.filter(site__id=id, user__id=user_id, ended_at__isnull=False)
     return []
 
 
@@ -81,7 +90,7 @@ def is_demand(obj):
 def activeness(is_active):
     if is_active:
         return "Active"
-    return "In Active"
+    return "In-Active"
 
 
 @register.filter

@@ -57,7 +57,9 @@ class ContactViewSet(viewsets.ModelViewSet):
     def filter_queryset(self, queryset):
         try:
             org = self.request.user.user_profile.organization
-            queryset = queryset.filter(organization = org)
+            import ipdb
+            ipdb.set_trace()
+            queryset = queryset.filter(organization = org,user__is_active=True).order_by('user__first_name')
         except:
             queryset = []
         return queryset

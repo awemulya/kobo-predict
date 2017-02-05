@@ -90,7 +90,8 @@ def site_images(request, pk):
 @login_required
 def organization_dashboard(request, pk):
     obj = Organization.objects.get(pk=pk)
-    peoples_involved = User.objects.filter(user_profile__organization=obj)
+    peoples_involved = User.objects.filter(user_profile__organization=obj,is_active=True).\
+        order_by('first_name')
     sites = Site.objects.filter(project__organization=obj)
     data = serialize('custom_geojson', sites, geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
@@ -128,7 +129,8 @@ def organization_dashboard(request, pk):
 @login_required
 def project_dashboard(request, pk):
     obj = Project.objects.get(pk=pk)
-    peoples_involved = User.objects.filter(user_profile__organization=obj.organization)
+    peoples_involved = User.objects.filter(user_profile__organization=obj.organization,is_active=True).\
+        order_by('first_name')
     sites = Site.objects.filter(project=obj)
     data = serialize('custom_geojson', sites, geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
@@ -163,7 +165,8 @@ def project_dashboard(request, pk):
 @login_required
 def site_dashboard(request, pk):
     obj = Site.objects.get(pk=pk)
-    peoples_involved = UserRole.objects.filter(site=obj).distinct('user')
+    peoples_involved = User.objects.filter(user_profile__organization=obj.project.organization, is_active=True).\
+        order_by('first_name')
     data = serialize('custom_geojson', [obj], geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
 

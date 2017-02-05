@@ -97,17 +97,31 @@
 
                      <div class="org-site-list">
 
-                        {% for role in peoples_involved %}
+                        {% for user in peoples_involved %}
 
                         <a href="#">
                             <div class="org-site">
                                 
                                 <div class="col-md-10">
-                                    <div class="detail-org">
-                                        <h3 class="pople-Name-org">{{role.user.email}}</h3>
-                                        <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ role.user.username }}</p>
-                                        <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ role.group.name }}</p>
-                                    </div>
+                                      <div class="detail-org">
+                                    <h3 class="pople-Name-org">{{user.get_full_name}}</h3>
+                                    <p class="address"><span><i class="fa fa-envelope" aria-hidden="true"></i></span>{{ user.email }}</p>
+                                    <p class="address"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ user.user_profile.phone }}</p>
+                                 {% with user.id|get_site_roles:obj.id as roles %}
+                                    {% for role in roles %}
+                                    <p class="contact"><span><i class="fa fa-minus" aria-hidden="true"></i></span>
+                                    {{ role.group }}
+                                    {% if role.site%}
+                                    {% trans 'at Site' %}{{role.site}}
+                                    {% endif %}
+                                    {% if role.project%}
+                                    {% trans 'Of Project' %}{{role.project}}
+                                    {% endif %}
+
+                                    </p>
+                                    {% endfor %}
+                                    {% endwith %}
+                                </div>
                                 </div>
                                 <div class="clearfixx"></div>
                             </div>
@@ -149,6 +163,11 @@
                                                 <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
+                                                {% with form.id|get_site_roles:obj.id as roles %}
+                                                    {% for role in roles %}
+                                                <p class="address"><span>Submission Time:</span>{{ role.group }}</p>
+                                                {% endfor %}
+                                                {% endwith %}
                                                 <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
                                                 <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
                                             </div>
@@ -219,6 +238,7 @@
                                                 <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
+
                                                 <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
                                                 <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
                                             </div>
