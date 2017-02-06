@@ -12,6 +12,8 @@ class LoginForm(forms.Form):
 
 
 class ProfileForm(forms.ModelForm):
+    first_name = forms.CharField(label="First Name", required=True)
+    last_name = forms.CharField(label="Last Name", required=True)
     gender = forms.ChoiceField(
         label=_('Gender'),
         required=False,
@@ -24,7 +26,9 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        exclude = ['user']
+        fields = ['first_name','last_name','address','gender','phone','skype','primary_number','secondary_number'
+            ,'office_number', 'viber', 'whatsapp', 'wechat', 'line', 'tango', 'hike', 'qq', 'google_talk', 'twitter',
+                  'profile_picture', ]
 
     def clean_profile_picture(self):
         image = self.cleaned_data.get('profile_picture')

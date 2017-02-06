@@ -29,7 +29,7 @@
         <div class="tab-content">
             <div id="grid-view" class="tab-pane fade in active">
                 {% autosort object_list as sorted_objects %}
-                {% autopaginate object_list 5 as paginated_objects %}
+                {% autopaginate object_list 100 as paginated_objects %}
 
                 {% for user in paginated_objects %}
                 <div class="col-md-3">
@@ -62,7 +62,7 @@
             </div>
             <div id="table-view" class="tab-pane fade">
                 {% autosort object_list as sorted_objects %}
-                {% autopaginate object_list 5 as paginated_objects %}
+                {% autopaginate object_list 100 as paginated_objects %}
          
                  <table class="table table-striped">
                      <thead>

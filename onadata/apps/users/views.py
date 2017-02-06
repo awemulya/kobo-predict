@@ -224,12 +224,36 @@ class ObtainAuthToken(APIView):
 
 class MyProfileView(ProfileView):
     model = UserProfile
-    success_url = reverse_lazy('users:profile')
+    success_url = reverse_lazy('users:profile', kwargs={'pk': 0})
     form_class = ProfileForm
 
 
 class ProfileUpdateView(MyProfileView, UpdateView):
-    pass
+
+    def form_valid(self, form):
+        user = self.request.user
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+        user.save()
+        profile = UserProfile.objects.get(user=user)
+        profile.address = form.cleaned_data['address']
+        profile.gender = form.cleaned_data['gender']
+        profile.phone = form.cleaned_data['phone']
+        profile.skype = form.cleaned_data['skype']
+        profile.primary_number = form.cleaned_data['primary_number']
+        profile.secondary_number = form.cleaned_data['secondary_number']
+        profile.office_number = form.cleaned_data['office_number']
+        profile.viber = form.cleaned_data['viber']
+        profile.whatsapp = form.cleaned_data['whatsapp']
+        profile.wechat = form.cleaned_data['wechat']
+        profile.line = form.cleaned_data['line']
+        profile.tango = form.cleaned_data['tango']
+        profile.hike = form.cleaned_data['hike']
+        profile.qq = form.cleaned_data['qq']
+        profile.google_talk = form.cleaned_data['google_talk']
+        profile.profile_picture = form.cleaned_data['profile_picture']
+        profile.save()
+        return HttpResponseRedirect(self.success_url)
 
 
 def my_profile(request, pk=None):

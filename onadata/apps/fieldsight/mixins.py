@@ -239,7 +239,8 @@ class ProfileView(LoginRequiredMixin):
     def get_form(self, *args, **kwargs):
         form = super(ProfileView, self).get_form(*args, **kwargs)
         if self.request.user:
-            form.user = self.request.project
+            form.fields['first_name'].initial = self.request.user.first_name
+            form.fields['last_name'].initial = self.request.user.last_name
         return form
 
 
