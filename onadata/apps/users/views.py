@@ -232,7 +232,10 @@ class ProfileUpdateView(MyProfileView, UpdateView):
     pass
 
 
-def my_profile(request):
-    profile, created = UserProfile.objects.get_or_create(user=request.user)
+def my_profile(request, pk=None):
+    if not pk or pk =='0':
+        profile, created = UserProfile.objects.get_or_create(user=request.user)
+    else:
+        profile, created = UserProfile.objects.get_or_create(user__id=pk)
     return render(request, 'users/profile.html', {'obj':profile})
 

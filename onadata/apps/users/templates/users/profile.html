@@ -1,9 +1,11 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 {% load filters %}
-{% block page-title %} {% trans 'Profile '  %}{{request.user }}{% endblock %}
+{% block page-title %} {% trans 'Profile '  %}{{obj.user }}{% endblock %}
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'users:profile_update' request.user.id|profile%}">{% trans 'edit' %} {% trans 'Profile' %}</a>
+{% ifequal request.user obj.user %}
+    <a class="btn btn-success btn-raised" href="{% url 'users:profile_update' obj.user.id|profile%}">{% trans 'edit' %} {% trans 'Profile' %}</a>
+{% endifequal %}
 {% endblock %}
 
 {% block content %}
@@ -17,12 +19,23 @@
 							<img src= "{{ obj.profile_picture.url}}" alt="image"/>	
 						</div>
 						<div class="detail-profile">
-							<h3>{{request.user.get_full_name}}</h3>
-							<h4>{{request.user }}</h4>
+							<h3>{{obj.user.get_full_name}}</h3>
+							<h4>{{obj.user }}</h4>
+							{% if obj.address %}
 							<p><span><i class="fa fa-map-marker" aria-hidden="true"></i></span> {{obj.address}}</p>
+							{% endif %}
+							{% if obj.gender %}
 							<p><span><i class="fa fa-user" aria-hidden="true"></i></span>{{obj.gender}}</p>
+							{% endif %}
+							{% if obj.phone %}
 							<p><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{obj.phone}}</p>
+							{% endif %}
+							{% if obj.skype %}
 							<p><span><i class="fa fa-skype" aria-hidden="true"></i></span>{{obj.skype}}</p>
+							{% endif %}
+							{% if obj.twitter %}
+							<p><span><i class="fa fa-twitter" aria-hidden="true"></i></span>{{obj.twitter}}</p>
+							{% endif %}
 						</div>
 					</div>
 				</div>

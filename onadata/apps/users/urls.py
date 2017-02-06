@@ -9,6 +9,6 @@ urlpatterns = [
     url(r'^edit/(?P<pk>[0-9]+)/$', views.edit, name='edit'),
     url(r'^api/get-auth-token/$', views.ObtainAuthToken.as_view() ),
     url(r'^profile-update/(?P<pk>[0-9]+)/$', views.ProfileUpdateView.as_view(), name='profile_update'),
-    url(r'^profile/$', views.my_profile, name='profile'),
+    url(r'^profile/(?P<pk>[0-9]+)/$', views.my_profile, name='profile'),
     ]
 
