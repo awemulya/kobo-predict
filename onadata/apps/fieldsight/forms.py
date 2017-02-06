@@ -71,7 +71,8 @@ class OrganizationForm(forms.ModelForm):
         exclude = []
         # exclude = ['organizaton']
         widgets = {
-        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400})
+        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
+        'address': forms.TextInput()
         }
 
 

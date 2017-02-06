@@ -41,18 +41,18 @@ class ProjectType(models.Model):
 
 
 class Organization(models.Model):
-    name = models.CharField(max_length=255)
-    country = models.CharField(max_length=3, choices=COUNTRIES, default=u'NPL')
-    logo = models.ImageField(upload_to="logo", default="logo/default_org.png")
+    name = models.CharField("Organization Name", max_length=255)
     type = models.ForeignKey(OrganizationType, verbose_name='Type of Organization')
-    public_desc = models.TextField("Public Description", blank=True, null=True)
+    phone = models.CharField("Contact Number",max_length=255, blank=True, null=True)
+    fax = models.CharField(max_length=255, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    website = models.URLField(blank=True, null=True)
+    country = models.CharField(max_length=3, choices=COUNTRIES, default=u'NPL')
     address = models.TextField(blank=True, null=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True,)
-    phone = models.CharField(max_length=255, blank=True, null=True)
-    email = models.EmailField(blank=True, null=True)
-    fax = models.CharField(max_length=255, blank=True, null=True)
-    website = models.URLField(blank=True, null=True)
+    public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
+    logo = models.ImageField(upload_to="logo", default="logo/default_org.png")
     is_active = models.BooleanField(default=True)
 
     def __unicode__(self):
