@@ -236,7 +236,7 @@ def edit_main_stage(request, stage, id, is_project):
         if form.is_valid():
             form.save()
             messages.info(request, 'Stage Updated.')
-            if is_project:
+            if is_project == '1':
                 return HttpResponseRedirect(reverse("forms:setup-project-stages", kwargs={'id': id}))
             else:
                 return HttpResponseRedirect(reverse("forms:setup-site-stages", kwargs={'site_id': id}))

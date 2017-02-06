@@ -81,9 +81,12 @@ class MainStageEditForm(forms.ModelForm):
 
 
 class SubStageEditForm(forms.ModelForm):
-    forms_list = [(obj.id, obj.title) for obj in XForm.objects.all()]
-    form = forms.ChoiceField(widget = forms.Select(),
-                     choices = forms_list, required=False,)
+    form = forms.ChoiceField(widget = forms.Select(), required=False,)
+    def __init__(self, *args, **kwargs):
+        super(SubStageEditForm, self).__init__(*args, **kwargs)
+        self.fields['form'].choices = [(obj.id, obj.title) for obj in XForm.objects.all()]
+        self.fields['form'].empty_label = None
+
 
     class Meta:
         exclude = ['group', 'stage', 'site', 'shared_level', 'project', 'ready', 'order']
@@ -91,9 +94,13 @@ class SubStageEditForm(forms.ModelForm):
 
 
 class AddSubSTageForm(forms.ModelForm):
-    forms_list = [(obj.id, obj.title) for obj in XForm.objects.all()]
-    form = forms.ChoiceField(widget = forms.Select(),
-                     choices = forms_list, required=False,)
+    form = forms.ChoiceField(widget = forms.Select(), required=False,)
+    def __init__(self, *args, **kwargs):
+        super(AddSubSTageForm, self).__init__(*args, **kwargs)
+        self.fields['form'].choices = [(obj.id, obj.title) for obj in XForm.objects.all()]
+        self.fields['form'].empty_label = None
+
+
     class Meta:
         exclude = ['stage', 'group', 'shared_level', 'site', 'project', 'ready']
         model = Stage
@@ -142,9 +149,11 @@ BIRTH_YEAR_CHOICES = ('1980', '1981', '1982')
 
 
 class ScheduleForm(forms.ModelForm):
-    forms_list = [(obj.id, obj.title) for obj in XForm.objects.all()]
-    form = forms.ChoiceField(widget = forms.Select(),
-                     choices = forms_list, required=False,)
+    form = forms.ChoiceField(widget = forms.Select(), required=False,)
+    def __init__(self, *args, **kwargs):
+        super(ScheduleForm, self).__init__(*args, **kwargs)
+        self.fields['form'].choices = [(obj.id, obj.title) for obj in XForm.objects.all()]
+        self.fields['form'].empty_label = None
 
     class Meta:
         exclude = ['site','project']
