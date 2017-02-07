@@ -149,7 +149,8 @@
             <div class="col-md-6">
                 <div class="outstanding-and-all">
                     <ul class="nav nav-tabs">
-                      <li class="active"><a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
+                      <li class="active">
+                          <a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
                         <li><a data-toggle="tab" href="#out-reject">Rejected ({{rejected|length}})</a></li>
                         <li><a data-toggle="tab" href="#out-flagged">Flagged ({{flagged|length}})</a></li>
                         <li><a data-toggle="tab" href="#out-approved">Approved ({{approved|length}})</a></li>
@@ -168,9 +169,9 @@
                                                 <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
-                                                <p class="address"><span>Form:</span>{{ form.fsform.xf.title}}</p>
-                                                <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
-                                                <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
+                                               <p class="address">{{ form.fsform.xf.title}}</p>
+                                                <p class="address">{{ form.submission_time }}</p>
+                                                <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
@@ -192,9 +193,9 @@
                                                  <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
-                                                <p class="address"><span>Form:</span>{{ form.fsform.xf.title}}</p>
-                                                <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
-                                                <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
+                                                <p class="address">{{ form.fsform.xf.title}}</p>
+                                                <p class="address">{{ form.submission_time }}</p>
+                                                <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
@@ -217,9 +218,9 @@
                                                  <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
-                                                <p class="address"><span>Form:</span>{{ form.fsform.xf.title}}</p>
-                                                <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
-                                                <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
+                                               <p class="address">{{ form.fsform.xf.title}}</p>
+                                                <p class="address">{{ form.submission_time }}</p>
+                                                <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
@@ -241,9 +242,9 @@
                                                 <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
-                                                <p class="address"><span>Form:</span>{{ form.fsform.xf.title}}</p>
-                                                <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
-                                                <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
+                                                <p class="address">{{ form.fsform.xf.title}}</p>
+                                                <p class="address">{{ form.submission_time }}</p>
+                                                <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
