@@ -8,6 +8,7 @@ from django.conf import settings
 
 from registration import forms as registration_forms
 
+from onadata.apps.fieldsight.helpers import AdminImageWidget
 from onadata.utils.forms import HTML5BootstrapModelForm, KOModelForm
 from .models import Organization, Project, Site
 from onadata.apps.userrole.models import UserRole
@@ -18,8 +19,6 @@ USERNAME_INVALID_MESSAGE = _(
     'A username may only contain lowercase letters, numbers, and '
     'underscores (_).'
 )
-
-organization_list = [(org.id, org.name) for org in Organization.objects.all()]
 
 
 class RegistrationForm(registration_forms.RegistrationFormUniqueEmail):
@@ -72,7 +71,8 @@ class OrganizationForm(forms.ModelForm):
         # exclude = ['organizaton']
         widgets = {
         'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
-        'address': forms.TextInput()
+        'address': forms.TextInput(),
+        'logo': AdminImageWidget()
         }
 
 
@@ -202,7 +202,8 @@ class ProjectForm(forms.ModelForm):
         exclude = []
         organization_filters = ['organization']
         widgets = {
-        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400})
+        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
+        'logo': AdminImageWidget()
         }
 
 
@@ -219,7 +220,8 @@ class SiteForm(forms.ModelForm):
         exclude = []
         project_filters = ['project']
         widgets = {
-        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400})
+        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
+        'logo': AdminImageWidget()
         }
 
 

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from onadata.apps.fieldsight.forms import organization_list
+from onadata.apps.fieldsight.models import Organization
 from onadata.utils.forms import HTML5BootstrapModelForm
 from .models import UserRole
 
@@ -21,8 +21,13 @@ class UserRoleForm(forms.ModelForm):
 
 
 class UserForm(HTML5BootstrapModelForm):
-    organization = forms.ChoiceField(widget = forms.Select(),
-                     choices = organization_list, required=False,)
+    organization = forms.ChoiceField(widget = forms.Select(), required=False,)
+
+    def __init__(self, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        self.fields['organization'].choices = [(org.id, org.name) for org in Organization.objects.all()]
+        self.fields['organization'].empty_label = None
+
     class Meta:
         model = User
         fields = ("username", "password", "first_name", "last_name", "is_active", "email", "organization",)
