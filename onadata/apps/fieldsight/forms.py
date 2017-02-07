@@ -202,6 +202,7 @@ class ProjectForm(forms.ModelForm):
         exclude = []
         organization_filters = ['organization']
         widgets = {
+        'address': forms.TextInput(),
         'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
         'logo': AdminImageWidget()
         }
@@ -220,6 +221,7 @@ class SiteForm(forms.ModelForm):
         exclude = []
         project_filters = ['project']
         widgets = {
+        'address': forms.TextInput(),
         'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
         'logo': AdminImageWidget()
         }
