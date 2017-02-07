@@ -55,6 +55,9 @@ class Organization(models.Model):
     logo = models.ImageField(upload_to="logo", default="logo/default_org.png")
     is_active = models.BooleanField(default=True)
 
+    class Meta:
+         ordering = ['-is_active', 'name', ]
+
     def __unicode__(self):
         return u'{}'.format(self.name)
 
@@ -111,6 +114,9 @@ class Project(models.Model):
     is_active = models.BooleanField(default=True)
 
     objects = GeoManager()
+
+    class Meta:
+         ordering = ['-is_active', 'name', ]
 
     @property
     def latitude(self):
@@ -176,6 +182,9 @@ class Site(models.Model):
     is_active = models.BooleanField(default=True)
 
     objects = GeoManager()
+
+    class Meta:
+         ordering = ['-is_active', 'name', ]
 
     @property
     def latitude(self):

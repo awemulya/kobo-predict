@@ -153,7 +153,7 @@ class Schedule(models.Model):
         db_table = 'fieldsight_forms_schedule'
         verbose_name = _("Form Schedule")
         verbose_name_plural = _("Form Schedules")
-        ordering = ("date_range_start",)
+        ordering = ('-date_range_start', 'date_range_end')
 
     def form_exists(self):
         return True if FieldSightXF.objects.filter(schedule=self).count() > 0 else False
