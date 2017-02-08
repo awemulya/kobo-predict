@@ -49,7 +49,17 @@ class MyLibraryListView(ListView):
         return XForm.objects.all()
 
 
+class OwnListView(ListView):
+    def get_template_names(self):
+        return ['fsforms/my_form_list.html']
+    def get_queryset(self):
+        return XForm.objects.filter(user=self.request.user)
+
+
 class LibraryFormsListView(FSFormView, LoginRequiredMixin, MyLibraryListView):
+    pass
+
+class MyOwnFormsListView(FSFormView, LoginRequiredMixin, OwnListView):
     pass
 
 

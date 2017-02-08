@@ -43,7 +43,8 @@ from .views import (
     site_survey,
     create_schedule,
     setup_project_stages, project_stage_add, instance_detail, alter_answer_status, project_survey,
-    project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, responses)
+    project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, responses,
+    MyOwnFormsListView)
 
 # router = routers.DefaultRouter()
 # router.register(r'api/groups', GroupViewSet)
@@ -57,7 +58,7 @@ from .views import (
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
         # url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
-        url(r'^assigned/$', FormsListView.as_view(), name='forms-list'),
+        url(r'^assigned/$', MyOwnFormsListView.as_view(), name='forms-list'),
         # assigned form list to a user(site supervisor)
         url(r'^assigned-form-list/$', AssignedFormsListView.as_view(), name='assigned-form-list'),
 
