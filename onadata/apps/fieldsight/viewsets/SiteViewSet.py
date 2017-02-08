@@ -10,3 +10,7 @@ class SiteViewSet(viewsets.ModelViewSet):
     """
     queryset = Site.objects.all()
     serializer_class = SiteSerializer
+
+    def filter_queryset(self, queryset):
+        project = self.kwargs.get('pk', None)
+        return queryset.filter(project__id=project)

@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
@@ -164,6 +166,7 @@ def project_dashboard(request, pk):
         'data': data,
     }
     return TemplateResponse(request, "fieldsight/project_dashboard.html", dashboard_data)
+
 
 @login_required
 def site_dashboard(request, pk):
