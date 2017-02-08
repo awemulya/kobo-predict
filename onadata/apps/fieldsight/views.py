@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
 from django.db import transaction
+from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.response import TemplateResponse
@@ -90,6 +91,8 @@ def site_images(request, pk):
 @login_required
 def organization_dashboard(request, pk):
     obj = Organization.objects.get(pk=pk)
+    if not UserRole.objects.filter(user=request.user, group__name="Organization Admin", organization=obj).exists():
+        return dashboard(request)
     peoples_involved = User.objects.filter(user_profile__organization=obj,is_active=True).\
         order_by('first_name')
     sites = Site.objects.filter(project__organization=obj)
@@ -416,8 +419,28 @@ class UserListView(ProjectMixin, OrganizationViewFromProfile, ListView):
     def get_template_names(self):
         return ['fieldsight/user_list.html']
 
-    # def get_queryset(self):
-    #     return User.objects.filter(pk__gt=0)
+    def get_context_data(self, **kwargs):
+        context = super(UserListView, self).get_context_data(**kwargs)
+        context['groups'] = Group.objects.all()
+        return context
+
+@login_required
+def filter_users(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        role = request.POST.get('role')
+        groups = Group.objects.all()
+        object_list = User.objects.filter(is_active=True, pk__gt=0)
+        if name:
+            object_list = object_list.filter(
+                Q(first_name__contains=name)|Q(last_name__contains=name) |Q(username__contains=name))
+        if role and role!='0':
+            object_list = object_list.filter(user_roles__group__id=role)
+        if hasattr(request,"organization") and request.organization:
+            object_list = object_list.filter(user_roles__organization=request.organization)
+        return render(request, 'fieldsight/user_list.html',{'object_list':object_list,'groups':groups})
+    return HttpResponseRedirect(reverse('fieldsight:user-list'))
+
 
 
 class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, RegistrationView):
