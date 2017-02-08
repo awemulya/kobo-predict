@@ -2,9 +2,10 @@ import datetime
 
 from django.core import serializers
 from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate
@@ -40,7 +41,9 @@ class ContactSerializer(serializers.ModelSerializer):
                 'secondary_number', 'office_number')
 
     def get_role(self, obj):
-        roles =  UserRole.objects.filter(user=obj.user, ended_at__isnull=True)
+        #exclude site supervisors.
+        group = Group.objects.get(name__exact="Site Supervisor")
+        roles =  UserRole.objects.filter(~Q(group = group),user=obj.user, ended_at__isnull=True)
         role_list =  []
         for r in roles:
             role_list.append({'group':str(r.group), 'project':str(r.project),'site':str(r.site)})
@@ -55,6 +58,12 @@ class ContactViewSet(viewsets.ModelViewSet):
     serializer_class = ContactSerializer
 
     def filter_queryset(self, queryset):
+        project = self.kwargs.get('pk', None)
+        if project:
+            queryset = queryset.filter(
+                user__user_roles__project__id = project,
+                user__is_active=True).order_by('user__first_name')
+            return queryset
         try:
             org = self.request.user.user_profile.organization
             queryset = queryset.filter(organization = org,user__is_active=True).order_by('user__first_name')
