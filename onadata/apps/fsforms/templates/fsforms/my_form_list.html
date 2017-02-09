@@ -12,7 +12,7 @@
 
     {% load pagination_tags %}
     {% load sorting_tags %}
-    {% load filters %}
+    {% load fs_filters %}
 
 
 
@@ -26,8 +26,9 @@
         <table class="table table-striped" id="dynamic-table1">
             <thead>
             <th>{% anchor title _('Name') %}</th>
+            <th>Edit</th>
             <th>Created Date</th>
-            <th colspan="2">Actions</th>
+            <th colspan="2">Share Level</th>
             </thead>
             <tbody>
             {% for obj in paginated_objects %}
@@ -36,14 +37,31 @@
                         <a href="{{ koboform_url }}#/forms/{{ obj.id_string }}">{{ obj.title }}</a>
                     </td>
                     <td>
-                        {{ obj.date_created }}
-                    </td>
-                     <td>
                         <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.id_string }}/edit">
-                             {% trans 'Edit Form Questions' %}</a>
+                             {% trans 'Edit' %}</a>
                     </td>
                     <td>
+                        {{ obj.date_created }}
                     </td>
+
+
+                <form method="post" action="{% url 'forms:share' obj.id_string forloop.counter %}">
+            {% csrf_token %}
+                 <td>
+                 <select name="sl">
+                     {% with obj.id_string|library as shared %}
+                     <option value="">{% trans 'None' %}</option>
+
+                     <option value="1" {% ifequal shared 1 %} selected {% endifequal %}>{% trans 'Organization' %}</option>
+                     <option value="2" {% ifequal shared 2 %} selected {% endifequal %}>{% trans 'Project' %}</option>
+                     <option value="0" {% ifequal shared 0 %} selected {% endifequal %}>{% trans 'Global' %}</option>
+                     {% endwith %}
+                </select>
+                 </td>
+                    <td>
+                        <button class="btn btn-success btn-raised" type="submit">Share</button>
+                    </td>
+                    </form>
                 </tr>
             {% endfor %}
             </tbody>

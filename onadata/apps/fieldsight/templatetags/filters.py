@@ -74,7 +74,6 @@ def get_site_roles(user_id, id):
         return UserRole.objects.filter(site__id=id, user__id=user_id, ended_at__isnull=True)
     return []
 
-
 @register.filter
 def status(status=0):
     return FORM_STATUS.get(status,"Outstanding")

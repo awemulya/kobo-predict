@@ -276,3 +276,8 @@ class FieldSightFormLibrary(models.Model):
     shared_date = models.DateTimeField(auto_now=True)
     organization = models.ForeignKey(Organization, null=True, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("Library")
+        verbose_name_plural = _("Library")
+        ordering = ("-shared_date",)

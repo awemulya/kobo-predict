@@ -44,7 +44,7 @@ from .views import (
     create_schedule,
     setup_project_stages, project_stage_add, instance_detail, alter_answer_status, project_survey,
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, responses,
-    MyOwnFormsListView)
+    MyOwnFormsListView, share_level)
 
 # router = routers.DefaultRouter()
 # router.register(r'api/groups', GroupViewSet)
@@ -163,6 +163,7 @@ urlpatterns = urlpatterns + [
     url(r'^api/site-main-stages/(?P<site_id>\d+)$', SiteMainStageViewSet.as_view({'get': 'list'}), name='main-stage-list'),
     url(r'^api/site-schedules/(?P<site_id>\d+)$', ScheduleViewset.as_view({'get': 'list'}), name='schedule-list'),
     url(r'^api/sub-stages/(?P<main_stage>\d+)$', SubStageViewSet.as_view({'get': 'list'}), name='sub-stage-list'),
+    url(r'^share/(?P<id>[\w-]+)/(?P<counter>\d+)$', share_level, name='share'),
 
 ]
 

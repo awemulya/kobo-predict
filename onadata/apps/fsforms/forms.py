@@ -66,13 +66,6 @@ class FSFormForm(forms.ModelForm):
         model = FieldSightXF
 
 
-class FieldSightFormLibraryForm(forms.ModelForm):
-
-    class Meta:
-        exclude = []
-        model = FieldSightFormLibrary
-
-
 class StageForm(forms.ModelForm):
 
     class Meta:

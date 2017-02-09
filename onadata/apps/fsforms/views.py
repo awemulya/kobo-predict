@@ -25,7 +25,7 @@ from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, P
     CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin, OrganizationOrProjectRequiredMixin, ProjectView
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
-    AlterAnswerStatus, MainStageEditForm, SubStageEditForm, FieldSightFormLibraryForm
+    AlterAnswerStatus, MainStageEditForm, SubStageEditForm
 from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
@@ -46,13 +46,12 @@ class OwnListView(ListView):
     def get_template_names(self):
         return ['fsforms/my_form_list.html']
     def get_queryset(self):
-        return XForm.objects.filter(user=self.request.user)
+        return XForm.objects.filter(user=self.request.user).order_by('title')
 
 
 class LibraryFormView(object):
     model = FieldSightFormLibrary
     success_url = reverse_lazy('forms:library-forms-list')
-    form_class = FieldSightFormLibraryForm
 
 
 class MyLibraryListView(ListView):
@@ -64,15 +63,64 @@ class LibraryFormsListView(LibraryFormView, ProjectView, MyLibraryListView, Proj
     pass
 
 
-class MyOwnFormsListView(FSFormView, OrganizationOrProjectRequiredMixin, OwnListView):
+class MyOwnFormsListView(FSFormView, OwnListView):
     pass
-
 
 class FormView(object):
     model = FieldSightXF
     success_url = reverse_lazy('forms:forms-list')
     form_class = FSFormForm
 
+
+@login_required
+@require_POST
+def share_level(request, id, counter):
+    xf = XForm.objects.get(id_string=id)
+    # sl = dict(request.POST).get('sl')[int(counter)-1]
+    sl = request.POST.get('sl')
+    if not FieldSightFormLibrary.objects.filter(xf__id_string=id).exists():
+        form = FieldSightFormLibrary()
+        form.xf= xf
+    else:
+        form = FieldSightFormLibrary.objects.get(xf__id_string=id)
+    if not sl:
+        if form.pk:
+            form.delete()
+            messages.add_message(request, messages.WARNING, '{0} Form Shared Removed'.format(xf.title))
+    else:
+        if sl == '0':
+            form.is_global = True
+            form.organization = None
+            form.project = None
+            form.save()
+            messages.add_message(request, messages.INFO, '{0} Shared Globally '.format(xf.title))
+        elif sl == '1':
+            form.is_global = False
+            if hasattr(request,"project") and request.project:
+                form.organization = request.project.organization
+                form.project = None
+                form.save()
+                messages.add_message(request, messages.INFO, '{0} Shared To Organization Level'.format(xf.title))
+            elif hasattr(request,"organization") and request.organization:
+                form.organization = request.organization
+                form.project = None
+                form.save()
+                messages.add_message(request, messages.INFO, '{0} Shared To Organization Level'.format(xf.title))
+            else:
+                messages.add_message(request, messages.WARNING, '{0} Not Shared. You Cannot Share to Project Level'.
+                                     format(xf.title))
+        else:
+            if hasattr(request,"project") and request.project:
+                form.is_global  = False
+                form.organization = request.project.organization
+                form.project = request.project
+                form.save()
+                messages.add_message(request, messages.INFO, '{0} Shared to Project Level '.format(xf.title))
+            else:
+                messages.add_message(request, messages.WARNING, '{0} Form Not Shared. You Cannot Share to Project Level'
+                                     .format(xf.title))
+
+    return HttpResponseRedirect(reverse('forms:forms-list'))
 
 class MyProjectListView(ListView):
     def get_template_names(self):
