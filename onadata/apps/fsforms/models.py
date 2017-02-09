@@ -8,7 +8,7 @@ from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 
-from onadata.apps.fieldsight.models import Site, Project
+from onadata.apps.fieldsight.models import Site, Project, Organization
 from onadata.apps.fsforms.utils import send_message
 from onadata.apps.logger.models import XForm
 from onadata.apps.viewer.models import ParsedInstance
@@ -270,3 +270,9 @@ class FieldSightParsedInstance(ParsedInstance):
         return fspi, created
 
 
+class FieldSightFormLibrary(models.Model):
+    xf = models.ForeignKey(XForm)
+    is_global = models.BooleanField(default=False)
+    shared_date = models.DateTimeField(auto_now=True)
+    organization = models.ForeignKey(Organization, null=True, blank=True)
+    project = models.ForeignKey(Project, null=True, blank=True)
