@@ -32,6 +32,16 @@ class LoginRequiredMixin(object):
         return login_required(view)
 
 
+class OrganizationOrProjectRequiredMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.organization and not request.project:
+            raise PermissionDenied()
+        if hasattr(self, 'check'):
+            if not getattr(request.organization, self.check)() or not getattr(request.organization, self.check)():
+                raise PermissionDenied()
+        return super(OrganizationOrProjectRequiredMixin, self).dispatch(request, *args, **kwargs)
+
+
 class OrganizationRequiredMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         if not request.organization:

@@ -3,7 +3,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.logger.models import XForm
-from .models import FieldSightXF, Stage, Schedule, FormGroup, FORM_STATUS
+from .models import FieldSightXF, Stage, Schedule, FormGroup, FORM_STATUS, FieldSightFormLibrary
 
 
 class AssignSettingsForm(forms.ModelForm):
@@ -64,6 +64,13 @@ class FSFormForm(forms.ModelForm):
     class Meta:
         exclude = ['site']
         model = FieldSightXF
+
+
+class FieldSightFormLibraryForm(forms.ModelForm):
+
+    class Meta:
+        exclude = []
+        model = FieldSightFormLibrary
 
 
 class StageForm(forms.ModelForm):

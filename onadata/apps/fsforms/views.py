@@ -22,11 +22,11 @@ from onadata.libs.utils.user_auth import helper_auth_helper
 from onadata.libs.utils.log import audit_log, Actions
 from onadata.libs.utils.logger_tools import response_with_mimetype_and_name
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectMixin, \
-    CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin
+    CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin, OrganizationOrProjectRequiredMixin, ProjectView
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
-    AlterAnswerStatus, MainStageEditForm, SubStageEditForm
-from .models import FieldSightXF, Stage, Schedule, FormGroup
+    AlterAnswerStatus, MainStageEditForm, SubStageEditForm, FieldSightFormLibraryForm
+from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -42,13 +42,6 @@ class FSFormView(object):
     form_class = FSFormForm
 
 
-class MyLibraryListView(ListView):
-    def get_template_names(self):
-        return ['fsforms/library_form_list.html']
-    def get_queryset(self):
-        return XForm.objects.all()
-
-
 class OwnListView(ListView):
     def get_template_names(self):
         return ['fsforms/my_form_list.html']
@@ -56,10 +49,22 @@ class OwnListView(ListView):
         return XForm.objects.filter(user=self.request.user)
 
 
-class LibraryFormsListView(FSFormView, LoginRequiredMixin, MyLibraryListView):
+class LibraryFormView(object):
+    model = FieldSightFormLibrary
+    success_url = reverse_lazy('forms:library-forms-list')
+    form_class = FieldSightFormLibraryForm
+
+
+class MyLibraryListView(ListView):
+    def get_template_names(self):
+        return ['fsforms/library_form_list.html']
+
+
+class LibraryFormsListView(LibraryFormView, ProjectView, MyLibraryListView, ProjectMixin):
     pass
 
-class MyOwnFormsListView(FSFormView, LoginRequiredMixin, OwnListView):
+
+class MyOwnFormsListView(FSFormView, OrganizationOrProjectRequiredMixin, OwnListView):
     pass
 
 

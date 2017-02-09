@@ -5,7 +5,6 @@
 {% block page-title %}{% trans 'Forms Library' %}{% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
 {% endblock %}
 
 {% block content %}
@@ -26,21 +25,16 @@
         <table class="table table-striped" id="dynamic-table1">
             <thead>
             <th>{% anchor title _('Name') %}</th>
-            <th>Created Date</th>
-            <th colspan="2">Actions</th>
+            <th>Shared Date</th>
             </thead>
             <tbody>
             {% for obj in paginated_objects %}
                 <tr>
                     <td>
-                        <a href="{{ koboform_url }}#/forms/{{ obj.id_string }}">{{ obj.title }}</a>
+                        <a href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}" title="preview">{{ obj.xf.title }}</a>
                     </td>
                     <td>
-                        {{ obj.date_created }}
-                    </td>
-                     <td>
-                        <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.id_string }}/edit">
-                             {% trans 'Edit Form Questions' %}</a>
+                        {{ obj.shared_date }}
                     </td>
                     <td>
                     </td>
