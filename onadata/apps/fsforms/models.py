@@ -12,20 +12,10 @@ from onadata.apps.fieldsight.models import Site, Project, Organization
 from onadata.apps.fsforms.utils import send_message
 from onadata.apps.logger.models import XForm
 from onadata.apps.viewer.models import ParsedInstance
+from onadata.utils.CustomModelFields import IntegerRangeField
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
 FORM_STATUS = [(0, 'Outstanding'), (1, 'Rejected'), (2, 'Flagged'), (3, 'Approved'), ]
-
-
-class IntegerRangeField(models.IntegerField):
-    def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
-        self.min_value, self.max_value = min_value, max_value
-        models.IntegerField.__init__(self, verbose_name, name, **kwargs)
-
-    def formfield(self, **kwargs):
-        defaults = {'min_value': self.min_value, 'max_value': self.max_value}
-        defaults.update(kwargs)
-        return super(IntegerRangeField, self).formfield(**defaults)
 
 
 class FormGroup(models.Model):

@@ -5,6 +5,8 @@ from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
 from jsonfield import JSONField
+
+from onadata.utils.CustomModelFields import IntegerRangeField
 from .static_lists import COUNTRIES
 
 
@@ -170,6 +172,7 @@ class Project(models.Model):
 
 
 class Site(models.Model):
+    identifier = IntegerRangeField("ID", min_value=1)
     name = models.CharField(max_length=255)
     type = models.ForeignKey(ProjectType, verbose_name='Type of Site')
     phone = models.CharField(max_length=255, blank=True, null=True)
