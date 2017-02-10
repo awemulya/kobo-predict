@@ -93,7 +93,7 @@ def site_images(request, pk):
 @login_required
 def organization_dashboard(request, pk):
     obj = Organization.objects.get(pk=pk)
-    if not UserRole.objects.filter(user=request.user, group__name="Organization Admin", organization=obj).exists():
+    if not UserRole.objects.filter(user=request.user).filter(Q(group__name="Organization Admin", organization=obj)|Q(group__name="Super Admin")).exists():
         return dashboard(request)
     peoples_involved = User.objects.filter(user_profile__organization=obj,is_active=True).\
         order_by('first_name')
