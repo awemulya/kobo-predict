@@ -339,11 +339,19 @@ def edit_sub_stage(request, stage, id, is_project):
 
 @login_required
 def create_schedule(request, site_id):
+    form = ScheduleForm()
     site = get_object_or_404(
         Site, pk=site_id)
     if request.method == 'POST':
         form = ScheduleForm(data=request.POST)
         if form.is_valid():
+            form_type = int(form.cleaned_data.get('form_type',0))
+            form = int(form.cleaned_data.get('form',0))
+            if not form_type:
+                if form:
+                    FieldSightXF.objects.get_or_create(xf_id=form, is_scheduled=False, is_staged=False, site=site)
+                    messages.info(request, 'General Form  Saved.')
+                return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': site.id}))
             schedule = form.save()
             schedule.site = site
             schedule.save()
@@ -352,7 +360,6 @@ def create_schedule(request, site_id):
                 FieldSightXF.objects.create(xf_id=form, is_scheduled=True,schedule=schedule,site=site)
             messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
             return HttpResponseRedirect(reverse("forms:site-survey", kwargs={'site_id': site.id}))
-    form = ScheduleForm()
     return render(request, "fsforms/schedule_form.html", {'form': form, 'obj': site})
 
 @login_required
@@ -361,6 +368,13 @@ def site_survey(request, site_id):
     if not len(objlist):
         return HttpResponseRedirect(reverse("forms:schedule-add", kwargs={'site_id': site_id}))
     return render(request, "fsforms/schedule_list.html", {'object_list': objlist, 'site':Site.objects.get(pk=site_id)})
+
+@login_required
+def site_general(request, site_id):
+    objlist = FieldSightXF.objects.filter(site__id=site_id, is_staged=False, is_scheduled=False)
+    if not len(objlist):
+        return HttpResponseRedirect(reverse("forms:schedule-add", kwargs={'site_id': site_id}))
+    return render(request, "fsforms/general_list.html", {'object_list': objlist, 'site':Site.objects.get(pk=site_id)})
 
 
 @login_required

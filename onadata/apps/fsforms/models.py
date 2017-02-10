@@ -140,7 +140,7 @@ class Days(models.Model):
 
 
 class Schedule(models.Model):
-    name = models.CharField("Schedule Name", max_length=256)
+    name = models.CharField("Schedule Name", max_length=256, blank=True, null=True)
     site = models.ForeignKey(Site, related_name="schedules", null=True, blank=True)
     project = models.ForeignKey(Project, related_name="schedules", null=True, blank=True)
     date_range_start = models.DateField(default=datetime.date.today)

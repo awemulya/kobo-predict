@@ -33,11 +33,7 @@
                <div class="col-sm-12 registration_field">
                {{ form.non_field_errors }}
                </div>
-               <div class="col-sm-12 registration_field">
-                 <div class="col-sm-3"> {% trans 'Description' %}</div>
-                 <div class="col-sm-3">      {{ form.name }}</div>
-                 <div class="col-sm-6">      {{ form.name.errors }}</div>
-               </div>
+
             <div class="col-sm-12 registration_field">
                  <div class="col-sm-3"> {{ form.form.label }}</div>
                  <div class="col-sm-3">      {{ form.form }}</div>
@@ -50,6 +46,12 @@
                  <div class="col-sm-6">      {{ form.form_type.errors }}</div>
             </div>
             <div id="hideable" style="display:none">
+                <div class="col-sm-12 registration_field">
+                 <div class="col-sm-3"> {{ form.name.label }}</div>
+                 <div class="col-sm-3">      {{ form.name }}</div>
+                 <div class="col-sm-6">      {{ form.name.errors }}</div>
+               </div>
+
                 <div class="col-sm-12 registration_field">
                      <div class="col-sm-3"> {{ form.date_range_start.label }}</div>
                      <div class="col-sm-3">      {{ form.date_range_start }}</div>

@@ -1,0 +1,54 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Forms Library' %}{% endblock %}
+
+{% block head %}
+<a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add' site.pk %}">{% trans 'New' %} {% trans 'Survey' %}</a>
+{% endblock %}
+
+{% block content %}
+
+    {% load pagination_tags %}
+    {% load sorting_tags %}
+    {% load filters %}
+
+
+
+
+    <div class="adv-table">
+
+
+        {% autosort object_list as sorted_objects %}
+        {% autopaginate object_list 25 as paginated_objects %}
+
+        <table class="table table-striped" id="dynamic-table1">
+            <thead>
+            <th>{% anchor title _('Name') %}</th>
+            <th>Created Date</th>
+            </thead>
+            <tbody>
+            {% for obj in paginated_objects %}
+                <tr>
+                    <td>
+                        <a href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}" title="preview">{{ obj.xf.title }}</a>
+                    </td>
+                    <td>
+                        {{ obj.date_created }}
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+  
+
+        {% paginate %}
+
+    </div>
+
+
+
+{% endblock %}
