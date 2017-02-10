@@ -188,6 +188,7 @@ class Site(models.Model):
 
     class Meta:
          ordering = ['-is_active', 'name', ]
+         unique_together = [('identifier', 'project'), ]
 
     @property
     def latitude(self):
