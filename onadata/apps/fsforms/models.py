@@ -145,7 +145,7 @@ class Schedule(models.Model):
     project = models.ForeignKey(Project, related_name="schedules", null=True, blank=True)
     date_range_start = models.DateField(default=datetime.date.today)
     date_range_end = models.DateField(default=datetime.date.today)
-    selected_days = models.ManyToManyField(Days,related_name='days')
+    selected_days = models.ManyToManyField(Days,related_name='days',blank=True,)
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
     date_created = models.DateTimeField(auto_now_add=True)
 
