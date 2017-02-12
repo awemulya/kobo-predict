@@ -222,8 +222,11 @@ class SiteForm(forms.ModelForm):
         project_filters = ['project']
         widgets = {
         'address': forms.TextInput(),
-        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
+        # 'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
+        'location': forms.HiddenInput(),
         'logo': AdminImageWidget()
         }
 
+    def clean(self):
+        super(SiteForm, self).clean()
 
