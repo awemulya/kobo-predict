@@ -228,5 +228,9 @@ class SiteForm(forms.ModelForm):
         }
 
     def clean(self):
+        lat = self.data.get("Longitude","85.3240")
+        long = self.data.get("Latitude","27.7172")
+        p = Point(float(lat), float(long),srid=4326)
+        self.cleaned_data["location"] = p
         super(SiteForm, self).clean()
 
