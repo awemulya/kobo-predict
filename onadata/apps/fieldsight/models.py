@@ -51,11 +51,11 @@ class Organization(models.Model):
     website = models.URLField(blank=True, null=True)
     country = models.CharField(max_length=3, choices=COUNTRIES, default=u'NPL')
     address = models.TextField(blank=True, null=True)
-    location = PointField(geography=True, srid=4326, blank=True, null=True,)
     public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
     logo = models.ImageField(upload_to="logo", default="logo/default_org.png")
     is_active = models.BooleanField(default=True)
+    location = PointField(geography=True, srid=4326, blank=True, null=True,)
 
     class Meta:
          ordering = ['-is_active', 'name', ]
@@ -110,10 +110,10 @@ class Project(models.Model):
     donor = models.CharField(max_length=256, blank=True, null=True)
     public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
-    location = PointField(geography=True, srid=4326, blank=True, null=True)
     organization = models.ForeignKey(Organization, related_name='projects')
     logo = models.ImageField(upload_to="logo", default="logo/default_org.png")
     is_active = models.BooleanField(default=True)
+    location = PointField(geography=True, srid=4326, blank=True, null=True)
 
     objects = GeoManager()
 

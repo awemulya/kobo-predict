@@ -70,10 +70,18 @@ class OrganizationForm(forms.ModelForm):
         exclude = []
         # exclude = ['organizaton']
         widgets = {
-        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
+        'location': forms.HiddenInput(),
         'address': forms.TextInput(),
         'logo': AdminImageWidget()
         }
+
+
+    def clean(self):
+        lat = self.data.get("Longitude","85.3240")
+        long = self.data.get("Latitude","27.7172")
+        p = Point(float(lat), float(long),srid=4326)
+        self.cleaned_data["location"] = p
+        super(OrganizationForm, self).clean()
 
 
 class SetOrgAdminForm(forms.ModelForm):
@@ -189,6 +197,7 @@ class SetCentralEngForm(HTML5BootstrapModelForm, KOModelForm):
 
 
 
+
 class ProjectForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
@@ -203,9 +212,16 @@ class ProjectForm(forms.ModelForm):
         organization_filters = ['organization']
         widgets = {
         'address': forms.TextInput(),
-        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
+        'location': forms.HiddenInput(),
         'logo': AdminImageWidget()
         }
+
+    def clean(self):
+        lat = self.data.get("Longitude","85.3240")
+        long = self.data.get("Latitude","27.7172")
+        p = Point(float(lat), float(long),srid=4326)
+        self.cleaned_data["location"] = p
+        super(ProjectForm, self).clean()
 
 
 class SiteForm(forms.ModelForm):
