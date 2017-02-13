@@ -28,7 +28,7 @@ class RegistrationForm(registration_forms.RegistrationFormUniqueEmail):
         self.fields['organization'].choices = [(org.id, org.name) for org in Organization.objects.all()]
         self.fields['organization'].empty_label = None
 
-    organization = forms.ChoiceField(widget = forms.Select())
+    organization = forms.ChoiceField(widget = forms.Select(), required=False)
     username = forms.RegexField(
         regex=USERNAME_REGEX,
         max_length=USERNAME_MAX_LENGTH,

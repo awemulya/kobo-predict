@@ -445,7 +445,6 @@ def filter_users(request):
     return HttpResponseRedirect(reverse('fieldsight:user-list'))
 
 
-
 class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, RegistrationView):
     def register(self, request, form, *args, **kwargs):
         with transaction.atomic():
@@ -464,6 +463,7 @@ class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, Registrat
                 organization = int(form.cleaned_data['organization'])
                 org = Organization.objects.get(pk=organization)
                 user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org)
-
-        return new_user
+        if created:
+            return new_user
+        return False
 
