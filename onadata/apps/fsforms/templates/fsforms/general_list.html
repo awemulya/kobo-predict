@@ -8,7 +8,7 @@
 {% if site %}
 <a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add' site.pk %}">{% trans 'New' %} {% trans 'Survey' %}</a>
 
-<a class="btn btn-success btn-raised" href="{% url 'forms:site-survey' site.pk %}">{% trans 'Scheduled Forms' %}</a>{
+<a class="btn btn-success btn-raised" href="{% url 'forms:site-survey' site.pk %}">{% trans 'Scheduled Forms' %}</a>
 {% endif %}
 
 {% if project %}
