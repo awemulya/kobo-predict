@@ -455,16 +455,14 @@ class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, Registrat
             new_user.first_name = request.POST.get('name', '')
             new_user.is_active = is_active
             new_user.save()
-            try:
-                org = request.organization
-                if not org:
-                    org = org.id
-            except:
+            created = False
+            if hasattr(request, "organization"):
+                if request.organization:
+                    user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=request.organization)
+
+            if not created:
                 organization = int(form.cleaned_data['organization'])
                 org = Organization.objects.get(pk=organization)
-                user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org)
-
-            else:
                 user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org)
 
         return new_user
