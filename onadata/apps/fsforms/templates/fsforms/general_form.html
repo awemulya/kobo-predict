@@ -1,0 +1,54 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{{ scenario }} {% trans 'Schedules Info' %}{% endblock %}
+
+{% block head %}
+{% if is_project %}
+    <a class="btn btn-success btn-raised" href="{% url 'forms:site-general' form.instance.site.pk%}">{% trans 'General Forms' %}</a>
+{% else %}
+    <a class="btn btn-success btn-raised" href="{% url 'forms:site-general' form.instance.site.pk%}">{% trans 'General Forms' %}</a>
+{% endif %}
+{% endblock %}
+
+{% block breadcrumbs %}
+{% if is_project %}
+    <li><a href="{% url 'fieldsight:project-dashboard' form.instance.site.pk %}">{% trans 'Project Dashboard' %}</a></li>
+{% else %}
+<li><a href="{% url 'fieldsight:site-dashboard' form.instance.site.pk %}">{% trans 'Site Dashboard' %}</a></li>
+{% endif %}
+    <li>{% trans 'General Form' %}</li>
+{% endblock %}
+
+{% block content %}
+
+    <form method="post" id='form' action="{% url 'forms:edit-general' form.instance.pk %}">
+            <div class="col-sm-12 registration_field">
+               {{ form.non_field_errors }}
+               </div>
+            
+            {% csrf_token %}
+            {{ form.media }}
+               <div class="col-sm-12 registration_field">
+               {{ form.non_field_errors }}
+               </div>
+
+            <div class="col-sm-12 registration_field">
+                 <div class="col-sm-3"> {{ form.xf.label }}</div>
+                 <div class="col-sm-3">      {{ form.xf }}</div>
+                 <div class="col-sm-6">      {{ form.xf.errors }}</div>
+               </div>
+            <div class="col-sm-12 registration_field">
+                 <div class="col-sm-3"> {{ form.shared_level.label }}</div>
+                 <div class="col-sm-3">      {{ form.shared_level }}</div>
+                 <div class="col-sm-6">      {{ form.shared_level.errors }}</div>
+               </div>
+
+
+        <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
+
+    </form>
+
+    
+
+{% endblock %}

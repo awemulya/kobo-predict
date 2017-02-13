@@ -66,6 +66,20 @@ class FSFormForm(forms.ModelForm):
         model = FieldSightXF
 
 
+class GeneralFSForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(GeneralFSForm, self).__init__(*args, **kwargs)
+        self.fields['xf'].choices = [(obj.id, obj.title) for obj in XForm.objects.all()]
+        self.fields['xf'].empty_label = None
+        self.fields['xf'].label = "Form"
+
+
+    class Meta:
+        fields = ['xf','shared_level']
+        model = FieldSightXF
+
+
 class StageForm(forms.ModelForm):
 
     class Meta:

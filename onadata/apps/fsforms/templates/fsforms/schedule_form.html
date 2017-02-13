@@ -40,12 +40,12 @@
                  <div class="col-sm-6">      {{ form.form.errors }}</div>
                </div>
 
-            <div class="col-sm-12 registration_field">
+            <div class="col-sm-12 registration_field" style="display:{% if is_edit %} none{% endif %}">
                  <div class="col-sm-3"> {{ form.form_type.label }}</div>
                  <div class="col-sm-3">      {{ form.form_type }}</div>
                  <div class="col-sm-6">      {{ form.form_type.errors }}</div>
             </div>
-            <div id="hideable" style="display:none">
+            <div id="hideable" style="display:{% if is_general %} none{% endif %}">
                 <div class="col-sm-12 registration_field">
                  <div class="col-sm-3"> {{ form.name.label }}</div>
                  <div class="col-sm-3">      {{ form.name }}</div>

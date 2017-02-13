@@ -7,6 +7,7 @@
 {% block head %}
     <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
 <a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add' site.pk %}">{% trans 'New' %} {% trans 'Schedule' %}</a>
+<a class="btn btn-success btn-raised" href="{% url 'forms:site-general' site.pk %}">{% trans 'General Forms' %}</a>
 {% endblock %}
 {% block breadcrumbs %}
     <li><a href="{% url 'fieldsight:site-dashboard' site.pk %}">{% trans 'Site Dashboard' %}</a></li>

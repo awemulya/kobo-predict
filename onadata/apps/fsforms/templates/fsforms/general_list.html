@@ -6,7 +6,8 @@
 
 {% block head %}
 <a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add' site.pk %}">{% trans 'New' %} {% trans 'Survey' %}</a>
-{% endblock %}
+
+<a class="btn btn-success btn-raised" href="{% url 'forms:site-survey' site.pk %}">{% trans 'Scheduled Forms' %}</a>{% endblock %}
 
 {% block content %}
 
@@ -26,7 +27,9 @@
         <table class="table table-striped" id="dynamic-table1">
             <thead>
             <th>{% anchor title _('Name') %}</th>
-            <th>Created Date</th>
+            <th>{% trans 'Created Date' %}</th>
+            <th>{% trans 'Shared Level' %}</th>
+            <th>{% trans 'Actions' %}</th>
             </thead>
             <tbody>
             {% for obj in paginated_objects %}
@@ -38,6 +41,10 @@
                         {{ obj.date_created }}
                     </td>
                     <td>
+                        {{ obj.get_shared_level_display}}
+                    </td>
+                    <td>
+                        <a href="{% url 'forms:edit-general' obj.pk %}">Edit</a>
                     </td>
                 </tr>
             {% endfor %}
