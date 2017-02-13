@@ -102,7 +102,7 @@ class UserRole(models.Model):
     @staticmethod
     def get_active_site_roles(user):
         return UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor").\
-            select_related('group', 'site')\
+            select_related('project', 'site')\
 
     @staticmethod
     def get_roles_supervisor(user, project_id):

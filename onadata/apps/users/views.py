@@ -95,9 +95,9 @@ def current_user(request):
             site_supervisor = True
         for role in roles:
             site = role.site
-            project = site.project
+            project = role.project
             site_info = {'site': {'id': site.id, 'name': site.name, 'description': site.public_desc,
-                                  'lat': site.latitude, 'lon':site.longitude},
+                                  'lat': site.latitude, 'lon':site.longitude, 'identifier':site.identifier},
                          'project': {'name': project.name, 'id': project.id,
                                      'description': project.public_desc, 'lat':project.latitude, 'lon':project.longitude},
                          }
