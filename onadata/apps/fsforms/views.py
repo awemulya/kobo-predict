@@ -1,6 +1,7 @@
 from bson import json_util
 from django.conf import settings
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
@@ -55,11 +56,19 @@ class LibraryFormView(object):
 
 
 class MyLibraryListView(ListView):
+
+    def get_queryset(self):
+        if self.request.project:
+            return super(MyLibraryListView, self).get_queryset().filter(Q(is_global=True) |Q(project=self.request.project))
+        elif self.request.organization:
+            return super(MyLibraryListView, self).get_queryset().filter(Q(is_global=True) |Q(organization=self.request.organization))
+        else:
+            return super(MyLibraryListView, self).get_queryset()
     def get_template_names(self):
         return ['fsforms/library_form_list.html']
 
 
-class LibraryFormsListView(LibraryFormView, ProjectView, MyLibraryListView, ProjectMixin):
+class LibraryFormsListView(LibraryFormView, MyLibraryListView, ProjectMixin):
     pass
 
 
