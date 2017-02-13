@@ -69,7 +69,7 @@ urlpatterns = [
     url(r'^project/alter-status/(?P<pk>\d+)/$', alter_proj_status, name='alter_proj_status'),
     url(r'^project/add-proj-manager/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
     url(r'^project/add-central-engineer/(?P<pk>\d+)/$', add_central_engineer, name='add_central_engineer'),
-    url(r'^api/project-sites/(?P<pk>\d+)/$', SiteViewSet.as_view({'get': 'list'}), name='add_central_engineer'),
+    url(r'^api/project-sites/(?P<pk>\d+)/$', SiteViewSet.as_view({'get': 'list'}), name='project_sites'),
 
 
     url(r'^site/$', SiteListView.as_view(), name='sites-list'),
