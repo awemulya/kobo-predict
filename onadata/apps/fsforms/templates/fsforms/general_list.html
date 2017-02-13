@@ -5,10 +5,19 @@
 {% block page-title %}{% trans 'Forms Library' %}{% endblock %}
 
 {% block head %}
+{% if site %}
 <a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add' site.pk %}">{% trans 'New' %} {% trans 'Survey' %}</a>
 
-<a class="btn btn-success btn-raised" href="{% url 'forms:site-survey' site.pk %}">{% trans 'Scheduled Forms' %}</a>{% endblock %}
+<a class="btn btn-success btn-raised" href="{% url 'forms:site-survey' site.pk %}">{% trans 'Scheduled Forms' %}</a>{
+{% endif %}
 
+{% if project %}
+<a class="btn btn-success btn-raised" href="{% url 'forms:project-schedule-add' project.pk %}">{% trans 'New' %} {% trans 'Survey' %}</a>
+
+<a class="btn btn-success btn-raised" href="{% url 'forms:project-survey' project.pk %}">{% trans 'Scheduled Forms' %}</a>
+
+{% endif %}
+{% endblock %}
 {% block content %}
 
     {% load pagination_tags %}

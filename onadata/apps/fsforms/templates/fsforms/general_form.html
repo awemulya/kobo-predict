@@ -5,7 +5,7 @@
 
 {% block head %}
 {% if is_project %}
-    <a class="btn btn-success btn-raised" href="{% url 'forms:site-general' form.instance.site.pk%}">{% trans 'General Forms' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'forms:project-general' form.instance.project.pk%}">{% trans 'General Forms' %}</a>
 {% else %}
     <a class="btn btn-success btn-raised" href="{% url 'forms:site-general' form.instance.site.pk%}">{% trans 'General Forms' %}</a>
 {% endif %}
@@ -13,7 +13,7 @@
 
 {% block breadcrumbs %}
 {% if is_project %}
-    <li><a href="{% url 'fieldsight:project-dashboard' form.instance.site.pk %}">{% trans 'Project Dashboard' %}</a></li>
+    <li><a href="{% url 'fieldsight:project-dashboard' form.instance.project.pk %}">{% trans 'Project Dashboard' %}</a></li>
 {% else %}
 <li><a href="{% url 'fieldsight:site-dashboard' form.instance.site.pk %}">{% trans 'Site Dashboard' %}</a></li>
 {% endif %}
