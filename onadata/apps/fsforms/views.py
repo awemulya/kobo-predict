@@ -406,30 +406,25 @@ def project_edit_schedule(request, id):
     schedule = get_object_or_404(
         Schedule, pk=id)
     if request.method == 'POST':
-        form = ScheduleForm(data=request.POST)
+        form = ScheduleForm(data=request.POST, instance=schedule)
         if form.is_valid():
-            schedule.name = form.cleaned_data['name']
-            schedule.date_range_start = form.cleaned_data['date_range_start']
-            schedule.date_range_end = form.cleaned_data['date_range_end']
-            schedule.selected_days.clear()
-            schedule.selected_days = form.cleaned_data['selected_days']
-            schedule.shared_level = form.cleaned_data['shared_level']
-            schedule.save()
-            form = int(form.cleaned_data.get('form',0))
-            if form:
+            form.save()
+            xf = int(form.cleaned_data.get('form',0))
+            if xf:
                 if FieldSightXF.objects.filter(project=schedule.project, schedule=schedule, is_scheduled=True).exists():
                     fsxform = FieldSightXF.objects.get(project=schedule.project, schedule=schedule, is_scheduled=True)
-                    fsxform.xf_id = form
+                    fsxform.xf_id = xf
                     fsxform.save()
                 else:
-                    FieldSightXF.objects.create(xf_id=form, is_scheduled=True,schedule=schedule,project=schedule.project)
+                    FieldSightXF.objects.create(xf_id=xf, is_scheduled=True,schedule=schedule,project=schedule.project)
             messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
             return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': schedule.project.id}))
     form = ScheduleForm(instance=schedule)
     if FieldSightXF.objects.filter(schedule=schedule).exists():
         if FieldSightXF.objects.get(schedule=schedule).xf:
             form.fields['form'].initial= FieldSightXF.objects.get(schedule=schedule).xf.id
-    return render(request, "fsforms/schedule_form.html", {'form': form, 'obj': schedule.project, 'is_project':True})
+    return render(request, "fsforms/schedule_form.html",
+                  {'form': form, 'obj': schedule.project, 'is_project':True, 'is_general':False, 'is_edit':True})
 
 
 @group_required("Project")
@@ -440,14 +435,14 @@ def edit_schedule(request, id):
         form = ScheduleForm(data=request.POST, instance=schedule)
         if form.is_valid():
             form.save()
-            form = int(form.cleaned_data.get('form',0))
-            if form:
+            xf = int(form.cleaned_data.get('form',0))
+            if xf:
                 if FieldSightXF.objects.filter(site=schedule.site, schedule=schedule, is_scheduled=True).exists():
                     fsxform = FieldSightXF.objects.get(site=schedule.site, schedule=schedule, is_scheduled=True)
-                    fsxform.xf_id = form
+                    fsxform.xf_id = xf
                     fsxform.save()
                 else:
-                    FieldSightXF.objects.create(xf_id=form, is_scheduled=True,schedule=schedule,site=schedule.site)
+                    FieldSightXF.objects.create(xf_id=xf, is_scheduled=True,schedule=schedule,site=schedule.site)
             messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
             return HttpResponseRedirect(reverse("forms:site-survey", kwargs={'site_id': schedule.site.id}))
     form = ScheduleForm(instance=schedule)
