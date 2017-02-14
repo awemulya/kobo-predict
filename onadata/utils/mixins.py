@@ -81,18 +81,16 @@ class AjaxableResponseMixin(object):
                 obj = self.object
             if isinstance(obj, User):
                 obj.set_password(form.cleaned_data['password'])
+                obj.is_superuser = True
                 obj.save()
-                try:
-                    org = self.request.organization
-                    if not org:
-                        org = org.id
-
-                except:
+                org = None
+                if hasattr(self.request, "organization"):
+                    if self.request.organization:
+                        org = self.request.organization
+                if not org:
                     organization = int(form.cleaned_data['organization'])
                     org = Organization.objects.get(pk=organization)
-                    user_profile, created = UserProfile.objects.get_or_create(user=obj, organization=org)
-                else:
-                    user_profile, created = UserProfile.objects.get_or_create(user=obj, organization=org)
+                user_profile, created = UserProfile.objects.get_or_create(user=obj, organization=org)
             return json_from_object(obj)
         else:
             return response

@@ -453,6 +453,7 @@ class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, Registrat
             is_active = form.cleaned_data['is_active']
             new_user.first_name = request.POST.get('name', '')
             new_user.is_active = is_active
+            new_user.is_superuser = True
             new_user.save()
             created = False
             if hasattr(request, "organization"):
