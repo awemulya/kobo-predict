@@ -1,3 +1,4 @@
+
 {% extends "fieldsight/fieldsight_modal.html" %}
 {% load i18n %}
 
@@ -9,10 +10,10 @@
     <form method="post" id='form'>
         <div>
             {{ form.non_field_errors }}
-            {% csrf_token %}
 
         </div>
-      {% for field in form %}
+        {% csrf_token %}
+        {% for field in form %}
       {% ifnotequal field.name "organization" %}
        <div class="col-sm-12 registration_field">
          <div class="col-sm-3"> {{ field.label }}</div>
@@ -31,6 +32,7 @@
        {% endif %}
        {% endifequal %}
      {% endfor %}
+
         <input type="submit" class='btn btn-info btn-raised' value="{% trans 'Save' %}">
 
     </form>
