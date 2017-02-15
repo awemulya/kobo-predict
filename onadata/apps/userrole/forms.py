@@ -28,6 +28,8 @@ class UserForm(HTML5BootstrapModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
+        self.fields['password'].widget = forms.widgets.PasswordInput()
+        self.fields['email'].required = True
         self.fields['organization'].choices = [(org.id, org.name) for org in Organization.objects.all()]
         self.fields['organization'].empty_label = None
 
