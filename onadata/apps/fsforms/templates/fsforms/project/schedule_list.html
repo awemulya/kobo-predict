@@ -7,6 +7,7 @@
 {% block head %}
     <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
 <a class="btn btn-success btn-raised" href="{% url 'forms:project-schedule-add' project.pk %}">{% trans 'New' %} {% trans 'Schedule' %}</a>
+<a class="btn btn-success btn-raised" href="{% url 'forms:project-general' project.pk %}">{% trans 'General Forms' %}</a>
 {% endblock %}
 
 {% block breadcrumbs %}
