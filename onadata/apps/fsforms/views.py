@@ -126,7 +126,7 @@ def share_level(request, id, counter):
         else:
             if hasattr(request,"project") and request.project:
                 form.is_global  = False
-                form.organization = request.project.organization
+                form.organization = None
                 form.project = request.project
                 form.save()
                 messages.add_message(request, messages.INFO, '{0} Shared to Project Level '.format(xf.title))
