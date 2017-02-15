@@ -59,9 +59,14 @@ class MyLibraryListView(ListView):
 
     def get_queryset(self):
         if self.request.project:
-            return super(MyLibraryListView, self).get_queryset().filter(Q(is_global=True) |Q(project=self.request.project))
+            return super(MyLibraryListView, self).\
+                get_queryset().filter(Q(is_global=True)
+                                      | Q(project=self.request.project)
+                                      |Q(organization=self.request.organization))
         elif self.request.organization:
-            return super(MyLibraryListView, self).get_queryset().filter(Q(is_global=True) |Q(organization=self.request.organization))
+            return super(MyLibraryListView, self).\
+                get_queryset().filter(Q(is_global=True)
+                                      |Q(organization=self.request.organization))
         else:
             return super(MyLibraryListView, self).get_queryset()
     def get_template_names(self):
