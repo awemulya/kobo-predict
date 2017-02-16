@@ -172,7 +172,7 @@ class Project(models.Model):
 
 
 class Site(models.Model):
-    identifier = IntegerRangeField("ID", min_value=1)
+    identifier = models.CharField("ID", max_length=255)
     name = models.CharField(max_length=255)
     type = models.ForeignKey(ProjectType, verbose_name='Type of Site')
     phone = models.CharField(max_length=255, blank=True, null=True)

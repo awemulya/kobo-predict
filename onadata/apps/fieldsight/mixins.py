@@ -260,6 +260,7 @@ USURPERS = {
              'Organization Admin', 'Super Admin'],
     'KoboForms': ['Project Manager', 'Central Engineer', 'Organization Admin', 'Super Admin'],
     'Project': ['Project Manager', 'Organization Admin', 'Super Admin', 'Central Engineer'],
+    'ProjectOnly': ['Project Manager', 'Site Supervisor', 'Central Engineer'],
     'Organization': ['Organization Admin', 'Super Admin'],
     'admin': ['Super Admin'],
 }

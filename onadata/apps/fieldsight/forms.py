@@ -250,3 +250,7 @@ class SiteForm(forms.ModelForm):
         self.cleaned_data["location"] = p
         super(SiteForm, self).clean()
 
+
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField()

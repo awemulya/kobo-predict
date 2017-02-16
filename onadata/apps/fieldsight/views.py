@@ -3,15 +3,23 @@ import json
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
+from django.contrib.gis.geos import Point
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.response import TemplateResponse
 from django.views.generic import ListView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
+from django.forms.forms import NON_FIELD_ERRORS
+from django.shortcuts import render_to_response
+from django.http import HttpResponseBadRequest
+from django.template import RequestContext
+import django_excel as excel
+
 
 from registration.backends.default.views import RegistrationView
 
@@ -24,7 +32,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      group_required, OrganizationViewFromProfile)
 from .models import Organization, Project, Site, ExtraUserDetail
 from .forms import OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetOrgAdminForm, \
-    SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm, AssignOrgAdmin
+    SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm, AssignOrgAdmin, UploadFileForm
 
 
 @login_required
@@ -417,6 +425,41 @@ class SiteUpdateView(SiteView, ProjectMixin, UpdateView):
 class SiteDeleteView(SiteView, ProjectMixin, DeleteView):
     pass
 
+@group_required("ProjectOnly")
+def upload_sites(request):
+    form = UploadFileForm()
+    if request.method == "POST":
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            project = request.project
+            try:
+                sites = request.FILES['file'].get_records()
+                with transaction.atomic():
+                    for site in sites:
+                        site = dict((k,v) for k,v in site.iteritems() if v is not '')
+                        lat = site.get("longitude",85.3240)
+                        long = site.get("latitude",27.7172)
+                        location = Point(lat, long,srid=4326)
+                        _site, created = Site.objects.get_or_create(identifier=str(site.get("id")), name=site.get("name"),
+                                                                    project=project, type_id=1)
+                        _site.description=site.get("description"),
+                        _site.phone=site.get("phone")
+                        _site.address=site.get("address")
+                        _site.public_desc=site.get("public_desc"),
+                        _site.additional_desc=site.get("additional_desc")
+                        _site.location=location
+                        _site.save()
+                messages.info(request, 'Site Upload Succesfull')
+                return HttpResponseRedirect(reverse('fieldsight:site-list'))
+            except Exception as e:
+                form.full_clean()
+                form._errors[NON_FIELD_ERRORS] = form.error_class(['Sites Upload Failed, UnSupported Data'])
+                messages.warning(request, 'Site Upload Failed, UnSupported Data ')
+    return render(request, 'fieldsight/upload_sites.html',{'form':form})
+
+def download(request):
+    sheet = excel.pe.Sheet([[1, 2],[3, 4]])
+    return excel.make_response(sheet, "csv")
 
 class UserListView(ProjectMixin, OrganizationViewFromProfile, ListView):
     def get_template_names(self):
