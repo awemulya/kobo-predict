@@ -9,14 +9,40 @@
 {% block breadcrumbs %}
     <li><a href="{% url 'fieldsight:site-dashboard' site %}">Site Dashboard</a></li>
 <li><a href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a></li>
-</li>
     <li>Responses</li>
 {% endblock %}
 {% block content %}
 
     <div class="adv-table">
+{% if generals %}
+        <h3>General Forms</h3>
 
-
+        <table class="table table-striped" id="dynamic-table2">
+            <thead>
+            <th>{% trans 'Form Name' %}</th>
+            <th>{% trans 'Created Date' %}</th>
+            <th>{% trans 'Submissions' %}</th>
+            </thead>
+            <tbody>
+            {% for obj in generals %}
+                <tr>
+                    <td>
+                        {{ obj.xf.title }}</a>
+                    </td>
+                    <td>
+                        {{ obj.date_created }}
+                    </td>
+                    <td>
+                         <a href="{% url 'forms:formpack_html_export' obj.id %}">
+                             {% trans 'View ' %}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+{% endif %}
+{% if schedules %}
+        <h3>Schedule Forms</h3>
 
         <table class="table table-striped" id="dynamic-table1">
             <thead>
@@ -45,12 +71,16 @@
             {% endfor %}
             </tbody>
         </table>
-  
+
+{% endif %}
 
     </div>
+{% if stages %}
+        <h3>Stages Forms</h3>
 {% for stage in stages %}
 <h3>{% trans 'Stage Name' %} {{stage.name }}
 {% trans 'Stage Order' %} {{stage.order }}</h3>
+{% if stage.parent.all.count %}
 <div class="adv-table">
         <table class="table table-striped">
             <thead>
@@ -93,7 +123,9 @@
 
 
     </div>
+{% endif %}
 
      {% endfor %}
+{% endif %}
 
 {% endblock %}

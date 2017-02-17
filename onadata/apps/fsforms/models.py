@@ -167,6 +167,7 @@ class FieldSightXF(models.Model):
     stage = models.ForeignKey(Stage, blank=True, null=True)
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
     form_status = models.IntegerField(default=0, choices=FORM_STATUS)
+    fsform = models.ForeignKey('self', blank=True, null=True, related_name="parent")
     # instances = models.ManyToManyField()
 
     class Meta:
@@ -216,9 +217,12 @@ class FieldSightXF(models.Model):
     @property
     def site_name(self):
         if self.site is not None:
-            return u'{}'.format(self.site.name  )
-
-
+            return u'{}'.format(self.site.name)
+    @property
+    def project_info(self):
+        if self.fsform:
+            return self.fsform.project.id, self.fsform.pk
+        return None, None
 
     def __unicode__(self):
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)

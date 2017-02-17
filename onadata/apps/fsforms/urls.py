@@ -44,7 +44,8 @@ from .views import (
     create_schedule,
     setup_project_stages, project_stage_add, instance_detail, alter_answer_status, project_survey,
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, responses,
-    MyOwnFormsListView, share_level, site_general, edit_general, project_general)
+    MyOwnFormsListView, share_level, site_general, edit_general, project_general, project_responses,
+    project_html_export)
 
 # router = routers.DefaultRouter()
 # router.register(r'api/groups', GroupViewSet)
@@ -69,6 +70,7 @@ urlpatterns = [
         url(r'^stage/$', StageListView.as_view(), name='stages-list'),
         url(r'^stage/add/(?P<site_id>\d+)/$', stage_add, name='stage-add'),
         url(r'^responses/(?P<site_id>\d+)/$', responses, name='site-responses'),
+        url(r'^project-responses/(?P<project_id>\d+)/$', project_responses, name='project-responses'),
         url(r'^project-stage/add/(?P<id>\d+)/$', project_stage_add, name='project-stage-add'),
         url(r'^stage/(?P<pk>\d+)/$', StageUpdateView.as_view(), name='stage-edit'),
         url(r'^stage-add-sub-stage/(?P<pk>\d+)/$', add_sub_stage, name='stage-add-sub-stage'),
@@ -118,6 +120,7 @@ urlpatterns = urlpatterns + [
 
 urlpatterns = urlpatterns + [
         url(r'reports/(?P<fsxf_id>\d+)$', html_export, name='formpack_html_export'),
+        url(r'project-responses/(?P<fsxf_id>\d+)$', project_html_export, name='project_html_export'),
         url(r'^forms/(?P<fsxf_id>\d+)/instance', instance, name='instance'),
         url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', instance_detail, name='instance_detail'),
         url(r'^forms/alter-answer-status/(?P<instance_id>\d+)/(?P<status>\d)/(?P<fsid>\d+)$', alter_answer_status, name='alter-answer-status'),

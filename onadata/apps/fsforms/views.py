@@ -15,7 +15,7 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
-    get_xform_and_perms, query_mongo, get_instance, update_status
+    get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
 from onadata.apps.fsforms.utils import send_message
 from onadata.apps.logger.models import XForm
 from onadata.libs.utils.user_auth import add_cors_headers
@@ -236,10 +236,21 @@ def stage_add(request, site_id=None):
     return render(request, "fsforms/stage_form.html", {'form': form, 'obj': site})
 
 @group_required("Project")
+def project_responses(request, project_id=None):
+    schedules = FieldSightXF.objects.filter(project_id=project_id, xf__isnull=False, is_scheduled=True)
+    stages = Stage.objects.filter(stage__isnull=True, project_id=project_id).order_by('order')
+    generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=project_id)
+    return render(request, "fsforms/project/project_responses_list.html",
+                  {'schedules': schedules, 'stages':stages, 'generals':generals, 'project': project_id})
+
+
+@group_required("Project")
 def responses(request, site_id=None):
     schedules = FieldSightXF.objects.filter(site_id=site_id, xf__isnull=False, is_scheduled=True)
     stages = Stage.objects.filter(stage__isnull=True, site_id=site_id).order_by('order')
-    return render(request, "fsforms/responses_list.html", {'schedules': schedules, 'stages':stages, 'site': site_id})
+    generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,site_id=site_id)
+    return render(request, "fsforms/responses_list.html",
+                  {'schedules': schedules, 'stages':stages,'generals':generals, 'site': site_id})
 
 @group_required("Project")
 def project_stage_add(request, id=None):
@@ -746,6 +757,64 @@ def html_export(request, fsxf_id):
     context['data'] = make_table(data)
     context['fsxfid'] = fsxf_id
     context['obj'] = fsxf
+    context['is_project'] = False
+    # return JsonResponse({'data': cursor})
+    return render(request, 'fsforms/fieldsight_export_html.html', context)
+
+
+@group_required('KoboForms')
+def project_html_export(request, fsxf_id):
+    limit = int(request.REQUEST.get('limit', 100))
+    fsxf_id = int(fsxf_id)
+    fsxf = FieldSightXF.objects.get(pk=fsxf_id)
+    xform = fsxf.xf
+    id_string = xform.id_string
+    cursor = get_instances_for_project_field_sight_form(fsxf_id)
+    cursor = list(cursor)
+    for index, doc in enumerate(cursor):
+        medias = []
+        for media in cursor[index].get('_attachments', []):
+            if media:
+                medias.append(media.get('download_url', ''))
+        cursor[index].update({'medias': medias})
+    paginator = Paginator(cursor, limit, request=request)
+
+    try:
+        page = paginator.page(request.REQUEST.get('page', 1))
+    except (EmptyPage, PageNotAnInteger):
+        try:
+            page = paginator.page(1)
+        except (EmptyPage, PageNotAnInteger):
+            raise Http404('This report has no submissions')
+
+    data = [("v1", page.object_list)]
+    context = build_export_context(request, xform, id_string)
+
+    context.update({
+        'page': page,
+        'table': [],
+        'title': id,
+    })
+
+    export = context['export']
+    sections = list(export.labels.items())
+    section, labels = sections[0]
+    id_index = labels.index('_id')
+
+    # generator dublicating the "_id" to allow to make a link to each
+    # submission
+    def make_table(submissions):
+        for chunk in export.parse_submissions(submissions):
+            for section_name, rows in chunk.items():
+                if section == section_name:
+                    for row in rows:
+                        yield row[id_index], row
+
+    context['labels'] = labels
+    context['data'] = make_table(data)
+    context['fsxfid'] = fsxf_id
+    context['obj'] = fsxf
+    context['is_project'] = True
     # return JsonResponse({'data': cursor})
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
