@@ -221,8 +221,8 @@ class FieldSightXF(models.Model):
     @property
     def project_info(self):
         if self.fsform:
-            return self.fsform.project.id, self.fsform.pk
-        return None, None
+            self.fsform.pk
+        return None
 
     def __unicode__(self):
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)

@@ -521,7 +521,7 @@ def deploy_survey(request, id):
             _schedule.save()
             _schedule.selected_days.add(*selected_days)
             child = FieldSightXF(is_staged=False, is_scheduled=True,
-                                 xf=fsxf.xf, site=site, fsform_id=id, schedule=_schedule)
+                                 xf=fsxf.xf, site=site, fsform=fsxf, schedule=_schedule)
             child.save()
     messages.info(request, 'Schedule {} with  Form Named {} Form Deployed to Sites'.format(schedule.name,fsxf.xf.title))
     return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': fsxf.project.id}))

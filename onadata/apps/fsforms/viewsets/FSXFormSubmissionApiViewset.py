@@ -34,7 +34,7 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
             siteid =  int(siteid)
             fsxfid = int(fsxfid)
             fsxf = FieldSightXF.objects.get(pk=kwargs.get('pk',None))
-            project, fs_proj_xf = fsxf.project_info
+            fs_proj_xf = fsxf.fsform.pk if fsxf.fsform else ''
         except:
             return self.error_response("Site Id Or Form ID Not Vaild", False, request)
 
