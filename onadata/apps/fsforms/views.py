@@ -500,7 +500,7 @@ def deploy_general(request, id):
     with transaction.atomic():
         fsxf = FieldSightXF.objects.get(pk=id)
         FieldSightXF.objects.filter(fsform=fsxf).delete()
-        for site in fsxf.project.sites.all():
+        for site in fsxf.project.sites.filter(is_active=True):
             # cloning from parent
             child = FieldSightXF(is_staged=False, is_scheduled=False,xf=fsxf.xf, site=site, fsform_id=id)
             child.save()
@@ -511,27 +511,21 @@ def deploy_general(request, id):
 @group_required("Project")
 def deploy_survey(request, id):
     schedule = Schedule.objects.get(pk=id)
+    selected_days = tuple(schedule.selected_days.all())
     fsxf = FieldSightXF.objects.get(schedule=schedule)
-    form_type = "Schedule" if fsxf.is_scheduled else "General"
-    sites = fsxf.project.sites.filter(is_active=True)
     with transaction.atomic():
-        Schedule.objects.filter(fieldsightxf__fsxf=fsxf).delete()
+        Schedule.objects.filter(fieldsightxf__fsform=fsxf).delete()
         FieldSightXF.objects.filter(fsform=fsxf).delete()
-        for site in sites:
-            if fsxf.is_scheduled:
-                schedule, created = Schedule.objects.get_or_create(name=fsxf.schedule.name, site=site)
-                _, created = FieldSightXF.objects.get_or_create(
-                    fsform=fsxf,is_staged=fsxf.is_staged,is_scheduled=fsxf.is_scheduled,
-                    xf=fsxf.xf,site=site, schedule=schedule)
-            else:
-                FieldSightXF.objects.get_or_create(
-                    fsform=fsxf,is_staged=fsxf.is_staged,is_scheduled=fsxf.is_scheduled,
-                    xf=fsxf.xf,site=site)
+        for site in fsxf.project.sites.filter(is_active=True):
+            _schedule = Schedule(name=schedule.name, site=site)
+            _schedule.save()
+            _schedule.selected_days.add(*selected_days)
+            child = FieldSightXF(is_staged=False, is_scheduled=True,
+                                 xf=fsxf.xf, site=site, fsform_id=id, schedule=_schedule)
+            child.save()
+    messages.info(request, 'Schedule {} with  Form Named {} Form Deployed to Sites'.format(schedule.name,fsxf.xf.title))
+    return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': fsxf.project.id}))
 
-    messages.info(request, '{} Form Named {} Form Deployed to Sites'.format(form_type, fsxf.xf.title))
-    if fsxf.is_scheduled:
-        return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': fsxf.project.id}))
-    return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fsxf.project.id}))
 
 
 

@@ -39,7 +39,7 @@
             {% for obj in paginated_objects %}
                 <tr>
                     <td>
-                        <a href="{% url 'forms:project-schedule-edit' obj.pk %}">{{ obj.name }}</a>
+                        {{ obj.name }}
                     </td>
                     <td>
                         {{ obj.date_range_start }} - {{ obj.date_range_end }}
@@ -56,6 +56,7 @@
                             {{obj.form.xf.title}}:
                           {% endif %}
                     </td>
+                    <td><a href="{% url 'forms:project-schedule-edit' obj.pk %}">Edit</a></td>
                     <td>{% if obj.form.xf %}
                           <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-survey' obj.pk %}">
                             Deploy To Sites</a>
