@@ -1,6 +1,7 @@
 from bson import json_util
 from django.conf import settings
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -476,6 +477,61 @@ def edit_schedule(request, id):
             form.fields['form'].initial= FieldSightXF.objects.get(schedule=schedule).xf.id
     return render(request, "fsforms/schedule_form.html",
                   {'form': form, 'obj': schedule.site, 'is_project':False, 'is_general':False, 'is_edit':True})
+
+
+@group_required("Project")
+def deploy_stages(request, id):
+    # use this to deploy stages
+    # project = Project(pk=id)
+    # sites = project.sites.filter(is_active=True)
+    # project_forms = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, project_id=id)
+    # with transaction.atomic():
+    #     FieldSightXF.objects.filter(site__project_id=id,is_staged=False,is_scheduled=False).delete()
+    #     #fsform__isnull=True
+    #     for fsxf in project_forms:
+    #         for site in sites:
+    #             FieldSightXF.objects.create(
+    #                 fsform=fsxf,is_staged=fsxf.is_staged,is_scheduled=fsxf.is_scheduled, xf=fsxf.xf,site_id=site.id)
+    messages.info(request, 'Stages Form Deployed to Sites')
+    return HttpResponseRedirect(reverse("forms:setup-project-stages", kwargs={'id': id}))
+
+@group_required("Project")
+def deploy_general(request, id):
+    with transaction.atomic():
+        fsxf = FieldSightXF.objects.get(pk=id)
+        FieldSightXF.objects.filter(fsform=fsxf).delete()
+        for site in fsxf.project.sites.all():
+            # cloning from parent
+            child = FieldSightXF(is_staged=False, is_scheduled=False,xf=fsxf.xf, site=site, fsform_id=id)
+            child.save()
+    messages.info(request, 'General Form {} Deployed to Sites'.format(fsxf.xf.title))
+    return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fsxf.project.pk}))
+
+
+@group_required("Project")
+def deploy_survey(request, id):
+    schedule = Schedule.objects.get(pk=id)
+    fsxf = FieldSightXF.objects.get(schedule=schedule)
+    form_type = "Schedule" if fsxf.is_scheduled else "General"
+    sites = fsxf.project.sites.filter(is_active=True)
+    with transaction.atomic():
+        Schedule.objects.filter(fieldsightxf__fsxf=fsxf).delete()
+        FieldSightXF.objects.filter(fsform=fsxf).delete()
+        for site in sites:
+            if fsxf.is_scheduled:
+                schedule, created = Schedule.objects.get_or_create(name=fsxf.schedule.name, site=site)
+                _, created = FieldSightXF.objects.get_or_create(
+                    fsform=fsxf,is_staged=fsxf.is_staged,is_scheduled=fsxf.is_scheduled,
+                    xf=fsxf.xf,site=site, schedule=schedule)
+            else:
+                FieldSightXF.objects.get_or_create(
+                    fsform=fsxf,is_staged=fsxf.is_staged,is_scheduled=fsxf.is_scheduled,
+                    xf=fsxf.xf,site=site)
+
+    messages.info(request, '{} Form Named {} Form Deployed to Sites'.format(form_type, fsxf.xf.title))
+    if fsxf.is_scheduled:
+        return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': fsxf.project.id}))
+    return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fsxf.project.id}))
 
 
 

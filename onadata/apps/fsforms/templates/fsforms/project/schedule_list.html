@@ -33,6 +33,7 @@
             <th>{% trans 'Days' %}</th>
             <th>{% anchor date_created _('Date Created') %}</th>
             <th>{% trans 'Assigned Form' %}</th>
+            <th colspan="2">{% trans 'Action' %}</th>
             </thead>
             <tbody>
             {% for obj in paginated_objects %}
@@ -54,6 +55,11 @@
                       <td> {% if obj.form_exists %}
                             {{obj.form.xf.title}}:
                           {% endif %}
+                    </td>
+                    <td>{% if obj.form.xf %}
+                          <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-survey' obj.pk %}">
+                            Deploy To Sites</a>
+                        {% endif %}
                     </td>
 
                 </tr>
