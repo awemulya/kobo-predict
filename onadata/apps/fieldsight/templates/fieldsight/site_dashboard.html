@@ -36,7 +36,7 @@
                             <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-9">
                         <div class="abt-org">
                             <h3>{{ obj.name }}</h3>
                             <h3>{{ obj.identifier }}</h3>
@@ -45,14 +45,20 @@
                             <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
                             <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
                             <p class="website"><span></span>{{ obj.website }}</p>
-							<p class="short-detail">{{ obj.description }}</p>
+							              <p class="short-detail">{{ obj.description }}</p>
                             <p class="progress-of-site">{% trans 'Progress' %}</p>
-                            <div class="progress progress-striped active progress-sm">
-                                <div class="progress-bar progress-bar-success" role="progressbar"
-                                     aria-valuenow="{{obj.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{ obj.progress }}%">
-                                    <span class="sr-only">{{ obj.progress }}% Complete</span>
-                                    <span class="progress-bar-value">{{ obj.progress }}%</span>
+                            <div class="progreess">
+                              <div class="col-md-6">
+                                <div class="progress progress-striped active progress-sm">
+                                    <div class="progress-bar progress-bar-success" role="progressbar"
+                                         aria-valuenow="{{obj.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{ obj.progress }}%">
+                                        <span class="sr-only">{{ obj.progress }}% Complete</span>
+                                        <span class="progress-bar-value">{{ obj.progress }}%</span>
+                                    </div>
                                 </div>
+                              </div>
+                              <div class="col-md-6"></div>
+                              <div class="clearfixx"></div>
                             </div>
                               <div class="manage-btn">
                                 <nav class="containerd">
@@ -61,8 +67,11 @@
                                     <a href="{% url 'fieldsight:add_supervisor' pk=obj.id %}" tooltip="{% trans 'Assign Supervisor' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/user-background.png');"></a>
                                     <a href="#" tooltip="{% trans 'Setup' %}" class="buttons-fab"><span><span class="rotate-fab"></span></span></a>
                                 </nav>
-                            </div>
+                              </div>
                         </div>
+                    </div>
+                    <div class="col-md-3">
+                      
                     </div>
                     <div class="clearfixx"></div>
                 </div>

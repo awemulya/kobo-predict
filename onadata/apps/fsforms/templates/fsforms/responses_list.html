@@ -14,8 +14,148 @@
 {% block content %}
 
     <div class="adv-table">
-{% if generals %}
-        <h3>General Forms</h3>
+
+    <ul class="nav nav-tabs">
+      <li class="active"><a data-toggle="tab" href="#general1">General Forms</a></li>
+      <li><a data-toggle="tab" href="#schedule2">Sechedule Forms</a></li>
+      <li><a data-toggle="tab" href="#stage3">Stage Forms</a></li>
+    </ul>
+
+    <div class="tab-content">
+      <div id="general1" class="tab-pane fade in active">
+        {% if generals %}
+          <h3><b> General Forms </b></h3>
+
+          <table class="table table-striped" id="dynamic-table2">
+              <thead>
+              <th>{% trans 'Form Name' %}</th>
+              <th>{% trans 'Created Date' %}</th>
+              <th>{% trans 'Submissions' %}</th>
+              </thead>
+              <tbody>
+              {% for obj in generals %}
+                  <tr>
+                      <td>
+                          {{ obj.xf.title }}</a>
+                      </td>
+                      <td>
+                          {{ obj.date_created }}
+                      </td>
+                      <td>
+                           <a href="{% url 'forms:formpack_html_export' obj.id %}">
+                               {% trans 'View ' %}</a>
+                      </td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+          </table>
+        {% endif %}
+      </div>
+
+
+      <div id="schedule2" class="tab-pane fade">
+        {% if schedules %}
+          <h3><b>Schedule Forms</b></h3>
+
+          <table class="table table-striped" id="dynamic-table1">
+              <thead>
+              <th>{% trans 'Schedule Name' %}</th>
+              <th>{% trans 'Form Name' %}</th>
+              <th>{% trans 'Created Date' %}</th>
+              <th>{% trans 'Submissions' %}</th>
+              </thead>
+              <tbody>
+              {% for obj in schedules %}
+                  <tr>
+                      <td>
+                          {{ obj.schedule}}</a>
+                      </td>
+                      <td>
+                          {{ obj.xf.title }}</a>
+                      </td>
+                      <td>
+                          {{ obj.date_created }}
+                      </td>
+                      <td>
+                           <a href="{% url 'forms:formpack_html_export' obj.id %}">
+                               {% trans 'View ' %}</a>
+                      </td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+          </table>
+
+        {% endif %}  
+      </div>
+
+
+      <div id="stage3" class="tab-pane fade">
+        {% if stages %}
+          <h3><b>Stages Forms</b></h3>
+          <div class="panel-group" id="accordion">
+            {% for stage in stages %}
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#colls{{stage.id}}"><b>{% trans 'Stage Name' %}:</b> {{stage.name }}</a>
+                </h4>
+              </div>
+              <div id="colls{{stage.id}}" class="panel-collapse collapse">
+                <div class="panel-body">
+                  {% if stage.parent.all.count %}
+
+                  <table class="table table-striped">
+                      <thead>
+                      <th>{% trans 'Sub Stage Name' %}</th>
+                      <th>{% trans 'Order' %}</th>
+                      <th>{% trans 'Form Name' %}</th>
+                      <th>{% trans 'Created Date' %}</th>
+                      <th>{% trans 'Submissions' %}</th>
+                      </thead>
+                      <tbody>
+                      {% for obj in stage.parent.all %}
+                          <tr>
+                              <td>
+                                  {{ obj.name}}</a>
+                              </td>
+                              <td>
+                                  {{ obj.order }}</a>
+                              </td>
+                              {% if obj.form %}
+                              <td>
+
+                                  {{ obj.form.xf.title }}</a>
+                              </td>
+                              <td>
+                                  {{ obj.date_created }}
+                              </td>
+                              <td>
+                                   <a href="{% url 'forms:formpack_html_export' obj.form.id %}">{% trans 'View ' %}</a>
+                              </td>
+                              {% else %}
+                              <td>-</td>
+                              <td> {{ obj.date_created }}</td>
+                              <td>-</td>
+                              {% endif %}
+                          </tr>
+                      {% endfor %}
+                      </tbody>
+                  </table>
+
+
+                  {% endif %}
+
+                       {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endif %} 
+          </div> 
+      </div>
+    </div>
+
+<!-- {% if generals %}
+        <h3><b> General Forms </b></h3>
 
         <table class="table table-striped" id="dynamic-table2">
             <thead>
@@ -42,7 +182,7 @@
         </table>
 {% endif %}
 {% if schedules %}
-        <h3>Schedule Forms</h3>
+        <h3><b>Schedule Forms</b></h3>
 
         <table class="table table-striped" id="dynamic-table1">
             <thead>
@@ -76,7 +216,7 @@
 
     </div>
 {% if stages %}
-        <h3>Stages Forms</h3>
+        <h3><b>Stages Forms</b></h3>
 {% for stage in stages %}
 <h3>{% trans 'Stage Name' %} {{stage.name }}
 {% trans 'Stage Order' %} {{stage.order }}</h3>
@@ -126,6 +266,6 @@
 {% endif %}
 
      {% endfor %}
-{% endif %}
+{% endif %} -->
 
 {% endblock %}
