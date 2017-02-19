@@ -2,12 +2,6 @@
 {% load i18n %}
 
 {% block page-title %}{{ scenario }} {% trans 'Schedules Info' %}{% endblock %}
- {%block extracss %}
-<link rel="stylesheet" type="text/css" href="/media/admin/css/forms.css"/>
-<link rel="stylesheet" type="text/css" href="/media/admin/css/base.css"/>
-<link rel="stylesheet" type="text/css" href="/media/admin/css/global.css"/>
-<link rel="stylesheet" type="text/css" href="/media/admin/css/widgets.css"/>
-    {% endblock %}
 
 {% block head %}
 {% if is_project %}
@@ -36,16 +30,53 @@
             
             {% csrf_token %}
             {{ form.media }}
-            {% for field in form %}
                <div class="col-sm-12 registration_field">
                {{ form.non_field_errors }}
                </div>
-               <div class="col-sm-12 registration_field">
-                 <div class="col-sm-3"> {{ field.label }}</div>
-                 <div class="col-sm-3">      {{ field }}</div>
-                 <div class="col-sm-6">      {{ field.errors }}</div>
+
+            <div class="col-sm-12 registration_field">
+                 <div class="col-sm-3"> {{ form.form.label }}</div>
+                 <div class="col-sm-3">      {{ form.form }}</div>
+                 <div class="col-sm-6">      {{ form.form.errors }}</div>
                </div>
-            {% endfor %}
+
+            <div class="col-sm-12 registration_field" style="display:{% if is_edit %} none{% endif %}">
+                 <div class="col-sm-3"> {{ form.form_type.label }}</div>
+                 <div class="col-sm-3">      {{ form.form_type }}</div>
+                 <div class="col-sm-6">      {{ form.form_type.errors }}</div>
+            </div>
+            <div id="hideable" style="display:{% if is_general %} none{% endif %}">
+                <div class="col-sm-12 registration_field">
+                 <div class="col-sm-3"> {{ form.name.label }}</div>
+                 <div class="col-sm-3">      {{ form.name }}</div>
+                 <div class="col-sm-6">      {{ form.name.errors }}</div>
+               </div>
+
+                <div class="col-sm-12 registration_field">
+                     <div class="col-sm-3"> {{ form.date_range_start.label }}</div>
+                     <div class="col-sm-3">      {{ form.date_range_start }}</div>
+                     <div class="col-sm-6">      {{ form.date_range_start.errors }}</div>
+                </div>
+
+                <div class="col-sm-12 registration_field">
+                     <div class="col-sm-3"> {{ form.date_range_end.label }}</div>
+                     <div class="col-sm-3">      {{ form.date_range_end }}</div>
+                     <div class="col-sm-6">      {{ form.date_range_end.errors }}</div>
+                </div>
+
+                <div class="col-sm-12 registration_field">
+                     <div class="col-sm-3"> {{ form.selected_days.label }}</div>
+                     <div class="col-sm-3">      {{ form.selected_days }}</div>
+                     <div class="col-sm-6">      {{ form.selected_days.errors }}</div>
+                </div>
+            </div>
+
+            <div class="col-sm-12 registration_field">
+                 <div class="col-sm-3"> {{ form.shared_level.label }}</div>
+                 <div class="col-sm-3">      {{ form.shared_level }}</div>
+                 <div class="col-sm-6">      {{ form.shared_level.errors }}</div>
+            </div>
+
         </div>
         
         <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
@@ -57,6 +88,17 @@
 {% endblock %}
 
 {%block extrascript %}
-<script type="text/javascript" src="/my_admin/jsi18n/"></script>
-<script type="text/javascript" src="/media/admin/js/core.js"></script>
+<script type="text/javascript">
+function Hide()
+{
+    if(document.getElementById('form_type').options[document.getElementById('form_type').selectedIndex].value == "0")
+    {
+        document.getElementById('hideable').style.display = 'none';
+
+    }else
+    {
+          document.getElementById('hideable').style.display = '';
+}
+}
+</script>
     {% endblock %}

@@ -1,8 +1,10 @@
+from PIL import Image
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.forms import forms
 
 from onadata.apps.fieldsight.models import Organization
 
@@ -35,3 +37,4 @@ class UserProfile(models.Model):
 
     def __unicode__(self):
         return u'Profile of user: %s' % self.user.username
+

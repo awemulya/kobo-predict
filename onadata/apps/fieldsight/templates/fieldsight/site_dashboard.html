@@ -4,7 +4,6 @@
 
 {% block page-title %}{% trans 'Site Dashboard' %}{% endblock %}
 {%block extracss %}
-
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
@@ -39,7 +38,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="abt-org">
-                            <h3>{{ obj.name }}</h3>
+                            <h3>{{ obj.name }}({{obj.identifier}})</h3>
                             <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
                             
                             <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
@@ -99,14 +98,19 @@
 
                         {% for user in peoples_involved %}
 
-                        <a href="#">
+                        <a href="{% url 'users:profile' user.id %}">
                             <div class="org-site">
                                 
                                 <div class="col-md-10">
                                       <div class="detail-org">
                                     <h3 class="pople-Name-org">{{user.get_full_name}}</h3>
-                                    <p class="address"><span><i class="fa fa-envelope" aria-hidden="true"></i></span>{{ user.email }}</p>
-                                    <p class="address"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ user.user_profile.phone }}</p>
+                                    <p class="address"><span><i class="fa fa-user" aria-hidden="true"></i>
+                                    </span>{{ user.username }}</p>
+                                    <p class="address"><span><i class="fa fa-envelope" aria-hidden="true">
+
+                                    </i></span>{{ user.email }}</p>
+                                    <p class="address"><span><i class="fa fa-phone" aria-hidden="true"></i>
+                                        </span>{{ user.user_profile.phone }}</p>
                                  {% with user.id|get_site_roles:obj.id as roles %}
                                     {% for role in roles %}
                                     <p class="contact"><span><i class="fa fa-minus" aria-hidden="true"></i></span>
@@ -144,7 +148,8 @@
             <div class="col-md-6">
                 <div class="outstanding-and-all">
                     <ul class="nav nav-tabs">
-                      <li class="active"><a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
+                      <li class="active">
+                          <a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
                         <li><a data-toggle="tab" href="#out-reject">Rejected ({{rejected|length}})</a></li>
                         <li><a data-toggle="tab" href="#out-flagged">Flagged ({{flagged|length}})</a></li>
                         <li><a data-toggle="tab" href="#out-approved">Approved ({{approved|length}})</a></li>
@@ -163,9 +168,9 @@
                                                 <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
-                                                <p class="address"><span>Form:</span>{{ form.fsform.xf.title}}</p>
-                                                <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
-                                                <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
+                                               <p class="address">{{ form.fsform.xf.title}}</p>
+                                                <p class="address">{{ form.submission_time }}</p>
+                                                <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
@@ -187,9 +192,9 @@
                                                  <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
-                                                <p class="address"><span>Form:</span>{{ form.fsform.xf.title}}</p>
-                                                <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
-                                                <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
+                                                <p class="address">{{ form.fsform.xf.title}}</p>
+                                                <p class="address">{{ form.submission_time }}</p>
+                                                <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
@@ -212,9 +217,9 @@
                                                  <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
-                                                <p class="address"><span>Form:</span>{{ form.fsform.xf.title}}</p>
-                                                <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
-                                                <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
+                                               <p class="address">{{ form.fsform.xf.title}}</p>
+                                                <p class="address">{{ form.submission_time }}</p>
+                                                <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
@@ -236,9 +241,9 @@
                                                 <h5 class="site-title-org">
                                                     <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                                         View Data</a></h5>
-                                                <p class="address"><span>Form:</span>{{ form.fsform.xf.title}}</p>
-                                                <p class="address"><span>Submission Time:</span>{{ form.submission_time }}</p>
-                                                <p class="contact"><span>Submitted By</span>{{ form.submitted_by }}</p>
+                                                <p class="address">{{ form.fsform.xf.title}}</p>
+                                                <p class="address">{{ form.submission_time }}</p>
+                                                <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>

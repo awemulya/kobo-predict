@@ -32,6 +32,16 @@ class LoginRequiredMixin(object):
         return login_required(view)
 
 
+class OrganizationOrProjectRequiredMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.organization and not request.project:
+            raise PermissionDenied()
+        if hasattr(self, 'check'):
+            if not getattr(request.organization, self.check)() or not getattr(request.organization, self.check)():
+                raise PermissionDenied()
+        return super(OrganizationOrProjectRequiredMixin, self).dispatch(request, *args, **kwargs)
+
+
 class OrganizationRequiredMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         if not request.organization:
@@ -239,7 +249,8 @@ class ProfileView(LoginRequiredMixin):
     def get_form(self, *args, **kwargs):
         form = super(ProfileView, self).get_form(*args, **kwargs)
         if self.request.user:
-            form.user = self.request.project
+            form.fields['first_name'].initial = self.request.user.first_name
+            form.fields['last_name'].initial = self.request.user.last_name
         return form
 
 
@@ -249,6 +260,7 @@ USURPERS = {
              'Organization Admin', 'Super Admin'],
     'KoboForms': ['Project Manager', 'Central Engineer', 'Organization Admin', 'Super Admin'],
     'Project': ['Project Manager', 'Organization Admin', 'Super Admin', 'Central Engineer'],
+    'ProjectOnly': ['Project Manager', 'Site Supervisor', 'Central Engineer'],
     'Organization': ['Organization Admin', 'Super Admin'],
     'admin': ['Super Admin'],
 }

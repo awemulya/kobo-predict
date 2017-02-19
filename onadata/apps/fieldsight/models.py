@@ -5,6 +5,8 @@ from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
 from jsonfield import JSONField
+
+from onadata.utils.CustomModelFields import IntegerRangeField
 from .static_lists import COUNTRIES
 
 
@@ -41,19 +43,22 @@ class ProjectType(models.Model):
 
 
 class Organization(models.Model):
-    name = models.CharField(max_length=255)
-    country = models.CharField(max_length=3, choices=COUNTRIES, default=u'NPL')
-    logo = models.ImageField(upload_to="logo", default="logo/default_org.png")
+    name = models.CharField("Organization Name", max_length=255)
     type = models.ForeignKey(OrganizationType, verbose_name='Type of Organization')
-    public_desc = models.TextField("Public Description", blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
-    location = PointField(geography=True, srid=4326, blank=True, null=True,)
-    phone = models.CharField(max_length=255, blank=True, null=True)
-    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField("Contact Number",max_length=255, blank=True, null=True)
     fax = models.CharField(max_length=255, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
     website = models.URLField(blank=True, null=True)
+    country = models.CharField(max_length=3, choices=COUNTRIES, default=u'NPL')
+    address = models.TextField(blank=True, null=True)
+    public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
+    logo = models.ImageField(upload_to="logo", default="logo/default_org.png")
     is_active = models.BooleanField(default=True)
+    location = PointField(geography=True, srid=4326, blank=True, null=True,)
+
+    class Meta:
+         ordering = ['-is_active', 'name', ]
 
     def __unicode__(self):
         return u'{}'.format(self.name)
@@ -97,20 +102,23 @@ class Organization(models.Model):
 class Project(models.Model):
     name = models.CharField(max_length=255)
     type = models.ForeignKey(ProjectType, verbose_name='Type of Project')
-    logo = models.ImageField(upload_to="logo", default="logo/default_org.png")
+    phone = models.CharField(max_length=255, blank=True, null=True)
+    fax = models.CharField(max_length=255, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    website = models.URLField(blank=True, null=True)
     donor = models.CharField(max_length=256, blank=True, null=True)
     public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
-    location = PointField(geography=True, srid=4326, blank=True, null=True)
-    phone = models.CharField(max_length=255, blank=True, null=True)
-    email = models.EmailField(blank=True, null=True)
-    fax = models.CharField(max_length=255, blank=True, null=True)
-    website = models.URLField(blank=True, null=True)
     organization = models.ForeignKey(Organization, related_name='projects')
+    logo = models.ImageField(upload_to="logo", default="logo/default_org.png")
     is_active = models.BooleanField(default=True)
+    location = PointField(geography=True, srid=4326, blank=True, null=True)
 
     objects = GeoManager()
+
+    class Meta:
+         ordering = ['-is_active', 'name', ]
 
     @property
     def latitude(self):
@@ -164,18 +172,23 @@ class Project(models.Model):
 
 
 class Site(models.Model):
+    identifier = models.CharField("ID", max_length=255)
     name = models.CharField(max_length=255)
     type = models.ForeignKey(ProjectType, verbose_name='Type of Site')
-    logo = models.ImageField(upload_to="logo", default="logo/default_site.png")
+    phone = models.CharField(max_length=255, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
     public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
-    location = PointField(geography=True, srid=4326, blank=True, null=True)
-    phone = models.CharField(max_length=255, blank=True, null=True)
     project = models.ForeignKey(Project, related_name='sites')
+    logo = models.ImageField(upload_to="logo", default="logo/default_site.png")
     is_active = models.BooleanField(default=True)
+    location = PointField(geography=True, srid=4326, blank=True, null=True)
 
     objects = GeoManager()
+
+    class Meta:
+         ordering = ['-is_active', 'name', ]
+         unique_together = [('identifier', 'project'), ]
 
     @property
     def latitude(self):

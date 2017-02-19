@@ -14,7 +14,23 @@
     {% load sorting_tags %}
     {% load filters %}
 
-    
+    <form method="post" action="{% url 'fieldsight:filter-users' %}">
+        {%csrf_token%}
+         <div class="col-sm-12 registration_field">
+             <div class="col-sm-5"><input type="text" name="name" placeholder="Search"></div>
+            <div class="col-sm-5">
+                <select name="role">
+                    <option value="0">{% trans 'Select' %}</option>
+                    {% for g in groups %}
+                    <option value="{{g.id}}">{{g.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+         <div class="col-sm-2">
+            <button class="btn btn-lg btn-primary registration__action" type="submit">{% trans 'Filter' %}</button>
+         </div>
+             </div>
+    </form>
     
       
       <div class="users-in-this-org">
@@ -29,7 +45,7 @@
         <div class="tab-content">
             <div id="grid-view" class="tab-pane fade in active">
                 {% autosort object_list as sorted_objects %}
-                {% autopaginate object_list 5 as paginated_objects %}
+                {% autopaginate object_list 100 as paginated_objects %}
 
                 {% for user in paginated_objects %}
                 <div class="col-md-3">
@@ -62,7 +78,7 @@
             </div>
             <div id="table-view" class="tab-pane fade">
                 {% autosort object_list as sorted_objects %}
-                {% autopaginate object_list 5 as paginated_objects %}
+                {% autopaginate object_list 100 as paginated_objects %}
          
                  <table class="table table-striped">
                      <thead>

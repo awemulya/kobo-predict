@@ -8,6 +8,7 @@ from django.conf import settings
 
 from registration import forms as registration_forms
 
+from onadata.apps.fieldsight.helpers import AdminImageWidget
 from onadata.utils.forms import HTML5BootstrapModelForm, KOModelForm
 from .models import Organization, Project, Site
 from onadata.apps.userrole.models import UserRole
@@ -19,8 +20,6 @@ USERNAME_INVALID_MESSAGE = _(
     'underscores (_).'
 )
 
-organization_list = [(org.id, org.name) for org in Organization.objects.all()]
-
 
 class RegistrationForm(registration_forms.RegistrationFormUniqueEmail):
 
@@ -29,7 +28,7 @@ class RegistrationForm(registration_forms.RegistrationFormUniqueEmail):
         self.fields['organization'].choices = [(org.id, org.name) for org in Organization.objects.all()]
         self.fields['organization'].empty_label = None
 
-    organization = forms.ChoiceField(widget = forms.Select())
+    organization = forms.ChoiceField(widget = forms.Select(), required=False)
     username = forms.RegexField(
         regex=USERNAME_REGEX,
         max_length=USERNAME_MAX_LENGTH,
@@ -71,8 +70,18 @@ class OrganizationForm(forms.ModelForm):
         exclude = []
         # exclude = ['organizaton']
         widgets = {
-        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400})
+        'location': forms.HiddenInput(),
+        'address': forms.TextInput(),
+        'logo': AdminImageWidget()
         }
+
+
+    def clean(self):
+        lat = self.data.get("Longitude","85.3240")
+        long = self.data.get("Latitude","27.7172")
+        p = Point(float(lat), float(long),srid=4326)
+        self.cleaned_data["location"] = p
+        super(OrganizationForm, self).clean()
 
 
 class SetOrgAdminForm(forms.ModelForm):
@@ -188,6 +197,7 @@ class SetCentralEngForm(HTML5BootstrapModelForm, KOModelForm):
 
 
 
+
 class ProjectForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
@@ -201,8 +211,17 @@ class ProjectForm(forms.ModelForm):
         exclude = []
         organization_filters = ['organization']
         widgets = {
-        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400})
+        'address': forms.TextInput(),
+        'location': forms.HiddenInput(),
+        'logo': AdminImageWidget()
         }
+
+    def clean(self):
+        lat = self.data.get("Longitude","85.3240")
+        long = self.data.get("Latitude","27.7172")
+        p = Point(float(lat), float(long),srid=4326)
+        self.cleaned_data["location"] = p
+        super(ProjectForm, self).clean()
 
 
 class SiteForm(forms.ModelForm):
@@ -218,7 +237,20 @@ class SiteForm(forms.ModelForm):
         exclude = []
         project_filters = ['project']
         widgets = {
-        'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400})
+        'address': forms.TextInput(),
+        # 'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
+        'location': forms.HiddenInput(),
+        'logo': AdminImageWidget()
         }
 
+    def clean(self):
+        lat = self.data.get("Longitude","85.3240")
+        long = self.data.get("Latitude","27.7172")
+        p = Point(float(lat), float(long),srid=4326)
+        self.cleaned_data["location"] = p
+        super(SiteForm, self).clean()
 
+
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField()

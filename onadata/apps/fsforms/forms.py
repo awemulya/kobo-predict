@@ -3,7 +3,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.logger.models import XForm
-from .models import FieldSightXF, Stage, Schedule, FormGroup, FORM_STATUS
+from .models import FieldSightXF, Stage, Schedule, FormGroup, FORM_STATUS, FieldSightFormLibrary
 
 
 class AssignSettingsForm(forms.ModelForm):
@@ -66,6 +66,20 @@ class FSFormForm(forms.ModelForm):
         model = FieldSightXF
 
 
+class GeneralFSForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(GeneralFSForm, self).__init__(*args, **kwargs)
+        self.fields['xf'].choices = [(obj.id, obj.title) for obj in XForm.objects.all()]
+        self.fields['xf'].empty_label = None
+        self.fields['xf'].label = "Form"
+
+
+    class Meta:
+        fields = ['xf','shared_level']
+        model = FieldSightXF
+
+
 class StageForm(forms.ModelForm):
 
     class Meta:
@@ -81,9 +95,12 @@ class MainStageEditForm(forms.ModelForm):
 
 
 class SubStageEditForm(forms.ModelForm):
-    forms_list = [(obj.id, obj.title) for obj in XForm.objects.all()]
-    form = forms.ChoiceField(widget = forms.Select(),
-                     choices = forms_list, required=False,)
+    form = forms.ChoiceField(widget = forms.Select(), required=False,)
+    def __init__(self, *args, **kwargs):
+        super(SubStageEditForm, self).__init__(*args, **kwargs)
+        self.fields['form'].choices = [(obj.id, obj.title) for obj in XForm.objects.all()]
+        self.fields['form'].empty_label = None
+
 
     class Meta:
         exclude = ['group', 'stage', 'site', 'shared_level', 'project', 'ready', 'order']
@@ -91,9 +108,13 @@ class SubStageEditForm(forms.ModelForm):
 
 
 class AddSubSTageForm(forms.ModelForm):
-    forms_list = [(obj.id, obj.title) for obj in XForm.objects.all()]
-    form = forms.ChoiceField(widget = forms.Select(),
-                     choices = forms_list, required=False,)
+    form = forms.ChoiceField(widget = forms.Select(), required=False,)
+    def __init__(self, *args, **kwargs):
+        super(AddSubSTageForm, self).__init__(*args, **kwargs)
+        self.fields['form'].choices = [(obj.id, obj.title) for obj in XForm.objects.all()]
+        self.fields['form'].empty_label = None
+
+
     class Meta:
         exclude = ['stage', 'group', 'shared_level', 'site', 'project', 'ready']
         model = Stage
@@ -142,12 +163,17 @@ BIRTH_YEAR_CHOICES = ('1980', '1981', '1982')
 
 
 class ScheduleForm(forms.ModelForm):
-    forms_list = [(obj.id, obj.title) for obj in XForm.objects.all()]
-    form = forms.ChoiceField(widget = forms.Select(),
-                     choices = forms_list, required=False,)
+    form = forms.ChoiceField(widget = forms.Select(), required=False,)
+    form_type = forms.ChoiceField("Select Form Type",widget = forms.Select(
+        attrs={'id':'form_type','onchange':'Hide()'}), required=False,)
+    def __init__(self, *args, **kwargs):
+        super(ScheduleForm, self).__init__(*args, **kwargs)
+        self.fields['form'].choices = [(obj.id, obj.title) for obj in XForm.objects.all()]
+        self.fields['form_type'].choices = [(0, "General"),(1, "Scheduled")]
+        self.fields['form'].empty_label = None
 
     class Meta:
-        exclude = ['site','project']
+        fields = ['form', 'form_type', 'name','date_range_start','date_range_end','selected_days','shared_level']
         model = Schedule
         widgets = { 'selected_days': forms.CheckboxSelectMultiple,
                     'date_range_start': SelectDateWidget,

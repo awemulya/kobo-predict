@@ -46,7 +46,7 @@ class UserView(object):
     form_class = UserForm
 
 
-class UserCreate(AjaxableResponseMixin, UserView, CreateView):
+class UserCreate(LoginRequiredMixin, AjaxableResponseMixin, UserView, CreateView):
     def get_template_names(self):
         return ['users/create_user.html']
 

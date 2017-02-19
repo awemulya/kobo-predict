@@ -30,7 +30,7 @@ from .views import (
     add_supervisor,
     add_central_engineer,
     CreateUserView,
-    UserListView, site_images)
+    UserListView, site_images, filter_users, upload_sites)
 
 router = routers.SimpleRouter()
 # router.register(r'api/organization-type', OrganizationTypeViewSet)
@@ -65,11 +65,12 @@ urlpatterns = [
 
 
     # url(r'^organization/search/$', organization_search, name='search-org'),
+    url(r'^upload/$', upload_sites, name='site-upload'),
     url(r'^project/delete/(?P<pk>\d+)/$', ProjectDeleteView.as_view(), name='project-delete'),
     url(r'^project/alter-status/(?P<pk>\d+)/$', alter_proj_status, name='alter_proj_status'),
     url(r'^project/add-proj-manager/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
     url(r'^project/add-central-engineer/(?P<pk>\d+)/$', add_central_engineer, name='add_central_engineer'),
-
+    url(r'^api/project-sites/(?P<pk>\d+)/$', SiteViewSet.as_view({'get': 'list'}), name='project_sites'),
 
 
     url(r'^site/$', SiteListView.as_view(), name='sites-list'),
@@ -87,6 +88,7 @@ urlpatterns = [
     url(r'^accounts/create/$', CreateUserView.as_view(
         form_class=RegistrationForm), name='user-create'),
     url(r'^userlist/$', UserListView.as_view(), name='user-list'),
+    url(r'^filter-users/$', filter_users, name='filter-users'),
     url(r'fcm/', include('fcm.urls')),
 
     # kobo form

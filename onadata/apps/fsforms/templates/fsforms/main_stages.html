@@ -173,6 +173,7 @@
     {% for stage in objlist %}
   
     <div class="col-md-4">
+        <h3><a class="btn" href="{% url 'forms:edit-main-stage' stage.pk site.pk 0 %}">Edit</a></h3>
         <a href="{% url 'forms:stages-detail' stage.pk %}">
           <div class="stages-main-block">
             <h3><span>Stage:</span> <b>{{stage.order}}</b></h3>

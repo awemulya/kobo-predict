@@ -43,7 +43,8 @@ from .views import (
     site_survey,
     create_schedule,
     setup_project_stages, project_stage_add, instance_detail, alter_answer_status, project_survey,
-    project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, responses)
+    project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, responses,
+    MyOwnFormsListView, share_level, site_general, edit_general, project_general)
 
 # router = routers.DefaultRouter()
 # router.register(r'api/groups', GroupViewSet)
@@ -57,7 +58,7 @@ from .views import (
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
         # url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
-        url(r'^assigned/$', FormsListView.as_view(), name='forms-list'),
+        url(r'^assigned/$', MyOwnFormsListView.as_view(), name='forms-list'),
         # assigned form list to a user(site supervisor)
         url(r'^assigned-form-list/$', AssignedFormsListView.as_view(), name='assigned-form-list'),
 
@@ -80,6 +81,7 @@ urlpatterns = [
         url(r'^schedule/add/(?P<site_id>\d+)/$', create_schedule, name='schedule-add'),
         # url(r'^schedule/(?P<pk>\d+)/$', ScheduleUpdateView.as_view(), name='schedule-edit'),
         url(r'^schedule/(?P<id>\d+)/$', edit_schedule, name='schedule-edit'),
+        url(r'^general/(?P<id>\d+)/$', edit_general, name='edit-general'),
         url(r'^schedule-add-form/(?P<pk>\d+)/$', schedule_add_form, name='schedule-add-form'),
 
         url(r'^project/schedule/add/(?P<id>\d+)/$', project_create_schedule, name='project-schedule-add'),
@@ -88,6 +90,8 @@ urlpatterns = [
         url(r'^setup-site-stage/(?P<site_id>\d+)$', setup_site_stages, name='setup-site-stages'),
         url(r'^setup-project-stage/(?P<id>\d+)$', setup_project_stages, name='setup-project-stages'),
         url(r'^site-survey/(?P<site_id>\d+)$', site_survey, name='site-survey'),
+        url(r'^site-general/(?P<site_id>\d+)$', site_general, name='site-general'),
+        url(r'^project-general/(?P<project_id>\d+)$', project_general, name='project-general'),
         url(r'^project-survey/(?P<project_id>\d+)$', project_survey, name='project-survey'),
 
         url(r'^assign/(?P<pk>\d+)/$', assign, name='assign'),
@@ -162,6 +166,7 @@ urlpatterns = urlpatterns + [
     url(r'^api/site-main-stages/(?P<site_id>\d+)$', SiteMainStageViewSet.as_view({'get': 'list'}), name='main-stage-list'),
     url(r'^api/site-schedules/(?P<site_id>\d+)$', ScheduleViewset.as_view({'get': 'list'}), name='schedule-list'),
     url(r'^api/sub-stages/(?P<main_stage>\d+)$', SubStageViewSet.as_view({'get': 'list'}), name='sub-stage-list'),
+    url(r'^share/(?P<id>[\w-]+)/(?P<counter>\d+)$', share_level, name='share'),
 
 ]
 

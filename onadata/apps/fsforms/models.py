@@ -8,24 +8,14 @@ from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 
-from onadata.apps.fieldsight.models import Site, Project
+from onadata.apps.fieldsight.models import Site, Project, Organization
 from onadata.apps.fsforms.utils import send_message
 from onadata.apps.logger.models import XForm
 from onadata.apps.viewer.models import ParsedInstance
+from onadata.utils.CustomModelFields import IntegerRangeField
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
 FORM_STATUS = [(0, 'Outstanding'), (1, 'Rejected'), (2, 'Flagged'), (3, 'Approved'), ]
-
-
-class IntegerRangeField(models.IntegerField):
-    def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
-        self.min_value, self.max_value = min_value, max_value
-        models.IntegerField.__init__(self, verbose_name, name, **kwargs)
-
-    def formfield(self, **kwargs):
-        defaults = {'min_value': self.min_value, 'max_value': self.max_value}
-        defaults.update(kwargs)
-        return super(IntegerRangeField, self).formfield(**defaults)
 
 
 class FormGroup(models.Model):
@@ -140,12 +130,12 @@ class Days(models.Model):
 
 
 class Schedule(models.Model):
-    name = models.CharField("Schedule Name", max_length=256)
+    name = models.CharField("Schedule Name", max_length=256, blank=True, null=True)
     site = models.ForeignKey(Site, related_name="schedules", null=True, blank=True)
     project = models.ForeignKey(Project, related_name="schedules", null=True, blank=True)
     date_range_start = models.DateField(default=datetime.date.today)
     date_range_end = models.DateField(default=datetime.date.today)
-    selected_days = models.ManyToManyField(Days,related_name='days')
+    selected_days = models.ManyToManyField(Days,related_name='days',blank=True,)
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -153,7 +143,7 @@ class Schedule(models.Model):
         db_table = 'fieldsight_forms_schedule'
         verbose_name = _("Form Schedule")
         verbose_name_plural = _("Form Schedules")
-        ordering = ("date_range_start",)
+        ordering = ('-date_range_start', 'date_range_end')
 
     def form_exists(self):
         return True if FieldSightXF.objects.filter(schedule=self).count() > 0 else False
@@ -270,3 +260,14 @@ class FieldSightParsedInstance(ParsedInstance):
         return fspi, created
 
 
+class FieldSightFormLibrary(models.Model):
+    xf = models.ForeignKey(XForm)
+    is_global = models.BooleanField(default=False)
+    shared_date = models.DateTimeField(auto_now=True)
+    organization = models.ForeignKey(Organization, null=True, blank=True)
+    project = models.ForeignKey(Project, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("Library")
+        verbose_name_plural = _("Library")
+        ordering = ("-shared_date",)

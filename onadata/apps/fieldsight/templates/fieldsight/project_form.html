@@ -12,11 +12,7 @@
 
 {% block content %}
 
-    {% if form.is_multipart %}
     <form enctype="multipart/form-data" method="post" id='form'>
-    {% else %}
-        <form method="post">
-    {% endif %}
         <div class="">
             <div class="col-sm-12 registration_field">
                {{ form.non_field_errors }}
@@ -25,17 +21,7 @@
             {% csrf_token %}
              {{ form.media }}
              <div class="col-sm-12 registration_field">
-                {% ifequal scenario "Edit" %}
-                 <div class="col-sm-3"> Logo</div>
-                 <div class="col-sm-9">
-                <img src="{{ form.instance.logo.url }}" title="{{ form.instance.logo}}" />
-                     </div>
-                        {% endifequal %}
-                </div>
             {% for field in form %}
-               <div class="col-sm-12 registration_field">
-               {{ form.non_field_errors }}
-               </div>
                <div class="col-sm-12 registration_field">
                  <div class="col-sm-2"> {{ field.label }}</div>
                  <div class="col-sm-4">      {{ field }}</div>
@@ -43,12 +29,43 @@
                </div>
             {% endfor %}
         </div>
-        
+
+            <div class="col-sm-12 registration_field">
+                  <div class="col-sm-3">Latitude:</div>
+                      <div class="col-sm-3">
+	                    <input type="text" id="Latitude" name="Latitude" class="LatLon"/>
+                      </div>
+               </div>
+            <div class="col-sm-12 registration_field">
+                  <div class="col-sm-3">Longitude:</div>
+                      <div class="col-sm-3">
+	                    <input type="text" id="Longitude" name="Longitude" class="LatLon"/>
+                      </div>
+               </div>
+
+        </div>
+        <div id="map" style="height:500px; width:500px; cursor:pointer;"></div>
+
         <!-- <input type="submit" class='btn btn-info btn-raised' value="{% trans 'Save' %}"> -->
         <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
         {% if form.instance.id %}
-            <a href="{% url 'fieldsight:project-delete' form.instance.id %}" class="btn btn-danger btn-raised">{% trans 'Delete' %}</a>
+            <a href="{% url 'fieldsight:project-delete' form.instance.id %}" class="btn btn-danger btn-raised">
+                {% trans 'Delete' %}</a>
         {% endif %}
+            </div>
     </form>
 
 {% endblock %}
+
+
+    {%block extrascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
+    <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
+  <script type="text/javascript">
+     var static_url ="{{ STATIC_URL }}";
+     var elat = "{{form.instance.latitude}}";
+     var elong = "{{form.instance.longitude}}";
+    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/addmarker.js"></script>
+{% endblock %}
+

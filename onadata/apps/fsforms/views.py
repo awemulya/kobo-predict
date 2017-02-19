@@ -1,6 +1,7 @@
 from bson import json_util
 from django.conf import settings
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
@@ -22,11 +23,11 @@ from onadata.libs.utils.user_auth import helper_auth_helper
 from onadata.libs.utils.log import audit_log, Actions
 from onadata.libs.utils.logger_tools import response_with_mimetype_and_name
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectMixin, \
-    CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin
+    CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin, OrganizationOrProjectRequiredMixin, ProjectView
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
-    AlterAnswerStatus, MainStageEditForm, SubStageEditForm
-from .models import FieldSightXF, Stage, Schedule, FormGroup
+    AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm
+from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -42,22 +43,98 @@ class FSFormView(object):
     form_class = FSFormForm
 
 
+class OwnListView(ListView):
+    def get_template_names(self):
+        return ['fsforms/my_form_list.html']
+    def get_queryset(self):
+        return XForm.objects.filter(user=self.request.user).order_by('title')
+
+
+class LibraryFormView(object):
+    model = FieldSightFormLibrary
+    success_url = reverse_lazy('forms:library-forms-list')
+
+
 class MyLibraryListView(ListView):
+
+    def get_queryset(self):
+        if self.request.project:
+            return super(MyLibraryListView, self).\
+                get_queryset().filter(Q(is_global=True)
+                                      | Q(project=self.request.project)
+                                      |Q(organization=self.request.organization))
+        elif self.request.organization:
+            return super(MyLibraryListView, self).\
+                get_queryset().filter(Q(is_global=True)
+                                      |Q(organization=self.request.organization))
+        else:
+            return super(MyLibraryListView, self).get_queryset()
     def get_template_names(self):
         return ['fsforms/library_form_list.html']
-    def get_queryset(self):
-        return XForm.objects.all()
 
 
-class LibraryFormsListView(FSFormView, LoginRequiredMixin, MyLibraryListView):
+class LibraryFormsListView(LibraryFormView, MyLibraryListView, ProjectMixin):
     pass
 
+
+class MyOwnFormsListView(FSFormView, OwnListView):
+    pass
 
 class FormView(object):
     model = FieldSightXF
     success_url = reverse_lazy('forms:forms-list')
     form_class = FSFormForm
 
+
+@login_required
+@require_POST
+def share_level(request, id, counter):
+    xf = XForm.objects.get(id_string=id)
+    # sl = dict(request.POST).get('sl')[int(counter)-1]
+    sl = request.POST.get('sl')
+    if not FieldSightFormLibrary.objects.filter(xf__id_string=id).exists():
+        form = FieldSightFormLibrary()
+        form.xf= xf
+    else:
+        form = FieldSightFormLibrary.objects.get(xf__id_string=id)
+    if not sl:
+        if form.pk:
+            form.delete()
+            messages.add_message(request, messages.WARNING, '{0} Form Shared Removed'.format(xf.title))
+    else:
+        if sl == '0':
+            form.is_global = True
+            form.organization = None
+            form.project = None
+            form.save()
+            messages.add_message(request, messages.INFO, '{0} Shared Globally '.format(xf.title))
+        elif sl == '1':
+            form.is_global = False
+            if hasattr(request,"project") and request.project:
+                form.organization = request.project.organization
+                form.project = None
+                form.save()
+                messages.add_message(request, messages.INFO, '{0} Shared To Organization Level'.format(xf.title))
+            elif hasattr(request,"organization") and request.organization:
+                form.organization = request.organization
+                form.project = None
+                form.save()
+                messages.add_message(request, messages.INFO, '{0} Shared To Organization Level'.format(xf.title))
+            else:
+                messages.add_message(request, messages.WARNING, '{0} Not Shared. You Cannot Share to Project Level'.
+                                     format(xf.title))
+        else:
+            if hasattr(request,"project") and request.project:
+                form.is_global  = False
+                form.organization = None
+                form.project = request.project
+                form.save()
+                messages.add_message(request, messages.INFO, '{0} Shared to Project Level '.format(xf.title))
+            else:
+                messages.add_message(request, messages.WARNING, '{0} Form Not Shared. You Cannot Share to Project Level'
+                                     .format(xf.title))
+
+    return HttpResponseRedirect(reverse('forms:forms-list'))
 
 class MyProjectListView(ListView):
     def get_template_names(self):
@@ -115,9 +192,7 @@ class StageUpdateView(StageView, LoginRequiredMixin, KoboFormsMixin, UpdateView)
 class StageDeleteView(StageView, LoginRequiredMixin, KoboFormsMixin, DeleteView):
     pass
 
-
-@login_required
-# @group_required('KoboForms')
+@group_required("Project")
 def add_sub_stage(request, pk=None):
     stage = get_object_or_404(
         Stage, pk=pk)
@@ -143,9 +218,7 @@ def add_sub_stage(request, pk=None):
     form = AddSubSTageForm(instance=instance)
     return render(request, "fsforms/add_sub_stage.html", {'form': form, 'obj': stage})
 
-
-@login_required
-# @group_required('KoboForms')
+@group_required("Project")
 def stage_add(request, site_id=None):
     site = get_object_or_404(
         Site, pk=site_id)
@@ -162,17 +235,13 @@ def stage_add(request, site_id=None):
     form = StageForm(instance=instance)
     return render(request, "fsforms/stage_form.html", {'form': form, 'obj': site})
 
-
-@login_required
-# @group_required('KoboForms')
+@group_required("Project")
 def responses(request, site_id=None):
     schedules = FieldSightXF.objects.filter(site_id=site_id, xf__isnull=False, is_scheduled=True)
     stages = Stage.objects.filter(stage__isnull=True, site_id=site_id).order_by('order')
     return render(request, "fsforms/responses_list.html", {'schedules': schedules, 'stages':stages, 'site': site_id})
 
-
-@login_required
-# @group_required('KoboForms')
+@group_required("Project")
 def project_stage_add(request, id=None):
     project = get_object_or_404(
         Project, pk=id)
@@ -190,8 +259,7 @@ def project_stage_add(request, id=None):
     return render(request, "fsforms/project/stage_form.html", {'form': form, 'obj': project})
 
 
-@login_required
-@group_required('KoboForms')
+@group_required("Project")
 def stage_details(request, pk=None):
     stage = get_object_or_404(
         Stage, pk=pk)
@@ -202,7 +270,7 @@ def stage_details(request, pk=None):
     return render(request, "fsforms/stage_detail.html", {'obj': stage, 'object_list':object_list, 'form':form})
 
 
-@login_required
+@group_required("Project")
 def stage_add_form(request, pk=None):
     stage = get_object_or_404(
         Stage, pk=pk)
@@ -228,7 +296,7 @@ def stage_add_form(request, pk=None):
             form = AssignFormToStageForm()
         return render(request, "fsforms/stage_add_form.html", {'form': form, 'obj': stage})
 
-@login_required
+@group_required("Project")
 def edit_main_stage(request, stage, id, is_project):
     stage = get_object_or_404(Stage, pk=stage)
     if request.method == 'POST':
@@ -236,14 +304,14 @@ def edit_main_stage(request, stage, id, is_project):
         if form.is_valid():
             form.save()
             messages.info(request, 'Stage Updated.')
-            if is_project:
+            if is_project == '1':
                 return HttpResponseRedirect(reverse("forms:setup-project-stages", kwargs={'id': id}))
             else:
                 return HttpResponseRedirect(reverse("forms:setup-site-stages", kwargs={'site_id': id}))
     form = MainStageEditForm(instance=stage)
     return render(request, "fsforms/main_stage_edit.html", {'form': form, 'id': id, 'is_project':is_project,'scenario':"Update"})
 
-@login_required
+@group_required("Project")
 def edit_sub_stage(request, stage, id, is_project):
     stage = get_object_or_404(Stage, pk=stage)
     if request.method == 'POST':
@@ -274,25 +342,31 @@ def edit_sub_stage(request, stage, id, is_project):
             form.fields['form'].initial= FieldSightXF.objects.get(stage=stage).xf.id
     return render(request, "fsforms/sub_stage_edit.html", {'form': form, 'id': id, 'is_project':is_project,'scenario':"Update"})
 
-@login_required
+@group_required("Project")
 def create_schedule(request, site_id):
+    form = ScheduleForm()
     site = get_object_or_404(
         Site, pk=site_id)
     if request.method == 'POST':
         form = ScheduleForm(data=request.POST)
         if form.is_valid():
+            form_type = int(form.cleaned_data.get('form_type',0))
+            xf = int(form.cleaned_data.get('form', 0))
+            if not form_type:
+                if xf:
+                    FieldSightXF.objects.get_or_create(xf_id=xf, is_scheduled=False, is_staged=False, site=site)
+                    messages.info(request, 'General Form  Saved.')
+                return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': site.id}))
             schedule = form.save()
             schedule.site = site
             schedule.save()
-            form = int(form.cleaned_data.get('form',0))
-            if form:
-                FieldSightXF.objects.create(xf_id=form, is_scheduled=True,schedule=schedule,site=site)
+            if xf:
+                FieldSightXF.objects.create(xf_id=xf, is_scheduled=True,schedule=schedule,site=site)
             messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
             return HttpResponseRedirect(reverse("forms:site-survey", kwargs={'site_id': site.id}))
-    form = ScheduleForm()
-    return render(request, "fsforms/schedule_form.html", {'form': form, 'obj': site})
+    return render(request, "fsforms/schedule_form.html", {'form': form, 'obj': site, 'is_general':True})
 
-@login_required
+@group_required("Project")
 def site_survey(request, site_id):
     objlist = Schedule.objects.filter(site__id=site_id)
     if not len(objlist):
@@ -300,84 +374,115 @@ def site_survey(request, site_id):
     return render(request, "fsforms/schedule_list.html", {'object_list': objlist, 'site':Site.objects.get(pk=site_id)})
 
 
-@login_required
+@group_required("Project")
+def site_general(request, site_id):
+    objlist = FieldSightXF.objects.filter(site__id=site_id, is_staged=False, is_scheduled=False)
+    if not len(objlist):
+        return HttpResponseRedirect(reverse("forms:schedule-add", kwargs={'site_id': site_id}))
+    return render(request, "fsforms/general_list.html", {'object_list': objlist, 'site':Site.objects.get(pk=site_id)})
+
+
+@group_required("Project")
+def project_general(request, project_id):
+    objlist = FieldSightXF.objects.filter(project__id=project_id, is_staged=False, is_scheduled=False)
+    if not len(objlist):
+        return HttpResponseRedirect(reverse("forms:project-schedule-add", kwargs={'id': project_id}))
+    return render(request, "fsforms/general_list.html", {'object_list': objlist, 'project':Project.objects.get(pk=project_id)})
+
+
+@group_required("Project")
 def project_create_schedule(request, id):
     project = get_object_or_404(
         Project, pk=id)
     if request.method == 'POST':
         form = ScheduleForm(data=request.POST)
         if form.is_valid():
+            form_type = int(form.cleaned_data.get('form_type',0))
+            xf = int(form.cleaned_data.get('form',0))
+            if not form_type:
+                if xf:
+                    FieldSightXF.objects.get_or_create(xf_id=xf, is_scheduled=False, is_staged=False, project=project)
+                    messages.info(request, 'General Form  Saved.')
+                return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': project.id}))
             schedule = form.save()
             schedule.project = project
             schedule.save()
-            form = int(form.cleaned_data.get('form',0))
-            if form:
-                FieldSightXF.objects.create(xf_id=form, is_scheduled=True,schedule=schedule,project=project)
+            if xf:
+                FieldSightXF.objects.create(xf_id=xf, is_scheduled=True,schedule=schedule,project=project)
             messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
             return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': project.id}))
     form = ScheduleForm()
-    return render(request, "fsforms/schedule_form.html", {'form': form, 'obj': project, 'is_project':True})
+    return render(request, "fsforms/schedule_form.html",
+                  {'form': form, 'obj': project, 'is_project':True, 'is_general':True})
 
-@login_required
+@group_required("Project")
 def project_edit_schedule(request, id):
     schedule = get_object_or_404(
         Schedule, pk=id)
     if request.method == 'POST':
-        form = ScheduleForm(data=request.POST)
+        form = ScheduleForm(data=request.POST, instance=schedule)
         if form.is_valid():
-            schedule.name = form.cleaned_data['name']
-            schedule.date_range_start = form.cleaned_data['date_range_start']
-            schedule.date_range_end = form.cleaned_data['date_range_end']
-            schedule.selected_days.clear()
-            schedule.selected_days = form.cleaned_data['selected_days']
-            schedule.shared_level = form.cleaned_data['shared_level']
-            schedule.save()
-            form = int(form.cleaned_data.get('form',0))
-            if form:
+            form.save()
+            xf = int(form.cleaned_data.get('form',0))
+            if xf:
                 if FieldSightXF.objects.filter(project=schedule.project, schedule=schedule, is_scheduled=True).exists():
                     fsxform = FieldSightXF.objects.get(project=schedule.project, schedule=schedule, is_scheduled=True)
-                    fsxform.xf_id = form
+                    fsxform.xf_id = xf
                     fsxform.save()
                 else:
-                    FieldSightXF.objects.create(xf_id=form, is_scheduled=True,schedule=schedule,project=schedule.project)
+                    FieldSightXF.objects.create(xf_id=xf, is_scheduled=True,schedule=schedule,project=schedule.project)
             messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
             return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': schedule.project.id}))
     form = ScheduleForm(instance=schedule)
     if FieldSightXF.objects.filter(schedule=schedule).exists():
         if FieldSightXF.objects.get(schedule=schedule).xf:
             form.fields['form'].initial= FieldSightXF.objects.get(schedule=schedule).xf.id
-    return render(request, "fsforms/schedule_form.html", {'form': form, 'obj': schedule.project, 'is_project':True})
+    return render(request, "fsforms/schedule_form.html",
+                  {'form': form, 'obj': schedule.project, 'is_project':True, 'is_general':False, 'is_edit':True})
 
 
-@login_required
+@group_required("Project")
 def edit_schedule(request, id):
     schedule = get_object_or_404(
         Schedule, pk=id)
     if request.method == 'POST':
-        form = ScheduleForm(data=request.POST)
+        form = ScheduleForm(data=request.POST, instance=schedule)
         if form.is_valid():
-            schedule.name = form.cleaned_data['name']
-            schedule.date_range_start = form.cleaned_data['date_range_start']
-            schedule.date_range_end = form.cleaned_data['date_range_end']
-            schedule.selected_days.clear()
-            schedule.selected_days = form.cleaned_data['selected_days']
-            schedule.shared_level = form.cleaned_data['shared_level']
-            schedule.save()
-            form = int(form.cleaned_data.get('form',0))
-            if form:
+            form.save()
+            xf = int(form.cleaned_data.get('form',0))
+            if xf:
                 if FieldSightXF.objects.filter(site=schedule.site, schedule=schedule, is_scheduled=True).exists():
                     fsxform = FieldSightXF.objects.get(site=schedule.site, schedule=schedule, is_scheduled=True)
-                    fsxform.xf_id = form
+                    fsxform.xf_id = xf
                     fsxform.save()
                 else:
-                    FieldSightXF.objects.create(xf_id=form, is_scheduled=True,schedule=schedule,site=schedule.site)
+                    FieldSightXF.objects.create(xf_id=xf, is_scheduled=True,schedule=schedule,site=schedule.site)
             messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
             return HttpResponseRedirect(reverse("forms:site-survey", kwargs={'site_id': schedule.site.id}))
     form = ScheduleForm(instance=schedule)
     if FieldSightXF.objects.filter(schedule=schedule).exists():
         if FieldSightXF.objects.get(schedule=schedule).xf:
             form.fields['form'].initial= FieldSightXF.objects.get(schedule=schedule).xf.id
-    return render(request, "fsforms/schedule_form.html", {'form': form, 'obj': schedule.site, 'is_project':False})
+    return render(request, "fsforms/schedule_form.html",
+                  {'form': form, 'obj': schedule.site, 'is_project':False, 'is_general':False, 'is_edit':True})
+
+
+
+@group_required("Project")
+def edit_general(request, id):
+    fsxform = get_object_or_404(
+        FieldSightXF, pk=id)
+    if request.method == 'POST':
+        form = GeneralFSForm(data=request.POST,instance=fsxform)
+        if form.is_valid():
+            form.save()
+            messages.info(request, 'General Form Updated')
+            if fsxform.site:
+                return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': fsxform.site.id}))
+            return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fsxform.project.id}))
+    form = GeneralFSForm(instance=fsxform)
+    is_project = True if fsxform.project else False
+    return render(request, "fsforms/general_form.html", {'form': form,'is_project':is_project})
 
 
 class ScheduleView(object):
@@ -402,8 +507,7 @@ class ScheduleCreateView(ScheduleView, LoginRequiredMixin, KoboFormsMixin, Creat
 #     pass
 
 
-@login_required
-@group_required('KoboForms')
+@group_required("Project")
 def schedule_add_form(request, pk=None):
     schedule = get_object_or_404(
         Schedule, pk=pk)
@@ -452,20 +556,15 @@ class GroupDeleteView(ScheduleView,LoginRequiredMixin, KoboFormsMixin, DeleteVie
 
 
 
-@login_required
-# @group_required('KoboForms')
+@group_required("Project")
 def site_forms(request, site_id=None):
     return render(request, "fsforms/site_forms_ng.html", {'site_id': site_id, 'angular_url':settings.ANGULAR_URL})
 
-
-@login_required
-# @group_required('KoboForms')
+@group_required("Project")
 def site_stages(request, site_id=None):
     return render(request, "fsforms/site_stages_ng.html", {'site_id': site_id, 'angular_url':settings.ANGULAR_URL})
 
-
-@login_required
-@group_required('KoboForms')
+@group_required("Project")
 def assign(request, pk=None):
     if request.method == 'POST':
         field_sight_form = get_object_or_404(
@@ -481,9 +580,7 @@ def assign(request, pk=None):
         form = AssignSettingsForm(instance=field_sight_form, project=project)
     return render(request, "fsforms/assign.html", {'form': form})
 
-
-@login_required
-@group_required('KoboForms')
+@group_required("Project")
 def fill_form_type(request, pk=None):
     field_sight_form = get_object_or_404(
         FieldSightXF, pk=pk)
@@ -507,9 +604,7 @@ def fill_form_type(request, pk=None):
         form = FormTypeForm()
     return render(request, "fsforms/stage_or_schedule.html", {'form': form, 'obj': field_sight_form})
 
-
-@login_required
-@group_required('KoboForms')
+@group_required("Project")
 def fill_details_stage(request, pk=None):
     field_sight_form = get_object_or_404(
         FieldSightXF, pk=pk)
@@ -524,8 +619,7 @@ def fill_details_stage(request, pk=None):
     return render(request, "fsforms/form_details_stage.html", {'form': form})
 
 
-@login_required
-@group_required('KoboForms')
+@group_required("Project")
 def fill_details_schedule(request, pk=None):
     field_sight_form = get_object_or_404(
         FieldSightXF, pk=pk)
@@ -539,7 +633,7 @@ def fill_details_schedule(request, pk=None):
         form = FormScheduleDetailsForm(instance=field_sight_form)
     return render(request, "fsforms/form_details_schedule.html", {'form': form})
 
-
+@group_required("Project")
 def setup_site_stages(request, site_id):
     objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True,site__id=site_id)
     order = Stage.objects.filter(site__id=site_id,stage__isnull=True).count() + 1
@@ -548,7 +642,7 @@ def setup_site_stages(request, site_id):
     return render(request, "fsforms/main_stages.html",
                   {'objlist': objlist, 'site':Site(pk=site_id),'form': form})
 
-
+@group_required("Project")
 def setup_project_stages(request, id):
     objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True,project__id=id)
     order = Stage.objects.filter(project__id=id,stage__isnull=True).count() + 1
@@ -557,7 +651,7 @@ def setup_project_stages(request, id):
     return render(request, "fsforms/project/project_main_stages.html",
                   {'objlist': objlist, 'obj':Project(pk=id), 'form': form})
 
-
+@group_required("Project")
 def project_survey(request, project_id):
     objlist = Schedule.objects.filter(project__id=project_id)
     if not len(objlist):

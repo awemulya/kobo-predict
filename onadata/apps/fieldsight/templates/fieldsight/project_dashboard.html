@@ -141,7 +141,7 @@
 
                     {% for user in peoples_involved %}
 
-                    <a href="#">
+                    <a href="{% url 'users:profile' user.id %}">
                         <div class="org-site">
                             <div class="col-md-2">
                                 <div class="image-org">
@@ -150,8 +150,9 @@
                             </div>
                             <div class="col-md-10">
                                 <div class="detail-org">
-                                    <h3 class="pople-Name-org">{{user.email}}</h3>
-                                    <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ user.username }}</p>
+                                    <h3 class="pople-Name-org">{{user.get_full_name}}</h3>
+                                    <p class="address"><span><i class="fa fa-user" aria-hidden="true"></i></span>{{ user.username }}</p>
+                                    <p class="address"><span><i class="fa fa-envelope" aria-hidden="true"></i></span>{{ user.email }}</p>
                                     <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ user.phone }}</p>
                                     {% with user.id|get_proj_roles:obj.id as roles %}
                                     {% for role in roles %}

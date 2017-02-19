@@ -2,9 +2,10 @@ import datetime
 
 from django.core import serializers
 from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate
@@ -40,7 +41,9 @@ class ContactSerializer(serializers.ModelSerializer):
                 'secondary_number', 'office_number')
 
     def get_role(self, obj):
-        roles =  UserRole.objects.filter(user=obj.user, ended_at__isnull=True)
+        #exclude site supervisors.
+        group = Group.objects.get(name__exact="Site Supervisor")
+        roles =  UserRole.objects.filter(~Q(group = group),user=obj.user, ended_at__isnull=True)
         role_list =  []
         for r in roles:
             role_list.append({'group':str(r.group), 'project':str(r.project),'site':str(r.site)})
@@ -55,6 +58,12 @@ class ContactViewSet(viewsets.ModelViewSet):
     serializer_class = ContactSerializer
 
     def filter_queryset(self, queryset):
+        project = self.kwargs.get('pk', None)
+        if project:
+            queryset = queryset.filter(
+                user__user_roles__project__id = project,
+                user__is_active=True).order_by('user__first_name')
+            return queryset
         try:
             org = self.request.user.user_profile.organization
             queryset = queryset.filter(organization = org,user__is_active=True).order_by('user__first_name')
@@ -86,11 +95,11 @@ def current_user(request):
             site_supervisor = True
         for role in roles:
             site = role.site
-            project = site.project
+            project = role.project
             site_info = {'site': {'id': site.id, 'name': site.name, 'description': site.public_desc,
-                                  'lat': site.latitude, 'lon':site.longitude},
-                         'project': {'name': project.name, 'id': project.id,
-                                     'description': project.public_desc, 'lat':project.latitude, 'lon':project.longitude},
+                                  'lat': repr(site.latitude), 'lon':repr(site.longitude), 'identifier':site.identifier},
+                         'project': {'name': project.name, 'id': project.id, 'description': project.public_desc,
+                                     'lat': repr(project.latitude), 'lon':repr(project.longitude)},
                          }
             field_sight_info.append(site_info)
 
@@ -224,15 +233,42 @@ class ObtainAuthToken(APIView):
 
 class MyProfileView(ProfileView):
     model = UserProfile
-    success_url = reverse_lazy('users:profile')
+    success_url = reverse_lazy('users:profile', kwargs={'pk': 0})
     form_class = ProfileForm
 
 
 class ProfileUpdateView(MyProfileView, UpdateView):
-    pass
+
+    def form_valid(self, form):
+        user = self.request.user
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+        user.save()
+        profile = UserProfile.objects.get(user=user)
+        profile.address = form.cleaned_data['address']
+        profile.gender = form.cleaned_data['gender']
+        profile.phone = form.cleaned_data['phone']
+        profile.skype = form.cleaned_data['skype']
+        profile.primary_number = form.cleaned_data['primary_number']
+        profile.secondary_number = form.cleaned_data['secondary_number']
+        profile.office_number = form.cleaned_data['office_number']
+        profile.viber = form.cleaned_data['viber']
+        profile.whatsapp = form.cleaned_data['whatsapp']
+        profile.wechat = form.cleaned_data['wechat']
+        profile.line = form.cleaned_data['line']
+        profile.tango = form.cleaned_data['tango']
+        profile.hike = form.cleaned_data['hike']
+        profile.qq = form.cleaned_data['qq']
+        profile.google_talk = form.cleaned_data['google_talk']
+        profile.profile_picture = form.cleaned_data['profile_picture']
+        profile.save()
+        return HttpResponseRedirect(self.success_url)
 
 
-def my_profile(request):
-    profile, created = UserProfile.objects.get_or_create(user=request.user)
+def my_profile(request, pk=None):
+    if not pk or pk =='0':
+        profile, created = UserProfile.objects.get_or_create(user=request.user)
+    else:
+        profile, created = UserProfile.objects.get_or_create(user__id=pk)
     return render(request, 'users/profile.html', {'obj':profile})
 
