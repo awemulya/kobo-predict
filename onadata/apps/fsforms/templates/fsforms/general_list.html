@@ -16,6 +16,7 @@
 
 <a class="btn btn-success btn-raised" href="{% url 'forms:project-survey' project.pk %}">{% trans 'Scheduled Forms' %}</a>
 
+
 {% endif %}
 {% endblock %}
 {% block content %}
@@ -38,7 +39,7 @@
             <th>{% anchor title _('Name') %}</th>
             <th>{% trans 'Created Date' %}</th>
             <th>{% trans 'Shared Level' %}</th>
-            <th>{% trans 'Actions' %}</th>
+            <th colspan="2">{% trans 'Actions' %}</th>
             </thead>
             <tbody>
             {% for obj in paginated_objects %}
@@ -54,6 +55,14 @@
                     </td>
                     <td>
                         <a href="{% url 'forms:edit-general' obj.pk %}">Edit</a>
+                    </td>
+                    <td>{% if obj.xf %}
+                        {% if project %}
+                          <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-general' obj.pk %}">
+                            Deploy To Sites</a>
+
+                        {% endif %}
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

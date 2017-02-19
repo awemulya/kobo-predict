@@ -1,6 +1,7 @@
 from bson import json_util
 from django.conf import settings
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -15,7 +16,7 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
-    get_xform_and_perms, query_mongo, get_instance, update_status
+    get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
 from onadata.apps.fsforms.utils import send_message
 from onadata.apps.logger.models import XForm
 from onadata.libs.utils.user_auth import add_cors_headers
@@ -236,10 +237,21 @@ def stage_add(request, site_id=None):
     return render(request, "fsforms/stage_form.html", {'form': form, 'obj': site})
 
 @group_required("Project")
+def project_responses(request, project_id=None):
+    schedules = FieldSightXF.objects.filter(project_id=project_id, xf__isnull=False, is_scheduled=True)
+    stages = Stage.objects.filter(stage__isnull=True, project_id=project_id).order_by('order')
+    generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=project_id)
+    return render(request, "fsforms/project/project_responses_list.html",
+                  {'schedules': schedules, 'stages':stages, 'generals':generals, 'project': project_id})
+
+
+@group_required("Project")
 def responses(request, site_id=None):
     schedules = FieldSightXF.objects.filter(site_id=site_id, xf__isnull=False, is_scheduled=True)
     stages = Stage.objects.filter(stage__isnull=True, site_id=site_id).order_by('order')
-    return render(request, "fsforms/responses_list.html", {'schedules': schedules, 'stages':stages, 'site': site_id})
+    generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,site_id=site_id)
+    return render(request, "fsforms/responses_list.html",
+                  {'schedules': schedules, 'stages':stages,'generals':generals, 'site': site_id})
 
 @group_required("Project")
 def project_stage_add(request, id=None):
@@ -465,6 +477,55 @@ def edit_schedule(request, id):
             form.fields['form'].initial= FieldSightXF.objects.get(schedule=schedule).xf.id
     return render(request, "fsforms/schedule_form.html",
                   {'form': form, 'obj': schedule.site, 'is_project':False, 'is_general':False, 'is_edit':True})
+
+
+@group_required("Project")
+def deploy_stages(request, id):
+    # use this to deploy stages
+    # project = Project(pk=id)
+    # sites = project.sites.filter(is_active=True)
+    # project_forms = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, project_id=id)
+    # with transaction.atomic():
+    #     FieldSightXF.objects.filter(site__project_id=id,is_staged=False,is_scheduled=False).delete()
+    #     #fsform__isnull=True
+    #     for fsxf in project_forms:
+    #         for site in sites:
+    #             FieldSightXF.objects.create(
+    #                 fsform=fsxf,is_staged=fsxf.is_staged,is_scheduled=fsxf.is_scheduled, xf=fsxf.xf,site_id=site.id)
+    messages.info(request, 'Stages Form Deployed to Sites')
+    return HttpResponseRedirect(reverse("forms:setup-project-stages", kwargs={'id': id}))
+
+@group_required("Project")
+def deploy_general(request, id):
+    with transaction.atomic():
+        fsxf = FieldSightXF.objects.get(pk=id)
+        FieldSightXF.objects.filter(fsform=fsxf).delete()
+        for site in fsxf.project.sites.filter(is_active=True):
+            # cloning from parent
+            child = FieldSightXF(is_staged=False, is_scheduled=False,xf=fsxf.xf, site=site, fsform_id=id)
+            child.save()
+    messages.info(request, 'General Form {} Deployed to Sites'.format(fsxf.xf.title))
+    return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fsxf.project.pk}))
+
+
+@group_required("Project")
+def deploy_survey(request, id):
+    schedule = Schedule.objects.get(pk=id)
+    selected_days = tuple(schedule.selected_days.all())
+    fsxf = FieldSightXF.objects.get(schedule=schedule)
+    with transaction.atomic():
+        Schedule.objects.filter(fieldsightxf__fsform=fsxf).delete()
+        FieldSightXF.objects.filter(fsform=fsxf).delete()
+        for site in fsxf.project.sites.filter(is_active=True):
+            _schedule = Schedule(name=schedule.name, site=site)
+            _schedule.save()
+            _schedule.selected_days.add(*selected_days)
+            child = FieldSightXF(is_staged=False, is_scheduled=True,
+                                 xf=fsxf.xf, site=site, fsform_id=id, schedule=_schedule)
+            child.save()
+    messages.info(request, 'Schedule {} with  Form Named {} Form Deployed to Sites'.format(schedule.name,fsxf.xf.title))
+    return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': fsxf.project.id}))
+
 
 
 
@@ -746,6 +807,64 @@ def html_export(request, fsxf_id):
     context['data'] = make_table(data)
     context['fsxfid'] = fsxf_id
     context['obj'] = fsxf
+    context['is_project'] = False
+    # return JsonResponse({'data': cursor})
+    return render(request, 'fsforms/fieldsight_export_html.html', context)
+
+
+@group_required('KoboForms')
+def project_html_export(request, fsxf_id):
+    limit = int(request.REQUEST.get('limit', 100))
+    fsxf_id = int(fsxf_id)
+    fsxf = FieldSightXF.objects.get(pk=fsxf_id)
+    xform = fsxf.xf
+    id_string = xform.id_string
+    cursor = get_instances_for_project_field_sight_form(fsxf_id)
+    cursor = list(cursor)
+    for index, doc in enumerate(cursor):
+        medias = []
+        for media in cursor[index].get('_attachments', []):
+            if media:
+                medias.append(media.get('download_url', ''))
+        cursor[index].update({'medias': medias})
+    paginator = Paginator(cursor, limit, request=request)
+
+    try:
+        page = paginator.page(request.REQUEST.get('page', 1))
+    except (EmptyPage, PageNotAnInteger):
+        try:
+            page = paginator.page(1)
+        except (EmptyPage, PageNotAnInteger):
+            raise Http404('This report has no submissions')
+
+    data = [("v1", page.object_list)]
+    context = build_export_context(request, xform, id_string)
+
+    context.update({
+        'page': page,
+        'table': [],
+        'title': id,
+    })
+
+    export = context['export']
+    sections = list(export.labels.items())
+    section, labels = sections[0]
+    id_index = labels.index('_id')
+
+    # generator dublicating the "_id" to allow to make a link to each
+    # submission
+    def make_table(submissions):
+        for chunk in export.parse_submissions(submissions):
+            for section_name, rows in chunk.items():
+                if section == section_name:
+                    for row in rows:
+                        yield row[id_index], row
+
+    context['labels'] = labels
+    context['data'] = make_table(data)
+    context['fsxfid'] = fsxf_id
+    context['obj'] = fsxf
+    context['is_project'] = True
     # return JsonResponse({'data': cursor})
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 

@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from onadata.apps.api.viewsets.xform_submission_api import XFormSubmissionApi
+from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.fsforms.serializers.FieldSightSubmissionSerializer import FieldSightSubmissionSerializer
 from ..fieldsight_logger_tools import safe_create_instance
 
@@ -10,11 +11,11 @@ from ..fieldsight_logger_tools import safe_create_instance
 DEFAULT_CONTENT_LENGTH = getattr(settings, 'DEFAULT_CONTENT_LENGTH', 10000000)
 
 
-def create_instance_from_xml(request, fsid, site):
+def create_instance_from_xml(request, fsid, site, fs_proj_xf):
     xml_file_list = request.FILES.pop('xml_submission_file', [])
     xml_file = xml_file_list[0] if len(xml_file_list) else None
     media_files = request.FILES.values()
-    return safe_create_instance(fsid, xml_file, media_files, None, request, site)
+    return safe_create_instance(fsid, xml_file, media_files, None, request, site, fs_proj_xf)
 
 
 class FSXFormSubmissionApi(XFormSubmissionApi):
@@ -32,6 +33,8 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
         try:
             siteid =  int(siteid)
             fsxfid = int(fsxfid)
+            fsxf = FieldSightXF.objects.get(pk=kwargs.get('pk',None))
+            project, fs_proj_xf = fsxf.project_info
         except:
             return self.error_response("Site Id Or Form ID Not Vaild", False, request)
 
@@ -40,7 +43,7 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
                             headers=self.get_openrosa_headers(request),
                             template_name=self.template_name)
 
-        error, instance = create_instance_from_xml(request, fsxfid, siteid)
+        error, instance = create_instance_from_xml(request, fsxfid, siteid, fs_proj_xf)
         # modify create instance
 
         if error or not instance:

@@ -7,8 +7,8 @@
 {% block head %}
 {% endblock %}
 {% block breadcrumbs %}
-    <li><a href="{% url 'fieldsight:site-dashboard' site %}">Site Dashboard</a></li>
-<li><a href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a></li>
+    <li><a href="{% url 'fieldsight:project-dashboard' project %}">Project Dashboard</a></li>
+<li><a href="{% url 'fieldsight:project-list' %}">{% trans 'Projects' %}</a></li>
     <li>Responses</li>
 {% endblock %}
 {% block content %}
@@ -33,7 +33,7 @@
                         {{ obj.date_created }}
                     </td>
                     <td>
-                         <a href="{% url 'forms:formpack_html_export' obj.id %}">
+                         <a href="{% url 'forms:project_html_export' obj.id %}">
                              {% trans 'View ' %}</a>
                     </td>
                 </tr>
@@ -64,7 +64,7 @@
                         {{ obj.date_created }}
                     </td>
                     <td>
-                         <a href="{% url 'forms:formpack_html_export' obj.id %}">
+                         <a href="{% url 'forms:project_html_export' obj.id %}">
                              {% trans 'View ' %}</a>
                     </td>
                 </tr>
@@ -108,7 +108,7 @@
                         {{ obj.date_created }}
                     </td>
                     <td>
-                         <a href="{% url 'forms:formpack_html_export' obj.form.id %}">
+                         <a href="{% url 'forms:project_html_export' obj.form.id %}">
                              {% trans 'View ' %}</a>
                     </td>
                     {% else %}

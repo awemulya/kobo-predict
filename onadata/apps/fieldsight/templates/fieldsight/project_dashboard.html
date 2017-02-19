@@ -13,6 +13,7 @@
 
 {% block head %}
     <a class="btn btn-success btn-raised" href="{% url 'fieldsight:project-edit' obj.pk %}">{% trans 'Edit' %}</a>
+ <a class="btn btn-success btn-raised" href="{% url 'forms:project-responses' obj.pk %}">{% trans 'Responses' %}</a>
 {% endblock %}
 
 {% block breadcrumbs %}

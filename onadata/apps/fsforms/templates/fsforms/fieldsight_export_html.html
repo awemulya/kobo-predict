@@ -3,10 +3,20 @@
 {% load filters %}
 {% block page-title %}{% trans 'Form Data' %}{% endblock %}
 {% block breadcrumbs %}
-    <li><a href="{% url 'fieldsight:site-dashboard' obj.site.pk %}">Site Dashboard</a></li>
+
+{% if is_project %}
+
+<li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">Project Dashboard</a></li>
+<li><a href="{% url 'fieldsight:project-list' %}">{% trans 'Projects' %}</a></li>
+<li><a href="{% url 'forms:project-responses' obj.project.pk %}">{% trans 'Responses' %}</a>
+</li>
+{% else %}
+<li><a href="{% url 'fieldsight:site-dashboard' obj.site.pk %}">Site Dashboard</a></li>
 <li><a href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a></li>
 <li><a href="{% url 'forms:site-responses' obj.site.pk %}">{% trans 'Responses' %}</a>
 </li>
+
+{% endif %}
     <li>Submissions</li>
 {% endblock %}
 {%block extracss %}
@@ -162,50 +172,16 @@ h1 {
   </div>
 </div>
 <div class="col-sm-12"> Form Details</div>
-    <!--<table class="table table-striped" id="dynamic-table1">-->
-            <!--<thead>-->
-            <!--<th>Name</th>-->
-            <!--<th>Site</th>-->
-            <!--<th>Created Date</th>-->
-            <!--<th>Form Type</th>-->
-            <!--<th>Stage/Schedule</th>-->
-            <!--<th colspan="2">Actions</th>-->
-            <!--</thead>-->
-<!--<tr>-->
-            <!--<td>-->
-                <!--<a href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}">{{ obj.xf.title }}</a>-->
-            <!--</td>-->
-            <!--<td>-->
-                <!--<a href="{% url 'fieldsight:site-edit' obj.site.id %}">{{ obj.site }}</a>-->
-            <!--</td>-->
-            <!--<td>-->
-                <!--{{ obj.date_created }}-->
-            <!--</td>-->
-                <!--<td>{{obj.form_type}}</td>-->
-
-             <!--<td>-->
-                 <!--{% if obj.is_staged %}-->
-                 <!--{{obj.stage_name }}-->
-                 <!--{% endif %}-->
-
-                 <!--{% if obj.is_scheduled %}-->
-                 <!--{{obj.schedule_name }}-->
-                 <!--{% endif %}-->
-             <!--</td>-->
-
-             <!--<td>-->
-                <!--<a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}/edit">-->
-                     <!--{% trans 'Edit Form Questions' %}</a>-->
-            <!--</td>-->
-            <!---->
-                    <!--</tr>-->
-        <!--</table>-->
 
     <div class="form-details-all">
         <div class="col-md-9">
             <div class="formmdetails">
                 <h2><span class="form-name">Name:</span>{{ obj.xf.title }}</h2>
+                {% if is_project %}
+                <p><span class="site-name">Project:</span>{{ obj.project }}</p>
+                {% else %}
                 <p><span class="site-name">Site:</span>{{ obj.site }}</p>
+                {% endif %}
                 <p><span class="creeated-date">Created date:</span>{{ obj.date_created }}</p>
                 <p><span class="form-type">Form type:</span>{{obj.form_type}}</p>
                 <p><span class="stage-schedule">Stage/Schedule:</span>
@@ -214,7 +190,7 @@ h1 {
                          {% endif %}
 
                          {% if obj.is_scheduled %}
-                         {{obj.schedule_name }}
+                         {{ obj.schedule_name }}
                          {% endif %}
                 </p>
             </div>
