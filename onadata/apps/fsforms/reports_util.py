@@ -12,9 +12,7 @@ def get_instances_for_field_sight_form(fieldsight_form_id, submission=None):
 
 
 def get_instances_for_project_field_sight_form(project_fieldsight_form_id, submission=None):
-    query = {'fs_project_uuid': { '$in': [project_fieldsight_form_id, str(project_fieldsight_form_id)] }, '_deleted_at': {'$exists': False}}
-    if submission:
-        query['_id'] = submission
+    query = {'fs_project_uuid': { '$in': [project_fieldsight_form_id, str(project_fieldsight_form_id)]}}
     return settings.MONGO_DB.instances.find(query)
 
 

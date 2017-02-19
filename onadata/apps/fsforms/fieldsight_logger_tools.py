@@ -176,10 +176,7 @@ def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
         instance.date_created = date_created_override
         instance.save()
     if instance.xform is not None:
-        if fs_poj_id is None or not fs_poj_id:
-            fs_poj_id = ""
-        else:
-            fs_poj_id = str(fs_poj_id)
+        fs_poj_id = str(fs_poj_id)
         pi, created = FieldSightParsedInstance.get_or_create(instance,
                                                              update_data={'fs_uuid': fxid, 'fs_status': 0,
                                                                           'fs_site':site, 'fs_project_uuid':fs_poj_id})
