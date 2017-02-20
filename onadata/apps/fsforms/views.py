@@ -481,17 +481,27 @@ def edit_schedule(request, id):
 
 @group_required("Project")
 def deploy_stages(request, id):
-    # use this to deploy stages
-    # project = Project(pk=id)
-    # sites = project.sites.filter(is_active=True)
-    # project_forms = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, project_id=id)
-    # with transaction.atomic():
-    #     FieldSightXF.objects.filter(site__project_id=id,is_staged=False,is_scheduled=False).delete()
-    #     #fsform__isnull=True
-    #     for fsxf in project_forms:
-    #         for site in sites:
-    #             FieldSightXF.objects.create(
-    #                 fsform=fsxf,is_staged=fsxf.is_staged,is_scheduled=fsxf.is_scheduled, xf=fsxf.xf,site_id=site.id)
+
+    project = Project(pk=id)
+    sites = project.sites.all()
+    main_stages = project.stages.filter(stage__isnull=True)
+    with transaction.atomic():
+        Stage.objects.filter(site__project=project).delete()
+        FieldSightXF.objects.filter(is_staged=True, site__project=project).delete()
+        for main_stage in main_stages:
+            for site in sites:
+                site_main_stage = Stage(name=main_stage.name, order=main_stage.order, site=site,
+                                   description=main_stage.description)
+                site_main_stage.save()
+                project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk)
+                for project_sub_stage in project_sub_stages:
+                    site_sub_stage = Stage(name=project_sub_stage.name, order=project_sub_stage.order, site=site,
+                                   description=project_sub_stage.description, stage=site_main_stage)
+                    site_sub_stage.save()
+                    if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
+                        fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
+                        FieldSightXF.objects.get_or_create(is_staged=True, xf=fsxf.xf, site=site,
+                                                           fsform=fsxf, stage=site_sub_stage, is_deployed=True)
     messages.info(request, 'Stages Form Deployed to Sites')
     return HttpResponseRedirect(reverse("forms:setup-project-stages", kwargs={'id': id}))
 

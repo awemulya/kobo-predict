@@ -168,7 +168,7 @@ class FieldSightXF(models.Model):
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
     form_status = models.IntegerField(default=0, choices=FORM_STATUS)
     fsform = models.ForeignKey('self', blank=True, null=True, related_name="parent")
-    is_deployed = models.BooleanField(default=True)
+    is_deployed = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'fieldsight_forms_data'
@@ -176,11 +176,6 @@ class FieldSightXF(models.Model):
         verbose_name = _("XForm")
         verbose_name_plural = _("XForms")
         ordering = ("-date_created",)
-
-    def save(self, *args, **kwargs):
-        if self.is_staged:
-            self.is_deployed = False
-        super(FieldSightXF, self).save(*args, **kwargs)
 
     def url(self):
         return reverse(
@@ -204,14 +199,14 @@ class FieldSightXF(models.Model):
 
     def clean(self):
         if self.is_staged:
-            if FieldSightXF.objects.filter(xf=self.xf, site=self.site, stage=self.stage).exists():
+            if FieldSightXF.objects.filter(stage=self.stage).exists():
                 raise ValidationError({
-                    'stage': ValidationError(_('Same Form On This Stage Found for This Site')),
+                    'stage': ValidationError(_('Duplicate Stage Data')),
                 })
         if self.is_scheduled:
-            if FieldSightXF.objects.filter(xf=self.xf, site=self.site, schedule=self.schedule).exists():
+            if FieldSightXF.objects.filter(schedule=self.schedule).exists():
                 raise ValidationError({
-                    'schedule': ValidationError(_('Same Form On This Schedule Found for This Site')),
+                    'schedule': ValidationError(_('Duplicate Schedule Data')),
                 })
 
     @staticmethod

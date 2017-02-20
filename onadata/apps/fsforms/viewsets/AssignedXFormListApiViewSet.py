@@ -19,7 +19,7 @@ class AssignedXFormListApi(XFormListApi):
             self.permission_denied(self.request)
         site_id = self.kwargs.get('site_id', None)
         site_id = int(site_id)
-        queryset = queryset.filter(site__id=site_id)
+        queryset = queryset.filter(site__id=site_id, is_deployed=True)
         return queryset
 
     @detail_route(methods=['GET'])
