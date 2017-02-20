@@ -45,7 +45,7 @@ from .views import (
     setup_project_stages, project_stage_add, instance_detail, alter_answer_status, project_survey,
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, project_responses,
-    project_html_export, deploy_survey, deploy_stages, deploy_general)
+    project_html_export, deploy_survey, deploy_stages, deploy_general, set_deploy_stages)
 
 # router = routers.DefaultRouter()
 # router.register(r'api/groups', GroupViewSet)
@@ -85,6 +85,7 @@ urlpatterns = [
         url(r'^schedule/(?P<id>\d+)/$', edit_schedule, name='schedule-edit'),
         url(r'^general/(?P<id>\d+)/$', edit_general, name='edit-general'),
         url(r'^deploy-stages/(?P<id>\d+)/$', deploy_stages, name='deploy-stages'),
+        url(r'^set-deploy-stages/(?P<id>\d+)/$', set_deploy_stages, name='set-deploy-stages'),
         url(r'^deploy-survey/(?P<id>\d+)/$', deploy_survey, name='deploy-survey'),
         url(r'^deploy-general/(?P<id>\d+)/$', deploy_general, name='deploy-general'),
         url(r'^schedule-add-form/(?P<pk>\d+)/$', schedule_add_form, name='schedule-add-form'),
