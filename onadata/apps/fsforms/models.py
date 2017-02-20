@@ -168,7 +168,7 @@ class FieldSightXF(models.Model):
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
     form_status = models.IntegerField(default=0, choices=FORM_STATUS)
     fsform = models.ForeignKey('self', blank=True, null=True, related_name="parent")
-    # instances = models.ManyToManyField()
+    is_deployed = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'fieldsight_forms_data'
@@ -176,6 +176,11 @@ class FieldSightXF(models.Model):
         verbose_name = _("XForm")
         verbose_name_plural = _("XForms")
         ordering = ("-date_created",)
+
+    def save(self, *args, **kwargs):
+        if self.is_staged:
+            self.is_deployed = False
+        super(FieldSightXF, self).save(*args, **kwargs)
 
     def url(self):
         return reverse(
@@ -229,7 +234,7 @@ class FieldSightXF(models.Model):
 
 @receiver(post_save, sender=FieldSightXF)
 def create_messages(sender, instance, created,  **kwargs):
-    if created and instance.site is not None:
+    if created and instance.site is not None and not instance.is_staged:
         send_message(instance)
 
 post_save.connect(create_messages, sender=FieldSightXF)
