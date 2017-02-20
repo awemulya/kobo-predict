@@ -11,7 +11,7 @@ class Entry:
         self.fsid = fsid
         self.instance = instance
         self.fsform = None
-        if FieldSightXF.objects.get(pk=self.fsid):
+        if FieldSightXF.objects.filter(pk=self.fsid).exists():
             self.fsform = FieldSightXF.objects.get(pk=self.fsid)
 
 
