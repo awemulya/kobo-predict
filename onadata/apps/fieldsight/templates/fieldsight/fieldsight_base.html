@@ -235,8 +235,18 @@
                     </a>
                     <ul class="sub">
                         <li><a href="{{ koboform_url }}#/forms/new">{% trans 'Create New' %}</a></li>
-                        <li><a href="{% url 'forms:library-forms-list' %}">{% trans 'Library Forms' %}</a></li>
                         <li><a href="{% url 'forms:forms-list' %}">{% trans 'My Forms' %}</a></li>
+
+                    </ul>
+                </li>
+                 <li class="sub-menu">
+                    <a href="javascript:;">
+                        <i class="fa fa-file-text-o"></i>
+                        <span>{% trans 'Library' %}</span>
+                    </a>
+                    <ul class="sub">
+                        <li><a href="{% url 'forms:library-forms-list' %}">{% trans 'Library Forms' %}</a></li>
+                        <li><a href="{% url 'forms:group-list' %}">{% trans 'Stages Library' %}</a></li>
 
                     </ul>
                 </li>

@@ -3,7 +3,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.logger.models import XForm
-from .models import FieldSightXF, Stage, Schedule, FormGroup, FORM_STATUS, FieldSightFormLibrary
+from .models import FieldSightXF, Stage, Schedule, FormGroup, FORM_STATUS
 
 
 class AssignSettingsForm(forms.ModelForm):
@@ -179,13 +179,30 @@ class ScheduleForm(forms.ModelForm):
                     'date_range_start': SelectDateWidget,
                     'date_range_end': SelectDateWidget,
                     }
+SHARED_LEVEL = [('' ,'None'),(0, 'Global'), (1, 'Organization'), (2, 'Project'), ]
 
 
 class GroupForm(forms.ModelForm):
+    shared_level = forms.ChoiceField(widget = forms.Select(), choices=(SHARED_LEVEL))
 
     class Meta:
-        exclude = ['creator']
+        fields = ['name', 'description','shared_level']
         model = FormGroup
+
+
+class GroupEditForm(forms.ModelForm):
+
+    class Meta:
+        fields = ['name', 'description', 'id']
+        model = FormGroup
+
+    widgets = {'id': forms.HiddenInput(),}
+
+
+    def clean(self):
+        if FormGroup.objects.filter(name=self.cleaned_data['name']).exists():
+            if not FormGroup.objects.get(name=self.cleaned_data['name']).pk == self.instance.pk:
+                raise forms.ValidationError(_("Name Already Exists"))
 
 
 class AlterAnswerStatus(forms.Form):

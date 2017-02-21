@@ -2,10 +2,9 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Groups' %}{% endblock %}
+{% block page-title %}{% trans 'Stages Library' %}{% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'forms:group-add' %}">{% trans 'New' %} {% trans 'Group' %}</a>
 {% endblock %}
 
 {% block content %}
@@ -29,12 +28,13 @@
             <th>{% anchor description _('Description') %}</th>
             <th>{% anchor date_created _('Created Date') %}</th>
             <th>{% anchor creator _('Created By') %}</th>
+            <th>{% trans 'Action' %}</th>
             </thead>
             <tbody>
             {% for obj in paginated_objects %}
                 <tr>
                     <td>
-                        <a href="{% url 'forms:group-edit' obj.pk %}">{{ obj.name }}</a>
+                       {{ obj.name }}
                     </td>
                     <td>
                         {{ obj.description }}
@@ -44,6 +44,12 @@
                     </td>
                     <td>
                         {{ obj.creator }}
+                    </td>
+                    <td>
+                        {% ifequal obj.creator request.user %}
+                        <a class="btn btn-danger btn-raised" href="{% url 'forms:edit-share-stages' obj.pk %}">
+                            {% trans 'Edit Details' %}</a>
+                        {% endifequal %}
                     </td>
 
                 </tr>

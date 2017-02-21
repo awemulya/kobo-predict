@@ -8,6 +8,8 @@
 {% block head %}
 <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-stages' obj.pk %}">
     {% trans 'Deploy All Stages To Sites' %}</a>
+<a class="btn btn-danger btn-raised" href="{% url 'forms:share-stages' obj.pk 1%}">
+    {% trans 'Share All Stages To Library' %}</a>
     <a class="btn btn-success btn-raised" href="{% url 'forms:project-stage-add' obj.pk %}">
                             {% trans 'Add New Stage' %}</a>
 {% endblock %}

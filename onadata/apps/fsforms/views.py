@@ -27,7 +27,7 @@ from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, P
     CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin, OrganizationOrProjectRequiredMixin, ProjectView
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
-    AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm
+    AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm
 from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
@@ -122,9 +122,9 @@ def share_level(request, id, counter):
                 form.save()
                 messages.add_message(request, messages.INFO, '{0} Shared To Organization Level'.format(xf.title))
             else:
-                messages.add_message(request, messages.WARNING, '{0} Not Shared. You Cannot Share to Project Level'.
+                messages.add_message(request, messages.WARNING, '{0} Not Shared. You Cannot Share to Organization Level'.
                                      format(xf.title))
-        else:
+        elif sl =='2':
             if hasattr(request,"project") and request.project:
                 form.is_global  = False
                 form.organization = None
@@ -481,8 +481,6 @@ def edit_schedule(request, id):
 
 @group_required("Project")
 def set_deploy_stages(request, id):
-
-    site = Site(pk=id)
     with transaction.atomic():
         FieldSightXF.objects.filter(is_staged=True, site__id=id).update(is_deployed=True)
         messages.info(request, 'Stages Form Deployed to Sites')
@@ -490,8 +488,117 @@ def set_deploy_stages(request, id):
 
 
 @group_required("Project")
-def deploy_stages(request, id):
+def edit_share_stages(request, id):
+    fgroup = get_object_or_404(
+        FormGroup, pk=id)
+    if request.method == 'POST':
+        form = GroupEditForm(data=request.POST,instance=fgroup)
+        if form.is_valid():
+            group = form.save()
+            sl = form.data['sl']
+            if sl == '':
+                group.is_global=False
+                group.organization=None
+                group.project=None
+                group.save()
 
+            if sl == '0':
+                group.is_global= True
+                group.organization=None
+                group.project=None
+                group.save()
+
+            elif sl == '1':
+                group.is_global = False
+                if hasattr(request,"project") and request.project:
+                    group.organization = request.project.organization
+                    group.project = None
+                    group.save()
+                    messages.add_message(request, messages.INFO, '{0} Shared To Organization Level'.format(group.name))
+                elif hasattr(request,"organization") and request.organization:
+                    group.organization = request.organization
+                    group.project = None
+                    group.save()
+                    messages.add_message(request, messages.INFO, '{0} Shared To Organization Level'.format(group.name))
+                else:
+                    messages.add_message(request, messages.WARNING, '{0} Not Shared. You Cannot Share to Organization Level'.
+                                       format(group.name))
+            elif sl == '2':
+                if hasattr(request,"project") and request.project:
+                    group.is_global  = False
+                    group.organization = None
+                    group.project = request.project
+                    group.save()
+                    messages.add_message(request, messages.INFO, '{0} Shared to Project Level '.format(group.name))
+                else:
+                    messages.add_message(request, messages.WARNING, '{0} Form Not Shared. You Cannot Share to Project Level'
+                                         .format(group.name))
+
+            return HttpResponseRedirect(reverse("forms:group-list"))
+    sl = ''
+    if fgroup.is_global:
+        sl =  0
+    elif fgroup.project:
+        sl = 2
+    elif fgroup.organization:
+        sl = 1
+    instance.shared_level = sl
+    form = GroupEditForm(instance=fgroup)
+    return render(request, "fsforms/edit_formgroup_form.html", {'form': form,'shared':sl})
+
+@group_required("Project")
+def share_stages(request, id, is_project):
+    if request.method == 'POST':
+        form = GroupForm(data=request.POST)
+        if form.is_valid():
+            with transaction.atomic():
+                group = form.save(commit=False)
+                group.creator=request.user
+                sl = form.cleaned_data['shared_level']
+                if sl == '':
+                    group.is_global=False
+                    group.organization=None
+                    group.project=None
+                    group.save()
+
+                if sl == '0':
+                    group.is_global= True
+                    group.organization=None
+                    group.project=None
+                    group.save()
+
+                if sl == '1':
+                    group.is_global= False
+                    if is_project:
+                        group.organization = Project(pk=id).organization
+                    else:
+                        group.organization = Site(pk=id).project.organization
+                    group.project=None
+                    group.save()
+                if sl == '2':
+                    group.is_global= False
+                    if is_project:
+                        group.project = Project(pk=id)
+                    else:
+                        group.project = Site(pk=id).project
+                    group.organization=None
+                    group.save()
+                if is_project:
+                    Stage.objects.filter(stage__isnull=True,project_id=id).update(group=group)
+                    messages.info(request, 'Project Stages Shared')
+                    return HttpResponseRedirect(reverse("forms:setup-project-stages", kwargs={'id': id}))
+                else:
+                    Stage.objects.filter(stage__isnull=True,site_id=id).update(group=group)
+                    messages.info(request, 'Site Stages Shared')
+                    return HttpResponseRedirect(reverse("forms:setup-site-stages", kwargs={'site_id': id}))
+    else:
+        form = GroupForm()
+    return render(request, "fsforms/formgroup_form.html", {'form': form,'is_project':is_project, 'id':id})
+
+
+
+@group_required("Project")
+def deploy_stages(request, id):
     project = Project(pk=id)
     sites = project.sites.all()
     main_stages = project.stages.filter(stage__isnull=True)
@@ -610,7 +717,19 @@ class FormGroupView(object):
 
 
 class GroupListView(FormGroupView, LoginRequiredMixin, ListView):
-    pass
+
+    def get_queryset(self):
+        if self.request.project:
+            return super(GroupListView, self).\
+                get_queryset().filter(Q(is_global=True)
+                                      | Q(project=self.request.project)
+                                      |Q(organization=self.request.organization))
+        elif self.request.organization:
+            return super(GroupListView, self).\
+                get_queryset().filter(Q(is_global=True)
+                                      |Q(organization=self.request.organization))
+        else:
+            return super(GroupListView, self).get_queryset()
 
 
 class CreateViewWithUser(CreateView):

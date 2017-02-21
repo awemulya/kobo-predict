@@ -19,12 +19,14 @@ FORM_STATUS = [(0, 'Outstanding'), (1, 'Rejected'), (2, 'Flagged'), (3, 'Approve
 
 
 class FormGroup(models.Model):
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, unique=True)
     description = models.TextField(blank=True, null=True)
-    shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     creator = models.ForeignKey(User, related_name="form_group")
+    is_global = models.BooleanField(default=False)
+    organization = models.ForeignKey(Organization, null=True, blank=True)
+    project = models.ForeignKey(Project, null=True, blank=True)
 
     class Meta:
         db_table = 'fieldsight_forms_group'

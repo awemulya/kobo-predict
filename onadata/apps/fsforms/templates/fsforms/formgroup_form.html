@@ -1,15 +1,14 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 
-{% block page-title %}{{ scenario }} {% trans 'Groups' %}{% endblock %}
+{% block page-title %} {% trans 'Share Stages To Library' %}{% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'forms:group-list' %}">{% trans 'Groups' %}</a>
 {% endblock %}
 
 {% block content %}
-
-    <form method="post" id='form'>
+    <h3> Please Enter Library Details For Stages</h3>
+    <form method="POST" action="{% url 'forms:share-stages' id is_project %}">
         <div class="">
             <div class="col-sm-12 registration_field">
                {{ form.non_field_errors }}
@@ -28,7 +27,7 @@
             {% endfor %}
         </div>
         
-        <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
+        <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Share' %}</button>
 
     </form>
 

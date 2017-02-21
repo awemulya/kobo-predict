@@ -1,0 +1,49 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{% trans 'Update' %}{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+    <h3> Please Update Library Details For Stages</h3>
+    <form method="POST">
+        <div class="">
+            <div class="col-sm-12 registration_field">
+               {{ form.non_field_errors }}
+               </div>
+            
+            {% csrf_token %}
+            {% for field in form %}
+               <div class="col-sm-12 registration_field">
+               {{ form.non_field_errors }}
+               </div>
+               <div class="col-sm-12 registration_field">
+                 <div class="col-sm-3"> {{ field.label }}</div>
+                 <div class="col-sm-3">      {{ field }}</div>
+                 <div class="col-sm-6">      {{ field.errors }}</div>
+               </div>
+            {% endfor %}
+
+               <div class="col-sm-12 registration_field">
+                 <div class="col-sm-3"> {% trans 'Shared Level' %}</div>
+                   <div class="col-sm-3">
+                 <select name="sl">
+                     <option value="">{% trans 'None' %}</option>
+
+                     <option value="1" {% ifequal shared 1 %} selected {% endifequal %}>{% trans 'Organization' %}</option>
+                     <option value="2" {% ifequal shared 2 %} selected {% endifequal %}>{% trans 'Project' %}</option>
+                     <option value="0" {% ifequal shared 0 %} selected {% endifequal %}>{% trans 'Global' %}</option>
+                </select>
+                   </div>
+               </div>
+        </div>
+        
+        <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Update' %}</button>
+
+    </form>
+
+    
+
+{% endblock %}

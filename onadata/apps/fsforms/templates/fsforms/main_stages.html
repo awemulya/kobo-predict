@@ -9,7 +9,7 @@
 <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
 
 <a class="btn btn-danger btn-raised" href="{% url 'forms:set-deploy-stages' site.pk %}">
-    {% trans 'Deploy All Stages To Sites' %}</a>
+    {% trans 'Deploy All Stages' %}</a>
     <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add' site.pk %}">
                             {% trans 'Add New Stage' %}</a>
 {% endblock %}
