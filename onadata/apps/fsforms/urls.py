@@ -46,7 +46,7 @@ from .views import (
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, project_responses,
     project_html_export, deploy_survey, deploy_stages, deploy_general, set_deploy_stages, share_stages,
-    edit_share_stages)
+    edit_share_stages, library_stages)
 
 # router = routers.DefaultRouter()
 # router.register(r'api/groups', GroupViewSet)
@@ -95,7 +95,8 @@ urlpatterns = [
 
         url(r'^project/schedule/add/(?P<id>\d+)/$', project_create_schedule, name='project-schedule-add'),
         url(r'^project/schedule/edit/(?P<id>\d+)/$', project_edit_schedule, name='project-schedule-edit'),
-        url(r'^site-stage/(?P<site_id>\d+)$', site_stages, name='site-stages'),
+        # url(r'^site-stage/(?P<site_id>\d+)$', site_stages, name='site-stages'),
+        url(r'^library-stage/(?P<id>\d+)$', library_stages, name='view-stages-of-library'),
         url(r'^setup-site-stage/(?P<site_id>\d+)$', setup_site_stages, name='setup-site-stages'),
         url(r'^setup-project-stage/(?P<id>\d+)$', setup_project_stages, name='setup-project-stages'),
         url(r'^site-survey/(?P<site_id>\d+)$', site_survey, name='site-survey'),

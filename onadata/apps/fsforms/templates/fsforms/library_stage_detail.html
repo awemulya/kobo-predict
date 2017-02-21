@@ -1,0 +1,67 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Stage Details' %}{% endblock %}
+
+{% block head %}
+{% endblock %}
+{% block breadcrumbs %}
+    <li>Stage Details</li>
+{% endblock %}
+{% block content %}
+     <div class="panel-group" id="accordion">
+          {% for stage in stages %}
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ stage.id }}"><b>
+                      {% trans 'Stage Name' %}:</b> {{stage.name }}</a>
+                </h4>
+              </div>
+              <div id="collapse{{ stage.id }}" class="panel-collapse collapse">
+                <div class="panel-body">
+                  {% if stage.parent.all.count %}
+
+                  <table class="table table-striped">
+                      <thead>
+                      <th>{% trans 'Sub Stage Name' %}</th>
+                      <th>{% trans 'Order' %}</th>
+                      <th>{% trans 'Form Name' %}</th>
+                      <th>{% trans 'Created Date' %}</th>
+                      </thead>
+                      <tbody>
+                      {% for obj in stage.parent.all %}
+                          <tr>
+                              <td>
+                                  {{ obj.name}}</a>
+                              </td>
+                              <td>
+                                  {{ obj.order }}</a>
+                              </td>
+                              {% if obj.form %}
+                              <td>
+
+                                  {{ obj.form.xf.title }}</a>
+                              </td>
+                              <td>
+                                  {{ obj.date_created }}
+                              </td>
+
+                              <td> {{ obj.date_created }}</td>
+                              <td>-</td>
+                              {% endif %}
+                          </tr>
+                      {% endfor %}
+                      </tbody>
+                  </table>
+
+
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}  
+            
+          </div> 
+{% endblock %}

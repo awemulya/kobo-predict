@@ -843,6 +843,11 @@ def setup_site_stages(request, site_id):
                   {'objlist': objlist, 'site':Site(pk=site_id),'form': form})
 
 @group_required("Project")
+def library_stages(request, id):
+    objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True, group__id=id).order_by('order')
+    return render(request, "fsforms/library_stage_detail.html", {'stages': objlist})
+
+@group_required("Project")
 def setup_project_stages(request, id):
     objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True,project__id=id)
     order = Stage.objects.filter(project__id=id,stage__isnull=True).count() + 1

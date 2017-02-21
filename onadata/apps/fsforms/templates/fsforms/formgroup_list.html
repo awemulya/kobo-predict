@@ -29,6 +29,7 @@
             <th>{% anchor date_created _('Created Date') %}</th>
             <th>{% anchor creator _('Created By') %}</th>
             <th>{% trans 'Action' %}</th>
+            <th>{% trans 'Stages' %}</th>
             </thead>
             <tbody>
             {% for obj in paginated_objects %}
@@ -50,6 +51,11 @@
                         <a class="btn btn-danger btn-raised" href="{% url 'forms:edit-share-stages' obj.pk %}">
                             {% trans 'Edit Details' %}</a>
                         {% endifequal %}
+                    </td>
+
+                    <td>
+                        <a  href="{% url 'forms:view-stages-of-library' obj.pk %}">
+                            {% trans 'View Stages' %}</a>
                     </td>
 
                 </tr>
