@@ -639,7 +639,7 @@ def deploy_general(request, id):
         FieldSightXF.objects.filter(fsform=fsxf).delete()
         for site in fsxf.project.sites.filter(is_active=True):
             # cloning from parent
-            child = FieldSightXF(is_staged=False, is_scheduled=False,xf=fsxf.xf, site=site, fsform_id=id)
+            child = FieldSightXF(is_staged=False, is_scheduled=False,xf=fsxf.xf, site=site, fsform_id=id, is_deployed=True)
             child.save()
     messages.info(request, 'General Form {} Deployed to Sites'.format(fsxf.xf.title))
     return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fsxf.project.pk}))
@@ -658,7 +658,7 @@ def deploy_survey(request, id):
             _schedule.save()
             _schedule.selected_days.add(*selected_days)
             child = FieldSightXF(is_staged=False, is_scheduled=True,
-                                 xf=fsxf.xf, site=site, fsform=fsxf, schedule=_schedule)
+                                 xf=fsxf.xf, site=site, fsform=fsxf, schedule=_schedule, is_deployed=True)
             child.save()
     messages.info(request, 'Schedule {} with  Form Named {} Form Deployed to Sites'.format(schedule.name,fsxf.xf.title))
     return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': fsxf.project.id}))
