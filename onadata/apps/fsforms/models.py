@@ -210,6 +210,12 @@ class FieldSightXF(models.Model):
                 raise ValidationError({
                     'schedule': ValidationError(_('Duplicate Schedule Data')),
                 })
+        if not self.is_scheduled and not self.is_staged:
+            if FieldSightXF.objects.filter(xf=self.xf, is_scheduled=False, is_staged=False,
+                                           site=self.site, project=self.project).exists():
+                raise ValidationError({
+                    'schedule': ValidationError(_('Duplicate General Form Data')),
+                })
 
     @staticmethod
     def get_xform_id_list(site_id):

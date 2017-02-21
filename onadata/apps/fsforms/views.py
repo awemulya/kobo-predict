@@ -367,14 +367,17 @@ def create_schedule(request, site_id):
             xf = int(form.cleaned_data.get('form', 0))
             if not form_type:
                 if xf:
-                    FieldSightXF.objects.get_or_create(xf_id=xf, is_scheduled=False, is_staged=False, site=site)
+                    _, created = FieldSightXF.objects.get_or_create(xf_id=xf, is_scheduled=False,
+                                                                    is_staged=False, site=site)
+                    _.is_deployed= True
+                    _.save()
                     messages.info(request, 'General Form  Saved.')
                 return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': site.id}))
             schedule = form.save()
             schedule.site = site
             schedule.save()
             if xf:
-                FieldSightXF.objects.create(xf_id=xf, is_scheduled=True,schedule=schedule,site=site)
+                FieldSightXF.objects.create(xf_id=xf, is_scheduled=True,schedule=schedule,site=site, is_deployed=True)
             messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
             return HttpResponseRedirect(reverse("forms:site-survey", kwargs={'site_id': site.id}))
     return render(request, "fsforms/schedule_form.html", {'form': form, 'obj': site, 'is_general':True})
@@ -414,14 +417,18 @@ def project_create_schedule(request, id):
             xf = int(form.cleaned_data.get('form',0))
             if not form_type:
                 if xf:
-                    FieldSightXF.objects.get_or_create(xf_id=xf, is_scheduled=False, is_staged=False, project=project)
+                    _, created = FieldSightXF.objects.get_or_create(
+                        xf_id=xf, is_scheduled=False, is_staged=False, project=project)
+                    _.is_deployed = True
+                    _.save()
                     messages.info(request, 'General Form  Saved.')
                 return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': project.id}))
             schedule = form.save()
             schedule.project = project
             schedule.save()
             if xf:
-                FieldSightXF.objects.create(xf_id=xf, is_scheduled=True,schedule=schedule,project=project)
+                FieldSightXF.objects.create(
+                    xf_id=xf, is_scheduled=True,schedule=schedule,project=project, is_deployed=True)
             messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
             return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': project.id}))
     form = ScheduleForm()
@@ -443,7 +450,8 @@ def project_edit_schedule(request, id):
                     fsxform.xf_id = xf
                     fsxform.save()
                 else:
-                    FieldSightXF.objects.create(xf_id=xf, is_scheduled=True,schedule=schedule,project=schedule.project)
+                    FieldSightXF.objects.create(
+                        xf_id=xf, is_scheduled=True,schedule=schedule,project=schedule.project, is_deployed=True)
             messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
             return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': schedule.project.id}))
     form = ScheduleForm(instance=schedule)
@@ -469,7 +477,8 @@ def edit_schedule(request, id):
                     fsxform.xf_id = xf
                     fsxform.save()
                 else:
-                    FieldSightXF.objects.create(xf_id=xf, is_scheduled=True,schedule=schedule,site=schedule.site)
+                    FieldSightXF.objects.create(
+                        xf_id=xf, is_scheduled=True,schedule=schedule,site=schedule.site, is_deployed=True)
             messages.info(request, 'Schedule {} Saved.'.format(schedule.name))
             return HttpResponseRedirect(reverse("forms:site-survey", kwargs={'site_id': schedule.site.id}))
     form = ScheduleForm(instance=schedule)
