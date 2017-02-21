@@ -352,7 +352,8 @@ def edit_sub_stage(request, stage, id, is_project):
     if FieldSightXF.objects.filter(stage=stage).exists():
         if FieldSightXF.objects.get(stage=stage).xf:
             form.fields['form'].initial= FieldSightXF.objects.get(stage=stage).xf.id
-    return render(request, "fsforms/sub_stage_edit.html", {'form': form, 'id': id, 'is_project':is_project,'scenario':"Update"})
+    return render(request, "fsforms/sub_stage_edit.html", {'form': form, 'id': id, 'is_project':is_project,
+                                                           'scenario':"Update"})
 
 @group_required("Project")
 def create_schedule(request, site_id):
@@ -569,7 +570,7 @@ def share_stages(request, id, is_project):
 
                 if sl == '1':
                     group.is_global= False
-                    if is_project:
+                    if is_project == '1':
                         group.organization = Project(pk=id).organization
                     else:
                         group.organization = Site(pk=id).project.organization
@@ -577,13 +578,13 @@ def share_stages(request, id, is_project):
                     group.save()
                 if sl == '2':
                     group.is_global= False
-                    if is_project:
+                    if is_project == '1':
                         group.project = Project(pk=id)
                     else:
                         group.project = Site(pk=id).project
                     group.organization=None
                     group.save()
-                if is_project:
+                if is_project == '1':
                     Stage.objects.filter(stage__isnull=True,project_id=id).update(group=group)
                     messages.info(request, 'Project Stages Shared')
                     return HttpResponseRedirect(reverse("forms:setup-project-stages", kwargs={'id': id}))
