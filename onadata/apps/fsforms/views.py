@@ -1023,6 +1023,7 @@ def project_html_export(request, fsxf_id):
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
 
+
 def instance_detail(request, fsxf_id, instance_id):
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     cursor = get_instance(instance_id)
@@ -1030,7 +1031,7 @@ def instance_detail(request, fsxf_id, instance_id):
     obj = cursor[0]
     _keys = ['_notes', 'meta/instanceID', 'end', '_uuid', '_bamboo_dataset_id', '_tags', 'start',
              '_geolocation', '_xform_id_string', '_userform_id', '_status', '__version__', 'formhub/uuid',
-             '_id', 'fs_uuid', 'fs_site']
+             '_id', 'fs_uuid', 'fs_site', 'fs_project_uuid']
     data = {}
     medias = []
     status = 0

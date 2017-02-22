@@ -1,6 +1,6 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n staticfiles %}
-{% load filters %}
+{% load filters fs_filters%}
 {% block page-title %}{% trans 'Form Submission Detail' %}{% endblock %}
 
 {% block head %}
@@ -62,7 +62,7 @@
       <tbody>
       {% for k, v in data.items %}
         <tr>
-          <td>{{k}}</td>
+          <td>{{k|setkey}}</td>
           <td>{{v}}</td>
         </tr>
       {% endfor %}  

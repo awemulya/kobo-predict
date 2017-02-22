@@ -1,7 +1,11 @@
+import json
+from bson import json_util
+from onadata.libs.utils.decorators import apply_form_field_names
 from django.conf import settings
 from formpack import FormPack
 from .models import FieldSightXF
 from onadata.apps.viewer.models.parsed_instance import dict_for_mongo, _encode_for_mongo, xform_instances
+DEFAULT_LIMIT = 30000
 
 
 def get_instances_for_field_sight_form(fieldsight_form_id, submission=None):
@@ -80,12 +84,6 @@ def get_xform_and_perms(fsxf_id, request):
     can_view = can_edit or\
         request.user.has_perm('logger.view_xform', xform)
     return [xform, is_owner, can_edit, can_view]
-
-import json
-from bson import json_util
-from onadata.libs.utils.decorators import apply_form_field_names
-DEFAULT_LIMIT = 30000
-
 
 
 @apply_form_field_names

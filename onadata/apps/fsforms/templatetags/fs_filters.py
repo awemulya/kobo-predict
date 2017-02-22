@@ -8,6 +8,14 @@ register = Library()
 
 
 @register.filter
+def setkey(key):
+    key = key.replace("_0", "")
+    key = key.replace("_", " ")
+    return key
+
+
+
+@register.filter
 def library(xf_id):
     if not FieldSightFormLibrary.objects.filter(xf__id_string=xf_id).exists():
         return 5
