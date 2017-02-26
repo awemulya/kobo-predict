@@ -1,30 +1,21 @@
-from django.conf.urls import url, include
-from rest_framework import routers
-
-from onadata.apps.fsforms.viewsets.FieldSightXformViewset import FieldSightXFormViewSet
-from onadata.apps.fsforms.viewsets.ScheduleViewset import ScheduleViewset, DayViewset
+from django.conf.urls import url
+from onadata.apps.fsforms.viewsets.ScheduleViewset import ScheduleViewset
 from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXFormListApi
 from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSubmissionApi
-from onadata.apps.fsforms.viewsets.GroupsViewset import GroupViewSet
 from onadata.apps.fsforms.viewsets.SiteFormsViewset import SiteFormViewSet
-from onadata.apps.fsforms.viewsets.StageViewset import StageViewSet, MainStageViewSet, SiteMainStageViewSet, \
+from onadata.apps.fsforms.viewsets.StageViewset import SiteMainStageViewSet, \
         SubStageViewSet
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
 from .views import (
     LibraryFormsListView,
-    FormsListView,
     GroupListView,
     GroupCreateView,
     GroupUpdateView,
     StageListView,
     StageUpdateView,
-    StageCreateView,
     add_sub_stage,
     stage_details,
     stage_add_form,
-    ScheduleListView,
-    ScheduleCreateView,
-    # ScheduleUpdateView,
     assign, fill_form_type,
     fill_details_stage,
     fill_details_schedule,
@@ -37,7 +28,6 @@ from .views import (
     delete_data,
     data_view,
     site_forms,
-    site_stages,
     setup_site_stages,
     stage_add,
     site_survey,
@@ -48,20 +38,10 @@ from .views import (
     project_html_export, deploy_survey, deploy_stages, deploy_general, set_deploy_stages, share_stages,
     edit_share_stages, library_stages)
 
-# router = routers.DefaultRouter()
-# router.register(r'api/groups', GroupViewSet)
-# router.register(r'api/stage', StageViewSet)
-# router.register(r'api/main-stages', MainStageViewSet)
-# router.register(r'api/schedule', ScheduleViewset)
-# router.register(r'api/day', DayViewset)
-# router.register(r'api/fsxform', FieldSightXFormViewSet)
-
 
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
-        # url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
         url(r'^assigned/$', MyOwnFormsListView.as_view(), name='forms-list'),
-        # assigned form list to a user(site supervisor)
         url(r'^assigned-form-list/$', AssignedFormsListView.as_view(), name='assigned-form-list'),
 
         url(r'^group/$', GroupListView.as_view(), name='group-list'),
@@ -80,9 +60,7 @@ urlpatterns = [
         url(r'^stage-edit/(?P<stage>\d+)/(?P<id>\d+)/(?P<is_project>\d)/$', edit_main_stage, name='edit-main-stage'),
         url(r'^sub-stage-edit/(?P<stage>\d+)/(?P<id>\d+)/(?P<is_project>\d)/$', edit_sub_stage, name='edit-sub-stage'),
 
-        # url(r'^schedule/$', ScheduleListView.as_view(), name='schedules-list'),
         url(r'^schedule/add/(?P<site_id>\d+)/$', create_schedule, name='schedule-add'),
-        # url(r'^schedule/(?P<pk>\d+)/$', ScheduleUpdateView.as_view(), name='schedule-edit'),
         url(r'^schedule/(?P<id>\d+)/$', edit_schedule, name='schedule-edit'),
         url(r'^general/(?P<id>\d+)/$', edit_general, name='edit-general'),
         url(r'^deploy-stages/(?P<id>\d+)/$', deploy_stages, name='deploy-stages'),
@@ -95,7 +73,6 @@ urlpatterns = [
 
         url(r'^project/schedule/add/(?P<id>\d+)/$', project_create_schedule, name='project-schedule-add'),
         url(r'^project/schedule/edit/(?P<id>\d+)/$', project_edit_schedule, name='project-schedule-edit'),
-        # url(r'^site-stage/(?P<site_id>\d+)$', site_stages, name='site-stages'),
         url(r'^library-stage/(?P<id>\d+)$', library_stages, name='view-stages-of-library'),
         url(r'^setup-site-stage/(?P<site_id>\d+)$', setup_site_stages, name='setup-site-stages'),
         url(r'^setup-project-stage/(?P<id>\d+)$', setup_project_stages, name='setup-project-stages'),
@@ -113,9 +90,6 @@ urlpatterns = [
 
 urlpatterns = urlpatterns + [
         url(r'^assignedFormList/(?P<site_id>\d+)$', AssignedXFormListApi.as_view({'get': 'list'}), name='form-list'),
-        # url(r'^(?P<pk>[\d+^/]+)/form\.xml$',
-        #         AssignedXFormListApi.as_view({'get': 'retrieve'}),
-        #         name='download_xform'),
         url(r'^(?P<pk>\d+)/form\.xml$',
                 'onadata.apps.fsforms.views.download_xform', name='download_xform'),
 

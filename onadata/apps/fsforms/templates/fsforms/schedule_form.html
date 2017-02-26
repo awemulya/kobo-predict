@@ -1,7 +1,7 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 
-{% block page-title %}{{ scenario }} {% trans 'Schedules Info' %}{% endblock %}
+{% block page-title %}{{ scenario }} {% trans 'New Survey Info' %}{% endblock %}
 
 {% block head %}
 {% if is_project %}
@@ -19,7 +19,7 @@
 {% else %}
 <li><a href="{% url 'fieldsight:site-dashboard' obj.pk %}">{% trans 'Site Dashboard' %}</a></li>
 {% endif %}
-    <li>{% trans 'Schedules Info' %}</li>
+    <li>{% trans 'New Survey Info' %}</li>
 {% endblock %}
 
 {% block content %}
