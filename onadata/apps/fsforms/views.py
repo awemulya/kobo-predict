@@ -201,7 +201,7 @@ def add_sub_stage(request, pk=None):
     stage = get_object_or_404(
         Stage, pk=pk)
     if request.method == 'POST':
-        form = AddSubSTageForm(data=request.POST)
+        form = AddSubSTageForm(data=request.POST, request=request)
         if form.is_valid():
             child_stage = form.save(commit=False)
             child_stage.stage = stage
@@ -335,7 +335,7 @@ def edit_main_stage(request, stage, id, is_project):
 def edit_sub_stage(request, stage, id, is_project):
     stage = get_object_or_404(Stage, pk=stage)
     if request.method == 'POST':
-        form = SubStageEditForm(instance=stage, data=request.POST)
+        form = SubStageEditForm(instance=stage, data=request.POST, request=request)
         if form.is_valid():
             form.save()
             form = int(form.cleaned_data.get('form',0))
@@ -370,7 +370,7 @@ def create_schedule(request, site_id):
     site = get_object_or_404(
         Site, pk=site_id)
     if request.method == 'POST':
-        form = ScheduleForm(data=request.POST)
+        form = ScheduleForm(data=request.POST ,request=request)
         if form.is_valid():
             form_type = int(form.cleaned_data.get('form_type',0))
             xf = int(form.cleaned_data.get('form', 0))
@@ -451,7 +451,7 @@ def project_edit_schedule(request, id):
     schedule = get_object_or_404(
         Schedule, pk=id)
     if request.method == 'POST':
-        form = ScheduleForm(data=request.POST, instance=schedule)
+        form = ScheduleForm(data=request.POST, instance=schedule, request=request)
         if form.is_valid():
             form.save()
             xf = int(form.cleaned_data.get('form', 0))
@@ -478,7 +478,7 @@ def edit_schedule(request, id):
     schedule = get_object_or_404(
         Schedule, pk=id)
     if request.method == 'POST':
-        form = ScheduleForm(data=request.POST, instance=schedule)
+        form = ScheduleForm(data=request.POST, instance=schedule, request=request)
         if form.is_valid():
             form.save()
             xf = int(form.cleaned_data.get('form',0))
@@ -681,7 +681,7 @@ def edit_general(request, id):
     fs_xform = get_object_or_404(
         FieldSightXF, pk=id)
     if request.method == 'POST':
-        form = GeneralFSForm(data=request.POST, instance=fs_xform)
+        form = GeneralFSForm(data=request.POST, instance=fs_xform, request=request)
         if form.is_valid():
             form.save()
             messages.info(request, 'General Form Updated')
@@ -699,7 +699,7 @@ def schedule_add_form(request, pk=None):
         Schedule, pk=pk)
     instance = FieldSightXF(site=schedule.site, is_staged=False, is_scheduled=True, schedule=schedule)
     if request.method == 'POST':
-        form = AssignFormToScheduleForm(request.POST, instance=instance)
+        form = AssignFormToScheduleForm(request.POST, instance=instance, request=request)
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.INFO, 'Form Assigned Successfully.')

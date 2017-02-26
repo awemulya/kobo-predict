@@ -86,7 +86,6 @@ class GeneralFSForm(forms.ModelForm):
         else:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
-        super(GeneralFSForm, self).__init__(*args, **kwargs)
         self.fields['xf'].choices = [(obj.id, obj.title) for obj in xform]
         self.fields['xf'].empty_label = None
         self.fields['xf'].label = "Form"
