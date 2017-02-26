@@ -21,7 +21,7 @@ class Submission():
         query = {'fs_site': str(site)}
         fields = {'fs_status':1, '_submission_time':1, '_submitted_by':1, 'fs_uuid':1, '_id':0}
         cursor =  settings.MONGO_DB.instances.find(query)
-        outstanding, flagged, approved, rejected = [], [], [], []
+        all, outstanding, flagged, approved, rejected = [], [], [], [], []
         if cursor.count():
             data = list(cursor)
             for form in data:
@@ -30,6 +30,7 @@ class Submission():
                               form['_submitted_by'],
                               form['fs_uuid'],
                               form['_id'])
+                all.append(entry)
                 if entry.status == 0:
                     outstanding.append(entry)
                 elif entry.status == 1:
@@ -38,5 +39,5 @@ class Submission():
                     flagged.append(entry)
                 else:
                     approved.append(entry)
-        return outstanding, flagged, approved, rejected
+        return all, outstanding, flagged, approved, rejected
 
