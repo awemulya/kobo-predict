@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.forms.extras.widgets import SelectDateWidget
 from django import forms
 from django.utils.translation import ugettext_lazy as _
@@ -69,14 +70,29 @@ class FSFormForm(forms.ModelForm):
 class GeneralFSForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super(GeneralFSForm, self).__init__(*args, **kwargs)
-        self.fields['xf'].choices = [(obj.id, obj.title) for obj in XForm.objects.all()]
+        if hasattr(self.request, "project") and self.request.project is not None:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
+                Q(fieldsightformlibrary__project=self.request.project) |
+                Q(fieldsightformlibrary__organization=self.request.organization))
+
+        elif hasattr(self.request, "organization") and self.request.organization is not None:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) |
+                Q(fieldsightformlibrary__is_global=True) |
+                Q(fieldsightformlibrary__organization=self.request.organization))
+        else:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
+        super(GeneralFSForm, self).__init__(*args, **kwargs)
+        self.fields['xf'].choices = [(obj.id, obj.title) for obj in xform]
         self.fields['xf'].empty_label = None
         self.fields['xf'].label = "Form"
 
-
     class Meta:
-        fields = ['xf','shared_level']
+        fields = ['xf']
         model = FieldSightXF
 
 
@@ -96,9 +112,25 @@ class MainStageEditForm(forms.ModelForm):
 
 class SubStageEditForm(forms.ModelForm):
     form = forms.ChoiceField(widget = forms.Select(), required=False,)
+
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super(SubStageEditForm, self).__init__(*args, **kwargs)
-        self.fields['form'].choices = [(obj.id, obj.title) for obj in XForm.objects.all()]
+        if hasattr(self.request, "project") and self.request.project is not None:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
+                Q(fieldsightformlibrary__project=self.request.project) |
+                Q(fieldsightformlibrary__organization=self.request.organization))
+
+        elif hasattr(self.request, "organization") and self.request.organization is not None:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) |
+                Q(fieldsightformlibrary__is_global=True) |
+                Q(fieldsightformlibrary__organization=self.request.organization))
+        else:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
+        self.fields['form'].choices = [(obj.id, obj.title) for obj in xform]
         self.fields['form'].empty_label = None
 
 
@@ -109,9 +141,25 @@ class SubStageEditForm(forms.ModelForm):
 
 class AddSubSTageForm(forms.ModelForm):
     form = forms.ChoiceField(widget = forms.Select(), required=False,)
+
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super(AddSubSTageForm, self).__init__(*args, **kwargs)
-        self.fields['form'].choices = [(obj.id, obj.title) for obj in XForm.objects.all()]
+        if hasattr(self.request, "project") and self.request.project is not None:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
+                Q(fieldsightformlibrary__project=self.request.project) |
+                Q(fieldsightformlibrary__organization=self.request.organization))
+
+        elif hasattr(self.request, "organization") and self.request.organization is not None:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) |
+                Q(fieldsightformlibrary__is_global=True) |
+                Q(fieldsightformlibrary__organization=self.request.organization))
+        else:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
+        self.fields['form'].choices = [(obj.id, obj.title) for obj in xform]
         self.fields['form'].empty_label = None
 
 
@@ -166,9 +214,25 @@ class ScheduleForm(forms.ModelForm):
     form = forms.ChoiceField(widget = forms.Select(), required=False,)
     form_type = forms.ChoiceField("Select Form Type",widget = forms.Select(
         attrs={'id':'form_type','onchange':'Hide()'}), required=False,)
+
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super(ScheduleForm, self).__init__(*args, **kwargs)
-        self.fields['form'].choices = [(obj.id, obj.title) for obj in XForm.objects.all()]
+        if hasattr(self.request, "project") and self.request.project is not None:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
+                Q(fieldsightformlibrary__project=self.request.project) |
+                Q(fieldsightformlibrary__organization=self.request.organization))
+
+        elif hasattr(self.request, "organization") and self.request.organization is not None:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) |
+                Q(fieldsightformlibrary__is_global=True) |
+                Q(fieldsightformlibrary__organization=self.request.organization))
+        else:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
+        self.fields['form'].choices = [(obj.id, obj.title) for obj in xform]
         self.fields['form_type'].choices = [(0, "General"),(1, "Scheduled")]
         self.fields['form'].empty_label = None
 
