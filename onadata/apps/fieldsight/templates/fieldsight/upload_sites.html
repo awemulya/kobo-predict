@@ -11,7 +11,7 @@
 
 {% block content %}
 
-    <form enctype="multipart/form-data" method="post">
+    <form enctype="multipart/form-data" method="post" action="{% url 'fieldsight:site-upload' project %}">
         <div class="col-sm-12 registration_field">
            {{ form.non_field_errors }}
        </div>

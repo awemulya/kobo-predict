@@ -425,13 +425,13 @@ class SiteUpdateView(SiteView, ProjectMixin, UpdateView):
 class SiteDeleteView(SiteView, ProjectMixin, DeleteView):
     pass
 
-@group_required("ProjectOnly")
-def upload_sites(request):
+@group_required("Project")
+def upload_sites(request, pk):
     form = UploadFileForm()
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            project = request.project
+            project = Project(pk=pk)
             try:
                 sites = request.FILES['file'].get_records()
                 with transaction.atomic():
@@ -455,7 +455,7 @@ def upload_sites(request):
                 form.full_clean()
                 form._errors[NON_FIELD_ERRORS] = form.error_class(['Sites Upload Failed, UnSupported Data'])
                 messages.warning(request, 'Site Upload Failed, UnSupported Data ')
-    return render(request, 'fieldsight/upload_sites.html',{'form':form})
+    return render(request, 'fieldsight/upload_sites.html',{'form':form, 'project':pk})
 
 def download(request):
     sheet = excel.pe.Sheet([[1, 2],[3, 4]])

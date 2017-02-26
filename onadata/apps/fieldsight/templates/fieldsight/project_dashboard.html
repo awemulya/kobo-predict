@@ -13,6 +13,7 @@
 
 {% block head %}
     <a class="btn btn-success btn-raised" href="{% url 'fieldsight:project-edit' obj.pk %}">{% trans 'Edit' %}</a>
+<a class="btn btn-success btn-raised" href="{% url 'fieldsight:site-upload' obj.pk %}">{% trans 'Bulk' %} {% trans 'Upload Sites' %}</a>
  <a class="btn btn-success btn-raised" href="{% url 'forms:project-responses' obj.pk %}">{% trans 'Responses' %}</a>
 {% endblock %}
 
@@ -23,9 +24,6 @@
     <li>{{obj.name}}</li>
 {% endblock %}
 {% block content %}
-
-
-
 
 
 	<div class="organization-detail-page">

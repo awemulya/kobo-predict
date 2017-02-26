@@ -65,7 +65,7 @@ urlpatterns = [
 
 
     # url(r'^organization/search/$', organization_search, name='search-org'),
-    url(r'^upload/$', upload_sites, name='site-upload'),
+    url(r'^upload/(?P<pk>\d+)/$', upload_sites, name='site-upload'),
     url(r'^project/delete/(?P<pk>\d+)/$', ProjectDeleteView.as_view(), name='project-delete'),
     url(r'^project/alter-status/(?P<pk>\d+)/$', alter_proj_status, name='alter_proj_status'),
     url(r'^project/add-proj-manager/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
