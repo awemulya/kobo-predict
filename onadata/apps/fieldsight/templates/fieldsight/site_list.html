@@ -70,28 +70,20 @@
             <!--</tbody>-->
         <!--</table>-->
          <div class="organization-list">
-            <a href="{% url 'fieldsight:site-dashboard' obj.pk %}">
-                <div class="org-grg">
-                    <div class="col-md-2">
-                        <div class="org-logo">
-                            <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />
-                        </div>
+            <div class="col-md-3">
+                <a href="{% url 'fieldsight:site-dashboard' obj.pk %}">
+                    <div class="org-grg">
+                            <div class="org-logo">
+                                <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />
+                            </div>
+                            <div class="abt-org">
+                                <h3>{{ obj.name }}</h3>
+                                <h3>{{obj.identifier}}</h3>
+                                <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }},{{ obj.get_country_display }}</p>
+                            </div>
                     </div>
-                    <div class="col-md-10">
-                        <div class="abt-org">
-                            <h3>{{ obj.name }}</h3>
-                            <h3>{{obj.identifier}}</h3>
-                            <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
-                            <p class="country"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.get_country_display }}</p>
-                            <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
-                            <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
-                            <p class="website"><span></span>{{ obj.website }}</p>
-
-                        </div>
-                    </div>
-                    <div class="clearfixx"></div>
-                </div>
-            </a>
+                </a>
+            </div>
         </div>
         {% endfor %}
         {% paginate %}

@@ -158,29 +158,49 @@
             <div class="col-md-6">
                 <div class="outstanding-and-all">
                     <ul class="nav nav-tabs">
-                      <li class="active">
-                          <a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
+                      <li class="active"><a data-toggle="tab" href="#out-all">All ({{all|length}})</a></li>
+                      <li><a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
                         <li><a data-toggle="tab" href="#out-reject">Rejected ({{rejected|length}})</a></li>
                         <li><a data-toggle="tab" href="#out-flagged">Flagged ({{flagged|length}})</a></li>
                         <li><a data-toggle="tab" href="#out-approved">Approved ({{approved|length}})</a></li>
                     </ul>
 
                     <div class="tab-content">
-                      <div id="out-standing" class="tab-pane fade in active">
+                      <div id="out-all" class="tab-pane fade in active">
                         <div class="org-site-list">
                             <div class="form-list">
-                                {% for form in outstanding %}
-                                <a href="#">
+                                {% for form in all %}
+                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                     <div class="org-site">
                                         
                                         <div class="">
                                             <div class="detail-org">
-                                                <h5 class="site-title-org">
-                                                    <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
-                                                        View Data</a></h5>
-                                               <p class="address">{{ form.fsform.xf.title}}</p>
-                                                <p class="address">{{ form.submission_time }}</p>
-                                                <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
+                                              <h5 class="site-title-org">
+                                              <p class="address">{{ form.fsform.xf.title}}</p>
+                                              <p class="address">{{ form.submission_time }}</p>
+                                              <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="clearfixx"></div>
+                                    </div>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                      </div>
+                      <div id="out-standing" class="tab-pane fade in active">
+                        <div class="org-site-list">
+                            <div class="form-list">
+                                {% for form in outstanding %}
+                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
+                                    <div class="org-site">
+                                        
+                                        <div class="">
+                                            <div class="detail-org">
+                                              <h5 class="site-title-org">
+                                              <p class="address">{{ form.fsform.xf.title}}</p>
+                                              <p class="address">{{ form.submission_time }}</p>
+                                              <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
@@ -194,17 +214,15 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for form in rejected %}
-                                <a href="#">
+                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                     <div class="org-site">
                                         
                                       <div class="">
                                             <div class="detail-org">
-                                                 <h5 class="site-title-org">
-                                                    <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
-                                                        View Data</a></h5>
-                                                <p class="address">{{ form.fsform.xf.title}}</p>
-                                                <p class="address">{{ form.submission_time }}</p>
-                                                <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
+                                              <h5 class="site-title-org">
+                                              <p class="address">{{ form.fsform.xf.title}}</p>
+                                              <p class="address">{{ form.submission_time }}</p>
+                                              <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
@@ -219,17 +237,15 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                {% for form in approved %}
-                                <a href="#">
+                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                     <div class="org-site">
 
                                       <div class="">
                                             <div class="detail-org">
-                                                 <h5 class="site-title-org">
-                                                    <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
-                                                        View Data</a></h5>
-                                               <p class="address">{{ form.fsform.xf.title}}</p>
-                                                <p class="address">{{ form.submission_time }}</p>
-                                                <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
+                                              <h5 class="site-title-org">
+                                              <p class="address">{{ form.fsform.xf.title}}</p>
+                                              <p class="address">{{ form.submission_time }}</p>
+                                              <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
                                             </div>
                                         </div>
                                         <div class="clearfixx"></div>
@@ -243,14 +259,12 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for form in flagged %}
-                                <a href="#">
+                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                     <div class="org-site">
 
                                       <div class="">
                                             <div class="detail-org">
                                                 <h5 class="site-title-org">
-                                                    <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
-                                                        View Data</a></h5>
                                                 <p class="address">{{ form.fsform.xf.title}}</p>
                                                 <p class="address">{{ form.submission_time }}</p>
                                                 <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
