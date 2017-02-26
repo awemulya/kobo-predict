@@ -158,11 +158,11 @@
             <div class="col-md-6">
                 <div class="outstanding-and-all">
                     <ul class="nav nav-tabs">
-                      <li class="active"><a data-toggle="tab" href="#out-all">All ({{all|length}})</a></li>
-                      <li><a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
-                        <li><a data-toggle="tab" href="#out-reject">Rejected ({{rejected|length}})</a></li>
-                        <li><a data-toggle="tab" href="#out-flagged">Flagged ({{flagged|length}})</a></li>
-                        <li><a data-toggle="tab" href="#out-approved">Approved ({{approved|length}})</a></li>
+                      <li class="all active"><a data-toggle="tab" href="#out-all">All ({{all|length}})</a></li>
+                      <li class="out"><a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
+                        <li class="reg"><a data-toggle="tab" href="#out-reject">Rejected ({{rejected|length}})</a></li>
+                        <li class="flag"><a data-toggle="tab" href="#out-flagged">Flagged ({{flagged|length}})</a></li>
+                        <li class="app"><a data-toggle="tab" href="#out-approved">Approved ({{approved|length}})</a></li>
                     </ul>
 
                     <div class="tab-content">
@@ -175,13 +175,13 @@
                                         
                                         <div class="">
                                             <div class="detail-org">
-                                              <h5 class="site-title-org">
-                                              <p class="address">{{ form.fsform.xf.title}}</p>
-                                              <p class="address">{{ form.submission_time }}</p>
-                                              <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
+                                              
+                                              <h4 class="address">{{ form.fsform.xf.title}}</h4>
+                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
+                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>
+                                              <div class="clearfixx"></div>
                                             </div>
                                         </div>
-                                        <div class="clearfixx"></div>
                                     </div>
                                 </a>
                                 {% endfor %}
@@ -197,13 +197,13 @@
                                         
                                         <div class="">
                                             <div class="detail-org">
-                                              <h5 class="site-title-org">
-                                              <p class="address">{{ form.fsform.xf.title}}</p>
-                                              <p class="address">{{ form.submission_time }}</p>
-                                              <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
+                                              
+                                              <h4 class="address">{{ form.fsform.xf.title}}</h4>
+                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
+                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>
+                                              <div class="clearfixx"></div>
                                             </div>
                                         </div>
-                                        <div class="clearfixx"></div>
                                     </div>
                                 </a>
                                 {% endfor %}
@@ -219,13 +219,13 @@
                                         
                                       <div class="">
                                             <div class="detail-org">
-                                              <h5 class="site-title-org">
-                                              <p class="address">{{ form.fsform.xf.title}}</p>
-                                              <p class="address">{{ form.submission_time }}</p>
-                                              <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
+                                              
+                                              <h4 class="address">{{ form.fsform.xf.title}}</h4>
+                                             <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
+                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>
+                                              <div class="clearfixx"></div>
                                             </div>
                                         </div>
-                                        <div class="clearfixx"></div>
                                     </div>
                                 </a>
                                  {% endfor %}
@@ -242,13 +242,13 @@
 
                                       <div class="">
                                             <div class="detail-org">
-                                              <h5 class="site-title-org">
-                                              <p class="address">{{ form.fsform.xf.title}}</p>
-                                              <p class="address">{{ form.submission_time }}</p>
-                                              <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
+                                              
+                                              <h4 class="address">{{ form.fsform.xf.title}}</h4>
+                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
+                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>
+                                              <div class="clearfixx"></div>
                                             </div>
                                         </div>
-                                        <div class="clearfixx"></div>
                                     </div>
                                 </a>
                                  {% endfor %}
@@ -264,13 +264,13 @@
 
                                       <div class="">
                                             <div class="detail-org">
-                                                <h5 class="site-title-org">
-                                                <p class="address">{{ form.fsform.xf.title}}</p>
-                                                <p class="address">{{ form.submission_time }}</p>
-                                                <p class="address"><i class="fa fa-user"></i>{{ form.submitted_by }}</p>
+                                                
+                                                <h4 class="address">{{ form.fsform.xf.title}}</h4>
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
+                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>
+                                              <div class="clearfixx"></div>
                                             </div>
                                         </div>
-                                        <div class="clearfixx"></div>
                                     </div>
                                 </a>
                                  {% endfor %}
