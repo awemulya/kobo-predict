@@ -19,6 +19,17 @@
 
 {% endif %}
 {% endblock %}
+
+{% block breadcrumbs %}
+{% if project %}
+    <li><a href="{% url 'fieldsight:project-dashboard' project.pk %}">{% trans 'Project Dashboard' %}</a></li>
+{% endif %}
+
+{% if site %}
+<li><a href="{% url 'fieldsight:site-dashboard' site.pk %}">{% trans 'Site Dashboard' %}</a></li>
+{% endif %}
+    <li>{% trans 'Schedules Info' %}</li>
+{% endblock %}
 {% block content %}
 
     {% load pagination_tags %}

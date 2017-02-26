@@ -425,6 +425,7 @@ class SiteUpdateView(SiteView, ProjectMixin, UpdateView):
 class SiteDeleteView(SiteView, ProjectMixin, DeleteView):
     pass
 
+
 @group_required("Project")
 def upload_sites(request, pk):
     form = UploadFileForm()

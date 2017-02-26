@@ -6,8 +6,10 @@
 {% block head %}
 {% if is_project %}
     <a class="btn btn-success btn-raised" href="{% url 'forms:project-survey' obj.pk%}">{% trans 'Schedules' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'forms:project-general' obj.pk%}">{% trans 'General Forms' %}</a>
 {% else %}
     <a class="btn btn-success btn-raised" href="{% url 'forms:site-survey' obj.pk%}">{% trans 'Schedules' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'forms:site-general' obj.pk%}">{% trans 'General Forms' %}</a>
 {% endif %}
 {% endblock %}
 
