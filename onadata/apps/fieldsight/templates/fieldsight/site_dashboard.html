@@ -12,6 +12,7 @@
 {% block head %}
     <a class="btn btn-success btn-raised" href="{% url 'fieldsight:site-edit' obj.pk %}">{% trans 'Edit' %}</a>
     <a class="btn btn-success btn-raised" href="{% url 'forms:site-responses' obj.pk %}">{% trans 'Responses' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:site-blue-prints' obj.pk %}">{% trans 'Add BluePrints' %}</a>
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -150,7 +151,11 @@
                   </div>
                   <div id="org-blueprint" class="tab-pane fade">
                      <div class="about-organization-blueprint">
-                      
+                      {% for image in obj.blueprints.all %}
+                         <div class="org-logo">
+                            <img src="{{ image.image.url }}" />
+                        </div>
+                         {% endfor %}
                      </div>
                   </div>
                 </div>    

@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
+from django.utils.text import slugify
 from jsonfield import JSONField
 
 from onadata.utils.CustomModelFields import IntegerRangeField
@@ -236,3 +237,16 @@ class Site(models.Model):
     @property
     def get_absolute_url(self):
         return reverse('sites-detail', kwargs={'pk': self.pk})
+
+
+def get_image_filename(instance, filename):
+    title = instance.site.identifier
+    project = instance.site.project.pk
+    slug = slugify(title)
+    return "blueprint_images/%s-%s-%s" % (project, slug, filename)
+
+
+class BluePrints(models.Model):
+    site = models.ForeignKey(Site, related_name="blueprints")
+    image = models.ImageField(upload_to=get_image_filename,
+                              verbose_name='BluePrints',)

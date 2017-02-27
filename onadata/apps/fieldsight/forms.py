@@ -1,5 +1,4 @@
 from django import forms
-from django.contrib.gis import forms as gform
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
 from django.core.urlresolvers import reverse_lazy
@@ -10,7 +9,7 @@ from registration import forms as registration_forms
 
 from onadata.apps.fieldsight.helpers import AdminImageWidget
 from onadata.utils.forms import HTML5BootstrapModelForm, KOModelForm
-from .models import Organization, Project, Site
+from .models import Organization, Project, Site, BluePrints
 from onadata.apps.userrole.models import UserRole
 
 USERNAME_REGEX = r'^[a-z][a-z0-9_]+$'
@@ -251,6 +250,13 @@ class SiteForm(forms.ModelForm):
         super(SiteForm, self).clean()
 
 
-
 class UploadFileForm(forms.Form):
     file = forms.FileField()
+
+
+class BluePrintForm(forms.ModelForm):
+    image = forms.ImageField(label='Image')
+
+    class Meta:
+        model = BluePrints
+        fields = ('image', )

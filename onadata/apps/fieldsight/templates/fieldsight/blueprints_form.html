@@ -1,0 +1,29 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{{ scenario }} {% trans 'Site' %}{% endblock %}
+{%block extracss %}
+{% endblock %}
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a>
+{% endblock %}
+
+
+{% block content %}
+
+    <form id="post_form" method="post" action="{% url 'fieldsight:site-blue-prints' id%}"
+      enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    {{ formset.management_form }}
+    {% for form in formset %}
+        {{ form }}
+    {% endfor %}
+
+
+    <input type="submit" class="btn btn-primary" name="submit" value="Submit" />
+</form>
+
+{% endblock %}
+

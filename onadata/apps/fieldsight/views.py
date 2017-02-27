@@ -7,6 +7,7 @@ from django.contrib.gis.geos import Point
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
+from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.response import TemplateResponse
@@ -30,9 +31,9 @@ from onadata.apps.users.models import UserProfile
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile)
-from .models import Organization, Project, Site, ExtraUserDetail
+from .models import Organization, Project, Site, ExtraUserDetail, BluePrints
 from .forms import OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetOrgAdminForm, \
-    SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm, AssignOrgAdmin, UploadFileForm
+    SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm, AssignOrgAdmin, UploadFileForm, BluePrintForm
 
 
 @login_required
@@ -526,3 +527,26 @@ class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, Registrat
             return new_user
         return False
 
+
+@login_required
+def blue_prints(request, id):
+
+    ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
+
+    if request.method == 'POST':
+
+        formset = ImageFormSet(request.POST, request.FILES,
+                               queryset=BluePrints.objects.none())
+
+        if formset.is_valid():
+            for form in formset.cleaned_data:
+                if 'image' in form:
+                    image = form['image']
+                    photo = BluePrints(site_id=id, image=image)
+                    photo.save()
+            messages.success(request,
+                             "Blueprints saved!")
+            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': id}))
+    else:
+        formset = ImageFormSet(queryset=BluePrints.objects.none())
+    return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': id},)
