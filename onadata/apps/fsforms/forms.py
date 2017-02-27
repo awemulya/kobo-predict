@@ -94,6 +94,16 @@ class GeneralFSForm(forms.ModelForm):
         fields = ['xf']
         model = FieldSightXF
 
+    def clean(self):
+        if FieldSightXF.objects.filter(xf=self.data['xf'], is_staged=False, is_scheduled=False,
+                        site=self.instance.site, project=self.instance.project).exists():
+            if not FieldSightXF.objects.get(xf=self.data['xf'], is_staged=False, is_scheduled=False,
+                        site=self.instance.site, project=self.instance.project).pk == self.instance.pk:
+                raise forms.ValidationError({
+                    'xf': forms.ValidationError(_('General Form Already Exists.'), code='invalid'),
+                })
+
+
 
 class StageForm(forms.ModelForm):
 

@@ -370,16 +370,16 @@ def create_schedule(request, site_id):
     site = get_object_or_404(
         Site, pk=site_id)
     if request.method == 'POST':
-        form = ScheduleForm(data=request.POST ,request=request)
+        form = ScheduleForm(data=request.POST , request=request)
         if form.is_valid():
             form_type = int(form.cleaned_data.get('form_type',0))
             xf = int(form.cleaned_data.get('form', 0))
             if not form_type:
                 if xf:
-                    _, created = FieldSightXF.objects.get_or_create(xf_id=xf, is_scheduled=False,
+                    fxf, created = FieldSightXF.objects.get_or_create(xf_id=xf, is_scheduled=False,
                                                                     is_staged=False, site=site)
-                    _.is_deployed= True
-                    _.save()
+                    fxf.is_deployed= True
+                    fxf.save()
                     messages.info(request, 'General Form  Saved.')
                 return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': site.id}))
             schedule = form.save()
@@ -427,10 +427,10 @@ def project_create_schedule(request, id):
             xf = int(form.cleaned_data.get('form',0))
             if not form_type:
                 if xf:
-                    _, created = FieldSightXF.objects.get_or_create(
+                    fxf, created = FieldSightXF.objects.get_or_create(
                         xf_id=xf, is_scheduled=False, is_staged=False, project=project)
-                    _.is_deployed = True
-                    _.save()
+                    fxf.is_deployed = True
+                    fxf.save()
                     messages.info(request, 'General Form  Saved.')
                 return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': project.id}))
             schedule = form.save()
@@ -681,15 +681,18 @@ def deploy_survey(request, id):
 def edit_general(request, id):
     fs_xform = get_object_or_404(
         FieldSightXF, pk=id)
+    form = GeneralFSForm(instance=fs_xform, request=request)
     if request.method == 'POST':
         form = GeneralFSForm(data=request.POST, instance=fs_xform, request=request)
-        if form.is_valid():
-            form.save()
-            messages.info(request, 'General Form Updated')
-            if fs_xform.site:
-                return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': fs_xform.site.id}))
-            return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fs_xform.project.id}))
-    form = GeneralFSForm(instance=fs_xform, request=request)
+        try:
+            if form.is_valid():
+                form.save()
+                messages.info(request, 'General Form Updated')
+                if fs_xform.site:
+                    return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': fs_xform.site.id}))
+                return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fs_xform.project.id}))
+        except:
+            messages.error(request, 'General Form Not Updated, Repeated Form')
     is_project = True if fs_xform.project else False
     return render(request, "fsforms/general_form.html", {'form': form,'is_project':is_project})
 
