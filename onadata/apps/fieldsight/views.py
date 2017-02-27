@@ -37,18 +37,17 @@ from .forms import OrganizationForm, ProjectForm, SiteForm, RegistrationForm, Se
 
 @login_required
 def dashboard(request):
-    if UserRole.is_active(request.user, "Super Admin"):
+    current_role = request.role
+    if not current_role or current_role is None:
         pass
-        # return HttpResponseRedirect(reverse("fieldsight:organizations-list"))
-    elif UserRole.is_active(request.user, "Organization Admin"):
-        org = UserRole.objects.filter(user=request.user, group__name="Organization Admin")[0].organization
-        return HttpResponseRedirect(reverse("fieldsight:organization-dashboard", kwargs={'pk': org.pk}))
-    elif UserRole.is_active(request.user, "Project Manager"):
-        project = UserRole.objects.filter(user=request.user, group__name="Project Manager")[0].project
-        return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': project.pk}))
-    elif UserRole.is_active(request.user, "Site Supervisor"):
-        site = UserRole.objects.filter(user=request.user, group__name="Site Supervisor")[0].site
-        return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': site.pk}))
+    if current_role.group.name == "Site Supervisor":
+        return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
+    if current_role.group.name in ["Project Manager", "Central Engineer"]:
+        return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role.project.pk}))
+    if current_role.group.name == "Organization Admin":
+        return HttpResponseRedirect(reverse("fieldsight:organization-dashboard",
+                                            kwargs={'pk': current_role.organization.pk}))
+
     total_users = User.objects.all().count()
     total_organizations = Organization.objects.all().count()
     total_projects = Project.objects.all().count()
@@ -103,7 +102,7 @@ def organization_dashboard(request, pk):
     obj = Organization.objects.get(pk=pk)
     if not UserRole.objects.filter(user=request.user).filter(Q(group__name="Organization Admin", organization=obj)|Q(group__name="Super Admin")).exists():
         return dashboard(request)
-    peoples_involved = User.objects.filter(user_profile__organization=obj,is_active=True).\
+    peoples_involved = User.objects.filter(user_profile__organization=obj, is_active=True).\
         order_by('first_name')
     sites = Site.objects.filter(project__organization=obj)
     data = serialize('custom_geojson', sites, geometry_field='location',
@@ -142,7 +141,13 @@ def organization_dashboard(request, pk):
 @login_required
 def project_dashboard(request, pk):
     obj = Project.objects.get(pk=pk)
-    peoples_involved = User.objects.filter(user_profile__organization=obj.organization,is_active=True).\
+    if not UserRole.objects.filter(user=request.user).filter(
+                    Q(group__name="Central Engineer", project=obj) |
+                    Q(group__name="Project Manager", project=obj) |
+                    Q(group__name="Organization Admin", organization=obj.organization)|
+                    Q(group__name="Super Admin")).exists():
+        return dashboard(request)
+    peoples_involved = User.objects.filter(user_profile__organization=obj.organization, is_active=True).\
         order_by('first_name')
     sites = Site.objects.filter(project=obj)
     data = serialize('custom_geojson', sites, geometry_field='location',
@@ -179,6 +184,14 @@ def project_dashboard(request, pk):
 @login_required
 def site_dashboard(request, pk):
     obj = Site.objects.get(pk=pk)
+    if not UserRole.objects.filter(user=request.user).filter(
+        Q(group__name="Site Supervisor", site=obj) |
+        Q(group__name="Central Engineer", project=obj.project) |
+        Q(group__name="Project Manager", project=obj.project) |
+        Q(group__name="Organization Admin", organization=obj.project.organization)|
+        Q(group__name="Super Admin")).exists():
+            return dashboard(request)
+
     peoples_involved = User.objects.filter(user_profile__organization=obj.project.organization, is_active=True).\
         order_by('first_name')
     data = serialize('custom_geojson', [obj], geometry_field='location',
