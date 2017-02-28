@@ -104,7 +104,6 @@ class GeneralFSForm(forms.ModelForm):
                 })
 
 
-
 class StageForm(forms.ModelForm):
 
     class Meta:
