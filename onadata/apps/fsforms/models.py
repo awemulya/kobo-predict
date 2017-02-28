@@ -202,20 +202,24 @@ class FieldSightXF(models.Model):
     def clean(self):
         if self.is_staged:
             if FieldSightXF.objects.filter(stage=self.stage).exists():
-                raise ValidationError({
-                    'stage': ValidationError(_('Duplicate Stage Data')),
-                })
+                if not FieldSightXF.objects.filter(stage=self.stage).pk == self.pk:
+                    raise ValidationError({
+                        'xf': ValidationError(_('Duplicate Stage Data')),
+                    })
         if self.is_scheduled:
             if FieldSightXF.objects.filter(schedule=self.schedule).exists():
-                raise ValidationError({
-                    'schedule': ValidationError(_('Duplicate Schedule Data')),
-                })
+                if not FieldSightXF.objects.filter(schedule=self.schedule)[0].pk == self.pk:
+                    raise ValidationError({
+                        'xf': ValidationError(_('Duplicate Schedule Data')),
+                    })
         if not self.is_scheduled and not self.is_staged:
             if FieldSightXF.objects.filter(xf=self.xf, is_scheduled=False, is_staged=False,
                                            site=self.site, project=self.project).exists():
-                raise ValidationError({
-                    'schedule': ValidationError(_('Duplicate General Form Data')),
-                })
+                if not FieldSightXF.objects.filter(xf=self.xf, is_scheduled=False, is_staged=False,
+                                           site=self.site, project=self.project)[0].pk == self.pk:
+                    raise ValidationError({
+                        'xf': ValidationError(_('Duplicate General Form Data')),
+                    })
 
     @staticmethod
     def get_xform_id_list(site_id):

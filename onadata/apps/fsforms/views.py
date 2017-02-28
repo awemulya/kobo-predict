@@ -17,7 +17,7 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
-from onadata.apps.fsforms.utils import send_message
+from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed
 from onadata.apps.logger.models import XForm
 from onadata.libs.utils.user_auth import add_cors_headers
 from onadata.libs.utils.user_auth import helper_auth_helper
@@ -346,12 +346,16 @@ def edit_sub_stage(request, stage, id, is_project):
                         fs_xform.xf_id = form
                         fs_xform.save()
                     else:
-                        FieldSightXF.objects.create(xf_id=form, is_staged=True,stage=stage,project=stage.project)
+                        FieldSightXF.objects.create(xf_id=form, is_staged=True,stage=stage, project=stage.project)
                 else:
                     if FieldSightXF.objects.filter(site=stage.site, stage=stage, is_staged=True).exists():
                         fs_xform = FieldSightXF.objects.get(site=stage.site, stage=stage, is_staged=True)
-                        fs_xform.xf_id = form
-                        fs_xform.save()
+                        if not fs_xform.xf.id != form:
+                            fs_xform.xf_id = form
+                            fs_xform.save()
+                            if fs_xform.is_deployed:
+                                send_message_xf_changed(fs_xform.site, fs_xform, False, id)
+
                     else:
                         FieldSightXF.objects.create(xf_id=form, is_staged=True,stage=stage,site=stage.site)
             messages.info(request, 'Stage {} Updated.'.format(stage.name))
@@ -421,7 +425,7 @@ def project_create_schedule(request, id):
     project = get_object_or_404(
         Project, pk=id)
     if request.method == 'POST':
-        form = ScheduleForm(data=request.POST)
+        form = ScheduleForm(data=request.POST, request=request)
         if form.is_valid():
             form_type = int(form.cleaned_data.get('form_type',0))
             xf = int(form.cleaned_data.get('form',0))
@@ -458,8 +462,9 @@ def project_edit_schedule(request, id):
             if xf:
                 if FieldSightXF.objects.filter(project=schedule.project, schedule=schedule, is_scheduled=True).exists():
                     fs_xform = FieldSightXF.objects.get(project=schedule.project, schedule=schedule, is_scheduled=True)
-                    fs_xform.xf_id = xf
-                    fs_xform.save()
+                    if not fs_xform.xf.id != xf:
+                        fs_xform.xf_id = xf
+                        fs_xform.save()
                 else:
                     FieldSightXF.objects.create(
                         xf_id=xf, is_scheduled=True,schedule=schedule,project=schedule.project, is_deployed=True)
@@ -485,8 +490,11 @@ def edit_schedule(request, id):
             if xf:
                 if FieldSightXF.objects.filter(site=schedule.site, schedule=schedule, is_scheduled=True).exists():
                     fs_xform = FieldSightXF.objects.get(site=schedule.site, schedule=schedule, is_scheduled=True)
-                    fs_xform.xf_id = xf
-                    fs_xform.save()
+                    if not fs_xform.xf.id != xf:
+                        fs_xform.xf_id = xf
+                        fs_xform.save()
+                        send_message_xf_changed(schedule.site, fs_xform, True, id)
+
                 else:
                     FieldSightXF.objects.create(
                         xf_id=xf, is_scheduled=True,schedule=schedule,site=schedule.site, is_deployed=True)
@@ -505,6 +513,7 @@ def edit_schedule(request, id):
 def set_deploy_stages(request, id):
     with transaction.atomic():
         FieldSightXF.objects.filter(is_staged=True, site__id=id).update(is_deployed=True)
+        send_message_stages(Site(pk=id))
         messages.info(request, 'Stages Form Deployed to Sites')
     return HttpResponseRedirect(reverse("forms:setup-site-stages", kwargs={'site_id': id}))
 
@@ -646,53 +655,51 @@ def deploy_stages(request, id):
 
 
 @group_required("Project")
-def deploy_general(request, id):
+def deploy_general(request, fxf_id):
     with transaction.atomic():
-        fsxf = FieldSightXF.objects.get(pk=id)
-        FieldSightXF.objects.filter(fsform=fsxf).delete()
-        for site in fsxf.project.sites.filter(is_active=True):
+        fxf = FieldSightXF.objects.get(pk=fxf_id)
+        FieldSightXF.objects.filter(fsform=fxf, is_scheduled=False, is_staged=False).delete()
+        for site in fxf.project.sites.filter(is_active=True):
             # cloning from parent
-            child = FieldSightXF(is_staged=False, is_scheduled=False,xf=fsxf.xf, site=site, fsform_id=id, is_deployed=True)
+            child = FieldSightXF(is_staged=False, is_scheduled=False, xf=fxf.xf, site=site, fsform_id=fxf_id,
+                                 is_deployed=True)
             child.save()
-    messages.info(request, 'General Form {} Deployed to Sites'.format(fsxf.xf.title))
-    return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fsxf.project.pk}))
+    messages.info(request, 'General Form {} Deployed to Sites'.format(fxf.xf.title))
+    return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fxf.project.pk}))
 
 
 @group_required("Project")
 def deploy_survey(request, id):
     schedule = Schedule.objects.get(pk=id)
     selected_days = tuple(schedule.selected_days.all())
-    fsxf = FieldSightXF.objects.get(schedule=schedule)
+    fxf = FieldSightXF.objects.get(schedule=schedule)
     with transaction.atomic():
-        Schedule.objects.filter(fieldsightxf__fsform=fsxf).delete()
-        FieldSightXF.objects.filter(fsform=fsxf).delete()
-        for site in fsxf.project.sites.filter(is_active=True):
+        Schedule.objects.filter(fieldsightxf__fsform=fxf).delete()
+        FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True).delete()
+        for site in fxf.project.sites.filter(is_active=True):
             _schedule = Schedule(name=schedule.name, site=site)
             _schedule.save()
             _schedule.selected_days.add(*selected_days)
-            child = FieldSightXF(is_staged=False, is_scheduled=True,
-                                 xf=fsxf.xf, site=site, fsform=fsxf, schedule=_schedule, is_deployed=True)
+            child = FieldSightXF(is_scheduled=True, xf=fxf.xf, site=site, fsform=fxf,
+                                 schedule=_schedule, is_deployed=True)
             child.save()
-    messages.info(request, 'Schedule {} with  Form Named {} Form Deployed to Sites'.format(schedule.name,fsxf.xf.title))
-    return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': fsxf.project.id}))
+    messages.info(request, 'Schedule {} with  Form Named {} Form Deployed to Sites'.format(schedule.name,fxf.xf.title))
+    return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': fxf.project.id}))
 
 
 @group_required("Project")
-def edit_general(request, id):
+def edit_general(request, fxf_id):
     fs_xform = get_object_or_404(
-        FieldSightXF, pk=id)
+        FieldSightXF, pk=fxf_id)
     form = GeneralFSForm(instance=fs_xform, request=request)
     if request.method == 'POST':
         form = GeneralFSForm(data=request.POST, instance=fs_xform, request=request)
-        try:
-            if form.is_valid():
-                form.save()
-                messages.info(request, 'General Form Updated')
-                if fs_xform.site:
-                    return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': fs_xform.site.id}))
-                return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fs_xform.project.id}))
-        except:
-            messages.error(request, 'General Form Not Updated, Repeated Form')
+        if form.is_valid():
+            form.save()
+            messages.info(request, 'General Form Updated')
+            if fs_xform.site:
+                return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': fs_xform.site.id}))
+            return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fs_xform.project.id}))
     is_project = True if fs_xform.project else False
     return render(request, "fsforms/general_form.html", {'form': form,'is_project':is_project})
 

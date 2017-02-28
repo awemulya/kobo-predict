@@ -226,7 +226,7 @@ class Site(models.Model):
         return self.type.name
 
     def progress(self):
-        stages = self.site_forms.filter(xf__isnull=False,is_staged=True)
+        stages = self.site_forms.filter(xf__isnull=False ,is_staged=True)
         approved = stages.filter(form_status=3)
         if not approved:
             return 0
