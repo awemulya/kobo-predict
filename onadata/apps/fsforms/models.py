@@ -9,10 +9,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 
 from onadata.apps.fieldsight.models import Site, Project, Organization
+from onadata.apps.fsforms.fieldsight_models import IntegerRangeField
 from onadata.apps.fsforms.utils import send_message
 from onadata.apps.logger.models import XForm
 from onadata.apps.viewer.models import ParsedInstance
-from onadata.utils.CustomModelFields import IntegerRangeField
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
 FORM_STATUS = [(0, 'Outstanding'), (1, 'Rejected'), (2, 'Flagged'), (3, 'Approved'), ]

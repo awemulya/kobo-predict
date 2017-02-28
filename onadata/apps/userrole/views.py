@@ -3,10 +3,8 @@ from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
 from django.views.generic import ListView
 
-from onadata.apps.fieldsight.mixins import LoginRequiredMixin, SuperAdminMixin, CreateView, UpdateView, DeleteView
-from onadata.apps.fieldsight.models import Organization
-from onadata.apps.users.models import UserProfile
-from onadata.utils.mixins import AjaxableResponseMixin
+from onadata.apps.fieldsight.mixins import (LoginRequiredMixin, SuperAdminMixin, CreateView, UpdateView, DeleteView,
+                                            AjaxableResponseMixinUser)
 from .forms import UserRoleForm, UserForm
 from .models import UserRole as Role, UserRole
 
@@ -46,7 +44,7 @@ class UserView(object):
     form_class = UserForm
 
 
-class UserCreate(LoginRequiredMixin, AjaxableResponseMixin, UserView, CreateView):
+class UserCreate(LoginRequiredMixin, AjaxableResponseMixinUser, UserView, CreateView):
     def get_template_names(self):
         return ['users/create_user.html']
 

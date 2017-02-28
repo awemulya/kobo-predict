@@ -8,7 +8,7 @@ from django.conf import settings
 from registration import forms as registration_forms
 
 from onadata.apps.fieldsight.helpers import AdminImageWidget
-from onadata.utils.forms import HTML5BootstrapModelForm, KOModelForm
+from .utils.forms import HTML5BootstrapModelForm, KOModelForm
 from .models import Organization, Project, Site, BluePrints
 from onadata.apps.userrole.models import UserRole
 
@@ -193,8 +193,6 @@ class SetCentralEngForm(HTML5BootstrapModelForm, KOModelForm):
             'group': forms.HiddenInput(),
             'project': forms.HiddenInput()
         }
-
-
 
 
 class ProjectForm(forms.ModelForm):

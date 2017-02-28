@@ -1,14 +1,11 @@
-import json
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
 from django.contrib.gis.geos import Point
-from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
 from django.forms import modelformset_factory
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.response import TemplateResponse
 from django.views.generic import ListView
@@ -16,9 +13,6 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
 from django.forms.forms import NON_FIELD_ERRORS
-from django.shortcuts import render_to_response
-from django.http import HttpResponseBadRequest
-from django.template import RequestContext
 import django_excel as excel
 
 
@@ -101,7 +95,8 @@ def site_images(request, pk):
 @login_required
 def organization_dashboard(request, pk):
     obj = Organization.objects.get(pk=pk)
-    if not UserRole.objects.filter(user=request.user).filter(Q(group__name="Organization Admin", organization=obj)|Q(group__name="Super Admin")).exists():
+    if not UserRole.objects.filter(user=request.user).filter(Q(group__name="Organization Admin", organization=obj)
+                                                                     | Q(group__name="Super Admin")).exists():
         return dashboard(request)
     peoples_involved = User.objects.filter(user_profile__organization=obj, is_active=True).\
         order_by('first_name')

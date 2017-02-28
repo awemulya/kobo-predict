@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from onadata.apps.fieldsight.models import Organization
-from onadata.utils.forms import HTML5BootstrapModelForm
+from onadata.apps.fieldsight.utils.forms import HTML5BootstrapModelForm, KOModelForm
 from .models import UserRole
 
 
@@ -23,8 +23,8 @@ class UserRoleForm(forms.ModelForm):
         exclude = []
 
 
-class UserForm(HTML5BootstrapModelForm):
-    organization = forms.ChoiceField(widget = forms.Select(), required=False,)
+class UserForm(HTML5BootstrapModelForm, KOModelForm):
+    organization = forms.ChoiceField(widget=forms.Select(), required=False,)
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)

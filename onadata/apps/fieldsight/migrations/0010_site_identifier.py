@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import onadata.utils.CustomModelFields
+import onadata.apps.fsforms.fieldsight_models
 
 
 class Migration(migrations.Migration):
@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='site',
             name='identifier',
-            field=onadata.utils.CustomModelFields.IntegerRangeField(default=1, verbose_name=b'ID'),
+            field=onadata.apps.fsforms.fieldsight_models.IntegerRangeField(default=1, verbose_name=b'ID'),
             preserve_default=False,
         ),
     ]

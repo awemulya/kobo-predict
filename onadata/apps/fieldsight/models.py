@@ -6,8 +6,6 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.utils.text import slugify
 from jsonfield import JSONField
-
-from onadata.utils.CustomModelFields import IntegerRangeField
 from .static_lists import COUNTRIES
 
 
