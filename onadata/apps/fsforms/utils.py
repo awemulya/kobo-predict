@@ -37,5 +37,5 @@ def send_message_xf_changed(fsxf=None, form_type=None, id=None):
     message = {'notify_type': 'Kobo Form Changed',
                'site':{'name': fsxf.site.name, 'id': fsxf.site.id},
                'form':{'kobo': fsxf.xf.id_string, 'fieldsight': fsxf.id,
-                       'form_type':form_type,'form_type_id':id,'form_name':fsxf.title}}
+                       'form_type':form_type,'form_type_id':id,'form_name':fsxf.xf.title}}
     Device.objects.filter(name__in=emails).send_message(message)
