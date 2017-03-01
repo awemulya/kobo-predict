@@ -95,10 +95,12 @@ def current_user(request):
             site_supervisor = True
         for role in roles:
             site = role.site
+            data = site.blueprints.all()
+            bp = [m.image.url for m in data]
             project = role.project
             site_info = {'site': {'id': site.id, 'name': site.name, 'description': site.public_desc,
                                   'lat': repr(site.latitude), 'lon':repr(site.longitude), 'identifier':site.identifier,
-                                  'progress':site.progress(), 'add_desc':site.additional_desc},
+                                  'progress':site.progress(), 'add_desc': site.additional_desc, 'blueprints':bp},
                          'project': {'name': project.name, 'id': project.id, 'description': project.public_desc,
                                      'lat': repr(project.latitude), 'lon':repr(project.longitude)},
                          }
