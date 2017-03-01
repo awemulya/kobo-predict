@@ -642,7 +642,7 @@ def deploy_stages(request, id):
                                    description=main_stage.description)
                 site_main_stage.save()
                 project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk)
-                send_message_stages(site, count=len(project_sub_stage))
+                send_message_stages(site, count=len(project_sub_stages))
                 for project_sub_stage in project_sub_stages:
                     site_sub_stage = Stage(name=project_sub_stage.name, order=project_sub_stage.order, site=site,
                                    description=project_sub_stage.description, stage=site_main_stage)

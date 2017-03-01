@@ -453,11 +453,11 @@ def upload_sites(request, pk):
                         location = Point(lat, long,srid=4326)
                         _site, created = Site.objects.get_or_create(identifier=str(site.get("id")), name=site.get("name"),
                                                                     project=project, type_id=1)
-                        _site.description=site.get("description"),
-                        _site.phone=site.get("phone")
-                        _site.address=site.get("address")
-                        _site.public_desc=site.get("public_desc"),
-                        _site.additional_desc=site.get("additional_desc")
+                        _site.description = site.get("description"),
+                        _site.phone = site.get("phone")
+                        _site.address = site.get("address")
+                        _site.public_desc = site.get("public_desc"),
+                        _site.additional_desc = site.get("additional_desc")
                         _site.location=location
                         _site.save()
                 messages.info(request, 'Site Upload Succesfull')
