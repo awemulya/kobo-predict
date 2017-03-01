@@ -338,7 +338,7 @@ def edit_sub_stage(request, stage, id, is_project):
         form = SubStageEditForm(instance=stage, data=request.POST, request=request)
         if form.is_valid():
             form.save()
-            form = int(form.cleaned_data.get('form',0))
+            form = int(form.cleaned_data.get('form', 0))
             if form:
                 if is_project:
                     if FieldSightXF.objects.filter(project=stage.project, stage=stage, is_staged=True).exists():
@@ -354,7 +354,7 @@ def edit_sub_stage(request, stage, id, is_project):
                             fs_xform.xf_id = form
                             fs_xform.save()
                             if fs_xform.is_deployed:
-                                send_message_xf_changed(fs_xform.site, fs_xform, False, id)
+                                send_message_xf_changed(fs_xform, "Stage", id)
 
                     else:
                         FieldSightXF.objects.create(xf_id=form, is_staged=True,stage=stage,site=stage.site)
@@ -493,7 +493,7 @@ def edit_schedule(request, id):
                     if not fs_xform.xf.id != xf:
                         fs_xform.xf_id = xf
                         fs_xform.save()
-                        send_message_xf_changed(schedule.site, fs_xform, True, id)
+                        send_message_xf_changed(fs_xform, "Schedule", id)
 
                 else:
                     FieldSightXF.objects.create(
@@ -512,8 +512,8 @@ def edit_schedule(request, id):
 @group_required("Project")
 def set_deploy_stages(request, id):
     with transaction.atomic():
-        FieldSightXF.objects.filter(is_staged=True, site__id=id).update(is_deployed=True)
-        send_message_stages(Site(pk=id))
+        count = FieldSightXF.objects.filter(is_staged=True, site__id=id).update(is_deployed=True)
+        send_message_stages(Site(pk=id), count)
         messages.info(request, 'Stages Form Deployed to Sites')
     return HttpResponseRedirect(reverse("forms:setup-site-stages", kwargs={'site_id': id}))
 
@@ -642,6 +642,7 @@ def deploy_stages(request, id):
                                    description=main_stage.description)
                 site_main_stage.save()
                 project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk)
+                send_message_stages(site, count=len(project_sub_stage))
                 for project_sub_stage in project_sub_stages:
                     site_sub_stage = Stage(name=project_sub_stage.name, order=project_sub_stage.order, site=site,
                                    description=project_sub_stage.description, stage=site_main_stage)
@@ -650,6 +651,7 @@ def deploy_stages(request, id):
                         fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
                         FieldSightXF.objects.get_or_create(is_staged=True, xf=fsxf.xf, site=site,
                                                            fsform=fsxf, stage=site_sub_stage, is_deployed=True)
+
     messages.info(request, 'Stages Form Deployed to Sites')
     return HttpResponseRedirect(reverse("forms:setup-project-stages", kwargs={'id': id}))
 
