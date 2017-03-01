@@ -15,7 +15,7 @@ def send_message(fsxf, status=None, comment=None):
                'comment': comment,
                'form_name': fsxf.xf.title,
                'xfid': fsxf.xf.id_string,
-               'form_type':fsxf.form_type,'form_type_id':fsxf.form_type_id,
+               'form_type':fsxf.form_type(),'form_type_id':fsxf.form_type_id(),
                'status': FORM_STATUS.get(status,"New Form"),
                'site':{'name': fsxf.site.name, 'id': fsxf.site.id}}
     Device.objects.filter(name__in=emails).send_message(message)
