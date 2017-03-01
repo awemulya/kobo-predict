@@ -246,7 +246,9 @@ class FieldSightXF(models.Model):
 
 @receiver(post_save, sender=FieldSightXF)
 def create_messages(sender, instance, created,  **kwargs):
-    if created and instance.site is not None and not instance.is_staged:
+    if instance.project is not None:
+        pass
+    elif created and instance.site is not None and not instance.is_staged:
         send_message(instance)
 
 post_save.connect(create_messages, sender=FieldSightXF)

@@ -350,7 +350,7 @@ def edit_sub_stage(request, stage, id, is_project):
                 else:
                     if FieldSightXF.objects.filter(site=stage.site, stage=stage, is_staged=True).exists():
                         fs_xform = FieldSightXF.objects.get(site=stage.site, stage=stage, is_staged=True)
-                        if not fs_xform.xf.id != form:
+                        if fs_xform.xf.id != form:
                             fs_xform.xf_id = form
                             fs_xform.save()
                             if fs_xform.is_deployed:
@@ -462,7 +462,7 @@ def project_edit_schedule(request, id):
             if xf:
                 if FieldSightXF.objects.filter(project=schedule.project, schedule=schedule, is_scheduled=True).exists():
                     fs_xform = FieldSightXF.objects.get(project=schedule.project, schedule=schedule, is_scheduled=True)
-                    if not fs_xform.xf.id != xf:
+                    if fs_xform.xf.id != xf:
                         fs_xform.xf_id = xf
                         fs_xform.save()
                 else:
@@ -490,7 +490,7 @@ def edit_schedule(request, id):
             if xf:
                 if FieldSightXF.objects.filter(site=schedule.site, schedule=schedule, is_scheduled=True).exists():
                     fs_xform = FieldSightXF.objects.get(site=schedule.site, schedule=schedule, is_scheduled=True)
-                    if not fs_xform.xf.id != xf:
+                    if fs_xform.xf.id != xf:
                         fs_xform.xf_id = xf
                         fs_xform.save()
                         send_message_xf_changed(fs_xform, "Schedule", id)
