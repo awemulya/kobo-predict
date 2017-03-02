@@ -33,15 +33,14 @@ from .forms import OrganizationForm, ProjectForm, SiteForm, RegistrationForm, Se
 @login_required
 def dashboard(request):
     current_role = request.role
-    if not current_role or current_role is None:
-        pass
-    if current_role.group.name == "Site Supervisor":
-        return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
-    if current_role.group.name in ["Project Manager", "Central Engineer"]:
-        return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role.project.pk}))
-    if current_role.group.name == "Organization Admin":
-        return HttpResponseRedirect(reverse("fieldsight:organization-dashboard",
-                                            kwargs={'pk': current_role.organization.pk}))
+    if current_role:
+        if current_role.group.name == "Site Supervisor":
+            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
+        if current_role.group.name in ["Project Manager", "Central Engineer"]:
+            return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role.project.pk}))
+        if current_role.group.name == "Organization Admin":
+            return HttpResponseRedirect(reverse("fieldsight:organization-dashboard",
+                                                kwargs={'pk': current_role.organization.pk}))
 
     total_users = User.objects.all().count()
     total_organizations = Organization.objects.all().count()
