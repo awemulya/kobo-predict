@@ -674,7 +674,9 @@ def deploy_general(request, fxf_id):
 def un_deploy_general(request, fxf_id):
     fxf = FieldSightXF.objects.get(pk=fxf_id)
     fxf.is_deployed = False if fxf.is_deployed else True
+    label = "Undeployed" if fxf.is_deployed else "Deployed"
     fxf.save()
+    messages.info(request, 'General Form {} has been {}'.format(fxf.xf.title, label))
     return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': fxf.site.pk}))
 
 
@@ -695,6 +697,17 @@ def deploy_survey(request, id):
             child.save()
     messages.info(request, 'Schedule {} with  Form Named {} Form Deployed to Sites'.format(schedule.name,fxf.xf.title))
     return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': fxf.project.id}))
+
+
+@group_required("Project")
+def un_deploy_survey(request, id):
+    schedule = Schedule.objects.get(pk=id)
+    fxf = FieldSightXF.objects.get(schedule=schedule)
+    fxf.is_deployed = False if fxf.is_deployed else True
+    fxf.save()
+    label = "Deployed" if fxf.is_deployed else "Undeployed"
+    messages.info(request, 'Schedule {} with  Form Named {} Form {}'.format(schedule.name,fxf.xf.title, label))
+    return HttpResponseRedirect(reverse("forms:site-survey", kwargs={'site_id': fxf.site.id}))
 
 
 @group_required("Project")

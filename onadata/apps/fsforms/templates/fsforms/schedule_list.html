@@ -35,12 +35,14 @@
             <th>{% trans 'Days' %}</th>
             <th>{% anchor date_created _('Date Created') %}</th>
             <th>{% trans 'Assigned Form' %}</th>
+            <th>{% trans 'Edit' %}</th>
+            <th>{% trans 'Action' %}</th>
             </thead>
             <tbody>
             {% for obj in paginated_objects %}
                 <tr>
                     <td>
-                        <a href="{% url 'forms:schedule-edit' obj.pk %}">{{ obj.name }}</a>
+                        {{ obj.name }}
                     </td>
                     <td>
                         {{ obj.date_range_start }} - {{ obj.date_range_end }}
@@ -54,6 +56,25 @@
                         {{ obj.date_created }}
                     </td>
                       <td> {{obj.form.xf.title}}
+                    </td>
+
+                      <td> <a class="btn btn-primary btn-raised" href="{% url 'forms:schedule-edit' obj.pk %}">
+                          {% trans 'Edit' %}</a>
+                    </td>
+
+                      <td>
+                          {% if obj.form.is_deployed %}
+                          <a class="btn btn-danger btn-raised" href="{% url 'forms:undeploy-survey' obj.pk %}">
+                            {% trans 'UnDeploy' %}
+                              </a>
+                              {% else %}
+                          {% if obj.form %}
+                          <a class="btn btn-info btn-raised" href="{% url 'forms:undeploy-survey' obj.pk %}">
+                              {% trans 'Deploy' %}
+                              </a>
+                              {% endif %}
+                              {% endif %}
+
                     </td>
 
                 </tr>
