@@ -674,7 +674,7 @@ def deploy_general(request, fxf_id):
 def un_deploy_general(request, fxf_id):
     fxf = FieldSightXF.objects.get(pk=fxf_id)
     fxf.is_deployed = False if fxf.is_deployed else True
-    label = "Undeployed" if fxf.is_deployed else "Deployed"
+    label = "Deployed" if fxf.is_deployed else "Undeployed"
     fxf.save()
     messages.info(request, 'General Form {} has been {}'.format(fxf.xf.title, label))
     return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': fxf.site.pk}))
