@@ -17,7 +17,8 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
-from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed
+from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed, \
+    send_message_un_deploy
 from onadata.apps.logger.models import XForm
 from onadata.libs.utils.user_auth import add_cors_headers
 from onadata.libs.utils.user_auth import helper_auth_helper
@@ -676,6 +677,7 @@ def un_deploy_general(request, fxf_id):
     fxf.is_deployed = False if fxf.is_deployed else True
     label = "Deployed" if fxf.is_deployed else "Undeployed"
     fxf.save()
+    send_message_un_deploy(fxf)
     messages.info(request, 'General Form {} has been {}'.format(fxf.xf.title, label))
     return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': fxf.site.pk}))
 
@@ -705,6 +707,7 @@ def un_deploy_survey(request, id):
     fxf = FieldSightXF.objects.get(schedule=schedule)
     fxf.is_deployed = False if fxf.is_deployed else True
     fxf.save()
+    send_message_un_deploy(fxf)
     label = "Deployed" if fxf.is_deployed else "Undeployed"
     messages.info(request, 'Schedule {} with  Form Named {} Form {}'.format(schedule.name,fxf.xf.title, label))
     return HttpResponseRedirect(reverse("forms:site-survey", kwargs={'site_id': fxf.site.id}))
