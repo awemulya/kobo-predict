@@ -75,6 +75,13 @@
                         {% endif %}
                         {% endif %}
                     </td>
+                    <td>
+                        {% if site %}
+                          <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-general' obj.pk %}">
+                            Undeploy</a>
+
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
