@@ -77,8 +77,15 @@
                     </td>
                     <td>
                         {% if site %}
-                          <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-general' obj.pk %}">
-                            Undeploy</a>
+                          {% if obj.is_deployed %}
+                          <a class="btn btn-danger btn-raised" href="{% url 'forms:undeploy-general' obj.pk %}">
+                            {% trans 'UnDeploy' %}
+                              </a>
+                              {% else %}
+                          <a class="btn btn-info btn-raised" href="{% url 'forms:undeploy-general' obj.pk %}">
+                              {% trans 'Deploy' %}
+                              </a>
+                              {% endif %}
 
                         {% endif %}
                     </td>

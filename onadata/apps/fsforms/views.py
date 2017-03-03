@@ -671,6 +671,14 @@ def deploy_general(request, fxf_id):
 
 
 @group_required("Project")
+def un_deploy_general(request, fxf_id):
+    fxf = FieldSightXF.objects.get(pk=fxf_id)
+    fxf.is_deployed = False if fxf.is_deployed else True
+    fxf.save()
+    return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': fxf.site.pk}))
+
+
+@group_required("Project")
 def deploy_survey(request, id):
     schedule = Schedule.objects.get(pk=id)
     selected_days = tuple(schedule.selected_days.all())

@@ -36,7 +36,7 @@ from .views import (
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, project_responses,
     project_html_export, deploy_survey, deploy_stages, deploy_general, set_deploy_stages, share_stages,
-    edit_share_stages, library_stages)
+    edit_share_stages, library_stages, un_deploy_general)
 
 
 urlpatterns = [
@@ -62,14 +62,16 @@ urlpatterns = [
 
         url(r'^schedule/add/(?P<site_id>\d+)/$', create_schedule, name='schedule-add'),
         url(r'^schedule/(?P<id>\d+)/$', edit_schedule, name='schedule-edit'),
+        url(r'^schedule-add-form/(?P<pk>\d+)/$', schedule_add_form, name='schedule-add-form'),
         url(r'^general/(?P<fxf_id>\d+)/$', edit_general, name='edit-general'),
+
         url(r'^deploy-stages/(?P<id>\d+)/$', deploy_stages, name='deploy-stages'),
         url(r'^change-share-stages/(?P<id>\d+)/$', edit_share_stages, name='edit-share-stages'),
         url(r'^share-stages/(?P<id>\d+)/(?P<is_project>\d)/$', share_stages, name='share-stages'),
         url(r'^set-deploy-stages/(?P<id>\d+)/$', set_deploy_stages, name='set-deploy-stages'),
         url(r'^deploy-survey/(?P<id>\d+)/$', deploy_survey, name='deploy-survey'),
         url(r'^deploy-general/(?P<fxf_id>\d+)/$', deploy_general, name='deploy-general'),
-        url(r'^schedule-add-form/(?P<pk>\d+)/$', schedule_add_form, name='schedule-add-form'),
+        url(r'^undeploy-general/(?P<fxf_id>\d+)/$', un_deploy_general, name='undeploy-general'),
 
         url(r'^project/schedule/add/(?P<id>\d+)/$', project_create_schedule, name='project-schedule-add'),
         url(r'^project/schedule/edit/(?P<id>\d+)/$', project_edit_schedule, name='project-schedule-edit'),
