@@ -513,7 +513,7 @@ def edit_schedule(request, id):
 def set_deploy_stages(request, id):
     with transaction.atomic():
         FieldSightXF.objects.filter(is_staged=True, site__id=id).update(is_deployed=True)
-        send_message_stages(Site(pk=id))
+        send_message_stages(Site.objects.get(pk=id))
         messages.info(request, 'Stages Form Deployed to Sites')
     return HttpResponseRedirect(reverse("forms:setup-site-stages", kwargs={'site_id': id}))
 
