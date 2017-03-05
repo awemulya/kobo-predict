@@ -231,7 +231,9 @@ class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMix
 
 
 class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationMixin, MyOwnOrganizationMixin, UpdateView):
-    pass
+    def get_success_url(self):
+        return reverse('fieldsight:organization-dashboard', kwargs={'pk': self.kwargs['pk']})
+
 
 
 class OrganizationDeleteView(OrganizationView,LoginRequiredMixin, SuperAdminMixin, DeleteView):
@@ -432,7 +434,8 @@ class ProjectCreateView(ProjectView, OrganizationMixin, CreateView):
 
 
 class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView):
-    pass
+    def get_success_url(self):
+        return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs['pk']})
 
 
 class ProjectDeleteView(ProjectView, OrganizationMixin, DeleteView):
@@ -454,7 +457,8 @@ class SiteCreateView(SiteView, ProjectMixin, CreateView):
 
 
 class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
-    pass
+    def get_success_url(self):
+        return reverse('fieldsight:site-dashboard', kwargs={'pk': self.kwargs['pk']})
 
 
 class SiteDeleteView(SiteView, ProjectMixin, DeleteView):
