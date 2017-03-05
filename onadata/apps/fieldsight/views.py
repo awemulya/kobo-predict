@@ -24,7 +24,7 @@ from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
-                     group_required, OrganizationViewFromProfile)
+                     group_required, OrganizationViewFromProfile, ReviewerMixin)
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm)
@@ -177,6 +177,7 @@ def project_dashboard(request, pk):
 
 
 @login_required
+@group_required("Reviewer")
 def site_dashboard(request, pk):
     obj = Site.objects.get(pk=pk)
     if not UserRole.objects.filter(user=request.user).filter(
@@ -349,7 +350,7 @@ def alter_site_status(request, pk):
 
 
 @login_required
-@group_required('Project')
+@group_required('Reviewer')
 def add_supervisor(request, pk):
     obj = get_object_or_404(
         Site, pk=int(pk))
@@ -449,7 +450,7 @@ class SiteCreateView(SiteView, ProjectMixin, CreateView):
     pass
 
 
-class SiteUpdateView(SiteView, ProjectMixin, UpdateView):
+class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
     pass
 
 
@@ -469,12 +470,11 @@ def upload_sites(request, pk):
                 with transaction.atomic():
                     for site in sites:
                         site = dict((k,v) for k,v in site.iteritems() if v is not '')
-                        lat = site.get("longitude",85.3240)
-                        long = site.get("latitude",27.7172)
-                        location = Point(lat, long,srid=4326)
+                        lat = site.get("longitude", 85.3240)
+                        long = site.get("latitude", 27.7172)
+                        location = Point(lat, long, srid=4326)
                         _site, created = Site.objects.get_or_create(identifier=str(site.get("id")), name=site.get("name"),
                                                                     project=project, type_id=1)
-                        _site.description = site.get("description"),
                         _site.phone = site.get("phone")
                         _site.address = site.get("address")
                         _site.public_desc = site.get("public_desc"),

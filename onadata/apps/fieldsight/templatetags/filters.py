@@ -116,7 +116,8 @@ USURPERS = {
     'Site': ['Reviewer', 'Site Supervisor', 'Project Manager', 'Reviewer', 'Organization Admin',
              'Super Admin'],
     'KoboForms': ['Project Manager', 'Reviewer', 'Organization Admin', 'Super Admin'],
-    'Project': ['Project Manager', 'Organization Admin', 'Super Admin', 'Reviewer'],
+    'Project': ['Project Manager', 'Organization Admin', 'Super Admin'],
+    'Reviewer': ['Project Manager', 'Reviewer','Organization Admin', 'Super Admin'],
     'Organization': ['Organization Admin', 'Super Admin'],
     'admin': ['Super Admin'],
 }

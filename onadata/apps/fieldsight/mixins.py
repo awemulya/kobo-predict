@@ -292,8 +292,8 @@ USURPERS = {
     'Site': ['Reviewer', 'Site Supervisor', 'Project Manager', 'Reviewer',
              'Organization Admin', 'Super Admin'],
     'KoboForms': ['Project Manager', 'Reviewer', 'Organization Admin', 'Super Admin'],
-    'Project': ['Project Manager', 'Organization Admin', 'Super Admin', 'Reviewer'],
-    'ProjectOnly': ['Project Manager', 'Site Supervisor', 'Reviewer'],
+    'Project': ['Project Manager', 'Organization Admin', 'Super Admin',],
+    'Reviewer': ['Project Manager', 'Reviewer', 'Organization Admin', 'Super Admin'],
     'Organization': ['Organization Admin', 'Super Admin'],
     'admin': ['Super Admin'],
 }
@@ -312,6 +312,14 @@ class ProjectMixin(object):
         if request.user.is_authenticated():
             if request.role.group.name in USURPERS['Project']:
                 return super(ProjectMixin, self).dispatch(request, *args, **kwargs)
+        raise PermissionDenied()
+
+
+class ReviewerMixin(object):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            if request.role.group.name in USURPERS['Reviewer']:
+                return super(ReviewerMixin, self).dispatch(request, *args, **kwargs)
         raise PermissionDenied()
 
 

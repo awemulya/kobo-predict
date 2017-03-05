@@ -49,9 +49,8 @@
                                 <nav class="containerd">
                                     <a href="{% url 'forms:setup-project-stages' obj.pk %}" tooltip="{% trans 'SetUp Stages' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/project-background.png');"></a>
                                     <a href="{% url 'forms:project-survey' obj.pk %}" tooltip="{% trans 'SetUp Survey' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/project-background.png');"></a>
-                                    <a href="{% url 'fieldsight:add_proj_manager' pk=obj.id %}" tooltip="{% trans 'Assign Project Manager' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/project-background.png');"></a>
-                                    <a href="{% url 'fieldsight:add_central_engineer' pk=obj.id %}" tooltip="{% trans 'Assign Central Engineer' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/project-background.png');"></a>
-                                    <!-- <a href="{% url 'fieldsight:site-add' %}" tooltip="{% trans 'Create Site' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/site-background.png');"></a> -->
+                                    <a href="{% url 'fieldsight:add_project_staffs' pk=obj.id %}" tooltip="{% trans 'Assign User' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/project-background.png');"></a>
+                                    <a href="{% url 'fieldsight:site-add' %}" tooltip="{% trans 'Create Site' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/site-background.png');"></a>
                                     <a href="#" tooltip="{% trans 'Setup' %}" class="buttons-fab"><span><span class="rotate-fab"></span></span></a>
                                 </nav>
                             </div>

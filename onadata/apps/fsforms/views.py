@@ -251,7 +251,7 @@ def project_responses(request, project_id=None):
                   {'schedules': schedules, 'stages':stages, 'generals':generals, 'project': project_id})
 
 
-@group_required("Project")
+@group_required("Reviewer")
 def responses(request, site_id=None):
     schedules = FieldSightXF.objects.filter(site_id=site_id, xf__isnull=False, is_scheduled=True)
     stages = Stage.objects.filter(stage__isnull=True, site_id=site_id).order_by('order')
@@ -1055,7 +1055,6 @@ def project_html_export(request, fsxf_id):
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
 
-
 def instance_detail(request, fsxf_id, instance_id):
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     cursor = get_instance(instance_id)
@@ -1080,7 +1079,8 @@ def instance_detail(request, fsxf_id, instance_id):
     return render(request, 'fsforms/fieldsight_instance_export_html.html',
                   {'obj': fsxf, 'answer': instance_id, 'status': status, 'data': data, 'medias': medias})
 
-
+@login_required
+@group_required("Reviewer")
 def alter_answer_status(request, instance_id, status, fsid):
     if request.method == 'POST':
         form = AlterAnswerStatus(request.POST)

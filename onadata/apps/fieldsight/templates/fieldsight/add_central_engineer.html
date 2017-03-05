@@ -16,7 +16,7 @@
 {% block content %}
     <div class="row">
       <div class="col-sm-6">
-          <form action="{% url 'fieldsight:add_central_engineer' pk=obj.id %}" method="POST">
+          <form action="{% url 'fieldsight:add_project_staffs' pk=obj.id %}" method="POST">
               {% csrf_token %}
                <div class="col-sm-12">
                {{ form.non_field_errors }}
