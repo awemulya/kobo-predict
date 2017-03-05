@@ -208,13 +208,6 @@
                 {% endrole %}
 
                 {% ifrole "Project" %}
-                <li class="sub-menu">
-                    <a href="{% url 'fieldsight:sites-list' %}">
-                        <i class="fa fa-picture-o"></i>
-                        <span>{% trans 'Sites' %}</span>
-                    </a>
-                    
-                </li>
 
                 <li class="sub-menu">
                     <a href="{% url 'fieldsight:user-list' %}">
@@ -225,6 +218,16 @@
                 </li>
 
 
+
+                {% endrole %}
+                {% ifrole "Reviewer" %}
+                 <li class="sub-menu">
+                    <a href="{% url 'fieldsight:sites-list' %}">
+                        <i class="fa fa-picture-o"></i>
+                        <span>{% trans 'Sites' %}</span>
+                    </a>
+
+                </li>
 
                 {% endrole %}
                 {% ifrole "Site" %}

@@ -92,6 +92,7 @@ def site_images(request, pk):
     return JsonResponse({'images':medias[:5]})
 
 @login_required
+@group_required("Organization")
 def organization_dashboard(request, pk):
     obj = Organization.objects.get(pk=pk)
     if not UserRole.objects.filter(user=request.user).filter(Q(group__name="Organization Admin", organization=obj)
@@ -134,6 +135,7 @@ def organization_dashboard(request, pk):
     return TemplateResponse(request, "fieldsight/organization_dashboard.html", dashboard_data)
 
 @login_required
+@group_required("Project")
 def project_dashboard(request, pk):
     obj = Project.objects.get(pk=pk)
     if not UserRole.objects.filter(user=request.user).filter(
@@ -442,7 +444,7 @@ class SiteView(PView):
     form_class = SiteForm
 
 
-class SiteListView(SiteView, ProjectMixin, ListView):
+class SiteListView(SiteView, ReviewerMixin, ListView):
     pass
 
 
