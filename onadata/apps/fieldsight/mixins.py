@@ -340,6 +340,15 @@ class OrganizationMixin(object):
         raise PermissionDenied()
 
 
+class MyOwnOrganizationMixin(object):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            if request.role.group.name in ['Organization Admin']:
+                if request.role.organization.pk == int(self.kwargs.get('pk','0')):
+                    return super(MyOwnOrganizationMixin, self).dispatch(request, *args, **kwargs)
+        raise PermissionDenied()
+
+
 class SuperAdminMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():

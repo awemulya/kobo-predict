@@ -24,7 +24,7 @@ from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
-                     group_required, OrganizationViewFromProfile, ReviewerMixin)
+                     group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin)
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm)
@@ -229,7 +229,7 @@ class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMix
     pass
 
 
-class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, UpdateView):
+class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationMixin, MyOwnOrganizationMixin, UpdateView):
     pass
 
 
