@@ -17,9 +17,19 @@
 
 {% block content %}
    <div class="col-sm-12 registration_field">
-        {% if obj.get_staffs %}
-        {% trans 'Existing admins'  %}{{obj.get_staffs}}
-        {% endif %}
+       <!--{% if form.fields.irganization.choices %}-->
+       <!--{% trans 'Existing admins'  %}-->
+       <!--{% endif %}-->
+       <!--{% for x, y in form.fields.organization.choices %}-->
+       <!--<div class="row">-->
+    <!--<div class="col-sm-6">-->
+      <!--Role_id  {{ y }}-->
+    <!--</div>-->
+        <!--<div class="col-sm-6">-->
+           <!--{{ y }}-->
+        <!--</div>-->
+   <!--</div>-->
+       <!--{% endfor %}-->
     </div>
     <form method="POST" id='form' enctype="multipart/form-data" action="{% url 'fieldsight:add_org_admin' pk=obj.id %}">
         {% csrf_token %}

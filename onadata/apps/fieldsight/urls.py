@@ -28,9 +28,8 @@ from .views import (
     site_dashboard,
     alter_site_status,
     add_supervisor,
-    add_central_engineer,
     CreateUserView,
-    UserListView, site_images, filter_users, upload_sites, blue_prints)
+    UserListView, site_images, filter_users, upload_sites, blue_prints, add_project_role)
 
 router = routers.SimpleRouter()
 # router.register(r'api/organization-type', OrganizationTypeViewSet)
@@ -69,7 +68,7 @@ urlpatterns = [
     url(r'^project/delete/(?P<pk>\d+)/$', ProjectDeleteView.as_view(), name='project-delete'),
     url(r'^project/alter-status/(?P<pk>\d+)/$', alter_proj_status, name='alter_proj_status'),
     url(r'^project/add-proj-manager/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
-    url(r'^project/add-central-engineer/(?P<pk>\d+)/$', add_central_engineer, name='add_central_engineer'),
+    url(r'^project/add-role/(?P<pk>\d+)/$', add_project_role, name='add_central_engineer'),
     url(r'^api/project-sites/(?P<pk>\d+)/$', SiteViewSet.as_view({'get': 'list'}), name='project_sites'),
 
 

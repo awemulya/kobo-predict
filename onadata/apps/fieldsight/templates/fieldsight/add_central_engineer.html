@@ -14,19 +14,48 @@
 {% endblock %}
 
 {% block content %}
-    <div class="col-sm-12 registration_field">
-        {% if obj.get_central_eng %}
-        {% trans 'Existing Central Engineers'  %}{{obj.get_central_eng}}
-        {% endif %}
-    </div>
-
-      <div class="col-sm-12 registration_field">
+    <div class="row">
+      <div class="col-sm-6">
           <form action="{% url 'fieldsight:add_central_engineer' pk=obj.id %}" method="POST">
               {% csrf_token %}
-                {{ form.as_p }}
-              <input type="submit" class="btn btn-success btn-raised" value="Add Central Engineer">
+               <div class="col-sm-12">
+               {{ form.non_field_errors }}
+               </div>
+              <div class="row">
+                <div class="col-lg-6 col-sm-12">
+                     {% trans 'Select User Type'  %}
+                    {{ form.group }}
+                    {{ form.group.errors }}
+                </div>
+
+                <div class="col-lg-6 col-sm-12">
+                    {% trans 'Select User '  %}
+                    {{ form.user }}
+                    {{ form.user.errors }}
+                </div>
+                  <div class="col-lg-6 col-sm-12">
+                    {{ form.project }}
+                </div>
+            </div>
+
+              <input type="submit" class="btn btn-success btn-raised" value="Save">
           </form>
       </div>
-
+<div class="col-sm-6">
+    {% if existing_staffs %}
+       {% trans 'Existing Managers And Reviewers'  %}
+       {% endif %}
+       {% for role in existing_staffs %}
+       <div class="row">
+    <div class="col-sm-6">
+      Role : {{role.group}}
+    </div>
+        <div class="col-sm-6">
+           {{role.user.get_full_name}}
+        </div>
+   </div>
+    {% endfor %}
+</div>
+</div>
 
 {% endblock %}

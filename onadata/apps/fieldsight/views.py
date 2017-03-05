@@ -13,9 +13,9 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
 from django.forms.forms import NON_FIELD_ERRORS
+
+
 import django_excel as excel
-
-
 from registration.backends.default.views import RegistrationView
 
 from onadata.apps.fsforms.Submission import Submission
@@ -26,8 +26,8 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile)
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints
-from .forms import OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetOrgAdminForm, \
-    SetProjectManagerForm, SetSupervisorForm, SetCentralEngForm, AssignOrgAdmin, UploadFileForm, BluePrintForm
+from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
+                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm)
 
 
 @login_required
@@ -378,7 +378,7 @@ def add_central_engineer(request, pk):
     role_obj = UserRole(project=obj, group=group)
     scenario = 'Assign'
     if request.method == 'POST':
-        form = SetCentralEngForm(data=request.POST, instance=role_obj, request=request)
+        form = SetProjectRoleForm(data=request.POST, instance=role_obj, request=request)
         if form.is_valid():
             role_obj = form.save(commit=False)
             user_id = request.POST.get('user')
@@ -387,8 +387,30 @@ def add_central_engineer(request, pk):
         messages.add_message(request, messages.INFO, 'Central Engineer Added')
         return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': obj.pk}))
     else:
-        form = SetCentralEngForm(instance=role_obj, request=request)
+        form = SetProjectRoleForm(instance=role_obj, request=request,)
     return render(request, "fieldsight/add_central_engineer.html", {'obj':obj,'form':form, 'scenario':scenario})
+
+
+@login_required
+@group_required('Project')
+def add_project_role(request, pk):
+    obj = get_object_or_404(
+        Project, pk=pk)
+    role_obj = UserRole(project=obj)
+    scenario = 'Assign People'
+    form = SetProjectRoleForm(instance=role_obj, request=request)
+    if request.method == 'POST':
+        form = SetProjectRoleForm(data=request.POST, instance=role_obj, request=request)
+        if form.is_valid():
+            role_obj = form.save(commit=False)
+            user_id = request.POST.get('user')
+            role_obj.user_id = int(user_id)
+            role_obj.save()
+            messages.add_message(request, messages.INFO, '{} Added'.format(role_obj.group.name))
+            return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': obj.pk}))
+    existing_staffs = obj.get_staffs
+    return render(request, "fieldsight/add_central_engineer.html", {'obj':obj,'form':form, 'scenario':scenario,
+                                                                    "existing_staffs":existing_staffs})
 
 
 class ProjectView(OView):

@@ -82,17 +82,12 @@ class Organization(models.Model):
 
     @property
     def get_staffs(self):
-        staffs = list(self.organization_roles.filter(group__name="Organization Admin"))
-        if staffs:
-            return [str(role.user.username) for role in staffs]
-        return ""\
+        staffs = self.organization_roles.filter(group__name="Organization Admin").values_list('id', 'user__username')
+        return staffs
 
     @property
     def get_staffs_id(self):
-        staffs = list(self.organization_roles.filter(group__name="Organization Admin"))
-        if staffs:
-            return [role.user.id for role in staffs]
-        return []
+        return self.organization_roles.filter(group__name="Organization Admin").values_list('id', flat=True)
 
     def get_organization_type(self):
         return self.type.name
@@ -134,31 +129,16 @@ class Project(models.Model):
 
     @property
     def get_staffs(self):
-        staffs = list(self.project_roles.filter(group__name="Project Manager"))
-        if staffs:
-            return [str(role.user.username) for role in staffs]
-        return ""\
+        staffs = self.project_roles.filter(group__name__in=["Reviewer" , "Project Manager"])
+        return staffs
 
     @property
-    def get_staffs_id(self):
-        staffs = self.project_roles.filter(group__name="Project Manager")
-        if staffs.exists():
-            return [role.user.id for role in staffs]
-        return []
+    def get_staffs_both_role(self):
+        managers_id = self.project_roles.filter(group__name="Project Manager").values_list('user__id', flat=True)
+        reviewers_id = self.project_roles.filter(group__name="Reviewer").values_list('user__id', flat=True)
+        both = list(set(managers_id).intersection(reviewers_id))
+        return both
 
-    @property
-    def get_central_eng(self):
-        staffs = list(self.project_roles.filter(group__name__exact="Central Engineer"))
-        if staffs:
-            return [str(role.user.username) for role in staffs]
-        return ""\
-
-    @property
-    def get_central_eng_id(self):
-        staffs = list(self.project_roles.filter(group__name="Central Engineer"))
-        if staffs:
-            return [role.user.id for role in staffs]
-        return []
 
     def get_organization_name(self):
         return self.organization.name

@@ -18,6 +18,7 @@ def set_role(request, pk):
 
 class UserRoleView(object):
     model = UserRole
+    # get sucess url dynamacially according to who is creating people(roles)
     success_url = reverse_lazy('role:user-role-list')
     form_class = UserRoleForm
 

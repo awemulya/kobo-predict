@@ -29,14 +29,14 @@ class UserRole(models.Model):
             )
 
     class Meta:
-        unique_together = ('user', 'group', 'organization', 'project','site')
+        unique_together = ('user', 'group', 'organization', 'project', 'site')
 
     def clean(self):
         if self.group.name == 'Site Supervisor' and not self.site_id:
             raise ValidationError({
                 'site': ValidationError(_('Missing site.'), code='required'),
             })
-        if self.group.name == 'Central Engineer' and not self.project_id:
+        if self.group.name == 'Reviewer' and not self.project_id:
             raise ValidationError({
                 'site': ValidationError(_('Missing Project.'), code='required'),
             })
@@ -63,7 +63,7 @@ class UserRole(models.Model):
         elif self.group.name == 'Organization Admin':
             self.project = None
             self.site = None
-        elif self.group.name in ['Project Manager', 'Central Engineer']:
+        elif self.group.name in ['Project Manager', 'Reviewer']:
             self.site = None
             self.organization = self.project.organization
 
@@ -81,7 +81,7 @@ class UserRole(models.Model):
         elif self.group.name == 'Organization Admin':
             self.project = None
             self.site = None
-        elif self.group.name in ['Project Manager', 'Central Engineer']:
+        elif self.group.name in ['Project Manager', 'Reviewer']:
             self.site = None
             self.organization = self.project.organization
 
@@ -122,7 +122,7 @@ class UserRole(models.Model):
 
     @staticmethod
     def central_engineers(project):
-        return UserRole.objects.filter(project=project, ended_at=None, group__name="Central Engineer").\
+        return UserRole.objects.filter(project=project, ended_at=None, group__name="Reviewer").\
             select_related('group', 'project')
 
 

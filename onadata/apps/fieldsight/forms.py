@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.gis.geos import Point
 from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
@@ -83,23 +83,6 @@ class OrganizationForm(forms.ModelForm):
         super(OrganizationForm, self).clean()
 
 
-class SetOrgAdminForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(SetOrgAdminForm, self).__init__(*args, **kwargs)
-        role = kwargs.get('instance')
-        if role is not None:
-            old_admins = role.get_staffs_id
-            users = User.objects.filter().exclude(id=settings.ANONYMOUS_USER_ID).exclude(id__in=old_admins)
-            self.fields['user'].choices = [(user.pk, user.username) for user in users]
-
-    class Meta:
-        fields = ['user']
-        model = UserRole
-        widgets = {
-        'user': forms.CheckboxSelectMultiple()
-        }
-
-
 class AssignOrgAdmin(HTML5BootstrapModelForm, KOModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -107,15 +90,22 @@ class AssignOrgAdmin(HTML5BootstrapModelForm, KOModelForm):
         super(AssignOrgAdmin, self).__init__(*args, **kwargs)
         role = kwargs.get('instance')
         if role is not None:
-            old_admins = role.organization.get_staffs_id
-            users = User.objects.filter().exclude(id=settings.ANONYMOUS_USER_ID).exclude(id__in=old_admins)
-            if hasattr(self.request,"organization"):
+            old_admins = role.organization.get_staffs
+            old_admins_id = [admin[0] for admin in old_admins]
+            old_admins_id.append(settings.ANONYMOUS_USER_ID)
+            if hasattr(self.request, "organization"):
                 if self.request.organization:
-                    users = users.filter(user_profile__organization=self.request.organization)
+                    users = User.objects.filter(user_profile__organization=self.request.organization, is_active=True).\
+                        filter(id__in=old_admins_id)
+                else:
+                    users = User.objects.filter(is_active=True).exclude(id__in=old_admins_id)
+            else:
+                users = User.objects.filter(is_active=True).exclude(id__in=old_admins_id)
             self.fields['user'].queryset = users
+            self.fields['organization'].choices = old_admins
 
     class Meta:
-        fields = ['user','group','organization']
+        fields = ['user', 'group', 'organization']
         model = UserRole
         widgets = {
             'user': forms.Select(attrs={'class': 'selectize', 'data-url': reverse_lazy('role:user_add')}),
@@ -171,26 +161,34 @@ class SetSupervisorForm(HTML5BootstrapModelForm, KOModelForm):
         }
 
 
-class SetCentralEngForm(HTML5BootstrapModelForm, KOModelForm):
+class SetProjectRoleForm(HTML5BootstrapModelForm, KOModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request')
-        super(SetCentralEngForm, self).__init__(*args, **kwargs)
+        super(SetProjectRoleForm, self).__init__(*args, **kwargs)
+        self.fields['group'].empty_label = None
         role = kwargs.get('instance')
         if role is not None:
-            old_admins = role.project.get_central_eng_id
-            users = User.objects.filter().exclude(id=settings.ANONYMOUS_USER_ID).exclude(id__in=old_admins)
+            old_admins = role.project.get_staffs_both_role
+            old_admins.append(settings.ANONYMOUS_USER_ID)
             if hasattr(self.request, "organization"):
                 if self.request.organization:
-                    users = users.filter(user_profile__organization=self.request.organization)
+                    users = User.objects.filter(is_active=True, user_profile__organization=self.request.organization)\
+                        .exclude(id__in=old_admins)
+                else:
+                    users = User.objects.filter(is_active=True).exclude(id__in=old_admins)
+            else:
+                users = User.objects.filter(is_active=True).exclude(id__in=old_admins)
             self.fields['user'].queryset = users
+        self.fields['group'].queryset = Group.objects.filter(
+            name__in=['Project Manager', 'Reviewer', 'Central Engineer'])
 
     class Meta:
-        fields = ['user','group','project']
+        fields = ['user', 'group','project']
         model = UserRole
         widgets = {
             'user': forms.Select(attrs={'class': 'selectize', 'data-url': reverse_lazy('role:user_add')}),
-            'group': forms.HiddenInput(),
+            'group': forms.Select(attrs={'class':'select', 'name': 'group', 'id':'value', 'onchange':'Hide()'}),
             'project': forms.HiddenInput()
         }
 
@@ -214,9 +212,9 @@ class ProjectForm(forms.ModelForm):
         }
 
     def clean(self):
-        lat = self.data.get("Longitude","85.3240")
-        long = self.data.get("Latitude","27.7172")
-        p = Point(float(lat), float(long),srid=4326)
+        lat = self.data.get("Longitude", "85.3240")
+        long = self.data.get("Latitude", "27.7172")
+        p = Point(float(lat), float(long), srid=4326)
         self.cleaned_data["location"] = p
         super(ProjectForm, self).clean()
 
