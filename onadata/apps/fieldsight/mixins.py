@@ -343,9 +343,25 @@ class OrganizationMixin(object):
 class MyOwnOrganizationMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():
+            if request.role.group.name in ['Super Admin']:
+                return super(MyOwnOrganizationMixin, self).dispatch(request, *args, **kwargs)
             if request.role.group.name in ['Organization Admin']:
                 if request.role.organization.pk == int(self.kwargs.get('pk','0')):
                     return super(MyOwnOrganizationMixin, self).dispatch(request, *args, **kwargs)
+        raise PermissionDenied()
+
+
+class MyOwnProjectMixin(object):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            if request.role.group.name in ['Super Admin']:
+                return super(MyOwnProjectMixin, self).dispatch(request, *args, **kwargs)
+            if request.role.group.name in ['Organization Admin']:
+                if request.role.organization == Project.objects.get(pk=kwargs.get('pk', 0)).organization:
+                    return super(MyOwnProjectMixin, self).dispatch(request, *args, **kwargs)
+            if request.role.group.name in ['Reviewer', 'Project Manager']:
+                if request.role.project.pk == int(self.kwargs.get('pk', '0')):
+                    return super(MyOwnProjectMixin, self).dispatch(request, *args, **kwargs)
         raise PermissionDenied()
 
 
