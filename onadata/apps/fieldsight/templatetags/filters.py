@@ -105,7 +105,7 @@ def profile(userid):
 
 
 # USURPERS = {
-#     'Site': ['Super Admin', 'Organization Admin', 'Project Manager', 'Central Engineer', 'Site Supervisor', 'Data Entry'],
+#     'Site': ['Super Admin', 'Organization Admin', 'Project Manager', 'Reviewer', 'Site Supervisor', 'Data Entry'],
 #     'Project': ['Super Admin', 'Organization Admin', 'Project Manager'],
 #     'Organization': ['Super Admin', 'Organization Admin'],
 #     'admin': ['Super Admin'],
@@ -113,10 +113,10 @@ def profile(userid):
 
 
 USURPERS = {
-    'Site': ['Central Engineer', 'Site Supervisor', 'Project Manager', 'Central Engineer', 'Organization Admin',
+    'Site': ['Reviewer', 'Site Supervisor', 'Project Manager', 'Reviewer', 'Organization Admin',
              'Super Admin'],
-    'KoboForms': ['Project Manager', 'Central Engineer', 'Organization Admin', 'Super Admin'],
-    'Project': ['Project Manager', 'Organization Admin', 'Super Admin', 'Central Engineer'],
+    'KoboForms': ['Project Manager', 'Reviewer', 'Organization Admin', 'Super Admin'],
+    'Project': ['Project Manager', 'Organization Admin', 'Super Admin', 'Reviewer'],
     'Organization': ['Organization Admin', 'Super Admin'],
     'admin': ['Super Admin'],
 }

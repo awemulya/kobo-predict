@@ -289,11 +289,11 @@ class ProfileView(LoginRequiredMixin):
 
 USURPERS = {
     # central engineer to project , same on roles.
-    'Site': ['Central Engineer', 'Site Supervisor', 'Project Manager', 'Central Engineer',
+    'Site': ['Reviewer', 'Site Supervisor', 'Project Manager', 'Reviewer',
              'Organization Admin', 'Super Admin'],
-    'KoboForms': ['Project Manager', 'Central Engineer', 'Organization Admin', 'Super Admin'],
-    'Project': ['Project Manager', 'Organization Admin', 'Super Admin', 'Central Engineer'],
-    'ProjectOnly': ['Project Manager', 'Site Supervisor', 'Central Engineer'],
+    'KoboForms': ['Project Manager', 'Reviewer', 'Organization Admin', 'Super Admin'],
+    'Project': ['Project Manager', 'Organization Admin', 'Super Admin', 'Reviewer'],
+    'ProjectOnly': ['Project Manager', 'Site Supervisor', 'Reviewer'],
     'Organization': ['Organization Admin', 'Super Admin'],
     'admin': ['Super Admin'],
 }
