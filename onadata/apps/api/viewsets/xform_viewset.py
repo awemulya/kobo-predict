@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import exceptions
 from rest_framework import status
+from rest_framework.authentication import BasicAuthentication, CSRFCheck
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
@@ -44,9 +45,6 @@ from onadata.libs.utils.string import str2bool
 
 from onadata.libs.utils.csv_import import submit_csv
 from onadata.libs.utils.viewer_tools import _get_form_url
-
-from onadata.apps.fsforms.models import FieldSightXF
-from onadata.apps.logger.models import XForm
 
 EXPORT_EXT = {
     'xls': Export.XLS_EXPORT,
@@ -251,6 +249,22 @@ def custom_response_handler(request, xform, query, export_type,
         file_path=export.filepath)
 
     return response
+
+
+from rest_framework.authentication import SessionAuthentication
+
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+
+    def enforce_csrf(self, request):
+        # reason = CSRFCheck().process_view(request, None, (), {})
+        # import ipdb
+        # ipdb.set_trace()
+        # if reason:
+        #     CSRF failed, bail with explicit error message
+            # raise exceptions.PermissionDenied('CSRF Failed: %s' % reason)
+        return  # To not perform the csrf check previously happening
+
 
 
 class XFormViewSet(AnonymousUserPublicFormsMixin, LabelsMixin, ModelViewSet):
@@ -722,6 +736,7 @@ data (instance/submission per row)
     lookup_field = 'pk'
     extra_lookup_fields = None
     permission_classes = [XFormPermissions, ]
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     # TODO: Figure out what `updatable_fields` does; if nothing, remove it
     updatable_fields = set(('description', 'downloadable', 'require_auth',
                             'shared', 'shared_data', 'title'))
