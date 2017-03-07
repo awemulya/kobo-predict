@@ -96,10 +96,7 @@ urlpatterns = [
     url(r'fcm/add/', FcmDeviceViewSet.as_view({'post': 'create'})),
     url(r'fcm/logout/', FcmDeviceViewSet.as_view({'post': 'inactivate'})),
 
-    # kobo form
 ]
-
-
 
 urlpatterns += router.urls
 
