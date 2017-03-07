@@ -1,6 +1,9 @@
 from django.conf.urls import url, include
+from django.views.decorators.csrf import csrf_exempt
+from fcm.views import DeviceViewSet
 from rest_framework import routers
 
+from onadata.apps.fieldsight.viewsets.FieldsightFcmViewset import FcmDeviceViewSet
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectViewSet
 from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet
@@ -89,7 +92,9 @@ urlpatterns = [
         form_class=RegistrationForm), name='user-create'),
     url(r'^userlist/$', UserListView.as_view(), name='user-list'),
     url(r'^filter-users/$', filter_users, name='filter-users'),
-    url(r'fcm/', include('fcm.urls')),
+    url(r'fcm/v1/devices/$', DeviceViewSet.as_view({'get': 'list'})),
+    url(r'fcm/add/', FcmDeviceViewSet.as_view({'post': 'create'})),
+    url(r'fcm/logout/', FcmDeviceViewSet.as_view({'post': 'inactivate'})),
 
     # kobo form
 ]
