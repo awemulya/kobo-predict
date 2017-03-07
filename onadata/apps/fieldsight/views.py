@@ -147,7 +147,11 @@ def project_dashboard(request, pk):
         return dashboard(request)
     peoples_involved = User.objects.filter(user_profile__organization=obj.organization, is_active=True).\
         order_by('first_name')
-    sites = Site.objects.filter(project=obj)
+    if request.method == "POST":
+        name = request.POST.get('name')
+        sites = Site.objects.filter(name__icontains=name, project=obj)
+    else:
+        sites = Site.objects.filter(project=obj)
     data = serialize('custom_geojson', sites, geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
