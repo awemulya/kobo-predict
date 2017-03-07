@@ -175,7 +175,7 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for form in all %}
-                                <a href="{% url 'forms:instance' form.fsid %}#/{{ form.instance|stringformat:'d' }}">
+                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                     <div class="org-site">
                                         
                                         <div class="">
@@ -197,8 +197,7 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for form in outstanding %}
-                                <a href="{% url 'forms:instance' form.fsid %}#/{{ form.instance|stringformat:'d' }}">
-
+                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                     <div class="org-site">
                                         
                                         <div class="">
@@ -220,7 +219,7 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for form in rejected %}
-                                <a href="{% url 'forms:instance' form.fsid %}#/{{ form.instance|stringformat:'d' }}">
+                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                     <div class="org-site">
                                         
                                       <div class="">
@@ -243,7 +242,7 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                {% for form in approved %}
-                                <a href="{% url 'forms:instance' form.fsid %}#/{{ form.instance|stringformat:'d' }}">
+                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                     <div class="org-site">
 
                                       <div class="">
@@ -265,7 +264,7 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for form in flagged %}
-                                <a href="{% url 'forms:instance' form.fsid %}#/{{ form.instance|stringformat:'d' }}">
+                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
                                     <div class="org-site">
 
                                       <div class="">
