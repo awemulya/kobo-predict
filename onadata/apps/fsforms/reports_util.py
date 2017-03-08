@@ -83,12 +83,12 @@ def get_xform_and_perms(fsxf_id, request):
     can_edit = True
     can_view = can_edit or\
         request.user.has_perm('logger.view_xform', xform)
-    return [xform, is_owner, can_edit, can_view]
+    return [xform, is_owner, can_edit, can_view, fs_xform]
 
 
 @apply_form_field_names
 def query_mongo(username, id_string, query, fields, sort, start=0,
-                    limit=DEFAULT_LIMIT, count=False, hide_deleted=True, fsxfid=None):
+                    limit=DEFAULT_LIMIT, count=False, hide_deleted=True, fs_uuid=None, fs_project_uuid=None):
     USERFORM_ID = u'_userform_id'
     STATUS = u'_status'
     DEFAULT_BATCHSIZE = 1000
@@ -106,9 +106,11 @@ def query_mongo(username, id_string, query, fields, sort, start=0,
     # if '_uuid' in query and ObjectId.is_valid(query['_uuid']):
     #     query['_uuid'] = ObjectId(query['_uuid'])
 
-    if fsxfid is not None:
+    if fs_uuid is not None:
         query.pop('_userform_id')
-        query['_uuid'] = { '$in': [fsxfid, str(fsxfid)] }
+        query['_uuid'] = { '$in': [fs_uuid, str(fs_uuid)] }
+    if fs_project_uuid is not None:
+        query['fs_project_uuid'] = { '$in': [fs_project_uuid, str(fs_project_uuid)] }
     if hide_deleted:
         # display only active elements
         # join existing query with deleted_at_query on an $and

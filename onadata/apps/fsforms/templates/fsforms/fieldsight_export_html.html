@@ -4,7 +4,7 @@
 {% block page-title %}{% trans 'Form Data' %}{% endblock %}
 {% block breadcrumbs %}
 
-{% if is_project %}
+{% if obj.project %}
 
 <li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">Project Dashboard</a></li>
 <li><a href="{% url 'fieldsight:project-list' %}">{% trans 'Projects' %}</a></li>
@@ -177,7 +177,7 @@ h1 {
         <div class="col-md-9">
             <div class="formmdetails">
                 <h2><span class="form-name">Name:</span>{{ obj.xf.title }}</h2>
-                {% if is_project %}
+                {% if obj.project %}
                 <p><span class="site-name">Project:</span>{{ obj.project }}</p>
                 {% else %}
                 <p><span class="site-name">Site:</span>{{ obj.site }}</p>
@@ -263,8 +263,8 @@ h1 {
     <tbody>
     {% for submission_id, row in data  %}
         <tr>
-            <!--<th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>-->
-            <th><a href="{% url 'forms:instance_detail' fsxfid  submission_id %}">{% trans "Open" %}</a></th>
+            <th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
+            <!--<th><a href="{% url 'forms:instance_detail' fsxfid  submission_id %}">{% trans "Open" %}</a></th>-->
             <th>
                 {% with row|fsmedia as last %}
                 {% for link in last %}

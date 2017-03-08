@@ -34,9 +34,18 @@
 {% block content %}
 <div class="page-header">
     <h1>{% trans "Browse Form Data" %}
-        <small><a href="{% url 'forms:formpack_html_export' fsxf_id %}">{{ xform.title }}</a></small>
+
+        <small>
+            {% if fxf.project %}
+
+            <a href="{% url 'forms:project_html_export' fxf.pk %}">{{ fxf.xf.title }}</a>
+            {% else %}
+            <a href="{% url 'forms:formpack_html_export' fxf.pk %}">{{ fxf.xf.title }}</a>
+            {% endif %}
+
+        </small>
         <small> | </small>
-        <small><a href="{% url 'forms:data_view' fsxf_id %}">{% trans "Data View" %}</a></small>
+        <small><a href="{% url 'forms:data_view' fxf.pk %}">{% trans "Data View" %}</a></small>
     </h1>
 </div>
 
@@ -86,9 +95,9 @@
 <script type="text/javascript" charset="utf-8" src="{{STATIC_URL}}js/sammy-plugins/sammy.meld-0.7.1.min.js"></script>
 
 <script type="text/javascript">
-var formJSONUrl = "{% url 'forms:download_jsonform' fsxf_id %}";
-var mongoAPIUrl = "{% url 'forms:mongo_view_api'  fsxf_id %}";
-var deleteAPIUrl = "{% url 'forms:delete_data'  fsxf_id %}";
+var formJSONUrl = "{% url 'forms:download_jsonform' fxf.pk %}";
+var mongoAPIUrl = "{% url 'forms:mongo_view_api'  fxf.pk %}";
+var deleteAPIUrl = "{% url 'forms:delete_data'  fxf.pk %}";
 var app; // sammy app
 var questions = {};
 var languages = [];

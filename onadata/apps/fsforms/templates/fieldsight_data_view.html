@@ -40,38 +40,37 @@
     <table class="table table-striped" id="dynamic-table1">
             <thead>
             <th>Name</th>
-            <th>Site</th>
+            <th>Site/Project</th>
             <th>Created Date</th>
             <th>Form Type</th>
             <th>Stage/Schedule</th>
-            <th colspan="2">Actions</th>
             </thead>
 <tr>
             <td>
-                <a href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}">{{ obj.xf.title }}</a>
+                {{ obj.xf.title }}
             </td>
             <td>
-                <a href="{% url 'fieldsight:site-edit' obj.site.id %}">{{ obj.site }}</a>
+                {% if obj.project %}
+                <a href="{% url 'fieldsight:project-dashboard' obj.project.id %}">{{ obj.project }}</a>
+                {% else %}
+                <a href="{% url 'fieldsight:site-dashboard' obj.site.id %}">{{ obj.site }}</a>
+                {% endif %}
             </td>
             <td>
                 {{ obj.date_created }}
             </td>
-                <td>{{obj.form_type}}</td>
+                <td>{{ obj.form_type }}</td>
 
              <td>
                  {% if obj.is_staged %}
-                 {{obj.stage_name }}
+                 {{obj.stage.name }}
                  {% endif %}
 
                  {% if obj.is_scheduled %}
-                 {{obj.schedule_name }}
+                 {{obj.schedule.name }}
                  {% endif %}
              </td>
 
-             <td>
-                <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}/edit">
-                     {% trans 'Edit Form Questions' %}</a>
-            </td>
             <!--if form is scheduled add link to fill schedule data or stage data or choose stage o schedule data-->
                     </tr>
         </table>
@@ -79,7 +78,12 @@
     <section id="data-view">
         <div class="page-header">
             <h1>{% trans "Data View" %}
-                <small><a href="{% url 'forms:formpack_html_export' fsxf_id %}">{{ xform.title }}</a>
+                <small>
+                    {% if obj.project %}
+                    <a href="{% url 'forms:project_html_export' obj.pk %}">{{ xform.title }}</a>
+                    {% else %}
+                    <a href="{% url 'forms:formpack_html_export' obj.pk %}">{{ xform.title }}</a>
+                    {% endif %}
                 </small>
             </h1>
         </div>

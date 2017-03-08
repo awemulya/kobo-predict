@@ -165,7 +165,7 @@ function createTable(canEdit)
         </div>\
     </form> \
     <div id="notes-section"></div></div>';
-    dataContainer.append(notesSection);
+//    dataContainer.append(notesSection);
 
     var table = $('<table id="data-table" class="table table-bordered table-striped"></table');
     var tHead = $('<thead><tr><th class="header" width="50%">' + gettext("Question") + '</th><th class="header">' + gettext("Response") + '</th></tr></thead>');

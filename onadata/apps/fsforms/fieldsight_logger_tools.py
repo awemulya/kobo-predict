@@ -157,7 +157,7 @@ def check_submission_permissions(request, xform):
 
 
 def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
-                    date_created_override, fxid, site, fs_poj_id=None):
+                    date_created_override, fxid, site, fs_poj_id=""):
     if not date_created_override:
         date_created_override = get_submission_date_from_xml(xml)
 
@@ -176,7 +176,8 @@ def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
         instance.date_created = date_created_override
         instance.save()
     if instance.xform is not None:
-        fs_poj_id = str(fs_poj_id)
+        if fs_poj_id:
+            fs_poj_id = str(fs_poj_id)
         pi, created = FieldSightParsedInstance.get_or_create(instance,
                                                              update_data={'fs_uuid': fxid, 'fs_status': 0,
                                                                           'fs_site':site, 'fs_project_uuid':fs_poj_id})

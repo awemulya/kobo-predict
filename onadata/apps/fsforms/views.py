@@ -993,7 +993,6 @@ def html_export(request, fsxf_id):
     context['data'] = make_table(data)
     context['fsxfid'] = fsxf_id
     context['obj'] = fsxf
-    context['is_project'] = False
     # return JsonResponse({'data': cursor})
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
@@ -1050,7 +1049,6 @@ def project_html_export(request, fsxf_id):
     context['data'] = make_table(data)
     context['fsxfid'] = fsxf_id
     context['obj'] = fsxf
-    context['is_project'] = True
     # return JsonResponse({'data': cursor})
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
@@ -1104,11 +1102,12 @@ def alter_answer_status(request, instance_id, status, fsid):
     return render(request, 'fsforms/alter_answer_status.html',
                   {'form': form, 'answer':instance_id, 'status':status, 'fsid':fsid})
 
+
 # @group_required('KoboForms')
 def instance(request, fsxf_id):
 
     fsxf_id = int(fsxf_id)
-    xform, is_owner, can_edit, can_view = get_xform_and_perms(fsxf_id, request)
+    xform, is_owner, can_edit, can_view, fxf = get_xform_and_perms(fsxf_id, request)
     # no access
     if not (xform.shared_data or can_view or
             request.session.get('public_link') == xform.uuid):
@@ -1123,10 +1122,9 @@ def instance(request, fsxf_id):
         {
             'id_string': xform.id_string,
         }, audit, request)
-    return render(request, 'fieldsight_instance.html', {
+    return render(request, 'fs_instance.html', {
         'username': request.user,
-        'fsxf_id': fsxf_id,
-        'xform': xform,
+        'fxf': fxf,
         'can_edit': can_edit
     })
 
@@ -1174,7 +1172,10 @@ def api(request, fsxf_id=None):
             args["count"] = True if int(request.GET.get('count')) > 0\
                 else False
         if xform:
-            args["fsxfid"] = fs_xform.id
+            if fs_xform.project:
+                args["fs_project_uuid"] = fs_xform.id
+            else:
+                args["fs_uuid"] = fs_xform.id
         cursor = query_mongo(**args)
     except ValueError as e:
         return HttpResponseBadRequest(e.__str__())
