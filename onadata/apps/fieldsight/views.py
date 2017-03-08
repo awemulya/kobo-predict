@@ -37,7 +37,7 @@ def dashboard(request):
     if current_role:
         if current_role.group.name == "Site Supervisor":
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
-        if current_role.group.name in ["Project Manager", "Central Engineer"]:
+        if current_role.group.name in ["Project Manager", "Reviewer"]:
             return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role.project.pk}))
         if current_role.group.name == "Organization Admin":
             return HttpResponseRedirect(reverse("fieldsight:organization-dashboard",
@@ -140,7 +140,7 @@ def organization_dashboard(request, pk):
 def project_dashboard(request, pk):
     obj = Project.objects.get(pk=pk)
     if not UserRole.objects.filter(user=request.user).filter(
-                    Q(group__name="Central Engineer", project=obj) |
+                    Q(group__name="Reviewer", project=obj) |
                     Q(group__name="Project Manager", project=obj) |
                     Q(group__name="Organization Admin", organization=obj.organization)|
                     Q(group__name="Super Admin")).exists():
@@ -189,7 +189,7 @@ def site_dashboard(request, pk):
     obj = Site.objects.get(pk=pk)
     if not UserRole.objects.filter(user=request.user).filter(
         Q(group__name="Site Supervisor", site=obj) |
-        Q(group__name="Central Engineer", project=obj.project) |
+        Q(group__name="Reviewer", project=obj.project) |
         Q(group__name="Project Manager", project=obj.project) |
         Q(group__name="Organization Admin", organization=obj.project.organization)|
         Q(group__name="Super Admin")).exists():
@@ -384,7 +384,7 @@ def add_supervisor(request, pk):
 def add_central_engineer(request, pk):
     obj = get_object_or_404(
         Project, pk=pk)
-    group = Group.objects.get(name__exact="Central Engineer")
+    group = Group.objects.get(name__exact="Reivewer")
     role_obj = UserRole(project=obj, group=group)
     scenario = 'Assign'
     if request.method == 'POST':
@@ -394,7 +394,7 @@ def add_central_engineer(request, pk):
             user_id = request.POST.get('user')
             role_obj.user_id = int(user_id)
             role_obj.save()
-        messages.add_message(request, messages.INFO, 'Central Engineer Added')
+        messages.add_message(request, messages.INFO, 'Reviewer Added')
         return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': obj.pk}))
     else:
         form = SetProjectRoleForm(instance=role_obj, request=request,)

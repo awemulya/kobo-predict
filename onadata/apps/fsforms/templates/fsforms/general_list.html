@@ -69,8 +69,9 @@
                     </td>
                     <td>{% if obj.xf %}
                         {% if project %}
-                          <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-general' obj.pk %}">
-                            Deploy To Sites</a>
+                          <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-general' obj.pk %}"> Deploy To Sites</a>
+                          <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-general-remaining-sites' obj.pk %}">
+                            Deploy To Remaining Sites</a>
 
                         {% endif %}
                         {% endif %}

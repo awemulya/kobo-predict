@@ -36,7 +36,7 @@ from .views import (
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, project_responses,
     project_html_export, deploy_survey, deploy_stages, deploy_general, set_deploy_stages, share_stages,
-    edit_share_stages, library_stages, un_deploy_general, un_deploy_survey)
+    edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part)
 
 
 urlpatterns = [
@@ -72,6 +72,7 @@ urlpatterns = [
         url(r'^deploy-survey/(?P<id>\d+)/$', deploy_survey, name='deploy-survey'),
         url(r'^un_deploy-survey/(?P<id>\d+)/$', un_deploy_survey, name='undeploy-survey'),
         url(r'^deploy-general/(?P<fxf_id>\d+)/$', deploy_general, name='deploy-general'),
+        url(r'^deploy-general-remaining/(?P<fxf_id>\d+)/$', deploy_general_part, name='deploy-general-remaining-sites'),
         url(r'^undeploy-general/(?P<fxf_id>\d+)/$', un_deploy_general, name='undeploy-general'),
 
         url(r'^project/schedule/add/(?P<id>\d+)/$', project_create_schedule, name='project-schedule-add'),

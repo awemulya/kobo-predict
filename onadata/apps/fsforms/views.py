@@ -670,6 +670,19 @@ def deploy_general(request, fxf_id):
     messages.info(request, 'General Form {} Deployed to Sites'.format(fxf.xf.title))
     return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fxf.project.pk}))
 
+@group_required("Project")
+def deploy_general_part(request, fxf_id):
+    with transaction.atomic():
+        fxf = FieldSightXF.objects.get(pk=fxf_id)
+        for site in fxf.project.sites.filter(is_active=True):
+            # cloning from parent
+            child, created = FieldSightXF.objects.get_or_create(is_staged=False, is_scheduled=False, xf=fxf.xf,
+                                site=site, fsform_id=fxf_id)
+            child.is_deployed = True
+            child.save()
+    messages.info(request, 'General Form {} Deployed to Sites'.format(fxf.xf.title))
+    return HttpResponseRedirect(reverse("forms:project-general", kwargs={'project_id': fxf.project.pk}))
+
 
 @group_required("Project")
 def un_deploy_general(request, fxf_id):

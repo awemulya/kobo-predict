@@ -50,7 +50,7 @@ class UserRole(models.Model):
             raise ValidationError({
                 'organization': ValidationError(_('Missing Organization.'), code='required'),
             })
-        if UserRole.objects.filter(user=self.user, group=self.group, project=self.project, site=self.site).exists():
+        if  self.user and UserRole.objects.filter(user=self.user, group=self.group, project=self.project, site=self.site).exists():
             raise ValidationError({
                 'user': ValidationError(_('User Role Already Exists.')),
             })
