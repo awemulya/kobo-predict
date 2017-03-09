@@ -319,6 +319,11 @@ def public_profile(request, username):
 
 @login_required
 def dashboard(request):
+    """
+
+    Returns:
+        object:
+    """
     content_user = request.user
     data = {
         'form': QuickConverter(),
@@ -378,9 +383,11 @@ def set_xform_owner_data(data, xform, request, username, id_string):
     data['users_with_perms'] = users_with_perms
     data['permission_form'] = PermissionForm(username)
 
+from onadata.apps.fieldsight.views import dashboard as fieldsight_dashboard
 
 @require_GET
 def show(request, username=None, id_string=None, uuid=None):
+    return fieldsight_dashboard(request)
     if uuid:
         return redirect_to_public_link(request, uuid)
     xform, is_owner, can_edit, can_view = get_xform_and_perms(

@@ -20,6 +20,8 @@ from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form
 from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed, \
     send_message_un_deploy
 from onadata.apps.logger.models import XForm
+from onadata.apps.main.models import MetaData
+from onadata.apps.main.views import set_xform_owner_data
 from onadata.libs.utils.user_auth import add_cors_headers
 from onadata.libs.utils.user_auth import helper_auth_helper
 from onadata.libs.utils.log import audit_log, Actions
@@ -1205,45 +1207,38 @@ def api(request, fsxf_id=None):
 
 
 @require_GET
+@group_required("Reviewer")
 def show(request, fsxf_id):
-    return HttpResponse("Show form here, comming soon.")
-    pass
-    # if uuid:
-    #     return redirect_to_public_link(request, uuid)
-    # xform, is_owner, can_edit, can_view = get_xform_and_perms(
-    #     username, id_string, request)
-    # # no access
-    # if not (xform.shared or can_view or request.session.get('public_link')):
-    #     return HttpResponseRedirect(reverse(home))
-    #
-    # data = {}
-    # data['cloned'] = len(
-    #     XForm.objects.filter(user__username__iexact=request.user.username,
-    #                          id_string__exact=id_string + XForm.CLONED_SUFFIX)
-    # ) > 0
-    # data['public_link'] = MetaData.public_link(xform)
-    # data['is_owner'] = is_owner
-    # data['can_edit'] = can_edit
-    # data['can_view'] = can_view or request.session.get('public_link')
-    # data['xform'] = xform
-    # data['content_user'] = xform.user
-    # data['base_url'] = "https://%s" % request.get_host()
-    # data['source'] = MetaData.source(xform)
-    # data['form_license'] = MetaData.form_license(xform).data_value
-    # data['data_license'] = MetaData.data_license(xform).data_value
-    # data['supporting_docs'] = MetaData.supporting_docs(xform)
-    # data['media_upload'] = MetaData.media_upload(xform)
-    # data['mapbox_layer'] = MetaData.mapbox_layer_upload(xform)
-    # data['external_export'] = MetaData.external_export(xform)
-    #
-    #
-    # if is_owner:
-    #     set_xform_owner_data(data, xform, request, username, id_string)
-    #
-    # if xform.allows_sms:
-    #     data['sms_support_doc'] = get_autodoc_for(xform)
-    #
-    # return render(request, "show.html", data)
+    fxf = FieldSightXF.objects.get(pk=fsxf_id)
+    xform, is_owner, can_edit, can_view = fxf.xf, False, False, False
+    # no access
+
+    data = {}
+    data['cloned'] = len(
+        XForm.objects.filter(user__username__iexact=request.user.username,
+                             id_string__exact=fxf.xf.id_string + XForm.CLONED_SUFFIX)
+    ) > 0
+    data['public_link'] = MetaData.public_link(xform)
+    data['is_owner'] = is_owner
+    data['can_edit'] = can_edit
+    data['can_view'] = can_view or request.session.get('public_link')
+    data['xform'] = xform
+    data['fxf'] = fxf
+    data['content_user'] = xform.user
+    data['base_url'] = "https://%s" % request.get_host()
+    data['source'] = MetaData.source(xform)
+    data['form_license'] = MetaData.form_license(xform).data_value
+    data['data_license'] = MetaData.data_license(xform).data_value
+    data['supporting_docs'] = MetaData.supporting_docs(xform)
+    data['media_upload'] = MetaData.media_upload(xform)
+    data['mapbox_layer'] = MetaData.mapbox_layer_upload(xform)
+    data['external_export'] = MetaData.external_export(xform)
+
+
+    if is_owner:
+        set_xform_owner_data(data, xform, request, xform.user.username, xform.id_string)
+
+    return render(request, "fieldsight_show.html", data)
 
 
 # @group_required('KoboForms')
@@ -1323,3 +1318,4 @@ def data_view(request, fsxf_id):
         }, audit, request)
 
     return render(request, "fieldsight_data_view.html", data)
+

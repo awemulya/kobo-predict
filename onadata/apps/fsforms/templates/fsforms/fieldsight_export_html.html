@@ -197,8 +197,8 @@ h1 {
         </div>
         <div class="col-md-3">
             <div class="editform">
-             <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}/edit">
-                     {% trans 'Edit Form Questions' %}</a>
+             <a class="btn btn-success btn-raised" href="{% url 'forms:show' obj.pk %}">
+                     {% trans 'More Actions' %}</a>
             </div>
         </div>
         <div class="clearfixx"></div>

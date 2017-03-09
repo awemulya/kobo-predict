@@ -305,6 +305,8 @@ def create_export(request, username, id_string, export_type):
             return HttpResponseForbidden(_(u'No XLS Template set.'))
 
     query = request.POST.get("query")
+    import ipdb
+    ipdb.set_trace()
     force_xlsx = request.POST.get('xls') != 'true'
 
     # export options
