@@ -305,8 +305,6 @@ def create_export(request, username, id_string, export_type):
             return HttpResponseForbidden(_(u'No XLS Template set.'))
 
     query = request.POST.get("query")
-    import ipdb
-    ipdb.set_trace()
     force_xlsx = request.POST.get('xls') != 'true'
 
     # export options
@@ -377,6 +375,7 @@ def _get_google_token(request, redirect_to_url):
 
 def export_list(request, username, id_string, export_type):
     if export_type == Export.GDOC_EXPORT:
+        return HttpResponseForbidden(_(u'Not shared.'))
         redirect_url = reverse(
             export_list,
             kwargs={
@@ -391,6 +390,7 @@ def export_list(request, username, id_string, export_type):
         return HttpResponseForbidden(_(u'Not shared.'))
 
     if export_type == Export.EXTERNAL_EXPORT:
+        return HttpResponseForbidden(_(u'Not shared.'))
         # check for template before trying to generate a report
         if not MetaData.external_export(xform=xform):
             return HttpResponseForbidden(_(u'No XLS Template set.'))
@@ -401,7 +401,6 @@ def export_list(request, username, id_string, export_type):
         'meta': export_meta,
         'token': export_token,
     }
-
     if should_create_new_export(xform, export_type):
         try:
             create_async_export(
@@ -427,7 +426,6 @@ def export_list(request, username, id_string, export_type):
             xform=xform, export_type=export_type).order_by('-created_on'),
         'metas': metadata
     }
-
     return render(request, 'export_list.html', data)
 
 
