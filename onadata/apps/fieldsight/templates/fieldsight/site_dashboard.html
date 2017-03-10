@@ -10,9 +10,8 @@
 {% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:site-edit' obj.pk %}">{% trans 'Edit' %}</a>
-    <a class="btn btn-success btn-raised" href="{% url 'forms:site-responses' obj.pk %}">{% trans 'Responses' %}</a>
-    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:site-blue-prints' obj.pk %}">{% trans 'Add BluePrints' %}</a>
+    <a class="setting-btn" href="{% url 'fieldsight:site-edit' obj.pk %}"><i class="fa fa-cog" aria-hidden="true"></i></a>
+    
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -39,41 +38,39 @@
                     </div>
                     <div class="col-md-9">
                         <div class="abt-org">
-                            <h3>{{ obj.name }}</h3>
-                            <h3>{{ obj.identifier }}</h3>
-                            <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
-                            
-                            <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
-                            <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
-                            <p class="website"><span></span>{{ obj.website }}</p>
-							              <p class="short-detail">{{ obj.description }}</p>
-                            <p class="progress-of-site">{% trans 'Progress' %}</p>
-                            <div class="progreess">
-                              <div class="col-md-6">
-                                <div class="progress progress-striped active progress-sm">
-                                    <div class="progress-bar progress-bar-success" role="progressbar"
-                                         aria-valuenow="{{obj.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{ obj.progress }}%">
-                                        <span class="sr-only">{{ obj.progress }}% Complete</span>
-                                        <span class="progress-bar-value">{{ obj.progress }}%</span>
-                                    </div>
+                            <div class="col-md-12">
+                              <h3>{{ obj.name }}</h3>
+                            </div>
+                            <div class="col-md-9">
+                              <h3>{{ obj.identifier }}</h3>
+                              <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
+                              
+                              <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
+                              <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
+                              <p class="website"><span></span>{{ obj.website }}</p>
+  							              <p class="short-detail">{{ obj.description }}</p>
+                              <p class="progress-of-site">{% trans 'Progress' %}</p>
+                              <div class="progreess">
+                                <div class="col-md-9">
+                                  <div class="progress progress-striped active progress-sm">
+                                      <div class="progress-bar progress-bar-success" role="progressbar"
+                                           aria-valuenow="{{obj.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{ obj.progress }}%">
+                                          <span class="sr-only">{{ obj.progress }}% Complete</span>
+                                          <span class="progress-bar-value">{{ obj.progress }}%</span>
+                                      </div>
+                                  </div>
                                 </div>
                               </div>
-                              <div class="col-md-6"></div>
-                              <div class="clearfixx"></div>
                             </div>
-                              <div class="manage-btn">
-                                <nav class="containerd">
-                                    <a href="{% url 'forms:setup-site-stages' obj.pk %}" tooltip="{% trans 'Setup Stages Data' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/project-background.png');"></a>
-                                    <a href="{% url 'forms:site-survey' obj.pk %}" tooltip="{% trans 'SetUp Survey' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/user-background.png');"></a>
-                                    <a href="{% url 'fieldsight:add_supervisor' pk=obj.id %}" tooltip="{% trans 'Assign Supervisor' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/user-background.png');"></a>
-                                    <a href="#" tooltip="{% trans 'Setup' %}" class="buttons-fab"><span><span class="rotate-fab"></span></span></a>
-                                </nav>
-                              </div>
+                            <div class="col-md-3">
+                              <a class="manage-button" href="{% url 'fieldsight:site-blue-prints' obj.pk %}">{% trans 'Add BluePrints' %}</a>
+                              <a href="{% url 'forms:setup-site-stages' obj.pk %}" class="manage-button">setup forms</a>
+                              <a href="{% url 'forms:site-survey' obj.pk %}" class="manage-button">setup users</a>
+                              <a href="{% url 'forms:site-responses' obj.pk %}" class="manage-button">view responses</a>
+                            </div>  
                         </div>
                     </div>
-                    <div class="col-md-3">
-                      
-                    </div>
+                    
                     <div class="clearfixx"></div>
                 </div>
 
@@ -167,7 +164,6 @@
                       <li class="out"><a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
                         <li class="reg"><a data-toggle="tab" href="#out-reject">Rejected ({{rejected|length}})</a></li>
                         <li class="flag"><a data-toggle="tab" href="#out-flagged">Flagged ({{flagged|length}})</a></li>
-                        <li class="app"><a data-toggle="tab" href="#out-approved">Approved ({{approved|length}})</a></li>
                     </ul>
 
                     <div class="tab-content">
@@ -182,8 +178,10 @@
                                             <div class="detail-org">
                                               
                                               <h4 class="address">{{ form.fsform.xf.title}}</h4>
-                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
-                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>
+                                              <div class="detail-person-time">
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>  
+                                              </div>
                                               <div class="clearfixx"></div>
                                             </div>
                                         </div>
@@ -204,8 +202,10 @@
                                             <div class="detail-org">
                                               
                                               <h4 class="address">{{ form.fsform.xf.title}}</h4>
-                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
-                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>
+                                              <div class="detail-person-time">
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>  
+                                              </div>
                                               <div class="clearfixx"></div>
                                             </div>
                                         </div>
@@ -226,8 +226,10 @@
                                             <div class="detail-org">
                                               
                                               <h4 class="address">{{ form.fsform.xf.title}}</h4>
-                                             <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
-                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>
+                                             <div class="detail-person-time">
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>  
+                                              </div>
                                               <div class="clearfixx"></div>
                                             </div>
                                         </div>
@@ -235,28 +237,6 @@
                                 </a>
                                  {% endfor %}
 
-                            </div>
-                        </div>
-                      </div>
-                      <div id="out-approved" class="tab-pane fade">
-                        <div class="org-site-list">
-                            <div class="form-list">
-                               {% for form in approved %}
-                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
-                                    <div class="org-site">
-
-                                      <div class="">
-                                            <div class="detail-org">
-                                              
-                                              <h4 class="address">{{ form.fsform.xf.title}}</h4>
-                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
-                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>
-                                              <div class="clearfixx"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                                 {% endfor %}
                             </div>
                         </div>
                       </div>
@@ -271,8 +251,10 @@
                                             <div class="detail-org">
                                                 
                                                 <h4 class="address">{{ form.fsform.xf.title}}</h4>
+                                                <div class="detail-person-time">
                                                 <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
-                                              <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>  
+                                              </div>
                                               <div class="clearfixx"></div>
                                             </div>
                                         </div>
