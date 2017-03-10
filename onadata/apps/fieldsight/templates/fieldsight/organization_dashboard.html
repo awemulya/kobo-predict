@@ -18,7 +18,7 @@
 {% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:organization-edit' obj.pk %}">{% trans 'Edit' %}</a>
+    <a class="setting-btn" title="Edit" href="{% url 'fieldsight:organization-edit' obj.pk %}"><i class="fa fa-cog" aria-hidden="true"></i></a>
 {% endblock %}
 {% block content %}
 
@@ -38,21 +38,22 @@
                     </div>
                     <div class="col-md-9">
                         <div class="abt-org">
-                            <h3>{{ obj.name }}</h3>
-                            <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
-                            <p class="country"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.get_country_display }}</p>
-                            <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
-                            <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
-                            <p class="website"><span></span>{{ obj.website }}</p>
-							<p class="short-detail">{{ obj.description }}</p>
-                            <div class="manage-btn">
-                                <nav class="containerd">
-                                    <a href="{% url 'fieldsight:project-add' %}" tooltip="{% trans 'Create Project' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/project-background.png');"></a>
-                                    <a href="{% url 'fieldsight:add_org_admin' pk=obj.id %}" tooltip="{% trans 'Assign Admin' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/user-background.png');"></a>
-                                    <a href="{% url 'fieldsight:site-add' %}" tooltip="{% trans 'Create Site' %}" class="buttons-fab" style="background-image: url('{{STATIC_URL}}images/site-background.png');"></a>
-                                    <a href="#" tooltip="{% trans 'Setup' %}" class="buttons-fab"><span><span class="rotate-fab"></span></span></a>
-                                </nav>
+                            <div class="col-md-12">
+                                <h3>{{ obj.name }}</h3>
                             </div>
+                            <div class="col-md-9">
+                                <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
+                                <p class="country"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.get_country_display }}</p>
+                                <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
+                                <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
+                                <p class="website"><span></span>{{ obj.website }}</p>
+    							<p class="short-detail">{{ obj.description }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="{% url 'fieldsight:project-add' %}" class="manage-button">create project</a>
+                                <a href="{% url 'fieldsight:site-add' %}" class="manage-button">setup users</a>
+                            </div>
+                            
                         </div>
                     </div>
                     <div class="clearfixx"></div>
