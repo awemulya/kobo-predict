@@ -1173,7 +1173,7 @@ def api(request, fsxf_id=None):
 
     try:
         args = {
-            'username': request.user.username,
+            'username': xform.user.username,
             'id_string': xform.id_string,
             'query': request.GET.get('query'),
             'fields': request.GET.get('fields'),

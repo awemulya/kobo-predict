@@ -50,7 +50,7 @@
                             </div>
                             <div class="col-md-3">
                               <a class="manage-button" href="{% url 'fieldsight:site-upload' obj.pk %}">{% trans 'Bulk' %} {% trans 'Upload Sites' %}</a>
-                              <a class="manage-button" href="{% url 'fieldsight:site-upload' obj.pk %}">{% trans 'Add' %} {% trans 'Sites' %}</a>
+                              <a class="manage-button" href="{% url 'fieldsight:site-add'%}">{% trans 'Add' %} {% trans 'Sites' %}</a>
                               <a href="{% url 'forms:project-schedule-add' obj.pk %}" class="manage-button">{% trans 'Schedule Forms' %}</a>
                               <a href="{% url 'forms:setup-project-stages' obj.pk %}" class="manage-button">{% trans 'Stages' %}</a>
                               <a href="{% url 'fieldsight:add_project_staffs' obj.pk %}" class="manage-button">{% trans 'Assign People' %}</a>
