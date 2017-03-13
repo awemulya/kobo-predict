@@ -1,7 +1,7 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n staticfiles %}
 
-{% block page-title %}{% trans 'Add Central Engineer to '  %}{{obj.name}}
+{% block page-title %}{% trans 'Add User Role In '  %}{{obj.name}}
 
 {% endblock %}
 {%block extracss %}
@@ -41,21 +41,32 @@
               <input type="submit" class="btn btn-success btn-raised" value="Save">
           </form>
       </div>
+
 <div class="col-sm-6">
-    {% if existing_staffs %}
-       {% trans 'Existing Managers And Reviewers'  %}
-       {% endif %}
-       {% for role in existing_staffs %}
-       <div class="row">
-    <div class="col-sm-6">
-      Role : {{role.group}}
-    </div>
-        <div class="col-sm-6">
-           {{role.user.get_full_name}}
+      <h3>Current Users</h3>
+      <div class="currentuser-block">
+        <div class="search-current">
+          <input type="text" class="current-input" placeholder="Search">
+          <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
         </div>
-   </div>
-    {% endfor %}
-</div>
-</div>
+        <div class="current-users-list">
+          {% for role in existing_staffs %}
+          <div class="current-person">
+            <div class="user-image-current">
+              <img src="{{role.user.user_profile.profile_picture.url}}" alt="">
+            </div>
+            <div class="user-name-position">
+              <p class="cu-name">{{role.user.get_full_name}}</p>
+              <p class="cu-position">{{role.group}}</p>
+            </div>
+            <div class="clear-btn-cu .animated .slideInRight"  onclick="this.parentElement.style.display='none'">
+              <span class="closebtn-cu"><i class="fa fa-times" aria-hidden="true"></i></span>
+            </div>
+            <div class="clearfixx"></div>
+          </div>
+        {% endfor %}
+        </div>
+          </div>
+    </div>
 
 {% endblock %}
