@@ -99,10 +99,12 @@ def current_user(request):
             bp = [m.image.url for m in data]
             project = role.project
             site_info = {'site': {'id': site.id, 'name': site.name, 'description': site.public_desc,
-                                  'lat': repr(site.latitude), 'lon':repr(site.longitude), 'identifier':site.identifier,
-                                  'progress':site.progress(), 'add_desc': site.additional_desc, 'blueprints':bp},
+                                  'address':site.address, 'lat': repr(site.latitude), 'lon': repr(site.longitude),
+                                  'identifier':site.identifier, 'progress': site.progress(),
+                                  'add_desc': site.additional_desc, 'blueprints':bp},
                          'project': {'name': project.name, 'id': project.id, 'description': project.public_desc,
-                                     'lat': repr(project.latitude), 'lon':repr(project.longitude)},
+                                     'address':project.address,
+                                     'lat': repr(project.latitude), 'lon': repr(project.longitude)},
                          }
             field_sight_info.append(site_info)
 
