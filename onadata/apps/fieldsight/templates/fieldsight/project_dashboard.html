@@ -13,7 +13,6 @@
 
 {% block head %}
     <a class="setting-btn" href="{% url 'fieldsight:project-edit' obj.pk %}"><i class="fa fa-cog" aria-hidden="true"></i></a>
-<a class="btn btn-success btn-raised" href="{% url 'fieldsight:site-upload' obj.pk %}">{% trans 'Bulk' %} {% trans 'Upload Sites' %}</a>
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -51,9 +50,11 @@
                             </div>
                             <div class="col-md-3">
                               <a class="manage-button" href="{% url 'fieldsight:site-upload' obj.pk %}">{% trans 'Bulk' %} {% trans 'Upload Sites' %}</a>
-                              <a href="{% url 'forms:setup-site-stages' obj.pk %}" class="manage-button">setup forms</a>
-                              <a href="{% url 'forms:site-survey' obj.pk %}" class="manage-button">setup users</a>
-                              <a href="{% url 'forms:project-responses' obj.pk %}" class="manage-button">view responses</a>
+                              <a class="manage-button" href="{% url 'fieldsight:site-upload' obj.pk %}">{% trans 'Add' %} {% trans 'Sites' %}</a>
+                              <a href="{% url 'forms:project-schedule-add' obj.pk %}" class="manage-button">{% trans 'Schedule Forms' %}</a>
+                              <a href="{% url 'forms:setup-project-stages' obj.pk %}" class="manage-button">{% trans 'Stages' %}</a>
+                              <a href="{% url 'fieldsight:add_project_staffs' obj.pk %}" class="manage-button">{% trans 'Assign People' %}</a>
+                              <a href="{% url 'forms:project-responses' obj.pk %}" class="manage-button">{% trans 'Responses' %}</a>
                             </div> 
                         </div>
                     </div>

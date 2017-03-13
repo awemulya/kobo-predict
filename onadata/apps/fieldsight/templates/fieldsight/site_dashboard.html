@@ -64,10 +64,10 @@
                             </div>
                             <div class="col-md-3">
                               <a class="manage-button" href="{% url 'fieldsight:site-blue-prints' obj.pk %}">{% trans 'Add BluePrints' %}</a>
-                              <a href="{% url 'forms:setup-site-stages' obj.pk %}" class="manage-button">setup stages</a>
-                              <a href="{% url 'forms:site-survey' obj.pk %}" class="manage-button">setup survey</a>
-                              <a href="{% url 'fieldsight:add_supervisor' obj.pk %}" class="manage-button">setup users</a>
-                              <a href="{% url 'forms:site-responses' obj.pk %}" class="manage-button">view responses</a>
+                              <a href="{% url 'forms:setup-site-stages' obj.pk %}" class="manage-button">{% trans 'Stages' %}</a>
+                              <a href="{% url 'forms:site-survey' obj.pk %}" class="manage-button">{% trans 'Survey' %}</a>
+                              <a href="{% url 'fieldsight:add_supervisor' obj.pk %}" class="manage-button">{% trans 'Assign People' %}</a>
+                              <a href="{% url 'forms:site-responses' obj.pk %}" class="manage-button">{% trans 'Responses' %}</a>
                             </div>  
                         </div>
                     </div>
@@ -172,7 +172,7 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for form in all %}
-                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
+                                <a href="{% url 'forms:instance' form.fsid %}#/{{ form.instance|stringformat:'d' }}">
                                     <div class="org-site">
                                         
                                         <div class="">
@@ -196,7 +196,7 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for form in outstanding %}
-                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
+                                <a href="{% url 'forms:instance' form.fsid %}#/{{ form.instance|stringformat:'d' }}">
                                     <div class="org-site">
                                         
                                         <div class="">
@@ -220,7 +220,7 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for form in rejected %}
-                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
+                                <a href="{% url 'forms:instance' form.fsid %}#/{{ form.instance|stringformat:'d' }}">
                                     <div class="org-site">
                                         
                                       <div class="">
@@ -245,7 +245,7 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for form in flagged %}
-                                <a href="{% url 'forms:instance_detail' form.fsid  form.instance %}">
+                                <a href="{% url 'forms:instance' form.fsid %}#/{{ form.instance|stringformat:'d' }}">
                                     <div class="org-site">
 
                                       <div class="">

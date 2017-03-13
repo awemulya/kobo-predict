@@ -50,8 +50,8 @@
     							<p class="short-detail">{{ obj.description }}</p>
                             </div>
                             <div class="col-md-3">
-                                <a href="{% url 'fieldsight:project-add' %}" class="manage-button">create project</a>
-                                <a href="{% url 'fieldsight:add_org_admin' obj.pk %}" class="manage-button">setup users</a>
+                                <a href="{% url 'fieldsight:project-add' %}" class="manage-button">{% trans 'Create Project' %}</a>
+                                <a href="{% url 'fieldsight:add_org_admin' obj.pk %}" class="manage-button">{% trans 'Assign People' %}</a>
                             </div>
                             
                         </div>
