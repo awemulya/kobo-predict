@@ -125,6 +125,13 @@ class UserRole(models.Model):
         return UserRole.objects.filter(project=project, ended_at=None, group__name="Reviewer").\
             select_related('group', 'project')
 
+    @property
+    def has_multiple_project_roles(self):
+        return UserRole.objects.filter(user=self.user, group__name__in=['Project Manager', 'Reviewer'], organization=self.organization).count() > 1
+
+    @property
+    def both_project_roles(self):
+        return UserRole.objects.filter(user=self.user, group__name__in=['Project Manager', 'Reviewer'], organization=self.organization)
 
 @receiver(post_save, sender=UserRole)
 def create_messages(sender, instance, created,  **kwargs):

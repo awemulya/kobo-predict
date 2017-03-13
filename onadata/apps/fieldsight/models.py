@@ -129,7 +129,7 @@ class Project(models.Model):
 
     @property
     def get_staffs(self):
-        staffs = self.project_roles.filter(group__name__in=["Reviewer" , "Project Manager"])
+        staffs = self.project_roles.filter(group__name__in=["Reviewer", "Project Manager"])
         return staffs
 
     @property

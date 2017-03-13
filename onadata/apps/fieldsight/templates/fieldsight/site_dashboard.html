@@ -105,35 +105,25 @@
 
                      <div class="org-site-list">
 
-                        {% for user in peoples_involved %}
+                        {% for role in peoples_involved %}
 
-                        <a href="{% url 'users:profile' user.id %}">
+                        <a href="{% url 'users:profile' role.user.id %}">
                             <div class="org-site">
                                 
                                 <div class="col-md-10">
                                       <div class="detail-org">
-                                    <h3 class="pople-Name-org">{{user.get_full_name}}</h3>
+                                    <h3 class="pople-Name-org">{{role.user.get_full_name}}</h3>
                                     <p class="address"><span><i class="fa fa-user" aria-hidden="true"></i>
-                                    </span>{{ user.username }}</p>
+                                    </span>{{ role.user.username }}</p>
                                     <p class="address"><span><i class="fa fa-envelope" aria-hidden="true">
 
-                                    </i></span>{{ user.email }}</p>
+                                    </i></span>{{ role.user.email }}</p>
                                     <p class="address"><span><i class="fa fa-phone" aria-hidden="true"></i>
-                                        </span>{{ user.user_profile.phone }}</p>
-                                 {% with user.id|get_site_roles:obj.id as roles %}
-                                    {% for role in roles %}
+                                        </span>{{ role.user.user_profile.phone }}</p>
+
                                     <p class="contact"><span><i class="fa fa-minus" aria-hidden="true"></i></span>
                                     {{ role.group }}
-                                    {% if role.site%}
-                                    {% trans 'at Site' %}{{role.site}}
-                                    {% endif %}
-                                    {% if role.project%}
-                                    {% trans 'Of Project' %}{{role.project}}
-                                    {% endif %}
-
                                     </p>
-                                    {% endfor %}
-                                    {% endwith %}
                                 </div>
                                 </div>
                                 <div class="clearfixx"></div>

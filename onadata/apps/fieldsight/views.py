@@ -145,8 +145,7 @@ def project_dashboard(request, pk):
                     Q(group__name="Organization Admin", organization=obj.organization)|
                     Q(group__name="Super Admin")).exists():
         return dashboard(request)
-    peoples_involved = User.objects.filter(user_profile__organization=obj.organization, is_active=True).\
-        order_by('first_name')
+    peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
     if request.method == "POST":
         name = request.POST.get('name')
         sites = Site.objects.filter(name__icontains=name, project=obj)
@@ -195,8 +194,7 @@ def site_dashboard(request, pk):
         Q(group__name="Super Admin")).exists():
             return dashboard(request)
 
-    peoples_involved = User.objects.filter(user_profile__organization=obj.project.organization, is_active=True).\
-        order_by('first_name')
+    peoples_involved = obj.site_roles.all().order_by('user__first_name')
     data = serialize('custom_geojson', [obj], geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
 
