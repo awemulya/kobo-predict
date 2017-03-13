@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Max
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 
@@ -250,6 +250,17 @@ def create_messages(sender, instance, created,  **kwargs):
         pass
     elif created and instance.site is not None and not instance.is_staged:
         send_message(instance)
+
+
+@receiver(pre_delete, sender=FieldSightXF)
+def send_delete_message(sender, instance, using, **kwargs):
+    if instance.project is not None:
+        pass
+    elif instance.is_staged:
+        pass
+    else:
+        fxf = instance
+        send_message(fxf)
 
 post_save.connect(create_messages, sender=FieldSightXF)
 

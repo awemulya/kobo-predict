@@ -16,7 +16,7 @@
 				<div class="profile-user-all-cell">
 					<div class="profile-user-table">
 						<div class="img-profile">
-							<img src= "{{ obj.profile_picture.url}}" alt="image"/>	
+							<img src= "{{ obj.profile_picture.url}}" alt="image"/>
 						</div>
 						<div class="detail-profile">
 							<h3>{{obj.user.get_full_name}}</h3>
@@ -42,11 +42,63 @@
 						</div>
 					</div>
 				</div>
-			</div>	
+			</div>
 		</div>
 	</div>
-
-
+<div class="row">
+	<h3>{% trans 'Roles Of' %} {{obj.user}}</h3>
+</div>
+<!--<div class="row">-->
+	<!--<div class="col-sm-3">-->
+		<!--{% trans 'Role' %}-->
+	<!--</div>-->
+	<!--<div class="col-sm-3">-->
+		<!--{% trans 'Site' %}-->
+	<!--</div>-->
+	<!--<div class="col-sm-3">-->
+		<!--{% trans 'Project' %}-->
+	<!--</div>-->
+	<!--<div class="col-sm-3">-->
+		<!--{% trans 'Organization' %}-->
+	<!--</div>-->
+<!--</div>-->
+{% for role in roles %}
+{{role.group }}
+{% if role.site%}
+{% trans 'of Site ' %}
+ <a href="{% url 'fieldsight:site-dashboard' role.site.pk %}">
+{{role.site}}
+	 </a>
+{% endif %}
+{% if role.project %}
+{% trans 'of Project ' %}
+ <a href="{% url 'fieldsight:project-dashboard' role.project.pk %}">
+{{role.project}}
+	 </a>
+{% endif %}
+{% if role.organization%}
+{% trans 'of ' %}
+ <a href="{% url 'fieldsight:organization-dashboard' role.organization.pk %}">
+{{role.organization}} </a>
+{% endif %}
+<br/>
+<!--<div class="row">-->
+	<!--<div class="col-sm-3">-->
+		<!--{{role.group }}-->
+	<!--</div>-->
+	<!--<div class="col-sm-3">-->
+		<!--{{role.site|default:"" }}-->
+	<!--</div>-->
+	<!--<div class="col-sm-3">-->
+		<!--{{role.project|default:"" }}-->
+	<!--</div>-->
+	<!--<div class="col-sm-3">-->
+		<!--{{role.organization|default:"" }}-->
+	<!--</div>-->
+<!--</div>-->
+{% empty %}
+<p class="emptylist">Sorry, no roles for this user.</p>
+{% endfor %}
 
 <!-- <p>address = {{obj.address}}</p>
 <p>gender = {{obj.gender}}</p>

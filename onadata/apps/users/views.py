@@ -273,7 +273,10 @@ class ProfileUpdateView(MyProfileView, UpdateView):
 def my_profile(request, pk=None):
     if not pk or pk =='0':
         profile, created = UserProfile.objects.get_or_create(user=request.user)
+        roles = request.user.user_roles.all()
     else:
         profile, created = UserProfile.objects.get_or_create(user__id=pk)
-    return render(request, 'users/profile.html', {'obj':profile})
+        roles = profile.user.user_roles.all()
+
+    return render(request, 'users/profile.html', {'obj': profile, 'roles': roles})
 
