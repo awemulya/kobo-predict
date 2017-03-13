@@ -99,8 +99,7 @@ def organization_dashboard(request, pk):
     if not UserRole.objects.filter(user=request.user).filter(Q(group__name="Organization Admin", organization=obj)
                                                                      | Q(group__name="Super Admin")).exists():
         return dashboard(request)
-    peoples_involved = User.objects.filter(user_profile__organization=obj, is_active=True).\
-        order_by('first_name')
+    peoples_involved = obj.organization_roles.filter(group__name = "Organization Admin").order_by('user__first_name')
     sites = Site.objects.filter(project__organization=obj)
     data = serialize('custom_geojson', sites, geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
