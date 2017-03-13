@@ -64,8 +64,9 @@
                             </div>
                             <div class="col-md-3">
                               <a class="manage-button" href="{% url 'fieldsight:site-blue-prints' obj.pk %}">{% trans 'Add BluePrints' %}</a>
-                              <a href="{% url 'forms:setup-site-stages' obj.pk %}" class="manage-button">setup forms</a>
-                              <a href="{% url 'forms:site-survey' obj.pk %}" class="manage-button">setup users</a>
+                              <a href="{% url 'forms:setup-site-stages' obj.pk %}" class="manage-button">setup stages</a>
+                              <a href="{% url 'forms:site-survey' obj.pk %}" class="manage-button">setup survey</a>
+                              <a href="{% url 'fieldsight:add_supervisor' obj.pk %}" class="manage-button">setup users</a>
                               <a href="{% url 'forms:site-responses' obj.pk %}" class="manage-button">view responses</a>
                             </div>  
                         </div>
