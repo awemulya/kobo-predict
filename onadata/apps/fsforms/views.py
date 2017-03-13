@@ -1138,7 +1138,7 @@ def instance(request, fsxf_id):
             'id_string': xform.id_string,
         }, audit, request)
     return render(request, 'fs_instance.html', {
-        'username': request.user,
+        'username': xform.user,
         'fxf': fxf,
         'can_edit': can_edit
     })
