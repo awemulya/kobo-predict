@@ -16,24 +16,10 @@
 {% endblock %}
 
 {% block content %}
-   <div class="col-sm-12 registration_field">
-       <!--{% if form.fields.irganization.choices %}-->
-       <!--{% trans 'Existing admins'  %}-->
-       <!--{% endif %}-->
-       <!--{% for x, y in form.fields.organization.choices %}-->
-       <!--<div class="row">-->
-    <!--<div class="col-sm-6">-->
-      <!--Role_id  {{ y }}-->
-    <!--</div>-->
-        <!--<div class="col-sm-6">-->
-           <!--{{ y }}-->
-        <!--</div>-->
-   <!--</div>-->
-       <!--{% endfor %}-->
-    </div>
-    <form method="POST" id='form' enctype="multipart/form-data" action="{% url 'fieldsight:add_org_admin' pk=obj.id %}">
+<div class="row">
+   <div class="col-sm-6">
+    <form method="POST" id='form' enctype="multipart/form-data" action="{% url 'fieldsight:add_org_admin' obj.id %}">
         {% csrf_token %}
-
 
             <div class="row">
                 <div class="col-sm-6">
@@ -43,18 +29,46 @@
                 </div>
                 <div class="col-sm-6">
                     {{ form.organization }}
-                </div>
-                <div class="col-sm-6">
                     {{ form.group }}
                 </div>
-            </div>
+                </div>
 
-        <div class="col-sm-6">
+        <div class="col-sm-12">
                     
-            <input type="submit" id='submit' class="btn btn-info btn-raised" value="{% trans 'Save' %}">
+            <input type="submit" id='submit' class="btn btn-info btn-raised" value="{% trans 'Save Admin' %}">
         </div>
 
+
     </form>
+</div>
+<div class="col-sm-6">
+      <h3>Current Users</h3>
+      <div class="currentuser-block">
+        <div class="search-current">
+          <input type="text" class="current-input" placeholder="Search">
+          <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+        </div>
+        <div class="current-users-list">
+          {% for role in obj.get_staffs_org %}
+          <div class="current-person">
+            <div class="user-image-current">
+              <img src="{{role.user.user_profile.profile_picture.url}}" alt="{{role.user.user_profile.profile_picture.url}}">
+            </div>
+            <div class="user-name-position">
+              <p class="cu-name">{{role.user.get_full_name}}</p>
+              <p class="cu-position">{{role.group}}</p>
+            </div>
+            <div class="clear-btn-cu .animated .slideInRight"  onclick="this.parentElement.style.display='none'">
+              <span class="closebtn-cu"><i class="fa fa-times" aria-hidden="true"></i></span>
+            </div>
+            <div class="clearfixx"></div>
+          </div>
+        {% endfor %}
+        </div>
+          </div>
+    </div>
+</div>
+
 
 
 {% endblock %}

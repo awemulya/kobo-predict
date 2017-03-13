@@ -83,6 +83,11 @@ class Organization(models.Model):
     @property
     def get_staffs(self):
         staffs = self.organization_roles.filter(group__name="Organization Admin").values_list('id', 'user__username')
+        return staffs\
+
+    @property
+    def get_staffs_org(self):
+        staffs = self.organization_roles.filter(group__name="Organization Admin")
         return staffs
 
     @property
@@ -184,10 +189,8 @@ class Site(models.Model):
 
     @property
     def get_supervisors(self):
-        staffs = list(self.site_roles.filter(group__name="Site Supervisor"))
-        if staffs:
-            return [str(role.user.username) for role in staffs]
-        return ""\
+        return self.site_roles.all()
+
 
     @property
     def get_supervisor_id(self):
