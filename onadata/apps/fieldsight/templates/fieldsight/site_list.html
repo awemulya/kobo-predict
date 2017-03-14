@@ -16,14 +16,29 @@
 
     <script>
 $(document).ready(function() {
- vm = new SitesViewModel();
+var myDjangoList = (("{{object_list |jsonify}}").replace(/&(l|g|quo)t;/g, function(a,b){
+            return {
+                l   : '<',
+                g   : '>',
+                quo : '"'
+            }[b];
+        }));
+
+myDjangoList = myDjangoList.replace(/u'/g, '\'')
+myDjangoList = myDjangoList.replace(/'/g, '\"')
+
+var site_list = JSON.parse( myDjangoList );
+
+ vm = new SitesViewModel(site_list);
  ko.applyBindings(vm);
 });
+
     </script>
     {% endblock %}
 
 {% block content %}
-    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:site_modal_visibility">
+<div data-bind="with:current_site">
+    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.site_modal_visibility">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -31,7 +46,43 @@ $(document).ready(function() {
         <h4 class="modal-title">Modal title</h4>
       </div>
       <div class="modal-body">
-        <p>One fine body&hellip;</p>
+         {% csrf_token %}
+             {{ form.media }}
+             <div class="col-sm-12 registration_field">
+            {% for field in form %}
+               <div class="col-sm-12 registration_field">
+                 <div class="col-sm-2"> {{ field.label }}</div>
+                 <div class="col-sm-4">      {{ field }}</div>
+                 <div class="col-sm-6">      {{ field.errors }}</div>
+               </div>
+            {% endfor %}
+        </div>
+
+            <div class="col-sm-12 registration_field">
+                  <div class="col-sm-3">Latitude:</div>
+                      <div class="col-sm-3">
+	                    <input type="text" id="Latitude" name="Latitude" class="LatLon"/>
+                      </div>
+               </div>
+            <div class="col-sm-12 registration_field">
+                  <div class="col-sm-3">Longitude:</div>
+                      <div class="col-sm-3">
+	                    <input type="text" id="Longitude" name="Longitude" class="LatLon"/>
+                      </div>
+               </div>
+
+        </div>
+        <div id="map" style="height:500px; width:500px; cursor:pointer;"></div>
+
+        <!-- <input type="submit" class='btn btn-info btn-raised' value="{% trans 'Save' %}"> -->
+        <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:save" >{% trans 'Save' %}</button>
+        {% if form.instance.id %}
+            <a href="{% url 'fieldsight:project-delete' form.instance.id %}" class="btn btn-danger btn-raised">
+                {% trans 'Delete' %}</a>
+        {% endif %}
+            </div>
+    </form>
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -40,32 +91,29 @@ $(document).ready(function() {
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
+</div>
 
  <form class="navbar-form" method="post" role="search" action="{% url 'fieldsight:site-list'%}">
-                    {% csrf_token %}
-                    <!--<div class="input-group">-->
-                        <!--<input type="text" class="form-control" placeholder="Search" name="name">-->
-                        <!--<div class="input-group-btn">-->
-                            <!--<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>-->
-                        <!--</div>-->
-                    <!--</div>-->
+
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" data-bind="value:search_key">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
     </form>
 
-    <div class='adv-table'>
+    <div class='adv-table' data-bind="foreach: sites">
 
-         {% for obj in object_list %}
-         <a href="{% url 'fieldsight:site-dashboard' obj.pk %}">
+         <a data-bind="attr: { href: url }">Dashboard</a>
                          <div class="col-sm-4">
                              <div style="margin-top:20px">
-                                 <i class="fa fa-building-o fa-fw" aria-hidden="true"></i>{{obj.name|default_if_none:""}}
-                                 {% if obj.address %}
-                           <i class="fa fa-location-arrow fa-fw" aria-hidden="true"></i>{{ obj.address|default_if_none:""}}
-                                 {% endif %}
+                                 <span data-bind="text: name">
+                                 <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
+
                             </div>
                          </div>
                          </a>
-        {% endfor %}
 
 
     </div>

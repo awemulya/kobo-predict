@@ -219,7 +219,7 @@ class ProjectForm(forms.ModelForm):
         super(ProjectForm, self).clean()
 
 
-class SiteForm(forms.ModelForm):
+class SiteForm(HTML5BootstrapModelForm, KOModelForm):
     def __init__(self, *args, **kwargs):
         super(SiteForm, self).__init__(*args, **kwargs)
         if not self.fields['location'].initial:

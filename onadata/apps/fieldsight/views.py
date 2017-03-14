@@ -450,7 +450,10 @@ class SiteView(PView):
 
 
 class SiteListView(SiteView, ReviewerMixin, ListView):
-    pass
+    def get_context_data(self, **kwargs):
+        context = super(SiteListView, self).get_context_data(**kwargs)
+        context['form'] = SiteForm()
+        return context
 
 
 class SiteCreateView(SiteView, ProjectMixin, CreateView):
