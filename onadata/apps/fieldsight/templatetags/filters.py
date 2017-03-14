@@ -30,12 +30,16 @@ def get_type(value):
 FORM_STATUS = {0:'Outstanding', 1: 'Rejected', 2: 'Flagged', 3: 'Approved'}
 
 def get_status_level(status=0):
+    if not isinstance(status, int):
+        status = 0
     return FORM_STATUS.get(status, "Outstanding")
 
 
 @register.filter
 def exceptlast(lst):
     my_list = lst[:-1]
+    if isinstance(my_list[-1],list):
+        my_list = my_list[:-1]
     my_list[-1] = get_status_level(my_list[-1])
     return my_list
 
