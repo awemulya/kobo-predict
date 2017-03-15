@@ -17,6 +17,7 @@ from django.template.loader import get_template
 
 from django.conf import settings
 
+from onadata.apps.fieldsight.models import Site
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 
@@ -35,12 +36,19 @@ def get_status_level(status=0):
     return FORM_STATUS.get(status, "Outstanding")
 
 
+def get_site_level(status):
+    if not isinstance(status, unicode):
+        return  ""
+    return Site.objects.get(pk=status).name
+
+
 @register.filter
 def exceptlast(lst):
     my_list = lst[:-1]
-    if isinstance(my_list[-1],list):
+    if isinstance(my_list[-1], list):
         my_list = my_list[:-1]
     my_list[-1] = get_status_level(my_list[-1])
+    my_list[-2] = get_site_level(my_list[-2])
     return my_list
 
 

@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -31,10 +32,10 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
         if fsxfid is None or  siteid is None:
             return self.error_response("Site Id Or Form ID Not Given", False, request)
         try:
-            siteid =  int(siteid)
             fsxfid = int(fsxfid)
-            fsxf = FieldSightXF.objects.get(pk=kwargs.get('pk',None))
-            fs_proj_xf = fsxf.fsform.pk if fsxf.fsform else ''
+            fxf = get_object_or_404(FieldSightXF, pk=kwargs.get('pk'))
+            fs_proj_xf = fxf.fsform.pk if fxf.fsform else ''
+            # siteid =  fxf.site.pk
         except:
             return self.error_response("Site Id Or Form ID Not Vaild", False, request)
 
