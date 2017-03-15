@@ -11,10 +11,12 @@
 
 {% endblock %}
  {%block kocript %}
-
+ <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
+    <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/sites.js"></script>
 
     <script>
+
 $(document).ready(function() {
 var myDjangoList = (("{{object_list |jsonify}}").replace(/&(l|g|quo)t;/g, function(a,b){
             return {
@@ -34,6 +36,7 @@ var site_list = JSON.parse( myDjangoList );
 });
 
     </script>
+
     {% endblock %}
 
 {% block content %}
@@ -72,7 +75,7 @@ var site_list = JSON.parse( myDjangoList );
                </div>
 
         </div>
-        <div id="map" style="height:500px; width:500px; cursor:pointer;"></div>
+        <div id="mapDiv" data-bind="style:{width:'300px',height:'300px'},map:myMap"></div>
 
         <!-- <input type="submit" class='btn btn-info btn-raised' value="{% trans 'Save' %}"> -->
         <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:save" >{% trans 'Save' %}</button>
@@ -83,11 +86,12 @@ var site_list = JSON.parse( myDjangoList );
             </div>
     </form>
 
+
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+      <!--<div class="modal-footer">-->
+        <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+        <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+      <!--</div>-->
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
