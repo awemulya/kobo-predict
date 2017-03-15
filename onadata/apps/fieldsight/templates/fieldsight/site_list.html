@@ -60,22 +60,22 @@ var site_list = JSON.parse( myDjangoList );
                </div>
             {% endfor %}
         </div>
-
-            <div class="col-sm-12 registration_field">
-                  <div class="col-sm-3">Latitude:</div>
-                      <div class="col-sm-3">
-	                    <input type="text" id="Latitude" name="Latitude" class="LatLon"/>
-                      </div>
-               </div>
-            <div class="col-sm-12 registration_field">
-                  <div class="col-sm-3">Longitude:</div>
-                      <div class="col-sm-3">
-	                    <input type="text" id="Longitude" name="Longitude" class="LatLon"/>
-                      </div>
+             <div class="col-sm-12 registration_field">
+                 <div class="col-sm-2"> {% trans 'Latitude' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: mapOne().lat" />
+                     </div>
+                 <div class="col-sm-6"></div>
                </div>
 
-        </div>
-        <div id="mapDiv" data-bind="style:{width:'300px',height:'300px'},map:myMap"></div>
+          <div class="col-sm-12 registration_field">
+                 <div class="col-sm-2"> {% trans 'Longitude' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: mapOne().lng" />
+                     </div>
+                 <div class="col-sm-6"></div>
+               </div>
+          <div id="map1Div" data-bind="style:{width:'100%',height:'500px'},map:mapOne"></div>
 
         <!-- <input type="submit" class='btn btn-info btn-raised' value="{% trans 'Save' %}"> -->
         <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:save" >{% trans 'Save' %}</button>
