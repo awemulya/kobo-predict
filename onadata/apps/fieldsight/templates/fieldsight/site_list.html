@@ -49,6 +49,7 @@ var site_list = JSON.parse( myDjangoList );
         <h4 class="modal-title">Modal title</h4>
       </div>
       <div class="modal-body">
+          <form>
          {% csrf_token %}
              {{ form.media }}
              <div class="col-sm-12 registration_field">
@@ -83,7 +84,6 @@ var site_list = JSON.parse( myDjangoList );
             <a href="{% url 'fieldsight:project-delete' form.instance.id %}" class="btn btn-danger btn-raised">
                 {% trans 'Delete' %}</a>
         {% endif %}
-            </div>
     </form>
 
 

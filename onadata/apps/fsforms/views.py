@@ -923,7 +923,7 @@ def project_survey(request, project_id):
 
 @group_required("Project")
 def setup_forms(request, is_project, pk):
-    return render(request, "fsforms/setup_forms.html", {'is_project': is_project, 'pk': pk})
+    return render(request, "fsforms/setup_forms.html", {'is_project': is_project, 'pk': pk, 'form':GeneralFSForm(request=request)})
 
 # kobo form related
 
