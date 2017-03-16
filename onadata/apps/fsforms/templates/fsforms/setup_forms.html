@@ -59,15 +59,16 @@ var pk = "{{pk}}";
                </div>
 
             {% csrf_token %}
-               <div class="col-sm-12 registration_field">
-               {{ form.non_field_errors }}
-               </div>
+              {{form.as_p}}
+               <!--<div class="col-sm-12 registration_field">-->
+               <!--{{ form.non_field_errors }}-->
+               <!--</div>-->
 
-            <div class="col-sm-12 registration_field">
-                 <div class="col-sm-3"> {{ form.xf.label }}</div>
-                 <div class="col-sm-3">      {{ form.xf }}</div>
-                 <div class="col-sm-6">      {{ form.xf.errors }}</div>
-               </div>
+            <!--<div class="col-sm-12 registration_field">-->
+                 <!--<div class="col-sm-3"> {{ form.xf.label }}</div>-->
+                 <!--<div class="col-sm-3">      {{ form.xf }}</div>-->
+                 <!--<div class="col-sm-6">      {{ form.xf.errors }}</div>-->
+               <!--</div>-->
 
         <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Save' %}</button>
 

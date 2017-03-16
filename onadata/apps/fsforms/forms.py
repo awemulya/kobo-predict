@@ -3,6 +3,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from onadata.apps.fieldsight.models import Site
+from onadata.apps.fieldsight.utils.forms import HTML5BootstrapModelForm, KOModelForm
 from onadata.apps.logger.models import XForm
 from .models import FieldSightXF, Stage, Schedule, FormGroup, FORM_STATUS
 
@@ -93,6 +94,36 @@ class GeneralFSForm(forms.ModelForm):
     class Meta:
         fields = ['xf']
         model = FieldSightXF
+
+
+class GeneralForm(HTML5BootstrapModelForm, KOModelForm):
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(GeneralForm, self).__init__(*args, **kwargs)
+        if hasattr(self.request, "project") and self.request.project is not None:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
+                Q(fieldsightformlibrary__project=self.request.project) |
+                Q(fieldsightformlibrary__organization=self.request.organization))
+
+        elif hasattr(self.request, "organization") and self.request.organization is not None:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) |
+                Q(fieldsightformlibrary__is_global=True) |
+                Q(fieldsightformlibrary__organization=self.request.organization))
+        else:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
+        self.fields['xf'].choices = [(obj.id, obj.title) for obj in xform]
+        self.fields['xf'].empty_label = None
+        self.fields['xf'].label = "Form"
+
+    class Meta:
+        fields = ['xf']
+        model = FieldSightXF
+
+
 
 
 class StageForm(forms.ModelForm):
