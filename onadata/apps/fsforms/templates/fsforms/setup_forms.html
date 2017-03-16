@@ -1,0 +1,55 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Manage Forms' %}{% endblock %}
+
+{% block head %}
+{% endblock %}
+{% block breadcrumbs %}
+{% if is_project == "0" %}
+<li><a href="{% url 'fieldsight:site-dashboard' pk %}">
+     {% trans 'Site Dashboard' %}</a></li>
+{% else %}
+<li><a href="{% url 'fieldsight:project-dashboard' pk %}">
+     {% trans 'Project Dashboard' %}</a></li>
+{% endif %}
+<li>{% trans 'Manage Forms' %}</li>
+{% endblock %}
+
+{%block kocript %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js"></script>
+
+<script>
+
+$(document).ready(function() {
+var is_project = "{{is_project}}";
+var pk = "{{pk}}";
+
+ vm = new SetUpViewModel(is_project, pk);
+ ko.applyBindings(vm);
+});
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="btn-group" role="group" aria-label="...">
+  <button type="button" class="btn" data-bind="css: {'btn-primary': currentVm() == 'general', 'btn-default': !currentVm() == 'general'}, click: function () {setSelectedVm('general')}">{% trans 'General Forms' %}</button>
+  <button type="button" class="btn" data-bind="css: {'btn-primary': currentVm() == 'schedules', 'btn-default': !currentVm() == 'schedules'}, click: function () {setSelectedVm('schedules')}">{% trans 'Schedules' %}</button>
+  <button type="button" class="btn" data-bind="css: {'btn-primary': currentVm() == 'stages', 'btn-default': !currentVm() == 'stages'}, click: function () {setSelectedVm('stages')}">{% trans 'Stages' %}</button>
+</div>
+
+<div class="row" data-bind="visible: currentVm() == 'general'" style="display:none;">
+    <div data-bind="with:generalVm">
+
+    </div>
+</div>
+<div class="row" data-bind="visible: currentVm() == 'schedules'" style="display:none;">
+schdeules list
+</div>
+<div class="row" data-bind="visible: currentVm() == 'stages'" style="display:none;">
+stages list
+</div>
+
+{% endblock %}

@@ -921,7 +921,11 @@ def project_survey(request, project_id):
     return render(request, "fsforms/project/schedule_list.html", {'object_list': objlist, 'project': Project(id=project_id)})
 
 
-# form related
+@group_required("Project")
+def setup_forms(request, is_project, pk):
+    return render(request, "fsforms/setup_forms.html", {'is_project': is_project, 'pk': pk})
+
+# kobo form related
 
 def download_xform(request, pk):
     # if request.user.is_anonymous():

@@ -36,7 +36,7 @@ from .views import (
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, project_responses,
     project_html_export, deploy_survey, deploy_stages, deploy_general, set_deploy_stages, share_stages,
-    edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part)
+    edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, setup_forms)
 
 
 urlpatterns = [
@@ -89,6 +89,9 @@ urlpatterns = [
         url(r'^fill-form-type/(?P<pk>\d+)/$', fill_form_type, name='fill_form_type'),
         url(r'^fill-details-stage/(?P<pk>\d+)/$', fill_details_stage, name='fill_details_stage'),
         url(r'^fill-details-schedule/(?P<pk>\d+)/$', fill_details_schedule, name='fill_details_schedule'),
+        #setup forms UI urls
+        url(r'^setup-forms/(?P<is_project>\d)/(?P<pk>\d+)$', setup_forms, name='setup-forms'),
+
 ]
 
 
