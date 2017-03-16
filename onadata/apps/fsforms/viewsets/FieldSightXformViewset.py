@@ -11,3 +11,22 @@ class FieldSightXFormViewSet(viewsets.ModelViewSet):
     """
     queryset = FieldSightXF.objects.all()
     serializer_class = FSXFormSerializer
+
+
+class GeneralFormsViewSet(viewsets.ModelViewSet):
+    """
+    General Forms
+    """
+    queryset = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False)
+    serializer_class = FSXFormSerializer
+
+    def filter_queryset(self, queryset):
+        if self.request.user.is_anonymous():
+            self.permission_denied(self.request)
+        is_project = self.kwargs.get('is_project', None)
+        pk = self.kwargs.get('pk', None)
+        if is_project == "1":
+            queryset = queryset.filter(project__id=pk)
+        else:
+            queryset = queryset.filter(site__id=pk)
+        return queryset

@@ -18,6 +18,8 @@
 {% endblock %}
 
 {%block kocript %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js"></script>
 
 <script>
@@ -86,13 +88,30 @@ var pk = "{{pk}}";
 </div><!-- /.modal -->
 </div>
 
-        <div class="panel panel-default">
+        <div class="panel panel-info">
           <div class="panel-heading">
             <h3 class="panel-title"><a data-bind="click:add_form"><i class="fa fa-plus" aria-hidden="true"></i> Add</a></h3>
           </div>
             <div class="panel-body">
-            Panel content
+            <p>A General Forms Is Created By Selecting One Kobo Form.</p>
           </div>
+             <table class="table">
+                 <thead> <tr>
+                     <th>#</th>
+                     <th>{% trans 'Form Name' %}</th>
+                     <th>{% trans 'Date Created' %}</th>
+                     <th>{% trans 'Submission Status' %}</th>
+                     <th>{% trans 'Deployed Status' %}</th>
+                 </tr> </thead>
+                 <tbody  data-bind="foreach: forms">
+                 <tr>
+                     <th scope="row" data-bind='text: $index()+1'></th>
+                     <td data-bind="text: name"></td>
+                     <td data-bind="text: formatDate(date_created)"></td>
+                     <td data-bind="text: formStatus(form_status)"></td>
+                     <td data-bind="text: deployStatus(is_deployed)"></td>
+                 </tr>
+                 </tbody></table>
         </div>
     </div>
 </div>

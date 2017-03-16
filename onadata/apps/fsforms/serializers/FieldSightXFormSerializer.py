@@ -118,7 +118,12 @@ class FSXFormListSerializer(serializers.ModelSerializer):
 
 
 class FSXFormSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField('get_title', read_only=True)
 
     class Meta:
         model = FieldSightXF
-        exclude = ('date_created', 'date_modified', 'form_status')
+        exclude = ()
+
+    @check_obj
+    def get_title(self, obj):
+        return u"%s" % obj.xf.title
