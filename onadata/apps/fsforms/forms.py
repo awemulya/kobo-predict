@@ -7,6 +7,8 @@ from onadata.apps.fieldsight.utils.forms import HTML5BootstrapModelForm, KOModel
 from onadata.apps.logger.models import XForm
 from .models import FieldSightXF, Stage, Schedule, FormGroup, FORM_STATUS
 
+SHARED_LEVEL = [('' ,'None'),(0, 'Global'), (1, 'Organization'), (2, 'Project'), ]
+
 
 class AssignSettingsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -273,7 +275,38 @@ class ScheduleForm(forms.ModelForm):
                     'date_range_start': SelectDateWidget,
                     'date_range_end': SelectDateWidget,
                     }
-SHARED_LEVEL = [('' ,'None'),(0, 'Global'), (1, 'Organization'), (2, 'Project'), ]
+
+
+class KoScheduleForm(HTML5BootstrapModelForm, KOModelForm):
+    form = forms.ChoiceField(widget = forms.Select(), required=False,)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(KoScheduleForm, self).__init__(*args, **kwargs)
+        if hasattr(self.request, "project") and self.request.project is not None:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
+                Q(fieldsightformlibrary__project=self.request.project) |
+                Q(fieldsightformlibrary__organization=self.request.organization))
+
+        elif hasattr(self.request, "organization") and self.request.organization is not None:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) |
+                Q(fieldsightformlibrary__is_global=True) |
+                Q(fieldsightformlibrary__organization=self.request.organization))
+        else:
+            xform = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
+        self.fields['form'].choices = [(obj.id, obj.title) for obj in xform]
+        self.fields['form'].empty_label = None
+
+    class Meta:
+        fields = ['form', 'name', 'date_range_start', 'date_range_end', 'selected_days']
+        model = Schedule
+        widgets = { 'selected_days': forms.CheckboxSelectMultiple,
+                    'date_range_start': SelectDateWidget,
+                    'date_range_end': SelectDateWidget,
+                    }
 
 
 class GroupForm(forms.ModelForm):

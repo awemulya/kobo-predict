@@ -120,6 +120,20 @@ class FSXFormListSerializer(serializers.ModelSerializer):
 class FSXFormSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField('get_title', read_only=True)
 
+    def validate(self, data):
+        """
+        Check that form is unique for general form.
+        """
+        if data.has_key('site'):
+            if FieldSightXF.objects.filter(
+                    xf=data['xf'], is_staged=False, is_scheduled=False, site=data['site']).exists():
+                raise serializers.ValidationError("Form Already Exists, Duplicate General Forms Not Allowded")
+        elif data.has_key('project'):
+            if FieldSightXF.objects.filter(
+                    xf=data['xf'], is_staged=False, is_scheduled=False, project=data['project']).exists():
+                raise serializers.ValidationError("Form Already Exists, Duplicate General Forms Not Allowded")
+        return data
+
     class Meta:
         model = FieldSightXF
         exclude = ()

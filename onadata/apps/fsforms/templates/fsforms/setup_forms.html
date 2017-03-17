@@ -18,6 +18,8 @@
 {% endblock %}
 
 {%block kocript %}
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js"></script>
@@ -62,16 +64,6 @@ var pk = "{{pk}}";
 
             {% csrf_token %}
               {{form.as_p}}
-               <!--<div class="col-sm-12 registration_field">-->
-               <!--{{ form.non_field_errors }}-->
-               <!--</div>-->
-
-            <!--<div class="col-sm-12 registration_field">-->
-                 <!--<div class="col-sm-3"> {{ form.xf.label }}</div>-->
-                 <!--<div class="col-sm-3">      {{ form.xf }}</div>-->
-                 <!--<div class="col-sm-6">      {{ form.xf.errors }}</div>-->
-               <!--</div>-->
-
         <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Save' %}</button>
 
     </form>
@@ -88,7 +80,7 @@ var pk = "{{pk}}";
 </div><!-- /.modal -->
 </div>
 
-        <div class="panel panel-success">
+        <div class="panel panel">
           <div class="panel-heading">
             <h3 class="panel-title"><a data-bind="click:add_form"><i class="fa fa-plus" aria-hidden="true"></i> Add</a></h3>
           </div>
@@ -115,9 +107,71 @@ var pk = "{{pk}}";
         </div>
     </div>
 </div>
+
 <div class="row" data-bind="visible: currentVm() == 'schedules'" style="display:none;">
-schdeules list
+      <div data-bind="with:scheduleVm">
+
+        <div data-bind="with:current_form">
+    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.schedule_form_modal_visibility">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Create Schedule</h4>
+      </div>
+      <div class="modal-body">
+
+          <form method="post">
+            <div class="col-sm-12 registration_field">
+               {{ general_form.non_field_errors }}
+               </div>
+
+            {% csrf_token %}
+              {{schedule_form.as_p}}
+        <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Save' %}</button>
+
+    </form>
+
+
+
+      </div>
+      <!--<div class="modal-footer">-->
+        <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+        <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+      <!--</div>-->
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 </div>
+
+        <div class="panel panel">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a data-bind="click:add_form"><i class="fa fa-plus" aria-hidden="true"></i> Add</a></h3>
+          </div>
+            <div class="panel-body">
+            <p><input type="text" class="form-control" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'"></p>
+          </div>
+             <table class="table">
+                 <thead> <tr>
+                     <th>#</th>
+                     <th>{% trans 'Form Name' %}</th>
+                     <th>{% trans 'Date Created' %}</th>
+                     <th>{% trans 'Submission Status' %}</th>
+                     <th>{% trans 'Deployed Status' %}</th>
+                 </tr> </thead>
+                 <tbody  data-bind="foreach: forms">
+                 <tr>
+                     <th scope="row" data-bind='text: $index()+1'></th>
+                     <td data-bind="text: name"></td>
+                     <td data-bind="text: formatDate(date_created)"></td>
+                     <td data-bind="text: formStatus(form_status)"></td>
+                     <td data-bind="text: deployStatus(is_deployed)"></td>
+                 </tr>
+                 </tbody></table>
+        </div>
+    </div>
+</div>
+
 <div class="row" data-bind="visible: currentVm() == 'stages'" style="display:none;">
 stages list
 </div>

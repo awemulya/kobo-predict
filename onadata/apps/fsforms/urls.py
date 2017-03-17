@@ -158,8 +158,7 @@ urlpatterns = urlpatterns + [
 urlpatterns = urlpatterns + [
 
     url(r'^api/general/(?P<is_project>\d)/(?P<pk>\d+)$', GeneralFormsViewSet.as_view({'get': 'list'}), name='general_forms'),
-    url(r'^api/fxf/', GeneralFormsViewSet.as_view({'post': 'create'})),
-    url(r'^api/fxf/(?P<pk>\d+)$', GeneralFormsViewSet.as_view({'put': 'update'})),
+    url(r'^api/fxf/', GeneralFormsViewSet.as_view({'post': 'create','put': 'update'})),
     url(r'^api/site-main-stages/(?P<site_id>\d+)$', SiteMainStageViewSet.as_view({'get': 'list'}), name='main-stage-list'),
     url(r'^api/site-schedules/(?P<site_id>\d+)$', ScheduleViewset.as_view({'get': 'list'}), name='schedule-list'),
     url(r'^api/sub-stages/(?P<main_stage>\d+)$', SubStageViewSet.as_view({'get': 'list'}), name='sub-stage-list'),

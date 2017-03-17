@@ -30,7 +30,7 @@ from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, P
     CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
-    AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm, GeneralForm
+    AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm, GeneralForm, KoScheduleForm
 from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
@@ -924,7 +924,8 @@ def project_survey(request, project_id):
 @group_required("Project")
 def setup_forms(request, is_project, pk):
     return render(request, "fsforms/setup_forms.html",
-                  {'is_project': is_project, 'pk': pk, 'form': GeneralForm(request=request)})
+                  {'is_project': is_project, 'pk': pk, 'form': GeneralForm(request=request),
+                   'schedule_form': KoScheduleForm(request=request)})
 
 # kobo form related
 
