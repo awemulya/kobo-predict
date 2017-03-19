@@ -18,8 +18,23 @@ class ScheduleSerializer(serializers.ModelSerializer):
 
     days = serializers.SerializerMethodField('get_all_days', read_only=True)
     form = serializers.SerializerMethodField('get_assigned_form', read_only=True)
+    xf = serializers.CharField()
     form_name = serializers.SerializerMethodField('get_assigned_form_name', read_only=True)
     is_deployed = serializers.SerializerMethodField('get_is_deployed_status', read_only=True)
+
+    def validate(self, data):
+        """
+        Check that form is unique for general form.
+        """
+        if data.has_key('site'):
+            if FieldSightXF.objects.filter(
+                    xf__id=data['xf'], is_staged=False, is_scheduled=True, site=data['site']).exists():
+                raise serializers.ValidationError("Form Already Exists, Duplicate Forms Not Allowded")
+        elif data.has_key('project'):
+            if FieldSightXF.objects.filter(
+                    xf__id=data['xf'], is_staged=False, is_scheduled=True, project=data['project']).exists():
+                raise serializers.ValidationError("Form Already Exists, Duplicate Forms Not Allowded")
+        return data
 
     class Meta:
         model = Schedule
