@@ -171,8 +171,11 @@ var pk = "{{pk}}";
              <table class="table">
                  <thead> <tr>
                      <th>#</th>
+                     <th>{% trans 'Schedule Name' %}</th>
                      <th>{% trans 'Form Name' %}</th>
-                     <th>{% trans 'Date Created' %}</th>
+                     <th>{% trans 'Start' %}</th>
+                     <th>{% trans 'End' %}</th>
+                     <th>{% trans 'Days' %}</th>
                      <th>{% trans 'Submission Status' %}</th>
                      <th>{% trans 'Deployed Status' %}</th>
                  </tr> </thead>
@@ -180,8 +183,11 @@ var pk = "{{pk}}";
                  <tr>
                      <th scope="row" data-bind='text: $index()+1'></th>
                      <td data-bind="text: name"></td>
-                     <td data-bind="text: formatDate(date_created)"></td>
-                     <td data-bind="text: formStatus(form_status)"></td>
+                     <td data-bind="text: form_name"></td>
+                     <td data-bind="text: formatDate(date_range_start)"></td>
+                     <td data-bind="text: formatDate(date_range_start)"></td>
+                     <td data-bind="text: days"></td>
+                     <td data-bind="text: formStatus(status)"></td>
                      <td data-bind="text: deployStatus(is_deployed)"></td>
                  </tr>
                  </tbody></table>

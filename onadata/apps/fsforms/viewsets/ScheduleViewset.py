@@ -4,7 +4,7 @@ from onadata.apps.fsforms.models import Schedule, Days
 from onadata.apps.fsforms.serializers.ScheduleSerializer import ScheduleSerializer, DaysSerializer
 
 
-class ScheduleViewset(viewsets.ReadOnlyModelViewSet):
+class ScheduleViewset(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing scheduless.
     """
@@ -12,13 +12,18 @@ class ScheduleViewset(viewsets.ReadOnlyModelViewSet):
     serializer_class = ScheduleSerializer
 
     def filter_queryset(self, queryset):
-        site_id = self.kwargs.get('site_id', None)
-        site_id = int(site_id)
-        queryset = queryset.filter(site__id=site_id)
+        if self.request.user.is_anonymous():
+            self.permission_denied(self.request)
+        is_project = self.kwargs.get('is_project', None)
+        pk = self.kwargs.get('pk', None)
+        if is_project == "1":
+            queryset = queryset.filter(project__id=pk)
+        else:
+            queryset = queryset.filter(site__id=pk)
         return queryset
 
 
-class DayViewset(viewsets.ModelViewSet):
+class DayViewset(viewsets.ReadOnlyModelViewSet):
     """
     A simple ViewSet for viewing and editing scheduless.
     """

@@ -18,6 +18,8 @@ class ScheduleSerializer(serializers.ModelSerializer):
 
     days = serializers.SerializerMethodField('get_all_days', read_only=True)
     form = serializers.SerializerMethodField('get_assigned_form', read_only=True)
+    form_name = serializers.SerializerMethodField('get_assigned_form_name', read_only=True)
+    is_deployed = serializers.SerializerMethodField('get_is_deployed_status', read_only=True)
 
     class Meta:
         model = Schedule
@@ -34,4 +36,19 @@ class ScheduleSerializer(serializers.ModelSerializer):
             if fsxf.xf:
                 return fsxf.id
         return None
+
+    def get_assigned_form_name(self, obj):
+        if not FieldSightXF.objects.filter(schedule=obj).exists():
+            return None
+        else:
+            fsxf = FieldSightXF.objects.get(schedule=obj)
+            if fsxf.xf:
+                return fsxf.xf.title
+        return None
+
+    def get_is_deployed_status(self, obj):
+        if not FieldSightXF.objects.filter(schedule=obj).exists():
+            return False
+        else:
+            return FieldSightXF.objects.get(schedule=obj).is_deployed
 
