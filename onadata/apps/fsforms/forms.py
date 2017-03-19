@@ -3,7 +3,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from onadata.apps.fieldsight.models import Site
-from onadata.apps.fieldsight.utils.forms import HTML5BootstrapModelForm, KOModelForm
+from onadata.apps.fieldsight.utils.forms import HTML5BootstrapModelForm, KOModelForm, HRBSFormField
 from onadata.apps.logger.models import XForm
 from .models import FieldSightXF, Stage, Schedule, FormGroup, FORM_STATUS
 
@@ -299,14 +299,11 @@ class KoScheduleForm(HTML5BootstrapModelForm, KOModelForm):
                 Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
         self.fields['form'].choices = [(obj.id, obj.title) for obj in xform]
         self.fields['form'].empty_label = None
+        self.fields['form'].label = "Select Form"
 
     class Meta:
-        fields = ['form', 'name', 'date_range_start', 'date_range_end', 'selected_days']
+        fields = ['form', 'name']
         model = Schedule
-        widgets = { 'selected_days': forms.CheckboxSelectMultiple,
-                    'date_range_start': SelectDateWidget,
-                    'date_range_end': SelectDateWidget,
-                    }
 
 
 class GroupForm(forms.ModelForm):

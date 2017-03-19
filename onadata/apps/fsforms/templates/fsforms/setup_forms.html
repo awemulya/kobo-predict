@@ -19,6 +19,8 @@
 
 {%block kocript %}
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<link rel="stylesheet" href="{% static 'css/datepicker.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
@@ -128,7 +130,22 @@ var pk = "{{pk}}";
 
             {% csrf_token %}
               {{schedule_form.as_p}}
-        <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Save' %}</button>
+              <div class="form-group">
+                  <input data-bind="datePicker : date_range_start" type="date">
+              </div>
+              <div class="form-group">
+                  <input data-bind="datePicker : date_range_end" type="date">
+              </div>
+           <div class="form-group">
+                <div data-bind="foreach: $parent.days">
+                    <div class="col-sm-3">
+                        <span data-bind="text:day"></span>
+                    <input type="checkbox"
+                           data-bind="checkedValue: id, checked: $parent.selected_days">
+                        </div>
+            </div>
+            </div>
+        <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Create' %}</button>
 
     </form>
 
@@ -175,5 +192,4 @@ var pk = "{{pk}}";
 <div class="row" data-bind="visible: currentVm() == 'stages'" style="display:none;">
 stages list
 </div>
-
 {% endblock %}

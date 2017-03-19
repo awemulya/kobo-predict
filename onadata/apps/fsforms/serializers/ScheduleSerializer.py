@@ -8,7 +8,7 @@ class DaysSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Days
-        exclude = ()
+        exclude = ('index', 'selected')
 
     def get_selected(self, obj):
         return False

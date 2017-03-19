@@ -1,4 +1,19 @@
 from django import forms
+from django.forms import widgets, Media
+from django.utils.safestring import mark_safe
+from django.utils.encoding import force_text
+from django.utils.html import format_html
+
+
+class HorizontalCheckboxRenderer(forms.CheckboxSelectMultiple.renderer):
+    def render(self):
+        id_ = self.attrs.get('id', None)
+        start_tag = format_html('<div id="{0}">', id_) if id_ else '<div>'
+        output = [start_tag]
+        for widget in self:
+            output.append(format_html(u'<span>{0}</span>', force_text(widget)))
+        output.append('</span>')
+        return mark_safe('\n'.join(output))
 
 
 class HTML5ModelForm(forms.ModelForm):
@@ -72,3 +87,40 @@ class KOModelForm(forms.ModelForm):
             if field.required:
                 field.widget.attrs['required'] = 'required'
             field.widget.attrs['data-bind'] = 'value: ' + name
+
+
+class HRBSFormField(widgets.TextInput):
+    def __init__(self, attrs=None):
+        # class_name = get_calendar() + '-date'
+        # if attrs:
+        #     attrs['class'] = class_name
+        # else:
+        #     attrs = {'class': class_name}
+        super(HRBSFormField, self).__init__(attrs)
+
+    def _media(self):
+        css = {}
+        js = ()
+        return Media(css=css, js=js)
+
+    def render(self, name, value, attrs=None):
+        html = super(HRBSFormField, self).render(name, value, attrs)
+        el_id = self.build_attrs(attrs).get('id')
+        html += self.trigger_picker(el_id)
+        return mark_safe(html)
+
+    def trigger_picker(self, el_id):
+        str = """
+        <script>
+            $(function(){
+                $('#%s').datepicker({
+                    format: 'yyyy-mm-dd',
+                    onClose: function() {
+                        $(this).change(); // Forces re-validation
+                    }
+                });
+            });
+        </script>""" % (el_id)
+        return str
+
+    media = property(_media)

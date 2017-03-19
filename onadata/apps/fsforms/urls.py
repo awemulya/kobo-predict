@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from onadata.apps.fsforms.viewsets.FieldSightXformViewset import GeneralFormsViewSet
-from onadata.apps.fsforms.viewsets.ScheduleViewset import ScheduleViewset
+from onadata.apps.fsforms.viewsets.ScheduleViewset import ScheduleViewset, DayViewset
 from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXFormListApi
 from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSubmissionApi
 from onadata.apps.fsforms.viewsets.SiteFormsViewset import SiteFormViewSet
@@ -157,6 +157,7 @@ urlpatterns = urlpatterns + [
 
 urlpatterns = urlpatterns + [
 
+    url(r'^api/days/', DayViewset.as_view({'get': 'list'}), name='days'),
     url(r'^api/general/(?P<is_project>\d)/(?P<pk>\d+)$', GeneralFormsViewSet.as_view({'get': 'list'}), name='general_forms'),
     url(r'^api/fxf/', GeneralFormsViewSet.as_view({'post': 'create','put': 'update'})),
     url(r'^api/site-main-stages/(?P<site_id>\d+)$', SiteMainStageViewSet.as_view({'get': 'list'}), name='main-stage-list'),
