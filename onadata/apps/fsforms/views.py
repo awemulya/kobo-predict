@@ -1116,9 +1116,7 @@ def instance_status(request, instance):
                 fi.save()
         return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
     except Exception as e:
-        import ipdb
-        ipdb.set_trace()
-        return Response({'error':'Submission Status Of this Outdated Submission Not Found'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @login_required
