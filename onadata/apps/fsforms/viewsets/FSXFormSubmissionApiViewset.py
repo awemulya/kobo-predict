@@ -12,11 +12,11 @@ from ..fieldsight_logger_tools import safe_create_instance
 DEFAULT_CONTENT_LENGTH = getattr(settings, 'DEFAULT_CONTENT_LENGTH', 10000000)
 
 
-def create_instance_from_xml(request, fsid, site, fs_proj_xf):
+def create_instance_from_xml(request, fsid, site, fs_proj_xf, proj_id, xform):
     xml_file_list = request.FILES.pop('xml_submission_file', [])
     xml_file = xml_file_list[0] if len(xml_file_list) else None
     media_files = request.FILES.values()
-    return safe_create_instance(fsid, xml_file, media_files, None, request, site, fs_proj_xf)
+    return safe_create_instance(fsid, xml_file, media_files, None, request, site, fs_proj_xf, proj_id, xform)
 
 
 class FSXFormSubmissionApi(XFormSubmissionApi):
@@ -29,13 +29,15 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
 
         fsxfid = kwargs.get('pk',None)
         siteid = kwargs.get('site_id',None)
-        if fsxfid is None or  siteid is None:
+        if fsxfid is None or siteid is None:
             return self.error_response("Site Id Or Form ID Not Given", False, request)
         try:
             fsxfid = int(fsxfid)
             fxf = get_object_or_404(FieldSightXF, pk=kwargs.get('pk'))
-            fs_proj_xf = fxf.fsform.pk if fxf.fsform else ''
-            # siteid =  fxf.site.pk
+            fs_proj_xf = fxf.fsform.pk if fxf.fsform else None
+            proj_id = fxf.project.pk if fxf.fsform else fxf.site.pk
+            xform = fxf.xf
+            # site_id = fxf.site.pk if fxf.site else None
         except:
             return self.error_response("Site Id Or Form ID Not Vaild", False, request)
 
@@ -44,7 +46,7 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
                             headers=self.get_openrosa_headers(request),
                             template_name=self.template_name)
 
-        error, instance = create_instance_from_xml(request, fsxfid, siteid, fs_proj_xf)
+        error, instance = create_instance_from_xml(request, fsxfid, siteid, fs_proj_xf, proj_id, xform)
         # modify create instance
 
         if error or not instance:

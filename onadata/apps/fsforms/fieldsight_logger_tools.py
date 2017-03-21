@@ -27,7 +27,7 @@ from pyxform.errors import PyXFormError
 from pyxform.xform2json import create_survey_element_from_xml
 import sys
 
-from onadata.apps.fsforms.models import FieldSightXF, FieldSightParsedInstance
+from onadata.apps.fsforms.models import FieldSightXF, FieldSightParsedInstance, FInstance
 from onadata.apps.fsforms.utils import FIELDSIGHT_XFORM_ID
 from onadata.apps.main.models import UserProfile
 from onadata.apps.logger.models import Attachment
@@ -66,7 +66,7 @@ uuid_regex = re.compile(r'<formhub>\s*<uuid>\s*([^<]+)\s*</uuid>\s*</formhub>',
 mongo_instances = settings.MONGO_DB.instances
 
 
-def _get_instance(xml, new_uuid, submitted_by, status, xform):
+def _get_instance(xml, new_uuid, submitted_by, status, xform, fxfid, project_fxf, site_id, project_id):
     # check if its an edit submission
     # old_uuid = get_deprecated_uuid_from_xml(xml)
     # instances = Instance.objects.filter(uuid=new_uuid)
@@ -84,6 +84,8 @@ def _get_instance(xml, new_uuid, submitted_by, status, xform):
         # new submission
         instance = Instance.objects.create(
             xml=xml, user=submitted_by, status=status, xform=xform)
+        FInstance.objects.create(instance=instance, site_id=site_id, project_id=project_id, site_fxf_id=fxfid,
+                                 project_fxf_id=project_fxf )
         if instance:
             instance.uuid = new_uuid
             instance.save()
@@ -157,11 +159,11 @@ def check_submission_permissions(request, xform):
 
 
 def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
-                    date_created_override, fxid, site, fs_poj_id=""):
+                    date_created_override, fxid, site, fs_poj_id=None, project=None):
     if not date_created_override:
         date_created_override = get_submission_date_from_xml(xml)
 
-    instance = _get_instance(xml, fxid, submitted_by, status, xform)
+    instance = _get_instance(xml, new_uuid, submitted_by, status, xform, fxid, fs_poj_id, site, project)
 
     for f in media_files:
         Attachment.objects.get_or_create(
@@ -180,7 +182,8 @@ def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
             fs_poj_id = str(fs_poj_id)
         pi, created = FieldSightParsedInstance.get_or_create(instance,
                                                              update_data={'fs_uuid': fxid, 'fs_status': 0,
-                                                                          'fs_site':site, 'fs_project_uuid':fs_poj_id})
+                                                                          'fs_site':site, 'fs_project':project,
+                                                                          'fs_project_uuid':fs_poj_id})
     if not created:
         pi.save(async=False)
     return instance
@@ -200,15 +203,15 @@ def schedule_uuid_value(fsxform):
 
 def create_instance(fsxfid, xml_file, media_files,
                     status=u'submitted_via_web', uuid=None,
-                    date_created_override=None, request=None, site=None, fs_proj_xf=None):
+                    date_created_override=None, request=None, site=None, fs_proj_xf=None, proj_id=None, xform=None):
 
     with transaction.atomic():
         instance = None
         submitted_by = request.user \
             if request and request.user.is_authenticated() else None
         xml = xml_file.read()
-        fsxform = FieldSightXF.objects.get(pk=fsxfid)
-        xform = fsxform.xf
+        # fsxform = FieldSightXF.objects.get(pk=fsxfid)
+        # xform = fsxform.xf
         # existing_instance_count = fsxform.fs_instances.count()
 
         # if(existing_instance_count and same_form_submitted_again_without_schedule(fsxform)):
@@ -226,7 +229,7 @@ def create_instance(fsxfid, xml_file, media_files,
         # else:
         instance = save_submission(xform, xml, media_files, uuid,
                                        submitted_by, status,
-                                       date_created_override, str(fsxfid), str(site), fs_proj_xf)
+                                       date_created_override, str(fsxfid), str(site), fs_proj_xf, proj_id)
         return instance
 
     # if duplicate_instances:
@@ -238,7 +241,7 @@ def create_instance(fsxfid, xml_file, media_files,
     #     raise DuplicateInstance()
 
 
-def safe_create_instance(fsxfid, xml_file, media_files, uuid, request, site, fs_proj_xf):
+def safe_create_instance(fsxfid, xml_file, media_files, uuid, request, site, fs_proj_xf, proj_id, xform):
     """Create an instance and catch exceptions.
 
     :returns: A list [error, instance] where error is None if there was no
@@ -248,7 +251,8 @@ def safe_create_instance(fsxfid, xml_file, media_files, uuid, request, site, fs_
 
     try:
         instance = create_instance(
-            fsxfid, xml_file, media_files, uuid=uuid, request=request, site=site, fs_proj_xf=fs_proj_xf)
+            fsxfid, xml_file, media_files, uuid=uuid, request=request, site=site, fs_proj_xf=fs_proj_xf,
+            proj_id=proj_id, xform=xform)
     except InstanceInvalidUserError:
         error = OpenRosaResponseBadRequest(_(u"Username or ID required."))
     except InstanceEmptyError:

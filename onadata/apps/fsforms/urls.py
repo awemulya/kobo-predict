@@ -23,7 +23,7 @@ from .views import (
     fill_details_schedule,
     schedule_add_form,
     AssignedFormsListView,
-    html_export, instance,
+    html_export, instance_kobo,
     show,
     api,
     download_jsonform,
@@ -38,7 +38,8 @@ from .views import (
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, project_responses,
     project_html_export, deploy_survey, deploy_stages, deploy_general, set_deploy_stages, share_stages,
-    edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, setup_forms)
+    edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, setup_forms,
+    instance_status)
 
 
 urlpatterns = [
@@ -112,7 +113,7 @@ urlpatterns = urlpatterns + [
 urlpatterns = urlpatterns + [
         url(r'reports/(?P<fsxf_id>\d+)$', html_export, name='formpack_html_export'),
         url(r'project-responses/(?P<fsxf_id>\d+)$', project_html_export, name='project_html_export'),
-        url(r'^forms/(?P<fsxf_id>\d+)$', instance, name='instance'),
+        url(r'^forms/(?P<fsxf_id>\d+)$', instance_kobo, name='instance'),
         url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', instance_detail, name='instance_detail'),
         url(r'^forms/alter-answer-status/(?P<instance_id>\d+)/(?P<status>\d)/(?P<fsid>\d+)$', alter_answer_status, name='alter-answer-status'),
 ]
@@ -158,6 +159,7 @@ urlpatterns = urlpatterns + [
 urlpatterns = urlpatterns + [
 
     url(r'^api/days/', DayViewset.as_view({'get': 'list'}), name='days'),
+    url(r'^instance/status/(?P<instance>\d+)$', instance_status, name='instance_status'),
     url(r'^api/general/(?P<is_project>\d)/(?P<pk>\d+)$', GeneralFormsViewSet.as_view({'get': 'list'}), name='general_forms'),
     url(r'^api/schedule/', ScheduleViewset.as_view({'post': 'create','put': 'update','get': 'list'})),
     url(r'^api/fxf/', GeneralFormsViewSet.as_view({'post': 'create','put': 'update'})),

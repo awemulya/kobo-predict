@@ -13,6 +13,9 @@ from django.views.generic import ListView
 from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpResponseBadRequest
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
@@ -31,7 +34,7 @@ from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, P
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
     AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm, GeneralForm, KoScheduleForm
-from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary
+from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -1098,6 +1101,26 @@ def instance_detail(request, fsxf_id, instance_id):
     return render(request, 'fsforms/fieldsight_instance_export_html.html',
                   {'obj': fsxf, 'answer': instance_id, 'status': status, 'data': data, 'medias': medias})
 
+
+@api_view(['GET', 'POST'])
+def instance_status(request, instance):
+    try:
+        fi = FInstance.objects.get(instance__id=instance)
+        if request.method == 'POST':
+            with transaction.atomic():
+                submission_status = request.data.get("status", 0)
+                message = request.data.get("message","")
+                InstanceStatusChanged.objects.create(finstance=fi, message=message, old_status=fi.form_status,
+                                                     new_status=submission_status, user=request.user)
+                fi.form_status = int(submission_status)
+                fi.save()
+        return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
+    except Exception as e:
+        import ipdb
+        ipdb.set_trace()
+        return Response({'error':'Submission Status Of this Outdated Submission Not Found'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 @login_required
 @group_required("Reviewer")
 def alter_answer_status(request, instance_id, status, fsid):
@@ -1125,14 +1148,16 @@ def alter_answer_status(request, instance_id, status, fsid):
 
 
 # @group_required('KoboForms')
-def instance(request, fsxf_id):
+def instance_kobo(request, fsxf_id):
 
     fsxf_id = int(fsxf_id)
-    xform, is_owner, can_edit, can_view, fxf = get_xform_and_perms(fsxf_id, request)
+    fxf = FieldSightXF.objects.get(pk=fsxf_id)
+    # xform, is_owner, can_edit, can_view, fxf = get_xform_and_perms(fsxf_id, request)
+    xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
     # no access
-    if not (xform.shared_data or can_view or
-            request.session.get('public_link') == xform.uuid):
-        return HttpResponseForbidden(_(u'Not shared.'))
+    # if not (xform.shared_data or can_view or
+    #         request.session.get('public_link') == xform.uuid):
+    #     return HttpResponseForbidden(_(u'Not shared.'))
 
     audit = {
         "xform": xform.id_string,

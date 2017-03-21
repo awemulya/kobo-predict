@@ -11,7 +11,7 @@ from django.dispatch import receiver
 from onadata.apps.fieldsight.models import Site, Project, Organization
 from onadata.apps.fsforms.fieldsight_models import IntegerRangeField
 from onadata.apps.fsforms.utils import send_message
-from onadata.apps.logger.models import XForm
+from onadata.apps.logger.models import XForm, Instance
 from onadata.apps.viewer.models import ParsedInstance
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
@@ -296,6 +296,24 @@ class FieldSightParsedInstance(ParsedInstance):
             fspi = FieldSightParsedInstance(instance=instance)
             fspi.save(update_fs_data=update_data, async=False)
         return fspi, created
+
+
+class FInstance(models.Model):
+    instance = models.OneToOneField(Instance, related_name='fieldsight_instance')
+    site = models.ForeignKey(Site, null=True, related_name='site_instances')
+    project = models.ForeignKey(Site, null=True, related_name='project_instances')
+    site_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='site_form_instances')
+    project_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='project_form_instances')
+    form_status = models.IntegerField(default=0, choices=FORM_STATUS)
+
+
+class InstanceStatusChanged(models.Model):
+    finstance = models.ForeignKey(FInstance, related_name="comments")
+    message = models.TextField(null=True, blank=True)
+    date = models.DateTimeField(auto_now=True)
+    old_status = models.IntegerField(default=0, choices=FORM_STATUS)
+    new_status = models.IntegerField(default=0, choices=FORM_STATUS)
+    user = models.ForeignKey(User, related_name="submission_comments")
 
 
 class FieldSightFormLibrary(models.Model):
