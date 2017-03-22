@@ -249,8 +249,8 @@ def stage_add(request, site_id=None):
 
 @group_required("Project")
 def project_responses(request, project_id=None):
-    schedules = FieldSightXF.objects.filter(project_id=project_id, xf__isnull=False, is_scheduled=True)
-    stages = Stage.objects.filter(stage__isnull=True, project_id=project_id).order_by('order')
+    schedules = Schedule.objects.filter(project_id=project_id, site__isnull=True, schedule_forms__isnull=False)
+    stages = Stage.objects.filter(stage__isnull=True, project_id=project_id, stage_forms__isnull=True).order_by('order')
     generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=project_id)
     return render(request, "fsforms/project/project_responses_list.html",
                   {'schedules': schedules, 'stages':stages, 'generals':generals, 'project': project_id})
@@ -258,7 +258,7 @@ def project_responses(request, project_id=None):
 
 @group_required("Reviewer")
 def responses(request, site_id=None):
-    schedules = FieldSightXF.objects.filter(site_id=site_id, xf__isnull=False, is_scheduled=True)
+    schedules = Schedule.objects.filter(site_id=site_id, project__isnull=True, schedule_forms__isnull=False)
     stages = Stage.objects.filter(stage__isnull=True, site_id=site_id).order_by('order')
     generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,site_id=site_id)
     return render(request, "fsforms/responses_list.html",

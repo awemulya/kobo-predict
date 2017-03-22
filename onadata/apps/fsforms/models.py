@@ -86,7 +86,10 @@ class Stage(models.Model):
     def form(self):
         if not FieldSightXF.objects.filter(stage=self).count():
             return False
-        return FieldSightXF.objects.filter(stage=self)[0]
+        return FieldSightXF.objects.filter(stage=self)
+
+    def active_substages(self):
+        return self.parent.filter(stage_forms__isnull=False)
 
     @classmethod
     def get_order(cls, site, project, stage):
@@ -169,8 +172,8 @@ class FieldSightXF(models.Model):
     is_scheduled = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now=True)
     date_modified = models.DateTimeField(auto_now=True)
-    schedule = models.ForeignKey(Schedule, blank=True, null=True)
-    stage = models.ForeignKey(Stage, blank=True, null=True)
+    schedule = models.OneToOneField(Schedule, blank=True, null=True, related_name="schedule_forms")
+    stage = models.OneToOneField(Stage, blank=True, null=True, related_name="stage_forms")
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
     form_status = models.IntegerField(default=0, choices=FORM_STATUS)
     fsform = models.ForeignKey('self', blank=True, null=True, related_name="parent")
@@ -305,6 +308,7 @@ class FInstance(models.Model):
     site_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='site_form_instances')
     project_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='project_form_instances')
     form_status = models.IntegerField(default=0, choices=FORM_STATUS)
+    date = models.DateTimeField(auto_now=True)
 
 
 class InstanceStatusChanged(models.Model):

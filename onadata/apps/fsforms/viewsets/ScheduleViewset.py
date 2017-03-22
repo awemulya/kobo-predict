@@ -9,7 +9,7 @@ class ScheduleViewset(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing scheduless.
     """
-    queryset = Schedule.objects.filter(fieldsightxf__isnull=False)
+    queryset = Schedule.objects.filter(schedule_forms__isnull=False)
     serializer_class = ScheduleSerializer
 
     def filter_queryset(self, queryset):
@@ -50,7 +50,6 @@ class ScheduleViewset(viewsets.ModelViewSet):
         if data.has_key("site"):
             fxf.is_deployed=True
         fxf.save()
-
 
 
 class DayViewset(viewsets.ReadOnlyModelViewSet):

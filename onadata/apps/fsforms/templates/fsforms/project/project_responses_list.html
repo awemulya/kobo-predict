@@ -1,6 +1,6 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n staticfiles %}
-{% load filters %}
+{% load fs_filters %}
 
 {% block page-title %}{% trans 'Forms Responses' %}{% endblock %}
 
@@ -30,7 +30,7 @@
               <thead>
               <th>{% trans 'Form Name' %}</th>
               <th>{% trans 'Created Date' %}</th>
-              <th>{% trans 'Submissions' %}</th>
+              <th>{% trans 'View Submissions' %}</th>
               </thead>
               <tbody>
               {% for obj in generals %}
@@ -43,7 +43,8 @@
                       </td>
                       <td>
                            <a href="{% url 'forms:project_html_export' obj.id %}">
-                               {% trans 'View ' %}</a>
+                               {{ obj.id|project_submissions }}
+                               {% trans ' View ' %}</a>
                       </td>
                   </tr>
               {% endfor %}
@@ -68,17 +69,22 @@
               {% for obj in schedules %}
                   <tr>
                       <td>
-                          {{ obj.schedule}}</a>
+                          {{ obj.name}}</a>
                       </td>
                       <td>
-                          {{ obj.xf.title }}</a>
+                          {{ obj.schedule_forms.xf.title }}</a>
                       </td>
                       <td>
                           {{ obj.date_created }}
                       </td>
                       <td>
-                           <a href="{% url 'forms:project_html_export' obj.id %}">
-                               {% trans 'View ' %}</a>
+                            {% with obj.schedule_forms.pk|site_submissions as count %}
+                          {% if count %}
+                           <a href="{% url 'forms:project_html_export' obj.schedule_forms.pk %}">
+                               {{ count }}
+                               {% trans ' View ' %}</a>
+                          {% endif %}
+                          {% endwith %}
                       </td>
                   </tr>
               {% endfor %}
@@ -101,41 +107,34 @@
               </div>
               <div id="collapse{{stage.id}}">
                 <div class="panel-body">
-                  {% if stage.parent.all.count %}
+                  {% if stage.active_substages %}
 
                   <table class="table table-striped">
                       <thead>
                       <th>{% trans 'Sub Stage Name' %}</th>
                       <th>{% trans 'Order' %}</th>
                       <th>{% trans 'Form Name' %}</th>
-                      <th>{% trans 'Created Date' %}</th>
                       <th>{% trans 'Submissions' %}</th>
                       </thead>
                       <tbody>
-                      {% for obj in stage.parent.all %}
+                     {% for obj in stage.active_substages %}
                           <tr>
                               <td>
-                                  {{ obj.name}}</a>
+                                  {{ obj.name}}
                               </td>
                               <td>
-                                  {{ obj.order }}</a>
+                                  {{ obj.order }}
                               </td>
-                              {% if obj.form %}
+                              <td>{{obj.stage_forms.xf.title}}</td>
                               <td>
-
-                                  {{ obj.form.xf.title }}</a>
+                                {% with obj.stage_forms.pk|project_submissions as count %}
+                          {% if count %}
+                           <a href="{% url 'forms:project_html_export' obj.stage_forms.pk %}">
+                               {{ count }}
+                               {% trans ' View ' %}</a>
+                          {% endif %}
+                          {% endwith %}
                               </td>
-                              <td>
-                                  {{ obj.date_created }}
-                              </td>
-                              <td>
-                                   <a href="{% url 'forms:project_html_export' obj.form.id %}">{% trans 'View ' %}</a>
-                              </td>
-                              {% else %}
-                              <td>-</td>
-                              <td> {{ obj.date_created }}</td>
-                              <td>-</td>
-                              {% endif %}
                           </tr>
                       {% endfor %}
                       </tbody>

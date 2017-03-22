@@ -8,7 +8,7 @@ class StageViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing Stages.
     """
-    queryset = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=False)
+    queryset = Stage.objects.filter(stage_forms__isnull=False, stage__isnull=False)
     serializer_class = StageSerializer
 
 
@@ -16,7 +16,7 @@ class MainStageViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and Main Stages.
     """
-    queryset = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True)
+    queryset = Stage.objects.filter(stage_forms__isnull=True,stage__isnull=True)
     serializer_class = StageSerializer
 
 
@@ -30,7 +30,7 @@ class SiteMainStageViewSet(viewsets.ModelViewSet):
     def filter_queryset(self, queryset):
         site_id = self.kwargs.get('site_id', None)
         site_id = int(site_id)
-        queryset = queryset.filter(fieldsightxf__isnull=True, stage__isnull=True,site__id=site_id)
+        queryset = queryset.filter(stage_forms__isnull=True, stage__isnull=True,site__id=site_id)
         return queryset
 
 

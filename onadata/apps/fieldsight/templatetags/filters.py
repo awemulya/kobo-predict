@@ -28,37 +28,13 @@ def get_type(value):
     return type(value)
 
 
-FORM_STATUS = {0:'Outstanding', 1: 'Rejected', 2: 'Flagged', 3: 'Approved'}
-
-def get_status_level(status=0):
-    if not isinstance(status, int):
-        status = 0
-    return FORM_STATUS.get(status, "Outstanding")
+FORM_STATUS = {0: 'Outstanding', 1: 'Rejected', 2: 'Flagged', 3: 'Approved'}
 
 
 def get_site_level(status):
     if not isinstance(status, unicode):
-        return  ""
+        return ""
     return Site.objects.get(pk=status).name
-
-
-@register.filter
-def exceptlast(lst):
-    my_list = lst[:-1]
-    if isinstance(my_list[-1], list):
-        my_list = my_list[:-1]
-    my_list[-1] = get_status_level(my_list[-1])
-    my_list[-2] = get_site_level(my_list[-2])
-    return my_list
-
-
-@register.filter
-def fsmedia(data_list):
-    if isinstance(data_list[-1], list):
-        return data_list[-1]
-    elif isinstance(data_list[-2], list):
-        return data_list[-2]
-    return []
 
 
 @register.filter
