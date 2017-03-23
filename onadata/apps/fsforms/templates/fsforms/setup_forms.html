@@ -196,6 +196,39 @@ var pk = "{{pk}}";
 </div>
 
 <div class="row" data-bind="visible: currentVm() == 'stages'" style="display:none;">
-stages list
-</div>
+    <div data-bind="with:stagesVm">
+            <div class="stage-container">
+          <div class="stage-container-heading">
+            <h3 class="panel-title"><a data-bind="click:add_stage"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'Add' %}</a></h3>
+          </div>
+            <div class="stage-container-body">
+            <p><input type="text" class="form-control" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'"></p>
+          </div>
+                 <div data-bind="foreach: stages">
+                     <div class="row">
+                        <div class="col-sm-2">{% trans 'Stage' %} <span data-bind='text: $index()+1'></span></div>
+                         <div class="col-sm-8"><span data-bind="text: name"></span></div>
+                     </div>
+                     <div class="row">
+                          <div class="row" data-bind="foreach: parent">
+                              <div class="col-sm-2"></div>
+                              <div class="col-sm-2">{% trans 'Sub Stage' %} <span data-bind='text: $index()+1'></span></div>
+                                <div class="col-sm-8"><span data-bind="text: name"></span></div>
+                                 </div>
+                  </div>
+                     <div class="row"><div class="col-sm-4"></div>
+                         <div class=col-sm-8">
+                         <a data-bind="click:add_sub_stage"><i class="fa fa-plus" aria-hidden="true"></i> {% trans 'Add Substage ' %}</a>
+                     </div>
+                     </div>
+                    <hr/>
+                 </div>
+                <div class="row">
+                    <a data-bind="click:add_stage"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'Add Stage' %}</a>
+                </div>
+             </div>
+        </div>
+
+     </div>
+
 {% endblock %}
