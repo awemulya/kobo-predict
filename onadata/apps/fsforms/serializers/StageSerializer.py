@@ -1,7 +1,18 @@
 from rest_framework import serializers
 
 from onadata.apps.fsforms.models import Stage, FieldSightXF
-from onadata.apps.fsforms.serializers.GroupSerializer import GroupSerializer
+
+
+class AllStageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stage
+        exclude = ()
+
+
+class AllSubStagesSerializer(serializers.ModelSerializer):
+    parent = AllStageSerializer(many=True)
+    class Meta:
+        model = Stage
 
 
 class StageSerializer(serializers.ModelSerializer):

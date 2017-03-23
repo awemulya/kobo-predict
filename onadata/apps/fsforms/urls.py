@@ -6,7 +6,7 @@ from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXF
 from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSubmissionApi
 from onadata.apps.fsforms.viewsets.SiteFormsViewset import SiteFormViewSet
 from onadata.apps.fsforms.viewsets.StageViewset import SiteMainStageViewSet, \
-        SubStageViewSet
+        SubStageViewSet, StageViewSet
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
 from .views import (
     LibraryFormsListView,
@@ -162,6 +162,7 @@ urlpatterns = urlpatterns + [
     url(r'^instance/status/(?P<instance>\d+)$', instance_status, name='instance_status'),
     url(r'^api/general/(?P<is_project>\d)/(?P<pk>\d+)$', GeneralFormsViewSet.as_view({'get': 'list'}), name='general_forms'),
     url(r'^api/schedule/', ScheduleViewset.as_view({'post': 'create','put': 'update','get': 'list'})),
+    url(r'^api/stage/', StageViewSet.as_view({'post': 'create','put': 'update','get': 'list'})),
     url(r'^api/fxf/', GeneralFormsViewSet.as_view({'post': 'create','put': 'update'})),
     url(r'^api/site-main-stages/(?P<site_id>\d+)$', SiteMainStageViewSet.as_view({'get': 'list'}), name='main-stage-list'),
     url(r'^api/schedules/(?P<is_project>\d)/(?P<pk>\d+)$', ScheduleViewset.as_view({'get': 'list'}), name='schedule-list'),

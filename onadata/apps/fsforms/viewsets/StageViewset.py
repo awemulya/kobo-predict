@@ -1,15 +1,16 @@
 from rest_framework import viewsets
 
 from onadata.apps.fsforms.models import Stage
-from onadata.apps.fsforms.serializers.StageSerializer import StageSerializer, SubStageSerializer
+from onadata.apps.fsforms.serializers.StageSerializer import StageSerializer, SubStageSerializer, AllStageSerializer, \
+    AllSubStagesSerializer
 
 
 class StageViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing Stages.
     """
-    queryset = Stage.objects.filter(stage_forms__isnull=False, stage__isnull=False)
-    serializer_class = StageSerializer
+    queryset = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True)
+    serializer_class = AllSubStagesSerializer
 
 
 class MainStageViewSet(viewsets.ModelViewSet):
