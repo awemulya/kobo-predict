@@ -3,16 +3,35 @@ from rest_framework import serializers
 from onadata.apps.fsforms.models import Stage, FieldSightXF
 
 
-class AllStageSerializer(serializers.ModelSerializer):
+class SubStageSerializer1(serializers.ModelSerializer):
     class Meta:
         model = Stage
-        exclude = ()
+        exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage')
 
 
-class AllSubStagesSerializer(serializers.ModelSerializer):
-    parent = AllStageSerializer(many=True)
+class StageSerializer1(serializers.ModelSerializer):
+    parent = SubStageSerializer1(many=True)
+
     class Meta:
         model = Stage
+        exclude = ('shared_level', 'group', 'ready', 'stage')
+
+    def create(self, validated_data):
+        id = self.context['request'].data.get('id', False)
+        validated_data.pop('parent')
+        substages_data = self.context['request'].data.get('parent')
+        if not id:
+            stage = Stage.objects.create(**validated_data)
+        else:
+            Stage.objects.filter(pk=id).update(**validated_data)
+            stage = Stage.objects.get(pk=id)
+        for sub_stage_data in substages_data:
+            sub_id = sub_stage_data.pop('id')
+            if not sub_id:
+                stage = Stage.objects.create(**sub_stage_data)
+            else:
+                Stage.objects.filter(pk=sub_id).update(**sub_stage_data)
+        return stage
 
 
 class StageSerializer(serializers.ModelSerializer):

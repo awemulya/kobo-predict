@@ -892,7 +892,7 @@ def fill_details_schedule(request, pk=None):
 
 @group_required("Project")
 def setup_site_stages(request, site_id):
-    objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True,site__id=site_id)
+    objlist = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True,site__id=site_id)
     order = Stage.objects.filter(site__id=site_id,stage__isnull=True).count() + 1
     instance = Stage(name="Stage"+str(order), order=order)
     form = StageForm(instance=instance)
@@ -902,13 +902,13 @@ def setup_site_stages(request, site_id):
 
 @group_required("Project")
 def library_stages(request, id):
-    objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True, group__id=id).order_by('order')
+    objlist = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True, group__id=id).order_by('order')
     return render(request, "fsforms/library_stage_detail.html", {'stages': objlist})
 
 
 @group_required("Project")
 def setup_project_stages(request, id):
-    objlist = Stage.objects.filter(fieldsightxf__isnull=True, stage__isnull=True,project__id=id)
+    objlist = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True,project__id=id)
     order = Stage.objects.filter(project__id=id,stage__isnull=True).count() + 1
     instance = Stage(name="Stage"+str(order), order=order)
     form = StageForm(instance=instance)
