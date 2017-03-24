@@ -18,7 +18,7 @@
 {% endblock %}
 
 {% block head %}
-    <a class="setting-btn" title="Edit" href="{% url 'fieldsight:organization-edit' obj.pk %}"><i class="fa fa-cog" aria-hidden="true"></i></a>
+    <a class="setting-btn" title="Edit" href="{% url 'fieldsight:organization-edit' obj.pk %}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
 {% endblock %}
 {% block content %}
 
@@ -50,9 +50,21 @@
     							<p class="short-detail">{{ obj.description }}</p>
                             </div>
                             <div class="col-md-3">
-                                <a href="{% url 'fieldsight:project-add' %}" class="manage-button">{% trans 'Create Project' %}</a>
-                                <a href="{% url 'fieldsight:add_org_admin' obj.pk %}" class="manage-button">{% trans 'Assign People' %}</a>
-                            </div>
+                                <div class="mini-stat clearfix">
+                                  <span class="mini-stat-icon orange"><i class="fa fa-users"></i></span>
+                                  <div class="mini-stat-info">
+                                      <span>0<!-- {{total_users}} --></span>
+                                      Total Users
+                                  </div>
+                                </div>
+                               <div class="mini-stat clearfix">
+                                <span class="mini-stat-icon green"><i class="fa fa-picture-o"></i></span>
+                                <div class="mini-stat-info">
+                                    <span>{{total_sites}}</span>
+                                    Total Sites
+                                </div>
+                              </div>
+                            </div> 
                             
                         </div>
                     </div>
@@ -62,11 +74,25 @@
         </div>
         <div class="organization-long-detail">
         	<ul class="nav nav-tabs">
-			  <li class="active"><a data-toggle="tab" href="#org-map">Map View</a></li>
-              <li><a data-toggle="tab" href="#org-list-proj">List of Projects</a></li>
+			  <li class="active"><a data-toggle="tab" href="#org-map">Map</a></li>
+              <li><a data-toggle="tab" href="#org-list-proj">Projects</a></li>
 			  <!--<li><a data-toggle="tab" href="#org-list-site">List of Sites</a></li>-->
-			  <li><a data-toggle="tab" href="#org-people">People Involved</a></li>
-			  <li><a data-toggle="tab" href="#org-about">About Organization</a></li>
+			  <li><a data-toggle="tab" href="#org-people"></a></li>
+			  <!-- <li><a data-toggle="tab" href="#org-about">About Organization</a></li> -->
+              <ul class="nav navbar-nav navbar-right">
+                 <li class="responses-all"><a href="{% url 'forms:project-responses' obj.pk %}">{% trans 'Responses' %}</a></li>
+                 <li class="dropdown man-drop">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">{% trans 'Setup Projects' %}</a></li>
+                      <li><a href="#">{% trans 'Setup Sites' %}</a></li>
+                      <!-- <li><a href="{% url 'fieldsight:add_project_staffs' obj.pk %}">{% trans 'Setup Projects' %}</a></li>
+                      <li><a href="{% url 'fieldsight:add_project_staffs' obj.pk %}">{% trans 'Setup Sites' %}</a></li> -->
+                      <!-- <li><a href="{% url 'fieldsight:add_project_staffs' obj.pk %}">{% trans 'People' %}</a></li> -->
+                      <!-- <li><a href="{% url 'fieldsight:site-add'%}">{% trans 'Add' %} {% trans 'Sites' %}</a></li> -->
+                    </ul>
+                </li>  
+               </ul>
 			</ul>
 
 			<div class="tab-content">
@@ -175,9 +201,74 @@
 
 {% endblock %}    
 
+{% block all_diagrams %} 
+    <section class="panel bar-gauge-diagrams">
+        <div class="col-md-6">
+          <div class="daily-visit">
+              <h4 class="widget-h">Forms Submitions</h4>
+              <div id="daily-visit-chart" style="width:100%; height: 100px; display: block">
+
+              </div>
+              <ul class="chart-meta clearfix">
+                  <li class="pull-left visit-chart-value">3233</li>
+                  <li class="pull-right visit-chart-title"><i class="fa fa-arrow-up"></i> 15%</li>
+              </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+         <div class="top-stats-panel">
+            <h4 class="widget-h">Site Progress</h4>
+            <div class="bar-stats">
+                <ul class="progress-stat-bar clearfix">
+                    <li data-percent="50%"><span class="progress-stat-percent pink"></span></li>
+                    <li data-percent="90%"><span class="progress-stat-percent"></span></li>
+                    <li data-percent="70%"><span class="progress-stat-percent yellow-b"></span></li>
+                </ul>
+                <ul class="bar-legend">
+                    <li><span class="bar-legend-pointer pink"></span> New York</li>
+                    <li><span class="bar-legend-pointer green"></span> Los Angels</li>
+                    <li><span class="bar-legend-pointer yellow-b"></span> Dallas</li>
+                </ul>
+                <div class="daily-sales-info">
+                    <span class="sales-count">1200 </span> <span class="sales-label">Products Sold</span>
+                </div>
+            </div>
+          </div> 
+        </div>
+
+        <div class="clearfixx"></div>
+        <div class="flags-dash text-center">
+          <div class="col-md-3">
+            <div class="out-dash-flag">
+              <p class="length-flags-forms">{{outstanding|length}}</p>
+              <p class="flags-forms">outstanding subs</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="flag-dash-flag">
+              <p class="length-flags-forms">{{flagged|length}}</p>
+              <p class="flags-forms">flagged subs</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="reg-dash-flag">
+              <p class="length-flags-forms">{{rejected|length}}</p>
+              <p class="flags-forms">rejected subs</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="app-dash-flag">
+              <p class="length-flags-forms">{{approved|length}}</p>
+              <p class="flags-forms">approved subs</p>
+            </div>
+          </div>
+          <div class="clearfixx"></div>
+        </div>
+    </section>             
+  {% endblock %} 
 
 {% block total_users %}
-<div class="row">
+<!-- <div class="row">
     <div class="col-md-4">
         <div class="mini-stat clearfix">
             <span class="mini-stat-icon orange"><i class="fa fa-users"></i></span>
@@ -206,7 +297,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 {% endblock %}
 
     {%block extrascript %}

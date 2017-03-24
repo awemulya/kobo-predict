@@ -330,6 +330,10 @@
           {% block all_flagged_forms %}              
           {% endblock %}
         </div>
+        <div class="diagrams">
+           {% block all_diagrams %}              
+          {% endblock %} 
+        </div>
         </section>
     </section>
 
@@ -352,31 +356,32 @@
 <!--<script type="text/javascript" src="{{ STATIC_URL }}js/jvector-map/jquery-jvectormap-us-lcc-en.js"></script>-->
 <!--<script type="text/javascript" src="{{ STATIC_URL }}js/gauge/gauge.js"></script>-->
 <!--clock init-->
+<script type="text/javascript" src="{{ STATIC_URL }}js/d3.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/css3clock/js/css3clock.js"></script>
 <!--Easy Pie Chart-->
 <script type="text/javascript" src="{{ STATIC_URL }}js/easypiechart/jquery.easypiechart.js"></script>
 <!--Sparkline Chart-->
 <script type="text/javascript" src="{{ STATIC_URL }}js/sparkline/jquery.sparkline.js"></script>
 <!--Morris Chart-->
-<!--<script type="text/javascript" src="{{ STATIC_URL }}js/morris-chart/morris.js"></script>-->
-<!--<script type="text/javascript" src="{{ STATIC_URL }}js/morris-chart/raphael-min.js"></script>-->
+<script type="text/javascript" src="{{ STATIC_URL }}js/morris-chart/morris.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/morris-chart/raphael-min.js"></script>
 <!--jQuery Flot Chart-->
-<!--<script type="text/javascript" src="{{ STATIC_URL }}js/flot-chart/jquery.flot.js"></script>-->
-<!--<script type="text/javascript" src="{{ STATIC_URL }}js/flot-chart/jquery.flot.tooltip.min.js"></script>-->
+<!-- <script type="text/javascript" src="{{ STATIC_URL }}js/flot-chart/jquery.flot.js"></script> -->
+<!-- <script type="text/javascript" src="{{ STATIC_URL }}js/flot-chart/jquery.flot.tooltip.min.js"></script> -->
 <!--<script type="text/javascript" src="{{ STATIC_URL }}js/flot-chart/jquery.flot.resize.js"></script>-->
 <!--<script type="text/javascript" src="{{ STATIC_URL }}js/flot-chart/jquery.flot.pie.resize.js"></script>-->
 <!--<script type="text/javascript" src="{{ STATIC_URL }}js/flot-chart/jquery.flot.animator.min.js"></script>-->
-<!--<script type="text/javascript" src="{{ STATIC_URL }}js/flot-chart/jquery.flot.growraf.js"></script>-->
+<!-- <script type="text/javascript" src="{{ STATIC_URL }}js/flot-chart/jquery.flot.growraf.js"></script> -->
 <!--<script type="text/javascript" src="{{ STATIC_URL }}js/dashboard.js"></script>-->
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.customSelect.min.js" ></script>
 <!--dynamic table-->
-<script type="text/javascript" language="javascript" src="{{ STATIC_URL }}js/advanced-datatable/js/jquery.dataTables.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}/bs3/js/bootstrap.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/data-tables/DT_bootstrap.js"></script>
+<!-- <script type="text/javascript" language="javascript" src="{{ STATIC_URL }}js/advanced-datatable/js/jquery.dataTables.js"></script> -->
+<!-- <script type="text/javascript" src="{{ STATIC_URL }}/bs3/js/bootstrap.js"></script> -->
+<!-- <script type="text/javascript" src="{{ STATIC_URL }}js/data-tables/DT_bootstrap.js"></script> -->
 <script type="text/javascript" src="{{ STATIC_URL }}js/owl.carousel.min.js"></script>
 
 <!--dynamic table initialization -->
-<script src="{{ STATIC_URL }}js/dynamic_table_init.js"></script>
+<!-- <script src="{{ STATIC_URL }}js/dynamic_table_init.js"></script> -->
 <!--common script init for all pages-->
 <script type="text/javascript" src="{{ STATIC_URL }}js/scripts.js"></script>
 
