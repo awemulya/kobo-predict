@@ -236,22 +236,110 @@ var pk = "{{pk}}";
                               <div class="clearfixx"></div>
                             </div>  
                           </div>
-                        </div>  
+                        </div>
+                        <div class="all-sub-grp">
+                          <div class="row" data-bind="with:newSubstage, visible:addSubStageMode()">
+                            <div class="each-sub-grp">
+                              <div class="col-sm-1"></div>
+                              <div class="col-sm-8">
+                                <h5 class="sub-stage-name-c">{% trans 'New Sub Stage' %}
+                                    <input type="text" class="name-stage-grp"  data-bind="value: name" placeholder="Substage Name" required="required">
+                                    <input type="text" class="name-stage-grp"  data-bind="value: description" placeholder="description">
+                                    <input type="number" class="name-stage-grp"  data-bind="value: order" placeholder="order" required="required">
+                                </h5>
+                              </div>
+                              <div class="col-md-3"></div>
+                              <div class="clearfixx"></div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       <div class="row">
                       <div class="col-md-1"></div>
                       <div class="col-sm-3">
-                        <a class="manage-button" data-bind="click:add_sub_stage"><i class="fa fa-plus" aria-hidden="true"></i> {% trans 'Add Substage ' %}</a>
+                          <a class="manage-button" data-bind="click:save_sub_stage, visible:addSubStageMode()"><i class="fa fa-plus" aria-hidden="true"></i> {% trans 'Add' %}</a>
+                        <a class="manage-button" data-bind="click:add_sub_stage, visible:!addSubStageMode()"><i class="fa fa-plus" aria-hidden="true"></i> {% trans 'New Substage ' %}</a>
                       </div>
                          <div class="col-sm-8"></div>
                       </div>
                     </div>
 
                     <hr/>
+                      <div class="col-sm-3">
+
+                     <!--<a class="manage-button" data-bind="click:save"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'Save Stage Data' %}</a>-->
+                      </div>
                  </div>
-                <div class="row">
-                    <a data-bind="click:add_stage"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'Add Stage' %}</a>
-                </div>
+
+
+
+
+
+
+                <!--<div data-bind="with: current_stage">-->
+                    <!--<div class="each-stage-grp">-->
+                     <!--<div class="row">-->
+                        <!--<div class="col-sm-12">-->
+                          <!--<h4 class="stage-name-c">{% trans 'New Stage' %} <span class="name-stage-grp" data-bind="value: name"></span></h4>-->
+                          <!--<h4 class="stage-name-c">{% trans 'New Stage' %} <span class="name-stage-grp" data-bind="value: description"></span></h4>-->
+                          <!--<h4 class="stage-name-c">{% trans 'New Stage' %} <span class="name-stage-grp" data-bind="value: order"></span></h4>-->
+                        <!--</div>-->
+                     <!--</div>-->
+                      <!--<div class="row">-->
+                        <!--<div class="all-sub-grp">-->
+                          <!--<div class="row" data-bind="foreach: parent">-->
+                            <!--<div class="each-sub-grp">-->
+                              <!--<div class="col-sm-1"></div>-->
+                              <!--<div class="col-sm-8">-->
+                                <!--<h5 class="sub-stage-name-c">{% trans 'Sub Stage' %} <span data-bind='text: $index()+1'></span>: <span class="name-stage-grp"  data-bind="text: name"></span></h5>-->
+                              <!--</div>-->
+                              <!--<div class="col-md-3"></div>-->
+                              <!--<div class="clearfixx"></div>-->
+                            <!--</div>-->
+                          <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="all-sub-grp">-->
+                          <!--<div class="row" data-bind="with:newSubstage, visible:addSubStageMode()">-->
+                            <!--<div class="each-sub-grp">-->
+                              <!--<div class="col-sm-1"></div>-->
+                              <!--<div class="col-sm-8">-->
+                                <!--<h5 class="sub-stage-name-c">{% trans 'New Sub Stage' %}-->
+                                    <!--<input type="text" class="name-stage-grp"  data-bind="value: name" placeholder="Substage Name" required="required">-->
+                                    <!--<input type="text" class="name-stage-grp"  data-bind="value: description" placeholder="description">-->
+                                    <!--<input type="number" class="name-stage-grp"  data-bind="value: order" placeholder="order" required="required">-->
+                                <!--</h5>-->
+                              <!--</div>-->
+                              <!--<div class="col-md-3"></div>-->
+                              <!--<div class="clearfixx"></div>-->
+                            <!--</div>-->
+                          <!--</div>-->
+                        <!--</div>-->
+                      <!--</div>-->
+                      <!--<div class="row">-->
+                      <!--<div class="col-md-1"></div>-->
+                      <!--<div class="col-sm-3">-->
+                          <!--<a class="manage-button" data-bind="click:save_sub_stage, visible:addSubStageMode()"><i class="fa fa-plus" aria-hidden="true"></i> {% trans 'Add' %}</a>-->
+                        <!--<a class="manage-button" data-bind="click:add_sub_stage, visible:!addSubStageMode()"><i class="fa fa-plus" aria-hidden="true"></i> {% trans 'New Substage ' %}</a>-->
+                        <!--<a class="manage-button" data-bind="click:save"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'Save Stage Data' %}</a>-->
+
+                      <!--</div>-->
+                         <!--<div class="col-sm-8">-->
+                         <!--</div>-->
+                      <!--</div>-->
+                    <!--</div>-->
+
+                    <!--<hr/>-->
+
+                 <!--</div>-->
+
+                <!--<div class="row">-->
+                     <!--<div class="col-md-1"></div>-->
+                      <!--<div class="col-sm-3">-->
+                    <!--<a class="manage-button" data-bind="click:add_stage"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'New Stage' %}</a>-->
+                <!--</div>-->
+                    <!--</div>-->
+
+
              </div>
         </div>
 
