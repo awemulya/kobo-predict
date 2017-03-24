@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block head %}
-    <a class="setting-btn" href="{% url 'fieldsight:site-edit' obj.pk %}"><i class="fa fa-cog" aria-hidden="true"></i></a>
+    <a class="setting-btn" href="{% url 'fieldsight:site-edit' obj.pk %}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
     
 {% endblock %}
 
@@ -38,10 +38,8 @@
                     </div>
                     <div class="col-md-9">
                         <div class="abt-org">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                               <h3>{{ obj.name }}</h3>
-                            </div>
-                            <div class="col-md-9">
                               <h3>{{ obj.identifier }}</h3>
                               <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
                               
@@ -62,12 +60,25 @@
                                 </div>
                               </div>
                             </div>
-                            <div class="col-md-3">
-                              <a class="manage-button" href="{% url 'fieldsight:site-blue-prints' obj.pk %}">{% trans 'Add BluePrints' %}</a>
+                            <div class="col-md-6">
+                              <div id="org-map" class="tab-pane fade in active">
+                                 <div class="map-container-fieldsight">
+                                    <div id="map"></div>
+                                    <div class="popop-container">
+                                        <h3 class="popop-head"></h3>
+                                        <p class="address-popop"></p>
+                                        <p class="contact-popop">01-1234567</p>
+                                        <div class="popop-gallery">
+
+                                        </div>
+                                    </div>
+                                  </div>
+                              </div>
+                              <!-- <a class="manage-button" href="{% url 'fieldsight:site-blue-prints' obj.pk %}">{% trans 'Add BluePrints' %}</a>
                               <a href="{% url 'forms:setup-site-stages' obj.pk %}" class="manage-button">{% trans 'Stages' %}</a>
                               <a href="{% url 'forms:site-survey' obj.pk %}" class="manage-button">{% trans 'Survey' %}</a>
                               <a href="{% url 'fieldsight:add_supervisor' obj.pk %}" class="manage-button">{% trans 'Assign People' %}</a>
-                              <a href="{% url 'forms:site-responses' obj.pk %}" class="manage-button">{% trans 'Responses' %}</a>
+                              <a href="{% url 'forms:site-responses' obj.pk %}" class="manage-button">{% trans 'Responses' %}</a> -->
                             </div>  
                         </div>
                     </div>
@@ -77,7 +88,7 @@
 
         </div>
         <div class="organization-long-detail">
-        	<div class="col-md-6">
+        	<!-- <div class="col-md-6">
                 <ul class="nav nav-tabs">
                   <li class="active"><a data-toggle="tab" href="#org-map">Map View</a></li>
                   <li><a data-toggle="tab" href="#org-people">People Involved</a></li>
@@ -147,18 +158,32 @@
                      </div>
                   </div>
                 </div>    
-            </div>
-            <div class="col-md-6">
+          </div> -->
+            <div class="col-md-12">
                 <div class="outstanding-and-all">
                     <ul class="nav nav-tabs">
-                      <li class="all active"><a data-toggle="tab" href="#out-all">All ({{all|length}})</a></li>
-                      <li class="out"><a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
+                      <!-- <li class="all active"><a data-toggle="tab" href="#out-all">All ({{all|length}})</a></li> -->
+                      <li class="out active"><a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
                         <li class="reg"><a data-toggle="tab" href="#out-reject">Rejected ({{rejected|length}})</a></li>
                         <li class="flag"><a data-toggle="tab" href="#out-flagged">Flagged ({{flagged|length}})</a></li>
+
+                        <ul class="nav navbar-nav navbar-right">
+                         <li class="responses-all"><a href="{% url 'forms:project-responses' obj.pk %}">{% trans 'Responses' %}</a></li>
+                         <li class="dropdown man-drop">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                              <li><a href="#">{% trans 'Forms' %}</a></li>
+                              <li><a href="#">{% trans 'People' %}</a></li>
+                              <!-- <li><a href="{% url 'forms:project-schedule-add' obj.pk %}">{% trans 'Forms' %}</a></li>
+                              <li><a href="{% url 'fieldsight:add_project_staffs' obj.pk %}">{% trans 'People' %}</a></li> -->
+                            </ul>
+                        </li>  
+                       </ul>
+
                     </ul>
 
                     <div class="tab-content">
-                      <div id="out-all" class="tab-pane fade in active">
+                      <!-- <div id="out-all" class="tab-pane fade in active">
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for form in all %}
@@ -181,8 +206,8 @@
                                 {% endfor %}
                             </div>
                         </div>
-                      </div>
-                      <div id="out-standing" class="tab-pane fade">
+                      </div> -->
+                      <div id="out-standing" class="tab-pane fade in active">
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for form in outstanding %}
@@ -265,6 +290,73 @@
     </div>
 
 {% endblock %}
+
+
+{% block all_diagrams %} 
+    <section class="panel bar-gauge-diagrams">
+        <div class="col-md-6">
+          <div class="daily-visit">
+              <h4 class="widget-h">Form Submitions</h4>
+              <div id="daily-visit-chart" style="width:100%; height: 100px; display: block">
+
+              </div>
+              <ul class="chart-meta clearfix">
+                  <li class="pull-left visit-chart-value">3233</li>
+                  <li class="pull-right visit-chart-title"><i class="fa fa-arrow-up"></i> 15%</li>
+              </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+         <div class="top-stats-panel">
+            <h4 class="widget-h">Site Progress</h4>
+            <div class="bar-stats">
+                <ul class="progress-stat-bar clearfix">
+                    <li data-percent="50%"><span class="progress-stat-percent pink"></span></li>
+                    <li data-percent="90%"><span class="progress-stat-percent"></span></li>
+                    <li data-percent="70%"><span class="progress-stat-percent yellow-b"></span></li>
+                </ul>
+                <ul class="bar-legend">
+                    <li><span class="bar-legend-pointer pink"></span> New York</li>
+                    <li><span class="bar-legend-pointer green"></span> Los Angels</li>
+                    <li><span class="bar-legend-pointer yellow-b"></span> Dallas</li>
+                </ul>
+                <div class="daily-sales-info">
+                    <span class="sales-count">1200 </span> <span class="sales-label">Products Sold</span>
+                </div>
+            </div>
+          </div> 
+        </div>
+
+        <div class="clearfixx"></div>
+        <div class="flags-dash text-center">
+          <div class="col-md-3">
+            <div class="out-dash-flag">
+              <p class="length-flags-forms">{{outstanding|length}}</p>
+              <p class="flags-forms">outstanding subs</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="flag-dash-flag">
+              <p class="length-flags-forms">{{flagged|length}}</p>
+              <p class="flags-forms">flagged subs</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="reg-dash-flag">
+              <p class="length-flags-forms">{{rejected|length}}</p>
+              <p class="flags-forms">rejected subs</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="app-dash-flag">
+              <p class="length-flags-forms">{{approved|length}}</p>
+              <p class="flags-forms">approved subs</p>
+            </div>
+          </div>
+          <div class="clearfixx"></div>
+        </div>
+    </section>             
+  {% endblock %} 
     {%block extrascript %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
 
