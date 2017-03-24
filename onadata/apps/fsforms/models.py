@@ -304,7 +304,7 @@ class FieldSightParsedInstance(ParsedInstance):
 class FInstance(models.Model):
     instance = models.OneToOneField(Instance, related_name='fieldsight_instance')
     site = models.ForeignKey(Site, null=True, related_name='site_instances')
-    project = models.ForeignKey(Site, null=True, related_name='project_instances')
+    project = models.ForeignKey(Project, null=True, related_name='project_instances')
     site_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='site_form_instances')
     project_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='project_form_instances')
     form_status = models.IntegerField(default=0, choices=FORM_STATUS)
