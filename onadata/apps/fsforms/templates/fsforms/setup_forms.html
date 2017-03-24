@@ -40,7 +40,7 @@ var pk = "{{pk}}";
 {% endblock %}
 
 {% block content %}
-<div class="btn-group" role="group" aria-label="...">
+<div class="btn-group-nav" role="group" aria-label="...">
   <button type="button" class="btn" data-bind="css: {'btn-primary': currentVm() == 'general', 'btn-default': !currentVm() == 'general'}, click: function () {setSelectedVm('general')}">{% trans 'General Forms' %}</button>
   <button type="button" class="btn" data-bind="css: {'btn-primary': currentVm() == 'schedules', 'btn-default': !currentVm() == 'schedules'}, click: function () {setSelectedVm('schedules')}">{% trans 'Schedules' %}</button>
   <button type="button" class="btn" data-bind="css: {'btn-primary': currentVm() == 'stages', 'btn-default': !currentVm() == 'stages'}, click: function () {setSelectedVm('stages')}">{% trans 'Stages' %}</button>
@@ -87,7 +87,10 @@ var pk = "{{pk}}";
             <h3 class="panel-title"><a data-bind="click:add_form"><i class="fa fa-plus" aria-hidden="true"></i> Add</a></h3>
           </div>
             <div class="panel-body">
-            <p><input type="text" class="form-control" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'"></p>
+              <div class="col-md-3">
+                <p><input type="text" class="form-control-search" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'"></p>
+              </div>
+              <div class="clearfixx"></div>
           </div>
              <table class="table">
                  <thead> <tr>
@@ -166,7 +169,10 @@ var pk = "{{pk}}";
             <h3 class="panel-title"><a data-bind="click:add_form"><i class="fa fa-plus" aria-hidden="true"></i> Add</a></h3>
           </div>
             <div class="panel-body">
-            <p><input type="text" class="form-control" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'"></p>
+              <div class="col-md-3">
+                <p><input type="text" class="form-control-search" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'"></p>
+              </div>
+              <div class="clearfixx"></div>
           </div>
              <table class="table">
                  <thead> <tr>
@@ -199,28 +205,48 @@ var pk = "{{pk}}";
     <div data-bind="with:stagesVm">
             <div class="stage-container">
           <div class="stage-container-heading">
+          <div class="panel-heading">
             <h3 class="panel-title"><a data-bind="click:add_stage"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'Add' %}</a></h3>
+          </div>  
           </div>
             <div class="stage-container-body">
-            <p><input type="text" class="form-control" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'"></p>
-          </div>
+              <div class="panel-body"> 
+                <div class="col-md-3"> 
+                  <p><input type="text" class="form-control-search" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'"></p>
+                </div>
+                <div class="clearfixx"></div>
+              </div>
+            </div>
                  <div data-bind="foreach: stages">
+                    <div class="each-stage-grp">
                      <div class="row">
-                        <div class="col-sm-2">{% trans 'Stage' %} <span data-bind='text: $index()+1'></span></div>
-                         <div class="col-sm-8"><span data-bind="text: name"></span></div>
+                        <div class="col-sm-12">
+                          <h4 class="stage-name-c">{% trans 'Stage' %} <span data-bind='text: $index()+1'></span>: <span class="name-stage-grp" data-bind="text: name"></span></h4>
+                        </div>
                      </div>
-                     <div class="row">
+                      <div class="row">
+                        <div class="all-sub-grp">
                           <div class="row" data-bind="foreach: parent">
-                              <div class="col-sm-2"></div>
-                              <div class="col-sm-2">{% trans 'Sub Stage' %} <span data-bind='text: $index()+1'></span></div>
-                                <div class="col-sm-8"><span data-bind="text: name"></span></div>
-                                 </div>
-                  </div>
-                     <div class="row"><div class="col-sm-4"></div>
-                         <div class=col-sm-8">
-                         <a data-bind="click:add_sub_stage"><i class="fa fa-plus" aria-hidden="true"></i> {% trans 'Add Substage ' %}</a>
-                     </div>
-                     </div>
+                            <div class="each-sub-grp">
+                              <div class="col-sm-1"></div>
+                              <div class="col-sm-8">
+                                <h5 class="sub-stage-name-c">{% trans 'Sub Stage' %} <span data-bind='text: $index()+1'></span>: <span class="name-stage-grp"  data-bind="text: name"></span></h5>
+                              </div>
+                              <div class="col-md-3"></div>
+                              <div class="clearfixx"></div>
+                            </div>  
+                          </div>
+                        </div>  
+                      </div>
+                      <div class="row">
+                      <div class="col-md-1"></div>
+                      <div class="col-sm-3">
+                        <a class="manage-button" data-bind="click:add_sub_stage"><i class="fa fa-plus" aria-hidden="true"></i> {% trans 'Add Substage ' %}</a>
+                      </div>
+                         <div class="col-sm-8"></div>
+                      </div>
+                    </div>
+
                     <hr/>
                  </div>
                 <div class="row">
