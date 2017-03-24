@@ -168,12 +168,12 @@
                         <li class="flag"><a data-toggle="tab" href="#out-flagged">Flagged ({{flagged|length}})</a></li>
 
                         <ul class="nav navbar-nav navbar-right">
-                         <li class="responses-all"><a href="{% url 'forms:project-responses' obj.pk %}">{% trans 'Responses' %}</a></li>
+                         <li class="responses-all"><a href="{% url 'forms:site-responses' obj.pk %}">{% trans 'Responses' %}</a></li>
                          <li class="dropdown man-drop">
                           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                              <li><a href="#">{% trans 'Forms' %}</a></li>
-                              <li><a href="#">{% trans 'People' %}</a></li>
+                              <li><a href="{% url 'forms:setup-forms' 0 obj.pk %}">{% trans 'Forms' %}</a></li>
+                              <li><a href="{% url 'fieldsight:add_supervisor' obj.pk %}">{% trans 'People' %}</a></li>
                               <!-- <li><a href="{% url 'forms:project-schedule-add' obj.pk %}">{% trans 'Forms' %}</a></li>
                               <li><a href="{% url 'fieldsight:add_project_staffs' obj.pk %}">{% trans 'People' %}</a></li> -->
                             </ul>
