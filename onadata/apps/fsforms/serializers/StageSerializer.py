@@ -18,19 +18,26 @@ class StageSerializer1(serializers.ModelSerializer):
 
     def create(self, validated_data):
         id = self.context['request'].data.get('id', False)
-        validated_data.pop('parent')
+        new_substages = validated_data.pop('parent')
         substages_data = self.context['request'].data.get('parent')
         if not id:
             stage = Stage.objects.create(**validated_data)
+            for ss in new_substages:
+                ss.update({'stage':stage})
+                Stage.objects.create(**ss)
+
         else:
             Stage.objects.filter(pk=id).update(**validated_data)
             stage = Stage.objects.get(pk=id)
-        for sub_stage_data in substages_data:
-            sub_id = sub_stage_data.pop('id')
-            if not sub_id:
-                stage = Stage.objects.create(**sub_stage_data)
-            else:
-                Stage.objects.filter(pk=sub_id).update(**sub_stage_data)
+            for sub_stage_data in substages_data:
+                old_substage = sub_stage_data.get('id', False)
+                if old_substage:
+                    sub_id = sub_stage_data.pop('id')
+                    sub_stage_data.update({'stage':stage})
+                    Stage.objects.filter(pk=sub_id).update(**sub_stage_data)
+                else:
+                    sub_stage_data.update({'stage':stage})
+                    Stage.objects.create(**sub_stage_data)
         return stage
 
 
