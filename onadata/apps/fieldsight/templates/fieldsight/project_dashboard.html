@@ -51,7 +51,7 @@
                                 <div class="mini-stat clearfix">
                                   <span class="mini-stat-icon orange"><i class="fa fa-users"></i></span>
                                   <div class="mini-stat-info">
-                                      <span>0<!-- {{total_users}} --></span>
+                                      <span>{{peoples_involved.count}}</span>
                                       Total Users
                                   </div>
                                 </div>
@@ -81,8 +81,8 @@
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                       <li><a href="{% url 'forms:setup-forms' 1 obj.pk %}">{% trans 'Setup Forms' %}</a></li>
-                      <li><a href="{% url 'fieldsight:add_project_staffs' obj.pk %}">{% trans 'Setup People' %}</a></li>
-                      <li><a href="{% url 'fieldsight:site-add'%}">{% trans 'Add' %} {% trans 'Add Site' %}</a></li>
+                      <li><a href="{% url 'fieldsight:add_project_staffs' obj.pk %}">{% trans 'Manage People' %}</a></li>
+                      <li><a href="{% url 'fieldsight:site-add'%}">{% trans 'Add Site' %}</a></li>
                     </ul>
                 </li>  
                </ul>
@@ -144,9 +144,7 @@
                          <div class="col-sm-4">
                              <div style="margin-top:20px">
                                  <i class="fa fa-building-o fa-fw" aria-hidden="true"></i>{{obj.name|default_if_none:""}}
-                                 {% if obj.address %}
-                           <i class="fa fa-location-arrow fa-fw" aria-hidden="true"></i>{{ obj.address|default_if_none:""}}
-                                 {% endif %}
+
                             </div>
                          </div>
                          </a>

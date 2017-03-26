@@ -94,9 +94,9 @@ var pk = "{{pk}}";
           </div>
              <table class="table">
                  <thead> <tr>
-                     <th>#</th>
-                     <th>{% trans 'Form Name' %}</th>
-                     <th>{% trans 'Date Created' %}</th>
+                     <th>{% trans 'SN' %}</th>
+                     <th>{% trans 'Form ' %}</th>
+                     <th>{% trans 'Assigned Date' %}</th>
                      <th>{% trans 'Submission Status' %}</th>
                      <th>{% trans 'Deployed Status' %}</th>
                  </tr> </thead>
@@ -176,7 +176,7 @@ var pk = "{{pk}}";
           </div>
              <table class="table">
                  <thead> <tr>
-                     <th>#</th>
+                     <th>{% trans 'SN' %}</th>
                      <th>{% trans 'Schedule Name' %}</th>
                      <th>{% trans 'Form Name' %}</th>
                      <th>{% trans 'Start' %}</th>
@@ -203,11 +203,18 @@ var pk = "{{pk}}";
 
 <div class="row" data-bind="visible: currentVm() == 'stages'" style="display:none;">
     <div data-bind="with:stagesVm">
-            <div class="stage-container">
+        <div class="stage-container">
           <div class="stage-container-heading">
           <div class="panel-heading">
-                <h3 class="panel-title"><button class="bt btn-primary" data-bind="click:add_stage"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'Add Stage' %}</button></h3>
-          </div>  
+                  <button class="bt btn-primary" data-bind="click:add_stage">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        {% trans 'Add Stage' %}
+                    </button>
+                    <button class="bt btn-danger" style="float:right" data-bind="click:add_stage">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        {% trans 'Deploy to Mobile' %}
+                    </button>
+          </div>
           </div>
             <div class="stage-container-body">
               <div class="panel-body"> 

@@ -5,9 +5,9 @@
 
 {%block extracss %}
     
-    <link rel="stylesheet" href="{% static 'css/leaflet.css' %}"></link>
-    <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}"></link>
-    <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}"></link>
+    <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
+    <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
+    <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -16,10 +16,10 @@
 <div class="row">
   <div class="map-container-fieldsight">
     <div id="map"></div>  
-    <div class="popop-container">
+    <div class="popop-container" style="display:none">
         <h3 class="popop-head"></h3>
         <p class="address-popop"></p>
-        <p class="contact-popop">01-1234567</p>  
+        <p class="contact-popop"></p>
         <div class="popop-gallery">
             
               
@@ -42,7 +42,7 @@
             <span class="mini-stat-icon orange"><i class="fa fa-users"></i></span>
             <div class="mini-stat-info">
                 <span>{{total_users}}</span>
-                Total Users
+                {% trans 'Total Users' %}
             </div>
         </div>
     </div>
@@ -51,7 +51,7 @@
             <span class="mini-stat-icon tar"><i class="fa fa-building-o"></i></span>
             <div class="mini-stat-info">
                 <span>{{total_organizations}}</span>
-                Total Organizations
+                {% trans 'Total Organizations' %}
             </div>
         </div>
     </div>
@@ -60,7 +60,7 @@
             <span class="mini-stat-icon pink"><i class="fa fa-building-o"></i></span>
             <div class="mini-stat-info">
                 <span>{{total_projects}}</span>
-                Total Projects
+                {% trans 'Total Projects' %}
             </div>
         </div>
     </div>
@@ -69,7 +69,7 @@
             <span class="mini-stat-icon green"><i class="fa fa-picture-o"></i></span>
             <div class="mini-stat-info">
                 <span>{{total_sites}}</span>
-                Total Sites
+                {% trans 'Total Sites' %}
             </div>
         </div>
     </div>

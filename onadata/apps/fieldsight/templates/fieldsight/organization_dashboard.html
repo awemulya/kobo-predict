@@ -42,8 +42,7 @@
                                 <h3>{{ obj.name }}</h3>
                             </div>
                             <div class="col-md-9">
-                                <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
-                                <p class="country"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.get_country_display }}</p>
+                                <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}, {{ obj.get_country_display }}</p>
                                 <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
                                 <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
                                 <p class="website"><span></span>{{ obj.website }}</p>
@@ -53,15 +52,15 @@
                                 <div class="mini-stat clearfix">
                                   <span class="mini-stat-icon orange"><i class="fa fa-users"></i></span>
                                   <div class="mini-stat-info">
-                                      <span>0<!-- {{total_users}} --></span>
-                                      Total Users
+                                      <span>{{peoples_involved.count}}</span>
+                                      {% trans 'Total Users ' %}
                                   </div>
                                 </div>
                                <div class="mini-stat clearfix">
                                 <span class="mini-stat-icon green"><i class="fa fa-picture-o"></i></span>
                                 <div class="mini-stat-info">
                                     <span>{{total_sites}}</span>
-                                    Total Sites
+                                    {% trans 'Total Sites ' %}
                                 </div>
                               </div>
                             </div> 
@@ -77,14 +76,14 @@
 			  <li class="active"><a data-toggle="tab" href="#org-map">Map</a></li>
               <li><a data-toggle="tab" href="#org-list-proj">Projects</a></li>
 			  <!--<li><a data-toggle="tab" href="#org-list-site">List of Sites</a></li>-->
-			  <li><a data-toggle="tab" href="#org-people"></a></li>
+			  <li><a data-toggle="tab" href="#org-people">{% trans 'People' %}</a></li>
 			  <!-- <li><a data-toggle="tab" href="#org-about">About Organization</a></li> -->
               <ul class="nav navbar-nav navbar-right">
                  <li class="dropdown man-drop">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                         <li><a href="{% url 'fieldsight:project-add'%}">{% trans 'Add' %} {% trans 'Project' %}</a></li>
-                      <li><a href="{% url 'fieldsight:add_org_admin' obj.pk %}">{% trans 'Add Admin' %}</a></li>
+                         <li class="drop-down-item"><a href="{% url 'fieldsight:project-add'%}"> {% trans 'Add Project' %}</a></li>
+                      <li class="drop-down-item"><a href="{% url 'fieldsight:add_org_admin' obj.pk %}">{% trans 'Add Admin' %}</a></li>
                     </ul>
                 </li>  
                </ul>
@@ -94,10 +93,10 @@
 			  <div id="org-map" class="tab-pane fade in active">
 			     <div class="map-container-fieldsight">
                     <div id="map"></div>  
-                    <div class="popop-container">
+                    <div class="popop-container" style="display:none">
                         <h3 class="popop-head"></h3>
                         <p class="address-popop"></p>
-                        <p class="contact-popop">01-1234567</p>  
+                        <p class="contact-popop"></p>
                         <div class="popop-gallery">
                             
                         </div>   

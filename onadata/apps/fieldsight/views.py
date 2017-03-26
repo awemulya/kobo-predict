@@ -113,11 +113,11 @@ def organization_dashboard(request, pk):
         if form.form_status == 0:
             outstanding += 1
         elif form.form_status == 1:
-            rejected +=1
+            rejected += 1
         elif form.form_status == 2:
-            flagged +=1
+            flagged += 1
         else:
-            approved +=1
+            approved += 1
 
     dashboard_data = {
         'obj': obj,
