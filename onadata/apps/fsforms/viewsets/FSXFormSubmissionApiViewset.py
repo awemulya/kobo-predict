@@ -35,7 +35,7 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
             fsxfid = int(fsxfid)
             fxf = get_object_or_404(FieldSightXF, pk=kwargs.get('pk'))
             fs_proj_xf = fxf.fsform.pk if fxf.fsform else None
-            proj_id = fxf.project.pk if fxf.fsform else fxf.site.pk
+            proj_id = fxf.fsform.project.pk if fxf.fsform else fxf.site.project.pk
             xform = fxf.xf
             # site_id = fxf.site.pk if fxf.site else None
         except:
@@ -45,7 +45,6 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
             return Response(status=status.HTTP_204_NO_CONTENT,
                             headers=self.get_openrosa_headers(request),
                             template_name=self.template_name)
-
         error, instance = create_instance_from_xml(request, fsxfid, siteid, fs_proj_xf, proj_id, xform)
         # modify create instance
 
