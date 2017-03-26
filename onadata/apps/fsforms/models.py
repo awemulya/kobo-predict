@@ -91,6 +91,10 @@ class Stage(models.Model):
     def active_substages(self):
         return self.parent.filter(stage_forms__isnull=False)
 
+    @property
+    def xf(self):
+        return FieldSightXF.objects.filter(stage=self)[0].xf.pk if self.form_exists() else None
+
     @classmethod
     def get_order(cls, site, project, stage):
         if site:

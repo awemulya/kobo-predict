@@ -579,7 +579,7 @@ def edit_share_stages(request, id):
         sl = 2
     elif fgroup.organization:
         sl = 1
-    instance.shared_level = sl
+    fgroup.shared_level = sl
     form = GroupEditForm(instance=fgroup)
     return render(request, "fsforms/edit_formgroup_form.html", {'form': form,'shared':sl})
 
