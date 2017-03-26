@@ -56,8 +56,10 @@ class StageSerializer1(serializers.ModelSerializer):
             if not id:
                 stage = Stage.objects.create(**validated_data)
                 for ss in new_substages:
+                    xf = ss.pop('xf')
                     ss.update({'stage':stage})
-                    Stage.objects.create(**ss)
+                    sub_stage_obj = Stage.objects.create(**ss)
+                    FieldSightXF.objects.create(xf_id=xf,site=stage.site, project=stage.project, is_staged=True,stage=sub_stage_obj)
 
             else:
                 Stage.objects.filter(pk=id).update(**validated_data)
@@ -66,11 +68,15 @@ class StageSerializer1(serializers.ModelSerializer):
                     old_substage = sub_stage_data.get('id', False)
                     if old_substage:
                         sub_id = sub_stage_data.pop('id')
+                        xf = sub_stage_data.pop('xf')
                         sub_stage_data.update({'stage':stage})
                         Stage.objects.filter(pk=sub_id).update(**sub_stage_data)
+                    #     if form change update fxf object's xf
                     else:
                         sub_stage_data.update({'stage':stage})
-                        Stage.objects.create(**sub_stage_data)
+                        xf = sub_stage_data.pop('xf')
+                        ss = Stage.objects.create(**sub_stage_data)
+                        FieldSightXF.objects.create(xf_id=xf,site=stage.site, project=stage.project, is_staged=True,stage=ss)
             return stage
 
 

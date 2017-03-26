@@ -13,7 +13,7 @@ class StageViewSet(viewsets.ModelViewSet):
     queryset = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True)
     serializer_class = StageSerializer1
 
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    # authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def filter_queryset(self, queryset):
         if self.request.user.is_anonymous():
