@@ -206,7 +206,7 @@ var pk = "{{pk}}";
             <div class="stage-container">
           <div class="stage-container-heading">
           <div class="panel-heading">
-            <h3 class="panel-title"><a data-bind="click:add_stage"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'Add Stage' %}</a></h3>
+                <h3 class="panel-title"><button class="bt btn-primary" data-bind="click:add_stage"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'Add Stage' %}</button></h3>
           </div>  
           </div>
             <div class="stage-container-body">
@@ -221,25 +221,25 @@ var pk = "{{pk}}";
                     <div class="each-stage-grp">
                      <div class="row">
                         <div class="col-sm-12">
-                          <h4 class="stage-name-c">{% trans 'Stage' %} <span data-bind='text: $index()+1'></span>:
+                          <a class="stage-name-c">{% trans 'Stage' %} <span data-bind='text: $index()+1'></span>:</a>
                               <span class="name-stage-grp" data-bind="text: name, click:setShowSubstages"></span>
-                              <a  title="Edit" data-bind="click:edit"><i class="fa fa-edit"></i> <a> </h4>
+                              <a  title="Edit" data-bind="click:edit"><i class="fa fa-edit"></i> </a>
                         </div>
                      </div>
 
                         <div class="row"  data-bind="visible:show_substages">
                         <div class="all-sub-grp">
                           <div class="row" data-bind="foreach: parent">
-                            <div class="each-sub-grp">
+                            <div class="each-stage-grp">
                               <div class="col-sm-1"></div>
                               <div class="col-sm-8">
-                                <h5 class="sub-stage-name-c">{% trans 'Sub Stage' %}
+                                <a class="sub-stage-name-c">{% trans 'Sub Stage' %}
                                     <span data-bind='text: $index()+1'></span>:
                                     <span class="name-stage-grp"  data-bind="text: name"></span>
-                                </h5>
-                                  <h5>
-                                  <span class="name-stage-grp"  data-bind="text: form_name_display()"></span>
-                                  </h5>
+                                    <i class="fa fa-file" aria-hidden="true"></i>
+                                    <span class="name-stage-grp"  data-bind="text: form_name_display()"></span>
+                                </a>
+
                               </div>
                               <div class="col-md-3"></div>
                               <div class="clearfixx"></div>
@@ -291,7 +291,7 @@ var pk = "{{pk}}";
 
 
     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:stage_form_modal_visibility">
-                        <div data-bind="with: current_stage">
+    <div data-bind="with: current_stage">
 
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -310,13 +310,13 @@ var pk = "{{pk}}";
                     <div class="each-stage-grp">
                      <div class="row">
                         <div class="col-sm-12">
-                              <input class="form-control-search" data-bind="value: name" placeholder="Stage Name" required="required">
+                              <input class="form-control" data-bind="value: name" placeholder="Stage Name" required="required">
                         </div>
                         <div class="col-sm-12">
-                              <input class="form-control-search" data-bind="value: description" placeholder="Description">
+                              <input class="form-control" data-bind="value: description" placeholder="Description">
                          </div>
                         <div class="col-sm-12">
-                              <input type="number" class="form-control-search" data-bind="value: order" placeholder="Order" required="required">
+                              <input type="number" class="form-control" data-bind="value: order" placeholder="Order" required="required">
                          </div>
                      </div>
                         <div class="row">
@@ -325,13 +325,12 @@ var pk = "{{pk}}";
                             <div class="each-sub-grp">
                               <div class="col-sm-1"></div>
                               <div class="col-sm-8">
-                                <h5 class="sub-stage-name-c">{% trans 'Sub Stage' %}
+                                <a class="sub-stage-name-c">{% trans 'Sub Stage' %}
                                     <span data-bind='text: $index()+1'></span>:
-                                    <span class="name-stage-grp"  data-bind="text: name"></span>
-                                </h5>
-                                  <h5 class="sub-stage-name-c">{% trans 'Form' %}
+                                    <span class="name-stage-grp"  data-bind="text: name"></span></a>
+                                    <a class="sub-stage-name-c"><i class="fa fa-file" aria-hidden="true"></i>
                                     <span class="name-stage-grp"  data-bind="text: form_name_display()"></span>
-                                </h5>
+                                </a>
                               </div>
                               <div class="col-md-3"></div>
                               <div class="clearfixx"></div>
@@ -400,7 +399,7 @@ var pk = "{{pk}}";
 
                   <div class="stage-container-heading">
                   <div class="panel-heading">
-                    <h3 class="panel-title"><a data-bind="click:add_stage"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'Add Stage' %}</a></h3>
+                    <h3 class="panel-title"><button class="btn btn-primary" data-bind="click:add_stage"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'Add Stage' %}</button></h3>
                   </div>
                   </div>
         </div>
