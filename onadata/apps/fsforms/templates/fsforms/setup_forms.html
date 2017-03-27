@@ -48,6 +48,7 @@ var pk = "{{pk}}";
 
 <div class="row" data-bind="visible: currentVm() == 'general'" style="display:none;">
     <div data-bind="with:generalVm">
+        {% csrf_token %}
 
         <div data-bind="with:current_form">
     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.general_form_modal_visibility">
@@ -97,16 +98,15 @@ var pk = "{{pk}}";
                      <th>{% trans 'SN' %}</th>
                      <th>{% trans 'Form ' %}</th>
                      <th>{% trans 'Assigned Date' %}</th>
-                     <th>{% trans 'Submission Status' %}</th>
-                     <th>{% trans 'Deployed Status' %}</th>
+                     <th colspan="2">{% trans 'Deploy Action' %}</th>
                  </tr> </thead>
                  <tbody  data-bind="foreach: forms">
                  <tr>
                      <th scope="row" data-bind='text: $index()+1'></th>
                      <td data-bind="text: name"></td>
-                     <td data-bind="text: formatDate(date_created)"></td>
-                     <td data-bind="text: formStatus(form_status)"></td>
-                     <td data-bind="text: deployStatus(is_deployed)"></td>
+                     <td data-bind="text: date_created"></td>
+                     <td data-bind="if: is_deployed"><button class="btn btn-primary" data-bind="click:deploy">{% trans 'Undeploy' %}</button></td>
+                     <td data-bind="if: !is_deployed()"><button class="btn btn-danger" data-bind="click:deploy">{% trans 'Deploy' %}</button></td>
                  </tr>
                  </tbody></table>
         </div>
@@ -115,6 +115,7 @@ var pk = "{{pk}}";
 
 <div class="row" data-bind="visible: currentVm() == 'schedules'" style="display:none;">
       <div data-bind="with:scheduleVm">
+          {% csrf_token %}
 
         <div data-bind="with:current_form">
     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.schedule_form_modal_visibility">
@@ -182,8 +183,7 @@ var pk = "{{pk}}";
                      <th>{% trans 'Start' %}</th>
                      <th>{% trans 'End' %}</th>
                      <th>{% trans 'Days' %}</th>
-                     <th>{% trans 'Submission Status' %}</th>
-                     <th>{% trans 'Deployed Status' %}</th>
+                     <th>{% trans 'Deploy Action' %}</th>
                  </tr> </thead>
                  <tbody  data-bind="foreach: forms">
                  <tr>
@@ -193,7 +193,6 @@ var pk = "{{pk}}";
                      <td data-bind="text: formatDate(date_range_start)"></td>
                      <td data-bind="text: formatDate(date_range_start)"></td>
                      <td data-bind="text: days"></td>
-                     <td data-bind="text: formStatus(status)"></td>
                      <td data-bind="text: deployStatus(is_deployed)"></td>
                  </tr>
                  </tbody></table>
