@@ -21,7 +21,7 @@ from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
 from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed, \
-    send_message_un_deploy
+    send_message_un_deploy, send_message_re_deploy
 from onadata.apps.logger.models import XForm
 from onadata.apps.main.models import MetaData
 from onadata.apps.main.views import set_xform_owner_data
@@ -713,10 +713,15 @@ def deploy_general(request, is_project, pk):
                         child.save()
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
         else:
+            fxf = FieldSightXF.objects.get(pk=fxf_id)
             if fxf_status:
-                FieldSightXF.objects.filter(pk=fxf_id).update(is_deployed=False)
+                fxf.is_deployed = False
+                fxf.save()
+                send_message_un_deploy(fxf)
             else:
-                FieldSightXF.objects.filter(pk=fxf_id).update(is_deployed=True)
+                fxf.is_deployed=True
+                fxf.save()
+                send_message_re_deploy(fxf)
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)

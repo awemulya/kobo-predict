@@ -34,4 +34,5 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         fxf = serializer.save()
         fxf.is_deployed = True
+        send_mesage()
         fxf.save()
