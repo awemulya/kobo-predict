@@ -30,3 +30,8 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
         else:
             queryset = queryset.filter(site__id=pk)
         return queryset
+
+    def perform_create(self, serializer):
+        fxf = serializer.save()
+        fxf.is_deployed = True
+        fxf.save()
