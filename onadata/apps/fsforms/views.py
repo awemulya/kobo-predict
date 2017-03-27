@@ -21,7 +21,7 @@ from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
 from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed, \
-    send_message_un_deploy, send_message_re_deploy
+    send_message_un_deploy
 from onadata.apps.logger.models import XForm
 from onadata.apps.main.models import MetaData
 from onadata.apps.main.views import set_xform_owner_data
@@ -719,9 +719,9 @@ def deploy_general(request, is_project, pk):
                 fxf.save()
                 send_message_un_deploy(fxf)
             else:
-                fxf.is_deployed=True
+                fxf.is_deployed = True
                 fxf.save()
-                send_message_re_deploy(fxf)
+                send_message_un_deploy(fxf)
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
@@ -768,22 +768,45 @@ def un_deploy_general(request, fxf_id):
 
 
 @group_required("Project")
-def deploy_survey(request, id):
-    schedule = Schedule.objects.get(pk=id)
-    selected_days = tuple(schedule.selected_days.all())
-    fxf = FieldSightXF.objects.get(schedule=schedule)
-    with transaction.atomic():
-        Schedule.objects.filter(fieldsightxf__fsform=fxf).delete()
-        FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True).delete()
-        for site in fxf.project.sites.filter(is_active=True):
-            _schedule = Schedule(name=schedule.name, site=site)
-            _schedule.save()
-            _schedule.selected_days.add(*selected_days)
-            child = FieldSightXF(is_scheduled=True, xf=fxf.xf, site=site, fsform=fxf,
-                                 schedule=_schedule, is_deployed=True)
-            child.save()
-    messages.info(request, 'Schedule {} with  Form Named {} Form Deployed to Sites'.format(schedule.name,fxf.xf.title))
-    return HttpResponseRedirect(reverse("forms:project-survey", kwargs={'project_id': fxf.project.id}))
+@api_view(['GET', 'POST'])
+def deploy_survey(request, is_project, pk):
+    id = request.data.get('id')
+    fxf_status = request.data.get('is_deployed')
+    try:
+        schedule = Schedule.objects.get(pk=id)
+        if is_project == "1":
+            fxf = schedule.schedule_forms
+            selected_days = tuple(schedule.selected_days.all())
+            with transaction.atomic():
+                if not fxf_status:
+                    # deployed case
+                    fxf.is_deployed = True
+                    fxf.save()
+                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project__id=pk).update(is_deployed=True)
+                    for site in Site.objects.filter(project__id=pk,is_active=True):
+                        _schedule, created = Schedule.objects.get_or_create(name=schedule.name, site=site)
+                        if created:
+                            _schedule.selected_days.add(*selected_days)
+                            child = FieldSightXF(is_scheduled=True, xf=fxf.xf, site=site, fsform=fxf,
+                                             schedule=_schedule, is_deployed=True)
+                            child.save()
+
+                else:
+                    # undeploy
+                    fxf.is_deployed = False
+                    fxf.save()
+                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project_id=pk).update(is_deployed=False)
+
+            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+        else:
+            flag = False if fxf_status else True
+            form = schedule.schedule_forms
+            form.is_deployed = flag
+            form.save()
+            send_message_un_deploy(form)
+            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @group_required("Project")

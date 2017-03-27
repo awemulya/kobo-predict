@@ -40,22 +40,7 @@ def send_message_un_deploy(fxf):
     message = {'notify_type': 'Form Altered',
                'is_delete':False,
                'form_id': fxf.id,
-               'is_deployed': fxf.is_deployed,
-               'form_name': fxf.xf.title,
-               'xfid': fxf.xf.id_string,
-               'form_type':fxf.form_type(), 'form_type_id':fxf.form_type_id(),
-               'site': {'name': fxf.site.name, 'id': fxf.site.id}}
-    Device.objects.filter(name__in=emails).send_message(message)
-
-
-def send_message_re_deploy(fxf):
-    roles = UserRole.objects.filter(site=fxf.site)
-    emails = [r.user.email for r in roles]
-    Device = get_device_model()
-    message = {'notify_type': 'Form Altered',
-               'is_delete':False,
-               'form_id': fxf.id,
-               'is_deployed': fxf.is_deployed,
+                   'is_deployed': fxf.is_deployed,
                'form_name': fxf.xf.title,
                'xfid': fxf.xf.id_string,
                'form_type':fxf.form_type(), 'form_type_id':fxf.form_type_id(),

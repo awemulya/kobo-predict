@@ -74,8 +74,8 @@ urlpatterns = [
 
         url(r'^set-deploy-stages/(?P<is_project>\d)/(?P<pk>\d+)$', set_deploy_stages, name='set-deploy-stages'),
         url(r'^deploy-general/(?P<is_project>\d)/(?P<pk>\d+)$', deploy_general, name='deploy-general'),
+        url(r'^deploy-survey/(?P<is_project>\d)/(?P<pk>\d+)$', deploy_survey, name='deploy-survey'),
 
-        url(r'^deploy-survey/(?P<id>\d+)/$', deploy_survey, name='deploy-survey'),
         url(r'^un_deploy-survey/(?P<id>\d+)/$', un_deploy_survey, name='undeploy-survey'),
         url(r'^deploy-general-remaining/(?P<fxf_id>\d+)/$', deploy_general_part, name='deploy-general-remaining-sites'),
         url(r'^undeploy-general/(?P<fxf_id>\d+)/$', un_deploy_general, name='undeploy-general'),

@@ -190,10 +190,10 @@ var pk = "{{pk}}";
                      <th scope="row" data-bind='text: $index()+1'></th>
                      <td data-bind="text: name"></td>
                      <td data-bind="text: form_name"></td>
-                     <td data-bind="text: formatDate(date_range_start)"></td>
-                     <td data-bind="text: formatDate(date_range_start)"></td>
+                     <td data-bind="text: date_range_start"></td>
+                     <td data-bind="text: date_range_start"></td>
                      <td data-bind="text: days"></td>
-                     <td data-bind="text: deployStatus(is_deployed)"></td>
+                     <td><button class="btn" data-bind="click:deploy, css:{ 'btn-danger': is_deployed()== true}"><span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></button></td>
                  </tr>
                  </tbody></table>
         </div>
