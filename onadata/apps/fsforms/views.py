@@ -516,12 +516,41 @@ def edit_schedule(request, id):
 
 
 @group_required("Project")
-def set_deploy_stages(request, id):
-    with transaction.atomic():
-        FieldSightXF.objects.filter(is_staged=True, site__id=id).update(is_deployed=True)
-        send_message_stages(Site.objects.get(pk=id))
-        messages.info(request, 'Stages Form Deployed to Sites')
-    return HttpResponseRedirect(reverse("forms:setup-site-stages", kwargs={'site_id': id}))
+@api_view(['POST', 'GET'])
+def set_deploy_stages(request, is_project, pk):
+    try:
+        if is_project == "1":
+            project = Project(pk=pk)
+            sites = project.sites.filter(is_active=True)
+            main_stages = project.stages.filter(stage__isnull=True)
+            with transaction.atomic():
+                Stage.objects.filter(site__project=project).delete()
+                FieldSightXF.objects.filter(is_staged=True, site__project=project).delete()
+                for main_stage in main_stages:
+                    for site in sites:
+                        send_message_stages(site)
+                        site_main_stage = Stage(name=main_stage.name, order=main_stage.order, site=site,
+                                           description=main_stage.description)
+                        site_main_stage.save()
+                        project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk)
+                        for project_sub_stage in project_sub_stages:
+                            site_sub_stage = Stage(name=project_sub_stage.name, order=project_sub_stage.order, site=site,
+                                           description=project_sub_stage.description, stage=site_main_stage)
+                            site_sub_stage.save()
+                            if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
+                                fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
+                                FieldSightXF.objects.get_or_create(is_staged=True, xf=fsxf.xf, site=site,
+                                                                   fsform=fsxf, stage=site_sub_stage, is_deployed=True)
+
+            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+        else:
+            site = Site.objects.get(pk=pk)
+            site.site_forms.filter(is_staged=True, xf__isnull=False).update(is_deployed=True)
+            send_message_stages(site)
+            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @group_required("Project")

@@ -206,11 +206,12 @@ var pk = "{{pk}}";
         <div class="stage-container">
           <div class="stage-container-heading">
           <div class="panel-heading">
-                  <button class="bt btn-primary" data-bind="click:add_stage">
+                  <button class="btn btn-primary" data-bind="click:add_stage">
                         <i class="fa fa-plus" aria-hidden="true"></i>
                         {% trans 'Add Stage' %}
                     </button>
-                    <button class="bt btn-danger" style="float:right" data-bind="click:add_stage">
+                    {% csrf_token %}
+                    <button class="btn btn-danger" style="float:right" data-bind="confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">
                         <i class="fa fa-plus" aria-hidden="true"></i>
                         {% trans 'Deploy to Mobile' %}
                     </button>
