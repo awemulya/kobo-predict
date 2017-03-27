@@ -85,7 +85,12 @@ var pk = "{{pk}}";
 
         <div class="panel panel">
           <div class="panel-heading">
-            <h3 class="panel-title"><a data-bind="click:add_form"><i class="fa fa-plus" aria-hidden="true"></i> Add</a></h3>
+            <h3 class="panel-title">
+                <button class="btn btn-primary" data-bind="click:add_form">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        {% trans 'Add New' %}
+                    </button>
+            </h3>
           </div>
             <div class="panel-body">
               <div class="col-md-3">
@@ -167,7 +172,10 @@ var pk = "{{pk}}";
 
         <div class="panel panel">
           <div class="panel-heading">
-            <h3 class="panel-title"><a data-bind="click:add_form"><i class="fa fa-plus" aria-hidden="true"></i> Add</a></h3>
+            <h3 class="panel-title"><button class="btn btn-primary" data-bind="click:add_form">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        {% trans 'Add New' %}
+                    </button></h3>
           </div>
             <div class="panel-body">
               <div class="col-md-3">
