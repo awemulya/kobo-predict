@@ -55,25 +55,25 @@ class StageSerializer1(serializers.ModelSerializer):
             substages_data = self.context['request'].data.get('parent')
             if not id:
                 stage = Stage.objects.create(**validated_data)
-                for ss in new_substages:
+                for order, ss in enumerate(new_substages):
                     xf = ss.pop('xf')
-                    ss.update({'stage':stage})
+                    ss.update({'stage':stage, 'order':order+1})
                     sub_stage_obj = Stage.objects.create(**ss)
-                    FieldSightXF.objects.create(xf_id=xf,site=stage.site, project=stage.project, is_staged=True,stage=sub_stage_obj)
+                    FieldSightXF.objects.create(xf_id=xf,site=stage.site, project=stage.project, is_staged=True, stage=sub_stage_obj)
 
             else:
                 Stage.objects.filter(pk=id).update(**validated_data)
                 stage = Stage.objects.get(pk=id)
-                for sub_stage_data in substages_data:
+                for order, sub_stage_data in enumerate(substages_data):
                     old_substage = sub_stage_data.get('id', False)
                     if old_substage:
                         sub_id = sub_stage_data.pop('id')
                         xf = sub_stage_data.pop('xf')
-                        sub_stage_data.update({'stage':stage})
+                        sub_stage_data.update({'stage':stage,'order':order+1})
                         Stage.objects.filter(pk=sub_id).update(**sub_stage_data)
                     #     if form change update fxf object's xf
                     else:
-                        sub_stage_data.update({'stage':stage})
+                        sub_stage_data.update({'stage':stage,'order':order+1})
                         xf = sub_stage_data.pop('xf')
                         ss = Stage.objects.create(**sub_stage_data)
                         FieldSightXF.objects.create(xf_id=xf,site=stage.site, project=stage.project, is_staged=True,stage=ss)

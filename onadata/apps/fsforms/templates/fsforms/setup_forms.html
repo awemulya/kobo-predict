@@ -216,20 +216,13 @@ var pk = "{{pk}}";
                     </button>
           </div>
           </div>
-            <div class="stage-container-body">
-              <div class="panel-body"> 
-                <div class="col-md-3"> 
-                  <p><input type="text" class="form-control-search" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'"></p>
-                </div>
-                <div class="clearfixx"></div>
-              </div>
-            </div>
-                 <div class="container" data-bind="sortable: stages">
+
+                 <div class="container" data-bind="sortable: {data: stages, afterMove: orderChanged}">
                     <div class="item">
                      <div class="row">
                         <div class="col-sm-12">
                           <a class="stage-name-c">{% trans 'Stage' %} <span data-bind='text: $index()+1'></span>:</a>
-                              <span class="name-stage-grp" data-bind="text: name, click:setShowSubstages"></span>
+                              <a class="name-stage-grp" data-bind="text: name, click:setShowSubstages"></a>
                               <a  title="Edit" data-bind="click:edit"><i class="fa fa-edit"></i> </a>
                         </div>
                      </div>
@@ -265,7 +258,7 @@ var pk = "{{pk}}";
                         </div>
                       </div>
                          <div class="row">
-                     <a class="btn btn-small btn-primary" data-bind="click:save, visible:stageChanged"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'Save Stage Data' %}</a>
+                     <a class="btn btn-small btn-primary" data-bind="click:save, visible:stageChanged"><i class="fa fa-save" aria-hidden="true"></i>  {% trans 'Save' %}</a>
                       </div>
                     </div>
 
@@ -292,10 +285,7 @@ var pk = "{{pk}}";
                         <div class="col-sm-12">
                               <input class="form-control" data-bind="value: description" placeholder="Description">
                          </div>
-                        <div class="col-sm-12">
-                              <input type="number" class="form-control" data-bind="value: order" placeholder="Order" required="required">
-                         </div>
-                     </div>
+                       </div>
                         <div class="row">
                         <div class="all-sub-grp">
                           <div class="container" data-bind="sortable: parent">
@@ -340,7 +330,6 @@ var pk = "{{pk}}";
 
                                     <input type="text" class="name-stage-grp"  data-bind="value: name" placeholder="Substage Name" required="required">
                                     <input type="text" class="name-stage-grp"  data-bind="value: description" placeholder="description">
-                                    <input type="number" class="name-stage-grp"  data-bind="value: order" placeholder="order" required="required">
                                 </form>
                               </div>
                               <div class="col-md-3"></div>
@@ -377,12 +366,6 @@ var pk = "{{pk}}";
 </div>
              </div>
 
-
-                  <div class="stage-container-heading">
-                  <div class="panel-heading">
-                    <h3 class="panel-title"><button class="btn btn-primary" data-bind="click:add_stage"><i class="fa fa-plus" aria-hidden="true"></i>  {% trans 'Add Stage' %}</button></h3>
-                  </div>
-                  </div>
         </div>
 
      </div>
