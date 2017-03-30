@@ -577,3 +577,9 @@ def blue_prints(request, id):
     else:
         formset = ImageFormSet(queryset=BluePrints.objects.none())
     return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': id},)
+
+
+@login_required
+@group_required('Reviewer')
+def manage_people_site(request, pk):
+    return render(request, "fieldsight/manage_people_site.html", {'pk':pk, 'level': "0"})

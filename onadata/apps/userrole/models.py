@@ -32,13 +32,9 @@ class UserRole(models.Model):
         unique_together = ('user', 'group', 'organization', 'project', 'site')
 
     def clean(self):
-        if self.group.name == 'Site Supervisor' and not self.site_id:
+        if self.group.name in ['Site Supervisor', 'Reviewer'] and not self.site_id:
             raise ValidationError({
                 'site': ValidationError(_('Missing site.'), code='required'),
-            })
-        if self.group.name == 'Reviewer' and not self.project_id:
-            raise ValidationError({
-                'site': ValidationError(_('Missing Project.'), code='required'),
             })
 
         if self.group.name == 'Project Manager' and not self.project_id:
@@ -63,11 +59,11 @@ class UserRole(models.Model):
         elif self.group.name == 'Organization Admin':
             self.project = None
             self.site = None
-        elif self.group.name in ['Project Manager', 'Reviewer']:
+        elif self.group.name == 'Project Manager':
             self.site = None
             self.organization = self.project.organization
 
-        elif self.group.name == 'Site Supervisor':
+        elif self.group.name in ['Site Supervisor', 'Reviewer']:
             self.project = self.site.project
             self.organization = self.site.project.organization
 
@@ -81,13 +77,14 @@ class UserRole(models.Model):
         elif self.group.name == 'Organization Admin':
             self.project = None
             self.site = None
-        elif self.group.name in ['Project Manager', 'Reviewer']:
+        elif self.group.name == 'Project Manager':
             self.site = None
             self.organization = self.project.organization
 
-        elif self.group.name == 'Site Supervisor':
+        elif self.group.name in ['Site Supervisor', 'Reviewer']:
             self.project = self.site.project
             self.organization = self.site.project.organization
+
 
         super(UserRole, self).update(*args, **kwargs)
 

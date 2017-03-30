@@ -1,3 +1,4 @@
+from onadata.apps.userrole.viewsets.UserRoleViewsets import UserRoleViewSet
 from .views import UserRoleListView, UserRoleDeleteView, UserRoleUpdateView,  UserRoleCreateView, set_role, UserCreate
 from django.conf.urls import url
 
@@ -8,4 +9,6 @@ urlpatterns = [
     url(r'^userroles/(?P<pk>[0-9]+)/$', UserRoleUpdateView.as_view(), name='user-role-edit'),
     url(r'^userroles/delete/(?P<pk>\d+)/$', UserRoleDeleteView.as_view(), name='user-role-delete'),
     url(r'^user/add$', UserCreate.as_view(), name='user_add'),
+
+    url(r'^api/people/(?P<level>\d)/(?P<pk>\d+)$', UserRoleViewSet.as_view({'post': 'create','get': 'list'})),
     ]

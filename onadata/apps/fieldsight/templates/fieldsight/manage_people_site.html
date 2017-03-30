@@ -1,0 +1,140 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Manage People' %}{% endblock %}
+
+{% block head %}
+{% endblock %}
+{% block breadcrumbs %}
+{% if level == "0" %}
+<li><a href="{% url 'fieldsight:site-dashboard' pk %}">
+     {% trans 'Site Dashboard' %}</a></li>
+{% endif %}
+<li>{% trans 'Manage People' %}</li>
+{% endblock %}
+
+{% block kocript %}
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/manage_people_site.js"></script>
+
+<script>
+
+$(document).ready(function() {
+var pk = "{{pk}}";
+var level = "{{level}}";
+vm = new ManagePeopleViewModel(pk, level);
+ ko.applyBindings(vm);
+});
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="modal" tabindex="-1" role="dialog" data-bind="modal:add_people_form_visibility">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{% trans 'Assign People' %}</h4>
+      </div>
+      <div class="modal-body">
+          <div data-bind="with:user">
+
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal" tabindex="-1" role="dialog" data-bind="modal:detail_people_form_visibility">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{% trans 'User Detail' %}</h4>
+      </div>
+      <div class="modal-body">
+          <div data-bind="with:role">
+                 <div class="current-person>
+                    <div class="user-image-current">
+                      <img width="50px" height="50px" data-bind="attr:{src: profile_picture}" />
+                    </div>
+                    <div class="user-name-position">
+                      <p class="cu-name" data-bind="text:user().full_name"></p>
+                      <p class="cu-position" data-bind="text:user().email"></p>
+                    </div>
+             </div>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="row">
+    {% csrf_token %}
+</div>
+<br/>
+
+<div class="row" data-bind="with:siteVm ,visible: currentVm() == 'site'" style="display:none;">
+
+<div class="btn-group-nav" role="group" aria-label="...">
+  <button type="button" class="btn" data-bind="css: {'btn-primary': group() == 'supervisor', 'btn-default': !group() == 'supervisor'}, click: function () {setSelectedGroup('supervisor')}">{% trans 'Supervisors' %}</button>
+  <button type="button" class="btn" data-bind="css: {'btn-primary': group() == 'reviewer', 'btn-default': !group() == 'reviewer'}, click: function () {setSelectedGroup('reviewer')}">{% trans 'Reviewers' %}</button>
+</div>
+<br/>
+<div class="col-sm-12">
+     <h3 class="panel-title">
+        <button class="btn btn-primary" data-bind="click:add">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                {% trans 'Add New' %}
+        </button>
+    </h3>
+</div>
+    <br/>
+    <div class="clearfixx"></div>
+<div class="col-sm-12" data-bind="visible :group() =='supervisor'">
+  <div class="currentuser-block">
+    <div class="search-current">
+      <input type="text" class="current-input" placeholder="Search Supervisors" data-bind="value:search_key_supervisor, valueUpdate:'afterkeydown'">
+      <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+    </div>
+      <br/>
+    <div class="current-users-list row" data-bind="foreach:supervisors">
+
+        <div class="current-person col-sm-3">
+        <div class="user-image-current">
+          <img width="16px" height="16px" data-bind="attr:{src: profile_picture}" />
+        </div>
+        <div class="user-name-position" data-bind="click:detail">
+          <p class="cu-name" data-bind="text:user().full_name"></p>
+          <p class="cu-position" data-bind="text:user().email"></p>
+        </div>
+        <div class="clear-btn-cu .animated .slideInRight"  data-bind="confirmClick: { message: 'Are you sure to remove this user?', click: remove }">
+          <span class="closebtn-cu"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+        <div class="clearfixx"></div>
+      </div>
+
+    </div>
+      </div>
+    </div>
+
+
+</div>
+
+<div class="row" data-bind="with:projectVm, visible: currentVm() == 'project'" style="display:none;">
+    Project
+</div>
+<div class="row" data-bind="with:organizationVm, visible: currentVm() == 'organization'" style="display:none;">
+    Organiztion
+</div>
+{% endblock %}

@@ -107,7 +107,8 @@ var pk = "{{pk}}";
                      <th scope="row" data-bind='text: $index()+1'></th>
                      <td data-bind="text: name"></td>
                      <td data-bind="text: date_created"></td>
-                     <td><button class="btn" data-bind="click:deploy, css:{ 'btn-danger': is_deployed()== true}"><span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></button></td>
+                     <td><button class="btn" data-bind="click:deploy, css:{ 'btn-danger': is_deployed()== true}">
+                         <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></button></td>
                  </tr>
                  </tbody></table>
         </div>
