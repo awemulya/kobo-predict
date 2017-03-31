@@ -181,7 +181,7 @@ class SetProjectRoleForm(HTML5BootstrapModelForm, KOModelForm):
                 users = User.objects.filter(is_active=True).exclude(id__in=old_admins)
             self.fields['user'].queryset = users
         self.fields['group'].queryset = Group.objects.filter(
-            name__in=['Project Manager', 'Reviewer', 'Central Engineer'])
+            name__in=['Project Manager'])
 
     class Meta:
         fields = ['user', 'group','project']
