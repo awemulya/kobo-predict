@@ -48,8 +48,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
             <div class="box-header with-border">
              <button class="btn btn-primary" data-bind="click:$root.addUser">{% trans 'Create New User' %}</button>
             </div>
-              <div class="box-body">
-                  <div class="selected-users" data-bind="visible:$root.selected_users().length">
+              <div class="box-body" style="overflow-y:scroll; height:400px;">
+                  <div class="selected-users" data-bind="visible:$root.selected_users().length" >
                   <h3> {% trans 'Currently Selected Users, Click To Remove '%} </h3>
 
                   <div class="current-users-list row" data-bind="foreach:$root.selected_users">
@@ -69,7 +69,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
                 </div>
                       </div>
-                  <div class="available-users" data-bind="visible:$root.available_users().length">
+                  <div class="available-users"  data-bind="visible:$root.available_users().length">
 
                   <h3> {% trans 'Click To Select From Existing Users '%} </h3>
 
@@ -266,6 +266,34 @@ vm = new ManagePeopleViewModel(pk, level, organization);
     </div>
       <br/>
     <div class="current-users-list row" data-bind="foreach:supervisors">
+
+        <div class="current-person col-sm-3">
+        <div class="user-image-current">
+          <img width="16px" height="16px" data-bind="attr:{src: user().profile_picture}" />
+        </div>
+        <div class="user-name-position" data-bind="click:detail">
+          <p class="cu-name" data-bind="text:user().full_name"></p>
+          <p class="cu-position" data-bind="text:user().email"></p>
+        </div>
+        <div class="clear-btn-cu .animated .slideInRight"  data-bind="confirmClick: { message: 'Are you sure to remove this user?', click: remove }">
+          <span class="closebtn-cu"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+        <div class="clearfixx"></div>
+      </div>
+
+    </div>
+      </div>
+    </div>
+
+
+    <div class="col-sm-12" data-bind="visible :group() =='Reviewer'">
+  <div class="currentuser-block">
+    <div class="search-current">
+      <input type="text" class="current-input" placeholder="Search Reviewers" data-bind="value:search_key_reviewer, valueUpdate:'afterkeydown'">
+      <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+    </div>
+      <br/>
+    <div class="current-users-list row" data-bind="foreach:reviewers">
 
         <div class="current-person col-sm-3">
         <div class="user-image-current">

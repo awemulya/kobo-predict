@@ -1,5 +1,10 @@
+from django.contrib.auth.models import Group
+from django.db import transaction
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import permissions
 from rest_framework import viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, BasePermission
 
 from onadata.apps.fieldsight.mixins import USURPERS
@@ -33,5 +38,22 @@ class UserRoleViewSet(viewsets.ModelViewSet):
         except:
             queryset = []
         return queryset
+
+    def custom_create(self, * args, **kwargs):
+        data = self.request.data
+        level = self.kwargs.get('level')
+        try:
+            with transaction.atomic():
+                if level == "0":
+                    group = Group.objects.get(name=data.get('group'))
+                    for user in data.get('users'):
+                        role = UserRole(user_id=user, site_id=self.kwargs.get('pk'), group=group)
+                        role.save()
+        except:
+            raise ValidationError({
+                "User Creation Failed ",
+            })
+        return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+
 
 

@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^userroles/delete/(?P<pk>\d+)/$', UserRoleDeleteView.as_view(), name='user-role-delete'),
     url(r'^user/add$', UserCreate.as_view(), name='user_add'),
 
-    url(r'^api/people/(?P<level>\d)/(?P<pk>\d+)$', UserRoleViewSet.as_view({'post': 'create','get': 'list'})),
+    url(r'^api/people/(?P<level>\d)/(?P<pk>\d+)$', UserRoleViewSet.as_view({'post': 'custom_create','get': 'list'})),
     ]
