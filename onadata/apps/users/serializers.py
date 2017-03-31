@@ -55,7 +55,13 @@ class AuthCustomTokenSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         exclude = ('password', 'last_login', 'is_superuser', 'is_staff', 'is_active', 'date_joined', 'groups', 'user_permissions')
+
+    def get_profile_picture(self, obj):
+        if obj.user_profile.profile_picture:
+            return obj.user_profile.profile_picture.url
+        return None

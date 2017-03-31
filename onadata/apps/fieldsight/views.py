@@ -582,4 +582,5 @@ def blue_prints(request, id):
 @login_required
 @group_required('Reviewer')
 def manage_people_site(request, pk):
-    return render(request, "fieldsight/manage_people_site.html", {'pk':pk, 'level': "0"})
+    organization = Site.objects.get(pk=pk).project.organization.id
+    return render(request, "fieldsight/manage_people_site.html", {'pk':pk, 'level': "0", 'organization': organization})

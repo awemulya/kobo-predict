@@ -26,7 +26,8 @@
 $(document).ready(function() {
 var pk = "{{pk}}";
 var level = "{{level}}";
-vm = new ManagePeopleViewModel(pk, level);
+var organization = "{{organization}}";
+vm = new ManagePeopleViewModel(pk, level, organization);
  ko.applyBindings(vm);
 });
 
@@ -39,10 +40,135 @@ vm = new ManagePeopleViewModel(pk, level);
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">{% trans 'Assign People' %}</h4>
+        <h4 class="modal-title">{% trans 'Assign People By ' %} {% trans 'Selecting From Existing Users Or Create New '%}</h4>
       </div>
       <div class="modal-body">
-          <div data-bind="with:user">
+          <div data-bind="with:new_role">
+              <div class="box-user-pop box-info">
+            <div class="box-header with-border">
+             <button class="btn btn-primary" data-bind="click:$root.addUser">{% trans 'Create New User' %}</button>
+            </div>
+              <div class="box-body">
+                  <div class="selected-users" data-bind="visible:$root.selected_users().length">
+                  <h3> {% trans 'Currently Selected Users, Click To Remove '%} </h3>
+
+                  <div class="current-users-list row" data-bind="foreach:$root.selected_users">
+
+                    <div class="current-person col-sm-3" data-bind="click:$root.setSelected">
+                    <div class="user-image-current">
+                      <img width="16px" height="16px" data-bind="attr:{src: profile_picture}" />
+                    </div>
+                    <div class="user-name-position">
+                      <p class="cu-name" data-bind="text:full_name"></p>
+                      <p class="cu-position" data-bind="text:username"></p>
+                      <p class="cu-position" data-bind="text:email"></p>
+                    </div>
+
+                    <div class="clearfixx"></div>
+                  </div>
+
+                </div>
+                      </div>
+                  <div class="available-users" data-bind="visible:$root.available_users().length">
+
+                  <h3> {% trans 'Click To Select From Existing Users '%} </h3>
+
+                  <div class="current-users-list row" data-bind="foreach:$root.available_users">
+
+                    <div class="current-person col-sm-3" data-bind="click:$root.setSelected">
+                    <div class="user-image-current">
+                      <img width="16px" height="16px" data-bind="attr:{src: profile_picture}" />
+                    </div>
+                    <div class="user-name-position">
+                      <p class="cu-name" data-bind="text:full_name"></p>
+                      <p class="cu-position" data-bind="text:username"></p>
+                      <p class="cu-position" data-bind="text:email"></p>
+                    </div>
+
+                    <div class="clearfixx"></div>
+                  </div>
+
+                </div>
+                      </div>
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <button class="btn btn-default" data-bind="click:$root.cancelAssign">{% trans 'Cancel' %}</button>
+                <button class="btn btn-info pull-right"  data-bind="click:$root.doAssign">{% trans 'Assign' %}</button>
+              </div>
+          </div>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" tabindex="-2" role="dialog" data-bind="modal:add_user_form_visibility">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{% trans 'New User' %}</h4>
+      </div>
+      <div class="modal-body">
+          <div data-bind="with:new_user">
+              <div class="box-user-pop box-info">
+            <div class="box-header with-border">
+             <h3  class="box-title box-warning" data-bind="text:error"></h3>
+            </div>
+            <form class="form-horizontal">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="username" class="col-sm-2 control-label">{% trans 'Username' %}</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="username" placeholder="Username" data-bind="value:username" required>
+                  </div>
+                </div>
+                  <div class="form-group">
+                  <label class="col-sm-2 control-label">{% trans 'First Name' %}</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control"  placeholder="First Name" data-bind="value:first_name" required>
+                  </div>
+                </div>
+                  <div class="form-group">
+                  <label class="col-sm-2 control-label">{% trans 'Last Name' %}</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control"  placeholder="last Name" data-bind="value:last_name" required>
+                  </div>
+                </div>
+                  <div class="form-group">
+                  <label for="inputEmail3" class="col-sm-2 control-label">{% trans 'Email' %}</label>
+
+                  <div class="col-sm-10">
+                    <input type="email" class="form-control" id="inputEmail3" placeholder="Email" data-bind="value:email" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">{% trans 'Password' %}</label>
+
+                  <div class="col-sm-10">
+                    <input type="password" class="form-control" id="inputPassword3" placeholder="Password" data-bind="value:password" required>
+                  </div>
+                </div>
+                  <div class="form-group">
+                  <label for="inputPassword2" class="col-sm-2 control-label">{% trans 'Password Confirm' %}</label>
+
+                  <div class="col-sm-10">
+                    <input type="password" class="form-control" id="inputPassword2" placeholder="Password Confirm" data-bind="value:cpassword" required>
+                  </div>
+                </div>
+
+              </div>
+              <div class="box-footer">
+                  <button  class="btn btn-default" data-bind="click:$root.cancelUser">{% trans 'Cancel' %}</button>
+                <button  class="btn btn-info pull-right" data-bind="click:$root.saveUser, visible:valid">{% trans 'Save' %}</button>
+              </div>
+            </form>
+          </div>
 
           </div>
       </div>
@@ -59,16 +185,47 @@ vm = new ManagePeopleViewModel(pk, level);
         <h4 class="modal-title">{% trans 'User Detail' %}</h4>
       </div>
       <div class="modal-body">
-          <div data-bind="with:role">
-                 <div class="current-person>
-                    <div class="user-image-current">
-                      <img width="50px" height="50px" data-bind="attr:{src: profile_picture}" />
-                    </div>
-                    <div class="user-name-position">
-                      <p class="cu-name" data-bind="text:user().full_name"></p>
-                      <p class="cu-position" data-bind="text:user().email"></p>
-                    </div>
-             </div>
+
+          <!--<div class="box-detail box-widget widget-user-2" data-bind="with:role">-->
+            <!--&lt;!&ndash; Add the bg color to the header using any of the bg-* classes &ndash;&gt;-->
+            <!--<div class="widget-user-header bg-blue">-->
+              <!--<div class="widget-user-image">-->
+                <!--<img class="img-circle" data-bind="attr:{src: profile_picture}">-->
+              <!--</div>-->
+              <!--&lt;!&ndash; /.widget-user-image &ndash;&gt;-->
+              <!--<h3 class="widget-user-username">Nadia Carmichael</h3>-->
+              <!--<h5 class="widget-user-desc">Lead Developer</h5>-->
+            <!--</div>-->
+            <!--<div class="box-footer no-padding">-->
+              <!--<ul class="nav nav-stacked">-->
+                <!--<li><a href="#">Projects <span class="pull-right badge bg-blue">31</span></a></li>-->
+                <!--<li><a href="#">Tasks <span class="pull-right badge bg-aqua">5</span></a></li>-->
+                <!--<li><a href="#">Completed Projects <span class="pull-right badge bg-green">12</span></a></li>-->
+                <!--<li><a href="#">Followers <span class="pull-right badge bg-red">842</span></a></li>-->
+              <!--</ul>-->
+            <!--</div>-->
+          <!--</div>-->
+
+          <div class="box-user-pop box-primary" data-bind="with:role">
+            <div class="box-body">
+              <img class="profile-user-img img-responsive img-circle" data-bind="attr:{src: user().profile_picture}">
+
+              <h3 class="profile-username text-center"></h3>
+
+              <ul class="list-group list-group-unbordered">
+                <li class="list-group-item">
+                  <b>{% trans 'Full Name' %}</b> <span class="cu-name" data-bind="text:user().full_name"></span>
+                </li>
+                  <li class="list-group-item">
+                  <b>{% trans 'Email' %}</b> <span class="cu-name" data-bind="text:user().email"></span>
+                </li>
+                  <li class="list-group-item">
+                  <b>{% trans 'Username' %}</b> <span class="cu-name" data-bind="text:user().username"></span>
+                </li>
+
+              </ul>
+            </div>
+          </div>
 
           </div>
       </div>
@@ -87,8 +244,8 @@ vm = new ManagePeopleViewModel(pk, level);
 <div class="row" data-bind="with:siteVm ,visible: currentVm() == 'site'" style="display:none;">
 
 <div class="btn-group-nav" role="group" aria-label="...">
-  <button type="button" class="btn" data-bind="css: {'btn-primary': group() == 'supervisor', 'btn-default': !group() == 'supervisor'}, click: function () {setSelectedGroup('supervisor')}">{% trans 'Supervisors' %}</button>
-  <button type="button" class="btn" data-bind="css: {'btn-primary': group() == 'reviewer', 'btn-default': !group() == 'reviewer'}, click: function () {setSelectedGroup('reviewer')}">{% trans 'Reviewers' %}</button>
+  <button type="button" class="btn" data-bind="css: {'btn-primary': group() == 'Site Supervisor', 'btn-default': !group() == 'Site Supervisor'}, click: function () {setSelectedGroup('Site Supervisor')}">{% trans 'Supervisors' %}</button>
+  <button type="button" class="btn" data-bind="css: {'btn-primary': group() == 'Reviewer', 'btn-default': !group() == 'Reviewer'}, click: function () {setSelectedGroup('Reviewer')}">{% trans 'Reviewers' %}</button>
 </div>
 <br/>
 <div class="col-sm-12">
@@ -101,7 +258,7 @@ vm = new ManagePeopleViewModel(pk, level);
 </div>
     <br/>
     <div class="clearfixx"></div>
-<div class="col-sm-12" data-bind="visible :group() =='supervisor'">
+<div class="col-sm-12" data-bind="visible :group() =='Site Supervisor'">
   <div class="currentuser-block">
     <div class="search-current">
       <input type="text" class="current-input" placeholder="Search Supervisors" data-bind="value:search_key_supervisor, valueUpdate:'afterkeydown'">
@@ -112,7 +269,7 @@ vm = new ManagePeopleViewModel(pk, level);
 
         <div class="current-person col-sm-3">
         <div class="user-image-current">
-          <img width="16px" height="16px" data-bind="attr:{src: profile_picture}" />
+          <img width="16px" height="16px" data-bind="attr:{src: user().profile_picture}" />
         </div>
         <div class="user-name-position" data-bind="click:detail">
           <p class="cu-name" data-bind="text:user().full_name"></p>
