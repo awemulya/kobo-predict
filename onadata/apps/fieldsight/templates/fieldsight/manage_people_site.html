@@ -317,7 +317,44 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 </div>
 
 <div class="row" data-bind="with:projectVm, visible: currentVm() == 'project'" style="display:none;">
-    Project
+<div class="col-sm-12">
+     <h3 class="panel-title">
+        <button class="btn btn-primary" data-bind="click:add">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                {% trans 'Add New' %}
+        </button>
+    </h3>
+</div>
+    <br/>
+    <div class="clearfixx"></div>
+<div class="col-sm-12">
+  <div class="currentuser-block">
+    <div class="search-current">
+      <input type="text" class="current-input" placeholder="Search Project Managers" data-bind="value:search_key, valueUpdate:'afterkeydown'">
+      <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+    </div>
+      <br/>
+    <div class="current-users-list row" data-bind="foreach:projectManagers">
+
+        <div class="current-person col-sm-3">
+        <div class="user-image-current">
+          <img width="16px" height="16px" data-bind="attr:{src: user().profile_picture}" />
+        </div>
+        <div class="user-name-position" data-bind="click:detail">
+          <p class="cu-name" data-bind="text:user().full_name"></p>
+          <p class="cu-position" data-bind="text:user().email"></p>
+        </div>
+        <div class="clear-btn-cu .animated .slideInRight"  data-bind="confirmClick: { message: 'Are you sure to remove this Project Manager?', click: rmrole }">
+          <span class="closebtn-cu"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+        <div class="clearfixx"></div>
+      </div>
+
+    </div>
+      </div>
+    </div>
+
+
 </div>
 <div class="row" data-bind="with:organizationVm, visible: currentVm() == 'organization'" style="display:none;">
     Organiztion

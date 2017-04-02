@@ -81,7 +81,7 @@
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                       <li><a href="{% url 'forms:setup-forms' 1 obj.pk %}">{% trans 'Setup Forms' %}</a></li>
-                      <li><a href="{% url 'fieldsight:add_project_staffs' obj.pk %}">{% trans 'Manage People' %}</a></li>
+                      <li><a href="{% url 'fieldsight:manage-people-project' obj.pk %}">{% trans 'People' %}</a></li>
                       <li><a href="{% url 'fieldsight:site-add'%}">{% trans 'Add Site' %}</a></li>
                     </ul>
                 </li>  

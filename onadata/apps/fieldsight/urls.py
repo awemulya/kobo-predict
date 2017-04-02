@@ -32,7 +32,8 @@ from .views import (
     alter_site_status,
     add_supervisor,
     CreateUserView,
-    UserListView, site_images, filter_users, upload_sites, blue_prints, add_project_role, manage_people_site)
+    UserListView, site_images, filter_users, upload_sites, blue_prints, add_project_role, manage_people_site,
+    manage_people_project, manage_people_organization)
 
 router = routers.SimpleRouter()
 # router.register(r'api/organization-type', OrganizationTypeViewSet)
@@ -88,6 +89,8 @@ urlpatterns = [
     url(r'^api/site-images/(?P<pk>\d+)/$', site_images, name='site_images'),
 
     url(r'^manage/people/site/(?P<pk>\d+)/$', manage_people_site, name='manage-people-site'),
+    url(r'^manage/people/project/(?P<pk>\d+)/$', manage_people_project, name='manage-people-project'),
+    url(r'^manage/people/organization/(?P<pk>\d+)/$', manage_people_organization, name='manage-people-org'),
 
     url(r'^accounts/create/$', CreateUserView.as_view(
         form_class=RegistrationForm), name='user-create'),

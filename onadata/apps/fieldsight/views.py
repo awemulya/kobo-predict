@@ -583,4 +583,17 @@ def blue_prints(request, id):
 @group_required('Reviewer')
 def manage_people_site(request, pk):
     organization = Site.objects.get(pk=pk).project.organization.id
-    return render(request, "fieldsight/manage_people_site.html", {'pk':pk, 'level': "0", 'organization': organization})
+    return render(request, "fieldsight/manage_people_site.html", {'pk': pk, 'level': "0", 'organization': organization})
+
+
+@login_required
+@group_required("Project")
+def manage_people_project(request, pk):
+    organization = Project.objects.get(pk=pk).organization.id
+    return render(request, "fieldsight/manage_people_site.html", {'pk': pk, 'level': "1", 'organization': organization})
+
+
+@login_required
+@group_required("Organization")
+def manage_people_organization(request, pk):
+    return render(request, "fieldsight/manage_people_site.html", {'pk': pk, 'level': "2", 'organization': pk})
