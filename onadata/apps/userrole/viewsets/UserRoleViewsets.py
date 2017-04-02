@@ -8,6 +8,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, BasePermission
 
 from onadata.apps.fieldsight.mixins import USURPERS
+from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.userrole.serializers.UserRoleSerializer import UserRoleSerializer
 from onadata.apps.userrole.models import UserRole
 
@@ -46,14 +47,22 @@ class UserRoleViewSet(viewsets.ModelViewSet):
         level = self.kwargs.get('level')
         try:
             with transaction.atomic():
-                if level == "0":
-                    group = Group.objects.get(name=data.get('group'))
-                    for user in data.get('users'):
-                        role, created = UserRole.objects.get_or_create(user_id=user, site_id=self.kwargs.get('pk'), group=group)
-                        if not created:
-                            role.ended_at = None
-                            role.save()
-                            role.save()
+                group = Group.objects.get(name=data.get('group'))
+                for user in data.get('users'):
+                    if level == "0":
+                        site = Site.objects.get(pk=self.kwargs.get('pk'))
+                        role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
+                                                                       project__id=site.project.id, group=group)
+                    elif level == "1":
+                        project = Project.objects.get(pk=self.kwargs.get('pk'))
+                        role, created = UserRole.objects.get_or_create(user_id=user, project_id=self.kwargs.get('pk'),
+                                                                       organization__id=project.organization.id, group=group)
+                    elif level =="2":
+                        role, created = UserRole.objects.get_or_create(user_id=user,
+                                                                       organization_id=self.kwargs.get('pk'), group=group)
+                    if not created:
+                        role.ended_at = None
+                        role.save()
         except:
             raise ValidationError({
                 "User Creation Failed ",
