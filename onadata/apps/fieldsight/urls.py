@@ -90,7 +90,7 @@ urlpatterns = [
 
     url(r'^manage/people/site/(?P<pk>\d+)/$', manage_people_site, name='manage-people-site'),
     url(r'^manage/people/project/(?P<pk>\d+)/$', manage_people_project, name='manage-people-project'),
-    url(r'^manage/people/organization/(?P<pk>\d+)/$', manage_people_organization, name='manage-people-org'),
+    url(r'^manage/people/organization/(?P<pk>\d+)/$', manage_people_organization, name='manage-people-organization'),
 
     url(r'^accounts/create/$', CreateUserView.as_view(
         form_class=RegistrationForm), name='user-create'),
