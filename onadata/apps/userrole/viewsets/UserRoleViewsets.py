@@ -14,7 +14,7 @@ from onadata.apps.userrole.models import UserRole
 SAFE_METHODS = ('GET', 'POST')
 
 
-class AddPeoplePermission(permissions.BasePermission):
+class ManagePeoplePermission(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if request.role.group.name == "Super Admin":
@@ -27,7 +27,7 @@ class AddPeoplePermission(permissions.BasePermission):
 class UserRoleViewSet(viewsets.ModelViewSet):
     queryset = UserRole.objects.filter(organization__isnull=False, ended_at__isnull=True)
     serializer_class = UserRoleSerializer
-    permission_classes = (IsAuthenticated, AddPeoplePermission)
+    permission_classes = (IsAuthenticated, ManagePeoplePermission)
 
     def filter_queryset(self, queryset):
         try:
@@ -47,8 +47,11 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                 if level == "0":
                     group = Group.objects.get(name=data.get('group'))
                     for user in data.get('users'):
-                        role = UserRole(user_id=user, site_id=self.kwargs.get('pk'), group=group)
-                        role.save()
+                        role, created = UserRole.objects.get_or_create(user_id=user, site_id=self.kwargs.get('pk'), group=group)
+                        if not created:
+                            role.ended_at = None
+                            role.save()
+                            role.save()
         except:
             raise ValidationError({
                 "User Creation Failed ",

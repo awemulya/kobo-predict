@@ -1,10 +1,18 @@
+from django.utils import timezone
+
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
 from django.views.generic import ListView
+from rest_framework.response import Response
 
 from onadata.apps.fieldsight.mixins import (LoginRequiredMixin, SuperAdminMixin, CreateView, UpdateView, DeleteView,
                                             AjaxableResponseMixinUser)
+from onadata.apps.userrole.serializers.UserRoleSerializer import UserRoleSerializer
+from onadata.apps.userrole.viewsets.UserRoleViewsets import ManagePeoplePermission
 from .forms import UserRoleForm, UserForm
 from .models import UserRole as Role, UserRole
 
@@ -49,5 +57,17 @@ class UserCreate(LoginRequiredMixin, AjaxableResponseMixinUser, UserView, Create
     def get_template_names(self):
         return ['users/create_user.html']
 
+
+@api_view(['POST'])
+@permission_classes([ManagePeoplePermission])
+def remove_role(request):
+    try:
+        role = UserRole.objects.get(pk=request.data.get("id"))
+        role.ended_at = timezone.now()
+        role.save()
+        serializer = UserRoleSerializer(role)
+        return Response({'role':role.id,'role_name':role.group.name, 'msg':"Sucessfully Unassigned {}".format(role.user.username)}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 
