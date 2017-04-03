@@ -197,7 +197,7 @@ def site_dashboard(request, pk):
     data = serialize('custom_geojson', [obj], geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
 
-    all, outstanding, flagged, approved, rejected = Submission.get_site_submission(pk)
+    outstanding, flagged, approved, rejected = obj.get_site_submission()
     dashboard_data = {
         'obj': obj,
         'peoples_involved': peoples_involved,
@@ -205,7 +205,6 @@ def site_dashboard(request, pk):
         'flagged': flagged,
         'approved': approved,
         'rejected': rejected,
-        'all': all,
         'data': data,
     }
     return TemplateResponse(request, "fieldsight/site_dashboard.html", dashboard_data)

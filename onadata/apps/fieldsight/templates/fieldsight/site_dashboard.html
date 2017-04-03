@@ -209,17 +209,17 @@
                       <div id="out-standing" class="tab-pane fade in active">
                         <div class="org-site-list">
                             <div class="form-list">
-                                {% for form in outstanding %}
-                                <a href="{% url 'forms:instance' form.fsid %}#/{{ form.instance|stringformat:'d' }}">
+                                {% for instance in outstanding %}
+                                <a href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.pk}}">
                                     <div class="org-site">
                                         
                                         <div class="">
                                             <div class="detail-org">
                                               
-                                              <h4 class="address">{{ form.fsform.xf.title}}</h4>
+                                              <h4 class="address">{{ instance.site_fxf.xf.title}}</h4>
                                               <div class="detail-person-time">
-                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
-                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>  
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ instance.submitted_by }}</span>
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ instance.date }}</span>
                                               </div>
                                               <div class="clearfixx"></div>
                                             </div>
@@ -233,24 +233,24 @@
                       <div id="out-reject" class="tab-pane fade">
                         <div class="org-site-list">
                             <div class="form-list">
-                                {% for form in rejected %}
-                                <a href="{% url 'forms:instance' form.fsid %}#/{{ form.instance|stringformat:'d' }}">
+                                {% for instance in rejected %}
+                                <a href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.pk}}">
                                     <div class="org-site">
-                                        
-                                      <div class="">
+
+                                        <div class="">
                                             <div class="detail-org">
-                                              
-                                              <h4 class="address">{{ form.fsform.xf.title}}</h4>
-                                             <div class="detail-person-time">
-                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
-                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>  
+
+                                              <h4 class="address">{{ instance.site_fxf.xf.title}}</h4>
+                                              <div class="detail-person-time">
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ instance.submitted_by }}</span>
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ instance.date }}</span>
                                               </div>
                                               <div class="clearfixx"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </a>
-                                 {% endfor %}
+                                {% endfor %}
 
                             </div>
                         </div>
@@ -258,24 +258,24 @@
                       <div id="out-flagged" class="tab-pane fade">
                         <div class="org-site-list">
                             <div class="form-list">
-                                {% for form in flagged %}
-                                <a href="{% url 'forms:instance' form.fsid %}#/{{ form.instance|stringformat:'d' }}">
+                                {% for instance in flagged %}
+                                <a href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.pk}}">
                                     <div class="org-site">
 
-                                      <div class="">
+                                        <div class="">
                                             <div class="detail-org">
-                                                
-                                                <h4 class="address">{{ form.fsform.xf.title}}</h4>
-                                                <div class="detail-person-time">
-                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
-                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>  
+
+                                              <h4 class="address">{{ instance.site_fxf.xf.title}}</h4>
+                                              <div class="detail-person-time">
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ instance.submitted_by }}</span>
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ instance.date }}</span>
                                               </div>
                                               <div class="clearfixx"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </a>
-                                 {% endfor %}
+                                {% endfor %}
                             </div>
                         </div>
                       </div>
@@ -331,25 +331,25 @@
           <div class="col-md-3">
             <div class="out-dash-flag">
               <p class="length-flags-forms">{{outstanding|length}}</p>
-              <p class="flags-forms">outstanding subs</p>
+              <p class="flags-forms">{% trans 'Outstanding submissions' %}</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="flag-dash-flag">
               <p class="length-flags-forms">{{flagged|length}}</p>
-              <p class="flags-forms">flagged subs</p>
+              <p class="flags-forms">{% trans 'Flagged submissions' %}</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="reg-dash-flag">
               <p class="length-flags-forms">{{rejected|length}}</p>
-              <p class="flags-forms">rejected subs</p>
+              <p class="flags-forms">{% trans 'Rejected submissions' %}</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="app-dash-flag">
               <p class="length-flags-forms">{{approved|length}}</p>
-              <p class="flags-forms">approved subs</p>
+              <p class="flags-forms">{% trans 'Approved submissions' %}</p>
             </div>
           </div>
           <div class="clearfixx"></div>

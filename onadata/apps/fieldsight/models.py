@@ -215,6 +215,21 @@ class Site(models.Model):
             return 0
         return ("%.2f" % (len(approved)/(len(stages)*0.01)))
 
+    def get_site_submission(self):
+        instances = self.site_instances.all()
+        outstanding, flagged, approved, rejected = [], [], [], []
+        for submission in instances:
+            if submission.form_status == 0:
+                outstanding.append(submission)
+            elif submission.form_status == 1:
+                rejected.append(submission)
+            elif submission.form_status == 2:
+                flagged.append(submission)
+            elif submission.form_status == 3:
+                approved.append(submission)
+
+        return outstanding, flagged, approved, rejected
+
     @property
     def get_absolute_url(self):
         return reverse('sites-detail', kwargs={'pk': self.pk})

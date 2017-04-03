@@ -313,6 +313,7 @@ class FInstance(models.Model):
     project_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='project_form_instances')
     form_status = models.IntegerField(default=0, choices=FORM_STATUS)
     date = models.DateTimeField(auto_now=True)
+    submitted_by = models.ForeignKey(User, related_name="supervisor")
 
 
 class InstanceStatusChanged(models.Model):

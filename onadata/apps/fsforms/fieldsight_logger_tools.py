@@ -66,7 +66,7 @@ uuid_regex = re.compile(r'<formhub>\s*<uuid>\s*([^<]+)\s*</uuid>\s*</formhub>',
 mongo_instances = settings.MONGO_DB.instances
 
 
-def _get_instance(xml, new_uuid, submitted_by, status, xform, fxfid, project_fxf, site_id, project_id):
+def _get_instance(xml, new_uuid, submitted_by, status, xform, fxfid, project_fxf, site_id, project_id, user):
     # check if its an edit submission
     # old_uuid = get_deprecated_uuid_from_xml(xml)
     # instances = Instance.objects.filter(uuid=new_uuid)
@@ -85,7 +85,7 @@ def _get_instance(xml, new_uuid, submitted_by, status, xform, fxfid, project_fxf
         instance = Instance.objects.create(
             xml=xml, user=submitted_by, status=status, xform=xform)
         FInstance.objects.create(instance=instance, site_id=site_id, project_id=project_id, site_fxf_id=fxfid,
-                                 project_fxf_id=project_fxf )
+                                 project_fxf_id=project_fxf, submitted_by=user)
         if instance:
             instance.uuid = new_uuid
             instance.save()
@@ -159,11 +159,11 @@ def check_submission_permissions(request, xform):
 
 
 def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
-                    date_created_override, fxid, site, fs_poj_id=None, project=None):
+                    date_created_override, fxid, site, fs_poj_id=None, project=None, user=None):
     if not date_created_override:
         date_created_override = get_submission_date_from_xml(xml)
 
-    instance = _get_instance(xml, new_uuid, submitted_by, status, xform, fxid, fs_poj_id, site, project)
+    instance = _get_instance(xml, new_uuid, submitted_by, status, xform, fxid, fs_poj_id, site, project, user)
 
     for f in media_files:
         Attachment.objects.get_or_create(
@@ -203,7 +203,7 @@ def schedule_uuid_value(fsxform):
 
 def create_instance(fsxfid, xml_file, media_files,
                     status=u'submitted_via_web', uuid=None,
-                    date_created_override=None, request=None, site=None, fs_proj_xf=None, proj_id=None, xform=None):
+                    date_created_override=None, request=None, site=None, fs_proj_xf=None, proj_id=None, xform=None, user=None):
 
     with transaction.atomic():
         instance = None
@@ -229,7 +229,7 @@ def create_instance(fsxfid, xml_file, media_files,
         # else:
         instance = save_submission(xform, xml, media_files, uuid,
                                        submitted_by, status,
-                                       date_created_override, str(fsxfid), str(site), fs_proj_xf, proj_id)
+                                       date_created_override, str(fsxfid), str(site), fs_proj_xf, proj_id, user)
         return instance
 
     # if duplicate_instances:
@@ -241,7 +241,7 @@ def create_instance(fsxfid, xml_file, media_files,
     #     raise DuplicateInstance()
 
 
-def safe_create_instance(fsxfid, xml_file, media_files, uuid, request, site, fs_proj_xf, proj_id, xform):
+def safe_create_instance(fsxfid, xml_file, media_files, uuid, request, site, fs_proj_xf, proj_id, xform, user):
     """Create an instance and catch exceptions.
 
     :returns: A list [error, instance] where error is None if there was no
@@ -252,7 +252,7 @@ def safe_create_instance(fsxfid, xml_file, media_files, uuid, request, site, fs_
     try:
         instance = create_instance(
             fsxfid, xml_file, media_files, uuid=uuid, request=request, site=site, fs_proj_xf=fs_proj_xf,
-            proj_id=proj_id, xform=xform)
+            proj_id=proj_id, xform=xform, user=user)
     except InstanceInvalidUserError:
         error = OpenRosaResponseBadRequest(_(u"Username or ID required."))
     except InstanceEmptyError:
