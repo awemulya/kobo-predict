@@ -6,7 +6,7 @@ from rest_framework import routers
 from onadata.apps.fieldsight.viewsets.FieldsightFcmViewset import FcmDeviceViewSet
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectViewSet
-from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet
+from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteViewSet
 from .forms import RegistrationForm
 
 from .views import (
@@ -76,6 +76,7 @@ urlpatterns = [
     url(r'^api/project-sites/(?P<pk>\d+)/$', SiteViewSet.as_view({'get': 'list'}), name='project_sites'),
 
 
+    url(r'^api/sites/$', AllSiteViewSet.as_view({'get': 'list'}), name='sites-list'),
     url(r'^site/$', SiteListView.as_view(), name='sites-list'),
     url(r'^site/$', SiteListView.as_view(), name='site-list'),
     url(r'^site/add/$', SiteCreateView.as_view(), name='site-add'),

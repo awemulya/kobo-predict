@@ -13,31 +13,22 @@
  {%block kocript %}
  <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
     <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/sites.js"></script>
 
     <script>
 
 $(document).ready(function() {
-var myDjangoList = (("{{object_list |jsonify}}").replace(/&(l|g|quo)t;/g, function(a,b){
-            return {
-                l   : '<',
-                g   : '>',
-                quo : '"'
-            }[b];
-        }));
-
-myDjangoList = myDjangoList.replace(/u'/g, '\'')
-myDjangoList = myDjangoList.replace(/'/g, '\"')
-
-var site_list = JSON.parse( myDjangoList );
-
- vm = new SitesViewModel(site_list);
+ vm = new SitesViewModel();
  ko.applyBindings(vm);
 });
 
     </script>
 
-    {% endblock %}
+{% endblock %}
 
 {% block content %}
 <div data-bind="with:current_site">

@@ -210,7 +210,7 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for instance in outstanding %}
-                                <a href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.pk}}">
+                                <a href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.pk|stringformat:'d'}}">
                                     <div class="org-site">
                                         
                                         <div class="">
@@ -234,7 +234,7 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for instance in rejected %}
-                                <a href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.pk}}">
+                                <a href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.pk|stringformat:'d'}}">
                                     <div class="org-site">
 
                                         <div class="">
@@ -259,7 +259,7 @@
                         <div class="org-site-list">
                             <div class="form-list">
                                 {% for instance in flagged %}
-                                <a href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.pk}}">
+                                <a href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.pk|stringformat:'d'}}">
                                     <div class="org-site">
 
                                         <div class="">
