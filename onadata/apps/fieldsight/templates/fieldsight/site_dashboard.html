@@ -174,8 +174,7 @@
                             <ul class="dropdown-menu">
                               <li><a href="{% url 'forms:setup-forms' 0 obj.pk %}">{% trans 'Forms' %}</a></li>
                               <li><a href="{% url 'fieldsight:manage-people-site' obj.pk %}">{% trans 'People' %}</a></li>
-                              <!-- <li><a href="{% url 'forms:project-schedule-add' obj.pk %}">{% trans 'Forms' %}</a></li>
-                              <li><a href="{% url 'fieldsight:add_project_staffs' obj.pk %}">{% trans 'People' %}</a></li> -->
+                                <li><a href="{% url 'fieldsight:site-blue-prints' obj.pk %}">{% trans 'Add BluePrints' %}</a></li>
                             </ul>
                         </li>  
                        </ul>
