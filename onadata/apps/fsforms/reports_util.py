@@ -108,15 +108,15 @@ def query_mongo(username, id_string, query, fields, sort, start=0,
     # if '_uuid' in query and ObjectId.is_valid(query['_uuid']):
     #     query['_uuid'] = ObjectId(query['_uuid'])
 
-    if fs_uuid is not None:
-        query.pop('_userform_id')
-        query['_uuid'] = { '$in': [fs_uuid, str(fs_uuid)] }
-    if fs_project_uuid is not None:
-        query['fs_project_uuid'] = { '$in': [fs_project_uuid, str(fs_project_uuid)] }
-    if hide_deleted:
-        # display only active elements
-        # join existing query with deleted_at_query on an $and
-        query = {"$and": [query, {"_deleted_at": None}]}
+    query.pop('_userform_id')
+    # if fs_uuid is not None:
+    #     query['_uuid'] = { '$in': [fs_uuid, str(fs_uuid)] } #fs_uuid
+    # if fs_project_uuid is not None:
+    #     query['fs_project_uuid'] = { '$in': [fs_project_uuid, str(fs_project_uuid)] } #fs_project_uuid
+    # if hide_deleted:
+    #     # display only active elements
+    #     # join existing query with deleted_at_query on an $and
+    #     query = {"$and": [query, {"_deleted_at": None}]}
 
     # fields must be a string array i.e. '["name", "age"]'
     if isinstance(fields, basestring):
@@ -131,8 +131,10 @@ def query_mongo(username, id_string, query, fields, sort, start=0,
     if isinstance(sort, basestring):
         sort = json.loads(sort, object_hook=json_util.object_hook)
     sort = sort if sort else {}
-
-    cursor = xform_instances.find(query, fields_to_select)
+    if fs_uuid is not None:
+        cursor = xform_instances.find({"$or":[ {"_uuid":fs_uuid}, {"fs_uuid":fs_uuid}, {"_uuid":str(fs_uuid)}, {"fs_uuid":str(fs_uuid)}]}, fields_to_select)
+    else:
+        cursor = xform_instances.find({"$or":[ {"fs_project_uuid":fs_project_uuid}, {"fs_project_uuid":str(fs_uuid)}]}, fields_to_select)
     if count:
         return [{"count": cursor.count()}]
 

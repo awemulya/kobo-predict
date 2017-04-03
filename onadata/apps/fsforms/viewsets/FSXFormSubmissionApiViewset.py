@@ -12,11 +12,11 @@ from ..fieldsight_logger_tools import safe_create_instance
 DEFAULT_CONTENT_LENGTH = getattr(settings, 'DEFAULT_CONTENT_LENGTH', 10000000)
 
 
-def create_instance_from_xml(request, fsid, site, fs_proj_xf, proj_id, xform, user):
+def create_instance_from_xml(request, fsid, site, fs_proj_xf, proj_id, xform):
     xml_file_list = request.FILES.pop('xml_submission_file', [])
     xml_file = xml_file_list[0] if len(xml_file_list) else None
     media_files = request.FILES.values()
-    return safe_create_instance(fsid, xml_file, media_files, None, request, site, fs_proj_xf, proj_id, xform, user)
+    return safe_create_instance(fsid, xml_file, media_files, None, request, site, fs_proj_xf, proj_id, xform)
 
 
 class FSXFormSubmissionApi(XFormSubmissionApi):
@@ -45,7 +45,7 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
             return Response(status=status.HTTP_204_NO_CONTENT,
                             headers=self.get_openrosa_headers(request),
                             template_name=self.template_name)
-        error, instance = create_instance_from_xml(request, fsxfid, siteid, fs_proj_xf, proj_id, xform, self.request.user)
+        error, instance = create_instance_from_xml(request, fsxfid, siteid, fs_proj_xf, proj_id, xform)
         # modify create instance
 
         if error or not instance:
