@@ -164,7 +164,7 @@
                     <ul class="nav nav-tabs">
                       <!-- <li class="all active"><a data-toggle="tab" href="#out-all">All ({{all|length}})</a></li> -->
                       <li class="out active"><a data-toggle="tab" href="#out-standing">Outstanding ({{outstanding|length}})</a></li>
-                        <li class="reg"><a data-toggle="tab" href="#out-reject">Rejected ({{rejected|length}})</a></li>
+                        <li class="reg"><a data-toggle="tab" href="#out-rejected">Rejected ({{rejected|length}})</a></li>
                         <li class="flag"><a data-toggle="tab" href="#out-flagged">Flagged ({{flagged|length}})</a></li>
 
                         <ul class="nav navbar-nav navbar-right">
@@ -182,104 +182,106 @@
                     </ul>
 
                     <div class="tab-content">
-                      <!-- <div id="out-all" class="tab-pane fade in active">
-                        <div class="org-site-list">
-                            <div class="form-list">
-                                {% for form in all %}
-                                <a href="{% url 'forms:instance' form.fsid %}#/{{ form.instance|stringformat:'d' }}">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                              
-                                              <h4 class="address">{{ form.fsform.xf.title}}</h4>
-                                              <div class="detail-person-time">
-                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ form.submitted_by }}</span>
-                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ form.submission_time }}</span>  
-                                              </div>
-                                              <div class="clearfixx"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                                {% endfor %}
-                            </div>
-                        </div>
-                      </div> -->
                       <div id="out-standing" class="tab-pane fade in active">
                         <div class="org-site-list">
                             <div class="form-list">
-                                {% for instance in outstanding %}
-                                <a href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-                                    <div class="org-site">
-                                        
-                                        <div class="">
-                                            <div class="detail-org">
-                                              
-                                              <h4 class="address">{{ instance.site_fxf.xf.title}}</h4>
-                                              <div class="detail-person-time">
-                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ instance.submitted_by }}</span>
-                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ instance.date }}</span>
-                                              </div>
-                                              <div class="clearfixx"></div>
+                                <div class="panel panel-default">
+                                  <table class="table table-striped table-hover">
+                                      {% for instance in outstanding %}
+                                      <tr>
+                                          <td>
+                                              <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+                                                <h4 class="address">{{ instance.site_fxf.xf.title}}</h4>
+                                              </a>
+                                          </td>
+                                          <td>
+                                              <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
+                                            <div class="detail-person-time">
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user fa-fw"></i></span>{{ instance.submitted_by }}</span>
                                             </div>
-                                        </div>
-                                    </div>
-                                </a>
-                                {% endfor %}
+                                              </a>
+                                          </td>
+                                          <td>
+                                            <div class="detail-person-time">
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i></span>{{ instance.date|timesince }}{% trans ' ago' %}</span>
+                                            </div>
+                                          </td>
+                                      </tr>
+                                      {% endfor %}
+                                  </table>
+                                 </div>
+
                             </div>
                         </div>
                       </div>
-                      <!--<div id="out-reject" class="tab-pane fade">-->
-                        <!--<div class="org-site-list">-->
-                            <!--<div class="form-list">-->
-                                <!--{% for instance in rejected %}-->
-                                <!--<a href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">-->
-                                    <!--<div class="org-site">-->
 
-                                        <!--<div class="">-->
-                                            <!--<div class="detail-org">-->
+                    <div id="out-rejected" class="tab-pane fade in">
+                        <div class="org-site-list">
+                            <div class="form-list">
+                                <div class="panel panel-default">
+                                  <table class="table table-striped table-hover">
+                                      {% for instance in rejected %}
+                                      <tr>
+                                          <td>
+                                              <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+                                                <h4 class="address">{{ instance.site_fxf.xf.title}}</h4>
+                                              </a>
+                                          </td>
+                                          <td>
+                                              <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
+                                            <div class="detail-person-time">
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user fa-fw"></i></span>{{ instance.submitted_by }}</span>
+                                            </div>
+                                              </a>
+                                          </td>
+                                          <td>
+                                            <div class="detail-person-time">
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i></span>{{ instance.date|timesince }}{% trans ' ago' %}</span>
+                                            </div>
+                                          </td>
+                                      </tr>
+                                      {% endfor %}
+                                  </table>
+                                 </div>
 
-                                              <!--<h4 class="address">{{ instance.site_fxf.xf.title}}</h4>-->
-                                              <!--<div class="detail-person-time">-->
-                                                <!--<span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ instance.submitted_by }}</span>-->
-                                                <!--<span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ instance.date }}</span>-->
-                                              <!--</div>-->
-                                              <!--<div class="clearfixx"></div>-->
-                                            <!--</div>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                <!--</a>-->
-                                <!--{% endfor %}-->
+                            </div>
+                        </div>
+                      </div>
 
-                            <!--</div>-->
-                        <!--</div>-->
-                      <!--</div>-->
-                      <!--<div id="out-flagged" class="tab-pane fade">-->
-                        <!--<div class="org-site-list">-->
-                            <!--<div class="form-list">-->
-                                <!--{% for instance in flagged %}-->
-                                <!--<a href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">-->
-                                    <!--<div class="org-site">-->
+                    <div id="out-flagged" class="tab-pane fade in">
+                        <div class="org-site-list">
+                            <div class="form-list">
+                                <div class="panel panel-default">
+                                  <table class="table table-striped table-hover">
+                                      {% for instance in flagged %}
+                                      <tr>
+                                          <td>
+                                              <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+                                                <h4 class="address">{{ instance.site_fxf.xf.title}}</h4>
+                                              </a>
+                                          </td>
+                                          <td>
+                                              <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
+                                            <div class="detail-person-time">
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user fa-fw"></i></span>{{ instance.submitted_by }}</span>
+                                            </div>
+                                              </a>
+                                          </td>
+                                          <td>
+                                            <div class="detail-person-time">
+                                                <span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i></span>{{ instance.date|timesince }}{% trans ' ago' %}</span>
+                                            </div>
+                                          </td>
+                                      </tr>
+                                      {% endfor %}
+                                  </table>
+                                 </div>
 
-                                        <!--<div class="">-->
-                                            <!--<div class="detail-org">-->
+                            </div>
+                        </div>
+                      </div>
 
-                                              <!--<h4 class="address">{{ instance.site_fxf.xf.title}}</h4>-->
-                                              <!--<div class="detail-person-time">-->
-                                                <!--<span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user"></i></span>{{ instance.submitted_by }}</span>-->
-                                                <!--<span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>{{ instance.date }}</span>-->
-                                              <!--</div>-->
-                                              <!--<div class="clearfixx"></div>-->
-                                            <!--</div>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                <!--</a>-->
-                                <!--{% endfor %}-->
-                            <!--</div>-->
-                        <!--</div>-->
-                      <!--</div>-->
-                    </div>  
+                    </div>
                 </div>  
             </div>
         </div>
