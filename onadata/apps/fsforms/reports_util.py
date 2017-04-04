@@ -134,7 +134,7 @@ def query_mongo(username, id_string, query, fields, sort, start=0,
     if fs_uuid is not None:
         cursor = xform_instances.find({"$or":[ {"_uuid":fs_uuid}, {"fs_uuid":fs_uuid}, {"_uuid":str(fs_uuid)}, {"fs_uuid":str(fs_uuid)}]}, fields_to_select)
     else:
-        cursor = xform_instances.find({"$or":[ {"fs_project_uuid":fs_project_uuid}, {"fs_project_uuid":str(fs_uuid)}]}, fields_to_select)
+        cursor = xform_instances.find({"$or":[ {"fs_project_uuid":fs_project_uuid}, {"fs_project_uuid":str(fs_project_uuid)}]}, fields_to_select)
     if count:
         return [{"count": cursor.count()}]
 
