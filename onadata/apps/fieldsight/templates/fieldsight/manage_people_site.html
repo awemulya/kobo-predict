@@ -346,24 +346,24 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 </div>
 <div class="row" data-bind="with:orgVm, visible: currentVm() == 'organization'" style="display:none;">
     <div class="col-sm-12">
-     <h3 class="panel-title">
-        <button class="btn btn-primary" data-bind="click:add">
-                <i class="fa fa-plus" aria-hidden="true"></i>
-                {% trans 'Add New' %}
-        </button>
-    </h3>
-</div>
-    <br/>
-    <div class="clearfixx"></div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="col-sm-2">
+                    <button class="btn btn-primary btn-lg sq" data-bind="click:add">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            {% trans 'Add New' %}
+                    </button>
+                </div>
+                <div class="col-sm-10">
+                     <input type="text" class="current-input" placeholder="Search Admins" data-bind="value:search_key, valueUpdate:'afterkeydown'">
+                    <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
 <div class="col-sm-12">
   <div class="currentuser-block">
-    <div class="search-current">
-      <input type="text" class="current-input" placeholder="Search Admins" data-bind="value:search_key, valueUpdate:'afterkeydown'">
-      <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
-    </div>
-      <br/>
     <div class="current-users-list row" data-bind="foreach:admins">
-
         <div class="current-person col-sm-3">
         <div class="user-image-current">
           <img width="16px" height="16px" data-bind="attr:{src: user().profile_picture}" />
