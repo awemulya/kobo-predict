@@ -185,27 +185,6 @@ vm = new ManagePeopleViewModel(pk, level, organization);
         <h4 class="modal-title">{% trans 'User Detail' %}</h4>
       </div>
       <div class="modal-body">
-
-          <!--<div class="box-detail box-widget widget-user-2" data-bind="with:role">-->
-            <!--&lt;!&ndash; Add the bg color to the header using any of the bg-* classes &ndash;&gt;-->
-            <!--<div class="widget-user-header bg-blue">-->
-              <!--<div class="widget-user-image">-->
-                <!--<img class="img-circle" data-bind="attr:{src: profile_picture}">-->
-              <!--</div>-->
-              <!--&lt;!&ndash; /.widget-user-image &ndash;&gt;-->
-              <!--<h3 class="widget-user-username">Nadia Carmichael</h3>-->
-              <!--<h5 class="widget-user-desc">Lead Developer</h5>-->
-            <!--</div>-->
-            <!--<div class="box-footer no-padding">-->
-              <!--<ul class="nav nav-stacked">-->
-                <!--<li><a href="#">Projects <span class="pull-right badge bg-blue">31</span></a></li>-->
-                <!--<li><a href="#">Tasks <span class="pull-right badge bg-aqua">5</span></a></li>-->
-                <!--<li><a href="#">Completed Projects <span class="pull-right badge bg-green">12</span></a></li>-->
-                <!--<li><a href="#">Followers <span class="pull-right badge bg-red">842</span></a></li>-->
-              <!--</ul>-->
-            <!--</div>-->
-          <!--</div>-->
-
           <div class="box-user-pop box-primary" data-bind="with:role">
             <div class="box-body">
               <img class="profile-user-img img-responsive img-circle" data-bind="attr:{src: user().profile_picture}">
@@ -239,7 +218,6 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 <div class="row">
     {% csrf_token %}
 </div>
-<br/>
 
 <div class="row" data-bind="with:siteVm ,visible: currentVm() == 'site'" style="display:none;">
 
@@ -247,24 +225,24 @@ vm = new ManagePeopleViewModel(pk, level, organization);
   <button type="button" class="btn" data-bind="css: {'btn-primary': group() == 'Site Supervisor', 'btn-default': !group() == 'Site Supervisor'}, click: function () {setSelectedGroup('Site Supervisor')}">{% trans 'Supervisors' %}</button>
   <button type="button" class="btn" data-bind="css: {'btn-primary': group() == 'Reviewer', 'btn-default': !group() == 'Reviewer'}, click: function () {setSelectedGroup('Reviewer')}">{% trans 'Reviewers' %}</button>
 </div>
-<br/>
-<div class="col-sm-12">
-     <h3 class="panel-title">
+<hr>
+
+<div class="col-sm-12" data-bind="visible :group() =='Site Supervisor'">
+    <div class="col-sm-4">
+        <h3 class="panel-title">
         <button class="btn btn-primary" data-bind="click:add">
-                <i class="fa fa-plus" aria-hidden="true"></i>
+            <i class="fa fa-plus" aria-hidden="true"></i>
                 {% trans 'Add New' %}
         </button>
-    </h3>
-</div>
-    <br/>
-    <div class="clearfixx"></div>
-<div class="col-sm-12" data-bind="visible :group() =='Site Supervisor'">
-  <div class="currentuser-block">
-    <div class="search-current">
-      <input type="text" class="current-input" placeholder="Search Supervisors" data-bind="value:search_key_supervisor, valueUpdate:'afterkeydown'">
-      <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+        </h3>
     </div>
-      <br/>
+    <div class="col-sm-8">
+        <input type="text" class="current-input" placeholder="Search Supervisors" data-bind="value:search_key_supervisor, valueUpdate:'afterkeydown'">
+        <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+
+    </div>
+<hr>
+  <div class="currentuser-block">
     <div class="current-users-list row" data-bind="foreach:supervisors">
 
         <div class="current-person col-sm-3">
@@ -282,17 +260,26 @@ vm = new ManagePeopleViewModel(pk, level, organization);
       </div>
 
     </div>
-      </div>
+  </div>
+</div>
+
+
+<div class="col-sm-12" data-bind="visible :group() =='Reviewer'">
+    <div class="col-sm-4">
+        <h3 class="panel-title">
+        <button class="btn btn-primary" data-bind="click:add">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+                {% trans 'Add New' %}
+        </button>
+        </h3>
     </div>
+    <div class="col-sm-8">
+            <input type="text" class="current-input" placeholder="Search Reviewers" data-bind="value:search_key_reviewer, valueUpdate:'afterkeydown'">
+            <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
 
-
-    <div class="col-sm-12" data-bind="visible :group() =='Reviewer'">
+    </div>
+</hr>
   <div class="currentuser-block">
-    <div class="search-current">
-      <input type="text" class="current-input" placeholder="Search Reviewers" data-bind="value:search_key_reviewer, valueUpdate:'afterkeydown'">
-      <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
-    </div>
-      <br/>
     <div class="current-users-list row" data-bind="foreach:reviewers">
 
         <div class="current-person col-sm-3">
