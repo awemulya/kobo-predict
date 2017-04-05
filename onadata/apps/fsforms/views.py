@@ -737,6 +737,30 @@ def deploy_general(request, is_project, pk):
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
+@group_required("Project")
+@api_view(['POST', 'GET'])
+def deploy_general_remaining_sites(request, is_project, pk):
+    fxf_id = request.data.get('id')
+    fxf_status = request.data.get('is_deployed')
+    try:
+        if is_project == "1":
+            with transaction.atomic():
+                fxf = FieldSightXF.objects.get(pk=fxf_id)
+                if fxf_status:
+                    for site in fxf.project.sites.filter(is_active=True):
+                        child, created = FieldSightXF.objects.get_or_create(is_staged=False, is_scheduled=False, xf=fxf.xf, site=site, fsform_id=fxf_id)
+                        child.is_deployed = True
+                        child.save()
+                        if created:
+                            send_message_stages(site)
+                else:
+                    return Response({'error':"Deploy Form First and deploy to remaining.."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error':"Site level Deploy to remaining Not permitted."}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 # @group_required("Project")

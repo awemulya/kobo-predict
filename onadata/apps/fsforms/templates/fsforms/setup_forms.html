@@ -108,7 +108,10 @@ var pk = "{{pk}}";
                      <td data-bind="text: name"></td>
                      <td data-bind="text: date_created"></td>
                      <td><button class="btn" data-bind="click:deploy, css:{ 'btn-danger': is_deployed()== true}">
-                         <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></button></td>
+                         <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></button>
+                         <button class="btn btn-info" data-bind="click:deploy_to_remaining, visible:is_deployed()== true && $root.is_project ==1">
+                         <span>{% trans 'Deploy To remaining sites' %}</span></button>
+                     </td>
                  </tr>
                  </tbody></table>
         </div>
@@ -206,19 +209,23 @@ var pk = "{{pk}}";
         <div class="stage-container">
           <div class="stage-container-heading">
           <div class="panel-heading">
-                  <button class="btn btn-primary" data-bind="click:add_stage">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                        {% trans 'Add Stage' %}
-                    </button>
-                    {% csrf_token %}
-                    <button class="btn btn-danger" style="float:right" data-bind="confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                        {% trans 'Deploy to Mobile' %}
-                    </button>
+              <button class="btn btn-primary" data-bind="click:add_stage">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    {% trans 'Add Stage' %}
+                </button>
+                {% csrf_token %}
+                <!--<button class="btn btn-info" style="float:right;margin-left:50px;" data-bind="visible:stages().length > 0, confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">-->
+                    <!--<i class="fa fa-code-fork" aria-hidden="true"></i>-->
+                    <!--{% trans 'Deploy to Remaining Sites' %}-->
+                <!--</button>-->
+                <button class="btn btn-danger" style="float:right;" data-bind="visible:stages().length > 0, confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">
+                    <i class="fa fa-upload" aria-hidden="true"></i>
+                    {% trans 'Deploy to Mobile' %}
+                </button>
           </div>
           </div>
 
-                 <div class="container" data-bind="sortable: {data: stages, afterMove: orderChanged}">
+                 <div class="container" data-bind="visible:stages().length > 0, sortable: {data: stages, afterMove: orderChanged}">
                     <div class="item">
                      <div class="row">
                         <div class="col-sm-12">
