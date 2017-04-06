@@ -9,9 +9,7 @@ DEFAULT_LIMIT = 30000
 
 
 def get_instances_for_field_sight_form(fieldsight_form_id, submission=None):
-    query = {'fs_uuid': { '$in': [fieldsight_form_id, str(fieldsight_form_id)] }, '_deleted_at': {'$exists': False}}
-    if submission:
-        query['_id'] = submission
+    query = {"$or":[{"_uuid":fieldsight_form_id}, {"fs_uuid":fieldsight_form_id}, {"_uuid":str(fieldsight_form_id)}, {"fs_uuid":str(fieldsight_form_id)}]}
     return settings.MONGO_DB.instances.find(query)
 
 
@@ -59,7 +57,7 @@ def build_export_context(request,xform, id_string):
                'lang': lang,
                'hierarchy_in_labels': hierarchy_in_labels,
                # 'copy_fields': ('_id', '_uuid', '_submission_time''),
-               'copy_fields': ('_id','_submission_time', '_submitted_by', 'medias'),
+               'copy_fields': ('_id','_submission_time', '_submitted_by'),
                # 'force_index': True
                'force_index': False
                }

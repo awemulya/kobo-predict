@@ -1092,19 +1092,19 @@ def download_xform(request, pk):
 @group_required('KoboForms')
 def html_export(request, fsxf_id):
 
-    limit = int(request.REQUEST.get('limit', 100))
+    limit = int(request.REQUEST.get('limit', 2))
     fsxf_id = int(fsxf_id)
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
     id_string = xform.id_string
     cursor = get_instances_for_field_sight_form(fsxf_id)
     cursor = list(cursor)
-    for index, doc in enumerate(cursor):
-        medias = []
-        for media in cursor[index].get('_attachments', []):
-            if media:
-                medias.append(media.get('download_url', ''))
-        cursor[index].update({'medias': medias})
+    # for index, doc in enumerate(cursor):
+    #     medias = []
+    #     for media in cursor[index].get('_attachments', []):
+    #         if media:
+    #             medias.append(media.get('download_url', ''))
+    #     cursor[index].update({'medias': medias})
     paginator = Paginator(cursor, limit, request=request)
 
     try:
@@ -1148,19 +1148,13 @@ def html_export(request, fsxf_id):
 
 @group_required('KoboForms')
 def project_html_export(request, fsxf_id):
-    limit = int(request.REQUEST.get('limit', 1000))
+    limit = int(request.REQUEST.get('limit', 10))
     fsxf_id = int(fsxf_id)
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
     id_string = xform.id_string
     cursor = get_instances_for_project_field_sight_form(fsxf_id)
     cursor = list(cursor)
-    for index, doc in enumerate(cursor):
-        medias = []
-        for media in cursor[index].get('_attachments', []):
-            if media:
-                medias.append(media.get('download_url', ''))
-        cursor[index].update({'medias': medias})
     paginator = Paginator(cursor, limit, request=request)
 
     try:

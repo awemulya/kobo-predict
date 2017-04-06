@@ -201,7 +201,6 @@ h1 {
     <thead>
         <tr>
             <th>{% trans "View or Edit" %}</th>
-            <th><span class="cell-content-wrap"> View Media</span></th>
             {% for label in labels %}
             <th><span class="cell-content-wrap">{{ label }}</span></th>
             {% endfor %}
@@ -213,14 +212,6 @@ h1 {
     {% for submission_id, row in data  %}
         <tr>
             <th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
-            <!--<th><a href="{% url 'forms:instance_detail' fsxfid  submission_id %}">{% trans "Open" %}</a></th>-->
-            <th>
-                {% with row|fsmedia as last %}
-                {% for link in last %}
-                 <a href="{{link}}" data-lightbox="roadtrip">{% trans 'View' %}</a>
-                {% endfor %}
-                {% endwith %}
-                </th>
             {% for value in row %}
             <td><span class="cell-content-wrap">{{ value }}</span></td>
             {% endfor %}
@@ -238,6 +229,6 @@ h1 {
 {% endblock %}
 
 
-{%block extrascript %}
+{% block extrascript %}
     <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
 {% endblock %}
