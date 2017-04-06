@@ -246,7 +246,7 @@ def stage_add(request, site_id=None):
     form = StageForm(instance=instance)
     return render(request, "fsforms/stage_form.html", {'form': form, 'obj': site})
 
-
+@login_required()
 @group_required("Project")
 def project_responses(request, project_id=None):
     schedules = Schedule.objects.filter(project_id=project_id, site__isnull=True, schedule_forms__isnull=False)
@@ -255,7 +255,7 @@ def project_responses(request, project_id=None):
     return render(request, "fsforms/project/project_responses_list.html",
                   {'schedules': schedules, 'stages':stages, 'generals':generals, 'project': project_id})
 
-
+@login_required()
 @group_required("Reviewer")
 def responses(request, site_id=None):
     schedules = Schedule.objects.filter(site_id=site_id, project__isnull=True, schedule_forms__isnull=False)
@@ -1233,6 +1233,7 @@ def instance_status(request, instance):
                                                      new_status=submission_status, user=request.user)
                 fi.form_status = int(submission_status)
                 fi.save()
+                send_message(fi.site_fxf, fi.form_status, message)
         return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
