@@ -221,10 +221,9 @@ h1 {
                 {% endfor %}
                 {% endwith %}
                 </th>
-            {% for value in row|exceptlast %}
+            {% for value in row %}
             <td><span class="cell-content-wrap">{{ value }}</span></td>
             {% endfor %}
-            <td><span class="cell-content-wrap"></span></td>
         </tr>
     {% endfor %}
 
