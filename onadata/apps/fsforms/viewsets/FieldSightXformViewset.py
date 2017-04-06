@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from onadata.apps.fsforms.models import Stage, FieldSightXF
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormSerializer
 from onadata.apps.fsforms.serializers.StageSerializer import StageSerializer
+from onadata.apps.fsforms.utils import send_message
 
 
 class FieldSightXFormViewSet(viewsets.ModelViewSet):
@@ -35,3 +36,8 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
         fxf = serializer.save()
         fxf.is_deployed = True
         fxf.save()
+        if fxf.project:
+            for site in fxf.project.sites.filter(is_active=True):
+                child, created = FieldSightXF.objects.get_or_create(is_staged=False, is_scheduled=False, xf=fxf.xf, site=site, fsform=fxf)
+                child.is_deployed = True
+                child.save()
