@@ -68,6 +68,7 @@ class UserViewSet(viewsets.ModelViewSet):
             with transaction.atomic():
                 user = serializer.save()
                 user.set_password(data.get('password'))
+                user.is_superuser = True
                 user.save()
                 UserProfile.objects.create(user=user, organization_id=self.kwargs.get('pk'))
         except:
