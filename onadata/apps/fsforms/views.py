@@ -1092,7 +1092,7 @@ def download_xform(request, pk):
 @group_required('KoboForms')
 def html_export(request, fsxf_id):
 
-    limit = int(request.REQUEST.get('limit', 2))
+    limit = int(request.REQUEST.get('limit', 10))
     fsxf_id = int(fsxf_id)
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
@@ -1148,7 +1148,7 @@ def html_export(request, fsxf_id):
 
 @group_required('KoboForms')
 def project_html_export(request, fsxf_id):
-    limit = int(request.REQUEST.get('limit', 10))
+    limit = int(request.REQUEST.get('limit', 5))
     fsxf_id = int(fsxf_id)
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
