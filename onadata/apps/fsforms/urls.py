@@ -39,7 +39,7 @@ from .views import (
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, project_responses,
     project_html_export, deploy_survey, deploy_stages, deploy_general, set_deploy_stages, share_stages,
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, setup_forms,
-    instance_status, rearrange_stages)
+    instance_status, rearrange_stages, deploy_general_remaining_sites)
 
 
 urlpatterns = [
@@ -74,6 +74,9 @@ urlpatterns = [
 
         url(r'^set-deploy-stages/(?P<is_project>\d)/(?P<pk>\d+)$', set_deploy_stages, name='set-deploy-stages'),
         url(r'^deploy-general/(?P<is_project>\d)/(?P<pk>\d+)$', deploy_general, name='deploy-general'),
+        url(r'^deploy-general-remaining/(?P<is_project>\d)/(?P<pk>\d+)$'
+            , deploy_general_remaining_sites
+            , name='deploy-general-remaining'),
         url(r'^deploy-survey/(?P<is_project>\d)/(?P<pk>\d+)$', deploy_survey, name='deploy-survey'),
 
         url(r'^api/stage-rearrange/(?P<is_project>\d)/(?P<pk>\d+)$', rearrange_stages),

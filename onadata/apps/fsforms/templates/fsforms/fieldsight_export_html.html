@@ -155,15 +155,8 @@ h1 {
 }
 
 </style>
-    <!--<link href="{{STATIC_URL}}css/kobo-branding.css" rel="stylesheet">-->
-    <!--<link href="{{STATIC_URL}}css/published_forms.css" rel="stylesheet">-->
-    <!--<link href="{{STATIC_URL}}css/data_pages.css" rel="stylesheet">-->
-    <!--<link href="{{STATIC_URL}}css/vex.css" rel="stylesheet">-->
-    <!--<link href="{{STATIC_URL}}css/vex-theme-kobo.css" rel="stylesheet">-->
     <link href="{{STATIC_URL}}lightbox2/dist/css/lightbox.css" rel="stylesheet">
-<!--<link href="{{STATIC_URL}}css/footable.css" rel="stylesheet">-->
 {% endblock %}
-
 {% block content %}
 
 
@@ -173,26 +166,26 @@ h1 {
 </div>
 <div class="col-sm-12"> Form Details</div>
 
-    <div class="form-details-all">
+<div class="form-details-all">
         <div class="col-md-9">
-            <div class="formmdetails">
-                <h2><span class="form-name">Name:</span>{{ obj.xf.title }}</h2>
-                {% if obj.project %}
-                <p><span class="site-name">Project:</span>{{ obj.project }}</p>
-                {% else %}
-                <p><span class="site-name">Site:</span>{{ obj.site }}</p>
-                {% endif %}
-                <p><span class="creeated-date">Created date:</span>{{ obj.date_created }}</p>
-                <p><span class="form-type">Form type:</span>{{obj.form_type}}</p>
-                <p><span class="stage-schedule">Stage/Schedule:</span>
-                    {% if obj.is_staged %}
-                         {{obj.stage_name }}
-                         {% endif %}
+        <div class="formmdetails">
+            <h2><span class="form-name">Name:</span>{{ obj.xf.title }}</h2>
+            {% if obj.project %}
+            <p><span class="site-name">Project:</span>{{ obj.project }}</p>
+            {% else %}
+            <p><span class="site-name">Site:</span>{{ obj.site }}</p>
+            {% endif %}
+            <p><span class="creeated-date">Created date:</span>{{ obj.date_created }}</p>
+            <p><span class="form-type">Form type:</span>{{obj.form_type}}</p>
+            <p><span class="stage-schedule">Stage/Schedule:</span>
+                {% if obj.is_staged %}
+                     {{obj.stage_name }}
+                     {% endif %}
 
-                         {% if obj.is_scheduled %}
-                         {{ obj.schedule_name }}
-                         {% endif %}
-                </p>
+                     {% if obj.is_scheduled %}
+                     {{ obj.schedule_name }}
+                     {% endif %}
+            </p>
             </div>
         </div>
         <div class="col-md-3">
@@ -202,57 +195,12 @@ h1 {
             </div>
         </div>
         <div class="clearfixx"></div>
-    </div>
-
-<!--<form action="{% url 'forms:formpack_html_export' fsxfid %}?page={{page}}"-->
-      <!--method="get" accept-charset="utf-8">-->
-
-  <!--<div class="formpack_html_export__options">-->
-
-    <!--<span class="select select&#45;&#45;lang">-->
-      <!--<label for="lang">{% trans "Value and header format" %}</label>-->
-      <!--<select name="lang" autocomplete="off">-->
-        <!--<option value="xml">-->
-            <!--{% trans "XML values and headers" %}-->
-        <!--</option>-->
-
-        <!--{% for lang in languages %}-->
-
-            <!--{% if lang == "_default" %}-->
-              <!--<option value="_default"-->
-                      <!--{% if headers_lang == lang %}selected{% endif %}-->
-              <!--&gt;-->
-                  <!--{% trans "Labels" %}-->
-              <!--</option>-->
-            <!--{% else %}-->
-              <!--<option value="{{ lang }}"-->
-                      <!--{% if headers_lang == lang %}selected{% endif %}-->
-              <!--&gt;-->
-                  <!--{% trans lang %}-->
-              <!--</option>-->
-            <!--{% endif %}-->
-
-         <!--{% endfor %}-->
-      <!--</select>-->
-    <!--</span>-->
-
-    <!--<span class="select select&#45;&#45;group">-->
-      <!--<label for="showgroup">{% trans "Include groups in headers" %}</label>-->
-      <!--<input type="checkbox" name="hierarchy_in_labels" {% if hierarchy_in_labels %}checked{% endif %} />-->
-      <!--<label for="groupsep">{% trans "Group separator" %}</label>-->
-      <!--<input type="input" name="group_sep" value="{{ group_sep }}" />-->
-    <!--</span>-->
-
-    <!--<button>{% trans "Update Table" %}</button>-->
-  <!--</div>-->
-
-<!--</form>-->
+</div>
 <table>
 
     <thead>
         <tr>
             <th>{% trans "View or Edit" %}</th>
-            <th><span class="cell-content-wrap"> View Media</span></th>
             {% for label in labels %}
             <th><span class="cell-content-wrap">{{ label }}</span></th>
             {% endfor %}
@@ -264,18 +212,9 @@ h1 {
     {% for submission_id, row in data  %}
         <tr>
             <th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
-            <!--<th><a href="{% url 'forms:instance_detail' fsxfid  submission_id %}">{% trans "Open" %}</a></th>-->
-            <th>
-                {% with row|fsmedia as last %}
-                {% for link in last %}
-                 <a href="{{link}}" data-lightbox="roadtrip">View</a>
-                {% endfor %}
-                {% endwith %}
-                </th>
-            {% for value in row|exceptlast %}
+            {% for value in row %}
             <td><span class="cell-content-wrap">{{ value }}</span></td>
             {% endfor %}
-            <td><span class="cell-content-wrap"></span></td>
         </tr>
     {% endfor %}
 
@@ -290,19 +229,6 @@ h1 {
 {% endblock %}
 
 
-{%block extrascript %}
-
-  <!--<script type="text/javascript" src="{% url "django.views.i18n.javascript_catalog" %}"></script>-->
-    <!--<script src="{{STATIC_URL}}js/jquery-migrate.min.js"></script>-->
-    <!--<script src="{{STATIC_URL}}js/jquery.tablesorter.min.js"></script>-->
-    <!--<script src="{{STATIC_URL}}bootstrap/js/bootstrap.js"></script>-->
-    <!--<script src="{{STATIC_URL}}bootstrap/js/bootstrapx-clickover.js"></script>-->
-    <!--<script src="{{STATIC_URL}}bootstrap/js/bootstrapx-clickover-btns.js"></script>-->
-    <!--<script src="{{STATIC_URL}}js/application.js?v=201307251039"></script>-->
-    <!--<script src="{{STATIC_URL}}js/vex.combined.min.js"></script>-->
-    <!--<script>vex.defaultOptions.className = 'vex-theme-kobo';</script>-->
-    <!--<script src="{{STATIC_URL}}js/footable.min.js"></script>-->
-    <!--&lt;!&ndash;  &ndash;&gt;-->
-    <!--<script src="{{STATIC_URL}}js/kobo-branding.js"></script>-->
+{% block extrascript %}
     <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
 {% endblock %}

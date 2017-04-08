@@ -246,7 +246,7 @@ def stage_add(request, site_id=None):
     form = StageForm(instance=instance)
     return render(request, "fsforms/stage_form.html", {'form': form, 'obj': site})
 
-
+@login_required()
 @group_required("Project")
 def project_responses(request, project_id=None):
     schedules = Schedule.objects.filter(project_id=project_id, site__isnull=True, schedule_forms__isnull=False)
@@ -255,7 +255,7 @@ def project_responses(request, project_id=None):
     return render(request, "fsforms/project/project_responses_list.html",
                   {'schedules': schedules, 'stages':stages, 'generals':generals, 'project': project_id})
 
-
+@login_required()
 @group_required("Reviewer")
 def responses(request, site_id=None):
     schedules = Schedule.objects.filter(site_id=site_id, project__isnull=True, schedule_forms__isnull=False)
@@ -737,6 +737,30 @@ def deploy_general(request, is_project, pk):
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
+@group_required("Project")
+@api_view(['POST', 'GET'])
+def deploy_general_remaining_sites(request, is_project, pk):
+    fxf_id = request.data.get('id')
+    fxf_status = request.data.get('is_deployed')
+    try:
+        if is_project == "1":
+            with transaction.atomic():
+                fxf = FieldSightXF.objects.get(pk=fxf_id)
+                if fxf_status:
+                    for site in fxf.project.sites.filter(is_active=True):
+                        child, created = FieldSightXF.objects.get_or_create(is_staged=False, is_scheduled=False, xf=fxf.xf, site=site, fsform_id=fxf_id)
+                        child.is_deployed = True
+                        child.save()
+                        if created:
+                            send_message_stages(site)
+                else:
+                    return Response({'error':"Deploy Form First and deploy to remaining.."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error':"Site level Deploy to remaining Not permitted."}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 # @group_required("Project")
@@ -1068,19 +1092,19 @@ def download_xform(request, pk):
 @group_required('KoboForms')
 def html_export(request, fsxf_id):
 
-    limit = int(request.REQUEST.get('limit', 100))
+    limit = int(request.REQUEST.get('limit', 10))
     fsxf_id = int(fsxf_id)
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
     id_string = xform.id_string
     cursor = get_instances_for_field_sight_form(fsxf_id)
     cursor = list(cursor)
-    for index, doc in enumerate(cursor):
-        medias = []
-        for media in cursor[index].get('_attachments', []):
-            if media:
-                medias.append(media.get('download_url', ''))
-        cursor[index].update({'medias': medias})
+    # for index, doc in enumerate(cursor):
+    #     medias = []
+    #     for media in cursor[index].get('_attachments', []):
+    #         if media:
+    #             medias.append(media.get('download_url', ''))
+    #     cursor[index].update({'medias': medias})
     paginator = Paginator(cursor, limit, request=request)
 
     try:
@@ -1124,19 +1148,13 @@ def html_export(request, fsxf_id):
 
 @group_required('KoboForms')
 def project_html_export(request, fsxf_id):
-    limit = int(request.REQUEST.get('limit', 1000))
+    limit = int(request.REQUEST.get('limit', 5))
     fsxf_id = int(fsxf_id)
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
     id_string = xform.id_string
     cursor = get_instances_for_project_field_sight_form(fsxf_id)
     cursor = list(cursor)
-    for index, doc in enumerate(cursor):
-        medias = []
-        for media in cursor[index].get('_attachments', []):
-            if media:
-                medias.append(media.get('download_url', ''))
-        cursor[index].update({'medias': medias})
     paginator = Paginator(cursor, limit, request=request)
 
     try:
@@ -1215,6 +1233,7 @@ def instance_status(request, instance):
                                                      new_status=submission_status, user=request.user)
                 fi.form_status = int(submission_status)
                 fi.save()
+                send_message(fi.site_fxf, fi.form_status, message)
         return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
@@ -1249,15 +1268,8 @@ def alter_answer_status(request, instance_id, status, fsid):
 # @group_required('KoboForms')
 def instance_kobo(request, fsxf_id):
 
-    fsxf_id = int(fsxf_id)
     fxf = FieldSightXF.objects.get(pk=fsxf_id)
-    # xform, is_owner, can_edit, can_view, fxf = get_xform_and_perms(fsxf_id, request)
     xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
-    # no access
-    # if not (xform.shared_data or can_view or
-    #         request.session.get('public_link') == xform.uuid):
-    #     return HttpResponseForbidden(_(u'Not shared.'))
-
     audit = {
         "xform": xform.id_string,
     }

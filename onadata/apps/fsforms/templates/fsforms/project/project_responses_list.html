@@ -36,7 +36,7 @@
               {% for obj in generals %}
                   <tr>
                       <td>
-                          {{ obj.xf.title }}</a>
+                          {{ obj.xf.title }}
                       </td>
                       <td>
                           {{ obj.date_created }}
@@ -78,7 +78,7 @@
                           {{ obj.date_created }}
                       </td>
                       <td>
-                            {% with obj.schedule_forms.pk|site_submissions as count %}
+                            {% with obj.schedule_forms.pk|project_submissions as count %}
                           {% if count %}
                            <a href="{% url 'forms:project_html_export' obj.schedule_forms.pk %}">
                                {{ count }}

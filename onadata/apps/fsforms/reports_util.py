@@ -9,9 +9,7 @@ DEFAULT_LIMIT = 30000
 
 
 def get_instances_for_field_sight_form(fieldsight_form_id, submission=None):
-    query = {'fs_uuid': { '$in': [fieldsight_form_id, str(fieldsight_form_id)] }, '_deleted_at': {'$exists': False}}
-    if submission:
-        query['_id'] = submission
+    query = {"$or":[{"_uuid":fieldsight_form_id}, {"fs_uuid":fieldsight_form_id}, {"_uuid":str(fieldsight_form_id)}, {"fs_uuid":str(fieldsight_form_id)}]}
     return settings.MONGO_DB.instances.find(query)
 
 
@@ -59,7 +57,7 @@ def build_export_context(request,xform, id_string):
                'lang': lang,
                'hierarchy_in_labels': hierarchy_in_labels,
                # 'copy_fields': ('_id', '_uuid', '_submission_time''),
-               'copy_fields': ('_id','_submission_time', '_submitted_by', 'fs_site', 'fs_status', 'medias'),
+               'copy_fields': ('_id','_submission_time', '_submitted_by'),
                # 'force_index': True
                'force_index': False
                }
@@ -109,10 +107,11 @@ def query_mongo(username, id_string, query, fields, sort, start=0,
     #     query['_uuid'] = ObjectId(query['_uuid'])
 
     query.pop('_userform_id')
-    # if fs_uuid is not None:
-    #     query['_uuid'] = { '$in': [fs_uuid, str(fs_uuid)] } #fs_uuid
-    # if fs_project_uuid is not None:
-    #     query['fs_project_uuid'] = { '$in': [fs_project_uuid, str(fs_project_uuid)] } #fs_project_uuid
+    if fs_uuid is not None:
+        query = {"$and": [query, {"$or":[ {"_uuid":fs_uuid}, {"fs_uuid":fs_uuid}, {"_uuid":str(fs_uuid)}, {"fs_uuid":str(fs_uuid)}]}]}
+        # query['_uuid'] = { '$in': [fs_uuid, str(fs_uuid)] } #fs_uuid
+    if fs_project_uuid is not None:
+        query['fs_project_uuid'] = { '$in': [fs_project_uuid, str(fs_project_uuid)] } #fs_project_uuid
     # if hide_deleted:
     #     # display only active elements
     #     # join existing query with deleted_at_query on an $and
@@ -131,10 +130,12 @@ def query_mongo(username, id_string, query, fields, sort, start=0,
     if isinstance(sort, basestring):
         sort = json.loads(sort, object_hook=json_util.object_hook)
     sort = sort if sort else {}
-    if fs_uuid is not None:
-        cursor = xform_instances.find({"$or":[ {"_uuid":fs_uuid}, {"fs_uuid":fs_uuid}, {"_uuid":str(fs_uuid)}, {"fs_uuid":str(fs_uuid)}]}, fields_to_select)
-    else:
-        cursor = xform_instances.find({"$or":[ {"fs_project_uuid":fs_project_uuid}, {"fs_project_uuid":str(fs_project_uuid)}]}, fields_to_select)
+    # if fs_uuid is not None:
+    #     cursor = xform_instances.find({"$or":[ {"_uuid":fs_uuid}, {"fs_uuid":fs_uuid}, {"_uuid":str(fs_uuid)}, {"fs_uuid":str(fs_uuid)}]}, fields_to_select)
+    # else:
+    #     cursor = xform_instances.find({"$or":[ {"fs_project_uuid":fs_project_uuid}, {"fs_project_uuid": str(fs_project_uuid)}]}, fields_to_select)
+
+    cursor = xform_instances.find(query, fields_to_select)
     if count:
         return [{"count": cursor.count()}]
 
