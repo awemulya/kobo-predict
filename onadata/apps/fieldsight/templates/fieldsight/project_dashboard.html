@@ -9,6 +9,57 @@
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
+<style>
+    .axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+  .bar {
+    fill: #296fd5;
+}
+
+.bar:hover {
+  fill: rgba(41, 111, 213, 0.5);
+}
+
+.x.axis path {
+  display: none;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+
+</style>
 {% endblock %}
 
 {% block head %}
@@ -229,36 +280,25 @@
   
   {% block all_diagrams %} 
     <section class="panel bar-gauge-diagrams">
-        <div class="col-md-6">
-          <div class="daily-visit">
-              <h4 class="widget-h">Form Submitions</h4>
-              <div id="daily-visit-chart" style="width:100%; height: 100px; display: block">
+        <!--<div class="col-md-6">-->
+          <!--<div class="daily-visit">-->
+              <!--<h4 class="widget-h">Form Submitions</h4>-->
+              <!--<div id="daily-visit-chart" style="width:100%; height: 100px; display: block">-->
 
-              </div>
-              <ul class="chart-meta clearfix">
-                  <li class="pull-left visit-chart-value">3233</li>
-                  <li class="pull-right visit-chart-title"><i class="fa fa-arrow-up"></i> 15%</li>
-              </ul>
-          </div>
-        </div>
-        <div class="col-md-6">
+              <!--</div>-->
+              <!--<ul class="chart-meta clearfix">-->
+                  <!--<li class="pull-left visit-chart-value">3233</li>-->
+                  <!--<li class="pull-right visit-chart-title"><i class="fa fa-arrow-up"></i> 15%</li>-->
+              <!--</ul>-->
+          <!--</div>-->
+        <!--</div>-->
+        <div class="col-md-12">
          <div class="top-stats-panel">
             <h4 class="widget-h">Site Progress</h4>
-            <div class="bar-stats">
-                <ul class="progress-stat-bar clearfix">
-                    <li data-percent="50%"><span class="progress-stat-percent pink"></span></li>
-                    <li data-percent="90%"><span class="progress-stat-percent"></span></li>
-                    <li data-percent="70%"><span class="progress-stat-percent yellow-b"></span></li>
-                </ul>
-                <ul class="bar-legend">
-                    <li><span class="bar-legend-pointer pink"></span> New York</li>
-                    <li><span class="bar-legend-pointer green"></span> Los Angels</li>
-                    <li><span class="bar-legend-pointer yellow-b"></span> Dallas</li>
-                </ul>
-                <div class="daily-sales-info">
-                    <span class="sales-count">1200 </span> <span class="sales-label">Products Sold</span>
-                </div>
-            </div>
+             <div id="progress-bar">
+
+             </div>
+
           </div> 
         </div>
 
@@ -307,4 +347,6 @@
 
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/d3.tip.v0.6.3.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_bar-graph.js"></script>
 {% endblock %}
