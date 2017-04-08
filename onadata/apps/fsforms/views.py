@@ -1268,15 +1268,8 @@ def alter_answer_status(request, instance_id, status, fsid):
 # @group_required('KoboForms')
 def instance_kobo(request, fsxf_id):
 
-    fsxf_id = int(fsxf_id)
     fxf = FieldSightXF.objects.get(pk=fsxf_id)
-    # xform, is_owner, can_edit, can_view, fxf = get_xform_and_perms(fsxf_id, request)
     xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
-    # no access
-    # if not (xform.shared_data or can_view or
-    #         request.session.get('public_link') == xform.uuid):
-    #     return HttpResponseForbidden(_(u'Not shared.'))
-
     audit = {
         "xform": xform.id_string,
     }
