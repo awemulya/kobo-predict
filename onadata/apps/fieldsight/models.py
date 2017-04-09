@@ -209,11 +209,14 @@ class Site(models.Model):
         return self.type.name
 
     def progress(self):
-        stages = self.site_forms.filter(xf__isnull=False ,is_staged=True)
-        approved = stages.filter(form_status=3)
+        stages = self.site_forms.filter(xf__isnull=False, is_staged=True).count()
+        approved = self.site_instances.filter(form_status=3).count()
         if not approved:
             return 0
-        return ("%.2f" % (len(approved)/(len(stages)*0.01)))
+        p = ("%.0f" % (approved/(stages*0.01)))
+        if p > 99:
+            return 100
+        return p
 
     def get_site_submission(self):
         instances = self.site_instances.all()

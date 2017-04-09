@@ -23,7 +23,7 @@ def get_range(progress):
     if progress in range(60,70): return d.keys()[6]
     if progress in range(70,80): return d.keys()[7]
     if progress in range(80,90): return d.keys()[8]
-    if progress in range(90,100): return d.keys()[9]
+    if progress in range(90,101): return d.keys()[9]
 
 
 class BarGenerator(object):
