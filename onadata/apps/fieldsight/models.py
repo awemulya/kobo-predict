@@ -214,6 +214,7 @@ class Site(models.Model):
         if not approved:
             return 0
         p = ("%.0f" % (approved/(stages*0.01)))
+        p = int(p)
         if p > 99:
             return 100
         return p
