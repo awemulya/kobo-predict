@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
@@ -18,6 +20,7 @@ from django.forms.forms import NON_FIELD_ERRORS
 import django_excel as excel
 from registration.backends.default.views import RegistrationView
 
+from onadata.apps.fieldsight.bar_data_project import BarGenerator
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.userrole.models import UserRole
@@ -166,7 +169,9 @@ def project_dashboard(request, pk):
             flagged +=1
         else:
             approved +=1
-
+    bar_graph = BarGenerator(sites)
+    ordered_list = [{'letter': key, 'frequency': val} for key, val in bar_graph.data.items()]
+    bar_data = json.dumps(ordered_list)
     dashboard_data = {
         'obj': obj,
         'sites': sites,
@@ -177,6 +182,7 @@ def project_dashboard(request, pk):
         'approved': approved,
         'rejected': rejected,
         'data': data,
+        'bar_data': bar_data,
     }
     return TemplateResponse(request, "fieldsight/project_dashboard.html", dashboard_data)
 
