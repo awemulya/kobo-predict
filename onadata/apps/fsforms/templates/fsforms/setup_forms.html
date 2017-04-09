@@ -102,10 +102,10 @@ var pk = "{{pk}}";
 
               </div>
 
-
+              </h3>
               </div >
 
-            </h3>
+            
           </div>
             <div class="panel-body">
               <div class="clearfixx"></div>
@@ -183,15 +183,30 @@ var pk = "{{pk}}";
 
         <div class="panel panel">
           <div class="panel-heading">
-            <h3 class="panel-title"><button class="btn btn-primary" data-bind="click:add_form">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                        {% trans 'Add New' %}
-                    </button></h3>
+            <div class="gap">
+                </div>
+            <div class="col-sm-2">
+                <h3 class="panel-title">
+                <button class="btn btn-primary square sq" style="border-radius: 0px;"data-bind="click:add_form">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            {% trans 'Add New' %}
+                </button>
+                </h3>
+            </div>
+            <div class="col-sm-6">
+
+                <input type="text" class="form-control-search current-input" placeholder="Search1"  data-bind="value:search_key, valueUpdate:'afterkeydown'">
+                <button type="submit" class="current-btn" style="margin-left:-1px; ">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+              </div>
+
+            </div>
+
+
           </div>
             <div class="panel-body">
-              <div class="col-md-3">
-                <p><input type="text" class="form-control-search" placeholder="Search1"  data-bind="value:search_key, valueUpdate:'afterkeydown'"></p>
-              </div>
+              
               <div class="clearfixx"></div>
           </div>
              <table class="table">
@@ -224,29 +239,35 @@ var pk = "{{pk}}";
         <div class="stage-container">
           <div class="stage-container-heading">
           <div class="panel-heading">
-              <button class="btn btn-primary" data-bind="click:add_stage">
-                    <i class="fa fa-plus" aria-hidden="true"></i>
-                    {% trans 'Add Stage' %}
-                </button>
-                {% csrf_token %}
-                <!--<button class="btn btn-info" style="float:right;margin-left:50px;" data-bind="visible:stages().length > 0, confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">-->
-                    <!--<i class="fa fa-code-fork" aria-hidden="true"></i>-->
-                    <!--{% trans 'Deploy to Remaining Sites' %}-->
-                <!--</button>-->
-                <button class="btn btn-danger" style="float:right;" data-bind="visible:stages().length > 0, confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">
-                    <i class="fa fa-upload" aria-hidden="true"></i>
-                    {% trans 'Deploy to Mobile' %}
-                </button>
+              <div class="button-row" style="padding: 0px 30px !important;">
+                  <button class="btn btn-primary square" data-bind="click:add_stage">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        {% trans 'Add Stage' %}
+                    </button>
+                    {% csrf_token %}
+                    <!--<button class="btn btn-info" style="float:right;margin-left:50px;" data-bind="visible:stages().length > 0, confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">-->
+                        <!--<i class="fa fa-code-fork" aria-hidden="true"></i>-->
+                        <!--{% trans 'Deploy to Remaining Sites' %}-->
+                    <!--</button>-->
+                    <button class="btn btn-danger square" style="float:right;" data-bind="visible:stages().length > 0, confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">
+                        <i class="fa fa-upload" aria-hidden="true"></i>
+                        {% trans 'Deploy to Mobile' %}
+                    </button>
+              </div>
           </div>
+          <hr>
           </div>
 
-                 <div class="container" data-bind="visible:stages().length > 0, sortable: {data: stages, afterMove: orderChanged}">
+                 <div class="container" style="margin:0px !important;"data-bind="visible:stages().length > 0, sortable: {data: stages, afterMove: orderChanged}">
                     <div class="item">
                      <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-12" style="padding: 8px 24px 8px 14px; font-size: 14px !important;">
                           <a class="stage-name-c">{% trans 'Stage' %} <span data-bind='text: $index()+1'></span>:</a>
                               <a class="name-stage-grp" data-bind="text: name, click:setShowSubstages"></a>
-                              <a  title="Edit" data-bind="click:edit"><i class="fa fa-edit"></i> </a>
+                              <a  title="Edit" data-bind="click:edit">
+                              <i class="fa fa-edit edit1">
+                                
+                              </i> </a>
                         </div>
                      </div>
 

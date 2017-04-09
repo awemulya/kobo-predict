@@ -40,22 +40,22 @@ vm = new ManagePeopleViewModel(pk, level, organization);
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">{% trans 'Assign People By ' %} {% trans 'Selecting From Existing Users Or Create New '%}</h4>
+        <h4 class="modal-title">{% trans 'Manage People ' %}</h4>
       </div>
       <div class="modal-body">
           <div data-bind="with:new_role">
               <div class="box-user-pop box-info">
             <div class="box-header with-border">
-             <button class="btn btn-primary" data-bind="click:$root.addUser">{% trans 'Create New User' %}</button>
+             <button class="btn btn-primary square" data-bind="click:$root.addUser">{% trans 'Create New User' %}</button>
             </div>
               
                   <div class="available-users"  data-bind="visible:$root.available_users().length">
 
-                  <h4> {% trans 'Click To Select From Existing Users '%} </h4>
+                  <h4> {% trans 'Select Users '%} </h4>
 
                   <div class="current-users-list row" data-bind="foreach:$root.available_users">
 
-                    <div class="current-person col-sm-3 " style="width: 24% !important;margin-right: 3px !important;margin-left: 9px;" data-bind="click:$root.setSelected">
+                    <div class="current-person col-sm-4 " style="/*width: 24% !important;*/margin-right: 3px !important;margin-left: 9px;" data-bind="click:$root.setSelected">
                     <div class="user-image-current">
                       <img  data-bind="attr:{src: profile_picture}" class="modal-image" />
                     </div>
@@ -73,11 +73,11 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
                       <div class="box-body">
                   <div class="selected-users" data-bind="visible:$root.selected_users().length" >
-                  <h3> {% trans 'Currently Selected Users, Click To Remove '%} </h3>
+                  <h4> {% trans 'Current Selection'%} </h4>
 
                   <div class="current-users-list row" data-bind="foreach:$root.selected_users">
 
-                    <div class="current-person col-sm-3" style="width: 24% !important;margin-right: 3px !important;margin-left: 9px;background: #dadbec;"data-bind="click:$root.setSelected">
+                    <div class="current-person col-sm-4" style="/*width: 24% !important;*/margin-right: 3px !important;margin-left: 9px;background: #dadbec;"data-bind="click:$root.setSelected">
                     <div class="user-image-current">
                       <img  data-bind="attr:{src: profile_picture}" class="modal-image" />
                     </div>
@@ -97,8 +97,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               </div>
               <!-- /.box-body -->
               <div class="box-footer">
-                <button class="btn btn-danger" data-bind="click:$root.cancelAssign">{% trans 'Cancel' %}</button>
                 <button class="btn btn-primary pull-right"  data-bind="click:$root.doAssign">{% trans 'Assign' %}</button>
+                <button class="btn btn-danger cancel" data-bind="click:$root.cancelAssign">{% trans 'Cancel' %}</button>
               </div>
           </div>
 
@@ -109,67 +109,69 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 </div>
 
 <div class="modal" tabindex="-2" role="dialog" data-bind="modal:add_user_form_visibility">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog form-modal" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">{% trans 'New User' %}</h4>
+        <h4 class="modal-title">{% trans 'New User'%}</h4>
       </div>
       <div class="modal-body">
           <div data-bind="with:new_user">
               <div class="box-user-pop box-info">
             <div class="box-header with-border">
-             <h3  class="box-title box-warning" data-bind="text:error"></h3>
+             <h4  class="box-title box-warning" data-bind="text:error"></h4>
+             <div class="gap">
+             </div>
             </div>
             <form class="form-horizontal">
               <div class="box-body">
                 <div class="form-group">
                   <label for="username" class="col-sm-2 control-label">{% trans 'Username' %}</label>
 
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control" id="username" placeholder="Username" data-bind="value:username" required>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" id="username" placeholder="username" data-bind="value:username" required>
                   </div>
                 </div>
                   <div class="form-group">
                   <label class="col-sm-2 control-label">{% trans 'First Name' %}</label>
 
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control"  placeholder="First Name" data-bind="value:first_name" required>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control"  placeholder="ex:John" data-bind="value:first_name" required>
                   </div>
                 </div>
                   <div class="form-group">
                   <label class="col-sm-2 control-label">{% trans 'Last Name' %}</label>
 
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control"  placeholder="last Name" data-bind="value:last_name" required>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control"  placeholder="ex:watson" data-bind="value:last_name" required>
                   </div>
                 </div>
                   <div class="form-group">
                   <label for="inputEmail3" class="col-sm-2 control-label">{% trans 'Email' %}</label>
 
-                  <div class="col-sm-10">
-                    <input type="email" class="form-control" id="inputEmail3" placeholder="Email" data-bind="value:email" required>
+                  <div class="col-sm-8">
+                    <input type="email" class="form-control" id="inputEmail3" placeholder="example@mail.com" data-bind="value:email" required>
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="inputPassword3" class="col-sm-2 control-label">{% trans 'Password' %}</label>
 
-                  <div class="col-sm-10">
+                  <div class=" col-sm-8">
                     <input type="password" class="form-control" id="inputPassword3" placeholder="Password" data-bind="value:password" required>
                   </div>
                 </div>
                   <div class="form-group">
                   <label for="inputPassword2" class="col-sm-2 control-label">{% trans 'Password Confirm' %}</label>
 
-                  <div class="col-sm-10">
+                  <div class="col-sm-8">
                     <input type="password" class="form-control" id="inputPassword2" placeholder="Password Confirm" data-bind="value:cpassword" required>
                   </div>
                 </div>
 
               </div>
               <div class="box-footer">
-                  <button  class="btn btn-default" data-bind="click:$root.cancelUser">{% trans 'Cancel' %}</button>
-                <button  class="btn btn-info pull-right" data-bind="click:$root.saveUser, visible:valid">{% trans 'Save' %}</button>
+                  <button  class="btn btn-danger form-cancel" data-bind="click:$root.cancelUser">{% trans 'Cancel' %}</button>
+                <button  class="btn btn-info pull-right" data-bind="click:$root.saveUser, visible:valid">{% trans 'Create' %}</button>
               </div>
             </form>
           </div>
@@ -247,6 +249,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </div>
             </div>
         </div>
+        <h4>Current Site Supervisors</h4>
       <div class="currentuser-block">
         <div class="current-users-list row" data-bind="foreach:supervisors">
 
@@ -274,19 +277,20 @@ vm = new ManagePeopleViewModel(pk, level, organization);
             <div class="panel-body">
                 <div class="col-sm-2">
                     <h3 class="panel-title">
-                    <button class="btn btn-primary btn-lg sq" data-bind="click:add">
+                    <button class="btn btn-primary square sq" data-bind="click:add">
                         <i class="fa fa-plus" aria-hidden="true"></i>
                             {% trans 'Add New' %}
                     </button>
                     </h3>
                 </div>
-                <div class="col-sm-10">
+                <div class="col-sm-6">
                         <input type="text" class="current-input" placeholder="Search Reviewers" data-bind="value:search_key_reviewer, valueUpdate:'afterkeydown'">
                         <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
 
                 </div>
             </div>
         </div>
+      <h4>Current Reviewers</h4>
       <div class="currentuser-block">
         <div class="current-users-list row" data-bind="foreach:reviewers">
 
