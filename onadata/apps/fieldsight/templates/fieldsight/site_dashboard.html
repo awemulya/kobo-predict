@@ -48,17 +48,20 @@
                               <p class="website"><span></span>{{ obj.website }}</p>
   							              <p class="short-detail">{{ obj.description }}</p>
                               <p class="progress-of-site">{% trans 'Progress' %}</p>
-                              <div class="progreess">
-                                <div class="col-md-9">
-                                  <div class="progress progress-striped active progress-sm">
-                                      <div class="progress-bar progress-bar-success" role="progressbar"
-                                           aria-valuenow="{{obj.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{ obj.progress }}%">
-                                          <span class="sr-only">{{ obj.progress }}% Complete</span>
-                                          <span class="progress-bar-value">{{ obj.progress }}%</span>
+                                {% with progress=obj.progress %}
+                                  <div class="progreess">
+                                    <div class="col-md-9">
+                                      <div class="progress progress-striped active progress-sm">
+                                          <div class="progress-bar progress-bar-success" role="progressbar"
+                                               aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{ obj.progress }}%">
+                                              <span class="sr-only">{{ progress }}% Complete</span>
+                                              <span class="progress-bar-value">{{ progress }}%</span>
+                                          </div>
                                       </div>
+                                    </div>
                                   </div>
-                                </div>
-                              </div>
+                                {% endwith %}
+
                             </div>
                             <div class="col-md-6">
                               <div id="org-map" class="tab-pane fade in active">
