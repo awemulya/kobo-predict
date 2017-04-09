@@ -36,19 +36,23 @@
                             <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />
                         </div>
                     </div>
-                    <div class="col-md-9">
-                        <div class="abt-org">
+                    <div class="col-md-6">
+                        <div class="abt-org1">
                             <div class="col-md-12">
-                                <h3>{{ obj.name }}</h3>
+                                <h5 class="organization_name">{{ obj.name }}</h4>
                             </div>
-                            <div class="col-md-8">
-                                <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}, {{ obj.get_country_display }}</p>
-                                <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
-                                <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
-                                <p class="website"><span></span>{{ obj.website }}</p>
-    							<p class="short-detail">{{ obj.description }}</p>
+                            <div class="col-md-8 detail">
+                                <p class="address information"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}, {{ obj.get_country_display }}</p>
+                                <p class="contact information"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
+                                <p class="fax information"><span><i class="fa fa-home" aria-hidden="true"></i></span>{{ obj.fax }}</p>
+                                <p class="website information"><span><i class="fa fa-chrome" aria-hidden="true"></i></span>{{ obj.website }}</p>
+    							   <p class="short-detail">{{ obj.description }}</p>
                             </div>
-                            <div class="col-md-4" style=" width: 28% !important;">
+                            
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
 
                                 <div class="mini-stat clearfix">
                                   <span class="mini-stat-icon green1"><i class="fa fa-users"></i></span>
@@ -71,10 +75,8 @@
                                     {% trans 'Total Sites ' %}
                                 </div>
                               </div>
-                            </div> 
+                    </div> 
                             
-                        </div>
-                    </div>
                     <div class="clearfixx"></div>
                 </div>
             

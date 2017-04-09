@@ -83,16 +83,31 @@ var pk = "{{pk}}";
         <div class="panel panel">
           <div class="panel-heading">
             <h3 class="panel-title">
-                <button class="btn btn-primary" data-bind="click:add_form">
+
+                <div class="gap">
+                </div>
+                <div class="col-sm-2">
+                <button class="btn btn-primary square sq" style="border-radius: 0px;" data-bind="click:add_form">
                         <i class="fa fa-plus" aria-hidden="true"></i>
                         {% trans 'Add New' %}
-                    </button>
+                </button>
+                </div>
+
+                
+                <div class="col-sm-6">
+                
+                  <input type="text" class="form-control-search current-input" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'">
+                  
+                  <button type="submit" class="current-btn" style="padding: 8px 10px 12px 10px !important;margin-left:-1px;  "><i class="fa fa-search" aria-hidden="true"></i></button>
+
+              </div>
+
+
+              </div >
+
             </h3>
           </div>
             <div class="panel-body">
-              <div class="col-md-3">
-                <p><input type="text" class="form-control-search" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'"></p>
-              </div>
               <div class="clearfixx"></div>
           </div>
              <table class="table">
@@ -175,7 +190,7 @@ var pk = "{{pk}}";
           </div>
             <div class="panel-body">
               <div class="col-md-3">
-                <p><input type="text" class="form-control-search" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'"></p>
+                <p><input type="text" class="form-control-search" placeholder="Search1"  data-bind="value:search_key, valueUpdate:'afterkeydown'"></p>
               </div>
               <div class="clearfixx"></div>
           </div>

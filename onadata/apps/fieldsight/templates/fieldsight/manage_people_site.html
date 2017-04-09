@@ -48,15 +48,16 @@ vm = new ManagePeopleViewModel(pk, level, organization);
             <div class="box-header with-border">
              <button class="btn btn-primary" data-bind="click:$root.addUser">{% trans 'Create New User' %}</button>
             </div>
-              <div class="box-body" style="overflow-y:scroll; height:400px;">
-                  <div class="selected-users" data-bind="visible:$root.selected_users().length" >
-                  <h3> {% trans 'Currently Selected Users, Click To Remove '%} </h3>
+              
+                  <div class="available-users"  data-bind="visible:$root.available_users().length">
 
-                  <div class="current-users-list row" data-bind="foreach:$root.selected_users">
+                  <h4> {% trans 'Click To Select From Existing Users '%} </h4>
 
-                    <div class="current-person col-sm-3" data-bind="click:$root.setSelected">
+                  <div class="current-users-list row" data-bind="foreach:$root.available_users">
+
+                    <div class="current-person col-sm-3 " style="width: 24% !important;margin-right: 3px !important;margin-left: 9px;" data-bind="click:$root.setSelected">
                     <div class="user-image-current">
-                      <img width="16px" height="16px" data-bind="attr:{src: profile_picture}" />
+                      <img  data-bind="attr:{src: profile_picture}" class="modal-image" />
                     </div>
                     <div class="user-name-position">
                       <p class="cu-name" data-bind="text:full_name"></p>
@@ -69,23 +70,26 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
                 </div>
                       </div>
-                  <div class="available-users"  data-bind="visible:$root.available_users().length">
 
-                  <h3> {% trans 'Click To Select From Existing Users '%} </h3>
+                      <div class="box-body">
+                  <div class="selected-users" data-bind="visible:$root.selected_users().length" >
+                  <h3> {% trans 'Currently Selected Users, Click To Remove '%} </h3>
 
-                  <div class="current-users-list row" data-bind="foreach:$root.available_users">
+                  <div class="current-users-list row" data-bind="foreach:$root.selected_users">
 
-                    <div class="current-person col-sm-3" data-bind="click:$root.setSelected">
+                    <div class="current-person col-sm-3" style="width: 24% !important;margin-right: 3px !important;margin-left: 9px;background: #dadbec;"data-bind="click:$root.setSelected">
                     <div class="user-image-current">
-                      <img width="16px" height="16px" data-bind="attr:{src: profile_picture}" />
+                      <img  data-bind="attr:{src: profile_picture}" class="modal-image" />
                     </div>
                     <div class="user-name-position">
                       <p class="cu-name" data-bind="text:full_name"></p>
                       <p class="cu-position" data-bind="text:username"></p>
                       <p class="cu-position" data-bind="text:email"></p>
+                      
+            </div>
                     </div>
 
-                    <div class="clearfixx"></div>
+                    
                   </div>
 
                 </div>
@@ -93,8 +97,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               </div>
               <!-- /.box-body -->
               <div class="box-footer">
-                <button class="btn btn-default" data-bind="click:$root.cancelAssign">{% trans 'Cancel' %}</button>
-                <button class="btn btn-info pull-right"  data-bind="click:$root.doAssign">{% trans 'Assign' %}</button>
+                <button class="btn btn-danger" data-bind="click:$root.cancelAssign">{% trans 'Cancel' %}</button>
+                <button class="btn btn-primary pull-right"  data-bind="click:$root.doAssign">{% trans 'Assign' %}</button>
               </div>
           </div>
 
@@ -221,20 +225,24 @@ vm = new ManagePeopleViewModel(pk, level, organization);
       <button type="button" class="btn" data-bind="css: {'btn-primary': group() == 'Site Supervisor', 'btn-default': !group() == 'Site Supervisor'}, click: function () {setSelectedGroup('Site Supervisor')}">{% trans 'Supervisors' %}</button>
       <button type="button" class="btn" data-bind="css: {'btn-primary': group() == 'Reviewer', 'btn-default': !group() == 'Reviewer'}, click: function () {setSelectedGroup('Reviewer')}">{% trans 'Reviewers' %}</button>
     </div>
-    <hr>
+    <div class="gap">
+      
+    </div>
 
     <div class="col-sm-12" data-bind="visible :group() =='Site Supervisor'">
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="col-sm-2">
-                    <button class="btn btn-primary btn-lg sq" data-bind="click:add">
+                    <button class="btn btn-primary square sq" data-bind="click:add">
                         <i class="fa fa-plus" aria-hidden="true"></i>
                             {% trans 'Add New' %}
                     </button>
                 </div>
-                <div class="col-sm-10">
+                <div class="col-sm-6">
                     <input type="text" class="current-input" placeholder="Search Supervisors" data-bind="value:search_key_supervisor, valueUpdate:'afterkeydown'">
-                    <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    <button type="submit" class="current-btn "  >
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </button>
 
                 </div>
             </div>
@@ -244,7 +252,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
             <div class="current-person col-sm-3">
             <div class="user-image-current">
-              <img width="16px" height="16px" data-bind="attr:{src: user().profile_picture}" />
+              <img  data-bind="attr:{src: user().profile_picture}" />
             </div>
             <div class="user-name-position" data-bind="click:detail">
               <p class="cu-name" data-bind="text:user().full_name"></p>
@@ -284,7 +292,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
             <div class="current-person col-sm-3">
             <div class="user-image-current">
-              <img width="16px" height="16px" data-bind="attr:{src: user().profile_picture}" />
+              <img  data-bind="attr:{src: user().profile_picture}" />
             </div>
             <div class="user-name-position" data-bind="click:detail">
               <p class="cu-name" data-bind="text:user().full_name"></p>
@@ -324,9 +332,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
   <div class="currentuser-block">
     <div class="current-users-list row" data-bind="foreach:projectManagers">
 
-        <div class="current-person col-sm-3">
+        <div class="current-person col-sm-3 ">
         <div class="user-image-current">
-          <img width="16px" height="16px" data-bind="attr:{src: user().profile_picture}" />
+          <img  data-bind="attr:{src: user().profile_picture}" />
         </div>
         <div class="user-name-position" data-bind="click:detail">
           <p class="cu-name" data-bind="text:user().full_name"></p>
@@ -349,12 +357,12 @@ vm = new ManagePeopleViewModel(pk, level, organization);
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="col-sm-2">
-                    <button class="btn btn-primary btn-lg sq" data-bind="click:add">
+                    <button class="btn btn-primary square" data-bind="click:add">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                             {% trans 'Add New' %}
                     </button>
                 </div>
-                <div class="col-sm-10">
+                <div class="col-sm-6">
                      <input type="text" class="current-input" placeholder="Search Admins" data-bind="value:search_key, valueUpdate:'afterkeydown'">
                     <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
                 </div>
@@ -366,7 +374,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
     <div class="current-users-list row" data-bind="foreach:admins">
         <div class="current-person col-sm-3">
         <div class="user-image-current">
-          <img width="16px" height="16px" data-bind="attr:{src: user().profile_picture}" />
+          <img  data-bind="attr:{src: user().profile_picture}" />
         </div>
         <div class="user-name-position" data-bind="click:detail">
           <p class="cu-name" data-bind="text:user().full_name"></p>
