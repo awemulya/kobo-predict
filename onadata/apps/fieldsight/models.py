@@ -213,6 +213,8 @@ class Site(models.Model):
         approved = self.site_instances.filter(form_status=3).count()
         if not approved:
             return 0
+        if not stages:
+            return 0
         p = ("%.0f" % (approved/(stages*0.01)))
         p = int(p)
         if p > 99:

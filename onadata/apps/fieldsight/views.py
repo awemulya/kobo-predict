@@ -150,9 +150,9 @@ def project_dashboard(request, pk):
     peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
     if request.method == "POST":
         name = request.POST.get('name')
-        sites = Site.objects.filter(name__icontains=name, project=obj)
+        sites = obj.sites.filter(name__icontains=name)
     else:
-        sites = Site.objects.filter(project=obj)
+        sites = obj.sites.filter(is_active=True)
     data = serialize('custom_geojson', sites, geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
