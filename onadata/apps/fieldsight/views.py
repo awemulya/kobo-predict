@@ -22,6 +22,7 @@ from registration.backends.default.views import RegistrationView
 
 from onadata.apps.fieldsight.bar_data_project import BarGenerator
 from onadata.apps.fsforms.Submission import Submission
+from onadata.apps.fsforms.line_data_project import LineChartGenerator
 from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
@@ -172,6 +173,12 @@ def project_dashboard(request, pk):
     bar_graph = BarGenerator(sites)
     ordered_list = [{'letter': key, 'frequency': val} for key, val in bar_graph.data.items()]
     bar_data = json.dumps(ordered_list)
+
+    line_chart = LineChartGenerator(obj)
+    line_chart_data = line_chart.data()
+    ordered_list_line = [{'date': key, 'close': val} for key, val in line_chart_data.items()]
+
+    graph_data = json.dumps(ordered_list_line)
     dashboard_data = {
         'obj': obj,
         'sites': sites,
@@ -183,6 +190,7 @@ def project_dashboard(request, pk):
         'rejected': rejected,
         'data': data,
         'bar_data': bar_data,
+        'line_chart_data': graph_data,
     }
     return TemplateResponse(request, "fieldsight/project_dashboard.html", dashboard_data)
 
