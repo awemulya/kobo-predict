@@ -276,32 +276,38 @@ var pk = "{{pk}}";
                           <div class="row" data-bind="foreach: parent">
                             <div class="each-stage-grp">
                               <div class="col-sm-1"></div>
-                              <div class="col-sm-8">
-                                <a class="sub-stage-name-c">{% trans 'Sub Stage' %}
-                                    <span data-bind='text: $index()+1'></span>:
-                                    <span class="name-stage-grp"  data-bind="text: name"></span>
-                                    <i class="fa fa-file" aria-hidden="true"></i>
-                                    <span class="name-stage-grp"  data-bind="text: form_name_display()"></span>
-                                    <a  title="Edit SubStage" data-bind="click:edit"><i class="fa fa-edit"></i> </a>
-                                </a>
+                              <div class="col-sm-10"  >
+                                <div class="substage-name sub-stage-name-c">{% trans 'Sub Stage' %}
+
+                                        <span data-bind='text: $index()+1'></span>:
+                                        <span class="name-stage-grp" style="padding:5px 1px;" data-bind="text: name"></span>
+                                    </div>
+                                    <div class="form-description">
+                                        <i class="fa fa-file" aria-hidden="true"></i>
+                                        <span class="name-stage-grp" data-bind="text: form_name_display()"></span>
+                                    </div>
+                                    <a  title="Edit SubStage" data-bind="click:edit"><i class="fa fa-edit edit2"></i> </a>
+
                               </div>
-                                <div class="col-sm-8" data-bind="visible:editable">
+                                <div class="col-sm-8 substage" data-bind="visible:editable">
                                 <a class="sub-stage-name-c">{% trans 'Sub Stage' %}
                                     <span data-bind='text: $index()+1'></span>:
-                                    <input class="name-stage-grp"  data-bind="value: name" placeholder="Stage Name">
-                                    <input class="name-stage-grp"  data-bind="value: description" placeholder="Stage Description">
-                                    <button   data-bind="click:edit_done"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
+                                    <input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name">
+                                    <input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description">
+                                    <button   data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
                                 </a>
 
                               </div>
                               <div class="col-md-3"></div>
-                              <div class="clearfixx"></div>
-                            </div>  
+                              <!--<div class="clearfixx"></div>-->
+                            </div>
+                              <hr style="color:red">
                           </div>
+
                         </div>
                       </div>
                          <div class="row">
-                     <a class="btn btn-small btn-primary" data-bind="click:save, visible:stageChanged"><i class="fa fa-save" aria-hidden="true"></i>  {% trans 'Save' %}</a>
+                     <a class="btn btn-small btn-primary square" style="margin-left:58px;" data-bind="click:save, visible:stageChanged"><i class="fa fa-save" aria-hidden="true"></i>  {% trans 'Save' %}</a>
                       </div>
                     </div>
 
@@ -311,7 +317,7 @@ var pk = "{{pk}}";
 
     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:stage_form_modal_visibility">
 <div data-bind="with: current_stage">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog form-modal" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -333,22 +339,24 @@ var pk = "{{pk}}";
                         <div class="all-sub-grp">
                           <div class="container" data-bind="sortable: parent">
                             <div class="item">
-                              <div class="col-sm-1"></div>
-                              <div class="col-sm-8">
+                              <div class="col-sm-0"></div>
+                              <div class="col-sm-10">
                                 <a class="sub-stage-name-c">{% trans 'Sub Stage' %}
                                     <span data-bind='text: $index()+1'></span>:
                                     <span class="name-stage-grp"  data-bind="text: name"></span></a>
                                     <a class="sub-stage-name-c"><i class="fa fa-file" aria-hidden="true"></i>
                                     <span class="name-stage-grp"  data-bind="text: form_name_display()"></span>
-                                        <a title="Edit Substage" data-bind="click:edit"><i class="fa fa-edit"></i></a>
+                                        <a title="Edit Substage" data-bind="click:edit"><i class="fa fa-edit edit2"></i></a>
                                 </a>
                               </div>
-                                <div class="col-sm-8" data-bind="visible:editable">
+                                <div class="col-sm-10 substage" data-bind="visible:editable">
                                 <a class="sub-stage-name-c">{% trans 'Sub Stage' %}
                                     <span data-bind='text: $index()+1'></span>:
-                                    <input class="name-stage-grp"  data-bind="value: name" placeholder="Stage Name">
-                                    <input class="name-stage-grp"  data-bind="value: description" placeholder="Stage Description">
-                                    <button   data-bind="click:edit_done"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
+                                    <input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name">
+
+                                    <input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description">
+                                    <div class="gap"></div>
+                                    <button   data-bind="click:edit_done" class="btn btn-primary "><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
                                 </a>
 
                               </div>
@@ -372,6 +380,7 @@ var pk = "{{pk}}";
                                               {{form.as_p}}
 
                                     <input type="text" class="name-stage-grp"  data-bind="value: name" placeholder="Substage Name" required="required">
+                                      <div class="gap"></div>
                                     <input type="text" class="name-stage-grp"  data-bind="value: description" placeholder="description">
                                 </form>
                               </div>
@@ -383,8 +392,8 @@ var pk = "{{pk}}";
                       </div>
                       <div class="row">
                       <div class="col-md-1"></div>
-                      <div class="col-sm-3">
-                          <a class="manage-button" data-bind="click:save_sub_stage, visible:addSubStageMode()"><i class="fa fa-plus" aria-hidden="true"></i> {% trans 'Add' %}</a>
+                      <div class="col-sm-2">
+                          <a class="manage-button modal-manage square" data-bind="click:save_sub_stage, visible:addSubStageMode()"><i class="fa fa-plus" aria-hidden="true"></i> {% trans 'Add' %}</a>
 
                       </div>
                          <div class="col-sm-8">
@@ -401,7 +410,7 @@ var pk = "{{pk}}";
       <div class="modal-footer">
            <div class="col-sm-3">
 
-             <a class="btn btn-primary" data-bind="click:save"><i class="fa fa-floppy-o" aria-hidden="true"></i>  {% trans 'Save' %}</a>
+             <a class="btn btn-primary square" style="margin-right:3px !important;" data-bind="click:save"><i class="fa fa-floppy-o" aria-hidden="true"></i>  {% trans 'Save' %}</a>
           </div>
       </div>
     </div>
