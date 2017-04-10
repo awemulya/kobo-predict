@@ -41,7 +41,9 @@ def dashboard(request):
     if current_role:
         if current_role.group.name == "Site Supervisor":
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
-        if current_role.group.name in ["Project Manager", "Reviewer"]:
+        if current_role.group.name == "Reviewer":
+            return HttpResponseRedirect(reverse("fieldsight:site-list", ))
+        if current_role.group.name == "Project Manager":
             return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role.project.pk}))
         if current_role.group.name == "Organization Admin":
             return HttpResponseRedirect(reverse("fieldsight:organization-dashboard",

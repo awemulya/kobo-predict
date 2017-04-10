@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.fieldsight.serializers.SiteSerializer import SiteSerializer
+from onadata.apps.userrole.models import UserRole
 
 
 class SiteViewSet(viewsets.ModelViewSet):
@@ -29,7 +30,10 @@ class AllSiteViewSet(viewsets.ModelViewSet):
             return queryset
         elif self.request.role.group.name == "Organization Admin":
             return queryset.filter(project__organization=self.request.project, is_active=True)
-        elif self.request.role.group.name in ["Reviewer", "Project Manager"]:
+        elif self.request.role.group.name == "Project Manager":
             return queryset.filter(project=self.request.project, is_active=True)
+        elif self.request.role.group.name == "Reviewer":
+            return queryset.filter(pk__in=[role.site.id for role in UserRole.objects.filter(
+                group=self.request.role.group, user=self.request.role.user)])
         return []
 

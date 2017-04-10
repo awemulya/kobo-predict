@@ -136,13 +136,13 @@
                             <li>
                                 <a href="#">{% trans 'Using as' %} {{ request.role.group }}
                                     {% if request.site%}
-                                    {% trans 'at Site' %}{{request.site}}
+                                    {% trans 'at Site ' %}{{request.site}}
                                     {% endif %}
                                     {% if request.project%}
-                                    {% trans 'at Project' %}{{request.project}}
+                                    {% trans 'at Project ' %}{{request.project}}
                                     {% endif %}
                                     {% if request.organization%}
-                                    {% trans 'at Org' %} {{request.organization}}
+                                    {% trans 'at Org ' %} {{request.organization}}
                                     {% endif %}
 
                                 </a>
@@ -155,13 +155,13 @@
                                 <li>
                                     <a href="{% url 'role:set_role' role.id %}">{% trans 'Use as' %} {{ role.group }}
                                     {% if role.site%}
-                                    {% trans 'at Site' %}{{role.site}}
+                                    {% trans 'at Site ' %}{{role.site}}
                                     {% endif %}
                                     {% if role.project%}
-                                    {% trans 'at Project' %}{{role.project}}
+                                    {% trans 'at Project ' %}{{role.project}}
                                     {% endif %}
                                     {% if role.organization%}
-                                    {% trans 'at Org' %} {{role.organization}}
+                                    {% trans 'at Org ' %} {{role.organization}}
                                     {% endif %}
                                     </a>
                                 </li>
