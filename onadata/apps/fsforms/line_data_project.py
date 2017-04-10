@@ -16,7 +16,7 @@ class LineChartGenerator(object):
 
     def data(self):
         d = OrderedDict()
-        dt =  [(datetime.datetime.today() - datetime.timedelta(days=x)) for x in range(0,30)]
+        dt = [(datetime.datetime.today() - datetime.timedelta(days=x)) for x in range(0,30)]
         dt = dt[::-1]
         for date in dt:
             count = self.get_count(date)
