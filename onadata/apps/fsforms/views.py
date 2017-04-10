@@ -1228,7 +1228,7 @@ def instance_status(request, instance):
         if request.method == 'POST':
             with transaction.atomic():
                 submission_status = request.data.get("status", 0)
-                message = request.data.get("message","")
+                message = request.data.get("message", "")
                 InstanceStatusChanged.objects.create(finstance=fi, message=message, old_status=fi.form_status,
                                                      new_status=submission_status, user=request.user)
                 fi.form_status = int(submission_status)

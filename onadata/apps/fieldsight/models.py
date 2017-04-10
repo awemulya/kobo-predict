@@ -237,7 +237,7 @@ class Site(models.Model):
         return p
 
     def get_site_submission(self):
-        instances = self.site_instances.all()
+        instances = self.site_instances.all().order_by('-date')
         outstanding, flagged, approved, rejected = [], [], [], []
         for submission in instances:
             if submission.form_status == 0:
