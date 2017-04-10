@@ -162,16 +162,7 @@ def project_dashboard(request, pk):
     total_sites = len(sites)
     fs_forms = FieldSightXF.objects.filter(site__project=obj.id)
     fs_forms = list(fs_forms)
-    outstanding = flagged = approved = rejected = 0
-    for form in fs_forms:
-        if form.form_status == 0:
-            outstanding += 1
-        elif form.form_status == 1:
-            rejected +=1
-        elif form.form_status == 2:
-            flagged +=1
-        else:
-            approved +=1
+    outstanding, flagged, approved, rejected = obj.get_submissions_count()
     bar_graph = BarGenerator(sites)
     ordered_list = [{'letter': key, 'frequency': val} for key, val in bar_graph.data.items()]
     bar_data = json.dumps(ordered_list)

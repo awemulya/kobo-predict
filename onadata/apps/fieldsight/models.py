@@ -151,6 +151,14 @@ class Project(models.Model):
     def get_project_type(self):
         return self.type.name
 
+    def get_submissions_count(self):
+        outstanding = self.project_instances.filter(form_status=0).count()
+        rejected = self.project_instances.filter(form_status=1).count()
+        flagged = self.project_instances.filter(form_status=2).count()
+        approved = self.project_instances.filter(form_status=3).count()
+
+        return outstanding, flagged, approved, rejected
+
     def get_absolute_url(self):
         return reverse('projects-detail', kwargs={'pk': self.pk})
 
