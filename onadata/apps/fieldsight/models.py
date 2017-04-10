@@ -38,8 +38,6 @@ class ProjectType(models.Model):
     def __unicode__(self):
         return u'{}'.format(self.name)
 
-# classs common(abstract)
-
 
 class Organization(models.Model):
     name = models.CharField("Organization Name", max_length=255)
@@ -76,6 +74,15 @@ class Organization(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_submissions_count(self):
+        from onadata.apps.fsforms.models import FInstance
+        outstanding = FInstance.objects.filter(project__organization=self, form_status=0).count()
+        rejected = FInstance.objects.filter(project__organization=self, form_status=1).count()
+        flagged = FInstance.objects.filter(project__organization=self, form_status=2).count()
+        approved = FInstance.objects.filter(project__organization=self, form_status=3).count()
+
+        return outstanding, flagged, approved, rejected
 
     def get_absolute_url(self):
         return reverse('organizations-detail', kwargs={'pk': self.pk})

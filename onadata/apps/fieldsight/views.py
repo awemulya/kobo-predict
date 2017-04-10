@@ -22,7 +22,8 @@ from registration.backends.default.views import RegistrationView
 
 from onadata.apps.fieldsight.bar_data_project import BarGenerator
 from onadata.apps.fsforms.Submission import Submission
-from onadata.apps.fsforms.line_data_project import LineChartGenerator
+from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
+    LineChartGeneratorSite
 from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
@@ -112,24 +113,25 @@ def organization_dashboard(request, pk):
     projects = Project.objects.filter(organization=obj)
     total_projects = len(projects)
     total_sites = len(sites)
-    fs_forms = FieldSightXF.objects.filter(site__project__organization=obj.id)
-    fs_forms = list(fs_forms)
-    outstanding = flagged = approved = rejected = 0
-    for form in fs_forms:
-        if form.form_status == 0:
-            outstanding += 1
-        elif form.form_status == 1:
-            rejected += 1
-        elif form.form_status == 2:
-            flagged += 1
-        else:
-            approved += 1
+    outstanding, flagged, approved, rejected = obj.get_submissions_count()
+    total_users = UserProfile.objects.filter(organization=obj).count()
+
+    bar_graph = BarGenerator(sites)
+    ordered_list = [{'letter': key, 'frequency': val} for key, val in bar_graph.data.items()]
+    bar_data = json.dumps(ordered_list)
+
+    line_chart = LineChartGeneratorOrganization(obj)
+    line_chart_data = line_chart.data()
+    ordered_list_line = [{'date': key, 'close': val} for key, val in line_chart_data.items()]
+
+    graph_data = json.dumps(ordered_list_line)
 
     dashboard_data = {
         'obj': obj,
         'projects': projects,
         'sites': sites,
         'peoples_involved': peoples_involved,
+        'total_users': total_users,
         'total_projects': total_projects,
         'total_sites': total_sites,
         'outstanding': outstanding,
@@ -137,6 +139,8 @@ def organization_dashboard(request, pk):
         'approved': approved,
         'rejected': rejected,
         'data': data,
+        'bar_data': bar_data,
+        'line_chart_data': graph_data,
     }
     return TemplateResponse(request, "fieldsight/organization_dashboard.html", dashboard_data)
 
@@ -160,8 +164,6 @@ def project_dashboard(request, pk):
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
     total_sites = len(sites)
-    fs_forms = FieldSightXF.objects.filter(site__project=obj.id)
-    fs_forms = list(fs_forms)
     outstanding, flagged, approved, rejected = obj.get_submissions_count()
     bar_graph = BarGenerator(sites)
     ordered_list = [{'letter': key, 'frequency': val} for key, val in bar_graph.data.items()]
@@ -204,6 +206,13 @@ def site_dashboard(request, pk):
     data = serialize('custom_geojson', [obj], geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
 
+    line_chart = LineChartGeneratorSite(obj)
+    line_chart_data = line_chart.data()
+    ordered_list_line = [{'date': key, 'close': val} for key, val in line_chart_data.items()]
+
+    graph_data = json.dumps(ordered_list_line)
+
+
     outstanding, flagged, approved, rejected = obj.get_site_submission()
     dashboard_data = {
         'obj': obj,
@@ -213,6 +222,7 @@ def site_dashboard(request, pk):
         'approved': approved,
         'rejected': rejected,
         'data': data,
+        'line_chart_data': graph_data,
     }
     return TemplateResponse(request, "fieldsight/site_dashboard.html", dashboard_data)
 

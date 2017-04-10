@@ -15,6 +15,62 @@
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
+<style>
+    .axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+  .bar {
+    fill: #296fd5;
+}
+
+.bar:hover {
+  fill: rgba(41, 111, 213, 0.5);
+}
+
+.x.axis path {
+  display: none;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+    path {
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+</style>
 {% endblock %}
 
 {% block head %}
@@ -39,7 +95,7 @@
                     <div class="col-md-6">
                         <div class="abt-org1">
                             <div class="col-md-12">
-                                <h5 class="organization_name">{{ obj.name }}</h4>
+                                <h5 class="organization_name">{{ obj.name }}</h5>
                             </div>
                             <div class="col-md-8 detail">
                                 <p class="address information"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}, {{ obj.get_country_display }}</p>
@@ -55,25 +111,31 @@
                     <div class="col-md-3">
 
                                 <div class="mini-stat clearfix">
-                                  <span class="mini-stat-icon green1"><i class="fa fa-users"></i></span>
-                                  <div class="mini-stat-info">
-                                      <span>{{peoples_involved.count}}</span>
-                                      {% trans 'Total Users ' %}
-                                  </div>
+                                    <a href="{% url 'fieldsight:user-list'%}">
+                                      <span class="mini-stat-icon green1"><i class="fa fa-users"></i></span>
+                                      <div class="mini-stat-info">
+                                          <span>{{total_users}}</span>
+                                          {% trans 'Users ' %}
+                                      </div>
+                                    </a>
                                 </div>
                                 <div class="mini-stat clearfix">
-                                  <span class="mini-stat-icon orange"><i class="fa fa-users"></i></span>
-                                  <div class="mini-stat-info">
-                                      <span>{{peoples_involved.count}}</span>
-                                      {% trans 'Total Users ' %}
-                                  </div>
+                                    <a href="{% url 'fieldsight:project-list'%}">
+                                          <span class="mini-stat-icon orange"><i class="fa fa-building-o"></i></span>
+                                          <div class="mini-stat-info">
+                                              <span>{{total_projects}}</span>
+                                              {% trans 'Projects ' %}
+                                          </div>
+                                    </a>
                                 </div>
                                <div class="mini-stat clearfix">
-                                <span class="mini-stat-icon green"><i class="fa fa-picture-o"></i></span>
-                                <div class="mini-stat-info">
-                                    <span>{{total_sites}}</span>
-                                    {% trans 'Total Sites ' %}
-                                </div>
+                                   <a href="{% url 'fieldsight:site-list'%}">
+                                    <span class="mini-stat-icon green"><i class="fa fa-picture-o"></i></span>
+                                    <div class="mini-stat-info">
+                                        <span>{{total_sites}}</span>
+                                        {% trans 'Sites ' %}
+                                    </div>
+                                   </a>
                               </div>
                     </div> 
                             
@@ -86,7 +148,7 @@
 			  <li class="active"><a data-toggle="tab" href="#org-map">Map</a></li>
               <li><a data-toggle="tab" href="#org-list-proj">Projects</a></li>
 			  <!--<li><a data-toggle="tab" href="#org-list-site">List of Sites</a></li>-->
-			  <li><a data-toggle="tab" href="#org-people">{% trans 'People' %}</a></li>
+			  <li><a data-toggle="tab" href="#org-people">{% trans 'Admins' %}</a></li>
 			  <!-- <li><a data-toggle="tab" href="#org-about">About Organization</a></li> -->
               <ul class="nav navbar-nav navbar-right">
                  <li class="dropdown man-drop">
@@ -178,9 +240,9 @@
                                     <p class="address"><span><i class="fa fa-user" aria-hidden="true"></i></span>{{ role.user.username }}</p>
                                     <p class="address"><span><i class="fa fa-envelope" aria-hidden="true"></i></span>{{ role.user.email }}</p>
                                     <p class="address"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ role.user.user_profile.phone }}</p>
-                                    <p class="contact"><span><i class="fa fa-minus" aria-hidden="true"></i></span>
-                                    {{ role.group }}
-                                    </p>
+                                    <!--<p class="contact"><span><i class="fa fa-minus" aria-hidden="true"></i></span>-->
+                                    <!--{{ role.group }}-->
+                                    <!--</p>-->
                                 </div>
                             </div>
                             <div class="clearfixx"></div>    
@@ -207,62 +269,51 @@
 
 {% block all_diagrams %} 
     <section class="panel bar-gauge-diagrams">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <div class="daily-visit">
-              <h4 class="widget-h">Forms Submitions</h4>
-              <div id="daily-visit-chart" style="width:100%; height: 100px; display: block">
+
+              <div id="submission-chart" style="width:100%; display: block">
 
               </div>
-              <ul class="chart-meta clearfix">
-                  <li class="pull-left visit-chart-value">3233</li>
-                  <li class="pull-right visit-chart-title"><i class="fa fa-arrow-up"></i> 15%</li>
-              </ul>
+              <h4 class="widget-h">{% trans 'Form Submissions' %}</h4>
+
+          </div>
+            <hr>
+        </div>
+        <div class="col-md-12">
+         <div class="top-stats-panel">
+
+             <div id="progress-bar">
+
+             </div>
+             <h4 class="widget-h">Site Progress</h4>
+             <hr>
+
           </div>
         </div>
-        <div class="col-md-6">
-         <div class="top-stats-panel">
-            <h4 class="widget-h">Site Progress</h4>
-            <div class="bar-stats">
-                <ul class="progress-stat-bar clearfix">
-                    <li data-percent="50%"><span class="progress-stat-percent pink"></span></li>
-                    <li data-percent="90%"><span class="progress-stat-percent"></span></li>
-                    <li data-percent="70%"><span class="progress-stat-percent yellow-b"></span></li>
-                </ul>
-                <ul class="bar-legend">
-                    <li><span class="bar-legend-pointer pink"></span> New York</li>
-                    <li><span class="bar-legend-pointer green"></span> Los Angels</li>
-                    <li><span class="bar-legend-pointer yellow-b"></span> Dallas</li>
-                </ul>
-                <div class="daily-sales-info">
-                    <span class="sales-count">1200 </span> <span class="sales-label">Products Sold</span>
-                </div>
-            </div>
-          </div> 
-        </div>
-
         <div class="clearfixx"></div>
         <div class="flags-dash text-center">
           <div class="col-md-3">
             <div class="out-dash-flag">
-              <p class="length-flags-forms">{{outstanding|length}}</p>
+              <p class="length-flags-forms">{{outstanding}}</p>
               <p class="flags-forms">Outstanding Submissions</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="flag-dash-flag">
-              <p class="length-flags-forms">{{flagged|length}}</p>
+              <p class="length-flags-forms">{{flagged}}</p>
               <p class="flags-forms">Flagged Submissions</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="reg-dash-flag">
-              <p class="length-flags-forms">{{rejected|length}}</p>
+              <p class="length-flags-forms">{{rejected}}</p>
               <p class="flags-forms">Rejected Submissions</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="app-dash-flag">
-              <p class="length-flags-forms">{{approved|length}}</p>
+              <p class="length-flags-forms">{{approved}}</p>
               <p class="flags-forms">Approved Submissions</p>
             </div>
           </div>
@@ -314,9 +365,13 @@
     <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
   <script type="text/javascript">
      var static_url ="{{ STATIC_URL }}";
-     var token ="{{ csrf_token }}";
     var data = {{ data|safe}};
+    var dict_bar_data = {{ bar_data|safe}};
+    var line_chart_data = {{ line_chart_data|safe}};
 
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/d3.tip.v0.6.3.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_bar-graph.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
 {% endblock %}
