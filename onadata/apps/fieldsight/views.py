@@ -520,6 +520,7 @@ def download(request):
     sheet = excel.pe.Sheet([[1, 2],[3, 4]])
     return excel.make_response(sheet, "csv")
 
+
 class UserListView(ProjectMixin, OrganizationViewFromProfile, ListView):
     def get_template_names(self):
         return ['fieldsight/user_list.html']
@@ -528,6 +529,7 @@ class UserListView(ProjectMixin, OrganizationViewFromProfile, ListView):
         context = super(UserListView, self).get_context_data(**kwargs)
         context['groups'] = Group.objects.all()
         return context
+
 
 @login_required
 def filter_users(request):
