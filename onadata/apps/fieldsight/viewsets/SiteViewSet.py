@@ -29,7 +29,7 @@ class AllSiteViewSet(viewsets.ModelViewSet):
         if self.request.role.group.name == "Super Admin":
             return queryset
         elif self.request.role.group.name == "Organization Admin":
-            return queryset.filter(project__organization=self.request.project, is_active=True)
+            return queryset.filter(project__organization=self.request.organization, is_active=True)
         elif self.request.role.group.name == "Project Manager":
             return queryset.filter(project=self.request.project, is_active=True)
         elif self.request.role.group.name == "Reviewer":

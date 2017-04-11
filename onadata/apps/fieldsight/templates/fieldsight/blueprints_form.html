@@ -5,9 +5,13 @@
 {%block extracss %}
 {% endblock %}
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a>
 {% endblock %}
 
+{% block breadcrumbs %}
+<li><a href="{% url 'fieldsight:site-dashboard' id %}">
+     {% trans 'Site Dashboard' %}</a></li>
+<li>{% trans 'Upload Blueprints image files' %}</li>
+{% endblock %}
 
 {% block content %}
 
