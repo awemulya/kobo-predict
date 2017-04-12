@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from onadata.apps.users.views import ContactViewSet
-from onadata.apps.users.viewsets import UserViewSet
+from onadata.apps.users.viewsets import UserViewSet, ProfileViewSet
 from . import views
 urlpatterns = [
     url(r'^contacts/$', ContactViewSet.as_view({'get': 'list'}), name='contacts'),
@@ -12,6 +12,8 @@ urlpatterns = [
     url(r'^edit/(?P<pk>[0-9]+)/$', views.edit, name='edit'),
     url(r'^api/get-auth-token/$', views.ObtainAuthToken.as_view() ),
     url(r'^profile-update/(?P<pk>[0-9]+)/$', views.ProfileUpdateView.as_view(), name='profile_update'),
+    url(r'^api/profile(?:/(?P<pk>[0-9]+))?/$',
+        ProfileViewSet.as_view({'put': 'update','get':'retrieve'}), name='profile_update_api'),
     url(r'^profile/(?P<pk>[0-9]+)/$', views.my_profile, name='profile'),
     ]
 

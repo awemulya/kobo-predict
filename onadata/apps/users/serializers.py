@@ -5,6 +5,8 @@ from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
+from onadata.apps.users.models import UserProfile
+
 
 def validateEmail( email ):
     from django.core.validators import validate_email
@@ -54,6 +56,13 @@ class AuthCustomTokenSerializer(serializers.Serializer):
         return attrs
 
 
+# class ProfileSerializer(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = UserProfile
+#         exclude = ('user', 'id', 'organization')
+#
+
 class UserSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
     password = serializers.CharField()
@@ -66,3 +75,27 @@ class UserSerializer(serializers.ModelSerializer):
         if obj.user_profile.profile_picture:
             return obj.user_profile.profile_picture.url
         return None
+
+
+class ProfileUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        exclude = ('last_login', 'is_superuser', 'is_staff', 'is_active', 'date_joined', 'groups', 'user_permissions','password')
+        read_only_fields = ('username', 'email', 'last_login', 'date_joined', 'id')
+
+
+class UserSerializerProfile(serializers.ModelSerializer):
+    user = ProfileUserSerializer(read_only=True)
+
+    class Meta:
+        model = UserProfile
+        read_only_fields = ('id')
+
+    def update(self,  instance, validated_data):
+        data = self.context['request'].data
+        user = data.pop('user')
+        UserProfile.objects.filter(pk=instance.pk).update(**validated_data)
+        User.objects.filter(user_profile=instance).update(**user)
+        return instance
+
