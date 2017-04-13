@@ -77,25 +77,35 @@ class UserSerializer(serializers.ModelSerializer):
         return None
 
 
-class ProfileUserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        exclude = ('last_login', 'is_superuser', 'is_staff', 'is_active', 'date_joined', 'groups', 'user_permissions','password')
-        read_only_fields = ('username', 'email', 'last_login', 'date_joined', 'id')
+# class ProfileUserSerializer(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = User
+#         exclude = ('last_login', 'is_superuser', 'is_staff', 'is_active', 'date_joined', 'groups', 'user_permissions','password')
+#         read_only_fields = ('username', 'email', 'last_login', 'date_joined', 'id')
 
 
 class UserSerializerProfile(serializers.ModelSerializer):
-    user = ProfileUserSerializer(read_only=True)
+    first_name = serializers.CharField(source="user.first_name")
+    last_name = serializers.CharField(source="user.last_name")
 
     class Meta:
         model = UserProfile
-        read_only_fields = ('id')
+        exclude = ('user',)
+        read_only_fields = ('id', 'profile_picture')
 
     def update(self,  instance, validated_data):
         data = self.context['request'].data
-        user = data.pop('user')
+        user_data = validated_data.pop("user")
+        User.objects.filter(pk=instance.user.pk).update(**user_data)
+        # profile_picture = data.get("profile_picture", False)
+        # if profile_picture:
+        #     validated_data.update({'profile_picture':profile_picture})
         UserProfile.objects.filter(pk=instance.pk).update(**validated_data)
-        User.objects.filter(user_profile=instance).update(**user)
-        return instance
+        profile =  UserProfile.objects.get(pk=instance.pk)
+        profile_picture = data.get("profile_picture", False)
+        if profile_picture:
+            profile.profile_picture = profile_picture
+            profile.save()
+        return profile
 

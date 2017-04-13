@@ -4,6 +4,7 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import detail_route
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -118,6 +119,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializerProfile
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     permission_classes = (IsAuthenticated, EditProfilePermission)
+    parser_classes = (FormParser, MultiPartParser)
 
     def retrieve(self, request, pk=None):
         queryset = UserProfile.objects.all()
