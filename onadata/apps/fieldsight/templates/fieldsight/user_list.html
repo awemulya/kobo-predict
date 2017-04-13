@@ -27,13 +27,24 @@
                 </select>
             </div>
          <div class="col-sm-2">
-            <button class="btn btn-lg btn-primary registration__action" type="submit">{% trans 'Filter' %}</button>
+            <button class="btn btn-primary registration__action" type="submit">{% trans 'Filter' %}</button>
          </div>
              </div>
-    </form>
+
+        <div class="gap"></div>
+        <div class="gap"></div>
+        <div class="gap"></div> 
+        <div class="gap"></div>
+        <div class="gap"></div>    
+        <div class="gap"></div>
+        <div class="gap"></div>
+        <div class="gap"></div> 
+        <div class="gap"></div>
+        <div class="gap"></div>    
     
-      
-      <div class="users-in-this-org">
+    </form>
+
+      <div class="users-in-this-org col-sm-12">
         <ul class="nav nav-tabs">
           <li class="active">
             <a data-toggle="tab" href="#table-view" title="Table View"><i class="fa fa-th-list" aria-hidden="true"></i></a>
@@ -49,17 +60,17 @@
          
                  <table class="table table-striped">
                      <thead>
-                     <th>{% anchor username _('Username') %}</th>
-                     <th>{% anchor first_name _('Fullname') %}</th>
-                     <th>{% anchor email _('Email') %}</th>
-                     <th>{% anchor is_active _('Active') %}</th>
-                     <th>Activate/Deactivate</th>
+                     <th class="table_head">{% anchor username _('Username') %}</th>
+                     <th class="table_head">{% anchor first_name _('Fullname') %}</th>
+                     <th class="table_head">{% anchor email _('Email') %}</th>
+                     <th class="table_head">{% anchor is_active _('Active') %}</th>
+                     <th class="table_head">Activate/Deactivate</th>
                      </thead>
                      <tbody>
                      {% for user in paginated_objects %}
                          <tr>
                              <td>
-                                 <a href="{% url 'users:edit' pk=user.id %}">{{ user.username }}</a>
+                                 <a class="username" href="{% url 'users:edit' pk=user.id %}">{{ user.username }}</a>
                              </td>
                              <td>
                                  {{ user.get_full_name }}

@@ -43,7 +43,7 @@ $(document).ready(function() {
           <form>
          {% csrf_token %}
              {{ form.media }}
-             <div class="col-sm-12 registration_field">
+             <div class="col-sm-9 registration_field">
             {% for field in form %}
                <div class="col-sm-12 registration_field">
                  <div class="col-sm-2"> {{ field.label }}</div>
@@ -70,7 +70,7 @@ $(document).ready(function() {
           <div id="map1Div" data-bind="style:{width:'100%',height:'500px'},map:mapOne"></div>
 
         <!-- <input type="submit" class='btn btn-info btn-raised' value="{% trans 'Save' %}"> -->
-        <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:save" >{% trans 'Save' %}</button>
+        <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:save" >{% trans 'Save1' %}</button>
         {% if form.instance.id %}
             <a href="{% url 'fieldsight:project-delete' form.instance.id %}" class="btn btn-danger btn-raised">
                 {% trans 'Delete' %}</a>

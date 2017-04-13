@@ -53,7 +53,7 @@ var pk = "{{pk}}";
 
         <div data-bind="with:current_form">
     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.general_form_modal_visibility">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog form-modal" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -68,8 +68,9 @@ var pk = "{{pk}}";
 
             {% csrf_token %}
               {{form.as_p}}
-        <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Save' %}</button>
-
+        <div class="gap"></div>
+        <button class="btn  btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Save' %}</button>
+        <div class="gap"></div>
     </form>
 
 
@@ -139,7 +140,7 @@ var pk = "{{pk}}";
 
         <div data-bind="with:current_form">
     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.schedule_form_modal_visibility">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog form-modal" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -329,10 +330,10 @@ var pk = "{{pk}}";
                     <div class="each-stage-grp">
                      <div class="row">
                         <div class="col-sm-12">
-                              <input class="form-control" data-bind="value: name" placeholder="Stage Name" required="required">
+                              <input class="form-control my-input" data-bind="value: name" placeholder="Stage Name" required="required">
                         </div>
                         <div class="col-sm-12">
-                              <input class="form-control" data-bind="value: description" placeholder="Description">
+                              <input class="form-control my-input" data-bind="value: description" placeholder="Description">
                          </div>
                        </div>
                         <div class="row">
@@ -354,7 +355,7 @@ var pk = "{{pk}}";
                                     <span data-bind='text: $index()+1'></span>:
                                     <input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name">
 
-                                    <input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description">
+                                    <input class="name-stage-grp substage my-input"  data-bind="value: description" placeholder="Stage Description">
                                     <div class="gap"></div>
                                     <button   data-bind="click:edit_done" class="btn btn-primary "><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
                                 </a>
@@ -372,16 +373,16 @@ var pk = "{{pk}}";
                               <div class="col-sm-8">
                                   <form method="post">
                                           <h5 class="sub-stage-name-c">{% trans 'New Sub Stage' %}</h5>
-                                            <div class="col-sm-12 registration_field">
+                                            <div class="col-sm-12 registration_field ">
                                                {{ form.non_field_errors }}
                                                </div>
 
                                             {% csrf_token %}
                                               {{form.as_p}}
 
-                                    <input type="text" class="name-stage-grp"  data-bind="value: name" placeholder="Substage Name" required="required">
+                                    <input type="text" class="name-stage-grp my-input"  data-bind="value: name" placeholder="Substage Name" required="required">
                                       <div class="gap"></div>
-                                    <input type="text" class="name-stage-grp"  data-bind="value: description" placeholder="description">
+                                    <input type="text" class="name-stage-grp my-input"  data-bind="value: description" placeholder="description">
                                 </form>
                               </div>
                               <div class="col-md-3"></div>
@@ -410,7 +411,7 @@ var pk = "{{pk}}";
       <div class="modal-footer">
            <div class="col-sm-3">
 
-             <a class="btn btn-primary square" style="margin-right:3px !important;" data-bind="click:save"><i class="fa fa-floppy-o" aria-hidden="true"></i>  {% trans 'Save' %}</a>
+             <a class="btn btn-primary " style="margin-right:3px !important;" data-bind="click:save"><i class="fa fa-floppy-o" aria-hidden="true"></i>  {% trans 'Save' %}</a>
           </div>
       </div>
     </div>
