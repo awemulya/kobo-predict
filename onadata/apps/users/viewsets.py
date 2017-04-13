@@ -53,7 +53,7 @@ class EditProfilePermission(BasePermission):
         elif request.role.group.name == "Reviewer":
             if UserRole.objects.filter(user=obj.user, group_name__in=USURPERS["Reviewer"]).exists():
                 return False
-            return obj == request.user
+            return obj.user == request.user
         return False
 
 

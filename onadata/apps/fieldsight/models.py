@@ -182,6 +182,7 @@ class Site(models.Model):
     logo = models.ImageField(upload_to="logo", default="logo/default_site.png")
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True)
+    is_survey = models.BooleanField(default=False)
 
     objects = GeoManager()
 
@@ -263,7 +264,20 @@ def get_image_filename(instance, filename):
     return "blueprint_images/%s-%s-%s" % (project, slug, filename)
 
 
+def get_survey_image_filename(instance, filename):
+    title = instance.site.identifier
+    project = instance.site.project.pk
+    slug = slugify(title)
+    return "survey_images/%s-%s-%s" % (project, slug, filename)
+
+
 class BluePrints(models.Model):
     site = models.ForeignKey(Site, related_name="blueprints")
     image = models.ImageField(upload_to=get_image_filename,
                               verbose_name='BluePrints',)
+
+
+class SiteCreateSurveyImages(models.Model):
+    site = models.ForeignKey(Site, related_name="create_surveys")
+    image = models.ImageField(upload_to=get_survey_image_filename,
+                              verbose_name='survey images',)
