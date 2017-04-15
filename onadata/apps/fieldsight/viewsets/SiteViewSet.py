@@ -4,8 +4,9 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, BasePermission
 
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
-from onadata.apps.fieldsight.models import Site
-from onadata.apps.fieldsight.serializers.SiteSerializer import SiteSerializer, SiteCreationSurveySerializer
+from onadata.apps.fieldsight.models import Site, ProjectType
+from onadata.apps.fieldsight.serializers.SiteSerializer import SiteSerializer, SiteCreationSurveySerializer, \
+    SiteReviewSerializer, ProjectTypeSerializer
 from onadata.apps.userrole.models import UserRole
 
 
@@ -57,6 +58,30 @@ class SiteCreationSurveyViewSet(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         return queryset.filter(pk=self.kwargs.get('pk', None))
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
+class SiteReviewViewSet(viewsets.ModelViewSet):
+    queryset = Site.objects.filter(is_survey=True)
+    serializer_class = SiteReviewSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    permission_classes = (SiteSurveyPermission,)
+    parser_classes = (MultiPartParser, FormParser,)
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(project__id=self.kwargs.get('pk', None))
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
+class ProjectTypeViewset(viewsets.ModelViewSet):
+    queryset = ProjectType.objects.all()
+    serializer_class = ProjectTypeSerializer
+    authentication_classes = (BasicAuthentication,)
+
 
     def get_serializer_context(self):
         return {'request': self.request}

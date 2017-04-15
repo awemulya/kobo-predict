@@ -6,7 +6,8 @@ from rest_framework import routers
 from onadata.apps.fieldsight.viewsets.FieldsightFcmViewset import FcmDeviceViewSet
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectViewSet
-from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet
+from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
+    SiteReviewViewSet, ProjectTypeViewset
 from .forms import RegistrationForm
 
 from .views import (
@@ -33,7 +34,7 @@ from .views import (
     add_supervisor,
     CreateUserView,
     UserListView, site_images, filter_users, upload_sites, blue_prints, add_project_role, manage_people_site,
-    manage_people_project, manage_people_organization)
+    manage_people_project, manage_people_organization, site_survey_list)
 
 router = routers.SimpleRouter()
 # router.register(r'api/organization-type', OrganizationTypeViewSet)
@@ -76,8 +77,11 @@ urlpatterns = [
     url(r'^api/project-sites/(?P<pk>\d+)/$', SiteViewSet.as_view({'get': 'list'}), name='project_sites'),
 
 
+    url(r'^survey-sites/(?P<pk>\d+)$', site_survey_list, name='site-survey-list'),
     url(r'^api/sites/$', AllSiteViewSet.as_view({'get': 'list'}), name='sites-list'),
+    url(r'^api/project-types/$', ProjectTypeViewset.as_view({'get': 'list'})),
     url(r'^api/survey-sites/(?P<pk>\d+)/$', SiteCreationSurveyViewSet.as_view({'get': 'list'}), name='sites-list'),
+    url(r'^api/survey-sites-review/(?P<pk>\d+)/$', SiteReviewViewSet.as_view({'get': 'list'}), name='sites-list-review'),
     url(r'^api/survey-sites/$', SiteCreationSurveyViewSet.as_view({'post': 'create', 'put':'update'}), name='sites-list'),
     url(r'^site/$', SiteListView.as_view(), name='sites-list'),
     url(r'^site/$', SiteListView.as_view(), name='site-list'),

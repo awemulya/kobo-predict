@@ -164,6 +164,7 @@ def project_dashboard(request, pk):
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
     total_sites = len(sites)
+    total_survey_sites = obj.sites.filter(is_survey=True).count()
     outstanding, flagged, approved, rejected = obj.get_submissions_count()
     bar_graph = BarGenerator(sites)
     ordered_list = [{'letter': key, 'frequency': val} for key, val in bar_graph.data.items()]
@@ -179,6 +180,7 @@ def project_dashboard(request, pk):
         'sites': sites,
         'peoples_involved': peoples_involved,
         'total_sites': total_sites,
+        'total_survey_sites': total_survey_sites,
         'outstanding': outstanding,
         'flagged': flagged,
         'approved': approved,
@@ -189,6 +191,11 @@ def project_dashboard(request, pk):
     }
     return TemplateResponse(request, "fieldsight/project_dashboard.html", dashboard_data)
 
+
+@login_required()
+@group_required("Project")
+def site_survey_list(request, pk):
+    return TemplateResponse(request, "fieldsight/site_survey_list.html", {'project':pk})
 
 @login_required
 @group_required("Reviewer")

@@ -4,7 +4,7 @@
 
 {% block page-title %}
 {{obj.name}}{% endblock %}
-{%block extracss %}
+{% block extracss %}
 
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
@@ -112,11 +112,22 @@
                                   </div>
                                 </div>
                                <div class="mini-stat clearfix">
+                                   <a href="{% url 'fieldsight:site-list'%}">
                                 <span class="mini-stat-icon green"><i class="fa fa-picture-o"></i></span>
                                 <div class="mini-stat-info">
                                     <span>{{total_sites}}</span>
                                     Total Sites
                                 </div>
+                                   </a>
+                              </div>
+                                <div class="mini-stat clearfix">
+                                    <a href="{% url 'fieldsight:site-survey-list' obj.pk%}">
+                                <span class="mini-stat-icon green"><i class="fa fa-building-o"></i></span>
+                                <div class="mini-stat-info">
+                                    <span>{{total_survey_sites}}</span>
+                                    {% trans 'Site Survey'%}
+                                </div>
+                                    </a>
                               </div>
                             </div> 
                         </div>
