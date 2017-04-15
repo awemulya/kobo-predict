@@ -56,7 +56,7 @@ class SiteCreationSurveyViewSet(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, FormParser,)
 
     def filter_queryset(self, queryset):
-        return queryset.filter(pk=self.kwargs.get('pk', None))
+        return queryset.filter(project__id=self.kwargs.get('pk', None))
 
     def get_serializer_context(self):
         return {'request': self.request}
