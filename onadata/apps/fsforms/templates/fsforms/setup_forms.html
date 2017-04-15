@@ -155,22 +155,30 @@ var pk = "{{pk}}";
 
             {% csrf_token %}
               {{schedule_form.as_p}}
-              <div class="form-group">
-                  <input data-bind="datePicker : date_range_start" type="date">
+              <div class="form-group date1">
+                  <label for="start">Start :</label>
+                  <input data-bind="datePicker : date_range_start" type="date" id="start">
               </div>
-              <div class="form-group">
-                  <input data-bind="datePicker : date_range_end" type="date">
+              <div class="form-group date2">
+                  <label for="End"> End:</label>
+                  <input data-bind="datePicker : date_range_end" type="date" id="End">
               </div>
            <div class="form-group">
+              <span style="font-weight: bold;">Days:</span>
                 <div data-bind="foreach: $parent.days">
-                    <div class="col-sm-3">
+                    <div class="col-sm-1" style="width: 14.28% !important">
                         <span data-bind="text:day"></span>
-                    <input type="checkbox"
+                    <input type="checkbox" class="day-schedule" 
                            data-bind="checkedValue: id, checked: $parent.selected_days">
                         </div>
             </div>
             </div>
-        <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Create' %}</button>
+
+            <div class="gap-high"></div>
+            <button class="btn g btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Create' %}</button>
+
+            <div class="gap-medium"></div>
+            
 
     </form>
 
