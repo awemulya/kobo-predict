@@ -1,6 +1,6 @@
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
-from onadata.apps.fieldsight.models import Site, SiteCreateSurveyImages
+from onadata.apps.fieldsight.models import Site, SiteCreateSurveyImages, ProjectType
 
 
 class SiteSerializer(serializers.ModelSerializer):
@@ -28,6 +28,13 @@ class PhotoSerializer(serializers.ModelSerializer):
         read_only_fields = ("site",)
 
 
+class ProjectTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ProjectType
+        read_only_fields = ("id",)
+
+
 class SiteCreationSurveySerializer(serializers.ModelSerializer):
     images = PhotoSerializer(many=True, read_only=True)
     latitude= serializers.CharField()
@@ -45,3 +52,25 @@ class SiteCreationSurveySerializer(serializers.ModelSerializer):
         for img in image:
             SiteCreateSurveyImages.objects.create(image=img, site=site)
         return site
+
+
+class SiteReviewSerializer(serializers.ModelSerializer):
+    images = PhotoSerializer(many=True, read_only=True)
+    type = ProjectTypeSerializer()
+    latitude= serializers.CharField()
+    longitude= serializers.CharField()
+
+    class Meta:
+        model = Site
+        read_only_fields = ('logo', 'location', 'type')
+
+    def create(self, validated_data):
+        p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')),srid=4326)
+        validated_data.update({'is_survey': True,'location':p})
+        site=Site.objects.create(**validated_data)
+        image = self.context['request'].FILES.values()
+        for img in image:
+            SiteCreateSurveyImages.objects.create(image=img, site=site)
+        return site
+
+

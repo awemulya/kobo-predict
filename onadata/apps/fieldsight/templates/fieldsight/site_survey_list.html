@@ -35,23 +35,122 @@ var project = "{{project}}";
 
 
 {% block content %}
-<div class="col-sm-12">
+<div data-bind="with:current_site">
+    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.site_modal_visibility">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{% trans 'Survey Detail' %}</h4>
+      </div>
+      <div class="modal-body">
+          <form>
+         {% csrf_token %}
+             <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'ID' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: identifier" />
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+              <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'Name' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: name" />
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+              <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'Address' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: address" />
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+              <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'Public Description' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: public_desc" />
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+              <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'Additional Description' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: additional_desc" />
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+              <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'Type' %}</div>
+                 <div class="col-sm-4">
+                 <select data-bind="options: $root.typeList,
+                       optionsText: 'name',
+                       value: type,
+                       optionsCaption: 'Type'"></select>
+
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+             <div class="col-sm-12 registration_field">
+                 <div class="col-sm-2"> {% trans 'Latitude' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: mapOne().lat" />
+                     </div>
+                 <div class="col-sm-6"></div>
+               </div>
+
+          <div class="col-sm-12 registration_field">
+                 <div class="col-sm-2"> {% trans 'Longitude' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: mapOne().lng" />
+                     </div>
+                 <div class="col-sm-6"></div>
+               </div>
+          <div id="map1Div" data-bind="style:{width:'100%',height:'500px'},map:mapOne"></div>
+
+        <!-- <input type="submit" class='btn btn-info btn-raised' value="{% trans 'Save' %}"> -->
+        <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:$root.close_detail" >
+            {% trans 'Close' %}</button>
+
+    </form>
+
+
+      </div>
+      <!--<div class="modal-footer">-->
+        <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+        <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+      <!--</div>-->
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+</div>
+
+
+<div class="col-sm-12 site-survey-list">
         <input type="text" class="form-control" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'">
 </div>
 
+
+
 <div class='adv-table' data-bind="foreach: sites">
+     <a data-bind="click:$parent.detail_survey">
+         <div class="col-sm-4 survey-site">
+             <div  >
+                 <span>{% trans 'Name' %}</span>
+                 <span data-bind="text: name">
+                 <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
 
-     <a data-bind="">
-                     <div class="col-sm-4">
-                         <div style="margin-top:20px">
-                             <span data-bind="text: name">
-                             <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
+            </div>
+             <div>
+                <span>{% trans 'ID' %}</span> <span data-bind="text: identifier"></span>
 
-                        </div>
-                     </div>
+            </div>
+         </div>
      </a>
 
 </div>
+
 {% endblock %}
 
 {%block extrascript %}
