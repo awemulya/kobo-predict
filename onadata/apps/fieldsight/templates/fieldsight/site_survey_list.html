@@ -84,10 +84,10 @@ var project = "{{project}}";
               <div class="col-sm-12 registration_field">
                 <div class="col-sm-2"> {% trans 'Type' %}</div>
                  <div class="col-sm-4">
-                 <select data-bind="options: $root.typeList,
+                 <select data-bind="options: $parent.typeList,
                        optionsText: 'name',
-                       value: type,
-                       optionsCaption: 'Type'"></select>
+                       optionsValue: 'id',
+                       value: type().id"></select>
 
                  </div>
                  <div class="col-sm-6"></div>
@@ -107,11 +107,26 @@ var project = "{{project}}";
                      </div>
                  <div class="col-sm-6"></div>
                </div>
-          <div id="map1Div" data-bind="style:{width:'100%',height:'500px'},map:mapOne"></div>
+          <div id="map1Div" data-bind="style:{width:'100%',height:'400px'},map:mapOne"></div>
 
-        <!-- <input type="submit" class='btn btn-info btn-raised' value="{% trans 'Save' %}"> -->
-        <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:$root.close_detail" >
-            {% trans 'Close' %}</button>
+              <div class="gap"></div>
+              <div class="gap"></div>
+              <h3 data-bind="visible:create_surveys().length">{% trans 'Survey Images' %}</h3>
+              <div class="review-images" data-bind="foreach: create_surveys">
+                  <img width="400px" height="400px" data-bind="attr:{src: image}" />
+
+              </div>
+              <div class="col-sm-12 registration_field">
+                 <div class="col-sm-2"> {% trans 'Verify This Survey' %}</div>
+                 <div class="col-sm-4">
+                  <input type="checkbox" data-bind="checked: is_survey" />
+                     </div>
+                 <div class="col-sm-6"></div>
+               </div>
+        <button class="btn btn-primary registration__action" type="submit" data-bind="click:$root.save_detail" >
+            {% trans 'Save Changes' %}</button>
+              <div class="gap"></div>
+              <div class="gap"></div>
 
     </form>
 

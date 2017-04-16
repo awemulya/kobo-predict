@@ -55,22 +55,31 @@ class SiteCreationSurveySerializer(serializers.ModelSerializer):
 
 
 class SiteReviewSerializer(serializers.ModelSerializer):
-    images = PhotoSerializer(many=True, read_only=True)
-    type = ProjectTypeSerializer()
-    latitude= serializers.CharField()
-    longitude= serializers.CharField()
+    create_surveys = PhotoSerializer(many=True, read_only=True)
+    type = ProjectTypeSerializer(read_only=True)
+    latitude = serializers.CharField()
+    longitude = serializers.CharField()
 
     class Meta:
         model = Site
-        read_only_fields = ('logo', 'location', 'type')
+        read_only_fields = ('logo', 'location', 'create_surveys','project')
 
-    def create(self, validated_data):
-        p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')),srid=4326)
-        validated_data.update({'is_survey': True,'location':p})
-        site=Site.objects.create(**validated_data)
-        image = self.context['request'].FILES.values()
-        for img in image:
-            SiteCreateSurveyImages.objects.create(image=img, site=site)
+    def update(self, instance, validated_data):
+        data = self.context['request'].data
+        type_id = data.pop('type')
+        site_type = ProjectType.objects.get(pk=type_id)
+        verify_survey = data.pop('is_survey')
+        if verify_survey:
+            validated_data.update({'is_survey': False})
+        else:
+            validated_data.update({'is_survey': True})
+
+        p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')), srid=4326)
+        validated_data.update({'location':p})
+        Site.objects.filter(pk=instance.pk).update(**validated_data)
+        site = Site.objects.get(pk=instance.id)
+        site.type = site_type
+        site.save()
         return site
 
 
