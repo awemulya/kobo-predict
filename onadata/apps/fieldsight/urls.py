@@ -7,7 +7,7 @@ from onadata.apps.fieldsight.viewsets.FieldsightFcmViewset import FcmDeviceViewS
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectViewSet
 from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
-    SiteReviewViewSet, ProjectTypeViewset, SiteReviewUpdateViewSet
+    SiteReviewViewSet, ProjectTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet
 from .forms import RegistrationForm
 
 from .views import (
@@ -82,6 +82,7 @@ urlpatterns = [
     url(r'^api/project-types/$', ProjectTypeViewset.as_view({'get': 'list'})),
     url(r'^api/survey-sites/(?P<pk>\d+)/$', SiteCreationSurveyViewSet.as_view({'get': 'list'}), name='sites-list'),
     url(r'^api/survey-sites-review/(?P<pk>\d+)/$', SiteReviewViewSet.as_view({'get': 'list'}), name='sites-list-review'),
+    url(r'^api/project-sites/(?P<pk>\d+)/$', SiteUnderProjectViewSet.as_view({'get': 'list'}), name='project-sites-list'),
     url(r'^api/survey-sites-review-update/(?P<pk>\d+)/$', SiteReviewUpdateViewSet.as_view({'post': 'update'})),
     url(r'^api/survey-sites/$', SiteCreationSurveyViewSet.as_view({'post': 'create', 'put':'update'}), name='sites-list'),
     url(r'^site/$', SiteListView.as_view(), name='sites-list'),

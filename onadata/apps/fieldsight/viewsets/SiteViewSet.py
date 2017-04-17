@@ -76,6 +76,14 @@ class SiteCreationSurveyViewSet(viewsets.ModelViewSet):
         return {'request': self.request}
 
 
+class SiteUnderProjectViewSet(viewsets.ModelViewSet):
+    queryset = Site.objects.filter(is_survey=False)
+    serializer_class = SiteSerializer
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(project__id=self.kwargs.get('pk', None))
+
+
 class SiteReviewViewSet(viewsets.ModelViewSet):
     queryset = Site.objects.filter(is_survey=True)
     serializer_class = SiteReviewSerializer

@@ -177,7 +177,6 @@ def project_dashboard(request, pk):
     graph_data = json.dumps(ordered_list_line)
     dashboard_data = {
         'obj': obj,
-        'sites': sites,
         'peoples_involved': peoples_involved,
         'total_sites': total_sites,
         'total_survey_sites': total_survey_sites,

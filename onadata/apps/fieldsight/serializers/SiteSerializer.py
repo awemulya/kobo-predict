@@ -11,7 +11,8 @@ class SiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Site
-        exclude = ('project','is_active','type',)
+        exclude = ('project','type',)
+        read_only_fields = ('is_active',)
 
     def get_progress(self, obj):
         return obj.progress()
