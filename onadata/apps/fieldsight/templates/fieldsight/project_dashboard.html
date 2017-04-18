@@ -173,8 +173,8 @@
 			     <div class="org-site-list">
                     {% for obj in projects %}
                     <a href="{% url 'fieldsight:project-edit' obj.pk %}">
-                        <div class="org-site">
-                            <div class="col-md-2">
+                        <div class="org-site ">
+                            <div class="col-md-2" >
                                 <div class="image-org">
                                      <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />
                                 </div>
@@ -245,21 +245,19 @@
                     {% for role in peoples_involved %}
 
                     <a href="{% url 'users:profile' role.user.id %}">
-                        <div class="org-site">
-                            <div class="col-md-2">
-                                <div class="image-org">
-                                     <img src="{{ role.user.user_profile.profile_picture.url }}" title="{{ role.user.user_profile.profile_picture.url}}" />
+                        <div class="org-site col-md-6 current-person " style="width: 48% !important;*/margin-right: 3px !important;margin-left: 9px;">
+                                <div class="user-image-current">
+                                     <img  class="modal-image" src="{{ role.user.user_profile.profile_picture.url }}" title="{{ role.user.user_profile.profile_picture.url}}" />
                                 </div>
-                            </div>
-                            <div class="col-md-10">
-                                <div class="detail-org">
-                                    <h3 class="pople-Name-org">{{role.user.get_full_name}}</h3>
-                                    <p class="address"><span><i class="fa fa-user" aria-hidden="true"></i></span>{{ role.user.username }}</p>
-                                    <p class="address"><span><i class="fa fa-envelope" aria-hidden="true"></i></span>{{ role.user.email }}</p>
-                                    <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ role.user.phone }}</p>
+                            <div class="">
+                                <div class="detail-org user-name-position">
+                                    <span class="pople-Name-org">{{role.user.get_full_name}}</span>
+                                    <p class="address italic"><span><i class="fa fa-user" aria-hidden="true"></i></span>{{ role.user.username }}</p>
+                                    <p class="address italic"><span><i class="fa fa-envelope" aria-hidden="true"></i></span>{{ role.user.email }}</p>
+                                    <p class="contact italic"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ role.user.phone }}</p>
                                     {% if role.has_multiple_project_roles %}
                                     {% for r in role.both_project_roles %}
-                                    <p class="contact"><span><i class="fa fa-minus" aria-hidden="true"></i></span>
+                                    <p class="contact italic"><span><i class="fa fa-minus" aria-hidden="true"></i></span>
                                     {{ r.group }}
                                     </p>
                                     {% endfor %}
@@ -294,7 +292,7 @@
   
   {% block all_diagrams %} 
     <section class="panel bar-gauge-diagrams">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <div class="daily-visit">
 
               <div id="submission-chart" style="width:100%; display: block">
@@ -305,7 +303,7 @@
           </div>
             <hr>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-6">
          <div class="top-stats-panel">
 
              <div id="progress-bar">

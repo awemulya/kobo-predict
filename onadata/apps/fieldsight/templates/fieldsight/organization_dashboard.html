@@ -87,12 +87,13 @@
         
         <div class="organization-short-detail" >
                 <div class="org-grg">
-                    <div class="col-md-3">
+                  <div class="card col-md-9">
+                    <div class="col-md-4">
                         <div class="org-logo">
                             <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <div class="abt-org1">
                             <div class="col-md-12">
                                 <h5 class="organization_name">{{ obj.name }}</h5>
@@ -106,6 +107,7 @@
                             </div>
                             
                         </div>
+                    </div>
                     </div>
 
                     <div class="col-md-3">
@@ -176,11 +178,11 @@
                   </div>    
 			  </div>
 			  <div id="org-list-proj" class="tab-pane fade">
-			     <div class="org-site-list">
+			     <div class="org-site-list current-person" style="/*width: 24% !important;*/margin-right: 3px !important;margin-left: 9px;">
                     {% for obj in projects %}
                     <a href="{% url 'fieldsight:project-dashboard' obj.pk %}">
                         <div class="org-site">
-                            <div class="col-md-2">
+                            <div class="col-md-2 "  >
                                 <div class="image-org">
                                      <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />    
                                 </div>

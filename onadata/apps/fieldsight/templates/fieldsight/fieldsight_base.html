@@ -105,25 +105,16 @@
         <div class="fa fa-bars"></div>
     </div>
 </div>
-<!--logo end-->
+<div class="brand-side col-sm-9">
+        <ol class="breadcrumb hidden-print" style="font-size: 16px;color: white !important;">
+                    {% block breadcrumbs_container %}
+                        <li><a href="{% url 'dashboard' %}">{% trans 'Home' %}</a></li>
+                        {% block breadcrumbs %}
+                            <li>{% usekwacro page-title %}</li>{% endblock %}
+                    {% endblock %}
+                </ol>
 
-<!-- <div class="nav notify-row" id="top_menu">
-    
-    <ul class="nav top-menu">
-        <li>
-            {% block logo %}
-                <img src="{{STATIC_URL}}images/logo1.png" alt="">
-            {% endblock %}
-        </li>    
-    </ul>
-    
-</div> -->
-<ul class="top-nav clearfix" style="padding-right: 31px !important;">
-
-
-
-    <!--search & user info start-->
-    <div class="dropdown pull-right top-menu">
+                <div class="dropdown pull-right top-menu top-nav clearfix">
         <!--<li>-->
             <!--<input type="text" class="form-control search" placeholder=" Search">-->
         <!--</li>-->
@@ -132,7 +123,7 @@
             <a  href="#" data-toggle="dropdown" class="dropdown-toggle" id="fs_drop_down"  border-radius: 4px;">
                 <img src="{{request.user.user_profile.profile_picture.url}}">
                 <span class="username"> {% trans request.user.username %}</span>
-                <b class="caret"></b>
+                <b class="caret" style="color: white;"></b>
             </a>
             <ul class="dropdown-menu dropdown-menu-right extended logout" id="fs_drop_menu">
                         {% if request.role %}
@@ -186,6 +177,26 @@
             </div>
         </li> -->
     </div>
+</div>
+<!--logo end-->
+
+<!-- <div class="nav notify-row" id="top_menu">
+    
+    <ul class="nav top-menu">
+        <li>
+            {% block logo %}
+                <img src="{{STATIC_URL}}images/logo1.png" alt="">
+            {% endblock %}
+        </li>    
+    </ul>
+    
+</div> -->
+<ul class="top-nav clearfix" style="padding-right: 31px !important;">
+
+
+
+    <!--search & user info start-->
+    
     <!--search & user info end-->
 </ul>
 </header>
@@ -286,13 +297,7 @@
             <div class="col-sm-12">
                 <section class="panel">
                     <header class="panel-heading">
-                      <ol class="breadcrumb hidden-print">
-            {% block breadcrumbs_container %}
-                <li><a href="{% url 'dashboard' %}">{% trans 'Home' %}</a></li>
-                {% block breadcrumbs %}
-                    <li>{% usekwacro page-title %}</li>{% endblock %}
-            {% endblock %}
-        </ol>
+                      
 
                         
                         <span class="tools pull-right">
