@@ -14,7 +14,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from onadata.apps.fieldsight.mixins import UpdateView, ProfileView
+from onadata.apps.fieldsight.mixins import UpdateView, ProfileView, OwnerMixin
 from rest_framework import renderers
 
 from onadata.apps.fieldsight.models import Organization
@@ -242,7 +242,7 @@ class MyProfileView(ProfileView):
     form_class = ProfileForm
 
 
-class ProfileUpdateView(MyProfileView, UpdateView):
+class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
 
     def form_valid(self, form):
         user = self.request.user

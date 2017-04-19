@@ -14,7 +14,20 @@ class SiteSurveyPermission(BasePermission):
     def has_object_permission(self, request, view, obj):
         if not obj.is_survey:
             return False
+        if request.group.name == "Super Admin":
+            return True
+        if request.group.name == "Organization Admin":
+            return obj.project.organization == request.organization
         return request.project == obj.project
+
+
+class SiteSurveyUpdatePermission(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.group.name == "Super Admin":
+            return True
+        if request.group.name == "Organization Admin":
+            return obj.project.organization == request.organization
+        return obj.project == request.project
 
 
 class SiteViewSet(viewsets.ModelViewSet):
@@ -63,6 +76,14 @@ class SiteCreationSurveyViewSet(viewsets.ModelViewSet):
         return {'request': self.request}
 
 
+class SiteUnderProjectViewSet(viewsets.ModelViewSet):
+    queryset = Site.objects.filter(is_survey=False)
+    serializer_class = SiteSerializer
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(project__id=self.kwargs.get('pk', None))
+
+
 class SiteReviewViewSet(viewsets.ModelViewSet):
     queryset = Site.objects.filter(is_survey=True)
     serializer_class = SiteReviewSerializer
@@ -77,10 +98,21 @@ class SiteReviewViewSet(viewsets.ModelViewSet):
         return {'request': self.request}
 
 
+class SiteReviewUpdateViewSet(viewsets.ModelViewSet):
+    queryset = Site.objects.all()
+    serializer_class = SiteReviewSerializer
+    permission_classes = (SiteSurveyUpdatePermission,)
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(pk=self.kwargs.get('pk', None))
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
 class ProjectTypeViewset(viewsets.ModelViewSet):
     queryset = ProjectType.objects.all()
     serializer_class = ProjectTypeSerializer
-    authentication_classes = (BasicAuthentication,)
 
 
     def get_serializer_context(self):

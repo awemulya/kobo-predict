@@ -11,7 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 
-from onadata.apps.fieldsight.models import Organization, Project
+from onadata.apps.fieldsight.models import Organization, Project, Site
 from onadata.apps.users.models import UserProfile
 from .helpers import json_from_object
 
@@ -299,6 +299,16 @@ USURPERS = {
 }
 
 
+class OwnerMixin(object):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            pk = kwargs.get('pk')
+            profile = UserProfile.objects.get(pk=pk)
+            if request.user == profile.user:
+                return super(OwnerMixin, self).dispatch(request, *args, **kwargs)
+        raise PermissionDenied()
+
+
 class SiteMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():
@@ -318,8 +328,25 @@ class ProjectMixin(object):
 class ReviewerMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():
-            if request.role.group.name in USURPERS['Reviewer']:
+            if request.group.name == "Super Admin":
                 return super(ReviewerMixin, self).dispatch(request, *args, **kwargs)
+            elif request.group.name == "Organization Admin":
+                pk = self.kwargs.get('pk', False)
+                if not pk:
+                    return super(ReviewerMixin, self).dispatch(request, *args, **kwargs)
+                else:
+                    site = Site.objects.get(pk=pk)
+                    organization = site.project.organization
+                    if organization == request.organization:
+                        return super(ReviewerMixin, self).dispatch(request, *args, **kwargs)
+            elif request.role.group.name in USURPERS['Reviewer']:
+                pk = self.kwargs.get('pk', False)
+                if not pk:
+                    return super(ReviewerMixin, self).dispatch(request, *args, **kwargs)
+                else:
+                    site = Site.objects.get(pk=pk)
+                    if site.project == request.project:
+                        return super(ReviewerMixin, self).dispatch(request, *args, **kwargs)
         raise PermissionDenied()
 
 

@@ -83,6 +83,8 @@ class KOModelForm(forms.ModelForm):
 
     def refine_for_ko(self):
         for (name, field) in self.fields.items():
+            if isinstance(field, forms.fields.ImageField ):
+                continue
             # add HTML5 required attribute for required fields
             if field.required:
                 field.widget.attrs['required'] = 'required'

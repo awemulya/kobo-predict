@@ -226,6 +226,7 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
             self.fields['location'].initial = Point(85.3240, 27.7172,srid=4326)
         self.fields['type'].empty_label = None
         self.fields['project'].empty_label = None
+        self.fields['logo'].required = False
 
     class Meta:
         model = Site

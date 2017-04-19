@@ -54,7 +54,7 @@ def dashboard(request):
     total_organizations = Organization.objects.all().count()
     total_projects = Project.objects.all().count()
     total_sites = Site.objects.all().count()
-    data = serialize('custom_geojson', Site.objects.all(), geometry_field='location',
+    data = serialize('custom_geojson', Site.objects.filter(is_survey=False, is_active=True), geometry_field='location',
                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
     fs_forms = FieldSightXF.objects.all()
     fs_forms = list(fs_forms)
@@ -159,7 +159,7 @@ def project_dashboard(request, pk):
         name = request.POST.get('name')
         sites = obj.sites.filter(name__icontains=name)
     else:
-        sites = obj.sites.filter(is_active=True,is_survey=False)
+        sites = obj.sites.filter(is_active=True, is_survey=False)
     data = serialize('custom_geojson', sites, geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
@@ -177,7 +177,6 @@ def project_dashboard(request, pk):
     graph_data = json.dumps(ordered_list_line)
     dashboard_data = {
         'obj': obj,
-        'sites': sites,
         'peoples_involved': peoples_involved,
         'total_sites': total_sites,
         'total_survey_sites': total_survey_sites,
