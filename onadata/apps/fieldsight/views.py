@@ -19,6 +19,9 @@ from django.forms.forms import NON_FIELD_ERRORS
 
 import django_excel as excel
 from registration.backends.default.views import RegistrationView
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from onadata.apps.fieldsight.bar_data_project import BarGenerator
 from onadata.apps.fsforms.Submission import Submission
@@ -489,6 +492,35 @@ class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
 
 class SiteDeleteView(SiteView, ProjectMixin, DeleteView):
     pass
+
+
+@group_required("Project")
+@api_view(['POST'])
+def ajax_upload_sites(request, pk):
+    form = UploadFileForm(request.POST, request.FILES)
+    if form.is_valid():
+        project = Project(pk=pk)
+        try:
+            sites = request.FILES['file'].get_records()
+            with transaction.atomic():
+                for site in sites:
+                    site = dict((k,v) for k,v in site.iteritems() if v is not '')
+                    lat = site.get("longitude", 85.3240)
+                    long = site.get("latitude", 27.7172)
+                    location = Point(lat, long, srid=4326)
+                    _site, created = Site.objects.get_or_create(identifier=str(site.get("id")), name=site.get("name"),
+                                                                project=project, type_id=1)
+                    _site.phone = site.get("phone")
+                    _site.address = site.get("address")
+                    _site.public_desc = site.get("public_desc"),
+                    _site.additional_desc = site.get("additional_desc")
+                    _site.location=location
+                    _site.save()
+            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'file':e.message}, status=status.HTTP_400_BAD_REQUEST)
+    return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @group_required("Project")

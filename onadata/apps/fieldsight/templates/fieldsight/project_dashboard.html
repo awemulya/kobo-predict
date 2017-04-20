@@ -99,6 +99,37 @@ var project = "{{obj.pk}}";
 
 {% block content %}
 
+<div class="modal" tabindex="-1" role="dialog" data-bind="modal:$root.modal_visibility">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{% trans 'Sites Bulk Upload' %}</h4>
+      </div>
+      <div class="modal-body">
+          <form enctype="multipart/form-data">
+         {% csrf_token %}
+                 <div>
+                    <div class="well">
+                        <div class="form-group row">
+                            <div class="col-sm-12">
+                                <input type="file" id="file" data-bind="fileUpload: upload_file">
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+
+        <button class="btn btn-primary registration__action" data-bind="click:$root.save_upload" >
+            {% trans 'Save Data' %}</button>
+
+    </form>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
 
 	<div class="organization-detail-page">
 
@@ -191,14 +222,12 @@ var project = "{{obj.pk}}";
 			  </div>
 
               <div id="org-list-site" class="tab-pane fade">
-                <form class="navbar-form" role="search">
-                    {% csrf_token %}
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search" data-bind="value:search_key, valueUpdate:'afterkeydown'">
+                        <input type="text" class="form-control" placeholder="Search Site" data-bind="value:search_key, valueUpdate:'afterkeydown'">
                         <div class="input-group-btn">
+                            <button class="btn btn-info" data-bind="click:$root.bulkUpload">{% trans 'Bulk Upload Sites Form File' %}</button>
                             </div>
                     </div>
-                </form>
                  <div class='adv-table' data-bind="foreach: sites">
 
                     <a data-bind="attr: { href: url }">

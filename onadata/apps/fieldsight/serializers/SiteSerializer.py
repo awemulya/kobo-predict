@@ -83,4 +83,3 @@ class SiteReviewSerializer(serializers.ModelSerializer):
         site.save()
         return site
 
-

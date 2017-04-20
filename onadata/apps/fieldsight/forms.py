@@ -246,9 +246,13 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
         self.cleaned_data["location"] = p
         super(SiteForm, self).clean()
 
+my_default_errors = {
+    'required': 'Excel File is required',
+    'invalid': 'Upload a valid excel File'
+}
 
 class UploadFileForm(forms.Form):
-    file = forms.FileField()
+    file = forms.FileField(error_messages=my_default_errors)
 
 
 class BluePrintForm(forms.ModelForm):
