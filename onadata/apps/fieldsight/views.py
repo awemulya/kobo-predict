@@ -524,6 +524,17 @@ def ajax_upload_sites(request, pk):
 
 
 @group_required("Project")
+@api_view(['POST'])
+def ajax_save_site(request, pk):
+    form = SiteForm(request.POST, request.FILES)
+    if form.is_valid():
+        form.save()
+        return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+    return Response({'error': 'Invalid Site Data'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@group_required("Project")
 def upload_sites(request, pk):
     form = UploadFileForm()
     if request.method == "POST":

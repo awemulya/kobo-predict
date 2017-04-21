@@ -34,7 +34,7 @@ from .views import (
     add_supervisor,
     CreateUserView,
     UserListView, site_images, filter_users, upload_sites, blue_prints, add_project_role, manage_people_site,
-    manage_people_project, manage_people_organization, site_survey_list, ajax_upload_sites)
+    manage_people_project, manage_people_organization, site_survey_list, ajax_upload_sites, ajax_save_site)
 
 router = routers.SimpleRouter()
 # router.register(r'api/organization-type', OrganizationTypeViewSet)
@@ -71,6 +71,7 @@ urlpatterns = [
     # url(r'^organization/search/$', organization_search, name='search-org'),
     url(r'^upload/(?P<pk>\d+)/$', upload_sites, name='site-upload'),
     url(r'^api/bulk_upload_site/(?P<pk>\d+)/$', ajax_upload_sites),
+    url(r'^api/async_save_site/(?P<pk>\d+)/$', ajax_save_site),
     url(r'^project/delete/(?P<pk>\d+)/$', ProjectDeleteView.as_view(), name='project-delete'),
     url(r'^project/alter-status/(?P<pk>\d+)/$', alter_proj_status, name='alter_proj_status'),
     url(r'^project/add-proj-manager/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),

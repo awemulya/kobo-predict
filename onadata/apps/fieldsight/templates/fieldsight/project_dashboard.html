@@ -130,6 +130,110 @@ var project = "{{obj.pk}}";
   </div>
 </div>
 
+<div data-bind="with:current_site">
+<div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.site_add_visibility">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{% trans 'Add New Site' %}</h4>
+      </div>
+      <div class="modal-body">
+          <form enctype="multipart/form-data">
+         {% csrf_token %}
+
+              <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'ID' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: identifier" required />
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+              <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'Name' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: name" required />
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+              <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'Address' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: address" />
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+              <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'Phone' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: phone" />
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+              <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'Public Description' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: public_desc" />
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+              <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'Additional Description' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: additional_desc" />
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+              <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'Logo' %}</div>
+                 <div class="col-sm-4">
+                 <input type="file" data-bind="fileUpload: logo" accept="image/png">
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+              <div class="col-sm-12 registration_field">
+                <div class="col-sm-2"> {% trans 'Type' %}</div>
+                 <div class="col-sm-4">
+                 <select data-bind="options: $parent.typeList,
+                       optionsText: 'name',
+                       optionsValue: 'id',
+                       value: type().id"></select>
+
+                 </div>
+                 <div class="col-sm-6"></div>
+               </div>
+             <div class="col-sm-12 registration_field">
+                 <div class="col-sm-2"> {% trans 'Latitude' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: mapOne().lat" />
+                     </div>
+                 <div class="col-sm-6"></div>
+               </div>
+
+          <div class="col-sm-12 registration_field">
+                 <div class="col-sm-2"> {% trans 'Longitude' %}</div>
+                 <div class="col-sm-4">
+                 <input data-bind="value: mapOne().lng" />
+                     </div>
+                 <div class="col-sm-6"></div>
+               </div>
+          <div id="map1Div" data-bind="style:{width:'80%',height:'300px'}, map:mapOne"></div>
+
+              <div class="gap"></div>
+              <div class="gap"></div>
+
+        <button class="btn btn-primary registration__action" data-bind="click:$parent.saveSite" >
+            {% trans 'Save Site' %}</button>
+
+    </form>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
 
 	<div class="organization-detail-page">
 
@@ -225,6 +329,7 @@ var project = "{{obj.pk}}";
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search Site" data-bind="value:search_key, valueUpdate:'afterkeydown'">
                         <div class="input-group-btn">
+                            <button class="btn btn-primary" data-bind="click:$root.addSite">{% trans 'Add Site' %}</button>
                             <button class="btn btn-info" data-bind="click:$root.bulkUpload">{% trans 'Bulk Upload Sites Form File' %}</button>
                             </div>
                     </div>
