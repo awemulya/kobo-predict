@@ -40,7 +40,7 @@ var project = "{{project}}";
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-bind="click:$parent.close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">{% trans 'Survey Detail' %}</h4>
       </div>
       <div class="modal-body">
@@ -123,7 +123,7 @@ var project = "{{project}}";
                      </div>
                  <div class="col-sm-6"></div>
                </div>
-        <button class="btn btn-primary registration__action" type="submit" data-bind="click:$root.save_detail" >
+        <button class="btn btn-primary registration__action" type="submit" data-bind="click:$parent.save_detail" >
             {% trans 'Save Changes' %}</button>
               <div class="gap"></div>
               <div class="gap"></div>
