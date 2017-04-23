@@ -1,4 +1,5 @@
 from django.utils import timezone
+from fcm.utils import get_device_model
 
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -65,7 +66,12 @@ def remove_role(request):
         role = UserRole.objects.get(pk=request.data.get("id"))
         role.ended_at = timezone.now()
         role.save()
-        serializer = UserRoleSerializer(role)
+        if role.group.name == "Site Supervisor":
+            Device = get_device_model()
+            if Device.objects.filter(name=role.user.email).exists():
+                message = {'notify_type':'UnAssign Site', 'site':{'name': role.site.name, 'id': role.site.id}}
+                Device.objects.filter(name=role.user.email).send_message(message)
+        # serializer = UserRoleSerializer(role)
         return Response({'role':role.id,'role_name':role.group.name, 'msg':"Sucessfully Unassigned {}".format(role.user.username)}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)

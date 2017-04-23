@@ -1,5 +1,6 @@
 from django.contrib.auth.models import Group
 from django.db import transaction
+from fcm.utils import get_device_model
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
@@ -55,6 +56,11 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                         site = Site.objects.get(pk=self.kwargs.get('pk'))
                         role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
                                                                        project__id=site.project.id, group=group)
+                        Device = get_device_model()
+                        if Device.objects.filter(name=role.user.email).exists():
+                            message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
+                            Device.objects.filter(name=role.user.email).send_message(message)
+
                     elif level == "1":
                         project = Project.objects.get(pk=self.kwargs.get('pk'))
                         role, created = UserRole.objects.get_or_create(user_id=user, project_id=self.kwargs.get('pk'),
@@ -65,7 +71,7 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                     if not created:
                         role.ended_at = None
                         role.save()
-        except:
+        except Exception as e:
             raise ValidationError({
                 "User Creation Failed ",
             })
