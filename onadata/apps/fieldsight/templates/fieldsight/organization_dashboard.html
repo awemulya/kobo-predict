@@ -178,16 +178,16 @@
                   </div>    
 			  </div>
 			  <div id="org-list-proj" class="tab-pane fade">
-			     <div class="org-site-list current-person" style="/*width: 24% !important;*/margin-right: 3px !important;margin-left: 9px;">
+			     <div class="org-site-list current-person col-md-6" style="/*width: 24% !important;*/margin-right: 3px !important; width: auto !important; padding: 8px !important;">
                     {% for obj in projects %}
                     <a href="{% url 'fieldsight:project-dashboard' obj.pk %}">
-                        <div class="org-site">
-                            <div class="col-md-2 "  >
-                                <div class="image-org">
+                        <div class="org-site" style="width: auto !important;">
+                            <div class="col-md-5 "  >
+                                <div class="image-org image-org1">
                                      <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />    
                                 </div>
                             </div>    
-                            <div class="col-md-10">
+                            <div class="col-md-7">
                                 <div class="detail-org">
                                     <h3 class="site-title-org">{{obj.name}}</h3>
                                     <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>

@@ -121,6 +121,7 @@ var project = "{{obj.pk}}";
 
         <button class="btn btn-primary registration__action" data-bind="click:$root.save_upload" >
             {% trans 'Save Data' %}</button>
+        <div class="gap"></div>
 
     </form>
 
@@ -143,56 +144,56 @@ var project = "{{obj.pk}}";
          {% csrf_token %}
 
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'ID' %}</div>
+                <div class="col-sm-2 field-label"> {% trans 'ID' %}</div>
                  <div class="col-sm-4">
                  <input data-bind="value: identifier" required />
                  </div>
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'Name' %}</div>
+                <div class="col-sm-2 field-label"> {% trans 'Name' %}</div>
                  <div class="col-sm-4">
                  <input data-bind="value: name" required />
                  </div>
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'Address' %}</div>
+                <div class="col-sm-2 field-label"> {% trans 'Address' %}</div>
                  <div class="col-sm-4">
                  <input data-bind="value: address" />
                  </div>
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'Phone' %}</div>
+                <div class="col-sm-2 field-label"> {% trans 'Phone' %}</div>
                  <div class="col-sm-4">
                  <input data-bind="value: phone" />
                  </div>
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'Public Description' %}</div>
+                <div class="col-sm-2 field-label"> {% trans 'Public Description' %}</div>
                  <div class="col-sm-4">
                  <input data-bind="value: public_desc" />
                  </div>
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'Additional Description' %}</div>
+                <div class="col-sm-2 field-label"> {% trans 'Additional Description' %}</div>
                  <div class="col-sm-4">
                  <input data-bind="value: additional_desc" />
                  </div>
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'Logo' %}</div>
+                <div class="col-sm-2 field-label"> {% trans 'Logo' %}</div>
                  <div class="col-sm-4">
                  <input type="file" data-bind="fileUpload: logo" accept="image/png">
                  </div>
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'Type' %}</div>
+                <div class="col-sm-2 field-label"> {% trans 'Type' %}</div>
                  <div class="col-sm-4">
                  <select data-bind="options: $parent.typeList,
                        optionsText: 'name',
@@ -203,7 +204,7 @@ var project = "{{obj.pk}}";
                  <div class="col-sm-6"></div>
                </div>
              <div class="col-sm-12 registration_field">
-                 <div class="col-sm-2"> {% trans 'Latitude' %}</div>
+                 <div class="col-sm-2 field-label"> {% trans 'Latitude' %}</div>
                  <div class="col-sm-4">
                  <input data-bind="value: mapOne().lat" />
                      </div>
@@ -211,19 +212,22 @@ var project = "{{obj.pk}}";
                </div>
 
           <div class="col-sm-12 registration_field">
-                 <div class="col-sm-2"> {% trans 'Longitude' %}</div>
+                 <div class="col-sm-2 field-label"> {% trans 'Longitude' %}</div>
                  <div class="col-sm-4">
                  <input data-bind="value: mapOne().lng" />
                      </div>
                  <div class="col-sm-6"></div>
-               </div>
-          <div id="map1Div" data-bind="style:{width:'80%',height:'300px'}, map:mapOne"></div>
+          </div>
+          <div class="gap"></div>
+
+          <div id="map1Div" class="map-right" data-bind="style:{width:'80%',height:'300px'}, map:mapOne"></div>
 
               <div class="gap"></div>
               <div class="gap"></div>
 
-        <button class="btn btn-primary registration__action" data-bind="click:$parent.saveSite" >
+        <button class="btn btn-primary registration__action map-right" data-bind="click:$parent.saveSite" >
             {% trans 'Save Site' %}</button>
+        <div class="gap"></div>
 
     </form>
 
@@ -275,8 +279,8 @@ var project = "{{obj.pk}}";
                               </div>
                                 <div class="mini-stat clearfix">
                                     <a href="{% url 'fieldsight:site-survey-list' obj.pk%}">
-                                <span class="mini-stat-icon green"><i class="fa fa-building-o"></i></span>
-                                <div class="mini-stat-info">
+                                <span class="mini-stat-icon red"><i class="fa fa-building-o"></i></span>
+                                <div class="mini-stat-info ">
                                     <span>{{total_survey_sites}}</span>
                                     {% trans 'Site Survey'%}
                                 </div>
@@ -330,7 +334,9 @@ var project = "{{obj.pk}}";
                         <input type="text" class="form-control" placeholder="Search Site" data-bind="value:search_key, valueUpdate:'afterkeydown'">
                         <div class="input-group-btn">
                             <button class="btn btn-primary" data-bind="click:$root.addSite">{% trans 'Add Site' %}</button>
-                            <button class="btn btn-info" data-bind="click:$root.bulkUpload">{% trans 'Bulk Upload Sites Form File' %}</button>
+                            <abbr title="Bulk Upload Sites Form File ">
+                            <button class="btn btn-info" data-bind="click:$root.bulkUpload"><i class="fa fa-upload" aria-hidden="true" style="padding-right: 4px;"></i>{% trans 'Bulk Upload'%}</button>
+                            </abbr>
                             </div>
                     </div>
                  <div class='adv-table' data-bind="foreach: sites">
@@ -354,21 +360,21 @@ var project = "{{obj.pk}}";
                     {% for role in peoples_involved %}
 
                     <a href="{% url 'users:profile' role.user.id %}">
-                        <div class="org-site">
-                            <div class="col-md-2">
+                        <div class="org-site  user-image-current col-md-5">
+                            <div class="col-md-4" style="padding-left: 0px;">
                                 <div class="image-org">
-                                     <img src="{{ role.user.user_profile.profile_picture.url }}" title="{{ role.user.user_profile.profile_picture.url}}" />
+                                     <img src="{{ role.user.user_profile.profile_picture.url }}" title="{{ role.user.user_profile.profile_picture.url}}" style="padding: 10px 10px 10px 0px !important;"  class="modal-image"/>
                                 </div>
                             </div>
-                            <div class="col-md-10">
+                            <div class="col-md-8 user-name-position">
                                 <div class="detail-org">
-                                    <h3 class="pople-Name-org">{{role.user.get_full_name}}</h3>
-                                    <p class="address"><span><i class="fa fa-user" aria-hidden="true"></i></span>{{ role.user.username }}</p>
-                                    <p class="address"><span><i class="fa fa-envelope" aria-hidden="true"></i></span>{{ role.user.email }}</p>
-                                    <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ role.user.phone }}</p>
+                                    <h3 class="pople-Name-org blue">{{role.user.get_full_name}}</h3>
+                                    <p class="address italic"><span><i class="fa fa-user" aria-hidden="true"></i></span>{{ role.user.username }}</p>
+                                    <p class="address italic"><span><i class="fa fa-envelope" aria-hidden="true"></i></span>{{ role.user.email }}</p>
+                                    <p class="contact italic"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ role.user.phone }}</p>
                                     {% if role.has_multiple_project_roles %}
                                     {% for r in role.both_project_roles %}
-                                    <p class="contact"><span><i class="fa fa-minus" aria-hidden="true"></i></span>
+                                    <p class="contact italic"><span><i class="fa fa-minus" aria-hidden="true"></i></span>
                                     {{ r.group }}
                                     </p>
                                     {% endfor %}

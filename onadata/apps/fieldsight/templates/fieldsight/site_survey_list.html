@@ -47,43 +47,43 @@ var project = "{{project}}";
           <form>
          {% csrf_token %}
              <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'ID' %}</div>
-                 <div class="col-sm-4">
+                <div class="col-sm-2 field-label"> {% trans 'ID' %}</div>
+                 <div class="col-sm-5">
                  <input data-bind="value: identifier" />
                  </div>
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'Name' %}</div>
-                 <div class="col-sm-4">
+                <div class="col-sm-2 field-label"> {% trans 'Name' %}</div>
+                 <div class="col-sm-5">
                  <input data-bind="value: name" />
                  </div>
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'Address' %}</div>
-                 <div class="col-sm-4">
+                <div class="col-sm-2 field-label"> {% trans 'Address' %}</div>
+                 <div class="col-sm-5">
                  <input data-bind="value: address" />
                  </div>
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'Public Description' %}</div>
-                 <div class="col-sm-4">
+                <div class="col-sm-2 field-label"> {% trans 'Public Description' %}</div>
+                 <div class="col-sm-5">
                  <input data-bind="value: public_desc" />
                  </div>
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'Additional Description' %}</div>
-                 <div class="col-sm-4">
+                <div class="col-sm-2 field-label"> {% trans 'Additional Description' %}</div>
+                 <div class="col-sm-5">
                  <input data-bind="value: additional_desc" />
                  </div>
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2"> {% trans 'Type' %}</div>
-                 <div class="col-sm-4">
+                <div class="col-sm-2 field-label"> {% trans 'Type' %}</div>
+                 <div class="col-sm-5">
                  <select data-bind="options: $parent.typeList,
                        optionsText: 'name',
                        optionsValue: 'id',
@@ -93,16 +93,16 @@ var project = "{{project}}";
                  <div class="col-sm-6"></div>
                </div>
              <div class="col-sm-12 registration_field">
-                 <div class="col-sm-2"> {% trans 'Latitude' %}</div>
-                 <div class="col-sm-4">
+                 <div class="col-sm-2 field-label"> {% trans 'Latitude' %}</div>
+                 <div class="col-sm-5">
                  <input data-bind="value: mapOne().lat" />
                      </div>
                  <div class="col-sm-6"></div>
                </div>
 
           <div class="col-sm-12 registration_field">
-                 <div class="col-sm-2"> {% trans 'Longitude' %}</div>
-                 <div class="col-sm-4">
+                 <div class="col-sm-2 field-label"> {% trans 'Longitude' %}</div>
+                 <div class="col-sm-5">
                  <input data-bind="value: mapOne().lng" />
                      </div>
                  <div class="col-sm-6"></div>
@@ -116,11 +116,16 @@ var project = "{{project}}";
                   <img width="400px" height="400px" data-bind="attr:{src: image}" />
 
               </div>
-              <div class="col-sm-12 registration_field">
-                 <div class="col-sm-2"> {% trans 'Verify This Survey' %}</div>
-                 <div class="col-sm-4">
-                  <input type="checkbox" data-bind="checked: is_survey" />
-                     </div>
+              <div class="col-sm-12 registration_field" style="padding: 0px ;">
+              <div class="col-sm-6" style="display:inline-flex;padding:0px;">
+                  <div >
+                    <input type="checkbox" data-bind="checked: is_survey" />
+                  </div>
+                  <div class="field-label" style="padding-left: 3px;">
+                    {% trans 'Verify This Survey' %}
+                  </div>
+                  
+              </div>
                  <div class="col-sm-6"></div>
                </div>
         <button class="btn btn-primary registration__action" type="submit" data-bind="click:$parent.save_detail" >
