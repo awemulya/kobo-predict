@@ -7,6 +7,7 @@
 {% endblock %}
 {% block head %}
     <a class="btn btn-success btn-raised" href="{% url 'fieldsight:project-add' %}">{% trans 'New' %} {% trans 'Project' %}</a>
+
 {% endblock %}
 
 {% block content %}
@@ -72,6 +73,7 @@
             <!--{% endfor %}-->
             <!--</tbody>-->
         <!--</table>-->
+        <div class="gap"></div>
         {% for obj in paginated_objects %}
         <div class="organization-list">
             <div class="col-md-3">

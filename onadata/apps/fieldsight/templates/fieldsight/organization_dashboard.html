@@ -178,18 +178,19 @@
                   </div>    
 			  </div>
 			  <div id="org-list-proj" class="tab-pane fade">
-			     <div class="org-site-list current-person col-md-6" style="/*width: 24% !important;*/margin-right: 3px !important; width: auto !important; padding: 8px !important;">
+			     <div class="org-site-list current-person row" style="/*width: 24% !important;*/margin-right: 3px !important; width: auto !important;border:none !important; padding: 8px !important;">
                     {% for obj in projects %}
+                    <div class="col-md-6">
                     <a href="{% url 'fieldsight:project-dashboard' obj.pk %}">
                         <div class="org-site" style="width: auto !important;">
                             <div class="col-md-5 "  >
-                                <div class="image-org image-org1">
+                                <div class="image-org ">
                                      <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />    
                                 </div>
                             </div>    
                             <div class="col-md-7">
                                 <div class="detail-org">
-                                    <h3 class="site-title-org">{{obj.name}}</h3>
+                                    <h4 class="site-title-org">{{obj.name}}</h4>
                                     <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
                                     <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
                                 </div>
@@ -197,6 +198,7 @@
                             <div class="clearfixx"></div>    
                         </div>
                     </a>
+                  </div>
                     {% endfor %}
 
                  </div>  
@@ -225,18 +227,18 @@
                  <!--</div>  -->
               <!--</div>-->
 			  <div id="org-people" class="tab-pane fade">
-			     <div class="org-site-list">
+			     <div class="org-site-list row">
                  
                     {% for role in peoples_involved %}
 
                     <a href="{% url 'users:profile' role.user.id %}">
-                        <div class="org-site">
-                            <div class="col-md-2">
-                                <div class="image-org">
-                                     <img src="{{ role.user.user_profile.profile_picture.url }}" />
+                        <div class="org-site col-md-6">
+                            <div class="col-md-3">
+                                <div class="image-org1" style="margin-top: 12px">
+                                     <img src="{{ role.user.user_profile.profile_picture.url }}"  style="border-radius: 8px" />
                                 </div>
                             </div>    
-                            <div class="col-md-10">
+                            <div class="col-md-9">
                                 <div class="detail-org">
                                     <h3 class="pople-Name-org">{{role.user.get_full_name}}</h3>
                                     <p class="address"><span><i class="fa fa-user" aria-hidden="true"></i></span>{{ role.user.username }}</p>

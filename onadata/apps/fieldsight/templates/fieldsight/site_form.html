@@ -28,13 +28,13 @@
                </div>
             {% endfor %}
            <div class="col-sm-12 registration_field">
-                  <div class="col-sm-3 label-site">Latitude:</div>
+                  <div class="col-sm-2 label-site">Latitude:</div>
                       <div class="col-sm-3">
 	                    <input type="text" id="Latitude" name="Latitude" class="LatLon"/>
                       </div>
                </div>
             <div class="col-sm-12 registration_field">
-                  <div class="col-sm-3 label-site">Longitude:</div>
+                  <div class="col-sm-2 label-site">Longitude:</div>
                       <div class="col-sm-3">
 	                    <input type="text" id="Longitude" name="Longitude" class="LatLon"/>
                       </div>
@@ -46,7 +46,7 @@
         <!-- <input type="submit" class='btn btn-info btn-raised' value="{% trans 'Save' %}"> -->
         <div class="gap"></div>
         <div class="gap"></div>
-        <button class="btn btn-lg btn-primary registration__action square" type="submit" >{% trans 'Save' %}</button>
+        <button class="btn btn-primary registration__action " type="submit" >{% trans 'Save' %}</button>
 
         {% if form.instance.id %}
         <a href="{% url 'fieldsight:site-delete' form.instance.id %}" class="btn btn-danger btn-raised">
