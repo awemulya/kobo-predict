@@ -43,7 +43,7 @@ var project = "{{project}}";
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-bind="click:$parent.close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">{% trans 'Survey Detail' %}</h4>
       </div>
-      <div class="modal-body" style="max-height: 556px; overflow-y: auto;">
+      <div class="modal-body">
           <form>
          {% csrf_token %}
              <div class="col-sm-12 registration_field">
@@ -148,7 +148,7 @@ var project = "{{project}}";
 
 
 <div class="col-sm-12 site-survey-list">
-        <input type="text" class="form-control" placeholder=" &#&#xf075; Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'">
+        <input type="text" class="form-control" placeholder="Search" style="font-family:Arial,FontAwesome;" data-bind="value:search_key, valueUpdate:'afterkeydown'">
 </div>
 
 

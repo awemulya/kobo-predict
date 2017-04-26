@@ -122,7 +122,7 @@
         
             <a  href="#" data-toggle="dropdown" class="dropdown-toggle" id="fs_drop_down"  border-radius: 4px;">
                 <img src="{{request.user.user_profile.profile_picture.url}}">
-                <span class="username"> {% trans request.user.username %}</span>
+                <span class="username1"> {% trans request.user.username %}</span>
                 <b class="caret" style="color: white;"></b>
             </a>
             <ul class="dropdown-menu dropdown-menu-right extended logout" id="fs_drop_menu">
@@ -308,6 +308,7 @@
                             
                          </span>
                     </header>
+                    <div class="gap"></div>
                     <div class="panel-body">
 
     {% block messages %}

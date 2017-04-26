@@ -7,6 +7,7 @@
 {% block head %}
 
     <a class="btn btn-success btn-raised" href="{% url 'fieldsight:site-add' %}">{% trans 'New' %} {% trans 'Site' %}</a>
+    <div class="gap"></div>
     <!--<a class="btn btn-success btn-raised" data-bind="click:add_site">{% trans 'New' %} {% trans 'Site' %}</a>-->
 
 {% endblock %}
@@ -89,9 +90,15 @@ $(document).ready(function() {
 </div>
 
 
-    <div class="col-sm-12">
+    <div class="col-sm-12 " style="padding: 0px;">
+          <div class="col-sm-5" style="padding: 0px;">
             <input type="text" class="form-control" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'">
+          </div>
+
+
     </div>
+
+    <div class="gap-medium"></div>
 
     <div class='adv-table' data-bind="foreach: sites">
 
