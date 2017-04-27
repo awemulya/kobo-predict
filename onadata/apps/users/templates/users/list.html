@@ -1,0 +1,76 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}  
+
+{% block page-title %} {% trans 'Users' %}{% endblock %}
+
+{% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:user-create' %}">{% trans 'New' %} {% trans 'User' %}</a>
+{% endblock %}
+
+{% block kocript %}
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/users.js"></script>
+
+    <script>
+
+$(document).ready(function() {
+ vm = new UsersViewModel();
+ ko.applyBindings(vm);
+});
+
+    </script>
+
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="col-sm-12 " style="padding: 0px;">
+          <div class="col-sm-5" style="padding: 0px;">
+            <input type="text" class="form-control" placeholder="Search"  data-bind="value:search_key">
+          </div>
+         <div class="col-sm-5">
+             <select data-bind="options: roleList,
+                       optionsText: 'name',
+                       value: selectedGroup,
+                       optionsCaption: 'Filter By'"></select>
+            </div>
+           <div class="col-sm-2">
+            <button class="btn btn-primary registration__action" data-bind="click:reloadData" type="submit">{% trans 'Filter' %}</button>
+         </div>
+
+
+    </div>
+
+    <div class="gap-medium"></div>
+
+    <div class='adv-table' data-bind="foreach: users">
+
+        <div class="current-person col-sm-4 " style="/*width: 24% !important;*/margin-right: 3px !important;margin-left: 9px;padding: 0px !important;">
+            <div class="person-div" style="margin-bottom: 0px !important; padding: 10px !important;" >
+              <div class="image-of-person user-image-current">
+                <img data-bind="attr:{src: profile_picture}" class="modal-image" style="width: 23% !important;">
+              </div>
+              <div class="details-of-person user-name-position">
+                    <h5 class="personname " data-bind="text:full_name"></h5>
+                    <h6 class="perso-usernname"><span data-bind="text:username"><i class="fa fa-user" aria-hidden="true"></i></span></h6>
+                    <p class="personemail"><span data-bind="text:email"><i class="fa fa-envelope-o" aria-hidden="true"></i></span></p>
+
+                    <div class="text-center"><p class="person-active" data-bind="text:is_active() == true ? 'Active' : 'InActive'"></p></div>
+
+
+              </div>
+              <div class="person-edit-delete">
+                <a data-bind="attr: { href: edit_url, title: 'Edit' }"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                <a data-bind="click: $parent.activeInactiveAction" title="active|in-active"><i class="fa fa-circle-o" aria-hidden="true"></i></a>
+
+              </div>
+            </div>
+          </div>
+
+    </div>
+{% endblock %}

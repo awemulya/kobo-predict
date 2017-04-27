@@ -13,7 +13,7 @@ from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthenticat
 from onadata.apps.fieldsight.mixins import USURPERS
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import User, UserProfile
-from onadata.apps.users.serializers import UserSerializer, UserSerializerProfile
+from onadata.apps.users.serializers import UserSerializer, UserSerializerProfile, SearchableUserSerializer
 
 SAFE_METHODS = ('GET', 'POST')
 
@@ -34,6 +34,11 @@ class AddPeoplePermission(BasePermission):
         #     return obj.user == request.user
         # return request.role.organization == obj.organization
         return request.role.group.name in USURPERS['Reviewer']
+
+
+class SuperAdminPermission(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.role.group.name == "Super Admin"
 
 
 class EditProfilePermission(BasePermission):
@@ -133,3 +138,31 @@ class ProfileViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return {'request': self.request}
 
+
+class UserListViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.filter(pk__gt=0)
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated, AddPeoplePermission)
+
+    def filter_queryset(self, queryset):
+        try:
+            pk = self.kwargs.get('pk', None)
+            queryset = queryset.filter(user_profile__organization__id=pk)
+        except:
+            queryset = []
+        return queryset
+
+
+class SearchableUserListViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.filter(pk__gt=0)
+    serializer_class = SearchableUserSerializer
+    permission_classes = (IsAuthenticated, SuperAdminPermission)
+
+    def filter_queryset(self, queryset):
+        try:
+            pk = self.kwargs.get('level', None)
+            username = self.kwargs.get('username', None)
+            # queryset = queryset.filter(user_profile__organization__id=pk)
+        except:
+            queryset = []
+        return queryset
