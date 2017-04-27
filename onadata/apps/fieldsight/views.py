@@ -244,7 +244,7 @@ class OrganizationView(object):
 
 class UserDetailView(object):
     model = User
-    success_url = reverse_lazy('fieldsight:user-list')
+    success_url = reverse_lazy('users:users')
     form_class = RegistrationForm
 
 
@@ -619,6 +619,7 @@ class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, Registrat
                 user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org)
         if created:
             return new_user
+        messages.add_message(request, messages.INFO, 'User {0} Creation Sucessfull'.format(new_user.get_full_name()))
         return False
 
 

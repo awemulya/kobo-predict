@@ -198,7 +198,7 @@ def edit(request, pk):
                     profile.organization = org
             profile.save()
             messages.info(request, 'User Details Updated.')
-        return HttpResponseRedirect(reverse('fieldsight:user-list'))
+        return HttpResponseRedirect(reverse('users:users'))
 
     else:
         form = UserEditForm(initial={'name': user.first_name, 'address':profile.address,'gender':profile.gender,

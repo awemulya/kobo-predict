@@ -59,7 +59,8 @@
     <!--<script type="text/javascript" src="{{ STATIC_URL }}js/base.js" ></script>-->
     <script type="text/javascript" src="{{ STATIC_URL }}js/ko_lib.js" ></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/selectize.min.js" ></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap-notify.min.js" ></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap-notify.min.js" ></script>-->
     <!--<script type="text/javascript" src="{{ STATIC_URL }}js/libs/material.min.js" ></script>-->
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/ripples.min.js" ></script>
     <!--clock css-->
@@ -237,7 +238,7 @@
                 {% ifrole "admin" %}
 
                 <li class="sub-menu">
-                    <a href="{% url 'fieldsight:user-list' %}">
+                    <a href="{% url 'users:users' %}">
                         <i class="fa fa-user"></i>
                         <span>{% trans 'Users' %}</span>
                     </a>
@@ -306,7 +307,7 @@
                            
                         {% endblock %}
                             
-                         </span>
+                         </div>
                     </header>
                     <div class="gap"></div>
                     <div class="panel-body">
@@ -316,7 +317,7 @@
             <script>
                 $(function () {
                     {% for message in messages %}
-                        bsalert.message('{{ message|remove_lines|safe }}', '{{ message.tags|last_word }}');
+                        App.notifyUser('{{ message|remove_lines|safe }}', '{{ message.tags|last_word }}');
                     {% endfor %}
                 });
             </script>
