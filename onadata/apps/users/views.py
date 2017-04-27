@@ -161,33 +161,18 @@ def current_user(request):
 @group_required("admin")
 @api_view(['GET'])
 def alter_status(request, pk):
-    if request.is_ajax():
-        try:
-            user = User.objects.get(pk=pk)
-            if user.is_active:
-                user.is_active = False
-                message = "User {0} Deactivated".format(user.get_full_name())
-            else:
-                user.is_active = True
-                message = "User {0} Activated".format(user.get_full_name())
-            user.save()
-            return Response({'msg': message}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'error': 'Failure caused by {0}'.format(e.message)}, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        try:
-            user = User.objects.get(pk=pk)
-            if user.is_active:
-                user.is_active = False
-                messages.info(request, 'User {0} Deactivated.'.format(user.get_full_name()))
-            else:
-                user.is_active = True
-                messages.info(request, 'User {0} Activated.'.format(user.get_full_name()))
-            user.save()
-        except:
-            messages.info(request, 'User {0} not found.'.format(user.get_full_name()))
-        return HttpResponseRedirect(reverse('fieldsight:user-list'))
-
+    try:
+        user = User.objects.get(pk=pk)
+        if user.is_active:
+            user.is_active = False
+            message = "User {0} Deactivated".format(user.get_full_name())
+        else:
+            user.is_active = True
+            message = "User {0} Activated".format(user.get_full_name())
+        user.save()
+        return Response({'msg': message}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': 'Failure caused by {0}'.format(e.message)}, status=status.HTTP_400_BAD_REQUEST)
 
 def edit(request, pk):
     user = User.objects.get(pk=pk)

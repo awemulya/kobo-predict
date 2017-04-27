@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import detail_route
@@ -154,15 +155,24 @@ class UserListViewSet(viewsets.ModelViewSet):
 
 
 class SearchableUserListViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.filter(pk__gt=0)
+    queryset = User.objects.filter(pk__gt=0).distinct('username')
     serializer_class = SearchableUserSerializer
     permission_classes = (IsAuthenticated, SuperAdminPermission)
 
     def filter_queryset(self, queryset):
         try:
-            pk = self.kwargs.get('level', None)
-            username = self.kwargs.get('username', None)
-            # queryset = queryset.filter(user_profile__organization__id=pk)
+            level = self.kwargs.get('level', None)
+            name = self.kwargs.get('username', None)
+            if name:
+                queryset = queryset.filter(Q(first_name__contains=name)|Q(last_name__contains=name) |Q(username__contains=name))
+            if level and level =='1':
+                queryset = queryset.filter(user_roles__group__name="Organization Admin")
+            if level and level =='2':
+                queryset = queryset.filter(user_roles__group__name="Project Manager")
+            if level and level =='3':
+                queryset = queryset.filter(user_roles__group__name="Reviewer")
+            if level and level =='4':
+                queryset = queryset.filter(user_roles__group__name="Site Supervisor")
         except:
             queryset = []
         return queryset
