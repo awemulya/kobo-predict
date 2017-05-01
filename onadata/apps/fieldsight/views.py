@@ -611,7 +611,7 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
             organization = int(form.cleaned_data['organization'])
             org = Organization.objects.get(pk=organization)
             UserProfile.objects.get_or_create(user=new_user, organization=org)
-        return False
+        return new_user
 
 
 @login_required
