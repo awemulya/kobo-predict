@@ -1,5 +1,9 @@
+from django.contrib.sites.shortcuts import get_current_site
 from django.db import transaction
 from django.db.models import Q
+from registration import signals
+from registration.models import RegistrationProfile
+from registration.views import RegistrationView
 from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import detail_route
@@ -105,7 +109,7 @@ class UserViewSet(viewsets.ModelViewSet):
             })
         if User.objects.filter(email=email).exists():
             raise ValidationError({
-                "Username Already Used ",
+                "Email Already Used ",
             })
         try:
             with transaction.atomic():
@@ -114,6 +118,17 @@ class UserViewSet(viewsets.ModelViewSet):
                 user.is_superuser = True
                 user.save()
                 UserProfile.objects.create(user=user, organization_id=self.kwargs.get('pk'))
+                site = get_current_site(self.request)
+
+                new_user = RegistrationProfile.objects.create_inactive_user(
+                    new_user=user,
+                    site=site,
+                    send_email=True,
+                    request=self.request,
+                )
+                signals.user_registered.send(sender=RegistrationView,
+                                             user=new_user,
+                                             request=self.request)
         except:
             raise ValidationError({
                 "User Creation Failed ",
