@@ -168,7 +168,6 @@
                         {% endif %}
                 <li><a href="{% url 'users:profile' 0 %}"><i class=" fa fa-suitcase"></i>Profile</a></li>
                 <li><a href="{% url 'auth_password_reset' %}"><i class=" fa fa-suitcase"></i>Change Password</a></li>
-                <li><a href="{% url 'onadata.apps.main.views.profile_settings' request.user.username %}"><i class="fa fa-cog"></i> Settings</a></li>
                 <li><a href="{% url 'auth_logout' %}"><i class="fa fa-key"></i> Log Out</a></li>
             </ul>
         
