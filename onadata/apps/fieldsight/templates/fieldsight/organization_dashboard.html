@@ -91,13 +91,13 @@
         
         <div class="organization-short-detail" >
                 <div class="org-grg">
-                  <div class="card col-md-9">
-                    <div class="col-md-4">
+                  <div class="card col-md-9 col-sm-12">
+                    <div class="col-md-4 col-sm-7">
                         <div class="org-logo">
                             <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-8 col-sm-5">
                         <div class="abt-org1">
                             <div class="col-md-12">
                                 <h5 class="organization_name">{{ obj.name }}</h5>
@@ -114,9 +114,9 @@
                     </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-3 col-sm-12">
 
-                                <div class="mini-stat clearfix">
+                                <div class="mini-stat clearfix col-sm-4 col-md-12">
                                     <a href="{% url 'fieldsight:user-list'%}">
                                       <span class="mini-stat-icon green1"><i class="fa fa-users"></i></span>
                                       <div class="mini-stat-info">
@@ -125,7 +125,7 @@
                                       </div>
                                     </a>
                                 </div>
-                                <div class="mini-stat clearfix">
+                                <div class="mini-stat clearfix col-sm-4 col-md-12">
                                     <a href="{% url 'fieldsight:project-list'%}">
                                           <span class="mini-stat-icon orange"><i class="fa fa-building-o"></i></span>
                                           <div class="mini-stat-info">
@@ -134,7 +134,7 @@
                                           </div>
                                     </a>
                                 </div>
-                               <div class="mini-stat clearfix">
+                               <div class="mini-stat clearfix col-sm-4 col-md-12">
                                    <a href="{% url 'fieldsight:site-list'%}">
                                     <span class="mini-stat-icon green"><i class="fa fa-picture-o"></i></span>
                                     <div class="mini-stat-info">
@@ -184,15 +184,15 @@
 			  <div id="org-list-proj" class="tab-pane fade">
 			     <div class="org-site-list current-person row" style="/*width: 24% !important;*/margin-right: 3px !important; width: auto !important;border:none !important; padding: 8px !important;">
                     {% for obj in projects %}
-                    <div class="col-md-6">
+                    <div class="col-md-6 col-sm-12">
                     <a href="{% url 'fieldsight:project-dashboard' obj.pk %}">
                         <div class="org-site" style="width: auto !important;">
-                            <div class="col-md-5 "  >
+                            <div class="col-md-5 col-sm-5 "  >
                                 <div class="image-org ">
                                      <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />    
                                 </div>
                             </div>    
-                            <div class="col-md-7">
+                            <div class="col-md-7 col-sm-7">
                                 <div class="detail-org">
                                     <h4 class="site-title-org">{{obj.name}}</h4>
                                     <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
