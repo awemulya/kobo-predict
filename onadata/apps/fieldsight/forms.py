@@ -246,6 +246,33 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
         self.cleaned_data["location"] = p
         super(SiteForm, self).clean()
 
+
+class ProjectFormKo(HTML5BootstrapModelForm, KOModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ProjectFormKo, self).__init__(*args, **kwargs)
+        if not self.fields['location'].initial:
+            self.fields['location'].initial = Point(85.3240, 27.7172,srid=4326)
+        self.fields['type'].empty_label = None
+        self.fields['organization'].empty_label = None
+        self.fields['logo'].required = False
+
+    class Meta:
+        model = Project
+        exclude = []
+        widgets = {
+        'address': forms.TextInput(),
+        # 'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
+        'location': forms.HiddenInput(),
+        'logo': AdminImageWidget()
+        }
+
+    def clean(self):
+        lat = self.data.get("Longitude","85.3240")
+        long = self.data.get("Latitude","27.7172")
+        p = Point(float(lat), float(long),srid=4326)
+        self.cleaned_data["location"] = p
+        super(ProjectFormKo, self).clean()
+
 my_default_errors = {
     'required': 'Excel File is required',
     'invalid': 'Upload a valid excel File'

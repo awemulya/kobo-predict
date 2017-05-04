@@ -30,7 +30,8 @@ from .views import (
     add_supervisor,
     CreateUserView,
     UserListView, site_images, filter_users, upload_sites, blue_prints, add_project_role, manage_people_site,
-    manage_people_project, manage_people_organization, site_survey_list, ajax_upload_sites, ajax_save_site)
+    manage_people_project, manage_people_organization, site_survey_list, ajax_upload_sites, ajax_save_site,
+    ajax_save_project)
 
 
 urlpatterns = [
@@ -52,6 +53,7 @@ urlpatterns = [
     url(r'^project/(?P<pk>[0-9]+)/$', ProjectUpdateView.as_view(), name='project-edit'),
     url(r'^project-dashboard/(?P<pk>[0-9]+)/$', project_dashboard, name='project-dashboard'),
     url(r'^api/org-projects/(?P<pk>\d+)/$', OrganizationsProjectViewSet.as_view({'get': 'list'})),
+    url(r'^api/async_save_project/$', ajax_save_project),
 
 
     url(r'^upload/(?P<pk>\d+)/$', upload_sites, name='site-upload'),

@@ -36,7 +36,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      MyOwnProjectMixin)
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
-                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm)
+                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo)
 
 
 @login_required
@@ -531,6 +531,16 @@ def ajax_save_site(request, pk):
         form.save()
         return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
     return Response({'error': 'Invalid Site Data'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@group_required("Organization")
+@api_view(['POST'])
+def ajax_save_project(request):
+    form = ProjectFormKo(request.POST, request.FILES)
+    if form.is_valid():
+        form.save()
+        return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+    return Response({'error': 'Invalid Project Data'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
