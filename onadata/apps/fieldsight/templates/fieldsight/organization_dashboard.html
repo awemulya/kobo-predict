@@ -80,11 +80,27 @@
 {% block head %}
     <a class="setting-btn" title="Edit" href="{% url 'fieldsight:organization-edit' obj.pk %}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
 {% endblock %}
-{% block content %}
 
-    
-    
-	
+ {%block kocript %}
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/organization_projects.js"></script>
+
+    <script>
+
+$(document).ready(function() {
+var project = "{{obj.pk}}";
+ vm = new SitesViewModel(project);
+ ko.applyBindings(vm);
+});
+
+    </script>
+
+{% endblock %}
+
+{% block content %}
 
 	<div class="organization-detail-page">
 
