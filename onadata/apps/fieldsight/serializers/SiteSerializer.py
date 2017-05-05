@@ -54,7 +54,6 @@ class SiteCreationSurveySerializer(serializers.ModelSerializer):
             SiteCreateSurveyImages.objects.create(image=img, site=site)
         return site
 
-
 class SiteReviewSerializer(serializers.ModelSerializer):
     create_surveys = PhotoSerializer(many=True, read_only=True)
     type = ProjectTypeSerializer(read_only=True)

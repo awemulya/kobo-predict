@@ -5,7 +5,7 @@ from rest_framework import routers
 
 from onadata.apps.fieldsight.viewsets.FieldsightFcmViewset import FcmDeviceViewSet
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
-from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectViewSet
+from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectViewSet, ProjectCreationViewSet
 from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
     SiteReviewViewSet, ProjectTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet
 from .forms import RegistrationForm
@@ -61,6 +61,9 @@ urlpatterns = [
     url(r'^organization/alter-status/(?P<pk>\d+)/$', alter_org_status, name='alter_org_status'),
     url(r'^organization/add-org-admin/(?P<pk>\d+)/$', add_org_admin, name='add_org_admin'),
 
+    url(r'^api/projects/(?P<pk>\d+)/$', ProjectViewSet.as_view({'get': 'list'})),
+    url(r'^api/projects/$', ProjectCreationViewSet.as_view({'post': 'create', 'put': 'update'}),
+        name='projects-list'),
     url(r'^project/$', ProjectListView.as_view(), name='projects-list'),
     url(r'^project/$', ProjectListView.as_view(), name='project-list'),
     url(r'^project/add/$', ProjectCreateView.as_view(), name='project-add'),
