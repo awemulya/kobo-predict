@@ -44,10 +44,12 @@
     <link rel="stylesheet" href="{% static 'css/selectize.default.css' %}">
     <link rel="stylesheet" href="{% static 'css/selectize.css' %}">
 
-    
+    <link rel="stylesheet" type="text/css"  href="{% static 'slick/slick.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'slick/slick-theme.css' %}" 
 
-    <!-- <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}"> -->
 
+    <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}"> 
+ 
 
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     {%block extracss %}
@@ -132,7 +134,7 @@
             <ul class="dropdown-menu dropdown-menu-right extended logout" id="fs_drop_menu">
                         {% if request.role %}
                             <li >
-                                <a href="#" style="background: #e4e8ef; border-radius: 4px !important;">{% trans 'Using as' %} {{ request.role.group }}
+                                <a href="#" style="background: #e4e8ef; border-radius: 4px !important;"><h6>{% trans 'Using as' %} {{ request.role.group }}
                                     {% if request.site%}
                                     {% trans 'at Site ' %}{{request.site}}
                                     {% endif %}
@@ -142,6 +144,7 @@
                                     {% if request.organization%}
                                     {% trans 'at Org ' %} {{request.organization}}
                                     {% endif %}
+                                    </h6>
 
                                 </a>
                             </li>
@@ -161,6 +164,7 @@
                                     {% if role.organization%}
                                     {% trans 'at Org ' %} {{role.organization}}
                                     {% endif %}
+                                    
                                     </a>
                                 </li>
                             {% endif %}
@@ -195,7 +199,7 @@
     </ul>
     
 </div> -->
-<ul class="top-nav clearfix" style="padding-right: 31px !important;">
+<ul class="top-nav main_ul clearfix" style="padding-right: 31px !important;">
 
 
 
@@ -398,9 +402,47 @@
 <!-- <script src="{{ STATIC_URL }}js/dynamic_table_init.js"></script> -->
 <!--common script init for all pages-->
 <script type="text/javascript" src="{{ STATIC_URL }}js/scripts.js"></script>
-
-
-
+<!-- <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+ -->
+<script type="text/javascript"   src="{{ STATIC_URL }}slick/slick.min.js"></script>
+<script>
+     $('.popop-gallery').slick({
+      dots: true,
+      infinite: false,
+      speed: 300,
+      slidesToShow: 4,
+      slidesToScroll: 4,
+      responsive: [
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 3,
+            infinite: true,
+            dots: true
+          }
+        },
+        {
+          breakpoint: 600,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 2
+          }
+        },
+        {
+          breakpoint: 480,
+          settings: {
+            slidesToShow: 1,
+            slidesToScroll: 1
+          }
+        }
+        // You can unslick at a given breakpoint now by adding:
+        // settings: "unslick"
+        // instead of a settings object
+      ]
+    });
+</script>
  {%block extrascript %}
     {% endblock %}
 </html>
