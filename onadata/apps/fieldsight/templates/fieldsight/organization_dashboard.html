@@ -313,7 +313,7 @@ var org = "{{obj.pk}}";
 			     <div class="org-site-list current-person row" style="/*width: 24% !important;*/margin-right: 3px !important; width: auto !important;border:none !important; padding: 8px !important;" data-bind="foreach: sites">
                     <div class="col-md-6 col-sm-12">
                     <a data-bind="attr: { href: url }">
-                        <div class="org-site" style="width: auto !important;">
+                        <div class="org-site" style="width: 100% !important;">
                             <div class="col-md-5 col-sm-5 "  >
                                 <div class="image-org ">
                                      <img data-bind="attr:{src: logo}" />
@@ -380,7 +380,7 @@ var org = "{{obj.pk}}";
 {% endblock %}    
 
 {% block all_diagrams %} 
-    <section class="panel bar-gauge-diagrams">
+    <section class=" row panel bar-gauge-diagrams">
         <div class="col-sm-6">
 
               <div id="submission-chart" style="width:100%; display: block">
@@ -425,10 +425,24 @@ var org = "{{obj.pk}}";
           </div>
           <div class="clearfixx"></div>
         </div>
-    </section>             
+        
+
+        
+
+
+
+
+    </section>
+
+
   {% endblock %} 
 
 {% block total_users %}
+
+
+
+
+
 <!-- <div class="row">
     <div class="col-md-4">
         <div class="mini-stat clearfix">
