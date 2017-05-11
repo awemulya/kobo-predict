@@ -29,6 +29,15 @@ class SiteSurveyUpdatePermission(BasePermission):
             return obj.project.organization == request.organization
         return obj.project == request.project
 
+class ProjectViewPermission(BasePermission):
+    def has_permission(self, request, view):
+        if request.group:
+            if request.group.name in ["Super Admin", "Organization Admin"]:
+                return True
+        return False
+
+
+
 
 class SiteViewSet(viewsets.ModelViewSet):
     """
@@ -60,6 +69,7 @@ class AllSiteViewSet(viewsets.ModelViewSet):
             return queryset.filter(pk__in=[role.site.id for role in UserRole.objects.filter(
                 group=self.request.role.group, user=self.request.role.user)])
         return []
+
 
 
 class SiteCreationSurveyViewSet(viewsets.ModelViewSet):
@@ -113,6 +123,9 @@ class SiteReviewUpdateViewSet(viewsets.ModelViewSet):
 class ProjectTypeViewset(viewsets.ModelViewSet):
     queryset = ProjectType.objects.all()
     serializer_class = ProjectTypeSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    permission_classes = (ProjectViewPermission,)
+
 
 
     def get_serializer_context(self):
