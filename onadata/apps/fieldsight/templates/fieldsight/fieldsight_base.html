@@ -91,7 +91,6 @@
 const webSocketBridge = new channels.WebSocketBridge();
 webSocketBridge.connect('/notify/');
 webSocketBridge.listen(function(text, byte) {
-alert(text.prop1);
 console.log(text.prop1);
 console.log(text.prop2);
 });
