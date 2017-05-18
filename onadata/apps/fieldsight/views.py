@@ -666,3 +666,15 @@ def manage_people_project(request, pk):
 @group_required("Organization")
 def manage_people_organization(request, pk):
     return render(request, "fieldsight/manage_people_site.html", {'pk': pk, 'level': "2", 'organization': pk})
+
+
+import json
+from channels import Group
+
+
+def all_notification(user,  message):
+    Group("%s" % user).send({
+        "text": json.dumps({
+            "msg": message
+        })
+    })

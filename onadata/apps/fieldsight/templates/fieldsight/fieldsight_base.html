@@ -74,6 +74,7 @@
     <!--<script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap-notify.min.js" ></script>-->
     <!--<script type="text/javascript" src="{{ STATIC_URL }}js/libs/material.min.js" ></script>-->
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/ripples.min.js" ></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}channels/js/websocketbridge.js" ></script>
     <!--clock css-->
     <!--Morris Chart CSS -->
 <!-- Custom styles for this template -->
@@ -87,6 +88,17 @@
 
     <![endif]-->
 <script type="text/javascript">
+const webSocketBridge = new channels.WebSocketBridge();
+webSocketBridge.connect('/notify/');
+webSocketBridge.listen(function(text, byte) {
+alert(text.prop1);
+console.log(text.prop1);
+console.log(text.prop2);
+});
+
+</script>
+<script type="text/javascript">
+
     function showMenu(){
     if ($('#fs_drop_menu').is(":hidden")){
      $('#fs_drop_menu').show();

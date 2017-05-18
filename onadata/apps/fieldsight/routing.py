@@ -1,9 +1,8 @@
-from channels.routing import route
-from onadata.apps.fieldsight.consumers import ws_connect, ws_message, ws_disconnect
-
+from channels.routing import route_class
+from onadata.apps.fieldsight.consumers import OneToOneConsumer, GroupConsumer, NotificationConsumer
 
 channel_routing = [
-    route("websocket.connect", ws_connect),
-    route("websocket.receive", ws_message),
-    route("websocket.disconnect", ws_disconnect),
+    route_class(OneToOneConsumer, path=r"^/chat/(?P<user_id>[^/]+)/$"),
+    route_class(GroupConsumer, path=r"^/groupchat/(?P<group_id>[^/]+)/$"),
+    route_class(NotificationConsumer, path=r"^/notify/$"),
 ]
