@@ -336,8 +336,8 @@ console.log(text.prop2);
           </li>
         </ul>
       </div>
-
-                <div class="dropdown pull-right top-menu top-nav clearfix">
+       <div class="dropdown pull-right top-menu top-nav clearfix">
+        
         <!--<li>-->
             <!--<input type="text" class="form-control search" placeholder=" Search">-->
         <!--</li>-->
@@ -401,7 +401,9 @@ console.log(text.prop2);
                 <div class="fa fa-bars"></div>
             </div>
         </li> -->
-    </div>
+          </div>
+
+             
 </div>
 <!--logo end-->
 
@@ -533,7 +535,7 @@ console.log(text.prop2);
                             
                          </div>
                     </header>
-                    <div class="gap"></div>
+                    
                     <div class="panel-body">
 
     {% block messages %}
@@ -569,11 +571,11 @@ console.log(text.prop2);
           {% endblock %} 
         </div>
 
-        <div class="chat-widget">
+        <!-- <div class="chat-widget">
             <div class="container1">
    <div class="row">
       <div class=" col-md-offset-6 col-md-6">
-         <div class="panel panel-primary panel-chat normal">
+         <div class="panel panel-primary panel-chat mini">
          <a href="#" class="chatminimize" onclick="return false">
             <div class="panel-heading heading1-chat ">
              <span class="glyphicon glyphicon-comment"></span> Chat</a>
@@ -624,13 +626,13 @@ console.log(text.prop2);
                    </ul>
                 </div>
                 <div class="panel-footer">
-                   <div class="input-group"> <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." /> <span class="input-group-btn"> <button class="btn btn-warning btn-sm" id="btn-chat"> Send</button> </span> </div>
+                   <div class="input-group"> <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..."  name="message-input" /> <span class="input-group-btn"> <button class="btn btn-warning btn-sm" id="btn-chat"> Send</button> </span> </div>
                 </div>
             
          </div>
       </div>
    </div>
-</div>
+</div> -->
 
         
         </div>
@@ -697,20 +699,20 @@ $('.panel-chat >.panel-heading> .chatminimize').click(function(){
     {
         console.log('clicked');
         $(this).parent().parent().removeClass('mini').addClass('normal');
-        $('.panel-chat > .panel-body').animate({height:'300px'} , 500).show();
-        $('.panel-chat > .panel-footer').animate({height:'25px'} , 500).show();
+        $('.panel-chat > .panel-body').removeClass('mini-1-body').addClass('normal-1-body').show();
+        $('.panel-chat > .panel-footer').removeClass('mini-1-fotter').addClass('normal-1-fotter').show();
     }
 
     else
     {
         $(this).parent().parent().removeClass('normal').addClass('mini');
-        $('.panel.panel-chat > .panel-body').animate({height:'0'} , 500);
-        $('.panel.panel-chat> .panel-footer').animate({height:'0'},500);
+        $('.panel-chat > .panel-body').removeClass('normal-1-body').addClass('mini-1-body');
+        $('.panel-chat > .panel-footer').removeClass('normal-1-fotter').addClass('mini-1-fotter');
 
         setTimeout(function() {
-                        $('.panel.panel-chat > .panel-body').hide();
-                        $('.panel.panel-chat > .panel-footer').hide();
-                    }, 500);
+         $('.panel.panel-chat > .panel-body').hide();
+         $('.panel.panel-chat > .panel-footer').hide();
+            }, 500);
         
     }
 
