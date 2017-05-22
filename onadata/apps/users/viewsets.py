@@ -15,6 +15,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
+from onadata.apps.eventlog.models import FieldSightLog
 from onadata.apps.fieldsight.mixins import USURPERS
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import User, UserProfile
@@ -117,7 +118,12 @@ class UserViewSet(viewsets.ModelViewSet):
                 user.set_password(data.get('password'))
                 user.is_superuser = True
                 user.save()
-                UserProfile.objects.create(user=user, organization_id=self.kwargs.get('pk'))
+                profile = UserProfile(user=user, organization_id=self.kwargs.get('pk'))
+                profile.save()
+                FieldSightLog.objects.create(source=self.request.user, profile=profile, type=0, title="new User",
+                                         description="new user {0} created by {1}".format(user.get_full_name(),
+                                                                                          self.request.user.get_full_name()))
+
                 site = get_current_site(self.request)
 
                 new_user = RegistrationProfile.objects.create_inactive_user(
