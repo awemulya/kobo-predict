@@ -23,6 +23,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from onadata.apps.eventlog.models import FieldSightLog
 from onadata.apps.fieldsight.bar_data_project import BarGenerator
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
@@ -620,7 +621,11 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
             new_user.save()
             organization = int(form.cleaned_data['organization'])
             org = Organization.objects.get(pk=organization)
-            UserProfile.objects.get_or_create(user=new_user, organization=org)
+            profile = UserProfile(user=new_user, organization=org)
+            profile.save()
+            FieldSightLog.objects.create(source=request.user, profile=profile, type=0, title="new User",
+                                         description="new user {0} created by {1}".format(new_user.get_full_name(),
+                                                                                          request.user.get_full_name()))
         return new_user
 
 

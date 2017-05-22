@@ -12,6 +12,7 @@ class FieldSightLog(models.Model):
         (0, 'USER'),
         (1, 'FORM'),
         (2, 'SUBMISSION'),
+        (3, 'Site'),
     )
     type = models.IntegerField(default=0, choices=ACTION_TYPES)
     title = models.CharField(max_length=255)
@@ -22,6 +23,7 @@ class FieldSightLog(models.Model):
     instance = models.ForeignKey(FInstance, related_name="log", null=True)
     site = models.ForeignKey(Site, related_name="log", null=True)
     is_seen = models.BooleanField(default=False)
+    source = models.ForeignKey(User, related_name='log', null=True)
 
     class Meta:
         get_latest_by = "date"
