@@ -53,8 +53,7 @@
     <link rel="stylesheet" type="text/css"  href="{% static 'slick/slick.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'slick/slick-theme.css' %}" />
 
-
-    <!-- <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}"> 
+    <!-- <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}">
   -->
 
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
@@ -220,7 +219,7 @@ console.log(text.prop2);
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">10</span>
+              <span class="label label-warning">{% if notifications.count %} {{notifications.count }} {% endif %}</span>
             </a>
             <ul class="dropdown-menu">
               <li class="header">You have 10 notifications</li>
