@@ -53,8 +53,7 @@
     <link rel="stylesheet" type="text/css"  href="{% static 'slick/slick.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'slick/slick-theme.css' %}" />
 
-
-    <!-- <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}"> 
+    <!-- <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}">
   -->
 
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
@@ -74,6 +73,7 @@
     <!--<script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap-notify.min.js" ></script>-->
     <!--<script type="text/javascript" src="{{ STATIC_URL }}js/libs/material.min.js" ></script>-->
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/ripples.min.js" ></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}channels/js/websocketbridge.js" ></script>
     <!--clock css-->
     <!--Morris Chart CSS -->
 <!-- Custom styles for this template -->
@@ -87,6 +87,16 @@
 
     <![endif]-->
 <script type="text/javascript">
+const webSocketBridge = new channels.WebSocketBridge();
+webSocketBridge.connect('/notify/');
+webSocketBridge.listen(function(text, byte) {
+console.log(text.prop1);
+console.log(text.prop2);
+});
+
+</script>
+<script type="text/javascript">
+
     function showMenu(){
     if ($('#fs_drop_menu').is(":hidden")){
      $('#fs_drop_menu').show();
@@ -209,43 +219,27 @@
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">10</span>
+              <span class="label label-warning">{% if notifications.count %} {{notifications.count }} {% endif %}</span>
             </a>
+              {% if notifications.count %}
             <ul class="dropdown-menu">
-              <li class="header">You have 10 notifications</li>
+              <li class="header">{% trans 'You have' %} {{notifications.count }}
+                  {% trans 'notifications' %} </li>
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
+                    {% for not in notifications %}
                   <li>
                     <a href="#">
-                      <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                      <i class="fa fa-users text-aqua"></i> {{not.title}}, {{not.description}}
                     </a>
                   </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-warning text-yellow"></i> Very long description here that may not fit into the
-                      page and may cause design problems
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-users text-red"></i> 5 new members joined
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-shopping-cart text-green"></i> 25 sales made
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-user text-red"></i> You changed your username
-                    </a>
-                  </li>
+                {% endfor %}
                 </ul>
               </li>
-              <li class="footer"><a href="#">View all</a></li>
+              <li class="footer"><a href="#">{% if notifications.count %} {% trans 'View all' %} {% endif %}</a></li>
             </ul>
+              {% endif %}
           </li>
           <!-- Tasks: style can be found in dropdown.less -->
           
@@ -463,16 +457,16 @@
 
 
                 {% endrole %}
-                {% ifrole "Reviewer" %}
-                 <li class="sub-menu">
-                    <a href="{% url 'fieldsight:sites-list' %}">
-                        <i class="fa fa-picture-o"></i>
-                        <span>{% trans 'Sites' %}</span>
-                    </a>
+                <!--{% ifrole "Reviewer" %}-->
+                 <!--<li class="sub-menu">-->
+                    <!--<a href="{% url 'fieldsight:sites-list' %}">-->
+                        <!--<i class="fa fa-picture-o"></i>-->
+                        <!--<span>{% trans 'Sites' %}</span>-->
+                    <!--</a>-->
 
-                </li>
+                <!--</li>-->
 
-                {% endrole %}
+                <!--{% endrole %}-->
                 {% ifrole "Site" %}
                 <li class="sub-menu">
                     <a href="javascript:;">

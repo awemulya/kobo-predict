@@ -281,3 +281,11 @@ class SiteCreateSurveyImages(models.Model):
     site = models.ForeignKey(Site, related_name="create_surveys")
     image = models.ImageField(upload_to=get_survey_image_filename,
                               verbose_name='survey images',)
+
+
+class ChatMessage(models.Model):
+    message = models.CharField(max_length=255)
+    room = models.CharField(max_length=30)
+
+    class Meta:
+        db_table = 'chat_message'
