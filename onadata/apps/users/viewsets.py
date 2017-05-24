@@ -1,4 +1,9 @@
+from django.contrib.sites.shortcuts import get_current_site
 from django.db import transaction
+from django.db.models import Q
+from registration import signals
+from registration.models import RegistrationProfile
+from registration.views import RegistrationView
 from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import detail_route
@@ -10,10 +15,11 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
+from onadata.apps.eventlog.models import FieldSightLog
 from onadata.apps.fieldsight.mixins import USURPERS
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import User, UserProfile
-from onadata.apps.users.serializers import UserSerializer, UserSerializerProfile
+from onadata.apps.users.serializers import UserSerializer, UserSerializerProfile, SearchableUserSerializer
 
 SAFE_METHODS = ('GET', 'POST')
 
@@ -34,6 +40,11 @@ class AddPeoplePermission(BasePermission):
         #     return obj.user == request.user
         # return request.role.organization == obj.organization
         return request.role.group.name in USURPERS['Reviewer']
+
+
+class SuperAdminPermission(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.role.group.name == "Super Admin"
 
 
 class EditProfilePermission(BasePermission):
@@ -99,7 +110,7 @@ class UserViewSet(viewsets.ModelViewSet):
             })
         if User.objects.filter(email=email).exists():
             raise ValidationError({
-                "Username Already Used ",
+                "Email Already Used ",
             })
         try:
             with transaction.atomic():
@@ -107,7 +118,23 @@ class UserViewSet(viewsets.ModelViewSet):
                 user.set_password(data.get('password'))
                 user.is_superuser = True
                 user.save()
-                UserProfile.objects.create(user=user, organization_id=self.kwargs.get('pk'))
+                profile = UserProfile(user=user, organization_id=self.kwargs.get('pk'))
+                profile.save()
+                FieldSightLog.objects.create(source=self.request.user, profile=profile, type=0, title="new User",
+                                         description="new user {0} created by {1}".format(user.get_full_name(),
+                                                                                          self.request.user.get_full_name()))
+
+                site = get_current_site(self.request)
+
+                new_user = RegistrationProfile.objects.create_inactive_user(
+                    new_user=user,
+                    site=site,
+                    send_email=True,
+                    request=self.request,
+                )
+                signals.user_registered.send(sender=RegistrationView,
+                                             user=new_user,
+                                             request=self.request)
         except:
             raise ValidationError({
                 "User Creation Failed ",
@@ -133,3 +160,40 @@ class ProfileViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return {'request': self.request}
 
+
+class UserListViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.filter(pk__gt=0)
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated, AddPeoplePermission)
+
+    def filter_queryset(self, queryset):
+        try:
+            pk = self.kwargs.get('pk', None)
+            queryset = queryset.filter(user_profile__organization__id=pk)
+        except:
+            queryset = []
+        return queryset
+
+
+class SearchableUserListViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.filter(pk__gt=0).distinct('username')
+    serializer_class = SearchableUserSerializer
+    permission_classes = (IsAuthenticated, SuperAdminPermission)
+
+    def filter_queryset(self, queryset):
+        try:
+            level = self.kwargs.get('level', None)
+            name = self.kwargs.get('username', None)
+            if name:
+                queryset = queryset.filter(Q(first_name__contains=name)|Q(last_name__contains=name) |Q(username__contains=name))
+            if level and level =='1':
+                queryset = queryset.filter(user_roles__group__name="Organization Admin")
+            if level and level =='2':
+                queryset = queryset.filter(user_roles__group__name="Project Manager")
+            if level and level =='3':
+                queryset = queryset.filter(user_roles__group__name="Reviewer")
+            if level and level =='4':
+                queryset = queryset.filter(user_roles__group__name="Site Supervisor")
+        except:
+            queryset = []
+        return queryset

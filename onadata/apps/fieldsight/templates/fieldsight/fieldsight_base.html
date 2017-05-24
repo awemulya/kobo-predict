@@ -37,14 +37,24 @@
     <!--dynamic table-->
     <link href="{% static 'js/advanced-datatable/css/demo_page.css' %}" rel="stylesheet" />
     <link href="{% static 'js/advanced-datatable/css/demo_table.css' %}" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'js/data-tables/DT_bootstrap.css' %}" />
+    <link rel="stylesheet" href="{% static 'js/data-tables/DT_bootstrap.css' %}"/>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'sample/dist/css/AdminLTE.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'sample/dist/css/AdminLTE.min.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'sample/dist/css/skins/_all-skins.min.css' %}">
+
     <link rel="stylesheet" href="{% static 'css/owl.carousel.css' %}" />
     <link rel="stylesheet" href="{% static 'css/owl.theme.css' %}" />
     <link rel="stylesheet" href="{% static 'css/owl.transitions.css' %}" />
     <link rel="stylesheet" href="{% static 'css/selectize.default.css' %}">
     <link rel="stylesheet" href="{% static 'css/selectize.css' %}">
-    <!-- <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}"> -->
 
+    <link rel="stylesheet" type="text/css"  href="{% static 'slick/slick.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'slick/slick-theme.css' %}" />
+
+    <!-- <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}">
+  -->
 
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     {%block extracss %}
@@ -59,9 +69,11 @@
     <!--<script type="text/javascript" src="{{ STATIC_URL }}js/base.js" ></script>-->
     <script type="text/javascript" src="{{ STATIC_URL }}js/ko_lib.js" ></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/selectize.min.js" ></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap-notify.min.js" ></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap-notify.min.js" ></script>-->
     <!--<script type="text/javascript" src="{{ STATIC_URL }}js/libs/material.min.js" ></script>-->
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/ripples.min.js" ></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}channels/js/websocketbridge.js" ></script>
     <!--clock css-->
     <!--Morris Chart CSS -->
 <!-- Custom styles for this template -->
@@ -75,6 +87,16 @@
 
     <![endif]-->
 <script type="text/javascript">
+const webSocketBridge = new channels.WebSocketBridge();
+webSocketBridge.connect('/notify/');
+webSocketBridge.listen(function(text, byte) {
+console.log(text.prop1);
+console.log(text.prop2);
+});
+
+</script>
+<script type="text/javascript">
+
     function showMenu(){
     if ($('#fs_drop_menu').is(":hidden")){
      $('#fs_drop_menu').show();
@@ -92,21 +114,21 @@
 
 <section id="container">
 <!--header start-->
-<header class="header fixed-top clearfix">
+<header class="header fixed-top clearfix row">
 <!--logo start-->
-<div class="brand">
+<div class="brand col-sm-2">
 
     <a href="#" class="logo">
         <!-- <img src="images/logo.png" alt=""> -->
-        <img src="{{STATIC_URL}}images/logo1.png"/>
+        <img src="{{STATIC_URL}}images/logo1.png" class="img-responsive1" />
         
     </a>
     <div class="sidebar-toggle-box">
         <div class="fa fa-bars"></div>
     </div>
 </div>
-<div class="brand-side col-sm-9">
-        <ol class="breadcrumb hidden-print" style="font-size: 16px;color: white !important;">
+<div class="brand-side col-sm-10">
+        <ol class="breadcrumb hidden-print col-sm-8" style="font-size: 16px;color: white !important;">
                     {% block breadcrumbs_container %}
                         <li><a href="{% url 'dashboard' %}">{% trans 'Home' %}</a></li>
                         {% block breadcrumbs %}
@@ -114,7 +136,191 @@
                     {% endblock %}
                 </ol>
 
-                <div class="dropdown pull-right top-menu top-nav clearfix">
+                <div class="navbar-custom-menu notification-div col-sm-3">
+        <ul class="nav navbar-nav" style="margin-top: 3%;margin-left: 30%;">
+          <!-- Messages: style can be found in dropdown.less-->
+          <li class="dropdown messages-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-envelope-o"></i>
+              <span class="label label-success">4</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 4 messages</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                  <li><!-- start message -->
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        Support Team
+                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                  <!-- end message -->
+                  <li>
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        AdminLTE Design Team
+                        <small><i class="fa fa-clock-o"></i> 2 hours</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        Developers
+                        <small><i class="fa fa-clock-o"></i> Today</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        Sales Department
+                        <small><i class="fa fa-clock-o"></i> Yesterday</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        Reviewers
+                        <small><i class="fa fa-clock-o"></i> 2 days</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="footer"><a href="#">See All Messages</a></li>
+            </ul>
+          </li>
+          <!-- Notifications: style can be found in dropdown.less -->
+          <li class="dropdown notifications-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-bell-o"></i>
+              <span class="label label-warning">{% if notifications.count %} {{notifications.count }} {% endif %}</span>
+            </a>
+              {% if notifications.count %}
+            <ul class="dropdown-menu">
+              <li class="header">{% trans 'You have' %} {{notifications.count }}
+                  {% trans 'notifications' %} </li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                    {% for not in notifications %}
+                  <li>
+                    <a href="#">
+                      <i class="fa fa-users text-aqua"></i> {{not.title}}, {{not.description}}
+                    </a>
+                  </li>
+                {% endfor %}
+                </ul>
+              </li>
+              <li class="footer"><a href="#">{% if notifications.count %} {% trans 'View all' %} {% endif %}</a></li>
+            </ul>
+              {% endif %}
+          </li>
+          <!-- Tasks: style can be found in dropdown.less -->
+          
+          <!-- User Account: style can be found in dropdown.less -->
+          <li class="dropdown tasks-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-flag-o"></i>
+              <span class="label label-danger">9</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 9 tasks</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                  <li><!-- Task item -->
+                    <a href="#">
+                      <h3>
+                        Design some buttons
+                        <small class="pull-right">20%</small>
+                      </h3>
+                      <div class="progress xs">
+                        <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                          <span class="sr-only">20% Complete</span>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                  <!-- end task item -->
+                  <li><!-- Task item -->
+                    <a href="#">
+                      <h3>
+                        Create a nice theme
+                        <small class="pull-right">40%</small>
+                      </h3>
+                      <div class="progress xs">
+                        <div class="progress-bar progress-bar-green" style="width: 40%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                          <span class="sr-only">40% Complete</span>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                  <!-- end task item -->
+                  <li><!-- Task item -->
+                    <a href="#">
+                      <h3>
+                        Some task I need to do
+                        <small class="pull-right">60%</small>
+                      </h3>
+                      <div class="progress xs">
+                        <div class="progress-bar progress-bar-red" style="width: 60%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                          <span class="sr-only">60% Complete</span>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                  <!-- end task item -->
+                  <li><!-- Task item -->
+                    <a href="#">
+                      <h3>
+                        Make beautiful transitions
+                        <small class="pull-right">80%</small>
+                      </h3>
+                      <div class="progress xs">
+                        <div class="progress-bar progress-bar-yellow" style="width: 80%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                          <span class="sr-only">80% Complete</span>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                  <!-- end task item -->
+                </ul>
+              </li>
+              <li class="footer">
+                <a href="#">View all tasks</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+       <div class="dropdown pull-right top-menu top-nav clearfix">
+        
         <!--<li>-->
             <!--<input type="text" class="form-control search" placeholder=" Search">-->
         <!--</li>-->
@@ -128,7 +334,7 @@
             <ul class="dropdown-menu dropdown-menu-right extended logout" id="fs_drop_menu">
                         {% if request.role %}
                             <li >
-                                <a href="#" style="background: #e4e8ef; border-radius: 4px !important;">{% trans 'Using as' %} {{ request.role.group }}
+                                <a href="#" style="background: #e4e8ef; border-radius: 4px !important;"><h6>{% trans 'Using as' %} {{ request.role.group }}
                                     {% if request.site%}
                                     {% trans 'at Site ' %}{{request.site}}
                                     {% endif %}
@@ -138,6 +344,7 @@
                                     {% if request.organization%}
                                     {% trans 'at Org ' %} {{request.organization}}
                                     {% endif %}
+                                    </h6>
 
                                 </a>
                             </li>
@@ -157,6 +364,7 @@
                                     {% if role.organization%}
                                     {% trans 'at Org ' %} {{role.organization}}
                                     {% endif %}
+                                    
                                     </a>
                                 </li>
                             {% endif %}
@@ -166,7 +374,7 @@
                             <li role="separator" class="divider"></li>
                         {% endif %}
                 <li><a href="{% url 'users:profile' 0 %}"><i class=" fa fa-suitcase"></i>Profile</a></li>
-                <li><a href="{% url 'onadata.apps.main.views.profile_settings' request.user.username %}"><i class="fa fa-cog"></i> Settings</a></li>
+                <li><a href="{% url 'auth_password_change' %}"><i class="fa fa-cog"></i> Change Password</a></li>
                 <li><a href="{% url 'auth_logout' %}"><i class="fa fa-key"></i> Log Out</a></li>
             </ul>
         
@@ -176,7 +384,9 @@
                 <div class="fa fa-bars"></div>
             </div>
         </li> -->
-    </div>
+          </div>
+
+             
 </div>
 <!--logo end-->
 
@@ -191,7 +401,7 @@
     </ul>
     
 </div> -->
-<ul class="top-nav clearfix" style="padding-right: 31px !important;">
+<ul class="top-nav main_ul clearfix" style="padding-right: 31px !important;">
 
 
 
@@ -237,7 +447,7 @@
                 {% ifrole "admin" %}
 
                 <li class="sub-menu">
-                    <a href="{% url 'fieldsight:user-list' %}">
+                    <a href="{% url 'users:users' %}">
                         <i class="fa fa-user"></i>
                         <span>{% trans 'Users' %}</span>
                     </a>
@@ -247,16 +457,16 @@
 
 
                 {% endrole %}
-                {% ifrole "Reviewer" %}
-                 <li class="sub-menu">
-                    <a href="{% url 'fieldsight:sites-list' %}">
-                        <i class="fa fa-picture-o"></i>
-                        <span>{% trans 'Sites' %}</span>
-                    </a>
+                <!--{% ifrole "Reviewer" %}-->
+                 <!--<li class="sub-menu">-->
+                    <!--<a href="{% url 'fieldsight:sites-list' %}">-->
+                        <!--<i class="fa fa-picture-o"></i>-->
+                        <!--<span>{% trans 'Sites' %}</span>-->
+                    <!--</a>-->
 
-                </li>
+                <!--</li>-->
 
-                {% endrole %}
+                <!--{% endrole %}-->
                 {% ifrole "Site" %}
                 <li class="sub-menu">
                     <a href="javascript:;">
@@ -306,9 +516,9 @@
                            
                         {% endblock %}
                             
-                         </span>
+                         </div>
                     </header>
-                    <div class="gap"></div>
+                    
                     <div class="panel-body">
 
     {% block messages %}
@@ -316,7 +526,7 @@
             <script>
                 $(function () {
                     {% for message in messages %}
-                        bsalert.message('{{ message|remove_lines|safe }}', '{{ message.tags|last_word }}');
+                        App.notifyUser('{{ message|remove_lines|safe }}', '{{ message.tags|last_word }}');
                     {% endfor %}
                 });
             </script>
@@ -342,6 +552,72 @@
         <div class="diagrams">
            {% block all_diagrams %}              
           {% endblock %} 
+        </div>
+
+        <!-- <div class="chat-widget">
+            <div class="container1">
+   <div class="row">
+      <div class=" col-md-offset-6 col-md-6">
+         <div class="panel panel-primary panel-chat mini">
+         <a href="#" class="chatminimize" onclick="return false">
+            <div class="panel-heading heading1-chat ">
+             <span class="glyphicon glyphicon-comment"></span> Chat</a>
+                
+               <div class="btn-group pull-right drop-btn">
+                  <button type="button" class="btn btn-warning btn-xs dropdown-toggle" data-toggle="dropdown"> <span class="glyphicon glyphicon-chevron-down"></span> </button> 
+                  <ul class="dropdown-menu slidedown">
+                     <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-refresh"> </span>Refresh</a></li>
+                     <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-ok-sign"> </span>Available</a></li>
+                     <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-remove"> </span>Busy</a></li>
+                     <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-time"></span> Away</a></li>
+                     <li class="divider"></li>
+                     <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-off"></span> Sign Out</a></li>
+                  </ul>
+               </div>
+            </div>
+            
+                <div class="panel-body chat-body">
+                   <ul class="chat">
+                      <li class="left clearfix">
+                         <span class="chat-img pull-left"> <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" /> </span> 
+                         <div class="chat-body clearfix">
+                            <div class="header1"> <strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted"> <span class="glyphicon glyphicon-time"></span>12 mins ago</small> </div>
+                            <p class="main-message"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales. </p>
+                         </div>
+                      </li>
+                      <li class="right clearfix">
+                         <span class="chat-img pull-right"> <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" /> </span> 
+                         <div class="chat-body clearfix">
+                            <div class="header1">  <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>13 mins ago</small> <strong class="pull-right primary-font">Bhaumik Patel</strong> </div>
+                            <p class="main-message"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales. </p>
+                         </div>
+                      </li>
+                      <li class="left clearfix">
+                         <span class="chat-img pull-left"> <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" /> </span> 
+                         <div class="chat-body clearfix">
+                            <div class="header1"> <strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted"> <span class="glyphicon glyphicon-time"></span>14 mins ago</small> </div>
+                            <p class="main-message"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales. </p>
+                         </div>
+                      </li>
+                      <li class="right clearfix">
+                         <span class="chat-img pull-right"> <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" /> </span> 
+                         <div class="chat-body clearfix">
+                            <div class="header1"> <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>15 mins ago</small> <strong class="pull-right primary-font">Sushila pokhrel</strong> </div>
+                            <p class="main-message"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales. </p>
+                         </div>
+                      </li>
+                   </ul>
+                </div>
+                <div class="panel-footer">
+                   <div class="input-group"> <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..."  name="message-input" /> <span class="input-group-btn"> <button class="btn btn-warning btn-sm" id="btn-chat"> Send</button> </span> </div>
+                </div>
+            
+         </div>
+      </div>
+   </div>
+</div> -->
+
+        
         </div>
         </section>
     </section>
@@ -394,7 +670,76 @@
 <!-- <script src="{{ STATIC_URL }}js/dynamic_table_init.js"></script> -->
 <!--common script init for all pages-->
 <script type="text/javascript" src="{{ STATIC_URL }}js/scripts.js"></script>
+<!-- <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+ -->
+<script type="text/javascript"   src="{{ STATIC_URL }}slick/slick.min.js"></script>
+<script>
 
+$('.panel-chat >.panel-heading> .chatminimize').click(function(){
+
+    if($(this).parent().parent().hasClass('mini'))
+    {
+        console.log('clicked');
+        $(this).parent().parent().removeClass('mini').addClass('normal');
+        $('.panel-chat > .panel-body').removeClass('mini-1-body').addClass('normal-1-body').show();
+        $('.panel-chat > .panel-footer').removeClass('mini-1-fotter').addClass('normal-1-fotter').show();
+    }
+
+    else
+    {
+        $(this).parent().parent().removeClass('normal').addClass('mini');
+        $('.panel-chat > .panel-body').removeClass('normal-1-body').addClass('mini-1-body');
+        $('.panel-chat > .panel-footer').removeClass('normal-1-fotter').addClass('mini-1-fotter');
+
+        setTimeout(function() {
+         $('.panel.panel-chat > .panel-body').hide();
+         $('.panel.panel-chat > .panel-footer').hide();
+            }, 500);
+        
+    }
+
+});
+
+
+
+
+     $('.popop-gallery').slick({
+      dots: true,
+      infinite: false,
+      speed: 300,
+      slidesToShow: 4,
+      slidesToScroll: 4,
+      responsive: [
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 3,
+            infinite: true,
+            dots: true
+          }
+        },
+        {
+          breakpoint: 600,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 2
+          }
+        },
+        {
+          breakpoint: 480,
+          settings: {
+            slidesToShow: 1,
+            slidesToScroll: 1
+          }
+        }
+        // You can unslick at a given breakpoint now by adding:
+        // settings: "unslick"
+        // instead of a settings object
+      ]
+    });
+</script>
  {%block extrascript %}
     {% endblock %}
 </html>

@@ -65,15 +65,35 @@ class AuthCustomTokenSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
-    password = serializers.CharField()
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
         exclude = ('last_login', 'is_superuser', 'is_staff', 'is_active', 'date_joined', 'groups', 'user_permissions')
+        write_only_fields = ('password',)
 
     def get_profile_picture(self, obj):
-        if obj.user_profile.profile_picture:
-            return obj.user_profile.profile_picture.url
+        try:
+            if obj.user_profile.profile_picture:
+                return obj.user_profile.profile_picture.url
+        except:
+            return None
+        return None
+
+
+class SearchableUserSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        exclude = ('is_superuser', 'is_staff', 'groups', 'user_permissions', 'password')
+
+    def get_profile_picture(self, obj):
+        try:
+            if obj.user_profile.profile_picture:
+                return obj.user_profile.profile_picture.url
+        except:
+            return None
         return None
 
 
@@ -108,4 +128,18 @@ class UserSerializerProfile(serializers.ModelSerializer):
             profile.profile_picture = profile_picture
             profile.save()
         return profile
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+        profile_picture = serializers.SerializerMethodField()
+
+        class Meta:
+            model = User
+            exclude = ('is_superuser', 'is_staff', 'groups', 'user_permissions',)
+
+        def get_profile_picture(self, obj):
+            if obj.user_profile.profile_picture:
+                return obj.user_profile.profile_picture.url
+            return None
+
 

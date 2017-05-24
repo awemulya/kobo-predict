@@ -9,12 +9,14 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate
+from django.views.generic import TemplateView
 from rest_framework import parsers
 from rest_framework.authtoken.models import Token
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from onadata.apps.fieldsight.mixins import UpdateView, ProfileView, OwnerMixin
+from onadata.apps.fieldsight.mixins import UpdateView, ProfileView, OwnerMixin, SuperAdminMixin, group_required
 from rest_framework import renderers
 
 from onadata.apps.fieldsight.models import Organization
@@ -156,21 +158,21 @@ def current_user(request):
 # @group_required("admin")
 
 
+@group_required("admin")
+@api_view(['GET'])
 def alter_status(request, pk):
     try:
         user = User.objects.get(pk=pk)
-            # alter status method on custom user
         if user.is_active:
             user.is_active = False
-            messages.info(request, 'User {0} Deactivated.'.format(user.get_full_name()))
+            message = "User {0} Deactivated".format(user.get_full_name())
         else:
             user.is_active = True
-            messages.info(request, 'User {0} Activated.'.format(user.get_full_name()))
+            message = "User {0} Activated".format(user.get_full_name())
         user.save()
-    except:
-        messages.info(request, 'User {0} not found.'.format(user.get_full_name()))
-    return HttpResponseRedirect(reverse('fieldsight:user-list'))
-
+        return Response({'msg': message}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': 'Failure caused by {0}'.format(e.message)}, status=status.HTTP_400_BAD_REQUEST)
 
 def edit(request, pk):
     user = User.objects.get(pk=pk)
@@ -196,7 +198,7 @@ def edit(request, pk):
                     profile.organization = org
             profile.save()
             messages.info(request, 'User Details Updated.')
-        return HttpResponseRedirect(reverse('fieldsight:user-list'))
+        return HttpResponseRedirect(reverse('users:users'))
 
     else:
         form = UserEditForm(initial={'name': user.first_name, 'address':profile.address,'gender':profile.gender,
@@ -280,3 +282,6 @@ def my_profile(request, pk=None):
 
     return render(request, 'users/profile.html', {'obj': profile, 'roles': roles})
 
+
+class UsersListView(TemplateView, SuperAdminMixin):
+    template_name = "users/list.html"

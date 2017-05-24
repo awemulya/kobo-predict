@@ -1,11 +1,12 @@
-from django.conf.urls import url, include
-from django.views.decorators.csrf import csrf_exempt
+from django.conf.urls import url
 from fcm.views import DeviceViewSet
-from rest_framework import routers
-
 from onadata.apps.fieldsight.viewsets.FieldsightFcmViewset import FcmDeviceViewSet
+
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
-from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectViewSet, ProjectCreationViewSet
+from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet
+
+from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProjectViewSet
+
 from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
     SiteReviewViewSet, ProjectTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet
 from .forms import RegistrationForm
@@ -34,20 +35,11 @@ from .views import (
     add_supervisor,
     CreateUserView,
     UserListView, site_images, filter_users, upload_sites, blue_prints, add_project_role, manage_people_site,
-    manage_people_project, manage_people_organization, site_survey_list, ajax_upload_sites, ajax_save_site)
-
-router = routers.SimpleRouter()
-# router.register(r'api/organization-type', OrganizationTypeViewSet)
-# router.register(r'api/organization', OrganizationViewSet)
-# router.register(r'api/project-type', ProjectTypeViewSet)
-# router.register(r'api/project', ProjectViewSet)
-# router.register(r'api/site', SiteViewSet)
+    manage_people_project, manage_people_organization, site_survey_list, ajax_upload_sites, ajax_save_site,
+    ajax_save_project)
 
 
 urlpatterns = [
-    # group_required('superuser')(OrgView.as_view())
-    # dispatch or get_context_data to control only org admin or that orf can actions on its projects and sites.
-    # url(r'^$', dashboard, name='dashboard'),
     url(r'^accounts/create/$', CreateUserView.as_view(
         form_class=RegistrationForm), name='user-create'),
 
@@ -56,7 +48,6 @@ urlpatterns = [
     url(r'^organization/add/$', OrganizationCreateView.as_view(), name='organization-add'),
     url(r'^organization/(?P<pk>[0-9]+)/$', OrganizationUpdateView.as_view(), name='organization-edit'),
     url(r'^organization-dashboard/(?P<pk>[0-9]+)/$', organization_dashboard, name='organization-dashboard'),
-    # url(r'^organization/search/$', organization_search, name='search-org'),
     url(r'^organization/delete/(?P<pk>\d+)/$', OrganizationDeleteView.as_view(), name='organization-delete'),
     url(r'^organization/alter-status/(?P<pk>\d+)/$', alter_org_status, name='alter_org_status'),
     url(r'^organization/add-org-admin/(?P<pk>\d+)/$', add_org_admin, name='add_org_admin'),
@@ -69,9 +60,10 @@ urlpatterns = [
     url(r'^project/add/$', ProjectCreateView.as_view(), name='project-add'),
     url(r'^project/(?P<pk>[0-9]+)/$', ProjectUpdateView.as_view(), name='project-edit'),
     url(r'^project-dashboard/(?P<pk>[0-9]+)/$', project_dashboard, name='project-dashboard'),
+    url(r'^api/org-projects/(?P<pk>\d+)/$', OrganizationsProjectViewSet.as_view({'get': 'list'})),
+    url(r'^api/async_save_project/$', ajax_save_project),
 
 
-    # url(r'^organization/search/$', organization_search, name='search-org'),
     url(r'^upload/(?P<pk>\d+)/$', upload_sites, name='site-upload'),
     url(r'^api/bulk_upload_site/(?P<pk>\d+)/$', ajax_upload_sites),
     url(r'^api/async_save_site/(?P<pk>\d+)/$', ajax_save_site),
@@ -96,7 +88,7 @@ urlpatterns = [
     url(r'^site/(?P<pk>[0-9]+)/$', SiteUpdateView.as_view(), name='site-edit'),
     url(r'^site/blue-prints/(?P<id>[0-9]+)/$', blue_prints, name='site-blue-prints'),
     url(r'^site-dashboard/(?P<pk>[0-9]+)/$', site_dashboard, name='site-dashboard'),
-    # url(r'^organization/search/$', organization_search, name='search-org'),
+
     url(r'^site/delete/(?P<pk>\d+)/$', SiteDeleteView.as_view(), name='site-delete'),
     url(r'^site/alter-status/(?P<pk>\d+)/$', alter_site_status, name='alter_site_status'),
     url(r'^site/add-supervisor/(?P<pk>\d+)/$', add_supervisor, name='add_supervisor'),
@@ -116,5 +108,4 @@ urlpatterns = [
 
 ]
 
-urlpatterns += router.urls
 

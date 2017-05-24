@@ -23,6 +23,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from onadata.apps.eventlog.models import FieldSightLog
 from onadata.apps.fieldsight.bar_data_project import BarGenerator
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
@@ -36,7 +37,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      MyOwnProjectMixin)
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
-                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm)
+                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo)
 
 
 @login_required
@@ -244,7 +245,7 @@ class OrganizationView(object):
 
 class UserDetailView(object):
     model = User
-    success_url = reverse_lazy('fieldsight:user-list')
+    success_url = reverse_lazy('users:users')
     form_class = RegistrationForm
 
 
@@ -533,6 +534,16 @@ def ajax_save_site(request, pk):
     return Response({'error': 'Invalid Site Data'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@group_required("Organization")
+@api_view(['POST'])
+def ajax_save_project(request):
+    form = ProjectFormKo(request.POST, request.FILES)
+    if form.is_valid():
+        form.save()
+        return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+    return Response({'error': 'Invalid Project Data'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 @group_required("Project")
 def upload_sites(request, pk):
@@ -598,7 +609,7 @@ def filter_users(request):
     return HttpResponseRedirect(reverse('fieldsight:user-list'))
 
 
-class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, RegistrationView):
+class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, RegistrationView):
     def register(self, request, form, *args, **kwargs):
         with transaction.atomic():
             new_user = super(CreateUserView, self).register(
@@ -608,18 +619,14 @@ class CreateUserView(LoginRequiredMixin, ProjectMixin, UserDetailView, Registrat
             new_user.is_active = is_active
             new_user.is_superuser = True
             new_user.save()
-            created = False
-            if hasattr(request, "organization"):
-                if request.organization:
-                    user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=request.organization)
-
-            if not created:
-                organization = int(form.cleaned_data['organization'])
-                org = Organization.objects.get(pk=organization)
-                user_profile, created = UserProfile.objects.get_or_create(user=new_user, organization=org)
-        if created:
-            return new_user
-        return False
+            organization = int(form.cleaned_data['organization'])
+            org = Organization.objects.get(pk=organization)
+            profile = UserProfile(user=new_user, organization=org)
+            profile.save()
+            FieldSightLog.objects.create(source=request.user, profile=profile, type=0, title="new User",
+                                         description="new user {0} created by {1}".format(new_user.get_full_name(),
+                                                                                          request.user.get_full_name()))
+        return new_user
 
 
 @login_required
@@ -664,3 +671,15 @@ def manage_people_project(request, pk):
 @group_required("Organization")
 def manage_people_organization(request, pk):
     return render(request, "fieldsight/manage_people_site.html", {'pk': pk, 'level': "2", 'organization': pk})
+
+
+import json
+from channels import Group
+
+
+def all_notification(user,  message):
+    Group("%s" % user).send({
+        "text": json.dumps({
+            "msg": message
+        })
+    })
