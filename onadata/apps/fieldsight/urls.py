@@ -52,7 +52,7 @@ urlpatterns = [
     url(r'^organization/alter-status/(?P<pk>\d+)/$', alter_org_status, name='alter_org_status'),
     url(r'^organization/add-org-admin/(?P<pk>\d+)/$', add_org_admin, name='add_org_admin'),
 
-    url(r'^api/projects/(?P<pk>\d+)/$', ProjectViewSet.as_view({'get': 'list'})),
+    # url(r'^api/projects/(?P<pk>\d+)/$', ProjectViewSet.as_view({'get': 'list'})),
     url(r'^api/projects/$', ProjectCreationViewSet.as_view({'post': 'create', 'put': 'update'}),
         name='projects-list'),
     url(r'^project/$', ProjectListView.as_view(), name='projects-list'),
