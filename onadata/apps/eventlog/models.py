@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 from onadata.apps.fsforms.models import FieldSightXF, FInstance
 from onadata.apps.users.models import UserProfile
-from onadata.apps.fieldsight.models import Site
+from onadata.apps.fieldsight.models import Site, Project
 
 
 class FieldSightLog(models.Model):
@@ -22,6 +22,7 @@ class FieldSightLog(models.Model):
     form = models.ForeignKey(FieldSightXF, related_name="log", null=True)
     instance = models.ForeignKey(FInstance, related_name="log", null=True)
     site = models.ForeignKey(Site, related_name="log", null=True)
+    project = models.ForeignKey(Project, related_name="log", null=True)
     is_seen = models.BooleanField(default=False)
     source = models.ForeignKey(User, related_name='log', null=True)
 

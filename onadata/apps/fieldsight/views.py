@@ -457,7 +457,24 @@ class ProjectListView(ProjectView, OrganizationMixin, ListView):
 
 
 class ProjectCreateView(ProjectView, OrganizationMixin, CreateView):
-    pass
+    def register(self, request, form, *args, **kwargs):
+        with transaction.atomic():
+            new_site = super(ProjectCreateView, self).register(
+                request, form, *args, **kwargs)
+            is_active = form.cleaned_data['is_active']
+            new_site.name = request.POST.get('name', '')
+            new_site.is_active = is_active
+            new_site.is_superuser = True
+            new_site.save()
+            project = int(form.cleaned_data['project'])
+            project = Site.objects.get(pk=project)
+            site = Site(user=new_site, project=project)
+            site.save()
+            FieldSightLog.objects.create(source=request.site, site=site, type=3, title="new Site",
+                                         description="new site {3} created by {1}".format(new_site.get_site_name(),
+                                                                                          request.user.get_site_name()))
+        return new_site
+
 
 
 class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView):
@@ -483,7 +500,23 @@ class SiteListView(SiteView, ReviewerMixin, ListView):
 
 
 class SiteCreateView(SiteView, ProjectMixin, CreateView):
-    pass
+    def register(self, request, form, *args, **kwargs):
+        with transaction.atomic():
+            new_site = super(SiteCreateView, self).register(
+                request, form, *args, **kwargs)
+            is_active = form.cleaned_data['is_active']
+            new_site.name = request.POST.get('name', '')
+            new_site.is_active = is_active
+            new_site.is_superuser = True
+            new_site.save()
+            project = int(form.cleaned_data['project'])
+            project = Site.objects.get(pk=project)
+            site = Site(user=new_site, project=project)
+            site.save()
+            FieldSightLog.objects.create(source=request.site, site=site, type=3, title="new Site",
+                                         description="new site {3} created by {1}".format(new_site.get_site_name(),
+                                                                                          request.user.get_site_name()))
+        return new_site
 
 
 class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
