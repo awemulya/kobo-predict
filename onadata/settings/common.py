@@ -158,7 +158,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'readonly.context_processors.readonly',
     'onadata.apps.main.context_processors.google_analytics',
     'onadata.apps.main.context_processors.site_name',
-    'onadata.apps.main.context_processors.base_url'
+    'onadata.apps.main.context_processors.base_url',
+    'onadata.apps.eventlog.context_processors.events'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -230,6 +231,7 @@ INSTALLED_APPS = (
     'onadata.apps.users',
     'onadata.apps.userrole',
     'onadata.apps.fsforms',
+    'onadata.apps.eventlog',
     'guardian',
     'djcelery',
     'onadata.apps.stats',

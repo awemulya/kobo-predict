@@ -53,8 +53,7 @@
     <link rel="stylesheet" type="text/css"  href="{% static 'slick/slick.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'slick/slick-theme.css' %}" />
 
-
-    <!-- <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}"> 
+    <!-- <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}">
   -->
 
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
@@ -74,6 +73,7 @@
     <!--<script type="text/javascript" src="{{ STATIC_URL }}js/libs/bootstrap-notify.min.js" ></script>-->
     <!--<script type="text/javascript" src="{{ STATIC_URL }}js/libs/material.min.js" ></script>-->
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/ripples.min.js" ></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}channels/js/websocketbridge.js" ></script>
     <!--clock css-->
     <!--Morris Chart CSS -->
 <!-- Custom styles for this template -->
@@ -87,6 +87,16 @@
 
     <![endif]-->
 <script type="text/javascript">
+const webSocketBridge = new channels.WebSocketBridge();
+webSocketBridge.connect('/notify/');
+webSocketBridge.listen(function(text, byte) {
+console.log(text.prop1);
+console.log(text.prop2);
+});
+
+</script>
+<script type="text/javascript">
+
     function showMenu(){
     if ($('#fs_drop_menu').is(":hidden")){
      $('#fs_drop_menu').show();
@@ -209,43 +219,27 @@
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">10</span>
+              <span class="label label-warning">{% if notifications.count %} {{notifications.count }} {% endif %}</span>
             </a>
+              {% if notifications.count %}
             <ul class="dropdown-menu">
-              <li class="header">You have 10 notifications</li>
+              <li class="header">{% trans 'You have' %} {{notifications.count }}
+                  {% trans 'notifications' %} </li>
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
+                    {% for not in notifications %}
                   <li>
                     <a href="#">
-                      <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                      <i class="fa fa-users text-aqua"></i> {{not.title}}, {{not.description}}
                     </a>
                   </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-warning text-yellow"></i> Very long description here that may not fit into the
-                      page and may cause design problems
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-users text-red"></i> 5 new members joined
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-shopping-cart text-green"></i> 25 sales made
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-user text-red"></i> You changed your username
-                    </a>
-                  </li>
+                {% endfor %}
                 </ul>
               </li>
-              <li class="footer"><a href="#">View all</a></li>
+              <li class="footer"><a href="#">{% if notifications.count %} {% trans 'View all' %} {% endif %}</a></li>
             </ul>
+              {% endif %}
           </li>
           <!-- Tasks: style can be found in dropdown.less -->
           
@@ -325,8 +319,8 @@
           </li>
         </ul>
       </div>
-
-                <div class="dropdown pull-right top-menu top-nav clearfix">
+       <div class="dropdown pull-right top-menu top-nav clearfix">
+        
         <!--<li>-->
             <!--<input type="text" class="form-control search" placeholder=" Search">-->
         <!--</li>-->
@@ -390,7 +384,9 @@
                 <div class="fa fa-bars"></div>
             </div>
         </li> -->
-    </div>
+          </div>
+
+             
 </div>
 <!--logo end-->
 
@@ -461,16 +457,16 @@
 
 
                 {% endrole %}
-                {% ifrole "Reviewer" %}
-                 <li class="sub-menu">
-                    <a href="{% url 'fieldsight:sites-list' %}">
-                        <i class="fa fa-picture-o"></i>
-                        <span>{% trans 'Sites' %}</span>
-                    </a>
+                <!--{% ifrole "Reviewer" %}-->
+                 <!--<li class="sub-menu">-->
+                    <!--<a href="{% url 'fieldsight:sites-list' %}">-->
+                        <!--<i class="fa fa-picture-o"></i>-->
+                        <!--<span>{% trans 'Sites' %}</span>-->
+                    <!--</a>-->
 
-                </li>
+                <!--</li>-->
 
-                {% endrole %}
+                <!--{% endrole %}-->
                 {% ifrole "Site" %}
                 <li class="sub-menu">
                     <a href="javascript:;">
@@ -522,7 +518,7 @@
                             
                          </div>
                     </header>
-                    <div class="gap"></div>
+                    
                     <div class="panel-body">
 
     {% block messages %}
@@ -558,11 +554,11 @@
           {% endblock %} 
         </div>
 
-        <div class="chat-widget">
+        <!-- <div class="chat-widget">
             <div class="container1">
    <div class="row">
       <div class=" col-md-offset-6 col-md-6">
-         <div class="panel panel-primary panel-chat normal">
+         <div class="panel panel-primary panel-chat mini">
          <a href="#" class="chatminimize" onclick="return false">
             <div class="panel-heading heading1-chat ">
              <span class="glyphicon glyphicon-comment"></span> Chat</a>
@@ -613,13 +609,13 @@
                    </ul>
                 </div>
                 <div class="panel-footer">
-                   <div class="input-group"> <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." /> <span class="input-group-btn"> <button class="btn btn-warning btn-sm" id="btn-chat"> Send</button> </span> </div>
+                   <div class="input-group"> <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..."  name="message-input" /> <span class="input-group-btn"> <button class="btn btn-warning btn-sm" id="btn-chat"> Send</button> </span> </div>
                 </div>
             
          </div>
       </div>
    </div>
-</div>
+</div> -->
 
         
         </div>
@@ -686,20 +682,20 @@ $('.panel-chat >.panel-heading> .chatminimize').click(function(){
     {
         console.log('clicked');
         $(this).parent().parent().removeClass('mini').addClass('normal');
-        $('.panel-chat > .panel-body').animate({height:'300px'} , 500).show();
-        $('.panel-chat > .panel-footer').animate({height:'25px'} , 500).show();
+        $('.panel-chat > .panel-body').removeClass('mini-1-body').addClass('normal-1-body').show();
+        $('.panel-chat > .panel-footer').removeClass('mini-1-fotter').addClass('normal-1-fotter').show();
     }
 
     else
     {
         $(this).parent().parent().removeClass('normal').addClass('mini');
-        $('.panel.panel-chat > .panel-body').animate({height:'0'} , 500);
-        $('.panel.panel-chat> .panel-footer').animate({height:'0'},500);
+        $('.panel-chat > .panel-body').removeClass('normal-1-body').addClass('mini-1-body');
+        $('.panel-chat > .panel-footer').removeClass('normal-1-fotter').addClass('mini-1-fotter');
 
         setTimeout(function() {
-                        $('.panel.panel-chat > .panel-body').hide();
-                        $('.panel.panel-chat > .panel-footer').hide();
-                    }, 500);
+         $('.panel.panel-chat > .panel-body').hide();
+         $('.panel.panel-chat > .panel-footer').hide();
+            }, 500);
         
     }
 
