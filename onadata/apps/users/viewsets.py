@@ -82,7 +82,6 @@ class UserViewSet(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        creator = self.request.user
         data = self.request.data
 
         if "id" in data and data.get('id'):
