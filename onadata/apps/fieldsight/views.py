@@ -457,24 +457,7 @@ class ProjectListView(ProjectView, OrganizationMixin, ListView):
 
 
 class ProjectCreateView(ProjectView, OrganizationMixin, CreateView):
-    def register(self, request, form, *args, **kwargs):
-        with transaction.atomic():
-            new_site = super(ProjectCreateView, self).register(
-                request, form, *args, **kwargs)
-            is_active = form.cleaned_data['is_active']
-            new_site.name = request.POST.get('name', '')
-            new_site.is_active = is_active
-            new_site.is_superuser = True
-            new_site.save()
-            project = int(form.cleaned_data['project'])
-            project = Site.objects.get(pk=project)
-            site = Site(user=new_site, project=project)
-            site.save()
-            FieldSightLog.objects.create(source=request.site, site=site, type=3, title="new Site",
-                                         description="new site {3} created by {1}".format(new_site.get_site_name(),
-                                                                                          request.user.get_site_name()))
-        return new_site
-
+    pass
 
 
 class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView):
@@ -500,23 +483,7 @@ class SiteListView(SiteView, ReviewerMixin, ListView):
 
 
 class SiteCreateView(SiteView, ProjectMixin, CreateView):
-    def register(self, request, form, *args, **kwargs):
-        with transaction.atomic():
-            new_site = super(SiteCreateView, self).register(
-                request, form, *args, **kwargs)
-            is_active = form.cleaned_data['is_active']
-            new_site.name = request.POST.get('name', '')
-            new_site.is_active = is_active
-            new_site.is_superuser = True
-            new_site.save()
-            project = int(form.cleaned_data['project'])
-            project = Site.objects.get(pk=project)
-            site = Site(user=new_site, project=project)
-            site.save()
-            FieldSightLog.objects.create(source=request.site, site=site, type=3, title="new Site",
-                                         description="new site {3} created by {1}".format(new_site.get_site_name(),
-                                                                                          request.user.get_site_name()))
-        return new_site
+    pass
 
 
 class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
@@ -542,8 +509,9 @@ def ajax_upload_sites(request, pk):
                     lat = site.get("longitude", 85.3240)
                     long = site.get("latitude", 27.7172)
                     location = Point(lat, long, srid=4326)
+                    type_id = int(site.get("type", "1"))    
                     _site, created = Site.objects.get_or_create(identifier=str(site.get("id")), name=site.get("name"),
-                                                                project=project, type_id=1)
+                                                                project=project, type_id=type_id)
                     _site.phone = site.get("phone")
                     _site.address = site.get("address")
                     _site.public_desc = site.get("public_desc"),
@@ -593,8 +561,9 @@ def upload_sites(request, pk):
                         lat = site.get("longitude", 85.3240)
                         long = site.get("latitude", 27.7172)
                         location = Point(lat, long, srid=4326)
+                        type_id = int(site.get("type", "1"))
                         _site, created = Site.objects.get_or_create(identifier=str(site.get("id")), name=site.get("name"),
-                                                                    project=project, type_id=1)
+                                                                    project=project, type__id=type_id)
                         _site.phone = site.get("phone")
                         _site.address = site.get("address")
                         _site.public_desc = site.get("public_desc"),
@@ -656,7 +625,7 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
             org = Organization.objects.get(pk=organization)
             profile = UserProfile(user=new_user, organization=org)
             profile.save()
-            FieldSightLog.objects.create(source=request.user, profile=profile, type=0, title="new User",
+            profile.organization.logs.create(source=request.user, type=0, title="new User",
                                          description="new user {0} created by {1}".format(new_user.get_full_name(),
                                                                                           request.user.get_full_name()))
         return new_user
