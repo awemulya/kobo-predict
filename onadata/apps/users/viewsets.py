@@ -120,10 +120,6 @@ class UserViewSet(viewsets.ModelViewSet):
                 user.save()
                 profile = UserProfile(user=user, organization_id=self.kwargs.get('pk'))
                 profile.save()
-                FieldSightLog.objects.create(source=self.request.user, profile=profile, type=0, title="new User",
-                                         description="new user {0} created by {1}".format(user.get_full_name(),
-                                                                                          self.request.user.get_full_name()))
-
                 site = get_current_site(self.request)
 
                 new_user = RegistrationProfile.objects.create_inactive_user(
@@ -132,12 +128,14 @@ class UserViewSet(viewsets.ModelViewSet):
                     send_email=True,
                     request=self.request,
                 )
-                signals.user_registered.send(sender=RegistrationView,
-                                             user=new_user,
-                                             request=self.request)
-        except:
+                profile.organization.logs.create(source=self.request.user, type=0, title="new User",
+                                                 description="new user {0} created by {1}".format(user.get_full_name(),
+                                                                                  self.request.user.get_full_name()))
+
+                signals.user_registered.send(sender=RegistrationView, user=new_user, request=self.request)
+        except Exception as e:
             raise ValidationError({
-                "User Creation Failed ",
+                "User Creation Failed {}".format(str(e)),
             })
 
 

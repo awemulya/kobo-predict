@@ -1,5 +1,6 @@
 from django.contrib.gis.db.models import PointField
 from django.contrib.gis.db.models import GeoManager
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.conf import settings
@@ -53,6 +54,7 @@ class Organization(models.Model):
     logo = models.ImageField(upload_to="logo", default="logo/default_org.png")
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True,)
+    logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
          ordering = ['-is_active', 'name', ]
@@ -120,6 +122,7 @@ class Project(models.Model):
     logo = models.ImageField(upload_to="logo", default="logo/default_org.png")
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True)
+    logs = GenericRelation('eventlog.FieldSightLog')
 
     objects = GeoManager()
 
@@ -183,6 +186,7 @@ class Site(models.Model):
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     is_survey = models.BooleanField(default=False)
+    logs = GenericRelation('eventlog.FieldSightLog')
 
     objects = GeoManager()
 

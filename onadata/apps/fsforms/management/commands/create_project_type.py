@@ -7,7 +7,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         _list = ['School', 'Clinic', 'Hospital', 'Government',
-                         'Building', 'Road', 'Other Infrastructure', 'House']
+                         'Building', 'Road', 'Other Infrastructure', 'House', 'Water Supply System']
         for _type in _list:
             new, created = ProjectType.objects.get_or_create(name=_type)
-            self.stdout.write('Successfully created Project Type .. "%s"' % _type)
+            if created:
+                self.stdout.write('Successfully created Project Type .. "%s"' % _type)
+            else:
+                self.stdout.write('Project Type  Already Exists.. "%s"' % _type)
