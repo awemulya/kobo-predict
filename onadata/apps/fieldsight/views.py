@@ -509,8 +509,9 @@ def ajax_upload_sites(request, pk):
                     lat = site.get("longitude", 85.3240)
                     long = site.get("latitude", 27.7172)
                     location = Point(lat, long, srid=4326)
+                    type_id = int(site.get("type", "1"))    
                     _site, created = Site.objects.get_or_create(identifier=str(site.get("id")), name=site.get("name"),
-                                                                project=project, type_id=1)
+                                                                project=project, type_id=type_id)
                     _site.phone = site.get("phone")
                     _site.address = site.get("address")
                     _site.public_desc = site.get("public_desc"),
@@ -560,8 +561,9 @@ def upload_sites(request, pk):
                         lat = site.get("longitude", 85.3240)
                         long = site.get("latitude", 27.7172)
                         location = Point(lat, long, srid=4326)
+                        type_id = int(site.get("type", "1"))
                         _site, created = Site.objects.get_or_create(identifier=str(site.get("id")), name=site.get("name"),
-                                                                    project=project, type_id=1)
+                                                                    project=project, type__id=type_id)
                         _site.phone = site.get("phone")
                         _site.address = site.get("address")
                         _site.public_desc = site.get("public_desc"),
