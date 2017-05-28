@@ -139,6 +139,7 @@ console.log(text.prop2);
                 <div class="navbar-custom-menu notification-div col-sm-3">
         <ul class="nav navbar-nav" style="margin-top: 3%;margin-left: 30%;">
           <!-- Messages: style can be found in dropdown.less-->
+          {% if fieldsight_message.count %}
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-envelope-o"></i>
@@ -215,7 +216,8 @@ console.log(text.prop2);
               <li class="footer"><a href="#">See All Messages</a></li>
             </ul>
           </li>
-          <!-- Notifications: style can be found in dropdown.less -->
+            {% endif %}
+            <!-- Notifications: style can be found in dropdown.less -->
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
@@ -244,6 +246,7 @@ console.log(text.prop2);
           <!-- Tasks: style can be found in dropdown.less -->
           
           <!-- User Account: style can be found in dropdown.less -->
+             {% if fieldsight_message.count %}
           <li class="dropdown tasks-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-flag-o"></i>
@@ -317,6 +320,7 @@ console.log(text.prop2);
               </li>
             </ul>
           </li>
+            {% endif %}
         </ul>
       </div>
        <div class="dropdown pull-right top-menu top-nav clearfix">
