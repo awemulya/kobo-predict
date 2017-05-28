@@ -38,8 +38,8 @@ class ProjectTypeSerializer(serializers.ModelSerializer):
 
 class SiteCreationSurveySerializer(serializers.ModelSerializer):
     images = PhotoSerializer(many=True, read_only=True)
-    latitude= serializers.CharField()
-    longitude= serializers.CharField()
+    latitude = serializers.CharField()
+    longitude = serializers.CharField()
 
     class Meta:
         model = Site
@@ -48,11 +48,12 @@ class SiteCreationSurveySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')),srid=4326)
         validated_data.update({'is_survey': True,'location':p})
-        site=Site.objects.create(**validated_data)
+        site = Site.objects.create(**validated_data)
         image = self.context['request'].FILES.values()
         for img in image:
             SiteCreateSurveyImages.objects.create(image=img, site=site)
         return site
+
 
 class SiteReviewSerializer(serializers.ModelSerializer):
     create_surveys = PhotoSerializer(many=True, read_only=True)
@@ -81,4 +82,3 @@ class SiteReviewSerializer(serializers.ModelSerializer):
         site.type = site_type
         site.save()
         return site
-
