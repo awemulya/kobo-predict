@@ -625,13 +625,9 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
             org = Organization.objects.get(pk=organization)
             profile = UserProfile(user=new_user, organization=org)
             profile.save()
-<<<<<<< HEAD
             profile.organization.logs.create(source=request.user, type=0, title="new User",
-=======
-            FieldSightLog.objects.create(source=request.user, profile=profile, type=0, title="new User",
->>>>>>> restful-projects-api
                                          description="new user {0} created by {1}".format(new_user.get_full_name(),
-                                                                                          request.user.get_full_name()))
+                                          request.user.get_full_name()))
         return new_user
 
 

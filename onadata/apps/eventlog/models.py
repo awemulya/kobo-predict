@@ -1,14 +1,10 @@
-from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
-from onadata.apps.fsforms.models import FieldSightXF, FInstance
-from onadata.apps.users.models import UserProfile
-from onadata.apps.fieldsight.models import Site
 
 class FieldSightLog(models.Model):
     ACTION_TYPES = (
@@ -29,12 +25,6 @@ class FieldSightLog(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
-    profile = models.ForeignKey(UserProfile, related_name="log", null=True)
-    form = models.ForeignKey(FieldSightXF, related_name="log", null=True)
-    instance = models.ForeignKey(FInstance, related_name="log", null=True)
-    site = models.ForeignKey(Site, related_name="log", null=True)
-    is_seen = models.BooleanField(default=False)
-    source = models.ForeignKey(User, related_name='log', null=True)
 
     class Meta:
         get_latest_by = "date"
