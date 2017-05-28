@@ -134,6 +134,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
                 signals.user_registered.send(sender=RegistrationView, user=new_user, request=self.request)
         except Exception as e:
+
             raise ValidationError({
                 "User Creation Failed {}".format(str(e)),
             })
