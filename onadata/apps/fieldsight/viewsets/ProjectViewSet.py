@@ -58,6 +58,13 @@ class ProjectTypeViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectTypeSerializer
 
+    authentication_classes = (BasicAuthentication,)
+    permission_classes = (ProjectPermission,)
+
+    def filter_queryset(self, queryset):
+        id = self.kwargs.get('pk', None)
+        return queryset.filter(organization__id=id, is_active=True)
+
     def get_serializer_context(self):
         return {'request': self.request}
 
