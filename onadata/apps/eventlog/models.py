@@ -27,5 +27,5 @@ class FieldSightLog(models.Model):
     content_object = GenericForeignKey()
 
     class Meta:
-        get_latest_by = "date"
-        ordering = ["-date", "type"]
+        get_latest_by = "-date"
+        ordering = ["-date"]

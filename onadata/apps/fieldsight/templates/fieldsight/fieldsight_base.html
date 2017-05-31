@@ -239,7 +239,7 @@ console.log(text.prop2);
                 {% endfor %}
                 </ul>
               </li>
-              <li class="footer"><a href="#">{% if notifications.count %} {% trans 'View all' %} {% endif %}</a></li>
+              <li class="footer"><a href="{% url 'eventlog:notification-list' %}">{% if notifications.count %} {% trans 'View all' %} {% endif %}</a></li>
             </ul>
               {% endif %}
           </li>

@@ -1,5 +1,6 @@
 import datetime
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -27,6 +28,7 @@ class FormGroup(models.Model):
     is_global = models.BooleanField(default=False)
     organization = models.ForeignKey(Organization, null=True, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
+    logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
         db_table = 'fieldsight_forms_group'
@@ -50,6 +52,7 @@ class Stage(models.Model):
     site = models.ForeignKey(Site, related_name="stages", null=True, blank=True)
     project = models.ForeignKey(Project, related_name="stages", null=True, blank=True)
     ready = models.BooleanField(default=False)
+    logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
         db_table = 'fieldsight_forms_stage'
@@ -147,6 +150,7 @@ class Schedule(models.Model):
     selected_days = models.ManyToManyField(Days,related_name='days',blank=True,)
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
     date_created = models.DateTimeField(auto_now_add=True)
+    logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
         db_table = 'fieldsight_forms_schedule'
@@ -182,6 +186,7 @@ class FieldSightXF(models.Model):
     form_status = models.IntegerField(default=0, choices=FORM_STATUS)
     fsform = models.ForeignKey('self', blank=True, null=True, related_name="parent")
     is_deployed = models.BooleanField(default=False)
+    logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
         db_table = 'fieldsight_forms_data'
@@ -314,6 +319,7 @@ class FInstance(models.Model):
     form_status = models.IntegerField(default=0, choices=FORM_STATUS)
     date = models.DateTimeField(auto_now=True)
     submitted_by = models.ForeignKey(User, related_name="supervisor")
+    logs = GenericRelation('eventlog.FieldSightLog')
 
 
 class InstanceStatusChanged(models.Model):
@@ -323,6 +329,7 @@ class InstanceStatusChanged(models.Model):
     old_status = models.IntegerField(default=0, choices=FORM_STATUS)
     new_status = models.IntegerField(default=0, choices=FORM_STATUS)
     user = models.ForeignKey(User, related_name="submission_comments")
+    logs = GenericRelation('eventlog.FieldSightLog')
 
 
 class FieldSightFormLibrary(models.Model):
@@ -331,6 +338,7 @@ class FieldSightFormLibrary(models.Model):
     shared_date = models.DateTimeField(auto_now=True)
     organization = models.ForeignKey(Organization, null=True, blank=True)
     project = models.ForeignKey(Project, null=True, blank=True)
+    logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
         verbose_name = _("Library")

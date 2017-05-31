@@ -1,5 +1,6 @@
 from PIL import Image
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
@@ -34,6 +35,7 @@ class UserProfile(models.Model):
     twitter = models.CharField(max_length=140, blank=True, null=True)
     profile_picture = models.ImageField(upload_to=user_directory_path, default="logo/default_user.png")
     organization = models.ForeignKey(Organization, null=True, blank=True)
+    logs = GenericRelation('eventlog.FieldSightLog')
 
     def __unicode__(self):
         return u'Profile of user: %s' % self.user.username

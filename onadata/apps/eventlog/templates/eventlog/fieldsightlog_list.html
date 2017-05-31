@@ -1,0 +1,55 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Logs' %}{% endblock %}
+
+{% block content %}
+
+    {% load pagination_tags %}
+    {% load sorting_tags %}
+    {% load filters %}
+
+    <div class='well'>
+
+        {% autosort object_list as sorted_objects %}
+        {% autopaginate object_list 25 as paginated_objects %}
+
+        <table class="table table-striped">
+            <!--<thead>-->
+            <!--<th>{% anchor title _('Title') %}</th>-->
+            <!--<th>{% anchor description _('Description') %}</th>-->
+            <!--<th>{% anchor date _('Date') %}</th>-->
+            <!--<th>{% anchor source _('Actor') %}</th>-->
+            <!--</thead>-->
+            <tbody>
+            {% for obj in paginated_objects %}
+            <tr><td>{{obj.title}} : {{obj.description}}{{obj.content_object}}  {% trans 'From User ' %} {{obj.source}} {% trans 'on ' %}{{obj.date}}</td></tr>
+                <!--<tr>-->
+
+                    <!--<td>-->
+                       <!--<a href="{% url 'eventlog:notification-detail' obj.pk %}"> {{ obj.title }}</a>-->
+
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.Description }}-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.date }}-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ obj.source|default:"-" }}-->
+                    <!--</td>-->
+
+                <!--</tr>-->
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% paginate %}
+
+    </div>
+
+
+
+{% endblock %}

@@ -625,9 +625,9 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
             org = Organization.objects.get(pk=organization)
             profile = UserProfile(user=new_user, organization=org)
             profile.save()
-            profile.organization.logs.create(source=request.user, type=0, title="new User",
-                                         description="new user {0} created by {1}".format(new_user.get_full_name(),
-                                          request.user.get_full_name()))
+            profile.logs.create(source=request.user, type=0, title="new User",
+                                         description="new user {0} created by {1}".format(new_user.get_fullname(),
+                                          request.user.get_fullname()))
         return new_user
 
 
