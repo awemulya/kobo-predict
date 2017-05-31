@@ -24,7 +24,11 @@
             <!--</thead>-->
             <tbody>
             {% for obj in paginated_objects %}
-            <tr><td>{{obj.title}} : {{obj.description}}{{obj.content_object}}  {% trans 'From User ' %} {{obj.source}} {% trans 'on ' %}{{obj.date}}</td></tr>
+            <tr><td>
+                <a href="{{obj.get_absolute_url}}">
+                {{obj.description}}  {% trans 'on ' %}{{obj.date}}
+                    </a>
+            </td></tr>
                 <!--<tr>-->
 
                     <!--<td>-->

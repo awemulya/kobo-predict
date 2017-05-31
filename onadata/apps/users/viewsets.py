@@ -129,8 +129,8 @@ class UserViewSet(viewsets.ModelViewSet):
                     request=self.request,
                 )
                 profile.logs.create(source=self.request.user, type=0, title="new User",
-                                                 description="new user {0} created by {1}".format(user.get_full_name(),
-                                                                                  self.request.user.get_full_name()))
+                                                 description="new user {0} created by {1}".format(user.username,
+                                                                                  self.request.user.username))
 
                 signals.user_registered.send(sender=RegistrationView, user=new_user, request=self.request)
         except Exception as e:
