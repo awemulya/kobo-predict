@@ -232,8 +232,8 @@ console.log(text.prop2);
                 <ul class="menu">
                     {% for not in notifications %}
                   <li>
-                    <a href="#">
-                      <i class="fa fa-users text-aqua"></i> {{not.title}}, {{not.description}}
+                    <a href="{{not.get_absolute_url}}">
+                      <i class="fa fa-users text-aqua"></i> {{not.description}}
                     </a>
                   </li>
                 {% endfor %}
