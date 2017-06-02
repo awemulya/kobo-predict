@@ -1,8 +1,10 @@
 from django.conf.urls import url
 
 from onadata.apps.eventlog.views import NotificationListView
+from onadata.apps.fieldsight.mixins import group_required
 
 
+@group_required("hello")
 def notifications(args):
     pass
 

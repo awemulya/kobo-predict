@@ -1,8 +1,9 @@
-from onadata.apps.eventlog.models import FieldSightLog
+from onadata.apps.eventlog.models import FieldSightLog, FieldSightMessage
 
 
 def events(request):
     logs = []
+    messages = FieldSightMessage.inbox(request.user)
     if request.group is not None:
         if request.group.name == "Super Admin":
            logs = FieldSightLog.objects.all()[:10]
@@ -12,6 +13,6 @@ def events(request):
             logs = FieldSightLog.objects.filter(organization=request.organization)[:10]
     return {
         'notifications': logs,
-        'fieldsight_message': []
+        'fieldsight_message': messages
 
     }

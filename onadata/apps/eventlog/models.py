@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 
 from onadata.apps.fieldsight.models import Organization
 
@@ -40,4 +41,27 @@ class FieldSightLog(models.Model):
         if self.content_type == user_type :
             return reverse('users:profile', kwargs={'pk': self.content_object.user.pk})
         return "#"
+
+
+class FieldSightMessage(models.Model):
+    sender = models.ForeignKey(User, related_name="sender")
+    receiver = models.ForeignKey(User, related_name="receiver")
+    msg_content = models.CharField(max_length=255)
+    date = models.DateTimeField(auto_now_add=True)
+    is_seen = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-date"]
+
+    @classmethod
+    def inbox(cls, user):
+        return FieldSightMessage.objects.filter(reciever=user, is_seen=False)
+
+    @classmethod
+    def outbox(cls, user):
+        return FieldSightMessage.objects.filter(sender=user)
+
+    @classmethod
+    def user_messages(cls, user):
+        return FieldSightMessage.objects.filter(Q(sender=user) | Q(receiver=user))
 
