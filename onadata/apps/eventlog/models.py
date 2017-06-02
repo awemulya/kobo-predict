@@ -55,7 +55,7 @@ class FieldSightMessage(models.Model):
 
     @classmethod
     def inbox(cls, user):
-        return FieldSightMessage.objects.filter(reciever=user, is_seen=False)
+        return FieldSightMessage.objects.filter(receiver=user, is_seen=False)
 
     @classmethod
     def outbox(cls, user):
