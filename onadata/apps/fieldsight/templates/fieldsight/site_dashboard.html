@@ -102,9 +102,14 @@
                               <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }}</p>
                               
                               <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
-                              <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
-                              <p class="website"><span></span>{{ obj.website }}</p> 
-  							              <p class="short-detail">{{ obj.description }}</p>
+                              <!-- <p class="website"><span></span>{{ obj.website }}</p> 
+  							              <p class="short-detail">{{ obj.description }}</p> -->
+                              <div class="text-wrapper">
+                                <p class="detail-text">
+                                  This is public description of the site of dhulikhel secondary boarding school building design.
+                                </p>
+                                <span class="description-modal read_more">Read more<i class="fa fa-angle-double-right next" aria-hidden="true"></i></span>
+                              </div>
                               <p class="progress-of-site">{% trans 'Progress' %}</p>
                                 {% with progress=obj.progress %}
                                   <div class="progreess">
@@ -143,6 +148,74 @@
                             </div>  
                         </div>
                     </div>
+
+                    <div class="row">
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                      <span class=" info-box-icon bg-red"><i class="fa fa-window-close" aria-hidden="true"></i>
+</span>
+
+                      <div class="info-box-content">
+                          <span class="info-box-number">{{rejected|length}}</span>
+                          <span class="info-box-text">{% trans 'Rejected Submissions' %}</span>
+                        
+                        
+                      </div>
+                      <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                  </div>
+        <!-- /.col -->
+
+
+
+        <!-- fix for small devices only -->
+                  <div class="clearfix visible-sm-block"></div>
+
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                      <span class="info-box-icon bg-green"><i class="fa fa-flag-checkered" aria-hidden="true"></i></span>
+
+                      <div class="info-box-content">
+                        
+                        <span class="info-box-number">{{flagged|length}}</span>
+                        <span class="info-box-text">{% trans 'Flagged Submissions' %}</span>
+                      </div>
+                      <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                  </div>
+        <!-- /.col -->
+
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-aqua"><i class="fa fa-trophy" aria-hidden="true"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-number">{{outstanding|length}}</span>
+                <span class="info-box-text">{% trans 'Outstanding Submissions' %}</span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+                  </div>
+          <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-yellow"><i class="fa fa-check-square-o" aria-hidden="true"></i>
+</span>
+
+            <div class="info-box-content">
+              <span class="info-box-number">{{approved|length}}</span>
+              <span class="info-box-text">{% trans 'Approved Submissions' %}</span>
+              
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+                  </div>
+        <!-- /.col -->
+      </div>
+
                     
                     <div class="clearfixx"></div>
                 </div>
@@ -231,7 +304,7 @@
                         <ul class="nav navbar-nav navbar-right">
                          <li class="responses-all"><a href="{% url 'forms:site-responses' obj.pk %}">{% trans 'Responses' %}</a></li>
                          <li class="dropdown man-drop">
-                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret"></span></a>
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret span-manage"></span></a>
                             <ul class="dropdown-menu">
                               <li><a href="{% url 'forms:setup-forms' 0 obj.pk %}">{% trans 'Forms' %}</a></li>
                               <li><a href="{% url 'fieldsight:manage-people-site' obj.pk %}">{% trans 'People' %}</a></li>
@@ -380,33 +453,7 @@
         <!--</div>-->
 
         <div class="clearfixx"></div>
-        <div class="flags-dash text-center">
-          <div class="col-md-3">
-            <div class="out-dash-flag">
-              <p class="length-flags-forms">{{outstanding|length}}</p>
-              <p class="flags-forms">{% trans 'Outstanding Submissions' %}</p>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="flag-dash-flag">
-              <p class="length-flags-forms">{{flagged|length}}</p>
-              <p class="flags-forms">{% trans 'Flagged Submissions' %}</p>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="reg-dash-flag">
-              <p class="length-flags-forms">{{rejected|length}}</p>
-              <p class="flags-forms">{% trans 'Rejected Submissions' %}</p>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="app-dash-flag">
-              <p class="length-flags-forms">{{approved|length}}</p>
-              <p class="flags-forms">{% trans 'Approved Submissions' %}</p>
-            </div>
-          </div>
-          <div class="clearfixx"></div>
-        </div>
+        
     </section>             
   {% endblock %} 
     {%block extrascript %}

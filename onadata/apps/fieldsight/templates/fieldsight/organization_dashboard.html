@@ -18,6 +18,7 @@
         <!-- SLider css external pravin -slick  -->
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
 <style>
     .axis path,
@@ -209,9 +210,7 @@ var org = "{{obj.pk}}";
 </div>
 
 	<div class="organization-detail-page">
-
-        
-        <div class="organization-short-detail" >
+       <div class="organization-short-detail" >
                 <div class="org-grg">
                   <div class="card col-md-9 col-sm-12">
                     <div class="col-md-4 col-sm-7">
@@ -229,16 +228,18 @@ var org = "{{obj.pk}}";
                                 <p class="contact information"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
                                 <p class="fax information"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p>
                                 <p class="website information"><span><i class="fa fa-internet-explorer" aria-hidden="true"></i></span>{{ obj.website }}</p>
+                                 <p class="website information"><span><i class="fa fa-internet-explorer" aria-hidden="true"></i></span>{{ obj.email }}</p>
     							   <p class="short-detail">{{ obj.description }}</p>
                             </div>
                             
                         </div>
                     </div>
+
                     </div>
 
                     <div class="col-md-3 col-sm-12">
 
-                                <div class="mini-stat clearfix col-sm-4 col-md-12">
+                                <div class="mini-stat clearfix col-sm-2 col-md-12">
                                     <a href="{% url 'fieldsight:user-list'%}">
                                       <span class="mini-stat-icon green1"><i class="fa fa-users"></i></span>
                                       <div class="mini-stat-info">
@@ -265,7 +266,137 @@ var org = "{{obj.pk}}";
                                     </div>
                                    </a>
                               </div>
+
+
                     </div> 
+                    </div>
+                    <div class="row1">
+                      <div class="col-md-9 org-description">
+                         <div class="post clearfix ">
+                                      <div class="user-block1 ">
+                                      <div class="gap"></div>
+                                            <span class="title1">
+                                              <a href="#">{% trans 'About ' %}</a>
+                                              
+                                            </span>
+                                      </div >
+                                      <div class="text-wrapper">
+                                      <!-- /.user-block -->
+                                      <p class="detail-text">
+                                         Our goal is to build a better, healthier future for people all over the world. Working through offices in more than 150 countries, WHO staff work side by side with governments and other partners to ensure the highest attainable level of health for all people.                                        Together we strive to combat diseases – infectious diseases like influenza and HIV and noncommunicable ones like cancer and heart disease.
+                                        </p>
+                                        <button class="button_hover button"><span>Read more</span></button>
+
+                                      </div>
+                                        
+
+                                      <!-- <form class="form-horizontal">
+                                        <div class="form-group margin-bottom-none">
+                                          <div class="col-sm-9">
+                                            <input class="form-control input-sm" placeholder="Response">
+                                          </div>
+                                          <div class="col-sm-3">
+                                            <button type="submit" class="btn btn-danger pull-right btn-block btn-sm">Send</button>
+                                          </div>
+                                        </div>
+                                      </form> -->
+                                     
+                                    </div>
+                      </div>
+                      <div class="col-md-3 admin-list">
+                      <div class="user-block">
+                          <span class="username">
+                                <a href="#">{% trans 'Admin' %}</a>
+                          </span>
+                      </div>
+                        <ul>
+                          <li class="user-block ">
+                                      <div class="gap"></div>
+                                        <img class="img-circle img-bordered-sm" src="/media/logo/default_user.png" alt="User Image">
+                                            <span class="adminname">
+                                              <a href="#">{% trans 'Admin user1' %}</a>
+                                            </span>
+                                        <span class="description">{% trans 'admin1@gmail.com' %}</span>
+                                      </li>
+
+                          <li class="user-block ">
+                                      <div class="gap"></div>
+                                        <img class="img-circle img-bordered-sm" src="/media/logo/default_user.png" alt="User Image">
+                                            <span class="adminname">
+                                              <a href="#">{% trans 'Admin user2' %}</a>
+                                              
+                                            </span>
+                                        <span class="description">{% trans 'admin2@gmail.com' %}</span>
+                                      </li>
+
+
+        
+                        </ul>
+                      </div>
+                       <div class="gap-medium"></div>
+
+                    <div class="row">
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                      <span class=" info-box-icon bg-red"><i class="fa fa-window-close" aria-hidden="true"></i></span>
+
+                      <div class="info-box-content">
+                          <span class="info-box-number">{{rejected}}</span>
+                          <span class="info-box-text">{%trans 'Rejected' %}</span>
+                        
+                        
+                      </div>
+                      <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                  </div>
+        <!-- /.col -->
+
+        <!-- fix for small devices only -->
+                  <div class="clearfix visible-sm-block"></div>
+
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                      <span class="info-box-icon bg-green"><i class="fa fa-flag-checkered" aria-hidden="true"></i></span>
+
+                      <div class="info-box-content">
+                        
+                        <span class="info-box-number">{{flagged}}</span>
+                        <span class="info-box-text">{% trans 'flagged' %}</span>
+                      </div>
+                      <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                  </div>
+        <!-- /.col -->
+
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-aqua"><i class="fa fa-trophy" aria-hidden="true"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-number">{{outstanding}}</span>
+                <span class="info-box-text">{% trans 'outstanding' %}</span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+                  </div>
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-yellow"><i class="fa fa-check-square-o" aria-hidden="true"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-number">{{approved}}</span>
+              <span class="info-box-text">{% trans 'Approved' %}</span>
+              
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+                  </div>
+        <!-- /.col -->
+      </div>
                             
                     <div class="clearfixx"></div>
                 </div>
@@ -280,13 +411,15 @@ var org = "{{obj.pk}}";
 			  <!-- <li><a data-toggle="tab" href="#org-about">About Organization</a></li> -->
               <ul class="nav navbar-nav navbar-right">
                  <li class="dropdown man-drop">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret"></span></a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret span-manage"></span></a>
                     <ul class="dropdown-menu">
                          <li class="drop-down-item"><a href="{% url 'fieldsight:project-add'%}"> {% trans 'Add Project' %}</a></li>
                       <li><a href="{% url 'fieldsight:manage-people-organization' obj.pk %}">{% trans 'People' %}</a></li>
                     </ul>
                 </li>  
                </ul>
+
+
 			</ul>
 
 			<div class="tab-content">

@@ -24,9 +24,8 @@
                {{ form.non_field_errors }}
                </div>
                <div class="col-sm-12 registration_field">
-                 <div class="col-sm-3"> {{ field.label }}</div>
-                <div class="col-sm-3">{{ field }}</div>
-                 <div class="col-sm-6"> {{ field.errors }}</div>
+                 <div class="col-sm-6"> <h4>{{ field.label }}</h4>{{ field }}</div>
+                 
                </div>
             {% endfor %}
             {% if orglist %}
@@ -44,7 +43,8 @@
             {% endif %}
 
         </div>
-            <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
+
+            <button class="btn btn-primary registration__action marg3 top3" type="submit" >{% trans 'Save' %}</button>
 
 
     </form>

@@ -31,7 +31,7 @@ $(document).ready(function() {
 
     <div class="col-sm-12 " style="padding: 0px;">
           <div class="col-sm-5" style="padding: 0px;">
-            <input type="text" class="form-control" placeholder="Search"  data-bind="value:search_key">
+            <input type="text" class="form-control height" placeholder="Search"  data-bind="value:search_key">
           </div>
          <div class="col-sm-5">
              <select data-bind="options: roleList,
@@ -40,7 +40,7 @@ $(document).ready(function() {
                        optionsCaption: 'Filter By'"></select>
             </div>
            <div class="col-sm-2">
-            <button class="btn btn-primary registration__action" data-bind="click:reloadData" type="submit">{% trans 'Filter' %}</button>
+            <button class="btn btn-primary registration__action height-btn" data-bind="click:reloadData" type="submit"><i class="fa fa-filter space" aria-hidden="true"></i>{% trans 'Filter' %}</button>
          </div>
 
 

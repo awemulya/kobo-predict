@@ -290,6 +290,77 @@ var project = "{{obj.pk}}";
                         </div>
                     </div>
                     <div class="clearfixx"></div>
+
+        <i class="fa fa-check-square-o" aria-hidden="true"></i>
+        <i class="fa fa-check-square-o" aria-hidden="true"></i>
+
+                     <div class="row">
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                      <span class=" info-box-icon bg-red"><i class="fa fa-window-close" aria-hidden="true"></i></span>
+
+                      <div class="info-box-content">
+                          <span class="info-box-number">{{rejected}}</span>
+                          <span class="info-box-text">{%trans 'Rejected' %}</span>
+                        
+                        
+                      </div>
+                      <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                  </div>
+        <!-- /.col -->
+
+        
+        
+
+        <!-- fix for small devices only -->
+                  <div class="clearfix visible-sm-block"></div>
+
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                      <span class="info-box-icon bg-green"><i class="fa fa-google-plus"></i></span>
+
+                      <div class="info-box-content">
+                        
+                        <span class="info-box-number">{{flagged}}</span>
+                        <span class="info-box-text">{% trans 'flagged' %}</span>
+                      </div>
+                      <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                  </div>
+        <!-- /.col -->
+
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-aqua"><i class="fa fa-google-plus"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-number">{{outstanding}}</span>
+                <span class="info-box-text">{% trans 'outstanding' %}</span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+                  </div>
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-yellow">
+                            <i class="fa fa-flag-checkered" aria-hidden="true"></i>
+        </span>
+
+            <div class="info-box-content">
+              <span class="info-box-number">{{approved}}</span>
+              <span class="info-box-text">{% trans 'Approved' %}</span>
+              
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+                  </div>
+        <!-- /.col -->
+      </div>
                 </div>
 
         </div>
@@ -302,7 +373,7 @@ var project = "{{obj.pk}}";
                <ul class="nav navbar-nav navbar-right">
                  <li class="responses-all"><a href="{% url 'forms:project-responses' obj.pk %}">{% trans 'Responses' %}</a></li>
                  <li class="dropdown man-drop">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret"></span></a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret span-manage"></span></a>
                     <ul class="dropdown-menu">
                       <li><a href="{% url 'forms:setup-forms' 1 obj.pk %}">{% trans 'Setup Forms' %}</a></li>
                       <li><a href="{% url 'fieldsight:manage-people-project' obj.pk %}">{% trans 'People' %}</a></li>
@@ -429,33 +500,7 @@ var project = "{{obj.pk}}";
         </div>
 
         <div class="clearfixx"></div>
-        <div class="flags-dash text-center">
-          <div class="col-md-3">
-            <div class="out-dash-flag">
-              <p class="length-flags-forms">{{outstanding}}</p>
-              <p class="flags-forms">Outstanding Submissions</p>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="flag-dash-flag">
-              <p class="length-flags-forms">{{flagged}}</p>
-              <p class="flags-forms">Flagged Submissions</p>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="reg-dash-flag">
-              <p class="length-flags-forms">{{rejected}}</p>
-              <p class="flags-forms">Rejected Submissions</p>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="app-dash-flag">
-              <p class="length-flags-forms">{{approved}}</p>
-              <p class="flags-forms">Approved Submissions</p>
-            </div>
-          </div>
-          <div class="clearfixx"></div>
-        </div>
+        
     </section>             
   {% endblock %} 
 
