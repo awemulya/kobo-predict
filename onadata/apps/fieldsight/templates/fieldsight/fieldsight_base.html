@@ -88,9 +88,17 @@
     <![endif]-->
 <script type="text/javascript">
 var id = "{{request.user.id}}";
-const webSocketBridge = new channels.WebSocketBridge();
-webSocketBridge.connect('/notify/'+id+'/');
-webSocketBridge.listen(function(text, byte) {
+const webSocketBridgeNotify = new channels.WebSocketBridge();
+const webSocketBridgeChat = new channels.WebSocketBridge();
+webSocketBridgeNotify.connect('/notify/'+id+'/');
+webSocketBridgeChat.connect('/chat/'+id+'/');
+webSocketBridgeNotify.listen(function(text, byte) {
+console.log("Notification received");
+console.log(text.prop1);
+console.log(text.prop2);
+});
+webSocketBridgeChat.listen(function(text, byte) {
+console.log("chat received");
 console.log(text.prop1);
 console.log(text.prop2);
 });
