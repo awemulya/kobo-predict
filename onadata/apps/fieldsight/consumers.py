@@ -92,7 +92,8 @@ class NotificationConsumer(WebsocketConsumer):
         Called to return the list of groups to automatically add/remove
         this connection to/from.
         """
-        return ["test"]
+        pk = kwargs.get('pk')
+        return ["notify-"+pk]
 
     def connect(self, message, **kwargs):
         """
@@ -100,7 +101,8 @@ class NotificationConsumer(WebsocketConsumer):
         """
         # Accept the connection; this is done by default if you don't override
         # the connect function.
-        Group("all").add(message.reply_channel)
+        pk = kwargs.get('pk')
+        Group("notify-"+pk).add(message.reply_channel)
         self.message.reply_channel.send({"accept": True})
 
     def receive(self, text=None, bytes=None, **kwargs):
@@ -109,13 +111,17 @@ class NotificationConsumer(WebsocketConsumer):
         filled out.
         """
         # Simple echo
+        pk = kwargs.get('pk')
+        print text
+        print bytes
         self.send(text=text, bytes=bytes)
 
     def disconnect(self, message, **kwargs):
         """
         Perform things on connection close
         """
-        pass
+        pk = kwargs.get('pk')
+        Group("notiy-"+pk).discard(message.reply_channel)
 
 
 # class Demultiplexer(WebsocketDemultiplexer):

@@ -87,12 +87,14 @@
 
     <![endif]-->
 <script type="text/javascript">
+var id = "{{request.user.id}}";
 const webSocketBridge = new channels.WebSocketBridge();
-webSocketBridge.connect('/notify/');
+webSocketBridge.connect('/notify/'+id+'/');
 webSocketBridge.listen(function(text, byte) {
 console.log(text.prop1);
 console.log(text.prop2);
 });
+<!--webSocketBridge.send({prop1: 'value1', prop2: 'value1'});-->
 
 </script>
 <script type="text/javascript">
