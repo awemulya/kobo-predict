@@ -87,16 +87,31 @@
 
     <![endif]-->
 <script type="text/javascript">
+var notificationCount = $('#noti-count').text() || "0";
+notificationCount = parseInt(notificationCount);
+
 var id = "{{request.user.id}}";
 const webSocketBridgeNotify = new channels.WebSocketBridge();
 const webSocketBridgeChat = new channels.WebSocketBridge();
+
 webSocketBridgeNotify.connect('/notify/'+id+'/');
 webSocketBridgeChat.connect('/chat/'+id+'/');
+
 webSocketBridgeNotify.listen(function(text, byte) {
-console.log("Notification received");
+if(notificationCount == 0){
+    notificationCount = $('#noti-count').text() || "0";
+    notificationCount = parseInt(notificationCount);
+                        }
+notificationCount += 1;
+$('#noti-count').text(notificationCount);
+
+console.log(notificationCount);
+
 console.log(text.prop1);
 console.log(text.prop2);
 });
+
+
 webSocketBridgeChat.listen(function(text, byte) {
 console.log("chat received");
 console.log(text.prop1);
@@ -188,7 +203,7 @@ console.log(text.prop2);
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">{% if notifications.count %} {{notifications.count }} {% endif %}</span>
+              <span class="label label-warning" id="noti-count">{% if notifications.count %} {{notifications.count }} {% endif %}</span>
             </a>
               {% if notifications.count %}
             <ul class="dropdown-menu">
@@ -196,7 +211,7 @@ console.log(text.prop2);
                   {% trans 'notifications' %} </li>
               <li>
                 <!-- inner menu: contains the actual data -->
-                <ul class="menu">
+                <ul class="menu" id="notification-ul">
                     {% for not in notifications %}
                   <li>
                     <a href="{{not.get_absolute_url}}">
