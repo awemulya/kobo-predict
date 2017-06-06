@@ -197,6 +197,9 @@ def edit(request, pk):
                     org = Organization.objects.get(pk=organization)
                     profile.organization = org
             profile.save()
+            profile.logs.create(source=request.user, organization=profile.organization, type=0, title="User",
+                                description="new user {0} created by {1}".format(user.username,
+                                                                                 request.user.username))
             messages.info(request, 'User Details Updated.')
         return HttpResponseRedirect(reverse('users:users'))
 
