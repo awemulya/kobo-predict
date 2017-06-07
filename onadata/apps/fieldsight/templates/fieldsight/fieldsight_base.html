@@ -207,10 +207,6 @@ console.log(text.prop2);
             </a>
               {% if notifications.count %}
             <ul class="dropdown-menu">
-              <li class="header">{% trans 'You have' %} {{notifications.count }}
-                  {% trans 'notifications' %} </li>
-              <li>
-                <!-- inner menu: contains the actual data -->
                 <ul class="menu" id="notification-ul">
                     {% for not in notifications %}
                   <li>
