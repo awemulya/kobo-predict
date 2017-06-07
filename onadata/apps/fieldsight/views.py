@@ -254,41 +254,12 @@ class OrganizationListView(OrganizationView, LoginRequiredMixin, SuperAdminMixin
 
 
 class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, CreateView):
-    def form_valid(self, request, form, *args, **kwargs):
-        with transaction.atomic():
-            new_organization = super(OrganizationCreateView, self).get_context_data(
-                request, form, *args, **kwargs)
-            is_active = form.cleaned_data['is_active']
-            new_organization.name = request.POST.get('name', '')
-            new_organization.is_active = is_active
-            new_organization.save()
-            organization = int(form.cleaned_data['organization'])
-            org = Organization.objects.get(pk=organization)
-            organization.logs.create(source=request.organization , type=5, title="new Organization",
-                                description="new organization create {5} created by {1}".format(new_organization.name,
-                                                                                 request.organization.name))
-        return new_organization
-
+    pass
 
 class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationMixin, MyOwnOrganizationMixin, UpdateView):
     def get_success_url(self):
         return reverse('fieldsight:organization-dashboard', kwargs={'pk': self.kwargs['pk']})
-
-    def form_valid(self, request, form, *args, **kwargs):
-        with transaction.atomic():
-            new_organization = super(OrganizationUpdateView, self).get_context_data(
-                request, form, *args, **kwargs)
-            is_active = form.cleaned_data['is_active']
-            new_organization.name = request.POST.get('name', '')
-            new_organization.is_active = is_active
-            new_organization.save()
-            organization = int(form.cleaned_data['organization'])
-            org = Organization.objects.get(pk=organization)
-            organization.logs.create(source=request.organization , type=5, title="new Organization",
-                                description="new organization update {5} created by {1}".format(new_organization.name,
-                                                                                 request.organization.name))
-        return new_organization
-
+    pass
 
 class OrganizationDeleteView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, DeleteView):
     pass
@@ -481,43 +452,27 @@ class ProjectView(OView):
 
 class ProjectListView(ProjectView, OrganizationMixin, ListView):
     pass
-
-
+# profile.logs.create(source=request.user, organization=profile.organization, type=0, title="new User",
+#                                          description="new user {0} created by {1}".format(new_user.username,
+#                                           request.user.username))
 class ProjectCreateView(ProjectView, OrganizationMixin, CreateView):
-    def form_valid(self, request, form, *args, **kwargs):
-        with transaction.atomic():
-            new_project = super(ProjectCreateView, self).get_context_data(
-                request, form, *args, **kwargs)
-            is_active = form.cleaned_data['is_active']
-            new_project.name = request.POST.get('name', '')
-            new_project.is_active = is_active
-            new_project.save()
-            project = int(form.cleaned_data['project'])
-            org = Organization.objects.get(pk=project)
-            project.logs.create(source=request.project , type=4, title="new User",
-                                description="new user {4} created by {1}".format(new_project.name,
-                                                                                 request.project.name))
-        return new_project
+    def form_valid(self, form):
+        self.object = form.save()
 
-
+        return HttpResponseRedirect(self.get_success_url())
 
 class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView):
+
     def get_success_url(self):
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs['pk']})
-    def form_valid(self, request, form, *args, **kwargs):
-        with transaction.atomic():
-            new_project = super(ProjectUpdateView, self).get_context_data(
-                request, form, *args, **kwargs)
-            is_active = form.cleaned_data['is_active']
-            new_project.name = request.POST.get('name', '')
-            new_project.is_active = is_active
-            new_project.save()
-            project = int(form.cleaned_data['project'])
-            org = Organization.objects.get(pk=project)
-            project.logs.create(source=request.project , type=4, title="new User",
-                                description="new user {4} created by {1}".format(new_project.name,
-                                                                                 request.project.name))
-        return new_project
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        self.object.logs.create(title="new Project Ubdated",
+                                         description="new project Ubdated {4} created by {1}".format())
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class ProjectDeleteView(ProjectView, OrganizationMixin, DeleteView):
     pass
@@ -537,39 +492,18 @@ class SiteListView(SiteView, ReviewerMixin, ListView):
 
 
 class SiteCreateView(SiteView, ProjectMixin, CreateView):
-    def form_valid(self, request, form, *args, **kwargs):
-        with transaction.atomic():
-            new_site = super(SiteCreateView, self).get_context_data(
-                request, form, *args, **kwargs)
-            is_active = form.cleaned_data['is_active']
-            new_site.name = request.POST.get('name', '')
-            new_site.is_active = is_active
-            new_site.save()
-            site = int(form.cleaned_data['site'])
-            org = Organization.objects.get(pk=site)
-            site.logs.create(source=request.project , type=4, title="new User",
-                                description="new user {4} created by {1}".format(new_site.name,
-                                                                                 request.site.name))
-        return new_site
+    def form_valid(self, form):
+        self.object = form.save()
+        import ipdb
+        ipdb.set_trace()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
-    def get_success_url(self):
-        return reverse('fieldsight:site-dashboard', kwargs={'pk': self.kwargs['pk']})
-    def form_valid(self, request, form, *args, **kwargs):
-        with transaction.atomic():
-            new_site = super(SiteUpdateView, self).get_context_data(
-                request, form, *args, **kwargs)
-            is_active = form.cleaned_data['is_active']
-            new_site.name = request.POST.get('name', '')
-            new_site.is_active = is_active
-            new_site.save()
-            site = int(form.cleaned_data['site'])
-            org = Organization.objects.get(pk=site)
-            site.logs.create(source=request.project , type=4, title="new User",
-                                description="new user {4} created by {1}".format(new_site.name,
-                                                                                 request.site.name))
-        return new_site
+    def form_valid(self, form ):
+        self.object = form.save()
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class SiteDeleteView(SiteView, ProjectMixin, DeleteView):
