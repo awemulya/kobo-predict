@@ -104,8 +104,13 @@ if(notificationCount == 0){
                         }
 notificationCount += 1;
 $('#noti-count').text(notificationCount);
+description = ' descript ';
+not_url = '"fieldsight/dashboard/"'
+new_li = '<li><a href='+not_url+'><i class="fa fa-users text-aqua"></i>'+ description +' </a>  </li>';
+console.log(new_li);
+$('#notification-ul').append(new_li);
 
-console.log(notificationCount);
+<!--console.log(notificationCount);-->
 
 console.log(text.prop1);
 console.log(text.prop2);
