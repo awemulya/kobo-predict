@@ -94,8 +94,8 @@ var id = "{{request.user.id}}";
 const webSocketBridgeNotify = new channels.WebSocketBridge({'port': '8001'});
 const webSocketBridgeChat = new channels.WebSocketBridge({'port': '8001'});
 
-webSocketBridgeNotify.connect('/notify/'+id+'/');
-webSocketBridgeChat.connect('/chat/'+id+'/');
+webSocketBridgeNotify.connect('ws://kc.naxa.com.np:8001/notify/'+id+'/');
+<!--webSocketBridgeChat.connect('/chat/'+id+'/');-->
 
 webSocketBridgeNotify.listen(function(text, byte) {
 if(notificationCount == 0){
@@ -117,11 +117,11 @@ console.log(text.prop2);
 });
 
 
-webSocketBridgeChat.listen(function(text, byte) {
-console.log("chat received");
-console.log(text.prop1);
-console.log(text.prop2);
-});
+<!--webSocketBridgeChat.listen(function(text, byte) {-->
+<!--console.log("chat received");-->
+<!--console.log(text.prop1);-->
+<!--console.log(text.prop2);-->
+<!--});-->
 <!--webSocketBridge.send({prop1: 'value1', prop2: 'value1'});-->
 
 </script>
