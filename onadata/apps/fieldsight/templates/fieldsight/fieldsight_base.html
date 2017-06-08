@@ -94,8 +94,8 @@ var id = "{{request.user.id}}";
 const webSocketBridgeNotify = new channels.WebSocketBridge();
 const webSocketBridgeChat = new channels.WebSocketBridge();
 
-webSocketBridgeNotify.connect('/notify/'+id+'/');
-webSocketBridgeChat.connect('/chat/'+id+'/');
+webSocketBridgeNotify.connect('ws://kc.naxa.com.np:8001/notify/'+id+'/');
+webSocketBridgeChat.connect('ws://kc.naxa.com.np:8001/chat/'+id+'/');
 
 webSocketBridgeNotify.listen(function(text, byte) {
 if(notificationCount == 0){
@@ -104,8 +104,13 @@ if(notificationCount == 0){
                         }
 notificationCount += 1;
 $('#noti-count').text(notificationCount);
+description = ' descript ';
+not_url = '"fieldsight/dashboard/"'
+new_li = '<li><a href='+not_url+'><i class="fa fa-users text-aqua"></i>'+ description +' </a>  </li>';
+console.log(new_li);
+$('#notification-ul').append(new_li);
 
-console.log(notificationCount);
+<!--console.log(notificationCount);-->
 
 console.log(text.prop1);
 console.log(text.prop2);
@@ -117,7 +122,6 @@ console.log("chat received");
 console.log(text.prop1);
 console.log(text.prop2);
 });
-<!--webSocketBridge.send({prop1: 'value1', prop2: 'value1'});-->
 
 </script>
 <script type="text/javascript">
@@ -207,10 +211,6 @@ console.log(text.prop2);
             </a>
               {% if notifications.count %}
             <ul class="dropdown-menu">
-              <li class="header">{% trans 'You have' %} {{notifications.count }}
-                  {% trans 'notifications' %} </li>
-              <li>
-                <!-- inner menu: contains the actual data -->
                 <ul class="menu" id="notification-ul">
                     {% for not in notifications %}
                   <li>

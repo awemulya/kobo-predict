@@ -415,17 +415,19 @@ var project = "{{obj.pk}}";
                             </div>
                     </div>
                  <div class='adv-table' data-bind="foreach: sites">
+                          <div class="col-sm-4">
+                             <div style="margin-top:20px">
 
-                    <a data-bind="attr: { href: url }">
-                                 <div class="col-sm-4">
-                                     <div style="margin-top:20px">
-                                         <span data-bind="text: name">
-                                         <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
+                                    <a data-bind="attr: { href: url }">
 
-                                    </div>
+                                        <span data-bind="text: name" style="font-size:15px"></span>
+                                    </a></br>
+                                    <i class="fa fa-map-marker" aria-hidden="true" data-bind="visible: address"></i>
+                                     <span data-bind="text: address">
+
+                                 `  </span>
                                  </div>
-                 </a>
-                </div>
+                                </div>
 
               </div>
 			  <div id="org-people" class="tab-pane fade">
