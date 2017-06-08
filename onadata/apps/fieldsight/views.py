@@ -469,9 +469,11 @@ class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView
     def form_valid(self, form):
         self.object = form.save()
 
-        self.object.logs.create(type=4, title = "project Updated",
-                                description="project Updated{4} updated by {1}")
-        # return object
+        self.object.logs.create(source=self.request.user, organization=self.object.organization,
+                                     type=4, title = "project Updated",
+                                description="project Updated{4} updated by {0}")
+
+
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -495,14 +497,18 @@ class SiteListView(SiteView, ReviewerMixin, ListView):
 class SiteCreateView(SiteView, ProjectMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save()
-        import ipdb
-        ipdb.set_trace()
+
         return HttpResponseRedirect(self.get_success_url())
 
 
 class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
-    def form_valid(self, form ):
+
+    def form_valid(self, form):
         self.object = form.save()
+
+
+        # self.object.logs.create(organization=form.organization, type=4, title="site Updated",
+        #                         description="site Updated {4} updated by {1}")
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -644,6 +650,7 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
             profile.logs.create(source=request.user, organization=profile.organization, type=0, title="new User",
                                          description="new user {0} created by {1}".format(new_user.username,
                                           request.user.username))
+
         return new_user
 
 
