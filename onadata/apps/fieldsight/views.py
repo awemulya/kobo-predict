@@ -469,8 +469,9 @@ class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView
     def form_valid(self, form):
         self.object = form.save()
 
-        self.object.logs.create(title="new Project Ubdated",
-                                         description="new project Ubdated {4} created by {1}".format())
+        self.object.logs.create(type=4, title = "project Updated",
+                                description="project Updated{4} updated by {1}")
+        # return object
         return HttpResponseRedirect(self.get_success_url())
 
 
