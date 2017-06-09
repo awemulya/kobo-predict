@@ -197,9 +197,7 @@ def edit(request, pk):
                     org = Organization.objects.get(pk=organization)
                     profile.organization = org
             profile.save()
-            profile.logs.create(source=request.user, organization=profile.organization, type=0, title="User",
-                                description="new user {0} created by {1}".format(user.username,
-                                                                                 request.user.username))
+
             messages.info(request, 'User Details Updated.')
         return HttpResponseRedirect(reverse('users:users'))
 
@@ -272,6 +270,9 @@ class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
         profile.google_talk = form.cleaned_data['google_talk']
         profile.profile_picture = form.cleaned_data['profile_picture']
         profile.save()
+        profile.logs.create(source=self.request.user, type=0, title="new User",
+                         description="new user {0} created by {1}".
+                         format(user.username, self.request.user.username))
         return HttpResponseRedirect(self.success_url)
 
 
