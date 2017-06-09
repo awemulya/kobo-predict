@@ -458,7 +458,12 @@ class ProjectCreateView(ProjectView, OrganizationMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save()
 
+        self.object.logs.create(source=self.request.user, organization=self.object.organization,
+                                type=4, title="project Created",
+                                description="project Created{4} created by {0}")
+
         return HttpResponseRedirect(self.get_success_url())
+
 
 class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView):
 
