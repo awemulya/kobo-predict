@@ -507,9 +507,6 @@ class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
         self.object = form.save()
 
 
-        # self.object.logs.create(organization=form.organization, type=4, title="site Updated",
-        #                         description="site Updated {4} updated by {1}")
-
         return HttpResponseRedirect(self.get_success_url())
 
 
