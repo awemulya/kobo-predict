@@ -452,9 +452,8 @@ class ProjectView(OView):
 
 class ProjectListView(ProjectView, OrganizationMixin, ListView):
     pass
-# profile.logs.create(source=request.user, organization=profile.organization, type=0, title="new User",
-#                                          description="new user {0} created by {1}".format(new_user.username,
-#                                           request.user.username))
+
+
 class ProjectCreateView(ProjectView, OrganizationMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save()
@@ -505,7 +504,9 @@ class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
 
     def form_valid(self, form):
         self.object = form.save()
-
+        self.object.logs.create(source=self.request.user, project=self.object.project,
+                                type=4, title="site Updated",
+                                description="site Updated{3} updated by {0}")
 
         return HttpResponseRedirect(self.get_success_url())
 
