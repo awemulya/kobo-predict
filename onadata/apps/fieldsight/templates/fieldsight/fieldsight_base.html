@@ -91,10 +91,14 @@ var notificationCount = $('#noti-count').text() || "0";
 notificationCount = parseInt(notificationCount);
 
 var id = "{{request.user.id}}";
+var orgid = "{{oid}}";
 const webSocketBridgeNotify = new channels.WebSocketBridge();
 const webSocketBridgeChat = new channels.WebSocketBridge();
 
-webSocketBridgeNotify.connect('ws://kc.naxa.com.np:8001/notify/'+id+'/');
+<!--webSocketBridgeNotify.connect('/notify/'+orgid+'/');-->
+<!--webSocketBridgeChat.connect('/chat/'+id+'/');-->
+
+webSocketBridgeNotify.connect('ws://kc.naxa.com.np:8001/notify/'+orgid+'/');
 webSocketBridgeChat.connect('ws://kc.naxa.com.np:8001/chat/'+id+'/');
 
 webSocketBridgeNotify.listen(function(text, byte) {
@@ -104,16 +108,16 @@ if(notificationCount == 0){
                         }
 notificationCount += 1;
 $('#noti-count').text(notificationCount);
-description = ' descript ';
-not_url = '"fieldsight/dashboard/"'
+description = text.description;
+not_url = text.url
 new_li = '<li><a href='+not_url+'><i class="fa fa-users text-aqua"></i>'+ description +' </a>  </li>';
 console.log(new_li);
 $('#notification-ul').append(new_li);
 
 <!--console.log(notificationCount);-->
 
-console.log(text.prop1);
-console.log(text.prop2);
+console.log(text.description);
+console.log(text.url);
 });
 
 
@@ -215,7 +219,7 @@ console.log(text.prop2);
                     {% for not in notifications %}
                   <li>
                     <a href="{{not.get_absolute_url}}">
-                      <i class="fa fa-users text-aqua"></i> {{not.description}}
+                      <i class="fa fa-info-circle fa-1"></i> {{not.description}}
                     </a>
                   </li>
                 {% endfor %}

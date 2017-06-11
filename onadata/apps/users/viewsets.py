@@ -1,3 +1,6 @@
+import json
+
+from channels import Group
 from django.contrib.sites.shortcuts import get_current_site
 from django.db import transaction
 from django.db.models import Q
@@ -131,6 +134,11 @@ class UserViewSet(viewsets.ModelViewSet):
                 profile.logs.create(source=self.request.user, type=0, title="new User",
                                     organization=profile.organization, description="new user {0} created by {1}".
                                     format(user.username, self.request.user.username))
+                result = {}
+                result['description'] = 'new user {0} created by {1}'.format(user.username, self.request.user.username)
+                result['url'] = '/users/profile/{}'.format(profile.user.id)
+                Group("notify-{}".format(profile.organization.id)).send({"text":json.dumps(result)})
+                Group("notify-0".format(profile.organization.id)).send({"text":json.dumps(result)})
 
                 signals.user_registered.send(sender=RegistrationView, user=new_user, request=self.request)
         except Exception as e:
