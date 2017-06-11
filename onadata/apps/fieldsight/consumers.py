@@ -116,7 +116,7 @@ class NotificationConsumer(WebsocketConsumer):
         # Accept the connection; this is done by default if you don't override
         # the connect function.
         pk = kwargs.get('pk')
-        Group("notify-"+pk).add(message.reply_channel)
+        Group("notify-{}".format(pk)).add(message.reply_channel)
         self.message.reply_channel.send({"accept": True})
 
     def receive(self, text=None, bytes=None, **kwargs):
@@ -135,7 +135,7 @@ class NotificationConsumer(WebsocketConsumer):
         Perform things on connection close
         """
         pk = kwargs.get('pk')
-        Group("notiy-"+pk).discard(message.reply_channel)
+        Group("notify-{}".format(pk)).discard(message.reply_channel)
 
 
 # class Demultiplexer(WebsocketDemultiplexer):
