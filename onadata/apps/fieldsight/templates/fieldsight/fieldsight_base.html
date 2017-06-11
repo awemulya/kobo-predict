@@ -53,6 +53,9 @@
     <link rel="stylesheet" type="text/css"  href="{% static 'slick/slick.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'slick/slick-theme.css' %}" />
 
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+
     <!-- <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}">
   -->
 
@@ -161,7 +164,7 @@ console.log(text.prop2);
     </div>
 </div>
 <div class="brand-side col-sm-10">
-        <ol class="breadcrumb hidden-print col-sm-8" style="font-size: 16px;color: white !important;">
+        <ol class="breadcrumb hidden-print col-sm-10" style="font-size: 16px;color: white !important;">
                     {% block breadcrumbs_container %}
                         <li><a href="{% url 'dashboard' %}">{% trans 'Home' %}</a></li>
                         {% block breadcrumbs %}
@@ -169,7 +172,7 @@ console.log(text.prop2);
                     {% endblock %}
                 </ol>
 
-                <div class="navbar-custom-menu notification-div col-sm-3">
+                <div class="navbar-custom-menu notification-div col-sm-1">
         <ul class="nav navbar-nav" style="margin-top: 3%;margin-left: 30%;">
           <!-- Messages: style can be found in dropdown.less-->
           {% if fieldsight_message.count %}
@@ -430,6 +433,8 @@ console.log(text.prop2);
                             
                          </div>
                     </header>
+
+                    <div class="gap-high"></div>
                     
                     <div class="panel-body">
 

@@ -76,7 +76,7 @@
         <div class="gap"></div>
         {% for obj in paginated_objects %}
         <div class="organization-list">
-            <div class="col-md-3">
+            <div class="col-md-3 project_list_img">
                 <a href="{% url 'fieldsight:project-dashboard' obj.pk %}">
 
                     <div class="org-grg demo-3">
@@ -86,7 +86,7 @@
 
                                     <figcaption class="abt-org" style="text-align: center;">
                                         <h2>{{ obj.name }}</h2>
-                                        <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }},{{ obj.get_country_display }}</p>
+                                        <p class="address"><span><i class="fa fa-map-marker space" aria-hidden="true"></i></span>{{ obj.address }},{{ obj.get_country_display }}</p>
                                     </figcaption>
                                 </figure>
                             </div>
@@ -94,6 +94,7 @@
                 </a>
             </div>
         </div>
+
               {% endfor %}
         {% paginate %}
 
