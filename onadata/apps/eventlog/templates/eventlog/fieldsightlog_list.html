@@ -26,7 +26,13 @@
             {% for obj in paginated_objects %}
             <tr><td>
                 <a href="{{obj.get_absolute_url}}">
-                {{obj.description}}  {% trans 'on ' %}{{obj.date}}
+                    <div class="unread note-div">
+                        <span class="notification-title">{{obj.description}} </span>
+                        <br>
+                         <span>{% trans 'on ' %}</span>
+                         <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        {{obj.date}}
+                    </div>
                     </a>
             </td></tr>
                 <!--<tr>-->
