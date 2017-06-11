@@ -136,7 +136,7 @@ class UserViewSet(viewsets.ModelViewSet):
                                     format(user.username, self.request.user.username))
                 result = {}
                 result['description'] = 'new user {0} created by {1}'.format(user.username, self.request.user.username)
-                result['url'] = 'users/profile/{}'.format(profile.user.id)
+                result['url'] = '/users/profile/{}'.format(profile.user.id)
                 Group("notify-{}".format(profile.organization.id)).send({"text":json.dumps(result)})
                 Group("notify-0".format(profile.organization.id)).send({"text":json.dumps(result)})
 
