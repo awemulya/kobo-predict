@@ -27,14 +27,18 @@
 
             {% csrf_token %}
              {{ form.media }}
-             <div class="col-sm-12 registration_field">
-               <div class="col-sm-12 registration_field">
-                 <div class="col-sm-3"><h5 class="italic1"><b> {{ form.name.label }} </b></h5></div>
-                 <div class="col-sm-5">      {{ form.name }}</div>
-                 <div class="col-sm-4">      {{ form.name.errors }}</div>
-               </div>
+             
 
-            </div>
+
+            <div class="col-sm-12 registration_field">
+            {% for field in form %}
+               <div class="col-sm-12 registration_field">
+                 <div class="col-sm-3 field-label"><h5 class="italic1"><b> {{ field.label }}</b></h5></div>
+                 <div class="col-sm-5 field-input">{{ field }}</div>
+                 <div class="col-sm-4">      {{ field.errors }}</div>
+               </div>
+            {% endfor %}
+        </div>
 
             <div class="col-sm-12 registration_field position-field">
               <div class=" col-sm-12 registration_field">

@@ -99,6 +99,90 @@ var project = "{{obj.pk}}";
 
 {% block content %}
 
+<div id="project_more" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Read More About our Organization</h4>
+      </div>
+      <div class="modal-body">
+          <div class="abt-org1">
+                            <div class="col-md-12">
+                                <h5 class="organization_name">{{ obj.name }}</h5>
+                            </div>
+                            <div class="col-md-12 detail read-more-description">
+                              <div class="col-md-8 bottom-push">
+                                  <div class="well well-sm our-office">
+                                  <span class="well-header">
+                                      <i class="fa fa-location-arrow blue" aria-hidden="true"></i>
+                                        Our Office  
+                                    </span>
+                                   </div>
+                                  <div class="office-information">
+                                      <p class="address information"><span><i class="fa fa-map-marker space " aria-hidden="true"></i></span>{{ obj.address }}, {{ obj.get_country_display }}</p>
+                                      <p class="contact information"><span><i class="fa fa-phone space " aria-hidden="true"></i></span>{{ obj.phone }}</p>
+                                      <p class="fax information"><span><i class="fa fa-fax space " aria-hidden="true"></i></span>{{ obj.fax }}</p>
+                                      <p class="website information"><span><i class="fa fa-internet-explorer space " aria-hidden="true"></i></span>{{ obj.website }}</p>
+                                      <p class="website information">
+                                          <span>
+                                            <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                                          </span>
+                                            {{ obj.email }}</p>
+
+                                     
+
+
+
+
+                                  </div>
+                              </div>
+
+                              <div class="gap-high"></div>
+
+                                <div class="col-md-12">
+                                 <div class=" well well-sm our-office">
+                                    <span class="well-header">
+                                      <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                        Our Introduction
+                                    </span>
+                                  </div>
+                                  <div class="office-information">
+                                    <!-- <div class="gap"></div> -->
+                                    <!-- <p class="short-detail">{{ obj.description }}</p> -->
+                                    <span class="line-header">Public Description</span>
+                                    <div class="gap"></div>
+                                    <div class="public_desc">
+                                        <p class="short-detail">{{ obj.public_desc}}</p>
+                                    </div>
+                                    <div class="gap-high"></div>
+                                    <span class="line-header">Additional Description</span>
+                                    <div class="gap"></div>
+                                    <div class="additional_desc">
+                                        <p class="short-detail">{{ obj.additional_desc }}</p>
+                                    </div>
+                                    <div class="gap"></div>
+                                </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+      </div>
+      <div class="gap"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
 <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$root.modal_visibility">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -132,6 +216,11 @@ var project = "{{obj.pk}}";
 </div>
 
 <div data-bind="with:current_site">
+
+  
+
+
+
 <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.site_add_visibility">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -253,16 +342,27 @@ var project = "{{obj.pk}}";
                         <div class="abt-org1">
                             <div class="col-md-9">
                                 <span class="object_name">{{ obj.name }}</span>
-                                <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{ obj.address }},{{ obj.get_country_display }}</p>
-                                <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ obj.phone }}</p>
+                                <p class="address"><span><i class="fa fa-map-marker space" aria-hidden="true"></i></span>{{ obj.address }},{{ obj.get_country_display }}</p>
+                                <p class="contact"><span><i class="fa fa-phone space" aria-hidden="true"></i></span>{{ obj.phone }}</p>
                                 <!-- <p class="fax"><span><i class="fa fa-fax" aria-hidden="true"></i></span>{{ obj.fax }}</p> -->
-                                <p class="website"><span><i class="fa fa-internet-explorer" aria-hidden="true"></i></span>{{ obj.website }}</p>
+                                <p class="website"><span><i class="fa fa-internet-explorer space" aria-hidden="true"></i></span>{{ obj.website }}</p>
     							              <p class="short-detail">{{ obj.description }}</p>
+
+                                <div class="text-wrapper org-description-sm pad-left">
+                                      <!-- /.user-block -->
+                                      <span class="title1">{% trans 'About ' %}</span>
+                                      <p class="detail-text">
+                                         {{ obj.public_desc}}
+                                        </p>
+                                        <button class="button_hover button" data-toggle="modal" data-target="#project_more"><span>Read more</span></button>
+
+
+                                      </div>
 
                             </div>
                             <div class="col-md-3">
                                 <div class="mini-stat clearfix">
-                                  <span class="mini-stat-icon orange"><i class="fa fa-users"></i></span>
+                                  <span class="mini-stat-icon box-side"><i class="fa fa-users"></i></span>
                                   <div class="mini-stat-info">
                                       <span>{{peoples_involved.count}}</span>
                                       Total Users
@@ -270,7 +370,7 @@ var project = "{{obj.pk}}";
                                 </div>
                                <div class="mini-stat clearfix">
                                    <a href="{% url 'fieldsight:site-list'%}">
-                                <span class="mini-stat-icon green"><i class="fa fa-picture-o"></i></span>
+                                <span class="mini-stat-icon box-side"><i class="fa fa-picture-o"></i></span>
                                 <div class="mini-stat-info">
                                     <span>{{total_sites}}</span>
                                     Total Sites
@@ -279,7 +379,7 @@ var project = "{{obj.pk}}";
                               </div>
                                 <div class="mini-stat clearfix">
                                     <a href="{% url 'fieldsight:site-survey-list' obj.pk%}">
-                                <span class="mini-stat-icon red"><i class="fa fa-building-o"></i></span>
+                                <span class="mini-stat-icon box-side"><i class="fa fa-building-o"></i></span>
                                 <div class="mini-stat-info ">
                                     <span>{{total_survey_sites}}</span>
                                     {% trans 'Site Survey'%}
@@ -290,9 +390,6 @@ var project = "{{obj.pk}}";
                         </div>
                     </div>
                     <div class="clearfixx"></div>
-
-        <i class="fa fa-check-square-o" aria-hidden="true"></i>
-        <i class="fa fa-check-square-o" aria-hidden="true"></i>
 
                      <div class="row">
                   <div class="col-md-3 col-sm-6 col-xs-12">
@@ -319,7 +416,7 @@ var project = "{{obj.pk}}";
 
                   <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box">
-                      <span class="info-box-icon bg-green"><i class="fa fa-google-plus"></i></span>
+                      <span class="info-box-icon bg-yellow"><i class="fa fa-flag-checkered" aria-hidden="true"></i></span>
 
                       <div class="info-box-content">
                         
@@ -334,7 +431,7 @@ var project = "{{obj.pk}}";
 
                   <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box">
-            <span class="info-box-icon bg-aqua"><i class="fa fa-google-plus"></i></span>
+            <span class="info-box-icon bg-aqua"><i class="fa fa-hourglass-half" aria-hidden="true"></i></span>
 
             <div class="info-box-content">
                 <span class="info-box-number">{{outstanding}}</span>
@@ -346,8 +443,8 @@ var project = "{{obj.pk}}";
                   </div>
                   <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box">
-            <span class="info-box-icon bg-yellow">
-                            <i class="fa fa-flag-checkered" aria-hidden="true"></i>
+            <span class=" info-box-icon bg-green">
+                            <i class="fa fa-check-square-o" aria-hidden="true"></i>
         </span>
 
             <div class="info-box-content">
@@ -389,20 +486,19 @@ var project = "{{obj.pk}}";
 			  <div id="org-map" class="tab-pane fade in active">
 			     <div class="map-container-fieldsight">
                     <div id="map"></div>
-                    <div class="popop-container">
+                    
+                  </div>
+
+            <div class="popop-container">
                         <h3 class="popop-head"></h3>
                         <p class="address-popop"></p>
                         <p class="contact-popop"></p>
                         <div class="popop-gallery">
-                            <div class="img1"><img src="/media/slider/slider1.jpg/" class="latest-image"></div>
-                            <div class="img1"><img src="/media/slider/slider2.jpg/" class="latest-image"></div>
-                            <div class="img1"><img src="/media/slider/slider3.jpg/" class="latest-image"></div>
-                            <div class="img1"><img src="/media/slider/slider4.jpg/" class="latest-image"></div>
-                            <div class="img1"><img src="/media/slider/slider5.jpg/" class="latest-image"></div>
+                            
                         </div>
                     </div>
-                  </div>
 			  </div>
+        
 
               <div id="org-list-site" class="tab-pane fade">
                     <div class="input-group">
@@ -414,20 +510,36 @@ var project = "{{obj.pk}}";
                             </abbr>
                             </div>
                     </div>
-                 <div class='adv-table' data-bind="foreach: sites">
-                          <div class="col-sm-4">
-                             <div style="margin-top:20px">
 
-                                    <a data-bind="attr: { href: url }">
+                 <div class='adv-table row' data-bind="foreach: sites">
 
-                                        <span data-bind="text: name" style="font-size:15px"></span>
-                                    </a></br>
-                                    <i class="fa fa-map-marker" aria-hidden="true" data-bind="visible: address"></i>
-                                     <span data-bind="text: address">
+                 <div class="org-site-list current-person col-sm-6 site-nav1"  >
+                      
+                    <a data-bind="attr:{ href: url }">
+                                 
+                                    <div class="col-md-4 col-sm-4 "  >
+                                        <div class="image-org ">
+                                             <img data-bind="attr:{src: logo}" />
+                                        </div>
+                                    </div>
+                                     <div  class="col-md-8 col-sm-8" ">
+                                         <span class="space site-label">{% trans 'Site Name :' %}</span>
+                                         <span data-bind="text: name" class="detail-text">
+                                         <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
+                                         
+                                         <span class="space site-label">{% trans 'ID :' %}</span>
+                                         <span data-bind="text: id">
+                                         <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
+                                         <br>
+                                         <span class="space site-label">{% trans 'Adress :' %}</span>
+                                         <span data-bind="text: address" class="detail-text1">
+                                         <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
 
-                                 `  </span>
-                                 </div>
-                                </div>
+                                    </div>
+                   </a>
+                  </div>
+                </div>
+
 
               </div>
 			  <div id="org-people" class="tab-pane fade">
