@@ -254,12 +254,25 @@ class OrganizationListView(OrganizationView, LoginRequiredMixin, SuperAdminMixin
 
 
 class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, CreateView):
-    pass
+    def form_valid(self, form):
+        self.object = form.save()
+
+        self.object.logs.create(source=self.request.user,  type=0, title="new Organization",
+                            description="new organization {0} created by {1}")
+
+        return HttpResponseRedirect(self.get_success_url())
 
 class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationMixin, MyOwnOrganizationMixin, UpdateView):
     def get_success_url(self):
         return reverse('fieldsight:organization-dashboard', kwargs={'pk': self.kwargs['pk']})
-    pass
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        self.object.logs.create(source=self.request.user,  type=0, title="Organization Updated",
+                            description="organization Updated {5} updated by {1}")
+
+        return HttpResponseRedirect(self.get_success_url())
 
 class OrganizationDeleteView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, DeleteView):
     pass
