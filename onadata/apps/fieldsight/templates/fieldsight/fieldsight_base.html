@@ -166,7 +166,7 @@ console.log(text.prop2);
     </div>
 </div>
 <div class="brand-side col-sm-10">
-        <ol class="breadcrumb hidden-print col-sm-10" style="font-size: 16px;color: white !important;">
+        <ol class="breadcrumb hidden-print col-sm-9" style="font-size: 16px;color: white !important;">
                     {% block breadcrumbs_container %}
                         <li><a href="{% url 'dashboard' %}">{% trans 'Home' %}</a></li>
                         {% block breadcrumbs %}
@@ -264,7 +264,7 @@ console.log(text.prop2);
             <ul class="dropdown-menu dropdown-menu-right extended logout" id="fs_drop_menu">
                         {% if request.role %}
                             <li >
-                                <a href="#" style="background: #e4e8ef; border-radius: 4px !important;"><h6>{% trans 'Using as' %} {{ request.role.group }}
+                                <a href="#" style="background: #e4e8ef; border-radius: 4px !important;" class="detail-text1"><h6>{% trans 'Using as' %} {{ request.role.group }}
                                     {% if request.site%}
                                     {% trans 'at Site ' %}{{request.site}}
                                     {% endif %}
