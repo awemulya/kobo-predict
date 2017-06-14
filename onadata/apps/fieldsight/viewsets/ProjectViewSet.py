@@ -54,15 +54,6 @@ class ProjectsPermission(BasePermission):
             return obj.organization == request.organization
 
 
-class ProjectsPermission(BasePermission):
-    def has_permission(self, request, view):
-        return request.group.name in ["Super Admin", "Organization Admin" ]
-
-    def has_object_permission(self, request, view, obj):
-        if request.group.name == "Organization Admin":
-            return obj.organization == request.organization
-
-
 class ProjectTypeViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing project and site  type.
