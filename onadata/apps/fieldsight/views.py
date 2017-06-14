@@ -269,9 +269,9 @@ class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationM
     def form_valid(self, form):
         self.object = form.save()
 
-        self.object.logs.create(source=self.request.user, type=0, organization=self.object.organization,
-                                title="new Organization",
-                                description="new organization {0} created by {1}")
+        self.object.logs.create(source=self.request.user, 
+                                type=4, title="site Created",
+                                description="site Created{4} created by {0}")
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -472,7 +472,7 @@ class ProjectCreateView(ProjectView, OrganizationMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save()
 
-        self.object.logs.create(source=self.request.user, organization=self.object.organization,
+        self.object.logs.create(source=self.request.user,
                                 type=4, title="project Created",
                                 description="project Created{4} created by {0}")
 
@@ -516,9 +516,9 @@ class SiteCreateView(SiteView, ProjectMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save()
 
-        self.object.logs.create(source=self.request.user, organization=self.object.organization,
-                                type=4, title="project Created",
-                                description="project Created{4} created by {0}")
+        self.object.logs.create(source=self.request.user, organization=self.object.project.organization,
+                                type=4, title="site Created",
+                                description="site Created{4} created by {0}")
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -527,9 +527,9 @@ class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
     def form_valid(self, form):
         self.object = form.save()
 
-        self.object.logs.create(source=self.request.user, object=self.object.organization,
+        self.object.logs.create(source=self.request.user, organization=self.object.project.organization,
                                 type=4, title="site Updated",
-                                description="site Updated{3} updated by {0}")
+                                description="site Updated{4} updated by {0}")
 
         return HttpResponseRedirect(self.get_success_url())
 
