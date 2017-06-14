@@ -126,6 +126,7 @@ class Project(models.Model):
     logs = GenericRelation('eventlog.FieldSightLog')
 
 
+
     objects = GeoManager()
 
     class Meta:

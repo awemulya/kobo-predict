@@ -71,8 +71,8 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                     if not created:
                         role.ended_at = None
                         role.save()
-                        role.logs.create(source=self.request.user, type=5, title="new Role",
-                                            description="new role {5} created by {1}".
+                        role.logs.create(source=self.request.user, type=0, title="new User",
+                                            description="new user {0} created by {1}".
                                             format(user.username, self.request.user.username))
         except Exception as e:
             raise ValidationError({
