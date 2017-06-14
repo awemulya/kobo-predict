@@ -89,6 +89,7 @@
     <script type="text/javascript" src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
 
     <![endif]-->
+<audio id="beep" src="{{ STATIC_URL }}sound/notification.mp3"></audio>
 <script type="text/javascript">
 var notificationCount = $('#noti-count').text() || "0";
 notificationCount = parseInt(notificationCount);
@@ -113,10 +114,11 @@ notificationCount += 1;
 $('#noti-count').text(notificationCount);
 description = text.description;
 not_url = text.url
-new_li = '<li><a href='+not_url+'><i class="fa fa-users text-aqua"></i>'+ description +' </a>  </li>';
-console.log(new_li);
-$('#notification-ul').append(new_li);
-
+new_li = '<li><a href='+not_url+'><i class="fa fa-info-circle fa-1"></i>'+ description +' </a>  </li>';
+<!--console.log(new_li);-->
+<!--$('#notification-ul').append(new_li);-->
+$(new_li).prependTo($('#notification-ul'));
+document.getElementById('beep').play();
 <!--console.log(notificationCount);-->
 
 console.log(text.description);
