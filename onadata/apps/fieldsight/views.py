@@ -269,7 +269,7 @@ class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationM
     def form_valid(self, form):
         self.object = form.save()
 
-        self.object.logs.create(source=self.request.user,
+        self.object.logs.create(source=self.request.user, organization = self.object.organization,
                                 type=4, title="site Created",
                                 description="site Created{4} created by {0}")
 
