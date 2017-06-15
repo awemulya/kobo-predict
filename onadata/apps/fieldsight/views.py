@@ -257,7 +257,7 @@ class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMix
     def form_valid(self, form):
         self.object = form.save()
 
-        self.object.logs.create(source=self.request.user,  type=0, title="new Organization", organization = self.object.organization,
+        self.object.logs.create(source=self.request.user,  type=0, title="new Organization",
                             description="new organization {0} created by {1}")
 
         return HttpResponseRedirect(self.get_success_url())

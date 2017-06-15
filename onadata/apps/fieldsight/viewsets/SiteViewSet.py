@@ -80,8 +80,6 @@ class SiteViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = serializer.save()
-        user.is_superuser = True
-        user.save()
         site = Site(user=user, organization_id=self.kwargs.get('pk'))
         site.save()
         site.logs.create(source=self.request.user, type=0, title="new User",

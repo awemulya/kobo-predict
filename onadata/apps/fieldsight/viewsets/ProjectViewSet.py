@@ -46,8 +46,6 @@ class ProjectCreationViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = serializer.save()
-        user.is_superuser = True
-        user.save()
         project = Project(user=user, organization_id=self.kwargs.get('pk'))
         project.save()
         project.logs.create(source=self.request.user, type=0, title="new User",
