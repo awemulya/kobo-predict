@@ -83,8 +83,11 @@ class SiteViewSet(viewsets.ModelViewSet):
         site = Site(user=user, organization_id=self.kwargs.get('pk'))
         site.save()
         site.logs.create(source=self.request.user, type=0, title="new User",
-                                    organization=site.project.organization, description="new user {0} created by {1}".
+                                    organization=site.project.organization, description="new site {5} created by {1}".
                                     format(user.username, self.request.user.username))
+        result = {}
+        result['description'] = 'new site {5} created by {1}'.format(user.username, self.request.user.username)
+
 
 class AllSiteViewSet(viewsets.ModelViewSet):
     """
