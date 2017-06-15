@@ -38,7 +38,7 @@
             <tr>
                 <td class="note-table">
                     <a href="{{obj.get_absolute_url}}">
-                        <div class="unread note-div">
+                        <div class="note-div {% if not obj.is_seen %} unread{% endif %}">
                             <div class="col-md-1">
                                 <i class="fa fa-user-plus note-icon" aria-hidden="true"></i>
                             </div>

@@ -114,7 +114,7 @@ notificationCount += 1;
 $('#noti-count').text(notificationCount);
 description = text.description;
 not_url = text.url
-new_li = '<li><a href='+not_url+'><i class="fa fa-info-circle fa-1"></i>'+ description +' </a>  </li>';
+new_li = '<li class=" note-div-sm unread "><a href='+not_url+'><i class="fa fa-info-circle fa-1"></i>'+ description +' </a>  </li>';
 <!--console.log(new_li);-->
 <!--$('#notification-ul').append(new_li);-->
 $(new_li).prependTo($('#notification-ul'));
@@ -224,18 +224,18 @@ console.log(text.prop2);
                   <div class="title2_note_div">
                     <span class="title2_note_sm">Notifications</span>
                   </div>
-                    {% for not in notifications %}
-                  <li class=" note-div-sm unread" >
-                    <a href="{{not.get_absolute_url}}" class="full">
+                    {% for noti in notifications %}
+                  <li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
+                    <a href="{{noti.get_absolute_url}}" class="full">
                  <div class="col-md-1">
                       <i class="fa fa-info-circle fa-1 note-icon-sm"></i>
                  </div>
                  <div class="col-md-10">
-                  <span class="detail-text1 notification-title-sm">{{not.description}}</span>
+                  <span class="detail-text1 notification-title-sm">{{noti.description}}</span>
                   
                   <div class="low">
                     <i class="fa fa-clock-o space" aria-hidden="true"></i>
-                    {{not.date}} 
+                    {{noti.date}}
                   </div>
                   </div>
                     </a>
