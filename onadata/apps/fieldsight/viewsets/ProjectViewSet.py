@@ -44,6 +44,17 @@ class ProjectCreationViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return {'request': self.request}
 
+    def perform_create(self, serializer):
+        user = serializer.save()
+        user.is_superuser = True
+        user.save()
+        project = Project(user=user, organization_id=self.kwargs.get('pk'))
+        project.save()
+        project.logs.create(source=self.request.user, type=0, title="new User",
+                                    organization=project.organization, description="new user {0} created by {1}".
+                                    format(user.username, self.request.user.username))
+
+
 
 class ProjectsPermission(BasePermission):
     def has_permission(self, request, view):
