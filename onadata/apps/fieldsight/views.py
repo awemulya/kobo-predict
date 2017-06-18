@@ -271,7 +271,7 @@ class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationM
         self.object = form.save()
 
         self.object.logs.create(source=self.request.user, type=5, organization=self.object, title="new Organization",
-                            description="new organization {0} created by {1}".format(self.object.name,self.request.user.username))
+                            description="new organization {0} created by {1}")
 
         return HttpResponseRedirect(self.get_success_url())
 

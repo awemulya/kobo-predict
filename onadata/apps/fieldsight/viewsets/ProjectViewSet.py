@@ -99,9 +99,6 @@ class OrganizationsProjectViewSet(viewsets.ModelViewSet):
         return queryset.filter(organization__id=id, is_active=True)
 
 
-
-    # authentication_classes = (BasicAuthentication,)
-    permission_classes = (ProjectsPermission,)
     parser_classes = (MultiPartParser, FormParser,)
 
     def filter_queryset(self, queryset):

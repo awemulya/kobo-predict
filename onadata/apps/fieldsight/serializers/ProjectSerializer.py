@@ -29,27 +29,14 @@ class ProjectCreationSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     latitude= serializers.CharField()
     longitude= serializers.CharField()
-
-    class Meta:
-        model = Project
-
     type_label = serializers.ReadOnlyField(source='type.name', read_only=True)
     organization_label = serializers.ReadOnlyField(source='organization.name', read_only=True)
-    latitude = serializers.CharField()
-    longitude = serializers.CharField()
 
     class Meta:
         model = Project
-        read_only_fields = ('location', 'latitude', 'longitude')
+        read_only_fields = ('logo', 'location', 'latitude', 'longitude')
         exclude = ()
 
-    latitude= serializers.CharField()
-    longitude= serializers.CharField()
-
-    class Meta:
-        model = Project
-        exclude = ()
-        read_only_fields = ('logo', 'location')
 
     def create(self, validated_data):
         p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')),srid=4326)
