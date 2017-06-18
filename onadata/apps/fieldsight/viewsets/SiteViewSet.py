@@ -78,6 +78,16 @@ class SiteViewSet(viewsets.ModelViewSet):
         project = self.kwargs.get('pk', None)
         return queryset.filter(project__id=project, is_active=True)
 
+    def perform_create(self, serializer):
+        user = serializer.save()
+        site = Site(user=user, organization_id=self.kwargs.get('pk'))
+        site.save()
+        site.logs.create(source=self.request.user, type=5, title="new User",
+                                    organization=site.project.organization, description="new site {0} created by {1}".
+                                    format(user.username, self.request.user.username))
+        result = {}
+        result['description'] = 'new site {0} created by {1}'.format(user.username, self.request.user.username)
+
 
 class AllSiteViewSet(viewsets.ModelViewSet):
     """

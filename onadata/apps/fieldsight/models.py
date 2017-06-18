@@ -56,6 +56,7 @@ class Organization(models.Model):
     location = PointField(geography=True, srid=4326, blank=True, null=True,)
     logs = GenericRelation('eventlog.FieldSightLog')
 
+
     class Meta:
          ordering = ['-is_active', 'name', ]
 
@@ -124,6 +125,8 @@ class Project(models.Model):
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
+
+
     objects = GeoManager()
 
     class Meta:
@@ -187,6 +190,7 @@ class Site(models.Model):
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     is_survey = models.BooleanField(default=False)
     logs = GenericRelation('eventlog.FieldSightLog')
+
 
     objects = GeoManager()
 
