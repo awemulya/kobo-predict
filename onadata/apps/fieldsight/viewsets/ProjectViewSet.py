@@ -49,11 +49,11 @@ class ProjectCreationViewSet(viewsets.ModelViewSet):
         project = Project(user=user, organization_id=self.kwargs.get('pk'))
         project.save()
         project.logs.create(source=self.request.user, type=4, title="new Project",
-                                    organization=project.organization, description="new project {4} created by {1}".
+                                    organization=project.organization, description="new project {0} created by {1}".
                                     format(user.username, self.request.user.username))
 
         result = {}
-        result['description'] = 'new user {4} created by {1}'.format(user.username, self.request.user.username)
+        result['description'] = 'new user {0} created by {1}'.format(user.username, self.request.user.username)
 
 class ProjectsPermission(BasePermission):
     def has_permission(self, request, view):
