@@ -38,9 +38,12 @@ class FieldSightLog(models.Model):
         ordering = ["-date"]
 
     def get_absolute_url(self):
-        if self.content_type == user_type :
-            return reverse('users:profile', kwargs={'pk': self.content_object.user.pk})
-        return "#"
+        return reverse('eventlog:notification-detail', kwargs={'pk': self.pk})
+
+    def get_event_url(self):
+        return self.content_object.get_absolute_url()
+
+
 
 
 class FieldSightMessage(models.Model):

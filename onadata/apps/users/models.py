@@ -1,6 +1,7 @@
 from PIL import Image
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
@@ -39,4 +40,7 @@ class UserProfile(models.Model):
 
     def __unicode__(self):
         return u'Profile of user: %s' % self.user.username
+
+    def get_absolute_url(self):
+        return reverse('users:profile', kwargs={'pk': self.pk})
 

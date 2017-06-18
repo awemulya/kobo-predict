@@ -59,3 +59,9 @@ custom_template
 Vagrantfile
 ansible
 media
+
+#extras
+dump.rdb
+fs_kobocat_data.json
+gunicorn_config.py
+

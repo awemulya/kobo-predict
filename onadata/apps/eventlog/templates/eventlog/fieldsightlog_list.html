@@ -3,13 +3,24 @@
 {% load filters %}
 
 {% block page-title %}{% trans 'Logs' %}{% endblock %}
+{% block extracss %}
+
+<style >
+    .panel-body{
+        position: relative;
+        bottom: 46px;
+    }
+</style>
+{% endblock %}
+
 
 {% block content %}
 
     {% load pagination_tags %}
     {% load sorting_tags %}
     {% load filters %}
-
+    <span class="title2_note">Your Notifications</span>
+    <div class="gap"></div>
     <div class='well'>
 
         {% autosort object_list as sorted_objects %}
@@ -24,17 +35,26 @@
             <!--</thead>-->
             <tbody>
             {% for obj in paginated_objects %}
-            <tr><td>
-                <a href="{{obj.get_absolute_url}}">
-                    <div class="unread note-div">
-                        <span class="notification-title">{{obj.description}} </span>
-                        <br>
-                         <span>{% trans 'on ' %}</span>
-                         <i class="fa fa-clock-o" aria-hidden="true"></i>
-                        {{obj.date}}
-                    </div>
-                    </a>
-            </td></tr>
+            <tr>
+                <td class="note-table">
+                    <a href="{{obj.get_absolute_url}}">
+                        <div class="note-div {% if not obj.is_seen %} unread{% endif %}">
+                            <div class="col-md-1">
+                                <i class="fa fa-user-plus note-icon" aria-hidden="true"></i>
+                            </div>
+                            <div class="col-md-11">
+                            <span class="detail-text1 notification-title">{{obj.description}} </span>
+                            
+                            <div class="gap"></div>
+                            <div class="low">
+                                 <i class="fa fa-clock-o space" aria-hidden="true"></i>
+                                {{obj.date}}
+                            </div>
+                            </div>
+                        </div>
+                        </a>
+                </td>
+            </tr>
                 <!--<tr>-->
 
                     <!--<td>-->
