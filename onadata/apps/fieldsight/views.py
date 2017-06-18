@@ -260,10 +260,10 @@ class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMix
 class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationMixin, MyOwnOrganizationMixin, UpdateView):
     def get_success_url(self):
         return reverse('fieldsight:organization-dashboard', kwargs={'pk': self.kwargs['pk']})
-    pass
 
 
-class OrganizationDeleteView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, DeleteView):
+
+class OrganizationDeleteView(OrganizationView,LoginRequiredMixin, SuperAdminMixin, DeleteView):
     pass
 
 @login_required
@@ -457,25 +457,15 @@ class ProjectListView(ProjectView, OrganizationMixin, ListView):
 
 
 class ProjectCreateView(ProjectView, OrganizationMixin, CreateView):
-    def form_valid(self, form):
-        self.object = form.save()
-
-        self.object.logs.create(source=self.request.user, organization=self.object.organization, type=4, title="project Created",
-                                description="project Created{0} created by {1}".format(self.object.name, self.request.user.username))
-
-        return HttpResponseRedirect(self.get_success_url())
+    pass
 
 
 class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView):
-
     def get_success_url(self):
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
         self.object = form.save()
-
-        self.object.logs.create(source=self.request.user, organization=self.object.organization, type=4, title = "project Updated",
-                                description="project Updated{0} updated by {1}".format(self.object.name, self.request.user.username))
 
 
         return HttpResponseRedirect(self.get_success_url())
@@ -499,24 +489,12 @@ class SiteListView(SiteView, ReviewerMixin, ListView):
 
 
 class SiteCreateView(SiteView, ProjectMixin, CreateView):
-    def form_valid(self, form):
-        self.object = form.save()
+    pass
 
-        self.object.logs.create(source=self.request.user, organization=self.object.project.organization, type=3, title="site Created",
-                                description="site Created{0} created by {1}".format(self.object.name, self.request.user.username))
-
-        return HttpResponseRedirect(self.get_success_url())
 
 class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
-
-    def form_valid(self, form):
-        self.object = form.save()
-
-        self.object.logs.create(source=self.request.user, organization=self.object.project.organization, type=3, title="site Updated",
-                                description="site Updated{0} updated by {1}".format(self.object.name, self.request.user.username))
-
-        return HttpResponseRedirect(self.get_success_url())
-
+    def get_success_url(self):
+        return reverse('fieldsight:site-dashboard', kwargs={'pk': self.kwargs['pk']})
 
 class SiteDeleteView(SiteView, ProjectMixin, DeleteView):
     pass
@@ -652,9 +630,14 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
             org = Organization.objects.get(pk=organization)
             profile = UserProfile(user=new_user, organization=org)
             profile.save()
-            profile.logs.create(source=request.user, organization=profile.organization, type=0, title="new User",
-                                         description="new user {0} created by {1}".format(new_user.username,
-                                          request.user.username))
+            noti = profile.logs.create(source=self.request.user, type=0, title="new User",
+                                    organization=profile.organization, description="new user {0} created by {1}".
+                                    format(new_user.username, self.request.user.username))
+            result = {}
+            result['description'] = 'new user {0} created by {1}'.format(new_user.username, self.request.user.username)
+            result['url'] = noti.get_absolute_url()
+            Group("notify-{}".format(profile.organization.id)).send({"text":json.dumps(result)})
+            Group("notify-0".format(profile.organization.id)).send({"text":json.dumps(result)})
 
         return new_user
 
