@@ -260,10 +260,10 @@ class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMix
 class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationMixin, MyOwnOrganizationMixin, UpdateView):
     def get_success_url(self):
         return reverse('fieldsight:organization-dashboard', kwargs={'pk': self.kwargs['pk']})
+    pass
 
 
-
-class OrganizationDeleteView(OrganizationView,LoginRequiredMixin, SuperAdminMixin, DeleteView):
+class OrganizationDeleteView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, DeleteView):
     pass
 
 @login_required
@@ -457,12 +457,28 @@ class ProjectListView(ProjectView, OrganizationMixin, ListView):
 
 
 class ProjectCreateView(ProjectView, OrganizationMixin, CreateView):
-    pass
+    def form_valid(self, form):
+        self.object = form.save()
+
+        self.object.logs.create(source=self.request.user, organization=self.object.organization, type=4, title="project Created",
+                                description="project Created{0} created by {1}".format(self.object.name, self.request.user.username))
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView):
+
     def get_success_url(self):
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs['pk']})
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        self.object.logs.create(source=self.request.user, organization=self.object.organization, type=4, title = "project Updated",
+                                description="project Updated{0} updated by {1}".format(self.object.name, self.request.user.username))
+
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class ProjectDeleteView(ProjectView, OrganizationMixin, DeleteView):
@@ -483,12 +499,23 @@ class SiteListView(SiteView, ReviewerMixin, ListView):
 
 
 class SiteCreateView(SiteView, ProjectMixin, CreateView):
-    pass
+    def form_valid(self, form):
+        self.object = form.save()
 
+        self.object.logs.create(source=self.request.user, organization=self.object.project.organization, type=3, title="site Created",
+                                description="site Created{0} created by {1}".format(self.object.name, self.request.user.username))
+
+        return HttpResponseRedirect(self.get_success_url())
 
 class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
-    def get_success_url(self):
-        return reverse('fieldsight:site-dashboard', kwargs={'pk': self.kwargs['pk']})
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        self.object.logs.create(source=self.request.user, organization=self.object.project.organization, type=3, title="site Updated",
+                                description="site Updated{0} updated by {1}".format(self.object.name, self.request.user.username))
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class SiteDeleteView(SiteView, ProjectMixin, DeleteView):
@@ -509,7 +536,7 @@ def ajax_upload_sites(request, pk):
                     lat = site.get("longitude", 85.3240)
                     long = site.get("latitude", 27.7172)
                     location = Point(lat, long, srid=4326)
-                    type_id = int(site.get("type", "1"))    
+                    type_id = int(site.get("type", "1"))
                     _site, created = Site.objects.get_or_create(identifier=str(site.get("id")), name=site.get("name"),
                                                                 project=project, type_id=type_id)
                     _site.phone = site.get("phone")
@@ -625,14 +652,9 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
             org = Organization.objects.get(pk=organization)
             profile = UserProfile(user=new_user, organization=org)
             profile.save()
-            noti = profile.logs.create(source=self.request.user, type=0, title="new User",
-                                    organization=profile.organization, description="new user {0} created by {1}".
-                                    format(new_user.username, self.request.user.username))
-            result = {}
-            result['description'] = 'new user {0} created by {1}'.format(new_user.username, self.request.user.username)
-            result['url'] = noti.get_absolute_url()
-            Group("notify-{}".format(profile.organization.id)).send({"text":json.dumps(result)})
-            Group("notify-0".format(profile.organization.id)).send({"text":json.dumps(result)})
+            profile.logs.create(source=request.user, organization=profile.organization, type=0, title="new User",
+                                         description="new user {0} created by {1}".format(new_user.username,
+                                          request.user.username))
 
         return new_user
 
