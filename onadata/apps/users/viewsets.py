@@ -131,12 +131,12 @@ class UserViewSet(viewsets.ModelViewSet):
                     send_email=True,
                     request=self.request,
                 )
-                profile.logs.create(source=self.request.user, type=0, title="new User",
+                noti = profile.logs.create(source=self.request.user, type=0, title="new User",
                                     organization=profile.organization, description="new user {0} created by {1}".
                                     format(user.username, self.request.user.username))
                 result = {}
                 result['description'] = 'new user {0} created by {1}'.format(user.username, self.request.user.username)
-                result['url'] = '/users/profile/{}'.format(profile.user.id)
+                result['url'] = noti.get_absolute_url()
                 Group("notify-{}".format(profile.organization.id)).send({"text":json.dumps(result)})
                 Group("notify-0".format(profile.organization.id)).send({"text":json.dumps(result)})
 

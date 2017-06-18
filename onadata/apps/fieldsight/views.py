@@ -625,9 +625,15 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
             org = Organization.objects.get(pk=organization)
             profile = UserProfile(user=new_user, organization=org)
             profile.save()
-            profile.logs.create(source=request.user, organization=profile.organization, type=0, title="new User",
-                                         description="new user {0} created by {1}".format(new_user.username,
-                                          request.user.username))
+            noti = profile.logs.create(source=self.request.user, type=0, title="new User",
+                                    organization=profile.organization, description="new user {0} created by {1}".
+                                    format(new_user.username, self.request.user.username))
+            result = {}
+            result['description'] = 'new user {0} created by {1}'.format(new_user.username, self.request.user.username)
+            result['url'] = noti.get_absolute_url()
+            Group("notify-{}".format(profile.organization.id)).send({"text":json.dumps(result)})
+            Group("notify-0".format(profile.organization.id)).send({"text":json.dumps(result)})
+
         return new_user
 
 

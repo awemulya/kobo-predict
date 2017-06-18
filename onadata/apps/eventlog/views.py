@@ -28,6 +28,8 @@ class NotificationDetailView(View):
         if not notification.is_seen:
             notification.is_seen = True
             notification.save()
+        if notification.type == 0:
+            return redirect('/users/profile/{}'.format(notification.content_object.user.id))
         url =  notification.content_object.get_absolute_url()
         return redirect(url)
 
