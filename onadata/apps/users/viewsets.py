@@ -72,7 +72,7 @@ class EditProfilePermission(BasePermission):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.filter(is_active=True)
+    queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated, AddPeoplePermission)
 

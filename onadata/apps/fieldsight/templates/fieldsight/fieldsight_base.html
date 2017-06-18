@@ -53,7 +53,7 @@
     <link rel="stylesheet" type="text/css"  href="{% static 'slick/slick.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'slick/slick-theme.css' %}" />
 
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"  crossorigin="anonymous">
 
 
     <!-- <link rel="stylesheet" href="{% static 'css/bootstrap-material-design.min.css' %}">
@@ -114,7 +114,7 @@ notificationCount += 1;
 $('#noti-count').text(notificationCount);
 description = text.description;
 not_url = text.url
-new_li = '<li><a href='+not_url+'><i class="fa fa-info-circle fa-1"></i>'+ description +' </a>  </li>';
+new_li = '<li class=" note-div-sm unread "><a href='+not_url+'><i class="fa fa-info-circle fa-1"></i>'+ description +' </a>  </li>';
 <!--console.log(new_li);-->
 <!--$('#notification-ul').append(new_li);-->
 $(new_li).prependTo($('#notification-ul'));
@@ -166,7 +166,7 @@ console.log(text.prop2);
     </div>
 </div>
 <div class="brand-side col-sm-10">
-        <ol class="breadcrumb hidden-print col-sm-10" style="font-size: 16px;color: white !important;">
+        <ol class="breadcrumb hidden-print col-sm-9" style="font-size: 16px;color: white !important;">
                     {% block breadcrumbs_container %}
                         <li><a href="{% url 'dashboard' %}">{% trans 'Home' %}</a></li>
                         {% block breadcrumbs %}
@@ -219,18 +219,31 @@ console.log(text.prop2);
               <span class="label label-warning" id="noti-count">{% if notifications.count %} {{notifications.count }} {% endif %}</span>
             </a>
               {% if notifications.count %}
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu menu-top">
                 <ul class="menu" id="notification-ul">
-                    {% for not in notifications %}
-                  <li>
-                    <a href="{{not.get_absolute_url}}">
-                      <i class="fa fa-info-circle fa-1"></i> {{not.description}}
+                  <div class="title2_note_div">
+                    <span class="title2_note_sm">Notifications</span>
+                  </div>
+                    {% for noti in notifications %}
+                  <li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
+                    <a href="{{noti.get_absolute_url}}" class="full">
+                 <div class="col-md-1">
+                      <i class="fa fa-info-circle fa-1 note-icon-sm"></i>
+                 </div>
+                 <div class="col-md-10">
+                  <span class="detail-text1 notification-title-sm">{{noti.description}}</span>
+                  
+                  <div class="low">
+                    <i class="fa fa-clock-o space" aria-hidden="true"></i>
+                    {{noti.date}}
+                  </div>
+                  </div>
                     </a>
                   </li>
                 {% endfor %}
                 </ul>
               </li>
-              <li class="footer"><a href="{% url 'eventlog:notification-list' %}">{% if notifications.count %} {% trans 'View all' %} {% endif %}</a></li>
+              <li class="footer note-footer"><a href="{% url 'eventlog:notification-list' %}">{% if notifications.count %} {% trans 'View all' %} {% endif %}</a></li>
             </ul>
               {% endif %}
           </li>
@@ -251,7 +264,7 @@ console.log(text.prop2);
             <ul class="dropdown-menu dropdown-menu-right extended logout" id="fs_drop_menu">
                         {% if request.role %}
                             <li >
-                                <a href="#" style="background: #e4e8ef; border-radius: 4px !important;"><h6>{% trans 'Using as' %} {{ request.role.group }}
+                                <a href="#" style="background: #e4e8ef; border-radius: 4px !important;" class="detail-text1"><h6>{% trans 'Using as' %} {{ request.role.group }}
                                     {% if request.site%}
                                     {% trans 'at Site ' %}{{request.site}}
                                     {% endif %}
