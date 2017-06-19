@@ -11,6 +11,7 @@ from onadata.apps.fsforms.viewsets.StageViewset import SiteMainStageViewSet, \
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
 from .views import (
     LibraryFormsListView,
+    XformDetailView,
     GroupListView,
     GroupCreateView,
     GroupUpdateView,
@@ -46,6 +47,7 @@ from .views import (
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
         url(r'^assigned/$', MyOwnFormsListView.as_view(), name='forms-list'),
+        url(r'^xform/(?P<pk>\d+)/$', XformDetailView.as_view(), name='xform-detail'),
         url(r'^assigned-form-list/$', AssignedFormsListView.as_view(), name='assigned-form-list'),
 
         url(r'^group/$', GroupListView.as_view(), name='group-list'),

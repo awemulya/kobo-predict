@@ -5,6 +5,8 @@ import re
 import io
 
 from hashlib import md5
+
+from django.contrib.contenttypes.fields import GenericRelation
 from django.utils import timezone
 from datetime import datetime
 from django.conf import settings
@@ -93,6 +95,7 @@ class XForm(BaseModel):
     num_of_submissions = models.IntegerField(default=0)
 
     tags = TaggableManager()
+    logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
         app_label = 'logger'
@@ -199,6 +202,9 @@ class XForm(BaseModel):
 
     def __unicode__(self):
         return getattr(self, "id_string", "")
+
+    def get_absolute_url(self):
+        return reverse('forms:xform-detail', kwargs={'pk': self.pk})
 
     def submission_count(self, force_update=False):
         if self.num_of_submissions == 0 or force_update:

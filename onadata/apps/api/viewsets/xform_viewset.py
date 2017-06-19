@@ -767,6 +767,17 @@ data (instance/submission per row)
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            noti = xform.logs.create(source=request.user, type=7, title="new Kobo form",
+                                     organization=request.organization,
+                                    description="new kobo form {0} created by {1}".
+                                    format(xform.title, request.user.username))
+            result = {}
+            result['description'] = noti.description
+            result['url'] = noti.get_absolute_url()
+            from channels import Group
+            Group("notify-0").send({"text":json.dumps(result)})
+            if noti.organization:
+                Group("notify-{}".format(noti.organization.id)).send({"text":json.dumps(result)})
             headers = self.get_success_headers(serializer.data)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED,
@@ -794,6 +805,17 @@ data (instance/submission per row)
                     # Something odd; hopefully it can be coerced into a string
                     raise exceptions.ParseError(detail=survey)
         # Let the superclass handle updates to the other fields
+        noti = existing_xform.logs.create(source=request.user, type=7, title="Kobo form Updated",
+                                     organization=request.organization,
+                                    description="new kobo form {0} Updated by {1}".
+                                    format(existing_xform.title, request.user.username))
+        result = {}
+        result['description'] = noti.description
+        result['url'] = noti.get_absolute_url()
+        from channels import Group
+        Group("notify-0").send({"text":json.dumps(result)})
+        if noti.organization:
+            Group("notify-{}".format(noti.organization.id)).send({"text":json.dumps(result)})
         return super(XFormViewSet, self).update(request, pk, *args, **kwargs)
 
     @detail_route(methods=['GET'])

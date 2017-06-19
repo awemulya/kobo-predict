@@ -21,6 +21,7 @@ class FieldSightLog(models.Model):
         (4, 'Project'),
         (5, 'Organization'),
         (6, 'Role'),
+        (7, 'XFORM'),
     )
     type = models.IntegerField(default=0, choices=ACTION_TYPES)
     title = models.CharField(max_length=255)
@@ -28,7 +29,7 @@ class FieldSightLog(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     is_seen = models.BooleanField(default=False)
     source = models.ForeignKey(User, related_name='log', null=True)
-    organization = models.ForeignKey(Organization, related_name="logs")
+    organization = models.ForeignKey(Organization, related_name="logs", null=True)
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
