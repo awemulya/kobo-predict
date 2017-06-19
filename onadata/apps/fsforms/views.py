@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpResponseBadRequest
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
@@ -30,7 +30,7 @@ from onadata.libs.utils.user_auth import helper_auth_helper
 from onadata.libs.utils.log import audit_log, Actions
 from onadata.libs.utils.logger_tools import response_with_mimetype_and_name
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectMixin, \
-    CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin
+    CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin, SuperAdminMixin
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
     AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm, GeneralForm, KoScheduleForm
@@ -1460,4 +1460,11 @@ def data_view(request, fsxf_id):
         }, audit, request)
 
     return render(request, "fieldsight_data_view.html", data)
+
+class XFormView(object):
+    model = XForm
+
+
+class XformDetailView(LoginRequiredMixin, SuperAdminMixin, XFormView, DetailView):
+    pass
 

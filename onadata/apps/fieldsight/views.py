@@ -23,6 +23,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from channels import Group as ChannelGroup
+
 from onadata.apps.eventlog.models import FieldSightLog
 from onadata.apps.fieldsight.bar_data_project import BarGenerator
 from onadata.apps.fsforms.Submission import Submission
@@ -631,8 +633,8 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
             result = {}
             result['description'] = 'new user {0} created by {1}'.format(new_user.username, self.request.user.username)
             result['url'] = noti.get_absolute_url()
-            Group("notify-{}".format(profile.organization.id)).send({"text":json.dumps(result)})
-            Group("notify-0".format(profile.organization.id)).send({"text":json.dumps(result)})
+            ChannelGroup("notify-{}".format(profile.organization.id)).send({"text":json.dumps(result)})
+            ChannelGroup("notify-0").send({"text":json.dumps(result)})
 
         return new_user
 
