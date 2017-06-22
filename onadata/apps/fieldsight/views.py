@@ -459,7 +459,19 @@ class ProjectListView(ProjectView, OrganizationMixin, ListView):
 
 
 class ProjectCreateView(ProjectView, OrganizationMixin, CreateView):
-    pass
+    def form_valid(self, form):
+        self.object = form.save()
+        noti = self.object.logs.create(source=self.request.user, type=4, title="new Project",
+                                       organization=self.object.organization,
+                                       description="new project {0} created by {1}".
+                                       format(self.object.name, self.request.user.username))
+        result = {}
+        result['description'] = 'new project {0} created by {1}'.format(self.object.name, self.request.user.username)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView):
@@ -468,9 +480,18 @@ class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView
 
     def form_valid(self, form):
         self.object = form.save()
-
+        noti = self.object.logs.create(source=self.request.user, type=4, title="new Project",
+                                       organization=self.object.organization,
+                                       description="new project {0} updated by {1}".
+                                       format(self.object.name, self.request.user.username))
+        result = {}
+        result['description'] = 'new project {0} updated by {1}'.format(self.object.name, self.request.user.username)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
+
 
 
 class ProjectDeleteView(ProjectView, OrganizationMixin, DeleteView):
@@ -491,12 +512,40 @@ class SiteListView(SiteView, ReviewerMixin, ListView):
 
 
 class SiteCreateView(SiteView, ProjectMixin, CreateView):
-    pass
+    def form_valid(self, form):
+        self.object = form.save()
+        noti = self.object.logs.create(source=self.request.user, type=3, title="new Project",
+                                       organization=self.object.project.organization,
+                                       description="new site {0} created by {1}".
+                                       format(self.object.name, self.request.user.username))
+        result = {}
+        result['description'] = 'new project {0} updated by {1}'.format(self.object.name, self.request.user.username)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+        return HttpResponseRedirect(self.get_success_url())
+
 
 
 class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
     def get_success_url(self):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.kwargs['pk']})
+
+    def form_valid(self, form):
+        self.object = form.save()
+        noti = self.object.logs.create(source=self.request.user, type=3, title="new Site",
+                                       organization=self.object.project.organization,
+                                       description="new site {0} created by {1}".
+                                       format(self.object.name, self.request.user.username))
+        result = {}
+        result['description'] = 'new site {0} updated by {1}'.format(self.object.name, self.request.user.username)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class SiteDeleteView(SiteView, ProjectMixin, DeleteView):
     pass
