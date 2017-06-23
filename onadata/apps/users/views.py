@@ -19,6 +19,7 @@ from rest_framework.views import APIView
 from onadata.apps.fieldsight.mixins import UpdateView, ProfileView, OwnerMixin, SuperAdminMixin, group_required
 from rest_framework import renderers
 
+from channels import Group as ChannelGroup
 from onadata.apps.fieldsight.models import Organization
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
@@ -270,9 +271,15 @@ class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
         profile.google_talk = form.cleaned_data['google_talk']
         profile.profile_picture = form.cleaned_data['profile_picture']
         profile.save()
-        profile.logs.create(source=self.request.user, type=0, title="new User",
-                         description="new user {0} created by {1}".
-                         format(user.username, self.request.user.username))
+        noti = profile.logs.create(source=self.request.user, type=0, title="User",
+                                   organization=profile.organization, description="user {0} updated by {1}".
+                                   format(user.username, self.request.user.username))
+        result = {}
+        result['description'] = 'user {0} updated by {1}'.format(user.username, self.request.user.username)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(profile.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
         return HttpResponseRedirect(self.success_url)
 
 
@@ -289,3 +296,14 @@ def my_profile(request, pk=None):
 
 class UsersListView(TemplateView, SuperAdminMixin):
     template_name = "users/list.html"
+
+import json
+from channels import Group
+
+
+def all_notification(user,  message):
+    Group("%s" % user).send({
+        "text": json.dumps({
+            "msg": message
+        })
+    })

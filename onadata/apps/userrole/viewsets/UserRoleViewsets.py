@@ -8,6 +8,7 @@ from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, BasePermission
 
+from channels import Group as ChannelGroup
 from onadata.apps.fieldsight.mixins import USURPERS
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.userrole.serializers.UserRoleSerializer import UserRoleSerializer
@@ -71,14 +72,27 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                     if not created:
                         role.ended_at = None
                         role.save()
-                        role.logs.create(source=self.request.user, type=0, title="new User",
-                                            description="new user {0} created by {1}".
-                                            format(user.username, self.request.user.username))
+                        noti = role.logs.create(source=self.request.user, type=6, title="User Role", organization=role.organization,
+                                                   description="user role {0} updated by {1}".format(user.username, self.request.user.username))
+                        result = {}
+                        result['description'] = 'user {0} updated by {1}'.format(user.username, self.request.user.username)
+                        result['url'] = noti.get_absolute_url()
+                        ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
         except Exception as e:
             raise ValidationError({
                 "User Creation Failed ",
             })
         return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
 
+import json
+from channels import Group
 
 
+def all_notification(user,  message):
+    Group("%s" % user).send({
+        "text": json.dumps({
+            "msg": message
+        })
+    })
