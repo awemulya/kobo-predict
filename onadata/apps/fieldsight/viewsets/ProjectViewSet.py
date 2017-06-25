@@ -2,7 +2,8 @@ from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import BasePermission
-
+from django.http import HttpResponseRedirect, JsonResponse
+from channels import Group as ChannelGroup
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated, BasePermission
@@ -32,7 +33,10 @@ class ProjectPermission(BasePermission):
                 return obj.organization == request.organization
         return False
 
+
 class ProjectCreationViewSet(viewsets.ModelViewSet):
+
+    queryset = Project.objects.all()
     serializer_class = ProjectCreationSerializer
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     permission_classes = (ProjectPermission,)
@@ -43,6 +47,18 @@ class ProjectCreationViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+    def perform_create(self, serializer):
+        project = serializer.save()
+        project.save()
+        noti = project.logs.create(source=self.request.user, type=4, title="new Project", organization=project.organization,
+                                   description="new project {0} created by {1}".format(project.name, self.request.user.username))
+        result = {}
+        result['description'] = 'new user {0} created by {1}'.format(project.name, self.request.user.username)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(project.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        return project
 
 
 class ProjectsPermission(BasePermission):
@@ -96,3 +112,14 @@ class OrganizationsProjectViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+import json
+from channels import Group
+
+
+def all_notification(user,  message):
+    Group("%s" % user).send({
+        "text": json.dumps({
+            "msg": message
+        })
+    })

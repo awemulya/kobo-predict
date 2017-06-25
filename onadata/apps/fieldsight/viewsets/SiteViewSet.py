@@ -2,6 +2,8 @@ from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import BasePermission
+from channels import Group as ChannelGroup
+
 
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
 from onadata.apps.fieldsight.models import Site, ProjectType
@@ -78,16 +80,16 @@ class SiteViewSet(viewsets.ModelViewSet):
         project = self.kwargs.get('pk', None)
         return queryset.filter(project__id=project, is_active=True)
 
-    def perform_create(self, serializer):
-        user = serializer.save()
-        site = Site(user=user, organization_id=self.kwargs.get('pk'))
-        site.save()
-        site.logs.create(source=self.request.user, type=5, title="new User",
-                                    organization=site.project.organization, description="new site {0} created by {1}".
-                                    format(user.username, self.request.user.username))
-        result = {}
-        result['description'] = 'new site {0} created by {1}'.format(user.username, self.request.user.username)
-
+    # def perform_create(self, serializer):
+    #     user = serializer.save()
+    #     site = Site(user=user, organization_id=self.kwargs.get('pk'))
+    #     site.save()
+    #     site.logs.create(source=self.request.user, type=5, title="new User",
+    #                                 organization=site.project.organization, description="new site {0} created by {1}".
+    #                                 format(user.username, self.request.user.username))
+    #     result = {}
+    #     result['description'] = 'new site {0} created by {1}'.format(user.username, self.request.user.username)
+    #
 
 class AllSiteViewSet(viewsets.ModelViewSet):
     """
@@ -124,6 +126,19 @@ class SiteCreationSurveyViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+    def perform_create(self, serializer):
+        site = serializer.save()
+        site.save()
+        noti = site.logs.create(source=self.request.user, type=3, title="new Site", organization=site.project.organization,
+                                   description="new site {0} created by {1}".format(site.name, self.request.user.username))
+        result = {}
+        result['description'] = 'new user {0} created by {1}'.format(site.name, self.request.user.username)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        return site
+
 
 
 class SiteUnderProjectViewSet(viewsets.ModelViewSet):
@@ -176,5 +191,14 @@ class ProjectTypeViewset(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return {'request': self.request}
 
+import json
+from channels import Group
 
+
+def all_notification(user,  message):
+    Group("%s" % user).send({
+        "text": json.dumps({
+            "msg": message
+        })
+    })
 

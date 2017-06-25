@@ -33,7 +33,7 @@ class OrganizationType(models.Model):
         return u'{}'.format(self.name)
 
 
-class ProjectType(models.Model):
+class   ProjectType(models.Model):
     name = models.CharField("Project Type", max_length=256)
 
     def __unicode__(self):
