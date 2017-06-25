@@ -34,7 +34,7 @@ class ProjectPermission(BasePermission):
 
 class ProjectCreationViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectCreationSerializer
-    authentication_classes = (CsrfExemptSessionAuthentication, )
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     permission_classes = (ProjectPermission,)
     parser_classes = (MultiPartParser, FormParser,)
 
@@ -44,16 +44,6 @@ class ProjectCreationViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return {'request': self.request}
 
-    def perform_create(self, serializer):
-        user = serializer.save()
-        project = Project(user=user, organization_id=self.kwargs.get('pk'))
-        project.save()
-        project.logs.create(source=self.request.user, type=4, title="new Project",
-                                    organization=project.organization, description="new project {0} created by {1}".
-                                    format(user.username, self.request.user.username))
-
-        result = {}
-        result['description'] = 'new user {0} created by {1}'.format(user.username, self.request.user.username)
 
 class ProjectsPermission(BasePermission):
     def has_permission(self, request, view):

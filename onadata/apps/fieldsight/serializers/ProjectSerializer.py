@@ -1,6 +1,6 @@
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
-from onadata.apps.fieldsight.models import Project, ProjectType
+from onadata.apps.fieldsight.models import Project, ProjectType, OrganizationType
 
 
 class ProjectTypeSerializer(serializers.ModelSerializer):
@@ -16,14 +16,21 @@ class ProjectTypeSerializer(serializers.ModelSerializer):
 
 
 class ProjectCreationSerializer(serializers.ModelSerializer):
-    # images = PhotoSerializer(many=True, read_only=True)
-    latitude= serializers.CharField()
-    longitude= serializers.CharField()
+    latitude = serializers.CharField()
+    longitude = serializers.CharField()
 
     class Meta:
         model = Project
         read_only_fields = ('logo', 'location')
-        exclude = ('organization',)
+        exclude = ()
+
+    def create(self, validated_data):
+        p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')), srid=4326)
+        validated_data.update({'is_active': True, 'location': p})
+        project = Project.objects.create(**validated_data)
+        project.save()
+        return project
+
 
 
 class ProjectSerializer(serializers.ModelSerializer):
