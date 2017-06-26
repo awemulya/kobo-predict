@@ -95,20 +95,13 @@ class OrganizationsProjectViewSet(viewsets.ModelViewSet):
 
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-
     authentication_classes = (BasicAuthentication,)
     permission_classes = (ProjectPermission,)
-
-    def filter_queryset(self, queryset):
-
-        id = self.kwargs.get('pk', None)
-        return queryset.filter(organization__id=id, is_active=True)
-
-
     parser_classes = (MultiPartParser, FormParser,)
 
     def filter_queryset(self, queryset):
-        return queryset.filter(organization__pk=self.kwargs.get('pk', None))
+        id = self.kwargs.get('pk', None)
+        return queryset.filter(organization__id=id, is_active=True)
 
     def get_serializer_context(self):
         return {'request': self.request}
