@@ -16,8 +16,11 @@ urlpatterns = [
     url(r'^api/alter-status/(?P<pk>[0-9]+)/$', views.alter_status),
     url(r'^api/get-auth-token/$', views.ObtainAuthToken.as_view() ),
     url(r'^profile-update/(?P<pk>[0-9]+)/$', views.ProfileUpdateView.as_view(), name='profile_update'),
+    url(r'^api/profile/(?P<pk>[0-9]+)/$',
+        ProfileViewSet.as_view({'post': 'update'}), name='profile_update_api'),
     url(r'^api/profile(?:/(?P<pk>[0-9]+))?/$',
-        ProfileViewSet.as_view({'put': 'update','get':'retrieve'}), name='profile_update_api'),
+        ProfileViewSet.as_view({'get':'retrieve'}), name='profile_get_api'),
+
     url(r'^profile/(?P<pk>[0-9]+)/$', views.my_profile, name='profile'),
     ]
 
