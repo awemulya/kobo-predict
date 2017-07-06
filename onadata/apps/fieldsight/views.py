@@ -176,9 +176,6 @@ def project_dashboard(request, pk):
 
     line_chart = LineChartGenerator(obj)
     line_chart_data = line_chart.data()
-    ordered_list_line = [{'date': key, 'close': val} for key, val in line_chart_data.items()]
-
-    graph_data = json.dumps(ordered_list_line)
     dashboard_data = {
         'obj': obj,
         'peoples_involved': peoples_involved,
@@ -190,7 +187,8 @@ def project_dashboard(request, pk):
         'rejected': rejected,
         'data': data,
         'bar_data': bar_data,
-        'line_chart_data': graph_data,
+        'cumulative_data': line_chart_data.values(),
+        'cumulative_labels': line_chart_data.keys(),
     }
     return TemplateResponse(request, "fieldsight/project_dashboard.html", dashboard_data)
 
@@ -218,10 +216,6 @@ def site_dashboard(request, pk):
 
     line_chart = LineChartGeneratorSite(obj)
     line_chart_data = line_chart.data()
-    ordered_list_line = [{'date': key, 'close': val} for key, val in line_chart_data.items()]
-
-    graph_data = json.dumps(ordered_list_line)
-
 
     outstanding, flagged, approved, rejected = obj.get_site_submission()
     dashboard_data = {
@@ -232,7 +226,8 @@ def site_dashboard(request, pk):
         'approved': approved,
         'rejected': rejected,
         'data': data,
-        'line_chart_data': graph_data,
+        'cumulative_data': line_chart_data.values(),
+        'cumulative_labels': line_chart_data.keys(),
     }
     return TemplateResponse(request, "fieldsight/site_dashboard.html", dashboard_data)
 

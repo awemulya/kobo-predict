@@ -18,17 +18,17 @@ class LineChartGenerator(object):
 
     def __init__(self, project):
         self.project = project
+        self.date_list = list(date_range(project.date_created.strftime("%Y%m%d"), datetime.datetime.today().strftime("%Y%m%d"), 6))
 
     def get_count(self, date):
-        return self.project.project_instances.filter(date__contains=date.date()).count()
+        return self.project.project_instances.filter(date__lt=date.date()).count()
 
     def data(self):
         d = OrderedDict()
-        dt = [(datetime.datetime.today() - datetime.timedelta(days=x)) for x in range(0,30)]
-        dt = dt[::-1]
+        dt = self.date_list
         for date in dt:
             count = self.get_count(date)
-            d[date.date().strftime('%Y-%m-%d')] = count
+            d[date.strftime('%Y-%m-%d')] = count
         return d
 
 
@@ -46,8 +46,6 @@ class LineChartGeneratorOrganization(object):
         dt = self.date_list
         for date in dt:
             count = self.get_count(date)
-            # import ipdb
-            # ipdb.set_trace()
             d[date.strftime('%Y-%m-%d')] = count
         return d
 
@@ -56,17 +54,17 @@ class LineChartGeneratorSite(object):
 
     def __init__(self, site):
         self.site = site
+        self.date_list = list(date_range(site.date_created.strftime("%Y%m%d"), datetime.datetime.today().strftime("%Y%m%d"), 6))
 
     def get_count(self, date):
-        return self.site.site_instances.filter(date__contains=date.date()).count()
+        return self.site.site_instances.filter(date__lt=date.date()).count()
 
     def data(self):
         d = OrderedDict()
-        dt = [(datetime.datetime.today() - datetime.timedelta(days=x)) for x in range(0,30)]
-        dt = dt[::-1]
+        dt = self.date_list
         for date in dt:
             count = self.get_count(date)
-            d[date.date().strftime('%Y-%m-%d')] = count
+            d[date.strftime('%Y-%m-%d')] = count
         return d
 
 
