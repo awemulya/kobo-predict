@@ -128,9 +128,6 @@ def organization_dashboard(request, pk):
 
     line_chart = LineChartGeneratorOrganization(obj)
     line_chart_data = line_chart.data()
-    ordered_list_line = [{'date': key, 'close': val} for key, val in line_chart_data.items()]
-
-    graph_data = json.dumps(ordered_list_line)
 
     dashboard_data = {
         'obj': obj,
@@ -146,8 +143,8 @@ def organization_dashboard(request, pk):
         'rejected': rejected,
         'data': data,
         'bar_data': bar_data,
-        'line_chart_data': graph_data,
-        'cumulative_data': [0,3,5,7,9],
+        'cumulative_data': line_chart_data.values(),
+        'cumulative_labels': line_chart_data.keys(),
     }
     return TemplateResponse(request, "fieldsight/organization_dashboard.html", dashboard_data)
 
