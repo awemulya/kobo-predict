@@ -147,6 +147,7 @@ def organization_dashboard(request, pk):
         'data': data,
         'bar_data': bar_data,
         'line_chart_data': graph_data,
+        'cumulative_data': [0,3,5,7,9],
     }
     return TemplateResponse(request, "fieldsight/organization_dashboard.html", dashboard_data)
 
