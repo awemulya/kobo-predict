@@ -21,7 +21,7 @@ class LineChartGenerator(object):
         self.date_list = list(date_range(project.date_created.strftime("%Y%m%d"), datetime.datetime.today().strftime("%Y%m%d"), 6))
 
     def get_count(self, date):
-        return self.project.project_instances.filter(date__lt=date.date()).count()
+        return self.project.project_instances.filter(date__lte=date.date()).count()
 
     def data(self):
         d = OrderedDict()
@@ -39,7 +39,7 @@ class LineChartGeneratorOrganization(object):
         self.date_list = list(date_range(organization.date_created.strftime("%Y%m%d"), datetime.datetime.today().strftime("%Y%m%d"), 6))
 
     def get_count(self, date):
-        return FInstance.objects.filter(project__organization=self.organization, date__lt=date.date()).count()
+        return FInstance.objects.filter(project__organization=self.organization, date__lte=date.date()).count()
 
     def data(self):
         d = OrderedDict()
@@ -57,7 +57,7 @@ class LineChartGeneratorSite(object):
         self.date_list = list(date_range(site.date_created.strftime("%Y%m%d"), datetime.datetime.today().strftime("%Y%m%d"), 6))
 
     def get_count(self, date):
-        return self.site.site_instances.filter(date__lt=date.date()).count()
+        return self.site.site_instances.filter(date__lte=date.date()).count()
 
     def data(self):
         d = OrderedDict()
