@@ -39,6 +39,7 @@ class LineChartGeneratorOrganization(object):
         self.date_list = list(date_range(organization.date_created.strftime("%Y%m%d"), datetime.datetime.today().strftime("%Y%m%d"), 6))
 
     def get_count(self, date):
+        date = date + datetime.timedelta(days=1)
         return FInstance.objects.filter(project__organization=self.organization, date__lte=date.date()).count()
 
     def data(self):
