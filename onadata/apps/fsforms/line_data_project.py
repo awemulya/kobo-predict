@@ -21,6 +21,7 @@ class LineChartGenerator(object):
         self.date_list = list(date_range(project.date_created.strftime("%Y%m%d"), datetime.datetime.today().strftime("%Y%m%d"), 6))
 
     def get_count(self, date):
+        date = date + datetime.timedelta(days=1)
         return self.project.project_instances.filter(date__lte=date.date()).count()
 
     def data(self):
@@ -58,6 +59,7 @@ class LineChartGeneratorSite(object):
         self.date_list = list(date_range(site.date_created.strftime("%Y%m%d"), datetime.datetime.today().strftime("%Y%m%d"), 6))
 
     def get_count(self, date):
+        date = date + datetime.timedelta(days=1)
         return self.site.site_instances.filter(date__lte=date.date()).count()
 
     def data(self):
