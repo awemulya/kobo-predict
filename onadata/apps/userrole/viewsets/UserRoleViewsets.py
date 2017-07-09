@@ -72,6 +72,7 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                     if not created:
                         role.ended_at = None
                         role.save()
+
                         noti = role.logs.create(source=self.request.user, type=6, title="User Role", organization=role.organization,
                                                    description="user role {0} updated by {1}".format(user.username, self.request.user.username))
                         result = {}
@@ -79,6 +80,12 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                         result['url'] = noti.get_absolute_url()
                         ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
                         ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+
+                        role.logs.create(source=self.request.user, type=
+                        0, title="new User",
+                                            description="new user {0} created by {1}".
+                                            format(user.username, self.request.user.username))
 
         except Exception as e:
             raise ValidationError({

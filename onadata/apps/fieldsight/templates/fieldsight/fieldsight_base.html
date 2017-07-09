@@ -88,6 +88,7 @@
     <script type="text/javascript" src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script type="text/javascript" src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
 
+
     <![endif]-->
 <audio id="beep" src="{{ STATIC_URL }}sound/notification.mp3"></audio>
 <script type="text/javascript">
@@ -95,34 +96,32 @@ var notificationCount = $('#noti-count').text() || "0";
 notificationCount = parseInt(notificationCount);
 
 var id = "{{request.user.id}}";
+var channel_url = "{{channels_url}}";
 var orgid = "{{oid}}";
+var today = new Date().toDateString();
 const webSocketBridgeNotify = new channels.WebSocketBridge();
 const webSocketBridgeChat = new channels.WebSocketBridge();
 
-<!--webSocketBridgeNotify.connect('/notify/'+orgid+'/');-->
-<!--webSocketBridgeChat.connect('/chat/'+id+'/');-->
-
-webSocketBridgeNotify.connect('ws://kc.naxa.com.np:8001/notify/'+orgid+'/');
-webSocketBridgeChat.connect('ws://kc.naxa.com.np:8001/chat/'+id+'/');
+webSocketBridgeNotify.connect(channel_url+'notify/'+orgid+'/');
+webSocketBridgeChat.connect(channel_url+'chat/'+id+'/');
 
 webSocketBridgeNotify.listen(function(text, byte) {
-if(notificationCount == 0){
-    notificationCount = $('#noti-count').text() || "0";
-    notificationCount = parseInt(notificationCount);
-                        }
-notificationCount += 1;
-$('#noti-count').text(notificationCount);
-description = text.description;
-not_url = text.url
-new_li = '<li class=" note-div-sm unread "><a href='+not_url+'><i class="fa fa-info-circle fa-1"></i>'+ description +' </a>  </li>';
-<!--console.log(new_li);-->
-<!--$('#notification-ul').append(new_li);-->
-$(new_li).prependTo($('#notification-ul'));
-document.getElementById('beep').play();
-<!--console.log(notificationCount);-->
+    if(notificationCount == 0){
+        notificationCount = $('#noti-count').text() || "0";
+        notificationCount = parseInt(notificationCount);
+    }
+    notificationCount += 1;
+    $('#noti-count').text(notificationCount);
+    description = text.description;
+    not_url = text.url
+    new_li = '<li class="note-div-sm unread"> <a href='+not_url+' class="full"> <div class="col-md-1"> \
+                <i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
+                  <span class="detail-text1 notification-title-sm">'+description +'</span> \
+                  <div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ today+' </div>\
+                  </div> </a> </li>';
 
-console.log(text.description);
-console.log(text.url);
+    $(new_li).prependTo($('#notification-ul'));
+    document.getElementById('beep').play();
 });
 
 
@@ -221,9 +220,6 @@ console.log(text.prop2);
               {% if notifications.count %}
             <ul class="dropdown-menu menu-top">
                 <ul class="menu" id="notification-ul">
-                  <div class="title2_note_div">
-                    <span class="title2_note_sm">Notifications</span>
-                  </div>
                     {% for noti in notifications %}
                   <li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
                     <a href="{{noti.get_absolute_url}}" class="full">
