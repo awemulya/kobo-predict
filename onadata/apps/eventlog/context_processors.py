@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from onadata.apps.eventlog.models import FieldSightLog, FieldSightMessage
 
 
@@ -17,6 +19,7 @@ def events(request):
     return {
         'notifications': logs,
         'fieldsight_message': messages,
-        'oid': oid
+        'oid': oid,
+        'channels_url': "ws://"+settings.WEBSOCKET_URL+":"+settings.WEBSOCKET_PORT+"/"
 
     }

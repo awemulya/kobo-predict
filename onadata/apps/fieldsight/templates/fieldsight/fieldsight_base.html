@@ -95,34 +95,26 @@ var notificationCount = $('#noti-count').text() || "0";
 notificationCount = parseInt(notificationCount);
 
 var id = "{{request.user.id}}";
+var channel_url = "{{channels_url}}";
 var orgid = "{{oid}}";
 const webSocketBridgeNotify = new channels.WebSocketBridge();
 const webSocketBridgeChat = new channels.WebSocketBridge();
 
-<!--webSocketBridgeNotify.connect('/notify/'+orgid+'/');-->
-<!--webSocketBridgeChat.connect('/chat/'+id+'/');-->
-
-webSocketBridgeNotify.connect('ws://kc.naxa.com.np:8001/notify/'+orgid+'/');
-webSocketBridgeChat.connect('ws://kc.naxa.com.np:8001/chat/'+id+'/');
+webSocketBridgeNotify.connect(channel_url+'notify/'+orgid+'/');
+webSocketBridgeChat.connect(channel_url+'chat/'+id+'/');
 
 webSocketBridgeNotify.listen(function(text, byte) {
-if(notificationCount == 0){
-    notificationCount = $('#noti-count').text() || "0";
-    notificationCount = parseInt(notificationCount);
-                        }
-notificationCount += 1;
-$('#noti-count').text(notificationCount);
-description = text.description;
-not_url = text.url
-new_li = '<li class=" note-div-sm unread "><a href='+not_url+'><i class="fa fa-info-circle fa-1"></i>'+ description +' </a>  </li>';
-<!--console.log(new_li);-->
-<!--$('#notification-ul').append(new_li);-->
-$(new_li).prependTo($('#notification-ul'));
-document.getElementById('beep').play();
-<!--console.log(notificationCount);-->
-
-console.log(text.description);
-console.log(text.url);
+    if(notificationCount == 0){
+        notificationCount = $('#noti-count').text() || "0";
+        notificationCount = parseInt(notificationCount);
+    }
+    notificationCount += 1;
+    $('#noti-count').text(notificationCount);
+    description = text.description;
+    not_url = text.url
+    new_li = '<li class=" note-div-sm unread "><a href='+not_url+'><i class="fa fa-info-circle fa-1"></i>'+ description +' </a>  </li>';
+    $(new_li).prependTo($('#notification-ul'));
+    document.getElementById('beep').play();
 });
 
 
