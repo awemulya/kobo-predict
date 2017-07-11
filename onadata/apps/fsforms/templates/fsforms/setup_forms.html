@@ -290,7 +290,7 @@ var pk = "{{pk}}";
                           <div class="row" data-bind="foreach: parent">
                             <div class="each-stage-grp">
                               <div class="col-sm-1"></div>
-                              <div class="col-sm-10"  >
+                              <div class="col-sm-10" data-bind="visible:!editable()">
                                 <div class="substage-name sub-stage-name-c">{% trans 'Sub Stage' %}
 
                                         <span data-bind='text: $index()+1'></span>:
@@ -304,13 +304,20 @@ var pk = "{{pk}}";
 
                               </div>
                                 <div class="col-sm-8 substage" data-bind="visible:editable">
-                                <a class="sub-stage-name-c">{% trans 'Sub Stage' %}
-                                    <span data-bind='text: $index()+1'></span>:
-                                    <input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name">
-                                    <input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description">
+                                <div class="sub-stage-name-c">{% trans 'Sub Stage' %}
+                                    <span data-bind='text: $index()+1'></span><br>
+                                    {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name"><br>
+                                    {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description"><br>
+                                    {% trans 'Form Assigned: ' %}
+                                    <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
+                                        value: stage_forms().xf().id">
+                                    </select>
+
+                                    <br>
+
                                     <button   data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
                                     <button  data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
-                                </a>
+                                </div>
 
                               </div>
                               <div class="col-md-3"></div>
