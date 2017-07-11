@@ -1,5 +1,9 @@
 from django.utils import timezone
 from fcm.utils import get_device_model
+from django.http import HttpResponseRedirect, JsonResponse
+from channels import Group as ChannelGroup
+import json
+from channels import Group
 
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -37,11 +41,35 @@ class UserRoleListView(LoginRequiredMixin, SuperAdminMixin, UserRoleView, ListVi
 
 
 class UserRoleCreateView(LoginRequiredMixin, SuperAdminMixin, UserRoleView, CreateView):
-    pass
+    def form_valid(self, form):
+        self.object = form.save()
+        noti = self.object.logs.create(source=self.request.user, type=6, title="new Role",
+                                       organization=self.object.role.organization,
+                                       description="new role {0} created by {1}".
+                                       format(self.object.name, self.request.user.username))
+        result = {}
+        result['description'] = 'new role {0} created by {1}'.format(self.object.name, self.request.user.username)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class UserRoleUpdateView(LoginRequiredMixin, SuperAdminMixin, UserRoleView, UpdateView):
-    pass
+    def form_valid(self, form):
+        self.object = form.save()
+        noti = self.object.logs.create(source=self.request.user, type=6, title="new Role",
+                                       organization=self.object.role.organization,
+                                       description="new role {0} updated by {1}".
+                                       format(self.object.name, self.request.user.username))
+        result = {}
+        result['description'] = 'new role {0} update by {1}'.format(self.object.name, self.request.user.username)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class UserRoleDeleteView(LoginRequiredMixin, SuperAdminMixin, UserRoleView, DeleteView):
@@ -77,3 +105,9 @@ def remove_role(request):
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 
+def all_notification(user,  message):
+    Group("%s" % user).send({
+        "text": json.dumps({
+            "msg": message
+        })
+    })
