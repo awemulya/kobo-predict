@@ -9,4 +9,5 @@ class XFormViewSet(viewsets.ReadOnlyModelViewSet):
     A simple ViewSet for viewing xforms.
     """
     queryset = XForm.objects.all()
+    # set custom querset with forms only belonging to library of his organization or self created.
     serializer_class = XFormListSerializer

@@ -2,16 +2,15 @@ from django.db import transaction
 from rest_framework import serializers
 
 from onadata.apps.fsforms.models import Stage, FieldSightXF
+from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFSerializer
 
 
 class SubStageSerializer1(serializers.ModelSerializer):
-    xf = serializers.CharField()
-    form_name = serializers.SerializerMethodField('get_assigned_form_name', read_only=True)
-    form = serializers.SerializerMethodField('get_assigned_form', read_only=True)
+    stage_forms = FSXFSerializer()
 
     class Meta:
         model = Stage
-        exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage')
+        exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage', 'date_modified', 'date_created')
 
     def get_assigned_form(self, obj):
         if not FieldSightXF.objects.filter(stage=obj).exists():
