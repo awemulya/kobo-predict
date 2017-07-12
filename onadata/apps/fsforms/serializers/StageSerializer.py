@@ -49,6 +49,8 @@ class StageSerializer1(serializers.ModelSerializer):
 
     def create(self, validated_data):
         id = self.context['request'].data.get('id', False)
+        stage = Stage.objects.get(pk=id)
+        return stage
         with transaction.atomic():
             new_substages = validated_data.pop('parent')
             substages_data = self.context['request'].data.get('parent')
