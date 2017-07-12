@@ -41,7 +41,7 @@ class SubStageSerializer1(serializers.ModelSerializer):
 
 
 class StageSerializer1(serializers.ModelSerializer):
-    parent = SubStageSerializer1(many=True)
+    parent = SubStageSerializer1(many=True, read_only=True)
 
     class Meta:
         model = Stage
@@ -49,18 +49,20 @@ class StageSerializer1(serializers.ModelSerializer):
 
     def create(self, validated_data):
         id = self.context['request'].data.get('id', False)
-        stage = Stage.objects.get(pk=id)
-        return stage
         with transaction.atomic():
-            new_substages = validated_data.pop('parent')
             substages_data = self.context['request'].data.get('parent')
             if not id:
                 stage = Stage.objects.create(**validated_data)
-                for order, ss in enumerate(new_substages):
-                    xf = ss.pop('xf')
+                for order, ss in enumerate(substages_data):
+                    fxf = ss.pop('stage_forms')
+                    xf = fxf.get('xf')
+                    xf_id = xf.get('id')
+                    # fxf_id = fxf.get('id')
+                    ss.pop('id')
+
                     ss.update({'stage':stage, 'order':order+1})
                     sub_stage_obj = Stage.objects.create(**ss)
-                    FieldSightXF.objects.create(xf_id=xf,site=stage.site, project=stage.project, is_staged=True, stage=sub_stage_obj)
+                    FieldSightXF.objects.create(xf_id=xf_id,site=stage.site, project=stage.project, is_staged=True, stage=sub_stage_obj)
 
             else:
                 Stage.objects.filter(pk=id).update(**validated_data)

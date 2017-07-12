@@ -258,10 +258,11 @@ var pk = "{{pk}}";
                         <!--<i class="fa fa-code-fork" aria-hidden="true"></i>-->
                         <!--{% trans 'Deploy to Remaining Sites' %}-->
                     <!--</button>-->
-                    <button class="btn btn-danger square" style="float:right;" data-bind="visible:stages().length > 0, confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">
+                    <a class="btn btn-danger square" style="float:right;" data-bind="visible:stages().length > 0,
+                    confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">
                         <i class="fa fa-upload" aria-hidden="true"></i>
                         {% trans 'Deploy to Mobile' %}
-                    </button>
+                    </a>
               </div>
           </div>
           <hr>
@@ -316,7 +317,7 @@ var pk = "{{pk}}";
                                     <br>
 
                                     <button   data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
-                                    <button  data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
+                                    <button  data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
                                 </div>
 
                               </div>
@@ -329,7 +330,7 @@ var pk = "{{pk}}";
                         </div>
                       </div>
                          <div class="row">
-                     <a class="btn btn-small btn-primary square" style="margin-left:58px;" data-bind="click:save, visible:stageChanged"><i class="fa fa-save" aria-hidden="true"></i>  {% trans 'Save' %}</a>
+                     <a class="btn btn-small btn-primary square" style="margin-left:58px;" data-bind="visible:stageChanged ,confirmClick: { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }"><i class="fa fa-save" aria-hidden="true"></i>  {% trans 'Save' %}</a>
                       </div>
                     </div>
 
@@ -393,7 +394,7 @@ var pk = "{{pk}}";
                                     <br>
 
                                     <button   data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
-                                    <button  data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
+                                    <button  data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
                                 </div>
 
                               </div>
@@ -452,8 +453,8 @@ var pk = "{{pk}}";
 
       <div class="modal-footer stage-footer">
            <div class="col-sm-3">
-
-             <a class="btn btn-primary " style="margin-right:-4px !important;" data-bind="click:save">
+            <a class="btn btn-primary " style="margin-right:-4px !important;"  data-bind="confirmClick:
+            { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }">
                  <i class="fa fa-floppy-o" aria-hidden="true"></i>  {% trans 'Save' %}</a>
           </div>
       </div>
