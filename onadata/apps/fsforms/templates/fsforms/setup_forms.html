@@ -408,7 +408,7 @@ var pk = "{{pk}}";
                               <div class="col-sm-1"></div>
                               <div class="col-sm-8">
                                   <form method="post">
-                                          <h5 class="sub-stage-name-c">{% trans 'New Sub Stage' %}</h5>
+                                          <h5 class="sub-stage-name-c">{% trans 'New Sub Stage' %} <span data-bind='text: $parent.parent().length+1'></span></h5>
                                             {% csrf_token %}
                                       <div>
                                         {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name of SUb Stage "><br>
