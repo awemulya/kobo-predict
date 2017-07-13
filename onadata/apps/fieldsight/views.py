@@ -501,7 +501,19 @@ class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView
 
 
 class ProjectDeleteView(ProjectView, OrganizationMixin, DeleteView):
-    pass
+    def delete(self,*args, **kwargs):
+        self.object = self.get_object()
+        noti = self.object.logs.create(source=self.request.user, type=4, title="new Site",
+                                       organization=self.object.organization,
+                                       description="new project {0} deleted by {1}".
+                                       format(self.object.name, self.request.user.username))
+        result = {}
+        result['description'] = 'new project {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        return HttpResponseRedirect(self.get_success_url())
+
 
 
 class SiteView(PView):
@@ -554,7 +566,19 @@ class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
 
 
 class SiteDeleteView(SiteView, ProjectMixin, DeleteView):
-    pass
+    def delete(self,*args, **kwargs):
+        self.object = self.get_object()
+        noti = self.object.logs.create(source=self.request.user, type=3, title="new Site",
+                                       organization=self.object.project.organization,
+                                       description="new site {0} deleted by {1}".
+                                       format(self.object.name, self.request.user.username))
+        result = {}
+        result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 @group_required("Project")

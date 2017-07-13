@@ -73,7 +73,21 @@ class UserRoleUpdateView(LoginRequiredMixin, SuperAdminMixin, UserRoleView, Upda
 
 
 class UserRoleDeleteView(LoginRequiredMixin, SuperAdminMixin, UserRoleView, DeleteView):
-    pass
+    def delete(self,*args, **kwargs):
+        self.object = self.get_object()
+        noti = self.object.logs.create(source=self.request.user, type=6, title="new Site",
+                                       organization=self.object.project.organization,
+                                       description="new role {0} deleted by {1}".
+                                       format(self.object.name, self.request.user.username))
+        result = {}
+
+        result['description'] = 'new role {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        return HttpResponseRedirect(self.get_success_url())
+
 
 
 class UserView(object):
