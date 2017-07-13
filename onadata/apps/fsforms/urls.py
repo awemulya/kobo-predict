@@ -41,7 +41,7 @@ from .views import (
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, project_responses,
     project_html_export, deploy_survey, deploy_stages, deploy_general, set_deploy_stages, share_stages,
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, setup_forms,
-    instance_status, rearrange_stages, deploy_general_remaining_sites)
+    instance_status, rearrange_stages, deploy_general_remaining_sites, delete_substage)
 
 
 urlpatterns = [
@@ -180,6 +180,7 @@ urlpatterns = urlpatterns + [
     url(r'^api/schedules/(?P<is_project>\d)/(?P<pk>\d+)$', ScheduleViewset.as_view({'get': 'list'}), name='schedule-list'),
     url(r'^api/sub-stages/(?P<main_stage>\d+)$', SubStageViewSet.as_view({'get': 'list'}), name='sub-stage-list'),
     url(r'^share/(?P<id>[\w-]+)/(?P<counter>\d+)$', share_level, name='share'),
+    url(r'^api/delete-substage/(?P<id>\d+)/$', delete_substage, name='delete_substage_api'),
 
 ]
 

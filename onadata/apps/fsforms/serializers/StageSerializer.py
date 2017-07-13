@@ -2,6 +2,7 @@ import json
 
 from django.db import transaction
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 
 from onadata.apps.fsforms.models import Stage, FieldSightXF
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFSerializer
@@ -44,11 +45,17 @@ class SubStageSerializer1(serializers.ModelSerializer):
 
 
 class StageSerializer1(serializers.ModelSerializer):
-    parent = SubStageSerializer1(many=True, read_only=True)
+    # parent = SubStageSerializer1(many=True, read_only=True)
+    parent = SerializerMethodField('get_substages')
 
     class Meta:
         model = Stage
         exclude = ('shared_level', 'group', 'ready', 'stage')
+
+    def get_substages(self, stage):
+        stages = Stage.objects.filter(stage=stage, stage_forms__is_deleted=False)
+        serializer = SubStageSerializer1(instance=stages, many=True)
+        return serializer.data
 
     def create(self, validated_data):
         id = self.context['request'].data.get('id', False)

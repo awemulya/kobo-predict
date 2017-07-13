@@ -8,4 +8,5 @@ class Serializer(GeoJSONSerializer):
         # Extend to your taste
         data.update(id=obj.pk)
         data.update(status=randint(0, 3))
+        data.update(progress=randint(10, 100))
         return data
