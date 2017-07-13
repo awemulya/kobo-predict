@@ -186,6 +186,7 @@ class FieldSightXF(models.Model):
     form_status = models.IntegerField(default=0, choices=FORM_STATUS)
     fsform = models.ForeignKey('self', blank=True, null=True, related_name="parent")
     is_deployed = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
@@ -203,6 +204,12 @@ class FieldSightXF(models.Model):
                 "id_string": self.id_string
             }
         )
+
+    def get_absolute_url(self):
+        if self.project:
+            return reverse('forms:project_html_export', kwargs={'fsxf_id': self.pk})
+        else:
+            return reverse('forms:formpack_html_export', kwargs={'fsxf_id': self.pk})
 
     def form_type(self):
         if self.is_scheduled: return "Scheduled"
