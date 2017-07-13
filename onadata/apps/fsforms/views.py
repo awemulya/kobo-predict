@@ -1,3 +1,5 @@
+import json
+
 from bson import json_util
 from django.conf import settings
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -16,6 +18,7 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from channels import Group as ChannelGroup
 
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
@@ -1219,6 +1222,28 @@ def instance_detail(request, fsxf_id, instance_id):
                 data.update({str(key): str(obj[key])})
     return render(request, 'fsforms/fieldsight_instance_export_html.html',
                   {'obj': fsxf, 'answer': instance_id, 'status': status, 'data': data, 'medias': medias})
+
+
+@api_view(['GET'])
+def delete_substage(request, id):
+    try:
+        sub_stage = Stage.objects.get(pk=id)
+        old_fsxf = sub_stage.stage_forms
+        old_fsxf.is_deleted = True
+        old_fsxf.save()
+        org = sub_stage.stage.project.organization if sub_stage.stage.project else sub_stage.stage.site.project.organization
+        desc = "deleted form of stage {} substage {} by {}".format(sub_stage.stage.name, sub_stage.name,
+                                                                   request.user.username)
+        noti = old_fsxf.logs.create(source=request.user, type=1, title="form Deleted",
+                organization=org, description=desc)
+        result = {}
+        result['description'] = desc
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(org.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        return Response({}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'POST'])

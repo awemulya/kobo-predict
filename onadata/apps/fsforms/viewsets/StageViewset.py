@@ -1,6 +1,4 @@
 from rest_framework import viewsets
-from rest_framework.authentication import BasicAuthentication
-
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
 from onadata.apps.fsforms.models import Stage
 from onadata.apps.fsforms.serializers.StageSerializer import StageSerializer, SubStageSerializer, StageSerializer1
@@ -14,6 +12,7 @@ class StageViewSet(viewsets.ModelViewSet):
     serializer_class = StageSerializer1
 
     # authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
 
     def filter_queryset(self, queryset):
         if self.request.user.is_anonymous():

@@ -1,17 +1,20 @@
+import json
+
 from django.db import transaction
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 
 from onadata.apps.fsforms.models import Stage, FieldSightXF
+from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFSerializer
+from channels import Group as ChannelGroup
 
 
 class SubStageSerializer1(serializers.ModelSerializer):
-    xf = serializers.CharField()
-    form_name = serializers.SerializerMethodField('get_assigned_form_name', read_only=True)
-    form = serializers.SerializerMethodField('get_assigned_form', read_only=True)
+    stage_forms = FSXFSerializer()
 
     class Meta:
         model = Stage
-        exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage')
+        exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage', 'date_modified', 'date_created')
 
     def get_assigned_form(self, obj):
         if not FieldSightXF.objects.filter(stage=obj).exists():
@@ -42,41 +45,88 @@ class SubStageSerializer1(serializers.ModelSerializer):
 
 
 class StageSerializer1(serializers.ModelSerializer):
-    parent = SubStageSerializer1(many=True)
+    # parent = SubStageSerializer1(many=True, read_only=True)
+    parent = SerializerMethodField('get_substages')
 
     class Meta:
         model = Stage
         exclude = ('shared_level', 'group', 'ready', 'stage')
 
+    def get_substages(self, stage):
+        stages = Stage.objects.filter(stage=stage, stage_forms__is_deleted=False)
+        serializer = SubStageSerializer1(instance=stages, many=True)
+        return serializer.data
+
     def create(self, validated_data):
         id = self.context['request'].data.get('id', False)
         with transaction.atomic():
-            new_substages = validated_data.pop('parent')
-            substages_data = self.context['request'].data.get('parent')
+            sub_stages_data = self.context['request'].data.get('parent')
             if not id:
                 stage = Stage.objects.create(**validated_data)
-                for order, ss in enumerate(new_substages):
-                    xf = ss.pop('xf')
+                for order, ss in enumerate(sub_stages_data):
+                    ss.pop('id')
+                    fxf = ss.pop('stage_forms')
+                    xf_id = fxf['xf']['id']
                     ss.update({'stage':stage, 'order':order+1})
                     sub_stage_obj = Stage.objects.create(**ss)
-                    FieldSightXF.objects.create(xf_id=xf,site=stage.site, project=stage.project, is_staged=True, stage=sub_stage_obj)
+                    FieldSightXF.objects.create(xf_id=xf_id,site=stage.site, project=stage.project, is_staged=True,
+                                                stage=sub_stage_obj)
 
             else:
-                Stage.objects.filter(pk=id).update(**validated_data)
+                # Stage.objects.filter(pk=id).update(**validated_data)
                 stage = Stage.objects.get(pk=id)
-                for order, sub_stage_data in enumerate(substages_data):
-                    old_substage = sub_stage_data.get('id', False)
+                for attr, value in validated_data.items():
+                    setattr(stage, attr, value)
+                stage.save()
+                for order, sub_stage_data in enumerate(sub_stages_data):
+                    old_substage = sub_stage_data.get('id', "")
                     if old_substage:
                         sub_id = sub_stage_data.pop('id')
-                        xf = sub_stage_data.pop('xf')
+                        fxf = sub_stage_data.pop('stage_forms')
                         sub_stage_data.update({'stage':stage,'order':order+1})
-                        Stage.objects.filter(pk=sub_id).update(**sub_stage_data)
+                        sub_stage = Stage.objects.get(pk=sub_id)
+                        for attr, value in sub_stage_data.items():
+                            setattr(sub_stage, attr, value)
+                        sub_stage.save()
+
+                        old_fsxf = sub_stage.stage_forms
+                        old_xf = old_fsxf.xf
+
+                        xf = fxf.get('xf')
+                        xf_id = xf.get('id')
+                        if old_xf.id  != xf_id:
+                            # xform changed history and mew fsf
+                            old_fsxf.is_deployed = False
+                            old_fsxf.is_deleted = True
+                            old_fsxf.stage=None
+                            old_fsxf.save()
+                            #create new fieldsight form
+                            FieldSightXF.objects.create(xf_id=xf_id,site=stage.site, project=stage.project, is_staged=True,
+                                                stage=sub_stage)
+                            org = stage.project.organization if stage.project else stage.site.project.organization
+                            desc = "deleted form of stage {} substage {} by {}".format(stage.name, sub_stage.name,
+                                                                                       self.context['request'].user.username)
+                            noti = old_fsxf.logs.create(source=self.context['request'].user, type=1, title="form Deleted",
+                                    organization=org, description=desc)
+                            result = {}
+                            result['description'] = desc
+                            result['url'] = noti.get_absolute_url()
+                            ChannelGroup("notify-{}".format(org.id)).send({"text": json.dumps(result)})
+                            ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+                        #     notify mobile and web
+
                     #     if form change update fxf object's xf
                     else:
-                        sub_stage_data.update({'stage':stage,'order':order+1})
-                        xf = sub_stage_data.pop('xf')
-                        ss = Stage.objects.create(**sub_stage_data)
-                        FieldSightXF.objects.create(xf_id=xf,site=stage.site, project=stage.project, is_staged=True,stage=ss)
+                        fxf = sub_stage_data.pop('stage_forms')
+                        xf = fxf.get('xf')
+                        xf_id = xf.get('id')
+                        # fxf_id = fxf.get('id')
+                        sub_stage_data.pop('id')
+
+                        sub_stage_data.update({'stage':stage, 'order':order+1})
+                        sub_stage_obj = Stage.objects.create(**sub_stage_data)
+                        FieldSightXF.objects.create(xf_id=xf_id,site=stage.site, project=stage.project, is_staged=True, stage=sub_stage_obj)
             return stage
 
 

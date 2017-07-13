@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 from onadata.apps.fsforms.models import FieldSightXF
+from onadata.apps.logger.models import XForm
 from onadata.libs.utils.decorators import check_obj
 
 
@@ -141,3 +142,15 @@ class FSXFormSerializer(serializers.ModelSerializer):
     @check_obj
     def get_title(self, obj):
         return u"%s" % obj.xf.title
+
+class XformSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = XForm
+        fields = ('title', 'id',)
+
+
+class FSXFSerializer(serializers.ModelSerializer):
+    xf = XformSerializer()
+    class Meta:
+        model = FieldSightXF
+        fields = ('xf','id',)
