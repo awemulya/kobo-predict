@@ -91,7 +91,7 @@ class Organization(models.Model):
         return outstanding, flagged, approved, rejected
 
     def get_absolute_url(self):
-        return reverse('organizations-detail', kwargs={'pk': self.pk})
+        return reverse('fieldsight:organizations-dashboard', kwargs={'pk': self.pk})
 
     @property
     def get_staffs(self):
@@ -177,7 +177,7 @@ class Project(models.Model):
         return outstanding, flagged, approved, rejected
 
     def get_absolute_url(self):
-        return reverse('projects-detail', kwargs={'pk': self.pk})
+        return reverse('fieldsight:project-dashboard', kwargs={'pk': self.pk})
 
 
 class Site(models.Model):
@@ -267,7 +267,7 @@ class Site(models.Model):
 
     @property
     def get_absolute_url(self):
-        return reverse('sites-detail', kwargs={'pk': self.pk})
+        return reverse('fieldsight:sites-dashboard', kwargs={'pk': self.pk})
 
 
 def get_image_filename(instance, filename):

@@ -523,19 +523,21 @@ def edit_schedule(request, id):
 def set_deploy_stages(request, is_project, pk):
     try:
         if is_project == "1":
-            project = Project(pk=pk)
+            project = Project.objects.get(pk=pk)
             sites = project.sites.filter(is_active=True)
             main_stages = project.stages.filter(stage__isnull=True)
             with transaction.atomic():
+
+                FieldSightXF.objects.filter(is_staged=True, site__project=project,stage__isnull=False).\
+                    update(stage=None, is_deployed=False, is_deleted=True)
                 Stage.objects.filter(site__project=project).delete()
-                FieldSightXF.objects.filter(is_staged=True, site__project=project).delete()
                 for main_stage in main_stages:
                     for site in sites:
                         send_message_stages(site)
                         site_main_stage = Stage(name=main_stage.name, order=main_stage.order, site=site,
                                            description=main_stage.description)
                         site_main_stage.save()
-                        project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk)
+                        project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
                         for project_sub_stage in project_sub_stages:
                             site_sub_stage = Stage(name=project_sub_stage.name, order=project_sub_stage.order, site=site,
                                            description=project_sub_stage.description, stage=site_main_stage)
@@ -544,12 +546,25 @@ def set_deploy_stages(request, is_project, pk):
                                 fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
                                 FieldSightXF.objects.get_or_create(is_staged=True, xf=fsxf.xf, site=site,
                                                                    fsform=fsxf, stage=site_sub_stage, is_deployed=True)
-
+            noti = project.logs.create(source=request.user, type=4, title="Project Stages Deployed",
+            organization=project.organization, description="Project Stages Deployed to sites.")
+            result = {}
+            result['description'] = "Project Form Deployed to sites."
+            result['url'] = noti.get_absolute_url()
+            ChannelGroup("notify-{}".format(project.organization.id)).send({"text": json.dumps(result)})
+            ChannelGroup("notify-0").send({"text": json.dumps(result)})
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
         else:
             site = Site.objects.get(pk=pk)
-            site.site_forms.filter(is_staged=True, xf__isnull=False).update(is_deployed=True)
+            site.site_forms.filter(is_staged=True, xf__isnull=False, is_deleted=False).update(is_deployed=True)
             send_message_stages(site)
+            noti = site.logs.create(source=request.user, type=4, title="Site Stages Deployed",
+            organization=site.project.organization, description="Project Form Deployed to sites.")
+            result = {}
+            result['description'] = "Project Form Deployed to sites."
+            result['url'] = noti.get_absolute_url()
+            ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
+            ChannelGroup("notify-0").send({"text": json.dumps(result)})
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
