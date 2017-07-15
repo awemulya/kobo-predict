@@ -56,12 +56,11 @@ $(document).ready(function() {
                 <img data-bind="attr:{src: profile_picture}" class="modal-image space" style="width: 23% !important;">
               </div>
               <div class="details-of-person user-name-position">
-                    <h5 class="personname " data-bind="text:full_name"></h5>
-                    
+                    <span class="personname list-heading detail-text" data-bind="text:full_name"></span>
+                    <div class="gap_border"></div>
                     <h6 class="perso-usernname"><span data-bind="text:username"><i class="fa fa-user" aria-hidden="true"></i></span></h6>
                     <p class="personemail"><span data-bind="text:email"><i class="fa fa-envelope-o" aria-hidden="true"></i></span></p>
-
-                    <div class="text-center"><p class="person-active" data-bind="text:is_active() == true ? 'Active' : 'InActive'"></p></div>
+                    <div class="left"><p class="person-active" data-bind="text:is_active() == true ? 'Active' : 'InActive'"></p></div>
 
 
               </div>
