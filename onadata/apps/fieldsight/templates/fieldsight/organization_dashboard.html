@@ -233,14 +233,43 @@ var org = "{{obj.pk}}";
                                    </div>
                                   <div class="office-information">
                                       <p class="address information"><span><i class="fa fa-map-marker space " aria-hidden="true"></i></span>{{ obj.address }}, {{ obj.get_country_display }}</p>
-                                      <p class="contact information"><span><i class="fa fa-phone space " aria-hidden="true"></i></span>{{ obj.phone }}</p>
-                                      <p class="fax information"><span><i class="fa fa-fax space " aria-hidden="true"></i></span>{{ obj.fax }}</p>
-                                      <p class="website information"><span><i class="fa fa-internet-explorer space " aria-hidden="true"></i></span>{{ obj.website }}</p>
+                                      <p class="contact information"><span><i class="fa fa-phone space " aria-hidden="true"></i></span>
+
+                                      {% if obj.phone %} 
+                                        <span>{{ obj.phone}}</span>
+                                      {% else %}
+                                        <span>N/A</span>
+
+                                       {% endif %}</p>
+                                      <p class="fax information"><span><i class="fa fa-fax space " aria-hidden="true"></i></span>
+                                        {% if obj.fax %} 
+                                        <span>{{ obj.fax }}</span>
+                                      {% else %}
+                                        <span>N/A</span>
+
+                                       {% endif %}</p>
+
+                                      <p class="website information"><span><i class="fa fa-internet-explorer space " aria-hidden="true"></i></span>
+
+                                      {% if obj.website %} 
+                                        <span>{{ obj.website }}</span>
+                                      {% else %}
+                                        <span>N/A</span>
+
+                                       {% endif %}
+                                       </p>
+
                                        <p class="website information">
                                           <span>
-                                            <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                                            <i class="fa fa-envelope-o space" aria-hidden="true"></i>
                                           </span>
-                                            {{ obj.email }}</p>
+                                        {% if obj.phone %} 
+                                            <span>{{ obj.email }}</span>
+                                          {% else %}
+                                            <span>N/A</span>
+
+                                           {% endif %}
+                                            </p>
                                   </div>
                               </div>
 
@@ -260,6 +289,7 @@ var org = "{{obj.pk}}";
                                     <div class="gap"></div>
                                     <div class="public_desc">
                                         <p class="short-detail">{{ obj.public_desc}}</p>
+                                      
                                     </div>
                                     <div class="gap-high"></div>
                                     <span class="line-header">Additional Description</span>
@@ -299,12 +329,54 @@ var org = "{{obj.pk}}";
                                 <h5 class="organization_name">{{ obj.name }}</h5>
                             </div>
                             <div class="col-md-8 detail">
-                                <p class="address information"><span><i class="fa fa-map-marker space" aria-hidden="true"></i></span>{{ obj.address }}, {{ obj.get_country_display }}</p>
-                                <p class="contact information"><span><i class="fa fa-phone space" aria-hidden="true"></i></span>{{ obj.phone }}</p>
-                                <p class="fax information"><span><i class="fa fa-fax space" aria-hidden="true"></i></span>{{ obj.fax }}</p>
-                                <p class="website information"><span><i class="fa fa-internet-explorer space" aria-hidden="true"></i></span>{{ obj.website }}</p>
-                                 <p class="website information"><span><i class="fa fa-envelope space space" aria-hidden="true"></i></span>{{ obj.email }}</p>
-    							   <p class="short-detail">{{ obj.description }}</p>
+                                <p class="address information"><span><i class="fa fa-map-marker space" aria-hidden="true"></i></span>
+
+
+
+
+                                {{ obj.address }}, {{ obj.get_country_display }}</p>
+                                <p class="contact information"><span><i class="fa fa-phone space" aria-hidden="true"></i></span>
+                                  {% if obj.phone %} 
+                                        <span>{{ obj.phone }}</span>
+                                      {% else %}
+                                        <span>N/A</span>
+
+                                       {% endif %}
+
+                                </p>
+                                <p class="fax information"><span><i class="fa fa-fax space" aria-hidden="true"></i></span>
+
+
+                                  {% if obj.fax %} 
+                                        <span>{{ obj.fax }}</span>
+                                      {% else %}
+                                        <span>N/A</span>
+
+                                       {% endif %}
+                                </p>
+                                <p class="website information"><span><i class="fa fa-internet-explorer space" aria-hidden="true"></i></span>
+
+                                {% if obj.website %} 
+                                        <span>{{ obj.website }}</span>
+                                      {% else %}
+                                        <span>N/A</span>
+
+                                       {% endif %}
+                                </p>
+                                
+                                 <p class="website information"><span><i class="fa fa-envelope space space" aria-hidden="true"></i></span>
+
+                                    {% if obj.description %} 
+                                        <span>{{ obj.description }}</span>
+                                      {% else %}
+                                        <span>N/A</span>
+
+                                       {% endif %}
+
+
+                                 {{ obj.email }}</p>
+    							   <p class="short-detail">              
+                      {{ obj.description }}</p>
                             </div>
                             
                         </div>
@@ -387,7 +459,7 @@ var org = "{{obj.pk}}";
                         <ul>
                           
                                     
-                              {% for role in peoples_involved|slice:":2" %}
+                              {% for role in peoples_involved %}
                                 <li class="user-block ">
                                     <a href="{% url 'users:profile' role.user.id %}">
                                                      <img class="img-circle img-bordered-sm" src="{{ role.user.user_profile.profile_picture.url }}" alt="user image"/>
@@ -427,7 +499,7 @@ var org = "{{obj.pk}}";
 
                       <div class="info-box-content">
                           <span class="info-box-number">{{rejected}}</span>
-                          <span class="info-box-text">{%trans 'Rejected' %}</span>
+                          <span class="info-box-text">{%trans 'Rejected Submissions' %}</span>
                         
                         
                       </div>
@@ -447,7 +519,7 @@ var org = "{{obj.pk}}";
                       <div class="info-box-content">
                         
                         <span class="info-box-number">{{flagged}}</span>
-                        <span class="info-box-text">{% trans 'flagged' %}</span>
+                        <span class="info-box-text">{% trans 'flagged Submissions' %}</span>
                       </div>
                       <!-- /.info-box-content -->
                     </div>
@@ -461,7 +533,7 @@ var org = "{{obj.pk}}";
 
             <div class="info-box-content">
                 <span class="info-box-number">{{outstanding}}</span>
-                <span class="info-box-text">{% trans 'outstanding' %}</span>
+                <span class="info-box-text">{% trans 'Pending Submissions' %}</span>
             </div>
             <!-- /.info-box-content -->
           </div>
@@ -473,7 +545,7 @@ var org = "{{obj.pk}}";
 
             <div class="info-box-content">
               <span class="info-box-number">{{approved}}</span>
-              <span class="info-box-text">{% trans 'Approved' %}</span>
+              <span class="info-box-text">{% trans 'Approved Submissions' %}</span>
               
             </div>
             <!-- /.info-box-content -->

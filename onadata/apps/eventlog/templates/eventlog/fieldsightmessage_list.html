@@ -1,10 +1,325 @@
+
+{% load i18n staticfiles %}
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+
+    <title>Fieldsight | messenger</title>
+
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/chat_style.css' %}" />
+
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
 </head>
+
 <body>
-message page
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 sidebar-chat">
+                <div class="row  chat-title">
+                    <div class="user-chat-image col-md-3">
+                    <img src="/media/logo/img_avatar.png" class="chat-image img-circle " alt="user-image">
+                    </div>
+                    <div class="col-md-9">
+                        <h4>Pravin poudel </h4>
+                        <div class="state right right-up">
+                            <div class="dropdown">
+                                <div class="dropdown-icon dropdown-toggle " data-toggle="dropdown">
+                                    <span class="state-icon">
+                                        <i class="fa fa-bell-slash space" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="caret "></span>
+                                </div>
+                                <ul class="dropdown-menu state ">
+                                    <li><a href="#off-state"><i class="fa fa-deaf space " aria-hidden="true"></i>off-state</a></li>
+                                    <li><a href="#sleep"><i class="fa fa-user-times space" aria-hidden="true"></i>sleep mode</a></li>
+                                    <li><a href="#donot-disturb"><i class="fa fa-deaf space" aria-hidden="true"></i>Donot disturb</a></li>
+                                    <li class="divider"> </li>
+                                    <li>
+                                        <a href="#offline"><i class="fa fa-power-off space" aria-hidden="true"></i>offline</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <h6>Available for chat</h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 side-chat">
+                        <div class="gap-high"></div>
+                        <form>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" type="submit">
+                                        <i class="glyphicon glyphicon-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <ul class="sidebar-list chat-body-top">
+                            <div class="gap-high"></div>
+                            <li class="user-message">
+                                <div class="user-chat-image col-md-3">
+                                <img src="/media/logo/default_user.png" class="chat-image img-circle " alt="user-image">
+                                </div>
+                                <div class="col-md-9">
+                                    <!--                   <i class="fa fa-circle active-now space-left" aria-hidden="true"></i>
+ --><span class="name-chat">Pravin poudel </span>
+                                    <h6 class="chat-msg-short">Hey pravin how r u bro . is every </h6>
+                                    <p class="time"><i class="fa fa-clock-o space" aria-hidden="true"></i>about a minute ago</p>
+                                </div>
+                            </li>
+                            <li class="user-message">
+                                <div class="user-chat-image col-md-3">
+                                    <img src="/media/logo/default_user.png" class="chat-image img-circle " alt="user-image">
+                                </div>
+                                <div class="col-md-9">
+                                    <span class="name-chat">Pravin poudel </span>
+                                    <h6 class="chat-msg-short">Hey pravin how r u bro . is every</h6>
+                                    <p class="time"><i class="fa fa-clock-o space" aria-hidden="true"></i>3 minutes ago</p>
+                                </div>
+                            </li>
+                            <li class="user-message">
+                                <div class="user-chat-image col-md-3">
+				<img src="/media/logo/default_user.png" class="chat-image img-circle " alt="user-image">
+                                </div>
+                                <div class="col-md-9">
+                                    <span class="name-chat">Pravin poudel </span>
+                                    <h6 class="chat-msg-short">Hey pravin how r u bro . is every</h6>
+                                    <p class="time"><i class="fa fa-clock-o space" aria-hidden="true"></i>3 minutes ago</p>
+                                </div>
+                            </li>
+                            <li class="user-message">
+                                <div class="user-chat-image col-md-3">
+                <img src="/media/logo/default_user.png" class="chat-image img-circle " alt="user-image">
+                                </div>
+                                <div class="col-md-9">
+                                    <span class="name-chat">Pravin poudel </span>
+                                    <h6 class="chat-msg-short">Hey pravin how r u bro . is every</h6>
+                                    <p class="time"><i class="fa fa-clock-o space" aria-hidden="true"></i>3 minutes ago</p>
+                                </div>
+                            </li>
+                            <li class="user-message">
+                                <div class="user-chat-image col-md-3">
+                <img src="/media/logo/default_user.png" class="chat-image img-circle " alt="user-image">
+                                </div>
+                                <div class="col-md-9">
+                                    <span class="name-chat">Pravin poudel </span>
+                                    <h6 class="chat-msg-short">Hey pravin how r u bro . is every</h6>
+                                    <p class="time"><i class="fa fa-clock-o space" aria-hidden="true"></i>3 minutes ago</p>
+                                </div>
+                            </li>
+                            <li class="user-message">
+                                <div class="user-chat-image col-md-3">
+                <img src="/media/logo/default_user.png" class="chat-image img-circle " alt="user-image">
+                                </div>
+                                <div class="col-md-9">
+                                    <span class="name-chat">Pravin poudel </span>
+                                    <h6 class="chat-msg-short">Hey pravin how r u bro . is every </h6>
+                                    <p class="time"><i class="fa fa-clock-o space" aria-hidden="true"></i>2 minutes ago</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9 right-chat-box">
+                <div class="row  chat-user-header">
+                    <div class="user-chat-image col-md-1">
+                        <img src="/media/logo/default_user.png" class="chat-image img-circle " alt="user-image">
+                    </div>
+                    <div class="col-md-8">
+                        <h4 class="chat-topic">Dhulikhel Site  </h4>
+                        <h6>Ideas about shift planning</h6>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="participant-count right right-down">
+                            <span class="participant">12 participant available </span> <i class="fa fa-cog marg-left-12 setting-icon" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-body-top">
+                    <ul class="chat">
+                        <li class="left clearfix"><span class="chat-img pull-left">
+                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Amulya dae</strong> <small class="pull-right text-muted">
+                                        <span class="glyphicon glyphicon-time"></span>12 mins ago</small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="right1 clearfix"><span class="chat-img pull-right">
+                            <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>13 mins ago</small>
+                                    <strong class="pull-right primary-font">Pravin poudel</strong>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="left clearfix"><span class="chat-img pull-left">
+                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Amulya dae</strong> <small class="pull-right text-muted">
+                                        <span class="glyphicon glyphicon-time"></span>14 mins ago</small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="right1 clearfix"><span class="chat-img pull-right">
+                            <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>15 mins ago</small>
+                                    <strong class="pull-right primary-font">Pravin poudel</strong>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="left clearfix"><span class="chat-img pull-left">
+                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Amulya dae</strong> <small class="pull-right text-muted">
+                                        <span class="glyphicon glyphicon-time"></span>14 mins ago</small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="right1 clearfix"><span class="chat-img pull-right">
+                            <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>15 mins ago</small>
+                                    <strong class="pull-right primary-font">Pravin poudel</strong>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="chat-footer">
+                    <div class="input-group">
+                        <input type="text" class="form-control message" placeholder="Search">
+                        <div class="input-group-btn">
+                            <button class="btn btn-success send">
+                                <i class="fa fa-paper-plane space" aria-hidden="true"></i>Send</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 </body>
+<script>
+
+$('.chat-body-top').scrollTop($('.chat-body-top')[0].scrollHeight);
+
+$('.send').click(function() {
+
+    $data = $('.message').val();
+
+    if ($data) {
+    
+        $('ul.chat').append(
+
+            $('<li>').attr('class' , 'right1').append(
+
+                $('<div>').attr('class' ,'chat-body').append(
+
+                    $('<p>').attr('class' , 'message-text').append($data)
+                    )
+                )
+            );
+
+
+    	var element = document.getElementsByClassName("chat-body-top");
+    	$('.chat-body-top').scrollTop($('.chat-body-top')[0].scrollHeight);
+    	
+    	
+
+    }
+
+    
+
+    $('.message').val("");
+
+});
+
+$('.state li a').click(function() {
+
+
+    $state = $(this).text();
+    
+    if ($state == 'off-state') {
+        
+        $('.state-icon').html('<i class="fa fa-deaf space " aria-hidden="true">');        
+
+    }
+
+    if ($state == 'sleep mode') {
+
+        $('.state-icon').html('<i class="fa fa-user-times space" aria-hidden="true"></i>');        
+    }
+
+    if ($state == 'Donot disturb') {
+        
+        $('.state-icon').html('<i class="fa fa-deaf space" aria-hidden="true"></i>');
+    }
+
+    if ($state == 'offline') {
+        
+        $('.state-icon').html('<i class="fa fa-power-off space" aria-hidden="true"></i>');
+    }
+});
+
+$('.message').keypress(function(e)
+{
+    if (e.which == 13) {
+    
+        $('.send').click();        
+    }
+});
+
+</script>
+
 </html>

@@ -431,7 +431,7 @@ console.log(text.prop2);
 
         <div class="row">
             <div class="col-sm-12">
-                <section class="panel">
+                <section class="panel  move_up">
                     <header class="panel-heading">
                       
 
@@ -667,6 +667,22 @@ $('.panel-chat >.panel-heading> .chatminimize').click(function(){
         // instead of a settings object
       ]
     });
+
+     ready(function(){
+
+     var selector = '.sidebar-menu li a';
+
+    $(selector).on('click', function(){
+        $(selector).removeClass('active');
+        $(this).addClass('active');
+    });
+
+    });
+
+
+
+
+
 </script>
  {%block extrascript %}
     {% endblock %}

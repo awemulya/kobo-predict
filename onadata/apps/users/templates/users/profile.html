@@ -15,10 +15,10 @@
 			<div class="profile-user-all">
 				<div class="profile-user-all-cell">
 					<div class="profile-user-table">
-						<div class="img-profile">
-							<img src= "{{ obj.profile_picture.url}}" alt="image"/>
+						<div class="profile-image col-sm-4 col-md-4">
+							<img src= "{{ obj.profile_picture.url}}" alt="image" class="ninety" />
 						</div>
-						<div class="detail-profile">
+						<div class="detail-profile position-detail-profile col-sm-8 col-md-8">
 							<h3>{{obj.user.get_full_name}}</h3>
 							<h4>{{obj.user }}</h4>
 							{% if obj.address %}
@@ -45,9 +45,11 @@
 			</div>
 		</div>
 	</div>
-<div class="row">
+<div class="row1">
 	<h3>{% trans 'Roles Of' %} {{obj.user}}</h3>
 </div>
+
+<hr class="colour">
 <!--<div class="row">-->
 	<!--<div class="col-sm-3">-->
 		<!--{% trans 'Role' %}-->
@@ -63,24 +65,33 @@
 	<!--</div>-->
 <!--</div>-->
 {% for role in roles %}
-{{role.group }}
-{% if role.site%}
-{% trans 'of Site ' %}
- <a href="{% url 'fieldsight:site-dashboard' role.site.pk %}">
-{{role.site}}
-	 </a>
-{% endif %}
-{% if role.project %}
-{% trans 'of Project ' %}
- <a href="{% url 'fieldsight:project-dashboard' role.project.pk %}">
-{{role.project}}
-	 </a>
-{% endif %}
-{% if role.organization%}
-{% trans 'of ' %}
- <a href="{% url 'fieldsight:organization-dashboard' role.organization.pk %}">
-{{role.organization}} </a>
-{% endif %}
+	<div class="col-md-6 col-sm-12 card notice padding-high font-medium">
+    	<span><b>{{role.group }}</b>
+    	
+	
+		{% if role.site%}
+		{% trans 'of Site ' %}
+		 <a href="{% url 'fieldsight:site-dashboard' role.site.pk %}">
+		{{role.site}}
+			 </a>
+		{% endif %}
+
+		{% if role.project %}
+
+		{% trans 'of Project  ' %}
+		 <a href="{% url 'fieldsight:project-dashboard' role.project.pk %}">
+			<b>{{role.project}}</b>
+		 </a>
+		{% endif %}
+		
+		{% if role.organization%}
+		{% trans 'of ' %}
+		 <a href="{% url 'fieldsight:organization-dashboard' role.organization.pk %}">
+		<b ">{{role.organization}}</b></a>
+		{% endif %}
+		</span>
+	</div>
+
 <br/>
 <!--<div class="row">-->
 	<!--<div class="col-sm-3">-->
