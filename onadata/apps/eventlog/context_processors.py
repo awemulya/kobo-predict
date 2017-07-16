@@ -16,10 +16,12 @@ def events(request):
         elif request.group.name in ["Project Manager", "Reviewer"]:
             logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:10]
             oid = request.organization.id
+    channels_url = "ws://"+settings.WEBSOCKET_URL+":"+settings.WEBSOCKET_PORT+"/" \
+        if settings.WEBSOCKET_PORT else "ws://"+settings.WEBSOCKET_URL+"/"
     return {
         'notifications': logs,
         'fieldsight_message': messages,
         'oid': oid,
-        'channels_url': "ws://"+settings.WEBSOCKET_URL+":"+settings.WEBSOCKET_PORT+"/"
+        'channels_url': channels_url
 
     }
