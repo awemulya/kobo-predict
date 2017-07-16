@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:organization-add' %}">{% trans 'New' %} {% trans 'Organization' %}</a>
+    <a class="btn btn-primary btn-raised square" href="{% url 'fieldsight:organization-add' %}">{% trans 'New' %} {% trans 'Organization' %}</a>
 {% endblock %}
 
 {% block content %}
@@ -16,25 +16,40 @@
     {% load filters %}
 
 
-    <div class="organization-lsit-all row">
+    <div class="organization-lsit-all ">
 
         {% for obj in object_list %}
-        <div class="organization-list {{obj.is_active|activeness}}">
-            <div class="col-md-3">
-                <a href="{% url 'fieldsight:organization-dashboard' obj.pk %}">
-                    <div class="org-grg demo-3">
-                        <div class="org-logo">
-                            <figure>
-                                    <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />
-                            <figcaption class="abt-org" style="text-align: center;">
-                                    <h2>{{ obj.name }}</h2>
-                                    <p class="address"><span><i class="fa fa-map-marker space" aria-hidden="true"></i></span>{{ obj.address }}, {{ obj.get_country_display }}</p>
-                                    
-                            </figcaption>
-                            </figure>   
+        <div class="organization-list  {{obj.is_active|activeness}}">
+            <div class="col-md-4 col-sm-4 col-xs-12">
+                <a href="{% url 'fieldsight:organization-dashboard' obj.pk %}" >
+
+
+                    <div class="card ">
+
+                        <!--Card image-->
+
+                        <div class="card-image ">
+                            <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" class="sixty" />
                         </div>
+                        <!--/.Card image-->
+
+                        <!--Card content-->
+                        <div class="card-block">
+                            <!--Title-->
+                            <h4 class="card-title">{{ obj.name }}</h4>
+                            <hr class="colour">
+                            <!--Text-->
+                            <p class="card-text"><span><i class="fa fa-map-marker space" aria-hidden="true"></i></span>
+
+                            {{ obj.address }}, {{ obj.get_country_display }}</p>
+ 
+                            <a href="{% url 'fieldsight:organization-dashboard' obj.pk %}" class="btn btn-primary">GO <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                        <!--/.Card content-->
 
                     </div>
+
                 </a>
 
             </div>
@@ -45,3 +60,5 @@
 
     </div>
 {% endblock %}
+
+

@@ -8,12 +8,12 @@
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
+
 {% endblock %}
 
 {% block content %}
 
-
-<div class="row">
+<div class="row ">
   <div class="map-container-fieldsight">
     <div id="map"></div>  
     <div class="popop-container" style="display:none">
@@ -38,7 +38,7 @@
 {% block total_users %}
 <div class="row">
     <div class="col-md-3">
-        <div class="mini-stat clearfix">
+        <div class="mini-stat clearfix card">
             <span class="mini-stat-icon orange"><i class="fa fa-users"></i></span>
             <div class="mini-stat-info">
                 <span>{{total_users}}</span>
@@ -47,7 +47,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="mini-stat clearfix">
+        <div class="mini-stat clearfix card">
             <span class="mini-stat-icon tar"><i class="fa fa-building-o"></i></span>
             <div class="mini-stat-info">
                 <span>{{total_organizations}}</span>
@@ -56,7 +56,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="mini-stat clearfix">
+        <div class="mini-stat clearfix card">
             <span class="mini-stat-icon pink"><i class="fa fa-building-o"></i></span>
             <div class="mini-stat-info">
                 <span>{{total_projects}}</span>
@@ -65,7 +65,7 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="mini-stat clearfix">
+        <div class="mini-stat clearfix card">
             <span class="mini-stat-icon green"><i class="fa fa-picture-o"></i></span>
             <div class="mini-stat-info">
                 <span>{{total_sites}}</span>

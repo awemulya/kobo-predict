@@ -91,7 +91,7 @@ class Organization(models.Model):
         return outstanding, flagged, approved, rejected
 
     def get_absolute_url(self):
-        return reverse('organizations-detail', kwargs={'pk': self.pk})
+        return reverse('fieldsight:organizations-dashboard', kwargs={'pk': self.pk})
 
     @property
     def get_staffs(self):
@@ -177,7 +177,7 @@ class Project(models.Model):
         return outstanding, flagged, approved, rejected
 
     def get_absolute_url(self):
-        return reverse('projects-detail', kwargs={'pk': self.pk})
+        return reverse('fieldsight:project-dashboard', kwargs={'pk': self.pk})
 
 
 class Site(models.Model):
@@ -249,6 +249,22 @@ class Site(models.Model):
         if p > 99:
             return 100
         return p
+    @property
+    def site_progress(self):
+        return self.progress()
+
+    @property
+    def status(self):
+        if self.site_instances.filter(form_status=3, site_fxf__is_staged=True).count():
+            return 3
+        elif self.site_instances.filter(form_status=2, site_fxf__is_staged=True).count():
+            return 2
+        elif self.site_instances.filter(form_status=0, site_fxf__is_staged=True).count():
+            return 0
+        elif self.site_instances.filter(form_status=1, site_fxf__is_staged=True).count():
+            return 1
+        return 1
+
 
     def get_site_submission(self):
         instances = self.site_instances.all().order_by('-date')
@@ -267,7 +283,7 @@ class Site(models.Model):
 
     @property
     def get_absolute_url(self):
-        return reverse('sites-detail', kwargs={'pk': self.pk})
+        return reverse('fieldsight:sites-dashboard', kwargs={'pk': self.pk})
 
 
 def get_image_filename(instance, filename):

@@ -49,18 +49,18 @@ $(document).ready(function() {
     <div class="gap-medium"></div>
 
     <div class='adv-table' data-bind="foreach: users">
-
-        <div class="current-person col-sm-4 " style="/*width: 24% !important;*/margin-right: 3px !important;margin-left: 9px;margin-top:24px;padding: 0px !important;">
+    <a data-bind="attr: { href:'profile/'+id(), title: 'Edit' }">
+        <div class="current-person col-sm-4 col-md-6 " style="/*width: 24% !important;*/margin-right: 3px !important;margin-left: 9px;margin-top:24px;padding: 0px !important;">
             <div class="person-div" style="margin-bottom: 0px !important; padding: 10px !important;" >
               <div class="image-of-person user-image-current">
                 <img data-bind="attr:{src: profile_picture}" class="modal-image space" style="width: 23% !important;">
               </div>
               <div class="details-of-person user-name-position">
-                    <h5 class="personname " data-bind="text:full_name"></h5>
+                    <span class="personname list-heading detail-text" data-bind="text:full_name"></span>
+                    <div class="gap_border"></div>
                     <h6 class="perso-usernname"><span data-bind="text:username"><i class="fa fa-user" aria-hidden="true"></i></span></h6>
                     <p class="personemail"><span data-bind="text:email"><i class="fa fa-envelope-o" aria-hidden="true"></i></span></p>
-
-                    <div class="text-center"><p class="person-active" data-bind="text:is_active() == true ? 'Active' : 'InActive'"></p></div>
+                    <div class="left"><p class="person-active" data-bind="text:is_active() == true ? 'Active' : 'InActive'"></p></div>
 
 
               </div>
@@ -71,6 +71,7 @@ $(document).ready(function() {
               </div>
             </div>
           </div>
+    </a>
 
     </div>
 {% endblock %}

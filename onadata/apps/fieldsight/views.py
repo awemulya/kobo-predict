@@ -61,7 +61,7 @@ def dashboard(request):
     total_projects = Project.objects.all().count()
     total_sites = Site.objects.all().count()
     data = serialize('custom_geojson', Site.objects.filter(is_survey=False, is_active=True), geometry_field='location',
-                        fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
+                        fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id'))
     fs_forms = FieldSightXF.objects.all()
     fs_forms = list(fs_forms)
     outstanding = flagged = approved = rejected = 0

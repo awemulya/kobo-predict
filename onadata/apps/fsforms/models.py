@@ -16,7 +16,7 @@ from onadata.apps.logger.models import XForm, Instance
 from onadata.apps.viewer.models import ParsedInstance
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
-FORM_STATUS = [(0, 'Outstanding'), (1, 'Rejected'), (2, 'Flagged'), (3, 'Approved'), ]
+FORM_STATUS = [(0, 'Pending'), (1, 'Rejected'), (2, 'Flagged'), (3, 'Approved'), ]
 
 
 class FormGroup(models.Model):
