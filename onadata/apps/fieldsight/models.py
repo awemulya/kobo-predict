@@ -249,6 +249,22 @@ class Site(models.Model):
         if p > 99:
             return 100
         return p
+    @property
+    def site_progress(self):
+        return self.progress()
+
+    @property
+    def status(self):
+        if self.site_instances.filter(form_status=3, site_fxf__is_staged=True).count():
+            return 3
+        elif self.site_instances.filter(form_status=2, site_fxf__is_staged=True).count():
+            return 2
+        elif self.site_instances.filter(form_status=0, site_fxf__is_staged=True).count():
+            return 0
+        elif self.site_instances.filter(form_status=1, site_fxf__is_staged=True).count():
+            return 1
+        return 1
+
 
     def get_site_submission(self):
         instances = self.site_instances.all().order_by('-date')
