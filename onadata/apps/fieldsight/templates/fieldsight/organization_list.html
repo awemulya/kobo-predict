@@ -14,7 +14,9 @@
 {% block content %}
 
     {% load filters %}
-
+<div class="col-sm-12">
+     <a class="btn btn-primary btn-raised square  pull-right" href="{% url 'fieldsight:organization-add' %}">{% trans 'New' %} {% trans 'Organization' %}</a>
+</div>
 
     <div class="organization-lsit-all ">
 
