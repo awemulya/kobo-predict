@@ -1245,6 +1245,7 @@ def delete_substage(request, id):
         sub_stage = Stage.objects.get(pk=id)
         old_fsxf = sub_stage.stage_forms
         old_fsxf.is_deleted = True
+        # old_fsxf.stage = None
         old_fsxf.save()
         org = sub_stage.stage.project.organization if sub_stage.stage.project else sub_stage.stage.site.project.organization
         desc = "deleted form of stage {} substage {} by {}".format(sub_stage.stage.name, sub_stage.name,
@@ -1256,6 +1257,36 @@ def delete_substage(request, id):
         result['url'] = noti.get_absolute_url()
         ChannelGroup("notify-{}".format(org.id)).send({"text": json.dumps(result)})
         ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        # sub_stage.delete()
+        return Response({}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def delete_mainstage(request, id):
+    try:
+        with transaction.atomic():
+            stage = Stage.objects.get(pk=id)
+            org = stage.site.project.organization if stage.site else stage.project.organization
+            substages = Stage.objects.filter(stage=stage)
+            for sub_stage in substages:
+                if hasattr(sub_stage, 'stage_forms'):
+                    old_fsxf = sub_stage.stage_forms
+                    old_fsxf.is_deleted = True
+                    old_fsxf.stage = None
+                    old_fsxf.save()
+                    desc = "deleted form of stage {} substage {} by {}".format(sub_stage.stage.name, sub_stage.name,
+                                                                               request.user.username)
+                    noti = old_fsxf.logs.create(source=request.user, type=1, title="form Deleted",
+                            organization=org, description=desc)
+                    result = {}
+                    result['description'] = desc
+                    result['url'] = noti.get_absolute_url()
+                    ChannelGroup("notify-{}".format(org.id)).send({"text": json.dumps(result)})
+                    ChannelGroup("notify-0").send({"text": json.dumps(result)})
+                sub_stage.delete()
+            stage.delete()
         return Response({}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)

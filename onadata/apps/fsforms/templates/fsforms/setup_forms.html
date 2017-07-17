@@ -275,10 +275,12 @@ var pk = "{{pk}}";
                         <div class="col-sm-12" style="padding: 8px 24px 8px 14px; font-size: 14px !important;">
                           <a class="stage-name-c">{% trans 'Stage' %} <span data-bind='text: $index()+1'></span>:</a>
                               <a class="name-stage-grp" data-bind="text: name, click:setShowSubstages"></a>
-                              <a  title="Edit" data-bind="click:edit">
-                              <i class="fa fa-edit edit1">
-                                
+                            <a  title="Delete" data-bind="confirmClick: { message: ' Submissions data of this stage will be lost.\n Are you sure ?',
+                              click: delete_stage }"> <i class="fa fa-trash-o">
                               </i> </a>
+                              <a  title="Edit" data-bind="click:edit"> <i class="fa fa-edit edit1">
+                              </i> </a>
+
 
                         </div>
                          <div class="col-sm-12" data-bind="visible:show_substages" style="padding: 8px 24px 8px 14px; font-size: 14px !important;">
