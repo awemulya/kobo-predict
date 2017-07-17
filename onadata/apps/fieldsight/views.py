@@ -255,20 +255,7 @@ class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMix
 class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationMixin, MyOwnOrganizationMixin, UpdateView):
     def get_success_url(self):
         return reverse('fieldsight:organization-dashboard', kwargs={'pk': self.kwargs['pk']})
-    def form_valid(self, form):
-        self.object = form.save()
-        noti = self.object.logs.create(source=self.request.user, type=4, title="new Organization",
-                                       organization=self.object,
-                                       description="new organization {0} created by {1}".
-                                       format(self.object.name, self.request.user.username))
-        result = {}
-        result['description'] = 'new organization {0} created by {1}'.format(self.object.name, self.request.user.username)
-        result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
-
-        return HttpResponseRedirect(self.get_success_url())
-
+    
 
 
 class OrganizationDeleteView(OrganizationView,LoginRequiredMixin, SuperAdminMixin, DeleteView):
