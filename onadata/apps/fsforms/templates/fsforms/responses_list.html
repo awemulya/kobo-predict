@@ -102,7 +102,7 @@
 
       <div id="stage3" class="tab-pane fade">
         {% if stages %}
-         <div class="panel-group" id="accordion">
+         <div class="panel-group col-sm-8" id="accordion">
           {% for stage in stages %}
             <div class="panel panel-default">
               <div class="panel-heading">
@@ -153,7 +153,17 @@
           {% endfor %}  
             
           </div> 
-        {% endif %} 
+        {% endif %}
+                       <div class="col-sm-4">
+            <p>Deleted forms</p>
+            {% for obj in deleted_forms %}
+            <div class="row">{{obj.xf.title}} {% trans 'with' %}
+             <a href="{% url 'forms:project_html_export' obj.id %}">
+                               {{ obj.id|project_submissions }}
+                               {% trans ' Submissions ' %}</a>
+            </div>
+            {% endfor %}
+        </div>
           </div> 
       </div>
     </div>

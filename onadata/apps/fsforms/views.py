@@ -255,8 +255,10 @@ def project_responses(request, project_id=None):
     schedules = Schedule.objects.filter(project_id=project_id, site__isnull=True, schedule_forms__isnull=False)
     stages = Stage.objects.filter(stage__isnull=True, project_id=project_id, stage_forms__isnull=True).order_by('order')
     generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=project_id)
+    deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_deleted=True,project_id=project_id)
     return render(request, "fsforms/project/project_responses_list.html",
-                  {'schedules': schedules, 'stages':stages, 'generals':generals, 'project': project_id})
+                  {'schedules': schedules, 'stages':stages, 'generals':generals,
+                   "deleted_forms":deleted_forms, 'project': project_id})
 
 @login_required()
 @group_required("Reviewer")
@@ -264,8 +266,10 @@ def responses(request, site_id=None):
     schedules = Schedule.objects.filter(site_id=site_id, project__isnull=True, schedule_forms__isnull=False)
     stages = Stage.objects.filter(stage__isnull=True, site_id=site_id).order_by('order')
     generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,site_id=site_id)
+    deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_scheduled=False,site_id=site_id, is_deleted=True)
     return render(request, "fsforms/responses_list.html",
-                  {'schedules': schedules, 'stages':stages,'generals':generals, 'site': site_id})
+                  {'schedules': schedules, 'stages':stages,'generals':generals,
+                    "deleted_forms":deleted_forms,'site': site_id})
 
 
 @group_required("Project")
