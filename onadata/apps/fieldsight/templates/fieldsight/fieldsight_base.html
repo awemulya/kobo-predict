@@ -604,80 +604,80 @@ console.log(text.prop2);
 <script type="text/javascript"   src="{{ STATIC_URL }}slick/slick.min.js"></script>
 <script>
 
-$('.panel-chat >.panel-heading> .chatminimize').click(function(){
+<!--$('.panel-chat >.panel-heading> .chatminimize').click(function(){-->
 
-    if($(this).parent().parent().hasClass('mini'))
-    {
-        console.log('clicked');
-        $(this).parent().parent().removeClass('mini').addClass('normal');
-        $('.panel-chat > .panel-body').removeClass('mini-1-body').addClass('normal-1-body').show();
-        $('.panel-chat > .panel-footer').removeClass('mini-1-fotter').addClass('normal-1-fotter').show();
-    }
+    <!--if($(this).parent().parent().hasClass('mini'))-->
+    <!--{-->
+        <!--console.log('clicked');-->
+        <!--$(this).parent().parent().removeClass('mini').addClass('normal');-->
+        <!--$('.panel-chat > .panel-body').removeClass('mini-1-body').addClass('normal-1-body').show();-->
+        <!--$('.panel-chat > .panel-footer').removeClass('mini-1-fotter').addClass('normal-1-fotter').show();-->
+    <!--}-->
 
-    else
-    {
-        $(this).parent().parent().removeClass('normal').addClass('mini');
-        $('.panel-chat > .panel-body').removeClass('normal-1-body').addClass('mini-1-body');
-        $('.panel-chat > .panel-footer').removeClass('normal-1-fotter').addClass('mini-1-fotter');
+    <!--else-->
+    <!--{-->
+        <!--$(this).parent().parent().removeClass('normal').addClass('mini');-->
+        <!--$('.panel-chat > .panel-body').removeClass('normal-1-body').addClass('mini-1-body');-->
+        <!--$('.panel-chat > .panel-footer').removeClass('normal-1-fotter').addClass('mini-1-fotter');-->
 
-        setTimeout(function() {
-         $('.panel.panel-chat > .panel-body').hide();
-         $('.panel.panel-chat > .panel-footer').hide();
-            }, 500);
-        
-    }
+        <!--setTimeout(function() {-->
+         <!--$('.panel.panel-chat > .panel-body').hide();-->
+         <!--$('.panel.panel-chat > .panel-footer').hide();-->
+            <!--}, 500);-->
+        <!---->
+    <!--}-->
 
-});
-
-
+<!--});-->
 
 
-     $('.popop-gallery').slick({
-      dots: true,
-      infinite: false,
-      speed: 300,
-      slidesToShow: 4,
-      slidesToScroll: 4,
-      responsive: [
-        {
-          breakpoint: 1024,
-          settings: {
-            slidesToShow: 3,
-            slidesToScroll: 3,
-            infinite: true,
-            dots: true
-          }
-        },
-        {
-          breakpoint: 600,
-          settings: {
-            slidesToShow: 2,
-            slidesToScroll: 2
-          }
-        },
-        {
-          breakpoint: 480,
-          settings: {
-            slidesToShow: 1,
-            slidesToScroll: 1
-          }
-        }
-        // You can unslick at a given breakpoint now by adding:
-        // settings: "unslick"
-        // instead of a settings object
-      ]
-    });
 
-     ready(function(){
 
-     var selector = '.sidebar-menu li a';
+     <!--$('.popop-gallery').slick({-->
+      <!--dots: true,-->
+      <!--infinite: false,-->
+      <!--speed: 300,-->
+      <!--slidesToShow: 4,-->
+      <!--slidesToScroll: 4,-->
+      <!--responsive: [-->
+        <!--{-->
+          <!--breakpoint: 1024,-->
+          <!--settings: {-->
+            <!--slidesToShow: 3,-->
+            <!--slidesToScroll: 3,-->
+            <!--infinite: true,-->
+            <!--dots: true-->
+          <!--}-->
+        <!--},-->
+        <!--{-->
+          <!--breakpoint: 600,-->
+          <!--settings: {-->
+            <!--slidesToShow: 2,-->
+            <!--slidesToScroll: 2-->
+          <!--}-->
+        <!--},-->
+        <!--{-->
+          <!--breakpoint: 480,-->
+          <!--settings: {-->
+            <!--slidesToShow: 1,-->
+            <!--slidesToScroll: 1-->
+          <!--}-->
+        <!--}-->
+        <!--// You can unslick at a given breakpoint now by adding:-->
+        <!--// settings: "unslick"-->
+        <!--// instead of a settings object-->
+      <!--]-->
+    <!--});-->
 
-    $(selector).on('click', function(){
-        $(selector).removeClass('active');
-        $(this).addClass('active');
-    });
+     <!--ready(function(){-->
 
-    });
+     <!--var selector = '.sidebar-menu li a';-->
+
+    <!--$(selector).on('click', function(){-->
+        <!--$(selector).removeClass('active');-->
+        <!--$(this).addClass('active');-->
+    <!--});-->
+
+    <!--});-->
 
 
 
