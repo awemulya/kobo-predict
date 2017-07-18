@@ -755,11 +755,10 @@ def manage_people_organization(request, pk):
 
 
 import json
-from channels import Group
 
 
 def all_notification(user,  message):
-    Group("%s" % user).send({
+    ChannelGroup("%s" % user).send({
         "text": json.dumps({
             "msg": message
         })
