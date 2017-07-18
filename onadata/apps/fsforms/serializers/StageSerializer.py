@@ -4,13 +4,26 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
-from onadata.apps.fsforms.models import Stage, FieldSightXF
+from onadata.apps.fsforms.models import Stage, FieldSightXF, EducationMaterial, EducationalImages
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFSerializer
 from channels import Group as ChannelGroup
 
 
+class EMImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EducationalImages
+        exclude = ("educational_material")
+
+
+class EMSerializer(serializers.ModelSerializer):
+    em_images = EMImagesSerializer(many=True, read_only=True)
+    class Meta:
+        model = EducationMaterial
+        exclude = ('stage')
+
 class SubStageSerializer1(serializers.ModelSerializer):
     stage_forms = FSXFSerializer()
+    em = EMSerializer(read_only=True)
 
     class Meta:
         model = Stage

@@ -133,6 +133,23 @@ class Stage(models.Model):
         return getattr(self, "name", "")
 
 
+
+class EducationMaterial(models.Model):
+    is_pdf = models.BooleanField(default=False)
+    pdf = models.FileField(upload_to="education-material-pdf", null=True, blank=True)
+    title = models.CharField(max_length=31, blank=True, null=True)
+    text = models.TextField(blank=True, null=True)
+    stage = models.OneToOneField(Stage, related_name="em")
+
+
+class EducationalImages(models.Model):
+    educational_material = models.ForeignKey(EducationMaterial, related_name="em_images")
+    image = models.ImageField(upload_to="education-material-images",
+                              verbose_name='Education Images',)
+
+
+
+
 class Days(models.Model):
     day = models.CharField(max_length=9)
     index = models.IntegerField()

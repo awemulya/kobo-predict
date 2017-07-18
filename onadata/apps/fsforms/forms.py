@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.fieldsight.utils.forms import HTML5BootstrapModelForm, KOModelForm, HRBSFormField
 from onadata.apps.logger.models import XForm
-from .models import FieldSightXF, Stage, Schedule, FormGroup, FORM_STATUS
+from .models import FieldSightXF, Stage, Schedule, FormGroup, FORM_STATUS, EducationMaterial
 
 SHARED_LEVEL = [('' ,'None'),(0, 'Global'), (1, 'Organization'), (2, 'Project'), ]
 
@@ -335,3 +335,7 @@ class AlterAnswerStatus(forms.Form):
     comment = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows':4, 'cols':15}))
 
 
+class EducationalmaterialForm(HTML5BootstrapModelForm, KOModelForm):
+    class Meta:
+        model = EducationMaterial
+        exclude = ()

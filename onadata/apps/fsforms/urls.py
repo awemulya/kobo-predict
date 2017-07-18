@@ -41,7 +41,8 @@ from .views import (
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, project_responses,
     project_html_export, deploy_survey, deploy_stages, deploy_general, set_deploy_stages, share_stages,
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, setup_forms,
-    instance_status, rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage)
+    instance_status, rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
+    save_educational_material)
 
 
 urlpatterns = [
@@ -182,6 +183,7 @@ urlpatterns = urlpatterns + [
     url(r'^share/(?P<id>[\w-]+)/(?P<counter>\d+)$', share_level, name='share'),
     url(r'^api/delete-substage/(?P<id>\d+)/$', delete_substage, name='delete_substage_api'),
     url(r'^api/delete-mainstage/(?P<id>\d+)/$', delete_mainstage, name='delete_mainstage_api'),
+    url(r'^api/save_educational_material/$', save_educational_material),
 
 ]
 

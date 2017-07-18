@@ -36,7 +36,8 @@ from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, P
     CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin, SuperAdminMixin
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
-    AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm, GeneralForm, KoScheduleForm
+    AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm, GeneralForm, KoScheduleForm, \
+    EducationalmaterialForm
 from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
@@ -1543,3 +1544,11 @@ class XFormView(object):
 class XformDetailView(LoginRequiredMixin, SuperAdminMixin, XFormView, DetailView):
     pass
 
+@login_required()
+@api_view(['POST'])
+def save_educational_material(request):
+    form = EducationalmaterialForm(request.POST, request.FILES)
+    if form.is_valid():
+        em = form.save()
+        return Response({'id': em.id}, status=status.HTTP_200_OK)
+    return Response({'error': 'Invalid Educational Material Data'}, status=status.HTTP_400_BAD_REQUEST)
