@@ -304,6 +304,7 @@ var pk = "{{pk}}";
                                         <span class="name-stage-grp" data-bind="text: stage_forms().xf().label"></span>
                                     </div>
                                     <a  title="Edit SubStage" data-bind="click:edit"><i class="fa fa-edit edit2"></i> </a>
+                                    <a  title="Educational Material" data-bind="click:education_material"><i class="fa fa-book"></i> </a>
 
                               </div>
                                 <div class="col-sm-8 substage" data-bind="visible:editable">
@@ -337,7 +338,21 @@ var pk = "{{pk}}";
                     </div>
 
                  </div>
-
+<div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
+    <div data-bind="with: current_education">
+      <div class="modal-dialog form-modal" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">{% trans 'Education Material' %}</h4>
+          </div>
+          <div class="modal-body">
+              Hello Edu
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
 
 
     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:stage_form_modal_visibility">
