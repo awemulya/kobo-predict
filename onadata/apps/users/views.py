@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.core import serializers
 from django.contrib import messages
@@ -297,12 +298,9 @@ def my_profile(request, pk=None):
 class UsersListView(TemplateView, SuperAdminMixin):
     template_name = "users/list.html"
 
-import json
-from channels import Group
-
 
 def all_notification(user,  message):
-    Group("%s" % user).send({
+    ChannelGroup("%s" % user).send({
         "text": json.dumps({
             "msg": message
         })

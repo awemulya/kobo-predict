@@ -2,7 +2,7 @@ import os
 import json
 
 from datetime import datetime
-
+from channels import Group as ChannelGroup
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect
@@ -774,10 +774,9 @@ data (instance/submission per row)
             result = {}
             result['description'] = noti.description
             result['url'] = noti.get_absolute_url()
-            from channels import Group
-            Group("notify-0").send({"text":json.dumps(result)})
+            ChannelGroup("notify-0").send({"text":json.dumps(result)})
             if noti.organization:
-                Group("notify-{}".format(noti.organization.id)).send({"text":json.dumps(result)})
+                ChannelGroup("notify-{}".format(noti.organization.id)).send({"text":json.dumps(result)})
             headers = self.get_success_headers(serializer.data)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED,
@@ -812,10 +811,9 @@ data (instance/submission per row)
         result = {}
         result['description'] = noti.description
         result['url'] = noti.get_absolute_url()
-        from channels import Group
-        Group("notify-0").send({"text":json.dumps(result)})
+        ChannelGroup("notify-0").send({"text":json.dumps(result)})
         if noti.organization:
-            Group("notify-{}".format(noti.organization.id)).send({"text":json.dumps(result)})
+            ChannelGroup("notify-{}".format(noti.organization.id)).send({"text":json.dumps(result)})
         return super(XFormViewSet, self).update(request, pk, *args, **kwargs)
 
     @detail_route(methods=['GET'])

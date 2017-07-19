@@ -1,3 +1,5 @@
+import json
+
 from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -184,12 +186,9 @@ class ProjectTypeViewset(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return {'request': self.request}
 
-import json
-from channels import Group
-
 
 def all_notification(user,  message):
-    Group("%s" % user).send({
+    ChannelGroup("%s" % user).send({
         "text": json.dumps({
             "msg": message
         })
