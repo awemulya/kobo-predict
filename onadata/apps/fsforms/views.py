@@ -1,7 +1,10 @@
 import json
+import uuid
+from base64 import b64decode
 
 from bson import json_util
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 from django.db.models import Q
@@ -23,6 +26,7 @@ from channels import Group as ChannelGroup
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
+from onadata.apps.fsforms.serializers.StageSerializer import EMSerializer
 from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed, \
     send_message_un_deploy
 from onadata.apps.logger.models import XForm
@@ -38,7 +42,8 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
     AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm, GeneralForm, KoScheduleForm, \
     EducationalmaterialForm
-from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance
+from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
+    EducationMaterial, EducationalImages
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -1547,8 +1552,21 @@ class XformDetailView(LoginRequiredMixin, SuperAdminMixin, XFormView, DetailView
 @login_required()
 @api_view(['POST'])
 def save_educational_material(request):
-    form = EducationalmaterialForm(request.POST, request.FILES)
+    id = request.POST.get('id', False)
+    if id:
+        instance = EducationMaterial.objects.get(pk=id)
+        form = EducationalmaterialForm(request.POST, request.FILES, instance=instance)
+    else:
+        form = EducationalmaterialForm(request.POST, request.FILES)
     if form.is_valid():
         em = form.save()
-        return Response({'id': em.id}, status=status.HTTP_200_OK)
+        non_pdf = request.POST.get('is_pdf')
+        if not non_pdf:
+            for key in request.FILES.keys():
+                if "new_images_" in key:
+                    img = request.FILES.get(key)
+                    ei = EducationalImages(image=img, educational_material=em)
+                    ei.save()
+        serializer = EMSerializer(em)
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
     return Response({'error': 'Invalid Educational Material Data'}, status=status.HTTP_400_BAD_REQUEST)

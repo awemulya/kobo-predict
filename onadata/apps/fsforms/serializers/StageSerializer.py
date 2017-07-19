@@ -12,14 +12,14 @@ from channels import Group as ChannelGroup
 class EMImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = EducationalImages
-        exclude = ("educational_material")
+        exclude = ("educational_material",)
 
 
 class EMSerializer(serializers.ModelSerializer):
     em_images = EMImagesSerializer(many=True, read_only=True)
     class Meta:
         model = EducationMaterial
-        exclude = ('stage')
+        exclude = ('stage',)
 
 class SubStageSerializer1(serializers.ModelSerializer):
     stage_forms = FSXFSerializer()
@@ -27,7 +27,7 @@ class SubStageSerializer1(serializers.ModelSerializer):
 
     class Meta:
         model = Stage
-        exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage', 'date_modified', 'date_created')
+        exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage', 'date_modified', 'date_created',)
 
     def get_assigned_form(self, obj):
         if not FieldSightXF.objects.filter(stage=obj).exists():
@@ -63,7 +63,7 @@ class StageSerializer1(serializers.ModelSerializer):
 
     class Meta:
         model = Stage
-        exclude = ('shared_level', 'group', 'ready', 'stage')
+        exclude = ('shared_level', 'group', 'ready', 'stage',)
 
     def get_substages(self, stage):
         stages = Stage.objects.filter(stage=stage, stage_forms__is_deleted=False)

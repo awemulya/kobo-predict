@@ -146,7 +146,7 @@ class FSXFormSerializer(serializers.ModelSerializer):
 class XformSerializer(serializers.ModelSerializer):
     class Meta:
         model = XForm
-        fields = ('title', 'id',)
+        fields = ('title', 'id', 'id_string')
 
 
 class FSXFSerializer(serializers.ModelSerializer):

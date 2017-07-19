@@ -4,6 +4,10 @@
 
 {% block page-title %}{% trans 'Manage Forms' %}{% endblock %}
 
+   {%block extracss %}
+<link rel="stylesheet" href="{% static 'css/knockout-file-bindings.css' %}">
+    {% endblock %}
+
 {% block head %}
 {% endblock %}
 {% block breadcrumbs %}
@@ -22,6 +26,7 @@
 <link rel="stylesheet" href="{% static 'css/datepicker.css' %}">
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/knockout-file-bindings.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/knockout-sortable.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
@@ -291,6 +296,85 @@ var pk = "{{pk}}";
                         <div class="row"  data-bind="visible:show_substages">
                         <div class="all-sub-grp">
                           <div class="row" data-bind="foreach: parent">
+
+  <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
+    <div data-bind="with: em">
+      <div class="modal-dialog form-modal" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">{% trans 'Education Material' %}</h4>
+          </div>
+          <div class="modal-body">
+              <div class="col-sm-8">
+                  <h2>Create A Education Material</h2>
+              <div class="input-group input-group-lg">
+              <span class="input-group-addon" id="sizing-addon1">Title</span>
+              <input data-bind="value:title" class="form-control" placeholder="Title" aria-describedby="sizing-addon1">
+                </div>
+              <div class="input-group input-group-lg">
+              <span class="input-group-addon" id="sizing-addon2">Text</span>
+              <input data-bind="value:text" class="form-control" placeholder="Text" aria-describedby="sizing-addon2">
+                </div>
+
+              <div>
+                  <div data-bind="visible:em_images().length">
+                      <p>Saved Images</p>
+                      <div data-bind="foreach:em_images">
+                          <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
+                      </div>
+                  </div>
+                    <h3>Multiple Images Uploads</h3>
+                        <div class="well" data-bind="fileDrag: multiFileData">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                          <!-- ko foreach: {data: multiFileData().dataURLArray, as: 'dataURL'} -->
+                                          <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">
+                                          <!-- /ko -->
+                                    <div data-bind="ifnot: multiFileData().fileArray">
+                                        <label class="drag-label">Drag files here</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="file" multiple data-bind="fileInput: multiFileData, customFileInput: {
+                                      buttonClass: 'btn btn-success',
+                                      fileNameClass: 'disabled form-control',
+                                      onClear: onClear,
+                                    }" accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+                 </div>
+                  </div>
+
+              <div class="col-sm-4">
+                  <h2> Upload PDF OF Education Material</h2>
+                  <div>
+                    <div class="well">
+                        <div class="form-group row">
+                            <div class="col-sm-12">
+                                <div data-bind="visible:pdf">
+                                    Current pdf
+                          <span data-bind="text:pdf"></span>
+                      </div>
+                                </div>
+                            <div class="col-sm-12">
+                                <span>Change PDf File</span>
+                                <input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+
+              </div>
+              <button data-bind="click:$parent.save_em">Save </button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
                             <div class="each-stage-grp">
                               <div class="col-sm-1"></div>
                               <div class="col-sm-10" data-bind="visible:!editable()">
@@ -338,21 +422,6 @@ var pk = "{{pk}}";
                     </div>
 
                  </div>
-<div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
-    <div data-bind="with: current_education">
-      <div class="modal-dialog form-modal" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">{% trans 'Education Material' %}</h4>
-          </div>
-          <div class="modal-body">
-              Hello Edu
-          </div>
-        </div>
-      </div>
-    </div>
-</div>
 
 
     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:stage_form_modal_visibility">
