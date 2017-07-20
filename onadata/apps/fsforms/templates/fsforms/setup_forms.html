@@ -309,14 +309,22 @@ var pk = "{{pk}}";
           <div class="modal-body">
               <div class="col-sm-8">
                   <h2>Create A Education Material</h2>
-              <div class="input-group input-group-lg">
-              <span class="input-group-addon" id="sizing-addon1">Title</span>
-              <input data-bind="value:title" class="form-control" placeholder="Title" aria-describedby="sizing-addon1">
+
+                <div class="form-group">
+                  <label for="title" id="sizing-addon2"><h4>Title</h4></label>
+                  <textarea data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></textarea>
                 </div>
-              <div class="input-group input-group-lg">
-              <span class="input-group-addon" id="sizing-addon2">Text</span>
-              <input data-bind="value:text" class="form-control" placeholder="Text" aria-describedby="sizing-addon2">
+
+
+
+
+
+                <div class="form-group">
+                  <label for="comment" id="sizing-addon2"><h4>Text</h4></label>
+                  <textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="3" id="comment"></textarea>
                 </div>
+
+
 
               <div>
                   <div data-bind="visible:em_images().length">
@@ -371,7 +379,7 @@ var pk = "{{pk}}";
                  </div>
 
               </div>
-              <button data-bind="click:$parent.save_em">Save </button>
+              <button class="btn btn-primary" data-bind="click:$parent.save_em">Save </button>
           </div>
         </div>
       </div>
