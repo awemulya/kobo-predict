@@ -35,10 +35,11 @@
 <script>
 
 $(document).ready(function() {
+var base_url = "{{request.get_host}}";
 var is_project = "{{is_project}}";
 var pk = "{{pk}}";
 
- vm = new SetUpViewModel(is_project, pk);
+ vm = new SetUpViewModel(is_project, pk, base_url);
  ko.applyBindings(vm);
 });
 
@@ -355,7 +356,10 @@ var pk = "{{pk}}";
                             <div class="col-sm-12">
                                 <div data-bind="visible:pdf">
                                     Current pdf
-                          <span data-bind="text:pdf"></span>
+                                    <a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank"> View </a>
+
+                          <!--<button data-bind="click: addPdf">Load PDF</button>-->
+                        <!--<div class="documentviewerpdf"></div>-->
                       </div>
                                 </div>
                             <div class="col-sm-12">
