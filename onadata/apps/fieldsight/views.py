@@ -123,8 +123,6 @@ def organization_dashboard(request, pk):
     total_users = UserProfile.objects.filter(organization=obj).count()
 
     bar_graph = BarGenerator(sites)
-    ordered_list = [{'letter': key, 'frequency': val} for key, val in bar_graph.data.items()]
-    bar_data = json.dumps(ordered_list)
 
     line_chart = LineChartGeneratorOrganization(obj)
     line_chart_data = line_chart.data()
@@ -142,9 +140,10 @@ def organization_dashboard(request, pk):
         'approved': approved,
         'rejected': rejected,
         'data': data,
-        'bar_data': bar_data,
         'cumulative_data': line_chart_data.values(),
         'cumulative_labels': line_chart_data.keys(),
+        'progress_data': bar_graph.data.values(),
+        'progress_labels': bar_graph.data.keys(),
     }
     return TemplateResponse(request, "fieldsight/organization_dashboard.html", dashboard_data)
 
@@ -171,8 +170,6 @@ def project_dashboard(request, pk):
     total_survey_sites = obj.sites.filter(is_survey=True).count()
     outstanding, flagged, approved, rejected = obj.get_submissions_count()
     bar_graph = BarGenerator(sites)
-    ordered_list = [{'letter': key, 'frequency': val} for key, val in bar_graph.data.items()]
-    bar_data = json.dumps(ordered_list)
 
     line_chart = LineChartGenerator(obj)
     line_chart_data = line_chart.data()
@@ -186,9 +183,10 @@ def project_dashboard(request, pk):
         'approved': approved,
         'rejected': rejected,
         'data': data,
-        'bar_data': bar_data,
         'cumulative_data': line_chart_data.values(),
         'cumulative_labels': line_chart_data.keys(),
+        'progress_data': bar_graph.data.values(),
+        'progress_labels': bar_graph.data.keys(),
     }
     return TemplateResponse(request, "fieldsight/project_dashboard.html", dashboard_data)
 
