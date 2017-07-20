@@ -9,62 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
-<style>
-    .axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
 
-  .bar {
-    fill: #296fd5;
-}
-
-.bar:hover {
-  fill: rgba(41, 111, 213, 0.5);
-}
-
-.x.axis path {
-  display: none;
-}
-
-.d3-tip {
-  line-height: 1;
-  font-weight: bold;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  border-radius: 2px;
-}
-
-/* Creates a small triangle extender for the tooltip */
-.d3-tip:after {
-  box-sizing: border-box;
-  display: inline;
-  font-size: 10px;
-  width: 100%;
-  line-height: 1;
-  color: rgba(0, 0, 0, 0.8);
-  content: "\25BC";
-  position: absolute;
-  text-align: center;
-}
-
-/* Style northward tooltips differently */
-.d3-tip.n:after {
-  margin: -1px 0 0 0;
-  top: 100%;
-  left: 0;
-}
-
-    path {
-    stroke: steelblue;
-    stroke-width: 2;
-    fill: none;
-}
-
-</style>
 {% endblock %}
 
 {% block head %}
@@ -511,7 +456,7 @@ var project = "{{obj.pk}}";
                   <label><input class = "switch" id = "form_status" type="radio" name="status" value="male" checked="checked"> Form Status</label><br>
               </div>
                <div class="radio">
-                  <label><input class = "switch" id = "project_progress" type="radio" name="progress" value="male"> Project Progress</label><br>
+                  <label><input class = "switch" id = "project_progress" type="radio" name="progress" value="male"> Site Progress</label><br>
                </div>
                </div>
                     <div id="map"></div>
@@ -637,6 +582,7 @@ var project = "{{obj.pk}}";
         <div class="col-sm-6">
 
              <div id="progress-bar">
+                 <canvas id="myBar" width="500" height="388"></canvas>
 
              </div>
              <h4 class="widget-h">Site Progress</h4>
@@ -660,9 +606,10 @@ var project = "{{obj.pk}}";
   <script type="text/javascript">
      var static_url ="{{ STATIC_URL }}";
     var data = {{ data|safe}};
-    var dict_bar_data = {{ bar_data|safe}};
     var cummulative_labels = {{ cumulative_labels|safe}};
     var cummulative_data = {{ cumulative_data|safe}};
+    var progress_labels = {{ progress_labels|safe}};
+    var progress_data = {{ progress_data|safe}};
 
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>

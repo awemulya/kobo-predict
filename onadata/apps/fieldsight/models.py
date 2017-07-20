@@ -255,15 +255,15 @@ class Site(models.Model):
 
     @property
     def status(self):
-        if self.site_instances.filter(form_status=3, site_fxf__is_staged=True).count():
+        if self.site_instances.filter(form_status=3).count():
             return 3
-        elif self.site_instances.filter(form_status=2, site_fxf__is_staged=True).count():
+        elif self.site_instances.filter(form_status=2).count():
             return 2
-        elif self.site_instances.filter(form_status=0, site_fxf__is_staged=True).count():
+        elif self.site_instances.filter(form_status=0).count():
             return 0
-        elif self.site_instances.filter(form_status=1, site_fxf__is_staged=True).count():
+        elif self.site_instances.filter(form_status=1).count():
             return 1
-        return 1
+        return 4
 
 
     def get_site_submission(self):
