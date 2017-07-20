@@ -263,7 +263,7 @@ class Site(models.Model):
             return 0
         elif self.site_instances.filter(form_status=1, site_fxf__is_staged=True).count():
             return 1
-        return 1
+        return 4
 
 
     def get_site_submission(self):
