@@ -230,7 +230,7 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
 
     class Meta:
         model = Site
-        exclude = []
+        exclude = ['is_survey']
         project_filters = ['project']
         widgets = {
         'address': forms.TextInput(),

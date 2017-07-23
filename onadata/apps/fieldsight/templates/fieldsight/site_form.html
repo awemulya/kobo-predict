@@ -48,10 +48,6 @@
         <div class="gap"></div>
         <button class="btn btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
 
-        {% if form.instance.id %}
-        <a href="{% url 'fieldsight:site-delete' form.instance.id %}" class="btn btn-danger btn-raised">
-            {% trans 'Delete' %}</a>
-        {% endif %}
     </form>
 
 {% endblock %}

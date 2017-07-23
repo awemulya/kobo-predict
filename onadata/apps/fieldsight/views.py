@@ -515,6 +515,10 @@ class SiteListView(SiteView, ReviewerMixin, ListView):
 
 
 class SiteCreateView(SiteView, ProjectMixin, CreateView):
+
+    def get_success_url(self):
+        return reverse('fieldsight:site-dashboard', kwargs={'pk': self.kwargs['pk']})
+
     def form_valid(self, form):
         self.object = form.save()
         noti = self.object.logs.create(source=self.request.user, type=3, title="new Project",

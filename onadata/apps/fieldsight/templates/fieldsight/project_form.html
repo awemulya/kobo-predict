@@ -53,10 +53,10 @@
         <!-- <input type="submit" class='btn btn-info btn-raised' value="{% trans 'Save' %}"> -->
         <div class="gap-medium"></div>
         <button class="btn btn-primary registration__action marg4" type="submit" ">{% trans 'SAVE' %}</button>
-        {% if form.instance.id %}
-            <a href="{% url 'fieldsight:project-delete' form.instance.id %}" class="btn btn-danger btn-raised marg4">
-                {% trans 'Delete' %}</a>
-        {% endif %}
+        <!--{% if form.instance.id %}-->
+            <!--<a href="{% url 'fieldsight:project-delete' form.instance.id %}" class="btn btn-danger btn-raised marg4">-->
+                <!--{% trans 'Delete' %}</a>-->
+        <!--{% endif %}-->
             </div>
     </form>
 
