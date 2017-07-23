@@ -365,3 +365,23 @@ class FieldSightFormLibrary(models.Model):
         verbose_name = _("Library")
         verbose_name_plural = _("Library")
         ordering = ("-shared_date",)
+
+
+@receiver(post_save, sender=Site)
+def copy_stages_from_project(sender, **kwargs):
+    site = kwargs.get('instance')
+    project = site.project
+    project_main_stages = project.stages.filter(stage__isnull=True)
+    for pms  in project_main_stages:
+        project_sub_stages = Stage.objects.filter(stage__id=pms.pk, stage_forms__is_deleted=False)
+        site_main_stage = Stage(name=pms.name, order=pms.order, site=site, description=pms.description)
+        site_main_stage.save()
+        for pss in project_sub_stages:
+            site_sub_stage = Stage(name=pss.name, order=pss.order, site=site,
+                           description=pss.description, stage=site_main_stage)
+            site_sub_stage.save()
+            if FieldSightXF.objects.filter(stage=pss).exists():
+                fsxf = pss.stage_forms
+                site_form = FieldSightXF(is_staged=True, xf=fsxf.xf, site=site,fsform=fsxf, stage=site_sub_stage, is_deployed=True)
+                site_form.save()
+
