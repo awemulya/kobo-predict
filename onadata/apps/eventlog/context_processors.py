@@ -4,12 +4,10 @@ from onadata.apps.eventlog.models import FieldSightLog, FieldSightMessage
 
 
 def events(request):
-    if not request.user:
-        messages = []
     if request.user.is_anonymous():
         messages = []
-    logs = []
-    messages = FieldSightMessage.inbox(request.user)
+    else:
+        messages = FieldSightMessage.inbox(request.user)
     oid = 0
     if request.group is not None:
         if request.group.name == "Super Admin":
