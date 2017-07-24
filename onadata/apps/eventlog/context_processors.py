@@ -4,6 +4,10 @@ from onadata.apps.eventlog.models import FieldSightLog, FieldSightMessage
 
 
 def events(request):
+    if not request.user:
+        messages = []
+    if request.user.is_anonymous():
+        messages = []
     logs = []
     messages = FieldSightMessage.inbox(request.user)
     oid = 0
@@ -16,8 +20,11 @@ def events(request):
         elif request.group.name in ["Project Manager", "Reviewer"]:
             logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:10]
             oid = request.organization.id
+    else:
+        logs = []
+        oid = None
     channels_url = "ws://"+settings.WEBSOCKET_URL+":"+settings.WEBSOCKET_PORT+"/" \
-        if settings.WEBSOCKET_PORT else "ws://"+settings.WEBSOCKET_URL+"/"
+    if settings.WEBSOCKET_PORT else "ws://"+settings.WEBSOCKET_URL+"/"
     return {
         'notifications': logs,
         'fieldsight_message': messages,
