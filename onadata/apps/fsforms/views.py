@@ -1560,13 +1560,11 @@ def save_educational_material(request):
         form = EducationalmaterialForm(request.POST, request.FILES)
     if form.is_valid():
         em = form.save()
-        non_pdf = request.POST.get('is_pdf')
-        if not non_pdf:
-            for key in request.FILES.keys():
-                if "new_images_" in key:
-                    img = request.FILES.get(key)
-                    ei = EducationalImages(image=img, educational_material=em)
-                    ei.save()
+        for key in request.FILES.keys():
+            if "new_images_" in key:
+                img = request.FILES.get(key)
+                ei = EducationalImages(image=img, educational_material=em)
+                ei.save()
         serializer = EMSerializer(em)
         return Response({'data': serializer.data}, status=status.HTTP_200_OK)
     return Response({'error': 'Invalid Educational Material Data'}, status=status.HTTP_400_BAD_REQUEST)
