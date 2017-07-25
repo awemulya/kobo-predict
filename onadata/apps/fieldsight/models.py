@@ -281,9 +281,8 @@ class Site(models.Model):
 
         return outstanding, flagged, approved, rejected
 
-    @property
     def get_absolute_url(self):
-        return reverse('fieldsight:sites-dashboard', kwargs={'pk': self.pk})
+        return reverse('fieldsight:site-dashboard', kwargs={'pk': self.pk})
 
 
 def get_image_filename(instance, filename):
