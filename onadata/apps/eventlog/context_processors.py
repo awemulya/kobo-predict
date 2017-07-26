@@ -9,6 +9,7 @@ def events(request):
     else:
         messages = FieldSightMessage.inbox(request.user)
     oid = 0
+    logs = []
     if request.group is not None:
         if request.group.name == "Super Admin":
            logs = FieldSightLog.objects.filter(is_seen=False)[:10]
