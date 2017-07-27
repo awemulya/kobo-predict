@@ -56,7 +56,7 @@ class ProjectCreationViewSet(viewsets.ModelViewSet):
         noti = project.logs.create(source=self.request.user, type=4, title="new Project", organization=project.organization,
                                    description="new project {0} created by {1}".format(project.name, self.request.user.username))
         result = {}
-        result['description'] = 'new user {0} created by {1}'.format(project.name, self.request.user.username)
+        result['description'] = 'new project {0} created by {1}'.format(project.name, self.request.user.username)
         result['url'] = noti.get_absolute_url()
         ChannelGroup("notify-{}".format(project.organization.id)).send({"text": json.dumps(result)})
         ChannelGroup("notify-0").send({"text": json.dumps(result)})

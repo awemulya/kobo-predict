@@ -253,7 +253,7 @@ class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMix
 class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationMixin, MyOwnOrganizationMixin, UpdateView):
     def get_success_url(self):
         return reverse('fieldsight:organization-dashboard', kwargs={'pk': self.kwargs['pk']})
-    
+
 
 
 class OrganizationDeleteView(OrganizationView,LoginRequiredMixin, SuperAdminMixin, DeleteView):
