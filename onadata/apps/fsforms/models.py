@@ -52,6 +52,7 @@ class Stage(models.Model):
     site = models.ForeignKey(Site, related_name="stages", null=True, blank=True)
     project = models.ForeignKey(Project, related_name="stages", null=True, blank=True)
     ready = models.BooleanField(default=False)
+    project_stage_id = models.IntegerField(default=0)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
@@ -63,8 +64,6 @@ class Stage(models.Model):
     def save(self, *args, **kwargs):
         if self.stage:
             self.group = self.stage.group
-        # if not self.pk:
-        #     self.order = Stage.get_order(self.site, self.project,self.stage)
         super(Stage, self).save(*args, **kwargs)
 
     def get_display_name(self):

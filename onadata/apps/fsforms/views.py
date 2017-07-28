@@ -545,12 +545,12 @@ def set_deploy_stages(request, is_project, pk):
                     for site in sites:
                         send_message_stages(site)
                         site_main_stage = Stage(name=main_stage.name, order=main_stage.order, site=site,
-                                           description=main_stage.description)
+                                           description=main_stage.description, project_stage_id=main_stage.id)
                         site_main_stage.save()
                         project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
                         for project_sub_stage in project_sub_stages:
                             site_sub_stage = Stage(name=project_sub_stage.name, order=project_sub_stage.order, site=site,
-                                           description=project_sub_stage.description, stage=site_main_stage)
+                                           description=project_sub_stage.description, stage=site_main_stage, project_stage_id=project_sub_stage.id)
                             site_sub_stage.save()
                             if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
                                 fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
