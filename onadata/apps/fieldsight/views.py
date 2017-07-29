@@ -247,22 +247,20 @@ class OrganizationListView(OrganizationView, LoginRequiredMixin, SuperAdminMixin
 
 
 class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, CreateView):
-    pass
-    # def form_valid(self, form):
-    #     self.object = form.save()
-    #     noti = self.object.logs.create(source=self.request.user, type=5, title="new Organization",
-    #                                    organization=self.object,
-    #                                    content_object=self.object,
-    #                                    description="new organization {0} created by {1}".
-    #                                    format(self.object.name, self.request.user.username))
-    #     result = {}
-    #     result['description'] = 'new organization {0} created by {1}'.format(self.object.name, self.request.user.username)
-    #     result['url'] = noti.get_absolute_url()
-    #     ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-    #     ChannelGroup("notify-0").send({"text": json.dumps(result)})
-    #
-    #     return HttpResponseRedirect(self.get_success_url())
-    #
+    def form_valid(self, form):
+        self.object = form.save()
+        noti = self.object.logs.create(source=self.request.user, type=5, title="new Organization",
+                                       organization=self.object, content_object=self.object,
+                                       description="new organization {0} created by {1}".
+                                       format(self.object.name, self.request.user.username))
+        result = {}
+        result['description'] = 'new organization {0} created by {1}'.format(self.object.name, self.request.user.username)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(self.object.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationMixin, MyOwnOrganizationMixin, UpdateView):
     def get_success_url(self):
@@ -276,7 +274,7 @@ class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationM
                                        description="new organization {0} updated by {1}".
                                        format(self.object.name, self.request.user.username))
         result = {}
-        result['description'] = 'new organization {0} created by {1}'.format(self.object.name, self.request.user.username)
+        result['description'] = 'new organization {0} updated by {1}'.format(self.object.name, self.request.user.username)
         result['url'] = noti.get_absolute_url()
         ChannelGroup("notify-{}".format(self.object.id)).send({"text": json.dumps(result)})
         ChannelGroup("notify-0").send({"text": json.dumps(result)})
