@@ -148,7 +148,7 @@ class StageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stage
-        fields = ('name', 'description', 'id', 'stage', 'main_stage', 'order', 'site')
+        fields = ('name', 'description', 'id', 'stage', 'main_stage', 'order', 'site', 'project_stage_id')
 
 
 class SubStageSerializer(serializers.ModelSerializer):
