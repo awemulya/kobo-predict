@@ -18,7 +18,7 @@
 
 {% block breadcrumbs %}
  {% ifrole "Organization" %}
-    <li><a href="{% url 'fieldsight:organization-dashboard' obj.organization.pk %}">{{obj.organization.name}}</a></li>
+    <li><a href="{% url 'fieldsight:organizations-dashboard' obj.organization.pk %}">{{obj.organization.name}}</a></li>
  {% endrole %}
     <li>{{obj.name}}</li>
 {% endblock %}

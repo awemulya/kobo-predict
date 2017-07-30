@@ -5,7 +5,7 @@
 
 {% block breadcrumbs %}
 {% if form.instance.id %}
-    <li><a href="{% url 'fieldsight:organization-dashboard' form.instance.pk %}">{% trans 'Organization Dashboard' %}</a></li>
+    <li><a href="{% url 'fieldsight:organizations-dashboard' form.instance.pk %}">{% trans 'Organization Dashboard' %}</a></li>
 {% endif %}
 {% if not form.instance.id %}
     <li><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organizations' %}</a></li>

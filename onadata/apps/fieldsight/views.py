@@ -264,7 +264,7 @@ class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMix
 
 class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationMixin, MyOwnOrganizationMixin, UpdateView):
     def get_success_url(self):
-        return reverse('fieldsight:organization-dashboard', kwargs={'pk': self.kwargs['pk']})
+        return reverse('fieldsight:organizations-dashboard', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
         self.object = form.save()

@@ -20,7 +20,7 @@
         {% for obj in object_list %}
         <div class="organization-list  {{obj.is_active|activeness}}">
             <div class="col-md-4 col-sm-4 col-xs-12">
-                <a href="{% url 'fieldsight:organization-dashboard' obj.pk %}" >
+                <a href="{% url 'fieldsight:organizations-dashboard' obj.pk %}" >
 
 
                     <div class="card ">
@@ -42,7 +42,7 @@
 
                             {{ obj.address }}, {{ obj.get_country_display }}</p>
  
-                            <a href="{% url 'fieldsight:organization-dashboard' obj.pk %}" class="btn btn-primary">GO <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <a href="{% url 'fieldsight:organizations-dashboard' obj.pk %}" class="btn btn-primary">GO <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             </a>
                         </div>
                         <!--/.Card content-->
