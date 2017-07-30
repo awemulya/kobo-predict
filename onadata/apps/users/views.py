@@ -120,6 +120,7 @@ def current_user(request):
                          'is_supervisor': site_supervisor,
                          'last_login': user.last_login,
                          'organization': user.user_profile.organization.name,
+                         'organization_url': user.user_profile.organization.logo.url,
                          'address': user.user_profile.address,
                          'skype': user.user_profile.skype,
                          'phone': user.user_profile.phone,

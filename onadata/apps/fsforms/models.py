@@ -52,6 +52,7 @@ class Stage(models.Model):
     site = models.ForeignKey(Site, related_name="stages", null=True, blank=True)
     project = models.ForeignKey(Project, related_name="stages", null=True, blank=True)
     ready = models.BooleanField(default=False)
+    project_stage_id = models.IntegerField(default=0)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
@@ -63,8 +64,6 @@ class Stage(models.Model):
     def save(self, *args, **kwargs):
         if self.stage:
             self.group = self.stage.group
-        # if not self.pk:
-        #     self.order = Stage.get_order(self.site, self.project,self.stage)
         super(Stage, self).save(*args, **kwargs)
 
     def get_display_name(self):
@@ -374,11 +373,11 @@ def copy_stages_from_project(sender, **kwargs):
     project_main_stages = project.stages.filter(stage__isnull=True)
     for pms  in project_main_stages:
         project_sub_stages = Stage.objects.filter(stage__id=pms.pk, stage_forms__is_deleted=False)
-        site_main_stage = Stage(name=pms.name, order=pms.order, site=site, description=pms.description)
+        site_main_stage = Stage(name=pms.name, order=pms.order, site=site, description=pms.description, project_stage_id=pms.id)
         site_main_stage.save()
         for pss in project_sub_stages:
             site_sub_stage = Stage(name=pss.name, order=pss.order, site=site,
-                           description=pss.description, stage=site_main_stage)
+                           description=pss.description, stage=site_main_stage, project_stage_id=pss.id)
             site_sub_stage.save()
             if FieldSightXF.objects.filter(stage=pss).exists():
                 fsxf = pss.stage_forms
