@@ -8,15 +8,15 @@ from onadata.apps.fieldsight.mixins import OrganizationMixin
 
 class NotificationListView(OrganizationMixin, ListView):
     model = FieldSightLog
-    paginate_by = 10
+    paginate_by = 100
 
     def get_queryset(self):
-        return super(NotificationListView, self).get_queryset().order_by('is_seen')
+        return super(NotificationListView, self).get_queryset().order_by('-date')
 
 
 class MessageListView(ListView):
     model = FieldSightMessage
-    paginate_by = 10
+    paginate_by = 100
 
     def get_queryset(self):
         return super(MessageListView, self).get_queryset().filter(Q(sender=self.request.user) | Q(receiver=self.request.user))
