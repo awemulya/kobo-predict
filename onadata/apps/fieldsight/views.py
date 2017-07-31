@@ -53,7 +53,7 @@ def dashboard(request):
         if current_role.group.name == "Project Manager":
             return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role.project.pk}))
         if current_role.group.name == "Organization Admin":
-            return HttpResponseRedirect(reverse("fieldsight:organization-dashboard",
+            return HttpResponseRedirect(reverse("fieldsight:organizations-dashboard",
                                                 kwargs={'pk': current_role.organization.pk}))
 
     total_users = User.objects.all().count()
