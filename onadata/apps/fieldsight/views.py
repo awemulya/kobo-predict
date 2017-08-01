@@ -1,5 +1,4 @@
 import json
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
@@ -782,10 +781,6 @@ def manage_people_project(request, pk):
 @group_required("Organization")
 def manage_people_organization(request, pk):
     return render(request, "fieldsight/manage_people_site.html", {'pk': pk, 'level': "2", 'organization': pk})
-
-
-import json
-
 
 def all_notification(user,  message):
     ChannelGroup("%s" % user).send({

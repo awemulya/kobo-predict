@@ -109,8 +109,6 @@ class OrganizationsProjectViewSet(viewsets.ModelViewSet):
         return {'request': self.request}
 
 
-
-
 def all_notification(user,  message):
     ChannelGroup("%s" % user).send({
         "text": json.dumps({
