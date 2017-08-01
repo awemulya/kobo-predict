@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth.models import Group
 from django.db import transaction
 from fcm.utils import get_device_model
@@ -80,12 +81,19 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                         result['description'] = 'new user {0} created by {1}'.format(user.username,
                                                                                      self.request.user.username)
                         result['url'] = noti.get_absolute_url()
-                        # ChannelGroup("notify-{}".format(project.organization.id)).send({"text": json.dumps(result)})
-                        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
-                        # return project
+                        ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+                        return role
 
         except Exception as e:
             raise ValidationError({
                 "User Creation Failed ",
             })
         return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+
+    def all_notification(user, message):
+        ChannelGroup("%s" % user).send({
+            "text": json.dumps({
+                "msg": message
+            })
+        })
