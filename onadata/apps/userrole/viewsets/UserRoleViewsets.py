@@ -83,7 +83,6 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                         result['url'] = noti.get_absolute_url()
                         ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
                         ChannelGroup("notify-0").send({"text": json.dumps(result)})
-                        return role
 
         except Exception as e:
             raise ValidationError({
