@@ -72,8 +72,10 @@ class SiteReviewSerializer(serializers.ModelSerializer):
         verify_survey = data.pop('is_survey')
         if verify_survey:
             validated_data.update({'is_survey': False})
+            validated_data.update({'is_active': True})
         else:
             validated_data.update({'is_survey': True})
+            validated_data.update({'is_active': False})
 
         p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')), srid=4326)
         validated_data.update({'location':p})

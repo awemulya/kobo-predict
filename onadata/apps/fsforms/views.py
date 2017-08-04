@@ -63,7 +63,7 @@ class OwnListView(ListView):
     def get_template_names(self):
         return ['fsforms/my_form_list.html']
     def get_queryset(self):
-        return XForm.objects.filter(user=self.request.user).order_by('title')
+        return XForm.objects.filter(user=self.request.user).order_by('-date_modified')
 
 
 class LibraryFormView(object):
