@@ -70,23 +70,25 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                     elif level =="2":
                         role, created = UserRole.objects.get_or_create(user_id=user,
                                                                        organization_id=self.kwargs.get('pk'), group=group)
+                    description = "Created"
                     if not created:
+                        description = "Updated"
                         role.ended_at = None
                         role.save()
-                        noti = role.logs.create(source=self.request.user, type=0, title="new User",
-                                                organization=role.organization,
-                                                description="new user {0} created by {1}".
-                                                format(user.username, self.request.user.username))
-                        result = {}
-                        result['description'] = 'new user {0} created by {1}'.format(user.username,
-                                                                                     self.request.user.username)
-                        result['url'] = noti.get_absolute_url()
-                        ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
-                        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+                    noti = role.logs.create(source=role.user, type=6, title="User Role {}".format(description),
+                                            organization=role.organization,
+                                            description="Role {0} for {1}  by {1}".
+                                            format(description, role.user.username, self.request.user.username))
+                    result = {}
+                    result['description'] = "Role {0} for {1}  by {1}".\
+                        format(description, role.user.username, self.request.user.username)
+                    result['url'] = noti.get_absolute_url()
+                    ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                    ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         except Exception as e:
             raise ValidationError({
-                "User Creation Failed ",
+                "User Creation Failed ".format(str(e)),
             })
         return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
 

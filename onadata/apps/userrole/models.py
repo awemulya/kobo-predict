@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from django.core.urlresolvers import reverse
 from fcm.utils import get_device_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
@@ -20,7 +22,7 @@ class UserRole(models.Model):
     site = models.ForeignKey(Site, null=True, blank=True, related_name='site_roles')
     project = models.ForeignKey(Project, null=True, blank=True, related_name='project_roles')
     organization = models.ForeignKey(Organization, null=True, blank=True, related_name='organization_roles')
-    roles = GenericRelation('eventlog.FieldSightLog')
+    logs = GenericRelation('eventlog.FieldSightLog')
 
     def __unicode__(self):
         return 'user: {}\'s role : {}'.format(self.user.__unicode__(), self.group.__unicode__())
@@ -32,6 +34,9 @@ class UserRole(models.Model):
 
     class Meta:
         unique_together = ('user', 'group', 'organization', 'project', 'site')
+
+    def get_absolute_url(self):
+        return reverse('users:profile', kwargs={'pk': self.user.pk})
 
     def clean(self):
         if self.group.name in ['Site Supervisor', 'Reviewer'] and not self.site_id:
