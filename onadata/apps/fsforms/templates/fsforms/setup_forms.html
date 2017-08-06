@@ -327,12 +327,12 @@ var pk = "{{pk}}";
 
 
               <div>
-                  <div data-bind="visible:em_images().length">
-                      <p>Saved Images</p>
-                      <div data-bind="foreach:em_images">
-                          <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
+                      <div data-bind="visible:em_images().length">
+                          <p>Saved Images</p>
+                          <div data-bind="foreach:em_images">
+                              <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
+                          </div>
                       </div>
-                  </div>
                     <h4>Multiple Images Uploads</h4>
                         <div class="well" data-bind="fileDrag: multiFileData">
                             <div class="form-group row">
