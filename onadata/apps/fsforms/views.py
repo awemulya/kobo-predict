@@ -1320,7 +1320,9 @@ def instance_status(request, instance):
                         obj.save()
                 fi.form_status = int(submission_status)
                 fi.save()
-                send_message(fi.site_fxf, fi.form_status, message)
+                comment_url = reverse("forms:instance_status_change_detail",
+                                                kwargs={'pk': status_changed.id})
+                send_message(fi.site_fxf, fi.form_status, message, comment_url)
                 org = fi.project.organization if fi.project else fi.site.project.organization
                 noti = status_changed.logs.create(source=request.user, type=8, title="form status changed",
                             organization=org, description="submission status Changed")

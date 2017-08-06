@@ -6,7 +6,7 @@ from onadata.apps.userrole.models import UserRole
 FIELDSIGHT_XFORM_ID = u"_fieldsight_xform_id"
 
 
-def send_message(fxf, status=None, comment=None):
+def send_message(fxf, status=None, comment=None, comment_url=None):
     roles = UserRole.objects.filter(site=fxf.site)
     emails = [r.user.email for r in roles]
     Device = get_device_model()
@@ -19,6 +19,7 @@ def send_message(fxf, status=None, comment=None):
                'xfid': fxf.xf.id_string,
                'form_type':fxf.form_type(), 'form_type_id':fxf.form_type_id(),
                'status': FORM_STATUS.get(status,"New Form"),
+               'submission_status_changed_id': comment_url,
                'site': {'name': fxf.site.name, 'id': fxf.site.id}}
     Device.objects.filter(name__in=emails).send_message(message)
 

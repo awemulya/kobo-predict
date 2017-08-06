@@ -10,3 +10,12 @@ class InstanceHistoryViewSet(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         return queryset.filter(finstance__instance__id=self.kwargs.get('pk', None))
+
+
+
+class InstanceHistoryDetailViewSet(viewsets.ModelViewSet):
+    queryset = InstanceStatusChanged.objects.all()
+    serializer_class = InstanceStatusChangedSerializer
+
+
+

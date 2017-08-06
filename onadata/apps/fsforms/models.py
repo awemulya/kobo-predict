@@ -358,6 +358,9 @@ class InstanceStatusChanged(models.Model):
     user = models.ForeignKey(User, related_name="submission_comments")
     logs = GenericRelation('eventlog.FieldSightLog')
 
+    class Meta:
+        ordering = ['-date']
+
     def get_absolute_url(self):
         return reverse('forms:alter-status-detail', kwargs={'pk': self.pk})
 
