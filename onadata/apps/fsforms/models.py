@@ -341,6 +341,13 @@ class FInstance(models.Model):
     submitted_by = models.ForeignKey(User, related_name="supervisor")
     logs = GenericRelation('eventlog.FieldSightLog')
 
+    @property
+    def fsxfid(self):
+        if self.project_fxf:
+            return self.project_fxf.id
+        else:
+            return self.site_fxf.id
+
 
 class InstanceStatusChanged(models.Model):
     finstance = models.ForeignKey(FInstance, related_name="comments")
@@ -350,6 +357,16 @@ class InstanceStatusChanged(models.Model):
     new_status = models.IntegerField(default=0, choices=FORM_STATUS)
     user = models.ForeignKey(User, related_name="submission_comments")
     logs = GenericRelation('eventlog.FieldSightLog')
+
+    def get_absolute_url(self):
+        return reverse('forms:alter-status-detail', kwargs={'pk': self.pk})
+
+
+class InstanceImages(models.Model):
+    instance_status = models.ForeignKey(InstanceStatusChanged, related_name="images")
+    image = models.ImageField(upload_to="submission-feedback-images",
+                              verbose_name='Status Changed Images',)
+
 
 
 class FieldSightFormLibrary(models.Model):

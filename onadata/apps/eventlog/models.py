@@ -22,6 +22,7 @@ class FieldSightLog(models.Model):
         (5, 'Organization'),
         (6, 'Role'),
         (7, 'XFORM'),
+        (8, 'SUBMISSION_STATUS'),
     )
     type = models.IntegerField(default=0, choices=ACTION_TYPES)
     title = models.CharField(max_length=255)

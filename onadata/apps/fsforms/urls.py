@@ -42,7 +42,7 @@ from .views import (
     project_html_export, deploy_survey, deploy_stages, deploy_general, set_deploy_stages, share_stages,
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, setup_forms,
     instance_status, rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
-    save_educational_material)
+    save_educational_material, AlterStatusDetailView)
 
 
 urlpatterns = [
@@ -172,6 +172,7 @@ urlpatterns = urlpatterns + [
     url(r'^api/days/', DayViewset.as_view({'get': 'list'}), name='days'),
     url(r'^instance/status/(?P<instance>\d+)$', instance_status, name='instance_status'),
     url(r'^api/instance/status-history/(?P<pk>\d+)$', InstanceHistoryViewSet.as_view({'get': 'list'}), name='instance_history'),
+    url(r'^api/instance/status-detail/(?P<pk>\d+)$', AlterStatusDetailView.as_view(), name='alter-status-detail'),
     url(r'^api/general/(?P<is_project>\d)/(?P<pk>\d+)$', GeneralFormsViewSet.as_view({'get': 'list'}), name='general_forms'),
     url(r'^api/schedule/$', ScheduleViewset.as_view({'post': 'create','put': 'update','get': 'list'})),
     url(r'^api/stage/(?P<is_project>\d)/(?P<pk>\d+)$', StageViewSet.as_view({'post': 'create','get': 'list'})),

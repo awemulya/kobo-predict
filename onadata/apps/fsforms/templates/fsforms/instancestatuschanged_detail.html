@@ -1,0 +1,40 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{% trans 'Submission Status Changed Detail' %}{% endblock %}
+
+{% block content %}
+<div class="row invoice-info">
+        <div class="col-sm-6 invoice-col">
+            <a href="{% url 'forms:instance' object.finstance.fsxfid %}#/{{ object.finstance.instance.id|stringformat:'d' }}"> View Submission </a><br>
+            From
+
+          <address>
+            <strong>{{object.get_old_status_display}}</strong><br>
+
+          </address>
+        </div>
+        <!-- /.col -->
+        <div class="col-sm-6 invoice-col">
+          To
+          <address>
+            <strong>{{object.get_new_status_display}}</strong><br>
+            {{object.message}}<br>
+            By: {{object.user}} @{{object.date}}
+          </address>
+        </div>
+
+  </div>
+
+<div class="row invoice-info">
+    <div class="col-sm-12 invoice-col">
+{% for img in object.images.all %}
+ <div class="org-logo">
+    <img src="{{ img.image.url }}" />
+</div>
+
+{% endfor %}
+    </div>
+</div>
+
+{% endblock %}

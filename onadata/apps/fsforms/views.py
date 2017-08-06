@@ -43,7 +43,7 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
     AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm, GeneralForm, KoScheduleForm, \
     EducationalmaterialForm
 from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
-    EducationMaterial, EducationalImages
+    EducationMaterial, EducationalImages, InstanceImages
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -1310,15 +1310,33 @@ def instance_status(request, instance):
             with transaction.atomic():
                 submission_status = request.data.get("status", 0)
                 message = request.data.get("message", "")
-                InstanceStatusChanged.objects.create(finstance=fi, message=message, old_status=fi.form_status,
+                status_changed = InstanceStatusChanged(finstance=fi, message=message, old_status=fi.form_status,
                                                      new_status=submission_status, user=request.user)
+                status_changed.save()
+                for key in request.FILES.keys():
+                    if "new_images_" in key:
+                        img = request.FILES.get(key)
+                        obj = InstanceImages(image=img, instance_status=status_changed)
+                        obj.save()
                 fi.form_status = int(submission_status)
                 fi.save()
                 send_message(fi.site_fxf, fi.form_status, message)
+                org = fi.project.organization if fi.project else fi.site.project.organization
+                noti = status_changed.logs.create(source=request.user, type=8, title="form status changed",
+                            organization=org, description="submission status Changed")
+                result = {}
+                result['description'] = "submission status Changed"
+                result['url'] = noti.get_absolute_url()
+                ChannelGroup("notify-{}".format(org.id)).send({"text": json.dumps(result)})
+                ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
         return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class AlterStatusDetailView(DetailView):
+    model = InstanceStatusChanged
 
 @login_required
 @group_required("Reviewer")
