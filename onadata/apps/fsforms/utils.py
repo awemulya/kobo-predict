@@ -11,6 +11,8 @@ def send_message(fxf, status=None, comment=None, comment_url=None):
     emails = [r.user.email for r in roles]
     Device = get_device_model()
     is_delete = True if status is None and fxf.fsform is not None else False
+    print("fxf.id",fxf.id)
+    print("fxf.site.id",fxf.site.id)
     message = {'notify_type': 'Form',
                'is_delete':is_delete,
                'form_id': fxf.id,
