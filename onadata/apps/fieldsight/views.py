@@ -1,4 +1,5 @@
 import json
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
@@ -35,11 +36,11 @@ from onadata.apps.users.models import UserProfile
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
-                     MyOwnProjectMixin)
+                     MyOwnProjectMixin, ProjectMixin)
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo)
-
+from django.views.generic import TemplateView
 
 @login_required
 def dashboard(request):
@@ -104,91 +105,90 @@ def site_images(request, pk):
 
     return JsonResponse({'images':medias[:5]})
 
-@login_required
-@group_required("Organization")
-def organization_dashboard(request, pk):
-    obj = Organization.objects.get(pk=pk)
-    if not UserRole.objects.filter(user=request.user).filter(Q(group__name="Organization Admin", organization=obj)
-                                                                     | Q(group__name="Super Admin")).exists():
-        return dashboard(request)
-    peoples_involved = obj.organization_roles.filter(group__name = "Organization Admin").order_by('user__first_name')
-    sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)
-    data = serialize('custom_geojson', sites, geometry_field='location',
-                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
-    projects = Project.objects.filter(organization=obj)
-    total_projects = len(projects)
-    total_sites = len(sites)
-    outstanding, flagged, approved, rejected = obj.get_submissions_count()
-    total_users = UserProfile.objects.filter(organization=obj).count()
+class Organization_dashboard(LoginRequiredMixin, OrganizationMixin, TemplateView):
+    template_name = "fieldsight/organization_dashboard.html"
+    def get_context_data(self, **kwargs):
+        dashboard_data = super(Organization_dashboard, self).get_context_data(**kwargs)
+        obj = Organization.objects.get(pk=self.kwargs.get('pk'))
+        peoples_involved = obj.organization_roles.filter(group__name = "Organization Admin").order_by('user__first_name')
+        sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)
+        data = serialize('custom_geojson', sites, geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+        projects = Project.objects.filter(organization=obj)
+        total_projects = len(projects)
+        total_sites = len(sites)
+        outstanding, flagged, approved, rejected = obj.get_submissions_count()
+        total_users = UserProfile.objects.filter(organization=obj).count()
 
-    bar_graph = BarGenerator(sites)
+        bar_graph = BarGenerator(sites)
 
-    line_chart = LineChartGeneratorOrganization(obj)
-    line_chart_data = line_chart.data()
+        line_chart = LineChartGeneratorOrganization(obj)
+        line_chart_data = line_chart.data()
 
-    dashboard_data = {
-        'obj': obj,
-        'projects': projects,
-        'sites': sites,
-        'peoples_involved': peoples_involved,
-        'total_users': total_users,
-        'total_projects': total_projects,
-        'total_sites': total_sites,
-        'outstanding': outstanding,
-        'flagged': flagged,
-        'approved': approved,
-        'rejected': rejected,
-        'data': data,
-        'cumulative_data': line_chart_data.values(),
-        'cumulative_labels': line_chart_data.keys(),
-        'progress_data': bar_graph.data.values(),
-        'progress_labels': bar_graph.data.keys(),
-    }
-    return TemplateResponse(request, "fieldsight/organization_dashboard.html", dashboard_data)
+        dashboard_data = {
+            'obj': obj,
+            'projects': projects,
+            'sites': sites,
+            'peoples_involved': peoples_involved,
+            'total_users': total_users,
+            'total_projects': total_projects,
+            'total_sites': total_sites,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+            'data': data,
+            'cumulative_data': line_chart_data.values(),
+            'cumulative_labels': line_chart_data.keys(),
+            'progress_data': bar_graph.data.values(),
+            'progress_labels': bar_graph.data.keys(),
+        }
+        return dashboard_data
 
-@login_required
-@group_required("Project")
-def project_dashboard(request, pk):
-    obj = Project.objects.get(pk=pk)
-    if not UserRole.objects.filter(user=request.user).filter(
-                    Q(group__name="Reviewer", project=obj) |
-                    Q(group__name="Project Manager", project=obj) |
-                    Q(group__name="Organization Admin", organization=obj.organization)|
-                    Q(group__name="Super Admin")).exists():
-        return dashboard(request)
-    peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
-    if request.method == "POST":
-        name = request.POST.get('name')
-        sites = obj.sites.filter(name__icontains=name)
-    else:
+class Project_dashboard(ProjectMixin, TemplateView):
+    template_name = "fieldsight/project_dashboard.html"
+    
+    def get_context_data(self, **kwargs):
+        dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
+        obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        # if not UserRole.objects.filter(user=request.user).filter(
+        #                 Q(group__name="Reviewer", project=obj) |
+        #                 Q(group__name="Project Manager", project=obj) |
+        #                 Q(group__name="Organization Admin", organization=obj.organization)|
+        #                 Q(group__name="Super Admin")).exists():
+        #     return dashboard(request)
+        peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
+        # if request.method == "POST":
+        #     name = request.POST.get('name')
+        #     sites = obj.sites.filter(name__icontains=name)
+        # else:
         sites = obj.sites.filter(is_active=True, is_survey=False)
-    data = serialize('custom_geojson', sites, geometry_field='location',
-                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
+        data = serialize('custom_geojson', sites, geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
-    total_sites = len(sites)
-    total_survey_sites = obj.sites.filter(is_survey=True).count()
-    outstanding, flagged, approved, rejected = obj.get_submissions_count()
-    bar_graph = BarGenerator(sites)
+        total_sites = len(sites)
+        total_survey_sites = obj.sites.filter(is_survey=True).count()
+        outstanding, flagged, approved, rejected = obj.get_submissions_count()
+        bar_graph = BarGenerator(sites)
 
-    line_chart = LineChartGenerator(obj)
-    line_chart_data = line_chart.data()
-    dashboard_data = {
-        'obj': obj,
-        'peoples_involved': peoples_involved,
-        'total_sites': total_sites,
-        'total_survey_sites': total_survey_sites,
-        'outstanding': outstanding,
-        'flagged': flagged,
-        'approved': approved,
-        'rejected': rejected,
-        'data': data,
-        'cumulative_data': line_chart_data.values(),
-        'cumulative_labels': line_chart_data.keys(),
-        'progress_data': bar_graph.data.values(),
-        'progress_labels': bar_graph.data.keys(),
+        line_chart = LineChartGenerator(obj)
+        line_chart_data = line_chart.data()
+        dashboard_data = {
+            'obj': obj,
+            'peoples_involved': peoples_involved,
+            'total_sites': total_sites,
+            'total_survey_sites': total_survey_sites,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+            'data': data,
+            'cumulative_data': line_chart_data.values(),
+            'cumulative_labels': line_chart_data.keys(),
+            'progress_data': bar_graph.data.values(),
+            'progress_labels': bar_graph.data.keys(),
     }
-    return TemplateResponse(request, "fieldsight/project_dashboard.html", dashboard_data)
-
+        return dashboard_data
 
 @login_required()
 @group_required("Project")
@@ -782,9 +782,21 @@ def manage_people_project(request, pk):
 def manage_people_organization(request, pk):
     return render(request, "fieldsight/manage_people_site.html", {'pk': pk, 'level': "2", 'organization': pk})
 
+
+import json
+
+
 def all_notification(user,  message):
     ChannelGroup("%s" % user).send({
         "text": json.dumps({
             "msg": message
         })
     })
+
+class RolesView(LoginRequiredMixin, TemplateView):
+    template_name = "fieldsite/roles_dashboard.html"
+    def get_context_data(self, **kwargs):
+        context = super(RolesView, self).get_context_data(**kwargs)
+        context['organizations'] = self.request.allroles.filter(organization__isnull=False)
+        context['projects'] = self.request.allroles.filter(project__isnull = False)
+        return context
