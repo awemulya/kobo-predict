@@ -9,7 +9,7 @@ from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.response import TemplateResponse
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
@@ -32,7 +32,7 @@ from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChart
 from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
-from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin,
+from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin, SiteView,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin)
@@ -195,38 +195,33 @@ def project_dashboard(request, pk):
 def site_survey_list(request, pk):
     return TemplateResponse(request, "fieldsight/site_survey_list.html", {'project':pk})
 
-@login_required
-@group_required("Reviewer")
-def site_dashboard(request, pk):
-    obj = Site.objects.get(pk=pk)
-    if not UserRole.objects.filter(user=request.user).filter(
-        Q(group__name="Site Supervisor", site=obj) |
-        Q(group__name="Reviewer", project=obj.project) |
-        Q(group__name="Project Manager", project=obj.project) |
-        Q(group__name="Organization Admin", organization=obj.project.organization)|
-        Q(group__name="Super Admin")).exists():
-            return dashboard(request)
 
-    peoples_involved = obj.site_roles.all().order_by('user__first_name')
-    data = serialize('custom_geojson', [obj], geometry_field='location',
-                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+class SiteDashboardView(TemplateView):
+    template_name = 'fieldsight/site_dashboard.html'
 
-    line_chart = LineChartGeneratorSite(obj)
-    line_chart_data = line_chart.data()
+    def get_context_data(self, **kwargs):
+        dashboard_data = super(SiteDashboardView, self).get_context_data(**kwargs)
+        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        peoples_involved = obj.site_roles.all().order_by('user__first_name')
+        data = serialize('custom_geojson', [obj], geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
 
-    outstanding, flagged, approved, rejected = obj.get_site_submission()
-    dashboard_data = {
-        'obj': obj,
-        'peoples_involved': peoples_involved,
-        'outstanding': outstanding,
-        'flagged': flagged,
-        'approved': approved,
-        'rejected': rejected,
-        'data': data,
-        'cumulative_data': line_chart_data.values(),
-        'cumulative_labels': line_chart_data.keys(),
-    }
-    return TemplateResponse(request, "fieldsight/site_dashboard.html", dashboard_data)
+        line_chart = LineChartGeneratorSite(obj)
+        line_chart_data = line_chart.data()
+
+        outstanding, flagged, approved, rejected = obj.get_site_submission()
+        dashboard_data = {
+            'obj': obj,
+            'peoples_involved': peoples_involved,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+            'data': data,
+            'cumulative_data': line_chart_data.values(),
+            'cumulative_labels': line_chart_data.keys(),
+        }
+        return dashboard_data
 
 
 class OrganizationView(object):
