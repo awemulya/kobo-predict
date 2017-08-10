@@ -1323,10 +1323,8 @@ def instance_status(request, instance):
                 comment_url = reverse("forms:instance_status_change_detail",
                                                 kwargs={'pk': status_changed.id})
                 print("Comment url",comment_url)
-                # send_message(fi.site_fxf, fi.form_status, message, comment_url)
+                send_message(fi.site_fxf, fi.form_status, message, comment_url)
                 org = fi.project.organization if fi.project else fi.site.project.organization
-                print("organization id ..")
-                print("organization id ..", org.id)
                 noti = status_changed.logs.create(source=request.user, type=8, title="form status changed",
                             organization=org, description="submission status Changed")
                 result = {}

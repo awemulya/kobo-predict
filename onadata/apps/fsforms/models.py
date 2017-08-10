@@ -230,9 +230,10 @@ class FieldSightXF(models.Model):
         if not self.is_scheduled and not self.is_staged: return "General"
 
     def form_type_id(self):
-        if self.is_scheduled: return self.schedule.id
-        if self.is_staged: return self.stage.id
-        if not self.is_scheduled and not self.is_staged: return None
+        if self.is_scheduled and self.schedule: return self.schedule.id
+        if self.is_staged and self.stage: return self.stage.id
+        return None
+
 
     def stage_name(self):
         if self.stage: return self.stage.name
