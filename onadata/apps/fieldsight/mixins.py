@@ -374,8 +374,8 @@ class OrganizationMixin(object):
                 return super(OrganizationMixin, self).dispatch(request, *args, **kwargs)
             organizationId = self.kwargs.get('pk')
             userId = request.user.id
-            user_role = request.allroles.filter(organization_id = organizationId)
-            if user_role and user_role.group.name == "Organization Admin":
+            user_role = request.roles.filter(organization_id = organizationId)
+            if user_role and user_role[0].group.name == "Organization Admin":
                 return super(OrganizationMixin, self).dispatch(request, *args, **kwargs)
         raise PermissionDenied()
 
@@ -388,17 +388,19 @@ class ProjectMixin(LoginRequiredMixin):
         
         projectId = self.kwargs.get('pk')
         userId = request.user.id
-        user_role = request.allroles.filter(user_id = userId, project_id = projectId)
+        user_role = request.roles.filter(user_id = userId, project_id = projectId)
         
         if user_role and user_role[0].group.name == "Project Manager":
             return super(ProjectMixin, self).dispatch(request, *args, **kwargs)
         organizationId = Project.objects.get(pk=projectId).organization.id
-        user_role_asorgadmin = request.allroles.filter(user_id = userId, organization_id = organizationId)
+        user_role_asorgadmin = request.roles.filter(user_id = userId, organization_id = organizationId)
         
         if user_role_asorgadmin and user_role_asorgadmin[0].group.name == "Organization Admin":
             return super(ProjectMixin, self).dispatch(request, *args, **kwargs)
 
         raise PermissionDenied()
+
+
 
 
 class ReviewerMixin(LoginRequiredMixin):
@@ -422,27 +424,6 @@ class ReviewerMixin(LoginRequiredMixin):
         raise PermissionDenied()
 
 
-
-# class ProjectMixin(LoginRequiredMixin):
-#     def dispatch(self, request, *args, **kwargs):
-#         projectId = self.kwargs.get('pk')
-#         userId = request.user.id
-
-#         if request.user.group == "Superadmin":
-#             return super(ProjectMixin, self).dispatch(request, *args, **kwargs)
-        
-#         if request.user.group == "Orgenisation admin":
-#             organization = Project.objects.filter(pk=projectId)
-#             user_role = UserRole.objects.filter(user_id = userId, organization_id = organization.id)
-#             if user_role:
-#                 return super(ProjectMixin, self).dispatch(request, *args, **kwargs)
-        
-#         if request.user.group == "projectadmin":
-#             user_role = UserRole.objects.filter(user_id = user, project_id = organization)
-#             if user_role:
-#                 return super(ProjectMixin, self).dispatch(request, *args, **kwargs)
-
-#         raise PermissionDenied()
 
 
 
