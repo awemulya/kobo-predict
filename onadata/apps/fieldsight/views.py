@@ -37,6 +37,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
+from .rolemixins import ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo)
@@ -107,7 +108,7 @@ def site_images(request, pk):
 
     return JsonResponse({'images':medias[:5]})
 
-class Organization_dashboard(LoginRequiredMixin, OrganizationMixin, TemplateView):
+class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
     template_name = "fieldsight/organization_dashboard.html"
     def get_context_data(self, **kwargs):
         dashboard_data = super(Organization_dashboard, self).get_context_data(**kwargs)
@@ -147,7 +148,7 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationMixin, TemplateView
         }
         return dashboard_data
 
-class Project_dashboard(ProjectMixin, TemplateView):
+class Project_dashboard(ProjectRoleMixin, TemplateView):
     template_name = "fieldsight/project_dashboard.html"
     
     def get_context_data(self, **kwargs):

@@ -409,7 +409,5 @@ def group_required(group_name):
                 if request.role.group.name in USURPERS.get(group_name, []):
                     return view_func(request, *args, **kwargs)
             raise PermissionDenied()
-
         return wrapper
-
-return _check_group
+    return _check_group
