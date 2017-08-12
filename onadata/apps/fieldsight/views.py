@@ -44,17 +44,19 @@ from django.views.generic import TemplateView
 
 @login_required
 def dashboard(request):
-    current_role = request.role
-    if current_role:
-        if current_role.group.name == "Site Supervisor":
-            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
-        if current_role.group.name == "Reviewer":
+    current_role = request.roles
+    if current_role.count() == 1:
+        if current_role[0].group.name == "Site Supervisor":
+            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role[0].site.pk}))
+        if current_role[0].group.name == "Reviewer":
             return HttpResponseRedirect(reverse("fieldsight:site-list", ))
-        if current_role.group.name == "Project Manager":
-            return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role.project.pk}))
-        if current_role.group.name == "Organization Admin":
+        if current_role[0].group.name == "Project Manager":
+            return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role[0].project.pk}))
+        if current_role[0].group.name == "Organization Admin":
             return HttpResponseRedirect(reverse("fieldsight:organizations-dashboard",
-                                                kwargs={'pk': current_role.organization.pk}))
+                                                kwargs={'pk': current_role[0].organization.pk}))
+    if current_role.count() > 1:
+        return HttpResponseRedirect(reverse("fieldsight:roles-dashboard"))
 
     total_users = User.objects.all().count()
     total_organizations = Organization.objects.all().count()
@@ -797,6 +799,7 @@ class RolesView(LoginRequiredMixin, TemplateView):
     template_name = "fieldsite/roles_dashboard.html"
     def get_context_data(self, **kwargs):
         context = super(RolesView, self).get_context_data(**kwargs)
-        context['organizations'] = self.request.allroles.filter(organization__isnull=False)
-        context['projects'] = self.request.allroles.filter(project__isnull = False)
+        context['org_admin'] = self.request.roles.filter(group__name="Organization Admin")
+        context['proj_manager'] = self.request.roles.filter(group__name = "Project Manager")
+        context['site_reviewer'] = self.request.roles.filter(group__name = "Reviewer")
         return context

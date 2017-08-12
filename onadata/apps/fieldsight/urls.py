@@ -105,7 +105,7 @@ urlpatterns = [
     url(r'fcm/v1/devices/$', DeviceViewSet.as_view({'get': 'list'})),
     url(r'fcm/add/', FcmDeviceViewSet.as_view({'post': 'create'})),
     url(r'fcm/logout/', FcmDeviceViewSet.as_view({'post': 'inactivate'})),
-    url(r'roles/', RolesView.as_view(), name='roles-dashboard'),
+    url(r'myroles/', RolesView.as_view(), name='roles-dashboard'),
 
 ]
 
