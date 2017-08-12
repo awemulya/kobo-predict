@@ -7,7 +7,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.template.response import TemplateResponse
 from django.views.generic import ListView, TemplateView
 from django.core.urlresolvers import reverse_lazy, reverse
@@ -315,15 +315,19 @@ def alter_org_status(request, pk):
 #         form = SetOrgAdminForm(instance=obj)
 #     return render(request, "fieldsight/add_admin.html", {'obj':obj,'form':form})
 
+class OrganizationadminCreateView(LoginRequiredMixin, OrganizationMixin, TemplateView):
 
-@login_required
-@group_required('Organization')
-def add_org_admin(request, pk=None):
-    organization = get_object_or_404(Organization, id=pk)
-    group = Group.objects.get(name__exact="Organization Admin")
-    role_obj = UserRole(organization=organization,group=group)
-    scenario = 'Assign'
-    if request.POST:
+    def get(self, request, pk=None):
+        organization = get_object_or_404(Organization, id=pk)
+        form = AssignOrgAdmin(request=request)
+        scenario = 'Assign'
+        return render(request, 'fieldsight/add_admin_form.html',
+                      {'form': form, 'scenario': scenario, 'obj': organization})
+
+    def post(self, request):
+        organization = get_object_or_404(Organization, id=id)
+        group = Group.objects.get(name__exact="Organization Admin")
+        role_obj = UserRole(organization=organization, group=group)
         form = AssignOrgAdmin(data=request.POST, instance=role_obj, request=request)
         if form.is_valid():
             role_obj = form.save(commit=False)
@@ -331,11 +335,7 @@ def add_org_admin(request, pk=None):
             role_obj.user_id = int(user_id)
             role_obj.save()
             messages.add_message(request, messages.INFO, 'Organization Admin Added')
-            return HttpResponseRedirect(reverse("fieldsight:organization-dashboard", kwargs={'pk': pk}))
-    else:
-        form = AssignOrgAdmin(instance=role_obj, request=request)
-    return render(request, 'fieldsight/add_admin_form.html',
-                  {'form': form, 'scenario': scenario, 'obj': organization})
+            return HttpResponseRedirect(reverse("fieldsight:organizations-dashboard", kwargs={'pk': id}))
 
 
 @login_required
@@ -690,22 +690,24 @@ class UserListView(ProjectMixin, OrganizationViewFromProfile, ListView):
         return context
 
 
-@login_required
-def filter_users(request):
-    if request.method == 'POST':
+class FilterUserView(TemplateView):
+    def get(self, *args, **kwargs):
+        return redirect('fieldsight:user-list')
+
+    def post(self, request, *args, **kwargs):
         name = request.POST.get('name')
         role = request.POST.get('role')
         groups = Group.objects.all()
         object_list = User.objects.filter(is_active=True, pk__gt=0)
         if name:
             object_list = object_list.filter(
-                Q(first_name__contains=name)|Q(last_name__contains=name) |Q(username__contains=name))
-        if role and role!='0':
+                Q(first_name__contains=name) | Q(last_name__contains=name) | Q(username__contains=name))
+        if role and role != '0':
             object_list = object_list.filter(user_roles__group__id=role)
-        if hasattr(request,"organization") and request.organization:
+        if hasattr(request, "organization") and request.organization:
             object_list = object_list.filter(user_roles__organization=request.organization)
-        return render(request, 'fieldsight/user_list.html',{'object_list':object_list,'groups':groups})
-    return HttpResponseRedirect(reverse('fieldsight:user-list'))
+        return render(request, 'fieldsight/user_list.html', {'object_list': object_list, 'groups': groups})
+
 
 
 class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, RegistrationView):
@@ -758,24 +760,23 @@ def blue_prints(request, id):
     return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': id},)
 
 
-@login_required
-@group_required('Reviewer')
-def manage_people_site(request, pk):
-    organization = Site.objects.get(pk=pk).project.organization.id
-    return render(request, "fieldsight/manage_people_site.html", {'pk': pk, 'level': "0", 'organization': organization})
+class ManagePeopleSiteView(LoginRequiredMixin, ReviewerMixin, TemplateView):
+    def get(self, request, pk):
+        organization = Site.objects.get(pk=pk).project.organization.id
+        return render(request, 'fieldsight/manage_people_site.html', {'pk':pk, 'level': "0", 'organization': organization})
 
 
-@login_required
-@group_required("Project")
-def manage_people_project(request, pk):
-    organization = Project.objects.get(pk=pk).organization.id
-    return render(request, "fieldsight/manage_people_site.html", {'pk': pk, 'level': "1", 'organization': organization})
+class ManagePeopleProjectView(LoginRequiredMixin, ProjectMixin, TemplateView):
+    def get(self, request, pk):
+        organization = Project.objects.get(pk=pk).organization.id
+        return render(request, "fieldsight/manage_people_site.html",
+                      {'pk': pk, 'level': "1", 'organization': organization})
 
 
-@login_required
-@group_required("Organization")
-def manage_people_organization(request, pk):
-    return render(request, "fieldsight/manage_people_site.html", {'pk': pk, 'level': "2", 'organization': pk})
+class ManagePeopleOrganizationView(LoginRequiredMixin, OrganizationMixin, TemplateView):
+    def get(self, request, pk):
+        return render(request, 'fieldsight/manage_people_site.html', {'pk': pk, 'level': "2", 'organization': pk})
+
 
 def all_notification(user,  message):
     ChannelGroup("%s" % user).send({

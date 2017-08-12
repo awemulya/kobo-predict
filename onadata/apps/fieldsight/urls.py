@@ -19,7 +19,7 @@ from .views import (
     OrganizationDeleteView,
     organization_dashboard,
     alter_org_status,
-    add_org_admin,
+    OrganizationadminCreateView,
     ProjectListView,
     ProjectCreateView,
     ProjectUpdateView,
@@ -35,8 +35,8 @@ from .views import (
     alter_site_status,
     add_supervisor,
     CreateUserView,
-    UserListView, site_images, filter_users, upload_sites, blue_prints, add_project_role, manage_people_site,
-    manage_people_project, manage_people_organization, site_survey_list, ajax_upload_sites, ajax_save_site,
+    UserListView, site_images, FilterUserView, upload_sites, blue_prints, add_project_role, ManagePeopleSiteView,
+    ManagePeopleProjectView, ManagePeopleOrganizationView, site_survey_list, ajax_upload_sites, ajax_save_site,
     ajax_save_project)
 
 
@@ -51,7 +51,7 @@ urlpatterns = [
     url(r'^organization-dashboard/(?P<pk>[0-9]+)/$', organization_dashboard, name='organizations-dashboard'),
     url(r'^organization/delete/(?P<pk>\d+)/$', OrganizationDeleteView.as_view(), name='organization-delete'),
     url(r'^organization/alter-status/(?P<pk>\d+)/$', alter_org_status, name='alter_org_status'),
-    url(r'^organization/add-org-admin/(?P<pk>\d+)/$', add_org_admin, name='add_org_admin'),
+    url(r'^organization/add-org-admin/(?P<pk>\d+)/$', OrganizationadminCreateView.as_view(), name='add_org_admin'),
 
     url(r'^api/projects/(?P<pk>\d+)/$', ProjectCreationViewSet.as_view({'get': 'list'}), name='projects-list'),
     url(r'^api/projects/$', ProjectCreationViewSet.as_view({'post': 'create', 'put': 'update'}), name='projects-list'),
@@ -94,14 +94,14 @@ urlpatterns = [
     url(r'^site/add-supervisor/(?P<pk>\d+)/$', add_supervisor, name='add_supervisor'),
     url(r'^api/site-images/(?P<pk>\d+)/$', site_images, name='site_images'),
 
-    url(r'^manage/people/site/(?P<pk>\d+)/$', manage_people_site, name='manage-people-site'),
-    url(r'^manage/people/project/(?P<pk>\d+)/$', manage_people_project, name='manage-people-project'),
-    url(r'^manage/people/organization/(?P<pk>\d+)/$', manage_people_organization, name='manage-people-organization'),
+    url(r'^manage/people/site/(?P<pk>\d+)/$', ManagePeopleSiteView.as_view(), name='manage-people-site'),
+    url(r'^manage/people/project/(?P<pk>\d+)/$', ManagePeopleProjectView.as_view(), name='manage-people-project'),
+    url(r'^manage/people/organization/(?P<pk>\d+)/$', ManagePeopleOrganizationView.as_view(), name='manage-people-organization'),
 
     url(r'^accounts/create/$', CreateUserView.as_view(
         form_class=RegistrationForm), name='user-create'),
     url(r'^userlist/$', UserListView.as_view(), name='user-list'),
-    url(r'^filter-users/$', filter_users, name='filter-users'),
+    url(r'^filter-users/$', FilterUserView.as_view(), name='filter-users'),
     url(r'fcm/v1/devices/$', DeviceViewSet.as_view({'get': 'list'})),
     url(r'fcm/add/', FcmDeviceViewSet.as_view({'post': 'create'})),
     url(r'fcm/logout/', FcmDeviceViewSet.as_view({'post': 'inactivate'})),
