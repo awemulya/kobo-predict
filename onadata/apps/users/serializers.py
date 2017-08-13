@@ -112,7 +112,7 @@ class UserSerializerProfile(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         exclude = ('user',)
-        read_only_fields = ('id', 'profile_picture')
+        read_only_fields = ('id', 'profile_picture', 'organization')
 
     def update(self,  instance, validated_data):
         data = self.context['request'].data
