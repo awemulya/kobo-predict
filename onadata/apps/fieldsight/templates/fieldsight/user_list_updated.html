@@ -1,0 +1,149 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Users' %}{% endblock %}
+
+{% block head %}
+    <a class="btn btn-primary btn-raised" href="{% url 'fieldsight:user-create' %}">{% trans 'New' %} {% trans 'User' %}</a>
+{% endblock %}
+
+{% block content %}
+
+    {% load pagination_tags %}
+    {% load sorting_tags %}
+    {% load filters %}
+
+    <form method="post" action="{% url 'fieldsight:filter-users' %}">
+        {%csrf_token%}
+         <div class="col-sm-12 registration_field">
+             <div class="col-sm-5"><input type="text" name="name" placeholder="Search"></div>
+            <div class="col-sm-5">
+                <select name="role">
+                    <option value="0">{% trans 'Select' %}</option>
+                    {% for g in groups %}
+                    <option value="{{g.id}}">{{g.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+         <div class="col-sm-2">
+            <button class="btn btn-primary registration__action square" type="submit">{% trans 'Filter' %}</button>
+         </div>
+         </div>
+
+        <div class="gap"></div>
+        <div class="gap"></div>
+        <div class="gap"></div> 
+        <div class="gap"></div>
+        <div class="gap"></div>    
+        <div class="gap"></div>
+        <div class="gap"></div>
+        <div class="gap"></div> 
+        <div class="gap"></div>
+        <div class="gap"></div>    
+    
+    </form>
+
+      <div class="users-in-this-org col-sm-12">
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a data-toggle="tab" href="#table-view" title="Table View"><i class="fa fa-th-list" aria-hidden="true"></i></a>
+          </li>
+          <li>
+            <a data-toggle="tab" href="#grid-view" title="Grid View"><i class="fa fa-th-large" aria-hidden="true"></i></a>
+          </li>
+        </ul>
+        <div class="tab-content">
+            <div id="table-view" class="tab-pane fade in active">
+                {% autosort object_list as sorted_objects %}
+                {% autopaginate object_list 100 as paginated_objects %}
+         
+                 <table class="table table-striped">
+                     <thead>
+                     <th class="table_head">{% anchor username _('Username') %}</th>
+                     <th class="table_head">{% anchor first_name _('Fullname') %}</th>
+                     <th class="table_head">{% anchor email _('Email') %}</th>
+                     <th class="table_head">{% anchor is_active _('Active') %}</th>
+                     <th class="table_head">Activate/Deactivate</th>
+                     </thead>
+                     <tbody>
+                     {% for user in paginated_objects %}
+                         <tr>
+                             <td>
+                                 <a class="username" href="{% url 'users:edit' pk=user.user.id %}">{{ user.user.username }}</a>
+                             </td>
+                             <td>
+                                 {{ user.user.get_full_name }}
+                             </td>
+                               <td>
+                                 {{ user.user.email }}
+                             </td>
+                             <td>
+                                 {{ user.user.is_active|activeness }}
+                             </td>
+                             <td class="deactivate-hover" style="padding-left: 30px;">
+                                
+                                <!-- <a class="setting-btn edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> -->
+                                 <a class="btn btn-success btn-raised btn-deactived" href="{% url 'users:alter_status' pk=user.user.id %}" >
+                                     <!--later with js framework ko in some and angular in some-->
+                                     {{ user.user.is_active|alter_status }} {% trans 'User' %}</a>
+                             </td>
+         
+                         </tr>
+                     {% endfor %}
+                     </tbody>
+                 </table>
+                {% paginate %}
+            </div>
+            <div id="grid-view" class="tab-pane fade ">
+                {% autosort object_list as sorted_objects %}
+                {% autopaginate object_list 100 as paginated_objects %}
+
+                {% for user in paginated_objects %}
+                <div class="current-person1 col-sm-4 " style="padding: 0px !important;">
+                    <div class="person-div" style="margin-bottom: 0px !important; padding: 10px !important;" >
+                      <div class="image-of-person user-image-current">
+                        <img src="{{user.user.user_profile.profile_picture.url}}" class="modal-image space" style="width: 23% !important;">  
+                      </div>
+                      <div class="details-of-person user-name-position">
+                            <h5 class="personname ">{{ user.user.get_full_name }}</h5>
+                            <h6 class="perso-usernname"><span><i class="fa fa-user" aria-hidden="true"></i></span>{{ user.user.username }}</h6>
+                            <!-- <p class="personaddress"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span>{{user.user_profile.address}}</p>
+                             -->
+                            <!-- <p class="personphone"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{user.user_profile.phone}}</p> -->
+                            <p class="personemail"><span><i class="fa fa-envelope-o" aria-hidden="true"></i></span>{{ user.user.email }}</p>
+
+                            <div class="text-center"><p class="person-active">{{ user.user.is_active|activeness }}</p></div>
+                        
+
+                      </div>
+                      <div class="person-edit-delete">
+                        <a href="{% url 'users:edit' pk=user.user.id %}" title="edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                        <a href="{% url 'users:alter_status' pk=user.user.id %}" title="active|in-active"><i class="fa fa-circle-o" aria-hidden="true"></i></a>
+
+                      </div>
+                    </div>
+                  </div>
+              
+                {% endfor %}
+                <div class="clearfixx"></div>
+                {% paginate %}       
+            </div>
+        </div>
+    </div>
+
+<!--     <script>
+        $(document).ready(function () {
+                $(document).on('mouseenter', '.deactivate-hover', function () {
+                    $(this).find(".btn-deactived").show();
+                    $(this).find(".edit").hide();
+                });
+                $(document).on('mouseleave','.deactivate-hover', function () {
+                    $(this).find(".btn-deactived").hide();
+                    $(this).find(".edit").show();
+                });
+            });
+    </script>
+ -->        
+
+{% endblock %}
