@@ -333,7 +333,7 @@ var org = "{{obj.pk}}";
 
                                 <div class="mini-stat clearfix col-sm-2 col-md-12">
                                     <!--{% url 'fieldsight:user-list'%}-->
-                                    <a href="#">
+                                    <a href="{% url 'fieldsight:org-user-list' obj.id%}">
                                       <span class="mini-stat-icon box-side"><i class="fa fa-users"></i></span>
                                       <div class="mini-stat-info">
                                           <span>{{total_users}}</span>
@@ -343,7 +343,7 @@ var org = "{{obj.pk}}";
                                 </div>
                                 <div class="mini-stat clearfix col-sm-4 col-md-12">
                                     <!--{% url 'fieldsight:project-list'%}-->
-                                    <a href="#">
+                                    <a href="{% url 'fieldsight:org-project-list' obj.id%}">
                                           <span class="mini-stat-icon box-side"><i class="fa fa-building-o"></i></span>
                                           <div class="mini-stat-info">
                                               <span>{{total_projects}}</span>
@@ -353,7 +353,7 @@ var org = "{{obj.pk}}";
                                 </div>
                                <div class="mini-stat clearfix col-sm-4 col-md-12">
                                    <!--{% url 'fieldsight:site-list'%}-->
-                                   <a href="#">
+                                   <a href="{% url 'fieldsight:org-site-list' obj.id%}">
                                     <span class="mini-stat-icon box-side"><i class="fa fa-picture-o"></i></span>
                                     <div class="mini-stat-info">
                                         <span>{{total_sites}}</span>
@@ -518,7 +518,7 @@ var org = "{{obj.pk}}";
                  <li class="dropdown man-drop">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret span-manage"></span></a>
                     <ul class="dropdown-menu">
-                         <li class="drop-down-item"><a href="{% url 'fieldsight:project-add'%}"> {% trans 'Add Project' %}</a></li>
+                         <li class="drop-down-item"><a href="{% url 'fieldsight:project-add' obj.pk%}"> {% trans 'Add Project' %}</a></li>
                       <li><a href="{% url 'fieldsight:manage-people-organization' obj.pk %}">{% trans 'People' %}</a></li>
                     </ul>
                 </li>  

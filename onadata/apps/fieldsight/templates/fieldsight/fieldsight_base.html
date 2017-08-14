@@ -258,7 +258,7 @@ console.log(text.prop2);
                 <b class="caret" style="color: white;"></b>
             </a>
             <ul class="dropdown-menu dropdown-menu-right extended logout" id="fs_drop_menu">
-                        {% if request.role %}
+                      <!--   {% if request.role %}
                             <li >
                                 <a href="#" style="background: #e4e8ef; border-radius: 4px !important;" class="detail-text1"><h6>{% trans 'Using as' %} {{ request.role.group }}
                                     {% if request.site%}
@@ -276,8 +276,8 @@ console.log(text.prop2);
                             </li>
                         <li role="separator" class="divider"></li>
                         {% endif %}
-
-                        {% for role in request.user.user_roles.all %}
+ -->
+                       <!--  {% for role in request.user.user_roles.all %}
                             {% if role.id != request.role.id %}
                                 <li >
                                     <a href="{% url 'role:set_role' role.id %}">{% trans 'Use as' %} {{ role.group }}
@@ -298,7 +298,7 @@ console.log(text.prop2);
 
                         {% if request.user.roles.all.count > 1 %}
                             <li role="separator" class="divider"></li>
-                        {% endif %}
+                        {% endif %} -->
                 <li><a href="{% url 'users:profile' 0 %}"><i class=" fa fa-suitcase"></i>Profile</a></li>
                 <li><a href="{% url 'auth_password_change' %}"><i class="fa fa-cog"></i> Change Password</a></li>
                 <li><a href="{% url 'auth_logout' %}"><i class="fa fa-key"></i> Log Out</a></li>

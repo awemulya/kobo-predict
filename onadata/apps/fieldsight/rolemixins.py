@@ -123,7 +123,14 @@ class ReviewerRoleMixinDeleteView(LoginRequiredMixin):
         raise PermissionDenied()
 
 
+class ProjectRoleView(LoginRequiredMixin):
+    def form_valid(self, form):
+        if self.request.kwargs.get('pk'):
+            form.instance.project = self.request.kwargs.get('pk')
+        return super(ProjectRoleView, self).form_valid(form)
 
+    def get_queryset(self):
+        return super(ProjectRoleView, self).get_queryset()
 
 
 

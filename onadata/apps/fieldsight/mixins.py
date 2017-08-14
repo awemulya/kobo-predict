@@ -241,7 +241,7 @@ class ProjectView(LoginRequiredMixin):
             return super(ProjectView, self).get_queryset().filter(project__organization=self.request.organization)
         else:
             return super(ProjectView, self).get_queryset()
-
+            
     def get_form(self, *args, **kwargs):
         form = super(ProjectView, self).get_form(*args, **kwargs)
         if self.request.project:
@@ -252,7 +252,6 @@ class ProjectView(LoginRequiredMixin):
                     form.fields[field].queryset = Project.objects.filter(id=self.request.project.pk)
                 elif self.request.organization:
                     form.fields[field].queryset = Project.objects.filter(organization=self.request.organization)
-
         return form
 
 

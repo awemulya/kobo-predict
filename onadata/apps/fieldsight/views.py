@@ -37,7 +37,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
-from .rolemixins import ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
+from .rolemixins import ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo)
@@ -462,19 +462,26 @@ def add_project_role(request, pk):
                                                                     "existing_staffs":existing_staffs})
 
 
-class ProjectView(OView):
+class ProjectView(object):
     model = Project
     success_url = reverse_lazy('fieldsight:project-list')
     form_class = ProjectForm
 
+class ProjectRoleView(object):
+    model = Project
+    success_url = reverse_lazy('fieldsight:project-list')
+    form_class = ProjectForm
 
-class ProjectListView(ProjectView, OrganizationMixin, ListView):
+class ProjectListView(ProjectRoleView, OrganizationMixin, ListView):
     pass
 
 
 class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
+
     def form_valid(self, form):
-        self.object = form.save()
+        self.object = form.save(commit=False)
+        self.object.organization_id = self.kwargs.get('pk')
+        self.object.save()
         noti = self.object.logs.create(source=self.request.user, type=4, title="new Project",
                                        organization=self.object.organization,
                                        description="new project {0} created by {1}".
@@ -797,23 +804,41 @@ class RolesView(LoginRequiredMixin, TemplateView):
         context['site_supervisor'] = self.request.roles.filter(group__name = "Site Supervisor")
         return context
 
+
 class OrgProjectList(OrganizationRoleMixin, ListView):
+    def get_context_data(self, **kwargs):
+        context = super(OrgProjectList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
     def get_queryset(self):
         queryset = Project.objects.filter(organization_id=self.kwargs.get('pk'))
         return queryset
 
+
 class OrgSiteList(OrganizationRoleMixin, ListView):
+    def get_context_data(self, **kwargs):
+        context = super(OrgSiteList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
     def get_queryset(self):
         queryset = Site.objects.filter(project__organization_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
         return queryset
 
-class ProjectSiteList(ProjectRoleMixin, ListView):
+class ProjSiteList(ProjectRoleMixin, ListView):
+    def get_context_data(self, **kwargs):
+        context = super(ProjSiteList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
     def get_queryset(self):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
         return queryset
 
 class OrgUserList(OrganizationRoleMixin, ListView):
     template_name = "fieldsight/user_list_updated.html"
+    def get_context_data(self, **kwargs):
+        context = super(OrgUserList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
     def get_queryset(self):
         #queryset = UserRole.objects.select_related('User').filter(organization_id=self.kwargs.get('pk')).distinct('user_id')
         #queryset = User.objects.select_related('user_profile').filter(user_profile__organization_id=self.kwargs.get('pk'))
@@ -821,14 +846,22 @@ class OrgUserList(OrganizationRoleMixin, ListView):
         queryset = UserRole.objects.select_related('user').filter(organization_id=self.kwargs.get('pk')).distinct('user_id')
         return queryset
 
-class ProjUserList(OrganizationRoleMixin, ListView):
+class ProjUserList(ProjectRoleMixin, ListView):
     template_name = "fieldsight/user_list_updated.html"
+    def get_context_data(self, **kwargs):
+        context = super(ProjUserList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
     def get_queryset(self):
         queryset = UserRole.objects.select_related('user').filter(project_id=self.kwargs.get('pk')).distinct('user_id')
         return queryset
 
 class SiteUserList(ProjectRoleMixin, ListView):
     template_name = "fieldsight/user_list_updated.html"
+    def get_context_data(self, **kwargs):
+        context = super(SiteUserList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
     def get_queryset(self):
         queryset = UserRole.objects.select_related('user').filter(site_id=self.kwargs.get('pk')).distinct('user_id')
     
