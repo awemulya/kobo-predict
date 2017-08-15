@@ -8,7 +8,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.template.response import TemplateResponse
 from django.views.generic import ListView
 from django.core.urlresolvers import reverse_lazy, reverse
@@ -154,17 +154,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
     def get_context_data(self, **kwargs):
         dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
-        # if not UserRole.objects.filter(user=request.user).filter(
-        #                 Q(group__name="Reviewer", project=obj) |
-        #                 Q(group__name="Project Manager", project=obj) |
-        #                 Q(group__name="Organization Admin", organization=obj.organization)|
-        #                 Q(group__name="Super Admin")).exists():
-        #     return dashboard(request)
         peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
-        # if request.method == "POST":
-        #     name = request.POST.get('name')
-        #     sites = obj.sites.filter(name__icontains=name)
-        # else:
         sites = obj.sites.filter(is_active=True, is_survey=False)
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
