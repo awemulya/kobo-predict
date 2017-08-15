@@ -795,7 +795,7 @@ def all_notification(user,  message):
     })
 
 class RolesView(LoginRequiredMixin, TemplateView):
-    template_name = "fieldsite/roles_dashboard.html"
+    template_name = "fieldsight/roles_dashboard.html"
     def get_context_data(self, **kwargs):
         context = super(RolesView, self).get_context_data(**kwargs)
         context['org_admin'] = self.request.roles.filter(group__name="Organization Admin")
