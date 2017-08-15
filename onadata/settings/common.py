@@ -182,7 +182,9 @@ MIDDLEWARE_CLASSES = (
     'linaro_django_pagination.middleware.PaginationMiddleware',
     'webstack_django_sorting.middleware.SortingMiddleware',
     'onadata.apps.users.middleware.RoleMiddleware',
-    # 'onadata.apps.api.middleware.DisableCSRFOnDebug'
+    # 'onadata.apps.api.middleware.DisableCSRFOnDebug',
+    
+
 )
 
 

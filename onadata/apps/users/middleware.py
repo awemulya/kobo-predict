@@ -47,7 +47,7 @@ class RoleMiddleware(object):
                 request.__class__.site = role.site
                 request.__class__.group = role.group
                 # request.__class__.roles = Role.objects.filter(user=request.user, organization=role.organization)
-                request.__class__.roles = roles = Role.get_active_roles(request.user)
+                request.__class__.roles = Role.get_active_roles(request.user)
                 request.__class__.is_super_admin = request.group.name in ('Super Admin')
                 #     for role in request.roles:
                 #         groups.append(role.group)
