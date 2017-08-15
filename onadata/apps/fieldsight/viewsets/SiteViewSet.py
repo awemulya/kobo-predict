@@ -127,18 +127,19 @@ class SiteCreationSurveyViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         with transaction.atomic():
             site = serializer.save()
-            group = Group.objcts.get(name="Site Supervisor")
-            role, created = UserRole.objects.get_or_create(user=self.request.user, site_id=site.id,
-                                                                           project__id=site.project.id, group=group)
-            noti = site.logs.create(source=self.request.user, type=3, title="new Site", organization=site.project.organization,
-                                       description="new site {0} created by {1}".format(site.name, self.request.user.username))
+            group = Group.objects.get(name="Site Supervisor")
+            UserRole.objects.get_or_create(user=self.request.user, site_id=site.id,
+                                           project__id=site.project.id, group=group)
+            noti = site.logs.create(source=self.request.user, type=3, title="new Site",
+                                    organization=site.project.organization,
+                                    description="new site {0} created by {1}".format(
+                                        site.name, self.request.user.username))
             result = {}
             result['description'] = 'new user {0} created by {1}'.format(site.name, self.request.user.username)
             result['url'] = noti.get_absolute_url()
             ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
             ChannelGroup("notify-0").send({"text": json.dumps(result)})
             return site
-        return {}
 
 
 

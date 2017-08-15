@@ -750,6 +750,8 @@ data (instance/submission per row)
     def create(self, request, *args, **kwargs):
         owner = _get_owner(request)
         survey = utils.publish_xlsform(request, owner)
+        import ipdb
+        ipdb.set_trace()
 
         if isinstance(survey, XForm):
             xform = XForm.objects.get(pk=survey.pk)
