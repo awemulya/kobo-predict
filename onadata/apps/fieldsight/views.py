@@ -154,17 +154,9 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
     def get_context_data(self, **kwargs):
         dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
-        # if not UserRole.objects.filter(user=request.user).filter(
-        #                 Q(group__name="Reviewer", project=obj) |
-        #                 Q(group__name="Project Manager", project=obj) |
-        #                 Q(group__name="Organization Admin", organization=obj.organization)|
-        #                 Q(group__name="Super Admin")).exists():
-        #     return dashboard(request)
+
         peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
-        # if request.method == "POST":
-        #     name = request.POST.get('name')
-        #     sites = obj.sites.filter(name__icontains=name)
-        # else:
+
         sites = obj.sites.filter(is_active=True, is_survey=False)
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
@@ -192,6 +184,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'progress_labels': bar_graph.data.keys(),
     }
         return dashboard_data
+
 
 class SiteSurveyListView(LoginRequiredMixin, ProjectMixin, TemplateView):
     def get(self, request, pk):
@@ -318,7 +311,6 @@ def alter_org_status(request, pk):
 #     return render(request, "fieldsight/add_admin.html", {'obj':obj,'form':form})
 
 class OrganizationadminCreateView(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
-
 
     def get(self, request, pk=None):
         organization = get_object_or_404(Organization, id=pk)
