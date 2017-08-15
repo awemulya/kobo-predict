@@ -12,6 +12,8 @@ from onadata.apps.fieldsight.models import Site, ProjectType
 from onadata.apps.fieldsight.serializers.SiteSerializer import SiteSerializer, SiteCreationSurveySerializer, \
     SiteReviewSerializer, ProjectTypeSerializer
 from onadata.apps.userrole.models import UserRole
+from django.contrib.auth.models import Group
+from django.db import transaction
 
 
 class SiteSurveyPermission(BasePermission):
@@ -123,16 +125,20 @@ class SiteCreationSurveyViewSet(viewsets.ModelViewSet):
         return {'request': self.request}
 
     def perform_create(self, serializer):
-        site = serializer.save()
-        site.save()
-        noti = site.logs.create(source=self.request.user, type=3, title="new Site", organization=site.project.organization,
-                                   description="new site {0} created by {1}".format(site.name, self.request.user.username))
-        result = {}
-        result['description'] = 'new user {0} created by {1}'.format(site.name, self.request.user.username)
-        result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
-        return site
+        with transaction.atomic():
+            site = serializer.save()
+            group = Group.objcts.get(name="Site Supervisor")
+            role, created = UserRole.objects.get_or_create(user=self.request.user, site_id=site.id,
+                                                                           project__id=site.project.id, group=group)
+            noti = site.logs.create(source=self.request.user, type=3, title="new Site", organization=site.project.organization,
+                                       description="new site {0} created by {1}".format(site.name, self.request.user.username))
+            result = {}
+            result['description'] = 'new user {0} created by {1}'.format(site.name, self.request.user.username)
+            result['url'] = noti.get_absolute_url()
+            ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
+            ChannelGroup("notify-0").send({"text": json.dumps(result)})
+            return site
+        return {}
 
 
 
