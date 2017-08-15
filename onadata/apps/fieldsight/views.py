@@ -1,4 +1,5 @@
 import json
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
@@ -35,25 +36,28 @@ from onadata.apps.users.models import UserProfile
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin, SiteView,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
-                     MyOwnProjectMixin)
+                     MyOwnProjectMixin, ProjectMixin)
+from .rolemixins import ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo)
-
+from django.views.generic import TemplateView
 
 @login_required
 def dashboard(request):
-    current_role = request.role
-    if current_role:
-        if current_role.group.name == "Site Supervisor":
-            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
-        if current_role.group.name == "Reviewer":
-            return HttpResponseRedirect(reverse("fieldsight:site-list", ))
-        if current_role.group.name == "Project Manager":
-            return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role.project.pk}))
-        if current_role.group.name == "Organization Admin":
+    current_role = request.roles
+    if current_role.count() == 1:
+        if current_role[0].group.name == "Site Supervisor":
+            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role[0].site.pk}))
+        if current_role[0].group.name == "Reviewer":
+            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role[0].site.pk}))
+        if current_role[0].group.name == "Project Manager":
+            return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role[0].project.pk}))
+        if current_role[0].group.name == "Organization Admin":
             return HttpResponseRedirect(reverse("fieldsight:organizations-dashboard",
-                                                kwargs={'pk': current_role.organization.pk}))
+                                                kwargs={'pk': current_role[0].organization.pk}))
+    if current_role.count() > 1:
+        return HttpResponseRedirect(reverse("fieldsight:roles-dashboard"))
 
     total_users = User.objects.all().count()
     total_organizations = Organization.objects.all().count()
@@ -104,98 +108,97 @@ def site_images(request, pk):
 
     return JsonResponse({'images':medias[:5]})
 
-@login_required
-@group_required("Organization")
-def organization_dashboard(request, pk):
-    obj = Organization.objects.get(pk=pk)
-    if not UserRole.objects.filter(user=request.user).filter(Q(group__name="Organization Admin", organization=obj)
-                                                                     | Q(group__name="Super Admin")).exists():
-        return dashboard(request)
-    peoples_involved = obj.organization_roles.filter(group__name = "Organization Admin").order_by('user__first_name')
-    sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)
-    data = serialize('custom_geojson', sites, geometry_field='location',
-                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
-    projects = Project.objects.filter(organization=obj)
-    total_projects = len(projects)
-    total_sites = len(sites)
-    outstanding, flagged, approved, rejected = obj.get_submissions_count()
-    total_users = UserProfile.objects.filter(organization=obj).count()
+class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
+    template_name = "fieldsight/organization_dashboard.html"
+    def get_context_data(self, **kwargs):
+        dashboard_data = super(Organization_dashboard, self).get_context_data(**kwargs)
+        obj = Organization.objects.get(pk=self.kwargs.get('pk'))
+        peoples_involved = obj.organization_roles.filter(group__name = "Organization Admin").order_by('user__first_name')
+        sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)
+        data = serialize('custom_geojson', sites, geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+        projects = Project.objects.filter(organization=obj)
+        total_projects = len(projects)
+        total_sites = len(sites)
+        outstanding, flagged, approved, rejected = obj.get_submissions_count()
+        total_users = UserProfile.objects.filter(organization=obj).count()
 
-    bar_graph = BarGenerator(sites)
+        bar_graph = BarGenerator(sites)
 
-    line_chart = LineChartGeneratorOrganization(obj)
-    line_chart_data = line_chart.data()
+        line_chart = LineChartGeneratorOrganization(obj)
+        line_chart_data = line_chart.data()
 
-    dashboard_data = {
-        'obj': obj,
-        'projects': projects,
-        'sites': sites,
-        'peoples_involved': peoples_involved,
-        'total_users': total_users,
-        'total_projects': total_projects,
-        'total_sites': total_sites,
-        'outstanding': outstanding,
-        'flagged': flagged,
-        'approved': approved,
-        'rejected': rejected,
-        'data': data,
-        'cumulative_data': line_chart_data.values(),
-        'cumulative_labels': line_chart_data.keys(),
-        'progress_data': bar_graph.data.values(),
-        'progress_labels': bar_graph.data.keys(),
-    }
-    return TemplateResponse(request, "fieldsight/organization_dashboard.html", dashboard_data)
+        dashboard_data = {
+            'obj': obj,
+            'projects': projects,
+            'sites': sites,
+            'peoples_involved': peoples_involved,
+            'total_users': total_users,
+            'total_projects': total_projects,
+            'total_sites': total_sites,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+            'data': data,
+            'cumulative_data': line_chart_data.values(),
+            'cumulative_labels': line_chart_data.keys(),
+            'progress_data': bar_graph.data.values(),
+            'progress_labels': bar_graph.data.keys(),
+        }
+        return dashboard_data
 
-@login_required
-@group_required("Project")
-def project_dashboard(request, pk):
-    obj = Project.objects.get(pk=pk)
-    if not UserRole.objects.filter(user=request.user).filter(
-                    Q(group__name="Reviewer", project=obj) |
-                    Q(group__name="Project Manager", project=obj) |
-                    Q(group__name="Organization Admin", organization=obj.organization)|
-                    Q(group__name="Super Admin")).exists():
-        return dashboard(request)
-    peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
-    if request.method == "POST":
-        name = request.POST.get('name')
-        sites = obj.sites.filter(name__icontains=name)
-    else:
+class Project_dashboard(ProjectRoleMixin, TemplateView):
+    template_name = "fieldsight/project_dashboard.html"
+    
+    def get_context_data(self, **kwargs):
+        dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
+        obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        # if not UserRole.objects.filter(user=request.user).filter(
+        #                 Q(group__name="Reviewer", project=obj) |
+        #                 Q(group__name="Project Manager", project=obj) |
+        #                 Q(group__name="Organization Admin", organization=obj.organization)|
+        #                 Q(group__name="Super Admin")).exists():
+        #     return dashboard(request)
+        peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
+        # if request.method == "POST":
+        #     name = request.POST.get('name')
+        #     sites = obj.sites.filter(name__icontains=name)
+        # else:
         sites = obj.sites.filter(is_active=True, is_survey=False)
-    data = serialize('custom_geojson', sites, geometry_field='location',
-                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
+        data = serialize('custom_geojson', sites, geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
-    total_sites = len(sites)
-    total_survey_sites = obj.sites.filter(is_survey=True).count()
-    outstanding, flagged, approved, rejected = obj.get_submissions_count()
-    bar_graph = BarGenerator(sites)
+        total_sites = len(sites)
+        total_survey_sites = obj.sites.filter(is_survey=True).count()
+        outstanding, flagged, approved, rejected = obj.get_submissions_count()
+        bar_graph = BarGenerator(sites)
 
-    line_chart = LineChartGenerator(obj)
-    line_chart_data = line_chart.data()
-    dashboard_data = {
-        'obj': obj,
-        'peoples_involved': peoples_involved,
-        'total_sites': total_sites,
-        'total_survey_sites': total_survey_sites,
-        'outstanding': outstanding,
-        'flagged': flagged,
-        'approved': approved,
-        'rejected': rejected,
-        'data': data,
-        'cumulative_data': line_chart_data.values(),
-        'cumulative_labels': line_chart_data.keys(),
-        'progress_data': bar_graph.data.values(),
-        'progress_labels': bar_graph.data.keys(),
+        line_chart = LineChartGenerator(obj)
+        line_chart_data = line_chart.data()
+        dashboard_data = {
+            'obj': obj,
+            'peoples_involved': peoples_involved,
+            'total_sites': total_sites,
+            'total_survey_sites': total_survey_sites,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+            'data': data,
+            'cumulative_data': line_chart_data.values(),
+            'cumulative_labels': line_chart_data.keys(),
+            'progress_data': bar_graph.data.values(),
+            'progress_labels': bar_graph.data.keys(),
     }
-    return TemplateResponse(request, "fieldsight/project_dashboard.html", dashboard_data)
-
+        return dashboard_data
 
 class SiteSurveyListView(LoginRequiredMixin, ProjectMixin, TemplateView):
     def get(self, request, pk):
         return TemplateResponse(request, "fieldsight/site_survey_list.html", {'project':pk})
 
 
-class SiteDashboardView(TemplateView):
+class SiteDashboardView(ReviewerRoleMixin, TemplateView):
     template_name = 'fieldsight/site_dashboard.html'
 
     def get_context_data(self, **kwargs):
@@ -255,7 +258,7 @@ class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMix
         return HttpResponseRedirect(self.get_success_url())
 
 
-class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationMixin, MyOwnOrganizationMixin, UpdateView):
+class OrganizationUpdateView(OrganizationView, OrganizationRoleMixin, UpdateView):
     def get_success_url(self):
         return reverse('fieldsight:organizations-dashboard', kwargs={'pk': self.kwargs['pk']})
 
@@ -276,7 +279,7 @@ class OrganizationUpdateView(OrganizationView, LoginRequiredMixin, OrganizationM
 
 
 
-class OrganizationDeleteView(OrganizationView,LoginRequiredMixin, SuperAdminMixin, DeleteView):
+class OrganizationDeleteView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, DeleteView):
     pass
 
 @login_required
@@ -314,8 +317,8 @@ def alter_org_status(request, pk):
 #         form = SetOrgAdminForm(instance=obj)
 #     return render(request, "fieldsight/add_admin.html", {'obj':obj,'form':form})
 
+class OrganizationadminCreateView(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
 
-class OrganizationadminCreateView(LoginRequiredMixin, OrganizationMixin, TemplateView):
 
     def get(self, request, pk=None):
         organization = get_object_or_404(Organization, id=pk)
@@ -460,19 +463,26 @@ def add_project_role(request, pk):
                                                                     "existing_staffs":existing_staffs})
 
 
-class ProjectView(OView):
+class ProjectView(object):
     model = Project
     success_url = reverse_lazy('fieldsight:project-list')
     form_class = ProjectForm
 
+class ProjectRoleView(object):
+    model = Project
+    success_url = reverse_lazy('fieldsight:project-list')
+    form_class = ProjectForm
 
-class ProjectListView(ProjectView, OrganizationMixin, ListView):
+class ProjectListView(ProjectRoleView, OrganizationMixin, ListView):
     pass
 
 
-class ProjectCreateView(ProjectView, OrganizationMixin, CreateView):
+class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
+
     def form_valid(self, form):
-        self.object = form.save()
+        self.object = form.save(commit=False)
+        self.object.organization_id = self.kwargs.get('pk')
+        self.object.save()
         noti = self.object.logs.create(source=self.request.user, type=4, title="new Project",
                                        organization=self.object.organization,
                                        description="new project {0} created by {1}".
@@ -487,7 +497,7 @@ class ProjectCreateView(ProjectView, OrganizationMixin, CreateView):
         return HttpResponseRedirect(self.object.get_absolute_url())
 
 
-class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView):
+class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
     def get_success_url(self):
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs['pk']})
 
@@ -507,7 +517,7 @@ class ProjectUpdateView(ProjectView, ProjectMixin, MyOwnProjectMixin, UpdateView
 
 
 
-class ProjectDeleteView(ProjectView, OrganizationMixin, DeleteView):
+class ProjectDeleteView(ProjectView, ProjectRoleMixinDeleteView, DeleteView):
     def delete(self,*args, **kwargs):
         self.object = self.get_object()
         noti = self.object.logs.create(source=self.request.user, type=4, title="new Site",
@@ -529,14 +539,14 @@ class SiteView(PView):
     form_class = SiteForm
 
 
-class SiteListView(SiteView, ReviewerMixin, ListView):
+class SiteListView(SiteView, ReviewerRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(SiteListView, self).get_context_data(**kwargs)
         context['form'] = SiteForm()
         return context
 
 
-class SiteCreateView(SiteView, ProjectMixin, CreateView):
+class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
     def get_success_url(self):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.object.id})
@@ -576,7 +586,7 @@ class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class SiteDeleteView(SiteView, ProjectMixin, DeleteView):
+class SiteDeleteView(SiteView, ReviewerRoleMixinDeleteView, DeleteView):
     def delete(self,*args, **kwargs):
         self.object = self.get_object()
         noti = self.object.logs.create(source=self.request.user, type=3, title="new Site",
@@ -786,3 +796,77 @@ def all_notification(user,  message):
             "msg": message
         })
     })
+
+class RolesView(LoginRequiredMixin, TemplateView):
+    template_name = "fieldsight/roles_dashboard.html"
+    def get_context_data(self, **kwargs):
+        context = super(RolesView, self).get_context_data(**kwargs)
+        context['org_admin'] = self.request.roles.filter(group__name="Organization Admin")
+        context['proj_manager'] = self.request.roles.filter(group__name = "Project Manager")
+        context['site_reviewer'] = self.request.roles.filter(group__name = "Reviewer")
+        context['site_supervisor'] = self.request.roles.filter(group__name = "Site Supervisor")
+        return context
+
+
+class OrgProjectList(OrganizationRoleMixin, ListView):
+    def get_context_data(self, **kwargs):
+        context = super(OrgProjectList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
+    def get_queryset(self):
+        queryset = Project.objects.filter(organization_id=self.kwargs.get('pk'))
+        return queryset
+
+
+class OrgSiteList(OrganizationRoleMixin, ListView):
+    def get_context_data(self, **kwargs):
+        context = super(OrgSiteList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
+    def get_queryset(self):
+        queryset = Site.objects.filter(project__organization_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
+        return queryset
+
+class ProjSiteList(ProjectRoleMixin, ListView):
+    def get_context_data(self, **kwargs):
+        context = super(ProjSiteList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
+    def get_queryset(self):
+        queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
+        return queryset
+
+class OrgUserList(OrganizationRoleMixin, ListView):
+    template_name = "fieldsight/user_list_updated.html"
+    def get_context_data(self, **kwargs):
+        context = super(OrgUserList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
+    def get_queryset(self):
+        #queryset = UserRole.objects.select_related('User').filter(organization_id=self.kwargs.get('pk')).distinct('user_id')
+        #queryset = User.objects.select_related('user_profile').filter(user_profile__organization_id=self.kwargs.get('pk'))
+        
+        queryset = UserRole.objects.select_related('user').filter(organization_id=self.kwargs.get('pk')).distinct('user_id')
+        return queryset
+
+class ProjUserList(ProjectRoleMixin, ListView):
+    template_name = "fieldsight/user_list_updated.html"
+    def get_context_data(self, **kwargs):
+        context = super(ProjUserList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
+    def get_queryset(self):
+        queryset = UserRole.objects.select_related('user').filter(project_id=self.kwargs.get('pk')).distinct('user_id')
+        return queryset
+
+class SiteUserList(ProjectRoleMixin, ListView):
+    template_name = "fieldsight/user_list_updated.html"
+    def get_context_data(self, **kwargs):
+        context = super(SiteUserList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
+    def get_queryset(self):
+        queryset = UserRole.objects.select_related('user').filter(site_id=self.kwargs.get('pk')).distinct('user_id')
+    
+        return queryset
+

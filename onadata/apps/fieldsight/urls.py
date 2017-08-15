@@ -17,14 +17,14 @@ from .views import (
     OrganizationCreateView,
     OrganizationUpdateView,
     OrganizationDeleteView,
-    organization_dashboard,
+    Organization_dashboard,
     alter_org_status,
     OrganizationadminCreateView,
     ProjectListView,
     ProjectCreateView,
     ProjectUpdateView,
     ProjectDeleteView,
-    project_dashboard,
+    Project_dashboard,
     alter_proj_status,
     add_proj_manager,
     SiteListView,
@@ -35,9 +35,11 @@ from .views import (
     alter_site_status,
     add_supervisor,
     CreateUserView,
-    UserListView, site_images, FilterUserView, UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
+
+    UserListView, site_images, FilterUserView,  UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
     ManagePeopleProjectView, ManagePeopleOrganizationView, SiteSurveyListView, ajax_upload_sites, ajax_save_site,
-    ajax_save_project)
+    ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList)
+
 
 
 urlpatterns = [
@@ -48,7 +50,7 @@ urlpatterns = [
     url(r'^organization/$', OrganizationListView.as_view(), name='organization-list'),
     url(r'^organization/add/$', OrganizationCreateView.as_view(), name='organization-add'),
     url(r'^organization/(?P<pk>[0-9]+)/$', OrganizationUpdateView.as_view(), name='organization-edit'),
-    url(r'^organization-dashboard/(?P<pk>[0-9]+)/$', organization_dashboard, name='organizations-dashboard'),
+    url(r'^organization-dashboard/(?P<pk>[0-9]+)/$', Organization_dashboard.as_view(), name='organizations-dashboard'),
     url(r'^organization/delete/(?P<pk>\d+)/$', OrganizationDeleteView.as_view(), name='organization-delete'),
     url(r'^organization/alter-status/(?P<pk>\d+)/$', alter_org_status, name='alter_org_status'),
     url(r'^organization/add-org-admin/(?P<pk>\d+)/$', OrganizationadminCreateView.as_view(), name='add_org_admin'),
@@ -57,11 +59,21 @@ urlpatterns = [
     url(r'^api/projects/$', ProjectCreationViewSet.as_view({'post': 'create', 'put': 'update'}), name='projects-list'),
     url(r'^project/$', ProjectListView.as_view(), name='projects-list'),
     url(r'^project/$', ProjectListView.as_view(), name='project-list'),
-    url(r'^project/add/$', ProjectCreateView.as_view(), name='project-add'),
+    # url(r'^project/add/$', ProjectCreateView.as_view(), name='project-add'),
+    url(r'^project/add/(?P<pk>[0-9]+)/$', ProjectCreateView.as_view(), name='project-add'),
     url(r'^project/(?P<pk>[0-9]+)/$', ProjectUpdateView.as_view(), name='project-edit'),
-    url(r'^project-dashboard/(?P<pk>[0-9]+)/$', project_dashboard, name='project-dashboard'),
+    url(r'^project-dashboard/(?P<pk>[0-9]+)/$', Project_dashboard.as_view(), name='project-dashboard'),
     url(r'^api/org-projects/(?P<pk>\d+)/$', OrganizationsProjectViewSet.as_view({'get': 'list'})),
     url(r'^api/async_save_project/$', ajax_save_project),
+
+    url(r'^org-projects/(?P<pk>\d+)/$', OrgProjectList.as_view(), name='org-project-list'),
+    url(r'^org-users/(?P<pk>\d+)/$', OrgUserList.as_view(), name='org-user-list'),
+    url(r'^org-sites/(?P<pk>\d+)/$', OrgSiteList.as_view(), name='org-site-list'),
+
+    url(r'^proj-users/(?P<pk>\d+)/$', ProjUserList.as_view(), name='proj-user-list'),
+    url(r'^proj-sites/(?P<pk>\d+)/$', ProjSiteList.as_view(), name='proj-site-list'),
+    
+    url(r'^site-users/(?P<pk>\d+)/$', SiteUserList.as_view(), name='site-user-list'),
 
 
     url(r'^upload/(?P<pk>\d+)/$', UploadSitesView.as_view(), name='site-upload'),
@@ -86,6 +98,7 @@ urlpatterns = [
     url(r'^site/$', SiteListView.as_view(), name='site-list'),
     url(r'^site/add/$', SiteCreateView.as_view(), name='site-add'),
     url(r'^site/(?P<pk>[0-9]+)/$', SiteUpdateView.as_view(), name='site-edit'),
+
     url(r'^site/blue-prints/(?P<id>[0-9]+)/$', BluePrintsView.as_view(), name='site-blue-prints'),
     url(r'^site-dashboard/(?P<pk>[0-9]+)/$', SiteDashboardView.as_view(), name='site-dashboard'),
 
@@ -105,7 +118,9 @@ urlpatterns = [
     url(r'fcm/v1/devices/$', DeviceViewSet.as_view({'get': 'list'})),
     url(r'fcm/add/', FcmDeviceViewSet.as_view({'post': 'create'})),
     url(r'fcm/logout/', FcmDeviceViewSet.as_view({'post': 'inactivate'})),
+    url(r'myroles/', RolesView.as_view(), name='roles-dashboard'),
 
 ]
+   
 
 
