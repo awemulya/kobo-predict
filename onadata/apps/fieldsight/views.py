@@ -190,10 +190,9 @@ def project_dashboard(request, pk):
     return TemplateResponse(request, "fieldsight/project_dashboard.html", dashboard_data)
 
 
-@login_required()
-@group_required("Project")
-def site_survey_list(request, pk):
-    return TemplateResponse(request, "fieldsight/site_survey_list.html", {'project':pk})
+class SiteSurveyListView(LoginRequiredMixin, ProjectMixin, TemplateView):
+    def get(self, request, pk):
+        return TemplateResponse(request, "fieldsight/site_survey_list.html", {'project':pk})
 
 
 class SiteDashboardView(TemplateView):
@@ -314,6 +313,7 @@ def alter_org_status(request, pk):
 #     else:
 #         form = SetOrgAdminForm(instance=obj)
 #     return render(request, "fieldsight/add_admin.html", {'obj':obj,'form':form})
+
 
 class OrganizationadminCreateView(LoginRequiredMixin, OrganizationMixin, TemplateView):
 
@@ -621,7 +621,6 @@ def ajax_upload_sites(request, pk):
     return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 @group_required("Project")
 @api_view(['POST'])
 def ajax_save_site(request, pk):
@@ -641,12 +640,13 @@ def ajax_save_project(request):
         return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
     return Response({'error': 'Invalid Project Data'}, status=status.HTTP_400_BAD_REQUEST)
 
+class UploadSitesView(ProjectMixin, TemplateView):
 
+    def get(self, request, pk):
+        form = UploadFileForm()
+        return render(request, 'fieldsight/upload_sites.html',{'form':form, 'project':pk})
 
-@group_required("Project")
-def upload_sites(request, pk):
-    form = UploadFileForm()
-    if request.method == "POST":
+    def post(self, request, pk=id):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             project = Project(pk=pk)
@@ -654,18 +654,19 @@ def upload_sites(request, pk):
                 sites = request.FILES['file'].get_records()
                 with transaction.atomic():
                     for site in sites:
-                        site = dict((k,v) for k,v in site.iteritems() if v is not '')
+                        site = dict((k, v) for k, v in site.iteritems() if v is not '')
                         lat = site.get("longitude", 85.3240)
                         long = site.get("latitude", 27.7172)
                         location = Point(lat, long, srid=4326)
                         type_id = int(site.get("type", "1"))
-                        _site, created = Site.objects.get_or_create(identifier=str(site.get("id")), name=site.get("name"),
+                        _site, created = Site.objects.get_or_create(identifier=str(site.get("id")),
+                                                                    name=site.get("name"),
                                                                     project=project, type__id=type_id)
                         _site.phone = site.get("phone")
                         _site.address = site.get("address")
                         _site.public_desc = site.get("public_desc"),
                         _site.additional_desc = site.get("additional_desc")
-                        _site.location=location
+                        _site.location = location
                         _site.save()
                 messages.info(request, 'Site Upload Succesfull')
                 return HttpResponseRedirect(reverse('fieldsight:site-list'))
@@ -673,7 +674,8 @@ def upload_sites(request, pk):
                 form.full_clean()
                 form._errors[NON_FIELD_ERRORS] = form.error_class(['Sites Upload Failed, UnSupported Data'])
                 messages.warning(request, 'Site Upload Failed, UnSupported Data ')
-    return render(request, 'fieldsight/upload_sites.html',{'form':form, 'project':pk})
+        return render(request, 'fieldsight/upload_sites.html', {'form': form, 'project': pk})
+
 
 def download(request):
     sheet = excel.pe.Sheet([[1, 2],[3, 4]])
@@ -735,16 +737,16 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
 
         return new_user
 
+class BluePrintsView(LoginRequiredMixin, TemplateView):
+    def get(self, request, *args, **kwargs):
+        ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
+        formset = ImageFormSet(queryset=BluePrints.objects.none())
+        return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': self.kwargs.get('id')},)
 
-@login_required
-def blue_prints(request, id):
-
-    ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
-
-    if request.method == 'POST':
-
+    def post(self, request, id):
+        ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
         formset = ImageFormSet(request.POST, request.FILES,
-                               queryset=BluePrints.objects.none())
+                                   queryset=BluePrints.objects.none())
 
         if formset.is_valid():
             for form in formset.cleaned_data:
@@ -755,9 +757,9 @@ def blue_prints(request, id):
             messages.success(request,
                              "Blueprints saved!")
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': id}))
-    else:
+
         formset = ImageFormSet(queryset=BluePrints.objects.none())
-    return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': id},)
+        return render(request, 'fieldsight/blueprints_form.html', {'formset': formset, 'id': self.kwargs.get('id')}, )
 
 
 class ManagePeopleSiteView(LoginRequiredMixin, ReviewerMixin, TemplateView):
