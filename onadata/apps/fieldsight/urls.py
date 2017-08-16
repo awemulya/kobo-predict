@@ -40,6 +40,7 @@ from .views import (
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList, SiteSupervisorDashboardView)
 
 
+
 urlpatterns = [
     url(r'^accounts/create/$', CreateUserView.as_view(
         form_class=RegistrationForm), name='user-create'),
@@ -58,7 +59,7 @@ urlpatterns = [
     url(r'^project/$', ProjectListView.as_view(), name='projects-list'),
     url(r'^project/$', ProjectListView.as_view(), name='project-list'),
     # url(r'^project/add/$', ProjectCreateView.as_view(), name='project-add'),
-    url(r'^project/add/(?P<pk>[0-9]+)/$', ProjectCreateView.as_view(), name='project-add'),
+    url(r'^project/add/$', ProjectCreateView.as_view(), name='project-add'),
     url(r'^project/(?P<pk>[0-9]+)/$', ProjectUpdateView.as_view(), name='project-edit'),
     url(r'^project-dashboard/(?P<pk>[0-9]+)/$', Project_dashboard.as_view(), name='project-dashboard'),
     url(r'^api/org-projects/(?P<pk>\d+)/$', OrganizationsProjectViewSet.as_view({'get': 'list'})),
@@ -71,7 +72,9 @@ urlpatterns = [
     url(r'^proj-sites/(?P<pk>\d+)/$', ProjSiteList.as_view(), name='proj-site-list'),
     url(r'^site-users/(?P<pk>\d+)/$', SiteUserList.as_view(), name='site-user-list'),
 
-    url(r'^upload/(?P<pk>\d+)/$', upload_sites, name='site-upload'),
+
+
+    url(r'^upload/(?P<pk>\d+)/$', UploadSitesView.as_view(), name='site-upload'),
     url(r'^api/bulk_upload_site/(?P<pk>\d+)/$', ajax_upload_sites),
     url(r'^api/async_save_site/(?P<pk>\d+)/$', ajax_save_site),
     url(r'^project/delete/(?P<pk>\d+)/$', ProjectDeleteView.as_view(), name='project-delete'),
@@ -80,7 +83,8 @@ urlpatterns = [
     url(r'^project/add-role/(?P<pk>\d+)/$', add_project_role, name='add_project_staffs'),
     url(r'^api/project-sites/(?P<pk>\d+)/$', SiteViewSet.as_view({'get': 'list'}), name='project_sites'),
 
-    url(r'^survey-sites/(?P<pk>\d+)$', site_survey_list, name='site-survey-list'),
+
+    url(r'^survey-sites/(?P<pk>\d+)$', SiteSurveyListView.as_view(), name='site-survey-list'),
     url(r'^api/sites/$', AllSiteViewSet.as_view({'get': 'list'}), name='sites-list'),
     url(r'^api/project-types/$', ProjectTypeViewset.as_view({'get': 'list'})),
     url(r'^api/survey-sites/(?P<pk>\d+)/$', SiteCreationSurveyViewSet.as_view({'get': 'list'}), name='sites-list'),
@@ -92,7 +96,9 @@ urlpatterns = [
     url(r'^site/$', SiteListView.as_view(), name='site-list'),
     url(r'^site/add/$', SiteCreateView.as_view(), name='site-add'),
     url(r'^site/(?P<pk>[0-9]+)/$', SiteUpdateView.as_view(), name='site-edit'),
-    url(r'^site/blue-prints/(?P<id>[0-9]+)/$', blue_prints, name='site-blue-prints'),
+
+    url(r'^site/blue-prints/(?P<id>[0-9]+)/$', BluePrintsView.as_view(), name='site-blue-prints'),
+
     url(r'^site-dashboard/(?P<pk>[0-9]+)/$', SiteDashboardView.as_view(), name='site-dashboard'),
     url(r'^site-supervisor-dashboard/(?P<pk>[0-9]+)/$', SiteSupervisorDashboardView.as_view(), name='site-supervisor-dashboard'),
 

@@ -8,9 +8,9 @@ from django.db import transaction
 from django.db.models import Q
 from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.template.response import TemplateResponse
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
@@ -33,7 +33,7 @@ from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChart
 from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
-from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin,
+from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin, SiteView,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
@@ -154,17 +154,9 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
     def get_context_data(self, **kwargs):
         dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
-        # if not UserRole.objects.filter(user=request.user).filter(
-        #                 Q(group__name="Reviewer", project=obj) |
-        #                 Q(group__name="Project Manager", project=obj) |
-        #                 Q(group__name="Organization Admin", organization=obj.organization)|
-        #                 Q(group__name="Super Admin")).exists():
-        #     return dashboard(request)
+
         peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
-        # if request.method == "POST":
-        #     name = request.POST.get('name')
-        #     sites = obj.sites.filter(name__icontains=name)
-        # else:
+
         sites = obj.sites.filter(is_active=True, is_survey=False)
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
@@ -193,10 +185,11 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
     }
         return dashboard_data
 
-@login_required()
-@group_required("Project")
-def site_survey_list(request, pk):
-    return TemplateResponse(request, "fieldsight/site_survey_list.html", {'project':pk})
+
+class SiteSurveyListView(LoginRequiredMixin, ProjectMixin, TemplateView):
+    def get(self, request, pk):
+        return TemplateResponse(request, "fieldsight/site_survey_list.html", {'project':pk})
+
 
 class SiteDashboardView(ReviewerRoleMixin, TemplateView):
     template_name = 'fieldsight/site_dashboard.html'
@@ -656,7 +649,6 @@ def ajax_upload_sites(request, pk):
     return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 @group_required("Project")
 @api_view(['POST'])
 def ajax_save_site(request, pk):
@@ -676,12 +668,13 @@ def ajax_save_project(request):
         return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
     return Response({'error': 'Invalid Project Data'}, status=status.HTTP_400_BAD_REQUEST)
 
+class UploadSitesView(ProjectMixin, TemplateView):
 
+    def get(self, request, pk):
+        form = UploadFileForm()
+        return render(request, 'fieldsight/upload_sites.html',{'form':form, 'project':pk})
 
-@group_required("Project")
-def upload_sites(request, pk):
-    form = UploadFileForm()
-    if request.method == "POST":
+    def post(self, request, pk=id):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             project = Project(pk=pk)
@@ -689,18 +682,19 @@ def upload_sites(request, pk):
                 sites = request.FILES['file'].get_records()
                 with transaction.atomic():
                     for site in sites:
-                        site = dict((k,v) for k,v in site.iteritems() if v is not '')
+                        site = dict((k, v) for k, v in site.iteritems() if v is not '')
                         lat = site.get("longitude", 85.3240)
                         long = site.get("latitude", 27.7172)
                         location = Point(lat, long, srid=4326)
                         type_id = int(site.get("type", "1"))
-                        _site, created = Site.objects.get_or_create(identifier=str(site.get("id")), name=site.get("name"),
+                        _site, created = Site.objects.get_or_create(identifier=str(site.get("id")),
+                                                                    name=site.get("name"),
                                                                     project=project, type__id=type_id)
                         _site.phone = site.get("phone")
                         _site.address = site.get("address")
                         _site.public_desc = site.get("public_desc"),
                         _site.additional_desc = site.get("additional_desc")
-                        _site.location=location
+                        _site.location = location
                         _site.save()
                 messages.info(request, 'Site Upload Succesfull')
                 return HttpResponseRedirect(reverse('fieldsight:site-list'))
@@ -708,7 +702,8 @@ def upload_sites(request, pk):
                 form.full_clean()
                 form._errors[NON_FIELD_ERRORS] = form.error_class(['Sites Upload Failed, UnSupported Data'])
                 messages.warning(request, 'Site Upload Failed, UnSupported Data ')
-    return render(request, 'fieldsight/upload_sites.html',{'form':form, 'project':pk})
+        return render(request, 'fieldsight/upload_sites.html', {'form': form, 'project': pk})
+
 
 def download(request):
     sheet = excel.pe.Sheet([[1, 2],[3, 4]])
@@ -770,16 +765,16 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
 
         return new_user
 
+class BluePrintsView(LoginRequiredMixin, TemplateView):
+    def get(self, request, *args, **kwargs):
+        ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
+        formset = ImageFormSet(queryset=BluePrints.objects.none())
+        return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': self.kwargs.get('id')},)
 
-@login_required
-def blue_prints(request, id):
-
-    ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
-
-    if request.method == 'POST':
-
+    def post(self, request, id):
+        ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
         formset = ImageFormSet(request.POST, request.FILES,
-                               queryset=BluePrints.objects.none())
+                                   queryset=BluePrints.objects.none())
 
         if formset.is_valid():
             for form in formset.cleaned_data:
@@ -790,9 +785,9 @@ def blue_prints(request, id):
             messages.success(request,
                              "Blueprints saved!")
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': id}))
-    else:
+
         formset = ImageFormSet(queryset=BluePrints.objects.none())
-    return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': id},)
+        return render(request, 'fieldsight/blueprints_form.html', {'formset': formset, 'id': self.kwargs.get('id')}, )
 
 
 class ManagePeopleSiteView(LoginRequiredMixin, ReviewerMixin, TemplateView):
