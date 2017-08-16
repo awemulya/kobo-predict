@@ -59,7 +59,7 @@ urlpatterns = [
     url(r'^project/$', ProjectListView.as_view(), name='projects-list'),
     url(r'^project/$', ProjectListView.as_view(), name='project-list'),
     # url(r'^project/add/$', ProjectCreateView.as_view(), name='project-add'),
-    url(r'^project/add/$', ProjectCreateView.as_view(), name='project-add'),
+    url(r'^project/add/(?P<pk>[0-9]+)/$', ProjectCreateView.as_view(), name='project-add'),
     url(r'^project/(?P<pk>[0-9]+)/$', ProjectUpdateView.as_view(), name='project-edit'),
     url(r'^project-dashboard/(?P<pk>[0-9]+)/$', Project_dashboard.as_view(), name='project-dashboard'),
     url(r'^api/org-projects/(?P<pk>\d+)/$', OrganizationsProjectViewSet.as_view({'get': 'list'})),
