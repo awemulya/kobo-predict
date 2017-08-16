@@ -6,7 +6,11 @@
 {% trans 'Projects ' %}
 {% endblock %}
 {% block head %}
+<<<<<<< HEAD
     <a class="btn btn-primary btn-raised" href="{% url 'fieldsight:project-add'  %}">{% trans 'New' %} {% trans 'Project' %}</a>
+=======
+    <a class="btn btn-primary btn-raised" href="{% url 'fieldsight:project-add' pk%}">{% trans 'New' %} {% trans 'Project' %}</a>
+>>>>>>> class_bashed_views
 
 {% endblock %}
 
