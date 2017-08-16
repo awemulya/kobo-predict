@@ -35,8 +35,8 @@ from .views import (
     alter_site_status,
     add_supervisor,
     CreateUserView,
-    UserListView, site_images, FilterUserView, upload_sites, blue_prints, add_project_role, ManagePeopleSiteView,
-    ManagePeopleProjectView, ManagePeopleOrganizationView, site_survey_list, ajax_upload_sites, ajax_save_site,
+    UserListView, site_images, FilterUserView, UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
+    ManagePeopleProjectView, ManagePeopleOrganizationView, SiteSurveyListView, ajax_upload_sites, ajax_save_site,
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList, SiteSupervisorDashboardView)
 
 
