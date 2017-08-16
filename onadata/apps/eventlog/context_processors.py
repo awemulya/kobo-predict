@@ -12,12 +12,12 @@ def events(request):
     logs = []
     if request.group is not None:
         if request.group.name == "Super Admin":
-           logs = FieldSightLog.objects.filter(is_seen=False)[:10]
+           logs = FieldSightLog.objects.filter(is_seen=False)[:100]
         elif request.group.name == "Organization Admin":
-            logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:10]
+            logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:100]
             oid = request.organization.id
         elif request.group.name in ["Project Manager", "Reviewer"]:
-            logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:10]
+            logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:100]
             oid = request.organization.id
     else:
         logs = []

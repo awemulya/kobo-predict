@@ -333,7 +333,8 @@ var org = "{{obj.pk}}";
 
                                 <div class="mini-stat clearfix col-sm-2 col-md-12">
                                     <!--{% url 'fieldsight:user-list'%}-->
-                                    <a href="{% url 'fieldsight:org-user-list' obj.id%}">
+                                    <!--<a href="{% url 'fieldsight:org-user-list' obj.id%}">-->
+                                    <a href="{% url 'fieldsight:manage-people-organization' obj.pk %}">
                                       <span class="mini-stat-icon box-side"><i class="fa fa-users"></i></span>
                                       <div class="mini-stat-info">
                                           <span>{{total_users}}</span>
