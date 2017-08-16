@@ -37,7 +37,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
-from .rolemixins import ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
+from .rolemixins import SiteSupervisorRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo)
@@ -50,7 +50,7 @@ def dashboard(request):
         if current_role[0].group.name == "Site Supervisor":
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role[0].site.pk}))
         if current_role[0].group.name == "Reviewer":
-            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role[0].site.pk}))
+            return HttpResponseRedirect(reverse("fieldsight:site-supervisor-dashboard", kwargs={'pk': current_role[0].site.pk}))
         if current_role[0].group.name == "Project Manager":
             return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role[0].project.pk}))
         if current_role[0].group.name == "Organization Admin":
@@ -218,6 +218,32 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
         }
         return dashboard_data
 
+class SiteSupervisorDashboardView(SiteSupervisorRoleMixin, TemplateView):
+    template_name = 'fieldsight/site_supervisor_dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        dashboard_data = super(SiteSupervisorDashboardView, self).get_context_data(**kwargs)
+        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        peoples_involved = obj.site_roles.all().order_by('user__first_name')
+        data = serialize('custom_geojson', [obj], geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+
+        line_chart = LineChartGeneratorSite(obj)
+        line_chart_data = line_chart.data()
+
+        outstanding, flagged, approved, rejected = obj.get_site_submission()
+        dashboard_data = {
+            'obj': obj,
+            'peoples_involved': peoples_involved,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+            'data': data,
+            'cumulative_data': line_chart_data.values(),
+            'cumulative_labels': line_chart_data.keys(),
+        }
+        return dashboard_data
 
 class OrganizationView(object):
     model = Organization
@@ -578,7 +604,7 @@ class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class SiteDeleteView(SiteView, ReviewerRoleMixinDeleteView, DeleteView):
+class SiteDeleteView(SiteView, ProjectRoleMixin, DeleteView):
     def delete(self,*args, **kwargs):
         self.object = self.get_object()
         noti = self.object.logs.create(source=self.request.user, type=3, title="new Site",
