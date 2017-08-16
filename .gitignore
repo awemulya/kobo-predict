@@ -21,6 +21,7 @@ build
 /onadata/test_media
 /onadata/media
 /onadata/static
+/onadata/settings/local_settings.py
 
 .~lock.*
 emails/*

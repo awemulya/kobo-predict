@@ -35,10 +35,10 @@ from .views import (
     alter_site_status,
     add_supervisor,
     CreateUserView,
+    UserListView, site_images, FilterUserView, upload_sites, blue_prints, add_project_role, ManagePeopleSiteView,
+    ManagePeopleProjectView, ManagePeopleOrganizationView, site_survey_list, ajax_upload_sites, ajax_save_site,
+    ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList, SiteSupervisorDashboardView)
 
-    UserListView, site_images, FilterUserView,  UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
-    ManagePeopleProjectView, ManagePeopleOrganizationView, SiteSurveyListView, ajax_upload_sites, ajax_save_site,
-    ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList)
 
 
 urlpatterns = [
@@ -68,11 +68,10 @@ urlpatterns = [
     url(r'^org-projects/(?P<pk>\d+)/$', OrgProjectList.as_view(), name='org-project-list'),
     url(r'^org-users/(?P<pk>\d+)/$', OrgUserList.as_view(), name='org-user-list'),
     url(r'^org-sites/(?P<pk>\d+)/$', OrgSiteList.as_view(), name='org-site-list'),
-
     url(r'^proj-users/(?P<pk>\d+)/$', ProjUserList.as_view(), name='proj-user-list'),
     url(r'^proj-sites/(?P<pk>\d+)/$', ProjSiteList.as_view(), name='proj-site-list'),
-    
     url(r'^site-users/(?P<pk>\d+)/$', SiteUserList.as_view(), name='site-user-list'),
+
 
 
     url(r'^upload/(?P<pk>\d+)/$', UploadSitesView.as_view(), name='site-upload'),
@@ -101,6 +100,7 @@ urlpatterns = [
     url(r'^site/blue-prints/(?P<id>[0-9]+)/$', BluePrintsView.as_view(), name='site-blue-prints'),
 
     url(r'^site-dashboard/(?P<pk>[0-9]+)/$', SiteDashboardView.as_view(), name='site-dashboard'),
+    url(r'^site-supervisor-dashboard/(?P<pk>[0-9]+)/$', SiteSupervisorDashboardView.as_view(), name='site-supervisor-dashboard'),
 
     url(r'^site/delete/(?P<pk>\d+)/$', SiteDeleteView.as_view(), name='site-delete'),
     url(r'^site/alter-status/(?P<pk>\d+)/$', alter_site_status, name='alter_site_status'),
