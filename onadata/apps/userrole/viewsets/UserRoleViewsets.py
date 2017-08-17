@@ -14,6 +14,7 @@ from onadata.apps.fieldsight.mixins import USURPERS
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.userrole.serializers.UserRoleSerializer import UserRoleSerializer
 from onadata.apps.userrole.models import UserRole
+from django.db.models import Q
 
 SAFE_METHODS = ('GET', 'POST')
 
