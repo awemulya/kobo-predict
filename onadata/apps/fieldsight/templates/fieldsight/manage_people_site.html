@@ -246,6 +246,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                     <button type="submit" class="current-btn "  >
                         <i class="fa fa-search" aria-hidden="true"></i>
                     </button>
+                     <button></button>
 
                 </div>
             </div>
@@ -325,10 +326,15 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                     <i class="fa fa-plus" aria-hidden="true"></i>
                     {% trans 'Add New' %}
                 </button>
+                 <button class="btn btn-primary square" data-toggle="modal" data-target="#myorgModal">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            {% trans 'Add Admin' %}
+                    </button>
                 </div>
             <div class="col-sm-5">
                 <input type="text" class="current-input" placeholder="Search Project Managers" data-bind="value:search_key, valueUpdate:'afterkeydown'">
                 <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+                <button></button>
             </div>
         </div>
     </div>
@@ -366,11 +372,22 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <i class="fa fa-plus" aria-hidden="true"></i>
                             {% trans 'Add New' %}
                     </button>
+
+                </div>
+                <div class="col-sm-2">
+                  <button class="btn btn-primary square" data-toggle="modal" data-target="#myorgModal">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            {% trans 'Add Admin' %}
+                    </button>
+
+                   
                 </div>
                 <div class="col-sm-6">
                      <input type="text" class="current-input" placeholder="Search Admins" data-bind="value:search_key, valueUpdate:'afterkeydown'">
                     <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+
                 </div>
+
             </div>
         </div>
     </div>
@@ -390,13 +407,75 @@ vm = new ManagePeopleViewModel(pk, level, organization);
         </div>
         <div class="clearfixx"></div>
       </div>
-
     </div>
       </div>
     </div>
-
-
-
-
 </div>
+
+
+
+ <div class="modal fade" id="myorgModal" role="dialog">
+                      <div class="modal-dialog">
+                      
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add Organization Admin</h4>
+                          </div>
+                          <div class="modal-body">
+                          <center>
+                            <div class="col-sm-5">
+                                
+                                  <label>Email:</label>
+                                  <input id="email" type="email" name="email">
+                                  <input type="hidden" id="organization_id" value="{{ organization }}">
+                                  <input type="hidden" id="project_id" value="{{ project_id }}">
+                                  <input type="hidden" id="site_id" value="{{ site_id }}">
+                                  {% if category == "site" %}
+                                  <input type="radio" id="group" value="Reviewer" checked> Reviewer<br>
+                                  <input type="radio" id="group" value="Site Supervisor"> Site Supervisor<br>
+                                  {% else %}
+                                  <input type="hidden" id="group" value="{{ category }}">
+                                  {% endif %}
+                
+                                  <input type="button" id="getemail" value="submit">
+                                
+                            </div>
+                            <div id="update-next-step">
+                              
+                            </div>
+                            </center>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                        
+                      </div>
+                    </div>
+<script>
+    $("#getemail").click(function () {
+      var email = $("#email").val();
+      var organization_id = $("#organization_id").val();
+      var project_id = $("#project_id").val();
+      var site_id = $("#site_id").val();
+      var group = $("#group").val();
+      console.log(group);
+      $.ajax({
+        url: "{% url 'fieldsight:senduserinvite' %}",
+        data: {'email': email, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        type: 'POST',
+        success: function (html) {
+           $('#update-next-step').html(html);
+           $('#getemail').hide()
+        }
+      });
+    });
+
+  </script>
 {% endblock %}
+
+
+
+

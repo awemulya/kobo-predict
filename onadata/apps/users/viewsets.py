@@ -23,7 +23,7 @@ from onadata.apps.fieldsight.mixins import USURPERS
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import User, UserProfile
 from onadata.apps.users.serializers import UserSerializer, UserSerializerProfile, SearchableUserSerializer
-from django.db.models import Q
+
 SAFE_METHODS = ('GET', 'POST')
 
 
@@ -79,7 +79,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def filter_queryset(self, queryset):
         try:
             pk = self.kwargs.get('pk', None)
-            queryset = User.objects.filter(Q(user_profile__organization__id=pk) | Q(user_profile__multiple_org=True))
+            queryset = queryset.filter(user_profile__organization__id=pk)
         except:
             queryset = []
         return queryset

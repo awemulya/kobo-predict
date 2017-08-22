@@ -38,10 +38,17 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
 from .rolemixins import SiteSupervisorRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
-from .models import Organization, Project, Site, ExtraUserDetail, BluePrints
+from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo)
 from django.views.generic import TemplateView
+from django.core.mail import send_mail
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.utils.crypto import get_random_string
+from django.http import HttpResponse
 
 @login_required
 def dashboard(request):
@@ -792,20 +799,20 @@ class BluePrintsView(LoginRequiredMixin, TemplateView):
 
 class ManagePeopleSiteView(LoginRequiredMixin, ReviewerMixin, TemplateView):
     def get(self, request, pk):
-        organization = Site.objects.get(pk=pk).project.organization.id
-        return render(request, 'fieldsight/manage_people_site.html', {'pk':pk, 'level': "0", 'organization': organization})
+        project = Site.objects.get(pk=pk).project
+        return render(request, 'fieldsight/manage_people_site.html', {'pk':pk, 'level': "0", 'category':"site", 'organization': project.organization.id, 'project':project.id, 'site':pk})
 
 
 class ManagePeopleProjectView(LoginRequiredMixin, ProjectMixin, TemplateView):
     def get(self, request, pk):
         organization = Project.objects.get(pk=pk).organization.id
         return render(request, "fieldsight/manage_people_site.html",
-                      {'pk': pk, 'level': "1", 'organization': organization})
+                      {'pk': pk, 'level': "1", 'category':"Project Manager", 'organization': organization, 'project': pk})
 
 
 class ManagePeopleOrganizationView(LoginRequiredMixin, OrganizationMixin, TemplateView):
     def get(self, request, pk):
-        return render(request, 'fieldsight/manage_people_site.html', {'pk': pk, 'level': "2", 'organization': pk})
+        return render(request, 'fieldsight/manage_people_site.html', {'pk': pk, 'level': "2", 'category':"Organization Admin", 'organization': pk})
 
 
 def all_notification(user,  message):
@@ -888,3 +895,47 @@ class SiteUserList(ProjectRoleMixin, ListView):
     
         return queryset
 
+@login_required()
+def ajaxgetuser(request):
+    user = User.objects.filter(email=request.POST.get('email'))
+    html = render_to_string('fieldsight/ajax_temp/ajax_user.html', {'department': User.objects.filter(email=user)})
+    return HttpResponse(html)
+
+@login_required()
+def senduserinvite(request):
+    user = User.objects.filter(email=request.POST.get('email'))
+    a=request.POST.get('group')
+    group = Group.objects.get(name=request.POST.get('group'))
+    if user:
+        invite = UserInvite(email=user.email, group=group, token=get_random_string(length=32), project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'))
+        invite.save()
+    else:
+        invite = UserInvite(email=request.POST.get('email'), new_invite=True, token=get_random_string(length=32), group=group, project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'))
+        invite.save()
+    current_site = get_current_site(request)
+    subject = 'Invitation for Role'
+    message = render_to_string('fieldsight/email_sample.html',
+    {
+        'email': invite.email,
+        'domain': current_site.domain,
+        'uid': urlsafe_base64_encode(force_bytes(invite.pk)),
+        'token': invite.token,
+        })
+    email_to = (invite.email,)
+    send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
+    return HttpResponse("success")
+
+# def activateuser(request, uidb64, token):
+#     try:
+#         uid = force_text(urlsafe_base64_decode(uidb64))
+#         # user = User.objects.get(pk=uid)
+#     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+#         user = None
+
+#     invite = UserInvite.objects.filter(id=token_id, reg_status=False)
+#     if invite.new_invite = True:
+    
+#     else:
+
+#     return render(request, 'registration/profiledetails.html', {'uid': uidb64, 'userform':userform, 'photoform':photoform})
+   

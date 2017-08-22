@@ -10,6 +10,7 @@ from django.db.models.signals import post_save
 from django.utils.text import slugify
 from jsonfield import JSONField
 from .static_lists import COUNTRIES
+from django.contrib.auth.models import Group
 
 
 class ExtraUserDetail(models.Model):
@@ -317,3 +318,32 @@ class ChatMessage(models.Model):
 
     class Meta:
         db_table = 'chat_message'
+
+class UserInvite(models.Model):
+    email=models.CharField(max_length=255)
+    reg_status = models.BooleanField(default=False)
+    token = models.CharField(max_length=255)
+    group = models.ForeignKey(Group)
+    new_invite = models.BooleanField(default=False)
+    site = models.ForeignKey(Site, null=True, blank=True, related_name='invite_site_roles')
+    project = models.ForeignKey(Project, null=True, blank=True, related_name='invite_project_roles')
+    organization = models.ForeignKey(Organization, null=True, blank=True, related_name='invite_organization_roles')
+    logs = GenericRelation('eventlog.FieldSightLog')
+
+    def save(self, *args, **kwargs):
+        if self.group.name == 'Super Admin':
+            self.organization = None
+            self.project = None
+            self.site = None
+        elif self.group.name == 'Organization Admin':
+            self.project = None
+            self.site = None
+        elif self.group.name == 'Project Manager':
+            self.site = None
+            self.organization = self.project.organization
+
+        elif self.group.name in ['Site Supervisor', 'Reviewer']:
+            self.project = self.site.project
+            self.organization = self.site.project.organization
+
+        super(UserInvite, self).save(*args, **kwargs)

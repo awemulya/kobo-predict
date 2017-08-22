@@ -34,7 +34,6 @@ class UserProfile(models.Model):
     qq = models.CharField(max_length=140, blank=True, null=True)
     google_talk = models.CharField(max_length=140, blank=True, null=True)
     twitter = models.CharField(max_length=140, blank=True, null=True)
-    multiple_org = models.BooleanField(default=False)
     profile_picture = models.ImageField(upload_to=user_directory_path, default="logo/default_user.png")
     organization = models.ForeignKey(Organization, null=True, blank=True)
     logs = GenericRelation('eventlog.FieldSightLog')
