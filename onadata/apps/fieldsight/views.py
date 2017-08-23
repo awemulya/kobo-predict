@@ -930,7 +930,7 @@ def senduserinvite(request):
 # def activate_role(request, invite_idb64, token):
 #     try:
 #         invite_id = force_text(urlsafe_base64_decode(invite_idb64))
-#         invite = UserInvite.objects.filter(id=invite_id, token=token, reg_status=False)
+#         invite = UserInvite.objects.filter(id=invite_id, token=token, is_used=False)
 #     except (TypeError, ValueError, OverflowError, UserInvite.DoesNotExist):
 #         invite = None
 #     if invite:
@@ -946,7 +946,7 @@ def senduserinvite(request):
 class ActivateRole(TemplateView):
     def dispatch(self, request, invite_idb64, token):
         invite_id = force_text(urlsafe_base64_decode(invite_idb64))
-        invite = UserInvite.objects.filter(id=invite_id, token=token, reg_status=False)
+        invite = UserInvite.objects.filter(id=invite_id, token=token, is_used=False)
         if invite:
             return super(ActivateRole, self).dispatch(request, invite[0], invite_idb64, token)
         return HttpResponse("Failed")
@@ -954,8 +954,7 @@ class ActivateRole(TemplateView):
     def get(self, request, invite, invite_idb64, token):
         user = User.objects.filter(email=invite.email)
         if user:
-    
-            return HttpResponse(invite.reg_status)
+            return render(request, 'fieldsight/invite_action.html',{'invite':invite,})
         else:
             return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite,})
         return HttpResponse("Failed")
@@ -963,9 +962,12 @@ class ActivateRole(TemplateView):
     def post(self, request, invite, *args, **kwargs):
         user = User.objects.filter(email=invite.email)
         if user:
-            userrole = UserRole(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
-            userrole.save()
-            invite.reg_status = True
+            if request.POST.get('response') == "accept"
+                userrole = UserRole(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
+                userrole.save()
+            else:
+                invite.is_declined = True
+            invite.is_used = True
             invite.save()
             return HttpResponse("Sucess")
         else:
@@ -973,7 +975,7 @@ class ActivateRole(TemplateView):
             user.save()
             userrole = UserRole(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
             userrole.save()
-            invite.reg_status = True
+            invite.is_used = True
             invite.save()
             return HttpResponse("Sucess")
             

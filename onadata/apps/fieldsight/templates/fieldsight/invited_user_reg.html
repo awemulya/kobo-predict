@@ -94,13 +94,19 @@
 
       var pass1 = document.getElementById("password1").value;
       var pass2 = document.getElementById("password2").value;
-       alert(pass1);
-      alert(pass2);
-      if(pass1 == pass2){
-        document.getElementById("user_reg_form").submit(); 
+      
+      if(pass1.length < 8){
+        alert("Password must be atleast 8 characters long.");
       }
-      else{
-         alert("Password did not match");
+      
+      else
+      {
+        if(pass1 == pass2){
+          document.getElementById("user_reg_form").submit(); 
+        }
+        else{
+           alert("Password did not match");
+        }
       }
     }
 
