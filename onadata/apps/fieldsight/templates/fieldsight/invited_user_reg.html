@@ -1,0 +1,114 @@
+
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Manage People' %}{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block kocript %}
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/manage_people_site.js"></script>
+
+{% endblock %}
+
+{% block content %}
+
+
+
+<div class="modal" tabindex="-2" role="dialog" data-bind="modal:add_user_form_visibility" style="background: #5d5959b3;">
+  <div class="modal-dialog form-modal" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{% trans 'New User'%}</h4>
+      </div>
+      <div class="modal-body">
+          <div data-bind="with:new_user">
+              <div class="box-user-pop box-info">
+            <div class="box-header with-border">
+             <h4  class="box-title box-warning" data-bind="text:error"></h4>
+             <div class="gap">
+             </div>
+            </div>
+            <form id="user_reg_form" method="POST" class="form-horizontal">
+            {% csrf_token %}
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="username" class="col-sm-2 control-label"></label>
+
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" name="username" id="username" placeholder="username" required>
+                  </div>
+                </div>
+                  <div class="form-group">
+                  <label class="col-sm-2 control-label">First Name</label>
+
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" name="firstname" placeholder="ex:John"  required>
+                  </div>
+                </div>
+                  <div class="form-group">
+                  <label class="col-sm-2 control-label">Last Name</label>
+
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" name="lastname" placeholder="ex:watson"  required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
+
+                  <div class=" col-sm-8">
+                    <input type="password" class="form-control" id="password1" placeholder="Password" data-bind="value:password" required>
+                  </div>
+                </div>
+                  <div class="form-group">
+                  <label for="inputPassword2" class="col-sm-2 control-label">Password Confirm</label>
+
+                  <div class="col-sm-8">
+                    <input type="password" class="form-control" name="password" id="password2" placeholder="Password Confirm" required>
+                  </div>
+                </div>
+
+              </div>
+              <div class="box-footer">
+                <input type="button" name="" onclick="validatepass()" value="submit">
+              </div>
+            </form>
+          </div>
+
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    function validatepass(){
+
+      var pass1 = document.getElementById("password1").value;
+      var pass2 = document.getElementById("password2").value;
+       alert(pass1);
+      alert(pass2);
+      if(pass1 == pass2){
+        document.getElementById("user_reg_form").submit(); 
+      }
+      else{
+         alert("Password did not match");
+      }
+    }
+
+
+   
+  </script>
+{% endblock %}
+
+
+
+
