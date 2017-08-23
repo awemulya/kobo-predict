@@ -39,7 +39,7 @@ from .views import (
 
     UserListView, site_images, FilterUserView,  UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
     ManagePeopleProjectView, ManagePeopleOrganizationView, SiteSurveyListView, ajax_upload_sites, ajax_save_site,
-    ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList, senduserinvite)
+    ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList, senduserinvite, ActivateRole)
 
 
 urlpatterns = [
@@ -121,8 +121,8 @@ urlpatterns = [
     url(r'fcm/logout/', FcmDeviceViewSet.as_view({'post': 'inactivate'})),
     url(r'myroles/', RolesView.as_view(), name='roles-dashboard'),
     url(r'^senduserinvite/$', senduserinvite, name='senduserinvite'),
-    # url(r'^activateuser/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-    #     activateuser, name='activateuser'),
+    url(r'^activateuser/(?P<invite_idb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z_\-]+)/$',
+        ActivateRole.as_view(), name='activate-role'),
 
 ]
    

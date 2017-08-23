@@ -49,6 +49,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.utils.crypto import get_random_string
 from django.http import HttpResponse
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 
 @login_required
 def dashboard(request):
@@ -907,10 +909,10 @@ def senduserinvite(request):
     a=request.POST.get('group')
     group = Group.objects.get(name=request.POST.get('group'))
     if user:
-        invite = UserInvite(email=user.email, group=group, token=get_random_string(length=32), project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'))
+        invite = UserInvite(email=request.POST.get('email'), group=group, token=get_random_string(length=32), project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'))
         invite.save()
     else:
-        invite = UserInvite(email=request.POST.get('email'), new_invite=True, token=get_random_string(length=32), group=group, project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'))
+        invite = UserInvite(email=request.POST.get('email'), token=get_random_string(length=32), group=group, project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'))
         invite.save()
     current_site = get_current_site(request)
     subject = 'Invitation for Role'
@@ -918,24 +920,60 @@ def senduserinvite(request):
     {
         'email': invite.email,
         'domain': current_site.domain,
-        'uid': urlsafe_base64_encode(force_bytes(invite.pk)),
+        'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
         'token': invite.token,
         })
     email_to = (invite.email,)
     send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
     return HttpResponse("success")
 
-# def activateuser(request, uidb64, token):
+# def activate_role(request, invite_idb64, token):
 #     try:
-#         uid = force_text(urlsafe_base64_decode(uidb64))
-#         # user = User.objects.get(pk=uid)
-#     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-#         user = None
+#         invite_id = force_text(urlsafe_base64_decode(invite_idb64))
+#         invite = UserInvite.objects.filter(id=invite_id, token=token, reg_status=False)
+#     except (TypeError, ValueError, OverflowError, UserInvite.DoesNotExist):
+#         invite = None
+#     if invite:
+#         user = User.objects.filter(email=invite[0].email)
+#         if user:
+#             userrole = UserRole(user=user[0], group=invite[0].group, organization=invite[0].organization, project=invite[0].project, site=invite[0].site)
+#             userrole.save()
+#             return HttpResponse("Sucess")
+#         else:
 
-#     invite = UserInvite.objects.filter(id=token_id, reg_status=False)
-#     if invite.new_invite = True:
-    
-#     else:
-
-#     return render(request, 'registration/profiledetails.html', {'uid': uidb64, 'userform':userform, 'photoform':photoform})
+#     return HttpResponse("Failed")
    
+class ActivateRole(TemplateView):
+    def dispatch(self, request, invite_idb64, token):
+        invite_id = force_text(urlsafe_base64_decode(invite_idb64))
+        invite = UserInvite.objects.filter(id=invite_id, token=token, reg_status=False)
+        if invite:
+            return super(ActivateRole, self).dispatch(request, invite[0], invite_idb64, token)
+        return HttpResponse("Failed")
+
+    def get(self, request, invite, invite_idb64, token):
+        user = User.objects.filter(email=invite.email)
+        if user:
+    
+            return HttpResponse(invite.reg_status)
+        else:
+            return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite,})
+        return HttpResponse("Failed")
+
+    def post(self, request, invite, *args, **kwargs):
+        user = User.objects.filter(email=invite.email)
+        if user:
+            userrole = UserRole(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
+            userrole.save()
+            invite.reg_status = True
+            invite.save()
+            return HttpResponse("Sucess")
+        else:
+            user = User(username=request.POST.get('username'), email=invite.email, password=request.POST.get('password'))
+            user.save()
+            userrole = UserRole(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
+            userrole.save()
+            invite.reg_status = True
+            invite.save()
+            return HttpResponse("Sucess")
+            

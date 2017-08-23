@@ -324,7 +324,6 @@ class UserInvite(models.Model):
     reg_status = models.BooleanField(default=False)
     token = models.CharField(max_length=255)
     group = models.ForeignKey(Group)
-    new_invite = models.BooleanField(default=False)
     site = models.ForeignKey(Site, null=True, blank=True, related_name='invite_site_roles')
     project = models.ForeignKey(Project, null=True, blank=True, related_name='invite_project_roles')
     organization = models.ForeignKey(Organization, null=True, blank=True, related_name='invite_organization_roles')

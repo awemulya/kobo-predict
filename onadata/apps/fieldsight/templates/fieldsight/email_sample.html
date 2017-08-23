@@ -1,7 +1,7 @@
 {% autoescape off %}
-Hi {{ user.username }},
+Hi {{ email }},
 
 Please click on the link below to confirm your registration:
 
-http://{{ domain }}/{{ token }}
+http://{{ domain }}{% url 'fieldsight:activate-role' invite_id token %}
 {% endautoescape %}
