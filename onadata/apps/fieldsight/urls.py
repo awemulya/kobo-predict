@@ -121,7 +121,7 @@ urlpatterns = [
     url(r'fcm/logout/', FcmDeviceViewSet.as_view({'post': 'inactivate'})),
     url(r'myroles/', RolesView.as_view(), name='roles-dashboard'),
     url(r'^senduserinvite/$', senduserinvite, name='senduserinvite'),
-    url(r'^activateuser/(?P<invite_idb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z_\-]+)/$',
+    url(r'^activaterole/(?P<invite_idb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z_\-]+)/$',
         ActivateRole.as_view(), name='activate-role'),
 
 ]

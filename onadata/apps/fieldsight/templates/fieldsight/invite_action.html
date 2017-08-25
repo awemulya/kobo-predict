@@ -1,11 +1,15 @@
-<form id="action-form" actoin="POST">
-	<input type="hidden" name="response">
-	<input type="button" onclick="setvalue('accept')">
-	<input type="button" onclick="setvalue('decline')">
+
+
+<form id="action-form" method="POST">
+{% csrf_token %}
+	<input type="hidden" name="response" id="response">
+	<input type="button" onclick="setvalue('accept')" value="Accept">
+	<input type="button" onclick="setvalue('decline')" value="Decline">
 </form>
 <script type="text/javascript">
 	function setvalue(status){
 		document.getElementById('response').value = status;
 		document.getElementById('action-form').submit();
+		alert();
 	}
 </script>

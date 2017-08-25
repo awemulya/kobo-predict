@@ -241,6 +241,14 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             {% trans 'Add New' %}
                     </button>
                 </div>
+                <div class="col-sm-2">
+                  <button class="btn btn-primary square" data-toggle="modal" data-target="#myorgModal">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            {% trans 'Add Admin' %}
+                    </button>
+
+                   
+                </div>
                 <div class="col-sm-5">
                     <input type="text" class="current-input" placeholder="Search Supervisors" data-bind="value:search_key_supervisor, valueUpdate:'afterkeydown'">
                     <button type="submit" class="current-btn "  >
@@ -377,7 +385,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <div class="col-sm-2">
                   <button class="btn btn-primary square" data-toggle="modal" data-target="#myorgModal">
                             <i class="fa fa-plus" aria-hidden="true"></i>
-                            {% trans 'Add Admin' %}
+                            {% trans 'Add User' %}
                     </button>
 
                    
@@ -433,8 +441,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                                   <input type="hidden" id="project_id" value="{{ project_id }}">
                                   <input type="hidden" id="site_id" value="{{ site_id }}">
                                   {% if category == "site" %}
-                                  <input type="radio" id="group" value="Reviewer" checked> Reviewer<br>
-                                  <input type="radio" id="group" value="Site Supervisor"> Site Supervisor<br>
+                                  <input type="radio" name="group" id="group" value="Reviewer" checked> Reviewer<br>
+                                  <input type="radio" name="group" id="group" value="Site Supervisor"> Site Supervisor<br>
                                   {% else %}
                                   <input type="hidden" id="group" value="{{ category }}">
                                   {% endif %}

@@ -59,7 +59,7 @@ def dashboard(request):
         if current_role[0].group.name == "Site Supervisor":
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role[0].site.pk}))
         if current_role[0].group.name == "Reviewer":
-            return HttpResponseRedirect(reverse("fieldsight:site-supervisor-dashboard", kwargs={'pk': current_role[0].site.pk}))
+            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role[0].site.pk}))
         if current_role[0].group.name == "Project Manager":
             return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role[0].project.pk}))
         if current_role[0].group.name == "Organization Admin":
@@ -906,11 +906,34 @@ def ajaxgetuser(request):
 @login_required()
 def senduserinvite(request):
     user = User.objects.filter(email=request.POST.get('email'))
-    a=request.POST.get('group')
+    
     group = Group.objects.get(name=request.POST.get('group'))
+
+    userinvite = UserInvite.objects.filter(email=request.POST.get('email'), group=group, project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'), is_used=False)
+
+    if userinvite:
+        return HttpResponse('Invite already sent.')
+
     if user:
+        userrole = UserRole.objects.filter(user=user[0], group=group, site_id=request.POST.get('site_id'), project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id')).order_by('-id')
+        
+        if userrole:
+            if userrole[0].ended_at__isnull==True:
+                return HttpResponse('Already has the role.') 
+        
         invite = UserInvite(email=request.POST.get('email'), group=group, token=get_random_string(length=32), project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'))
         invite.save()
+        organization = Organization.objects.get(pk=1)
+        noti = invite.logs.create(source=user[0], type=9, title="new Role",
+                                       organization_id=request.POST.get('organization_id'),
+                                       description="{0} sent you an invite to join {1} as the {2}.".
+                                       format(request.user.username, organization.name, invite.group.name,))
+        # result = {}
+        # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+        # result['url'] = noti.get_absolute_url()
+        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
     else:
         invite = UserInvite(email=request.POST.get('email'), token=get_random_string(length=32), group=group, project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'))
         invite.save()
@@ -953,17 +976,19 @@ class ActivateRole(TemplateView):
 
     def get(self, request, invite, invite_idb64, token):
         user = User.objects.filter(email=invite.email)
+        if invite.is_used==True:
+            return render(request, 'fieldsight/invite_action.html',{'invite':invite, 'is_used': True, })
         if user:
-            return render(request, 'fieldsight/invite_action.html',{'invite':invite,})
+            return render(request, 'fieldsight/invite_action.html',{'invite':invite, 'is_used': False,})
         else:
-            return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite,})
-        return HttpResponse("Failed")
+            return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False,})
+        
 
     def post(self, request, invite, *args, **kwargs):
         user = User.objects.filter(email=invite.email)
         if user:
-            if request.POST.get('response') == "accept"
-                userrole = UserRole(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
+            if request.POST.get('response') == "accept":
+                userrole = UserRole(user=user[0], group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
                 userrole.save()
             else:
                 invite.is_declined = True

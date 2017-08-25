@@ -12,6 +12,10 @@ from jsonfield import JSONField
 from .static_lists import COUNTRIES
 from django.contrib.auth.models import Group
 
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.utils.encoding import force_text
+
 
 class ExtraUserDetail(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='extra_details')
@@ -347,3 +351,6 @@ class UserInvite(models.Model):
             self.organization = self.site.project.organization
 
         super(UserInvite, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('fieldsight:activate-role', kwargs={'invite_idb64': urlsafe_base64_encode(force_bytes(self.pk)), 'token':self.token,})
