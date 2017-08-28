@@ -1,0 +1,17 @@
+{% for user in users %}
+
+<div class="current-person col-sm-4 " style="/*width: 24% !important;*/margin-right: 3px !important;margin-left: 9px;" data-bind="click:$root.setSelected">
+                    <div class="user-image-current">
+                      <img data-bind="attr:{src: profile_picture}" class="modal-image" src="">
+                    </div>
+                    <div class="user-name-position">
+                      <p class="cu-name" data-bind="text:full_name">{{ user.first_name }} {{ user.last_name }} </p>
+                      <p class="cu-position" data-bind="text:username">{{ user.username }}</p>
+                      <p class="cu-position" data-bind="text:email">{{ user.email }}</p>
+                    </div>
+                    <br>
+                    <a href="#" onclick="sendinvite('{{ user.email }}')">send invite</a>
+                    <div class="clearfixx"></div>
+                   
+                  </div>
+{% endfor %}

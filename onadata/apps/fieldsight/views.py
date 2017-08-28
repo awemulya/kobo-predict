@@ -903,25 +903,44 @@ def ajaxgetuser(request):
     html = render_to_string('fieldsight/ajax_temp/ajax_user.html', {'department': User.objects.filter(email=user)})
     return HttpResponse(html)
 
+def RepresentsInt(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
+
 @login_required()
 def senduserinvite(request):
     user = User.objects.filter(email=request.POST.get('email'))
-    
     group = Group.objects.get(name=request.POST.get('group'))
 
-    userinvite = UserInvite.objects.filter(email=request.POST.get('email'), group=group, project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'), is_used=False)
+    organization_id = None
+    project_id =None
+    site_id =None
+
+    if RepresentsInt(request.POST.get('organization_id')):
+        organization_id = request.POST.get('organization_id')
+    if RepresentsInt(request.POST.get('project_id')):
+        project_id = request.POST.get('project_id')
+    if RepresentsInt(request.POST.get('site_id')):
+        site_id = request.POST.get('site_id')
+
+
+    userinvite = UserInvite.objects.filter(email=request.POST.get('email'), organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
 
     if userinvite:
         return HttpResponse('Invite already sent.')
 
     if user:
-        userrole = UserRole.objects.filter(user=user[0], group=group, site_id=request.POST.get('site_id'), project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id')).order_by('-id')
+        userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
         
         if userrole:
-            if userrole[0].ended_at__isnull==True:
+            if userrole[0].ended_at==None:
                 return HttpResponse('Already has the role.') 
         
-        invite = UserInvite(email=request.POST.get('email'), group=group, token=get_random_string(length=32), project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'))
+        invite = UserInvite(email=request.POST.get('email'), group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
+
         invite.save()
         organization = Organization.objects.get(pk=1)
         noti = invite.logs.create(source=user[0], type=9, title="new Role",
@@ -1004,3 +1023,10 @@ class ActivateRole(TemplateView):
             invite.save()
             return HttpResponse("Sucess")
             
+@login_required()
+def checkemailforinvite(request):
+    user = User.objects.select_related('user_profile').filter(email__icontains=request.POST.get('email'))
+    if user:
+        return render(request, 'fieldsight/invite_response.html', {'users': user,})
+    else:
+        return HttpResponse("No existing User found.<a href='#' onclick='sendnewuserinvite()'>send</a>")

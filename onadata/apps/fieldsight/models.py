@@ -333,6 +333,9 @@ class UserInvite(models.Model):
     project = models.ForeignKey(Project, null=True, blank=True, related_name='invite_project_roles')
     organization = models.ForeignKey(Organization, null=True, blank=True, related_name='invite_organization_roles')
     logs = GenericRelation('eventlog.FieldSightLog')
+    
+    def __unicode__(self):
+        return self.email + "-----" + str(self.is_used)
 
     def save(self, *args, **kwargs):
         if self.group.name == 'Super Admin':
