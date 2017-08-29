@@ -39,7 +39,8 @@ from .views import (
 
     UserListView, site_images, FilterUserView,  UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
     ManagePeopleProjectView, ManagePeopleOrganizationView, SiteSurveyListView, ajax_upload_sites, ajax_save_site,
-    ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList, senduserinvite, ActivateRole, checkemailforinvite)
+    ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList, 
+    senduserinvite, ActivateRole, checkemailforinvite, html_to_pdf_view)
 
 
 urlpatterns = [
@@ -124,6 +125,7 @@ urlpatterns = [
     url(r'^checkemailforinvite/$', checkemailforinvite, name='check-email-for-invite'),
     url(r'^activaterole/(?P<invite_idb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z_\-]+)/$',
         ActivateRole.as_view(), name='activate-role'),
+    url(r'^pdf/$', html_to_pdf_view, name='pdf'),
 
 ]
    

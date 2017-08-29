@@ -52,6 +52,9 @@ from django.http import HttpResponse
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 
+from django.core.files.storage import FileSystemStorage
+from weasyprint import HTML
+
 @login_required
 def dashboard(request):
     current_role = request.roles
@@ -930,7 +933,7 @@ def senduserinvite(request):
     userinvite = UserInvite.objects.filter(email=request.POST.get('email'), organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
 
     if userinvite:
-        return HttpResponse('Invite already sent.')
+        return HttpResponse('<script> alert("Invite already sent."); <script>')
 
     if user:
         userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
@@ -1030,3 +1033,18 @@ def checkemailforinvite(request):
         return render(request, 'fieldsight/invite_response.html', {'users': user,})
     else:
         return HttpResponse("No existing User found.<a href='#' onclick='sendnewuserinvite()'>send</a>")
+
+def html_to_pdf_view(request):
+    paragraphs = ['first paragraph', 'second paragraph', 'third paragraph']
+    html_string = render_to_string('fieldsight/report.html', {'paragraphs': paragraphs})
+
+    html = HTML(string=html_string)
+    html.write_pdf(target='/tmp/mypdf.pdf');
+
+    fs = FileSystemStorage('/tmp')
+    with fs.open('mypdf.pdf') as pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+        return response
+
+    return response
