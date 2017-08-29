@@ -4,6 +4,8 @@ from onadata.apps.eventlog.models import FieldSightLog, FieldSightMessage
 
 
 def events(request):
+    from django.contrib.sites.models import Site
+    site = Site.objects.first()
     if request.user.is_anonymous():
         messages = []
     else:
@@ -28,6 +30,7 @@ def events(request):
         'notifications': logs,
         'fieldsight_message': messages,
         'oid': oid,
-        'channels_url': channels_url
+        'channels_url': channels_url,
+        'site_name': site.domain
 
     }

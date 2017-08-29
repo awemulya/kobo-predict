@@ -225,6 +225,25 @@ console.log(text.prop2);
             <ul class="dropdown-menu menu-top">
                 <ul class="menu" id="notification-ul">
                     {% for noti in notifications %}
+                    {% if noti.type == 6 %}
+                    <li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
+                    <a href="{{noti.get_absolute_url}}" class="full">
+                 <div class="col-md-1">
+                      <!--<i class="fa fa-info-circle fa-1 note-icon-sm"></i>-->
+                     <img src="{{noti.content_object.user.user_profile.profile_picture.url}}" height="30" width="30">
+                 </div>
+                 <div class="col-md-10">
+                  <span class="detail-text1 notification-title-sm">{{noti.content_object.user.get_full_name}}
+                      {% trans 'joined ' %} {{noti.content_object.organization.name}} {% trans 'as ' %} {{noti.content_object.group.name}}</span>
+
+                  <div class="low">
+                    <i class="fa fa-clock-o space" aria-hidden="true"></i>
+                    {{noti.date}}
+                  </div>
+                  </div>
+                    </a>
+                  </li>
+                    {% else %}
                   <li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
                     <a href="{{noti.get_absolute_url}}" class="full">
                  <div class="col-md-1">
@@ -240,6 +259,7 @@ console.log(text.prop2);
                   </div>
                     </a>
                   </li>
+                    {% endif %}
                 {% endfor %}
                 </ul>
               </li>
