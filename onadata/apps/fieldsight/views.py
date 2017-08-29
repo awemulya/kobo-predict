@@ -942,7 +942,7 @@ def senduserinvite(request):
             if userrole[0].ended_at==None:
                 return HttpResponse('Already has the role.') 
         
-        invite = UserInvite(email=request.POST.get('email'), group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
+        invite = UserInvite(email=request.POST.get('email'), by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
 
         invite.save()
         organization = Organization.objects.get(pk=1)
@@ -957,7 +957,7 @@ def senduserinvite(request):
         # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
     else:
-        invite = UserInvite(email=request.POST.get('email'), token=get_random_string(length=32), group=group, project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'))
+        invite = UserInvite(email=request.POST.get('email'), by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'))
         invite.save()
     current_site = get_current_site(request)
     subject = 'Invitation for Role'
@@ -970,7 +970,7 @@ def senduserinvite(request):
         })
     email_to = (invite.email,)
     send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
-    return HttpResponse("success")
+    return HttpResponse("<script> alert('Sucessfully invited for "+ group.name +" role.');</script>")
 
 # def activate_role(request, invite_idb64, token):
 #     try:
@@ -994,7 +994,7 @@ class ActivateRole(TemplateView):
         invite = UserInvite.objects.filter(id=invite_id, token=token, is_used=False)
         if invite:
             return super(ActivateRole, self).dispatch(request, invite[0], invite_idb64, token)
-        return HttpResponse("Failed")
+        return HttpResponseRedirect(reverse('login'))
 
     def get(self, request, invite, invite_idb64, token):
         user = User.objects.filter(email=invite.email)
@@ -1016,7 +1016,7 @@ class ActivateRole(TemplateView):
                 invite.is_declined = True
             invite.is_used = True
             invite.save()
-            return HttpResponse("Sucess")
+            return HttpResponseRedirect(reverse('login'))
         else:
             user = User(username=request.POST.get('username'), email=invite.email, password=request.POST.get('password'))
             user.save()
@@ -1024,7 +1024,7 @@ class ActivateRole(TemplateView):
             userrole.save()
             invite.is_used = True
             invite.save()
-            return HttpResponse("Sucess")
+            return HttpResponseRedirect(reverse('login'))
             
 @login_required()
 def checkemailforinvite(request):

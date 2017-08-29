@@ -1,94 +1,96 @@
 
-{% load i18n staticfiles %}
-{% load filters %}
-
-{% block page-title %}{% trans 'Manage People' %}{% endblock %}
-
-{% block head %}
-{% endblock %}
-
-
-{% block kocript %}
-<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/manage_people_site.js"></script>
-
-{% endblock %}
-
-{% block content %}
 
 
 
-<div class="modal" tabindex="-2" role="dialog" data-bind="modal:add_user_form_visibility" style="background: #5d5959b3;">
-  <div class="modal-dialog form-modal" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">{% trans 'New User'%}</h4>
-      </div>
-      <div class="modal-body">
-          <div data-bind="with:new_user">
-              <div class="box-user-pop box-info">
-            <div class="box-header with-border">
-             <h4  class="box-title box-warning" data-bind="text:error"></h4>
-             <div class="gap">
-             </div>
+
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    
+    
+    
+
+<link rel="stylesheet" href="/static/css/normalize.min.css">
+<link rel="stylesheet" href="/static/bs3/css/bootstrap.min.css">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>KoBoToolbox </title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/x-icon" href="/static/img/favicon.ico" />
+<!-- iPhone + iPad icons -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/img/apple-touch-icon-114x114.png">
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/img/apple-touch-icon-72x72-precomposed.png">
+<link rel="apple-touch-icon-precomposed" href="/static/img/apple-touch-icon-precomposed.png">
+<link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/static/css/style.css">
+
+  
+
+</head>
+<body>
+
+
+<body class="login-body">
+
+    <div class="container">
+
+      <form class="form-signin" id="user_reg_form" method="POST" class="form-horizontal">
+{% csrf_token %}
+        <div class="login-heading-with-image">
+          <img class="form-signin-heading-img" src="/static/images/logo1.png" / >
+          <!-- <h2 class="form-signin-heading">sign in now</h2> -->
+        </div>
+        <div class="login-wrap">
+        
+            <div class="user-login-info">
+              
+                
+                <p></p>
+                <input type="text" class="form-control" placeholder="Username" name="username" value="" autofocus>
+                
+                <p></p>
+
+                <input type="text" class="form-control" placeholder="First Name" name="password" value="">
+                
+                       
+                <p></p>
+
+                <input type="text" class="form-control" placeholder="Last Name" name="lastname" value="">
+                               
+                <p></p>
+
+                <input type="password" class="form-control" placeholder="Password" id="password1" name="password1" value="">
+                               
+                <p></p>
+
+                <input type="password" class="form-control" placeholder="Re-type Password" id="password2" name="password2" value="">
+        
+                
             </div>
-            <form id="user_reg_form" method="POST" class="form-horizontal">
-            {% csrf_token %}
-              <div class="box-body">
-                <div class="form-group">
-                  <label for="username" class="col-sm-2 control-label"></label>
+           
+            <button onclick="validatepass()" class="btn btn-lg btn-login btn-block registration__action" type="button" value="Login" >Register</button>
+           
 
-                  <div class="col-sm-8">
-                    <input type="text" class="form-control" name="username" id="username" placeholder="username" required>
-                  </div>
-                </div>
-                  <div class="form-group">
-                  <label class="col-sm-2 control-label">First Name</label>
 
-                  <div class="col-sm-8">
-                    <input type="text" class="form-control" name="firstname" placeholder="ex:John"  required>
-                  </div>
-                </div>
-                  <div class="form-group">
-                  <label class="col-sm-2 control-label">Last Name</label>
+        </div>
 
-                  <div class="col-sm-8">
-                    <input type="text" class="form-control" name="lastname" placeholder="ex:watson"  required>
-                  </div>
-                </div>
+          
+      </form>
+ 
 
-                <div class="form-group">
-                  <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
-
-                  <div class=" col-sm-8">
-                    <input type="password" class="form-control" id="password1" placeholder="Password" data-bind="value:password" required>
-                  </div>
-                </div>
-                  <div class="form-group">
-                  <label for="inputPassword2" class="col-sm-2 control-label">Password Confirm</label>
-
-                  <div class="col-sm-8">
-                    <input type="password" class="form-control" name="password" id="password2" placeholder="Password Confirm" required>
-                  </div>
-                </div>
-
-              </div>
-              <div class="box-footer">
-                <input type="button" name="" onclick="validatepass()" value="submit">
-              </div>
-            </form>
-          </div>
-
-          </div>
-      </div>
     </div>
-  </div>
-</div>
 
+
+
+
+
+
+</body>
 <script>
     function validatepass(){
 
@@ -113,8 +115,4 @@
 
    
   </script>
-{% endblock %}
-
-
-
-
+</html>

@@ -15,7 +15,7 @@ from django.contrib.auth.models import Group
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.utils.encoding import force_text
-
+from django.conf import settings
 
 class ExtraUserDetail(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='extra_details')
@@ -325,13 +325,14 @@ class ChatMessage(models.Model):
 
 class UserInvite(models.Model):
     email=models.CharField(max_length=255)
+    by_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='invited_by_user')
     is_used = models.BooleanField(default=False)
     is_declied = models.BooleanField(default=False)
     token = models.CharField(max_length=255)
     group = models.ForeignKey(Group)
     site = models.ForeignKey(Site, null=True, blank=True, related_name='invite_site_roles')
     project = models.ForeignKey(Project, null=True, blank=True, related_name='invite_project_roles')
-    organization = models.ForeignKey(Organization, null=True, blank=True, related_name='invite_organization_roles')
+    organization = models.ForeignKey(Organization, related_name='invite_organization_roles')
     logs = GenericRelation('eventlog.FieldSightLog')
     
     def __unicode__(self):

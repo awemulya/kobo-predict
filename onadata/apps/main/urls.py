@@ -27,7 +27,7 @@ urlpatterns = patterns(
     url(r'^api/v1', RedirectView.as_view(url='/api/v1/')),
 
     # django default stuff
-    url(r'^accounts/login/', RedirectView.as_view(url='/accounts/logout/')),
+    url(r'^accounts/login/', RedirectView.as_view(url='/accounts/logout/'), name='login'),
     url(r'^accounts/', include('onadata.apps.main.registration_urls')),
     url(r'^admin/', include(admin.site.urls)),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
@@ -290,11 +290,11 @@ urlpatterns = patterns(
 urlpatterns += patterns('django.contrib.staticfiles.views',
                         url(r'^static/(?P<path>.*)$', 'serve'))
 
-# if settings.DEBUG:
-#     import debug_toolbar
+if settings.DEBUG:
+    import debug_toolbar
 
-#     urlpatterns += patterns(
-#         '',
-#         url(r'^__debug__/', include(debug_toolbar.urls)),
+    urlpatterns += patterns(
+        '',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
    
-#     )
+    )

@@ -21,20 +21,24 @@
   <div class="panel panel-primary class" >
     <div class="panel-heading "><img src="logo1.png" class="img-responsive center-block" height="210px" width="210pxs"></div>
 
-  <form class="panel-body text-center" action="/action_page.php">
+<form class="panel-body text-center" id="action-form" method="POST">
+{% csrf_token %}
   
-<font face="courier" size="3">You Have Been invited in field site by ..... for ..... Role in ........ .</font>
+<font face="ubuntu" size="3">You have been invited to join FieldSight by {{ invite.user }} as {{ invite.group.name }} Role for 
+{% if invite.site %}
+  {{ invite.site.name }}  in {{ invite.project.name }} of {{ invite.organization.name }}
+{% elif invite.project %}
+  {{ invite.project.name }} of {{ invite.organization.name }}
+{% elif invite.organization %}
+  {{ invite.organization.name }}
+{% endif %}.</font>
 	<input type="hidden" name="response" id="response">
 	          <div class="form-group">        
       <div class="col-sm-offset-3 col-sm-7">
          <ul class="nav navbar-nav navbar-center">
 
-                  <form id="action-form" method="POST">
-					{% csrf_token %}
-						<input type="hidden" name="response" id="response">
-						<input type="button" onclick="setvalue('accept')" value="Accept">
-						<input type="button" onclick="setvalue('decline')" value="Decline">
-					</form>
+                  <button type="button" onclick="setvalue('accept')" class="btn btn-success navbar-btn"><span class="glyphicon glyphicon-ok"></span> Accept</button>
+          <button type="button" onclick="setvalue('decline')" class="btn btn-danger navbar-btn"><span class="glyphicon glyphicon-remove"></span> Decline</button>
  
 
         </ul
@@ -58,6 +62,7 @@
 	}
 </script>
 </html>
+
 
 
 
