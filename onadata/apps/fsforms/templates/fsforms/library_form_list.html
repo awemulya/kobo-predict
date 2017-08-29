@@ -31,7 +31,7 @@
             {% for obj in paginated_objects %}
                 <tr>
                     <td>
-                        <a href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}" title="preview">{{ obj.xf.title }}</a>
+                        <a href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}/edit" title="preview">{{ obj.xf.title }}</a>
                     </td>
                     <td>
                         {{ obj.shared_date }}
