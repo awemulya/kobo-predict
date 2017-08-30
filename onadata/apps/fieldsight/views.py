@@ -957,7 +957,7 @@ def senduserinvite(request):
         # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
     else:
-        invite = UserInvite(email=request.POST.get('email'), by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=request.POST.get('project_id'), organization_id=request.POST.get('organization_id'),  site_id=request.POST.get('site_id'))
+        invite = UserInvite(email=request.POST.get('email'), by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
         invite.save()
     current_site = get_current_site(request)
     subject = 'Invitation for Role'
@@ -1018,7 +1018,7 @@ class ActivateRole(TemplateView):
             invite.save()
             return HttpResponseRedirect(reverse('login'))
         else:
-            user = User(username=request.POST.get('username'), email=invite.email, password=request.POST.get('password'))
+            user = User(username=request.POST.get('username'), email=invite.email, password=request.POST.get('password1'))
             user.save()
             userrole = UserRole(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
             userrole.save()

@@ -125,7 +125,7 @@ urlpatterns = [
     url(r'^checkemailforinvite/$', checkemailforinvite, name='check-email-for-invite'),
     url(r'^activaterole/(?P<invite_idb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z_\-]+)/$',
         ActivateRole.as_view(), name='activate-role'),
-    #url(r'^pdf/$', html_to_pdf_view, name='pdf'),
+    url(r'^pdf/$', html_to_pdf_view, name='pdf'),
 
 ]
    

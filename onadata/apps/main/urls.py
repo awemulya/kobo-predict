@@ -29,7 +29,7 @@ urlpatterns = patterns(
     # django default stuff
     url(r'^accounts/login/', RedirectView.as_view(url='/accounts/logout/'), name='login'),
     url(r'^accounts/', include('onadata.apps.main.registration_urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    # url(r'^admin/', include(admin.site.urls)),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # oath2_provider
