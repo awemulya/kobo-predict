@@ -28,6 +28,8 @@ urlpatterns = patterns(
 
     # django default stuff
     url(r'^accounts/login/', RedirectView.as_view(url='/accounts/logout/'), name='login'),
+    url(r'^accounts/logout/', 'onadata.apps.main.views.logout_view', name='logout'),
+    url(r'kpi-logout/', RedirectView.as_view(url=settings.KPI_LOGOUT_URL, permanent=True), name='kpi-logout'),
     url(r'^accounts/', include('onadata.apps.main.registration_urls')),
     url(r'^admin/', include(admin.site.urls)),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
