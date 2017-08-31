@@ -53,7 +53,6 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 
 from django.core.files.storage import FileSystemStorage
-from weasyprint import HTML
 
 @login_required
 def dashboard(request):
@@ -1018,7 +1017,8 @@ class ActivateRole(TemplateView):
             invite.save()
             return HttpResponseRedirect(reverse('login'))
         else:
-            user = User(username=request.POST.get('username'), email=invite.email, password=request.POST.get('password1'))
+            user = User(username=request.POST.get('username'), email=invite.email, first_name=request.POST.get('firstname'), last_name=request.POST.get('lastname'))
+            user.set_password(request.POST.get('password1'))
             user.save()
             userrole = UserRole(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
             userrole.save()
@@ -1034,17 +1034,32 @@ def checkemailforinvite(request):
     else:
         return HttpResponse("No existing User found.<a href='#' onclick='sendnewuserinvite()'>send</a>")
 
-def html_to_pdf_view(request):
-    paragraphs = ['first paragraph', 'second paragraph', 'third paragraph']
-    html_string = render_to_string('fieldsight/report.html', {'paragraphs': paragraphs})
 
-    html = HTML(string=html_string)
-    html.write_pdf(target='/tmp/mypdf.pdf');
+class SummaryReport(TemplateView):
+    def get(self, request, pk):
+        site = Site.objects.select_related('project').get(pk=pk)
+        organization = site.project.organization
+        project_managers = site.project.project_roles.filter(group__name="Project_manager").order_by('user__first_name')
+        site_reviewers = site.site_roles.filter(group__name="Reviewer").order_by('user__first_name')
+        site_supervisors = site.site_roles.filter(group__name="Site Supervisor").order_by('user__first_name')
+        data = serialize('custom_geojson', [site], geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
 
-    fs = FileSystemStorage('/tmp')
-    with fs.open('mypdf.pdf') as pdf:
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
-        return response
+        line_chart = LineChartGeneratorSite(site)
+        line_chart_data = line_chart.data()
 
-    return response
+        outstanding, flagged, approved, rejected = site.get_site_submission()
+        dashboard_data = {
+            'site': site,
+            'obj':site,
+            'project': site.project,
+            'organization':organization,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+            'data': data,
+            'cumulative_data': line_chart_data.values(),
+            'cumulative_labels': line_chart_data.keys(),
+        }
+        return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)

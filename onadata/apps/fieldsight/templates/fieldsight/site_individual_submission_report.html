@@ -1,4 +1,4 @@
-{% extends "fieldsight/fieldsight_base.html" %}
+{% extends "fieldsight/report_base.html" %}
 {% load i18n staticfiles %}
 {% load filters %}
 
@@ -10,17 +10,7 @@
 
 {% endblock %}
 
-{% block head %}
-    <a class="setting-btn" href="{% url 'fieldsight:site-edit' obj.pk %}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-    
-{% endblock %}
 
-{% block breadcrumbs %}
- {% ifrole "Project" %}
-    <li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">{{obj.project.name}}</a></li>
- {% endrole %}
-    <li>{{obj.name}}</li>
-{% endblock %}
 {% block content %}
 
 
@@ -101,7 +91,7 @@
 
 
 
-	<div class="organization-detail-page">
+    <div class="organization-detail-page">
 
 
         <div class="organization-short-detail">
@@ -122,7 +112,7 @@
                               
                               <p class="contact"><span><i class="fa fa-phone space" aria-hidden="true"></i></span>{{ obj.phone }}</p>
                               <!-- <p class="website"><span></span>{{ obj.website }}</p> 
-  							              <p class="short-detail">{{ obj.description }}</p> -->
+                                          <p class="short-detail">{{ obj.description }}</p> -->
                               <div class="text-wrapper ">
                                 <span class="title1">About</span>
                                 <p class="detail-text">
@@ -320,7 +310,7 @@
 
         </div>
         <div class="organization-long-detail">
-        	<!-- <div class="col-md-6">
+            <!-- <div class="col-md-6">
                 <ul class="nav nav-tabs">
                   <li class="active"><a data-toggle="tab" href="#org-map">Map View</a></li>
                   <li><a data-toggle="tab" href="#org-people">People Involved</a></li>

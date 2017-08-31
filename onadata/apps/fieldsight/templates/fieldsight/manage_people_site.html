@@ -446,8 +446,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
                                   <input type="button" id="retry" onclick="refresh()" value="check">
                                   <input type="hidden" id="invite_organization_id" value="{{ organization }}">
-                                  <input type="hidden" id="invite_project_id" value="{{ project_id }}">
-                                  <input type="hidden" id="invite_site_id" value="{{ site_id }}">
+                                  <input type="hidden" id="invite_project_id" value="{{ project }}">
+                                  <input type="hidden" id="invite_site_id" value="{{ site }}">
                                   {% if category == "site" %}
                                   <input type="radio" name="group" id="invite_group" value="Reviewer" checked> Reviewer<br>
                                   <input type="radio" name="group" id="invite_group" value="Site Supervisor"> Site Supervisor<br>
