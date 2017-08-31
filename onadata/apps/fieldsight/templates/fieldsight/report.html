@@ -1,25 +1,42 @@
-
 <!DOCTYPE html>
-<html>
-  <head>
-    <style>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Site Summary
+    </title>
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.12.0/semantic.min.css" />
+</head>
+
+<body  style="margin-left: 300px;">
+<div id="aasis" style="border: 2px solid black; width:700px;">
+  <div class="ui page grid">
+      <div class="wide column">
+          <h1 class="ui header aligned center">HTML to PDF 2
+          </h1>
+          <div class="ui divider hidden">
+          </div>
+
+          <div class="ui segment">
+              <div class="ui button aligned center teal" id="create_pdf">Create PDF
+              </div>
+              <div class="ui divider">
+              </div>
+              <form class="ui form">
+                  <h4 class="ui dividing header">Personal Information
+                  </h4>
+
+ <style>
        #map {
         height: 400px;
         width: 100%;
        }
     </style>
-  </head>
-  <body>
-    <h3>My Google Maps Demo</h3>
+
+
+  <h3>My Google Maps Demo</h3>
     <div id="map"></div>
-
-    
-<input type="submit"  value="Print"
-name="Submit" id="printbtn"
-onclick="printPDF('/asb.Pdf')" />
-
-  </body>
-  <script>
+    <script>
       function initMap() {
         var uluru = {lat: -25.363, lng: 131.044};
         var map = new google.maps.Map(document.getElementById('map'), {
@@ -32,7 +49,27 @@ onclick="printPDF('/asb.Pdf')" />
         });
       }
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDmkU1cjj2GkxzKoYWZV987q0sIGCL3Ps&callback=initMap">
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDmkU1cjj2GkxzKoYWZV987q0sIGCL3Ps&callback=initMap">
     </script>
- 
-</html>
+                
+<input type="button" name="" value="" onclick="PrintElem('aasis')">
+
+<script type="text/javascript">
+  function PrintElem(elem)
+{
+    var mywindow = window.open('', 'PRINT', 'height=400,width=700');
+
+    
+    mywindow.document.write(document.getElementById(elem).innerHTML);
+
+
+    mywindow.document.close(); // necessary for IE >= 10
+   // necessary for IE >= 10*/
+
+    mywindow.print();
+    mywindow.close();
+
+    return true;
+}
+</script>
