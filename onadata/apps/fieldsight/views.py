@@ -966,6 +966,7 @@ def senduserinvite(request):
         'domain': current_site.domain,
         'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
         'token': invite.token,
+        'invite': invite,
         })
     email_to = (invite.email,)
     send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)

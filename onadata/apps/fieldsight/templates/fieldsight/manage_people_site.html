@@ -537,11 +537,35 @@ function sendnewuserinvite(){
 }
       
 
-function sendinvite(email){ 
+  </script>
+{% if category == "site" %}
+
+<script>
+  function sendinvite(email){ 
       var organization_id = $("#invite_organization_id").val();
       var project_id = $("#invite_project_id").val();
       var site_id = $("#invite_site_id").val();
-      var group = $("#invite_group").val();
+      var group =  $( 'input[id=invite_group]:checked' ).val();
+      alert(group);
+      console.log(group);
+      $.ajax({
+        url: "{% url 'fieldsight:senduserinvite' %}",
+        data: {'email': email, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        type: 'POST',
+        success: function (html) {
+           $('#update-next-step').html(html);
+        }
+      });
+    }
+</script>
+{% else %}
+<script>
+  function sendinvite(email){ 
+      var organization_id = $("#invite_organization_id").val();
+      var project_id = $("#invite_project_id").val();
+      var site_id = $("#invite_site_id").val();
+      var group =  $("#invite_group").val();
+      alert(group);
       console.log(group);
       $.ajax({
         url: "{% url 'fieldsight:senduserinvite' %}",
@@ -552,8 +576,8 @@ function sendinvite(email){
         }
       });
 }
-  </script>
-}
+</script>
+{% endif %}
 {% endblock %}
 
 
