@@ -101,9 +101,11 @@ var orgid = "{{oid}}";
 var pid = "{{oid}}";
 var sid = "{{oid}}";
 var today = new Date().toDateString();
+
 const webSocketBridgeNotify = new channels.WebSocketBridge();
 const webSocketBridgeNotifyProject = new channels.WebSocketBridge();
 const webSocketBridgeNotifySite = new channels.WebSocketBridge();
+
 const webSocketBridgeChat = new channels.WebSocketBridge();
 
 webSocketBridgeNotify.connect(channel_url+'notify/'+orgid+'/');
