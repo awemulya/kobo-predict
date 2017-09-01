@@ -43,7 +43,7 @@ class FieldSightLog(models.Model):
     description = models.CharField(max_length=255, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
     is_seen = models.BooleanField(default=False)
-    seen_by = models.ManyToManyField(null=True)
+    seen_by = models.ManyToManyField(User, null=True)
     source = models.ForeignKey(User, related_name='log', null=True)
     organization = models.ForeignKey(Organization, related_name="logs", null=True)
     project = models.ForeignKey(Project, related_name="logs", null=True)

@@ -59,6 +59,19 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                         site = Site.objects.get(pk=self.kwargs.get('pk'))
                         role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
                                                                        project__id=site.project.id, group=group)
+
+                        if created:
+                            description = "{0} was assigned  as {1} in {2}".format(
+                                role.user.get_full_name(), role.lgroup.name, role.project)
+                            noti = role.logs.create(source=role.user, type=6, title=description,
+                                                    description=description,
+                                                    site=role.site)
+                            result = {}
+                            result['description'] = description
+                            result['url'] = noti.get_absolute_url()
+                            ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                            ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
                         Device = get_device_model()
                         if Device.objects.filter(name=role.user.email).exists():
                             message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
@@ -67,25 +80,34 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                     elif level == "1":
                         project = Project.objects.get(pk=self.kwargs.get('pk'))
                         role, created = UserRole.objects.get_or_create(user_id=user, project_id=self.kwargs.get('pk'),
-                                                                       organization__id=project.organization.id, group=group)
+                                                                       organization__id=project.organization.id,
+                                                                       project__id=project.id,
+                                                                       group=group)
+                        if created:
+                            description = "{0} was assigned  as Project Manager in {1}".format(
+                                role.user.get_full_name(), role.project)
+                            noti = role.logs.create(source=role.user, type=6, title=description, description=description)
+                            result = {}
+                            result['description'] = description
+                            result['url'] = noti.get_absolute_url()
+                            ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                            ChannelGroup("notify-0").send({"text": json.dumps(result)})
                     elif level =="2":
                         role, created = UserRole.objects.get_or_create(user_id=user,
                                                                        organization_id=self.kwargs.get('pk'), group=group)
-                    description = "Created"
-                    if not created:
-                        description = "Updated"
-                        role.ended_at = None
-                        role.save()
-                    noti = role.logs.create(source=role.user, type=6, title="User Role {}".format(description),
-                                            organization=role.organization,
-                                            description="Role {0} for {1}  by {1}".
-                                            format(description, role.user.username, self.request.user.username))
-                    result = {}
-                    result['description'] = "Role {0} for {1}  by {1}".\
-                        format(description, role.user.username, self.request.user.username)
-                    result['url'] = noti.get_absolute_url()
-                    ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
-                    ChannelGroup("notify-0").send({"text": json.dumps(result)})
+                        if created:
+                            description = "{0} was assigned  as Organization Admin in {1}".format(
+                                role.user.get_full_name(), role.organization)
+                            noti = role.logs.create(source=role.user, type=4, title=description, description=description)
+                            result = {}
+                            result['description'] = description
+                            result['url'] = noti.get_absolute_url()
+                            ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                            ChannelGroup("notify-0").send({"text": json.dumps(result)})
+                        else:
+                            role.ended_at = None
+                            role.save()
+
 
         except Exception as e:
             raise ValidationError({
