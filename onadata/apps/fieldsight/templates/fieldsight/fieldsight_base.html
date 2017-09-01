@@ -98,11 +98,18 @@ notificationCount = parseInt(notificationCount);
 var id = "{{request.user.id}}";
 var channel_url = "{{channels_url}}";
 var orgid = "{{oid}}";
+var pid = "{{oid}}";
+var sid = "{{oid}}";
 var today = new Date().toDateString();
 const webSocketBridgeNotify = new channels.WebSocketBridge();
+const webSocketBridgeNotifyProject = new channels.WebSocketBridge();
+const webSocketBridgeNotifySite = new channels.WebSocketBridge();
 const webSocketBridgeChat = new channels.WebSocketBridge();
 
 webSocketBridgeNotify.connect(channel_url+'notify/'+orgid+'/');
+webSocketBridgeNotifyProject.connect(channel_url+'project/'+pid+'/');
+webSocketBridgeNotifySite.connect(channel_url+'site/'+sid+'/');
+
 webSocketBridgeChat.connect(channel_url+'chat/'+id+'/');
 
 webSocketBridgeNotify.listen(function(text, byte) {
