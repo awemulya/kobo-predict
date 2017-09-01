@@ -70,6 +70,8 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                             result['description'] = description
                             result['url'] = noti.get_absolute_url()
                             ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                            ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
+                            ChannelGroup("site-{}".format(role.site.id)).send({"text": json.dumps(result)})
                             ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
                         Device = get_device_model()
@@ -91,6 +93,7 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                             result['description'] = description
                             result['url'] = noti.get_absolute_url()
                             ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                            ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
                             ChannelGroup("notify-0").send({"text": json.dumps(result)})
                     elif level =="2":
                         role, created = UserRole.objects.get_or_create(user_id=user,
