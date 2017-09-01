@@ -101,6 +101,28 @@ var orgid = "{{oid}}";
 var pid = "{{oid}}";
 var sid = "{{oid}}";
 var today = new Date().toDateString();
+var types = {
+        0 : type0,
+        1 : type1,
+        2 : type2,
+        3 : type3,
+        4 : type4,
+        5 : type5,
+        6 : type6,
+        7 : type7,
+        8 : type8,
+        9 : type9,
+        10 : type10,
+        11 : type11,
+        12 : type12,
+        13 : type13,
+        14 : type14,
+        15 : type15,
+        16 : type16,
+        17 : type17,
+        18 : type18,
+        19 : type19,
+    }
 
 const webSocketBridgeNotify = new channels.WebSocketBridge();
 const webSocketBridgeNotifyProject = new channels.WebSocketBridge();
@@ -108,9 +130,13 @@ const webSocketBridgeNotifySite = new channels.WebSocketBridge();
 
 const webSocketBridgeChat = new channels.WebSocketBridge();
 
+if(orgid != ""){
 webSocketBridgeNotify.connect(channel_url+'notify/'+orgid+'/');
+}else if(pid != ""){
 webSocketBridgeNotifyProject.connect(channel_url+'project/'+pid+'/');
-webSocketBridgeNotifySite.connect(channel_url+'site/'+sid+'/');
+}else if(sid != ""){
+  webSocketBridgeNotifySite.connect(channel_url+'site/'+sid+'/');
+}
 
 webSocketBridgeChat.connect(channel_url+'chat/'+id+'/');
 
@@ -121,14 +147,48 @@ webSocketBridgeNotify.listen(function(text, byte) {
     }
     notificationCount += 1;
    
+
+
     $('#noti-count').text(notificationCount);
     description = text.description;
-    not_url = text.url
-    new_li = '<li class="note-div-sm unread"> <a href='+not_url+' class="full"> <div class="col-md-1"> \
-                <i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-                  <span class="detail-text1 notification-title-sm">'+description +'</span> \
-                  <div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ today+' </div>\
-                  </div> </a> </li>';
+    desc = description.split(",");
+    
+    typeid = text.typeid
+
+    var content = types[typeid](text, desc);
+    var new_li = '<li class="note-div-sm unread"> <a href='+ text.url +' class="full"> <div class="col-md-1">' + content + '<div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ today+' </div></div> </a> </li>'
+
+    function type0(text, desc){
+         content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
+              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.org_url + '">' + text.org_name + '</a></b>'+ desc[1] +'</span>';
+         return content;
+    }
+
+    function type1(text, desc){
+          content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
+              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.project_url + '">' + text.project_name + '</a></b>'+ desc[1] + '<b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
+              return content;
+    }
+
+    function type2(text, desc){
+           content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
+              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.site_url + '">' + text.site_name + '</a></b>'+ desc[1] + '<b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
+              return content;
+          
+    }
+    function type3(text, desc){
+          content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
+                <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.site_url + '">' + text.site_name + '</a></b>'+ desc[1] + '<b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
+                return content;
+          
+    }
+    function type4(text, desc){
+           content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
+              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.site_url + '">' + text.site_name + '</a></b>'+ '</span>';
+              return content;
+    }
+
+
 
     $(new_li).prependTo($('#notification-ul'));
     document.getElementById('beep').play();
