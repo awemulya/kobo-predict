@@ -275,7 +275,7 @@ class OrganizationListView(OrganizationView, LoginRequiredMixin, SuperAdminMixin
 class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save()
-        noti = self.object.logs.create(source=self.request.user, type=5, title="new Organization",
+        noti = self.object.logs.create(source=self.request.user, type=9, title="new Organization",
                                        organization=self.object, content_object=self.object,
                                        description="{} created a new organization named {1}".
                                        format(self.request.user.get_full_name(), self.object.name))
@@ -294,13 +294,12 @@ class OrganizationUpdateView(OrganizationView, OrganizationRoleMixin, UpdateView
 
     def form_valid(self, form):
         self.object = form.save()
-        noti = self.object.logs.create(source=self.request.user, type=5, title="new Site",
-                                       organization=self.object,
-                                       content_object=self.object,
-                                       description="new organization {0} updated by {1}".
-                                       format(self.object.name, self.request.user.username))
+        noti = self.object.logs.create(source=self.request.user, type=13, title="edit Organization",
+                                       organization=self.object, content_object=self.object,
+                                       description="{} changed the details of organization named {1}".
+                                       format(self.request.user.get_full_name(), self.object.name))
         result = {}
-        result['description'] = 'new organization {0} updated by {1}'.format(self.object.name, self.request.user.username)
+        result['description'] = noti.description
         result['url'] = noti.get_absolute_url()
         ChannelGroup("notify-{}".format(self.object.id)).send({"text": json.dumps(result)})
         ChannelGroup("notify-0").send({"text": json.dumps(result)})
@@ -506,13 +505,13 @@ class ProjectListView(ProjectRoleView, OrganizationMixin, ListView):
     pass
 
 
-class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
+class ProjetCreateView(ProjectView, OrganizationRoleMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.organization_id = self.kwargs.get('pk')
         self.object.save()
-        noti = self.object.logs.create(source=self.request.user, type=4, title="new Project",
+        noti = self.object.logs.create(source=self.request.user, type=10, title="new Project",
                                        organization=self.object.organization,
                                        description='{0} created new project named {1}'.format(
                                            self.request.user.get_full_name(), self.object.name))
@@ -582,7 +581,7 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        noti = self.object.logs.create(source=self.request.user, type=3, title="new Project",
+        noti = self.object.logs.create(source=self.request.user, type=11, title="new Project",
                                        organization=self.object.project.organization,
                                        project=self.object.project,
                                        description='{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
@@ -638,9 +637,11 @@ class SiteDeleteView(SiteView, ProjectRoleMixin, DeleteView):
 def ajax_upload_sites(request, pk):
     form = UploadFileForm(request.POST, request.FILES)
     if form.is_valid():
+        count = 0
         project = Project(pk=pk)
         try:
             sites = request.FILES['file'].get_records()
+            count = len(sites)
             with transaction.atomic():
                 for site in sites:
                     site = dict((k,v) for k,v in site.iteritems() if v is not '')
@@ -656,6 +657,16 @@ def ajax_upload_sites(request, pk):
                     _site.additional_desc = site.get("additional_desc")
                     _site.location=location
                     _site.save()
+            if count:
+                noti = project.logs.create(source=request.user, type=12, title="bulk Sites",
+                                       organization=project.organization,
+                                       project=project,
+                                       description='{0} created a {1} sites in {2}'.
+                                           format(request.user.get_full_name(), count, project.name))
+                result = {}
+                result['description'] = noti.description
+                result['url'] = noti.get_absolute_url()
+                ChannelGroup("project-{}".format(project.id)).send({"text": json.dumps(result)})
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'file':e.message}, status=status.HTTP_400_BAD_REQUEST)
