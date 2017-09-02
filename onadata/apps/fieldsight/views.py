@@ -531,15 +531,16 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        noti = self.object.logs.create(source=self.request.user, type=4, title="new Project",
+        noti = self.object.logs.create(source=self.request.user, type=14, title="Edit Project",
                                        organization=self.object.organization,
-                                       description="new project {0} updated by {1}".
-                                       format(self.object.name, self.request.user.username))
+                                       project=self.object,
+                                       description='{0} changed the details of project named {1}'.format(
+                                           self.request.user.get_full_name(), self.object.name))
         result = {}
-        result['description'] = 'new project {0} updated by {1}'.format(self.object.name, self.request.user.username)
+        result['description'] = noti.description
         result['url'] = noti.get_absolute_url()
         ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        ChannelGroup("project-{}".format(self.object.id)).send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -603,15 +604,17 @@ class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        noti = self.object.logs.create(source=self.request.user, type=3, title="new Site",
+        noti = self.object.logs.create(source=self.request.user, type=15, title="edit Site",
                                        organization=self.object.project.organization,
-                                       description="new site {0} updated by {1}".
-                                       format(self.object.name, self.request.user.username))
+                                       description='{0} changed the details of site named {1}'.format(
+                                           self.request.user.get_full_name(), self.object.name))
         result = {}
         result['description'] = 'new site {0} updated by {1}'.format(self.object.name, self.request.user.username)
         result['url'] = noti.get_absolute_url()
         ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
+        ChannelGroup("site-{}".format(self.object.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
 
