@@ -505,7 +505,7 @@ class ProjectListView(ProjectRoleView, OrganizationMixin, ListView):
     pass
 
 
-class ProjetCreateView(ProjectView, OrganizationRoleMixin, CreateView):
+class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -581,7 +581,7 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        noti = self.object.logs.create(source=self.request.user, type=11, title="new Project",
+        noti = self.object.logs.create(source=self.request.user, type=11, title="new Site",
                                        organization=self.object.project.organization,
                                        project=self.object.project,
                                        description='{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
