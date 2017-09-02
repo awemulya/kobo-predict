@@ -280,9 +280,9 @@ class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMix
                                        description="new organization {0} created by {1}".
                                        format(self.object.name, self.request.user.username))
         result = {}
-        result['description'] = 'new organization {0} created by {1}'.format(self.object.name, self.request.user.username)
+        result['description'] = '{} created a new organization named {1} '.format(noti.source.get_full_name(), self.object.name)
         result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(self.object.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-{}".format(self.object.id)).send({"text": json.dumps(result)})
         ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
