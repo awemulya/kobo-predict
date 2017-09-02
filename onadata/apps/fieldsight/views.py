@@ -277,8 +277,8 @@ class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMix
         self.object = form.save()
         noti = self.object.logs.create(source=self.request.user, type=5, title="new Organization",
                                        organization=self.object, content_object=self.object,
-                                       description="new organization {0} created by {1}".
-                                       format(self.object.name, self.request.user.username))
+                                       description="{} created a new organization named {1}".
+                                       format(self.request.user.get_full_name(), self.object.name))
         result = {}
         result['description'] = '{} created a new organization named {1} '.format(noti.source.get_full_name(), self.object.name)
         result['url'] = noti.get_absolute_url()
@@ -514,13 +514,13 @@ class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
         self.object.save()
         noti = self.object.logs.create(source=self.request.user, type=4, title="new Project",
                                        organization=self.object.organization,
-                                       description="new project {0} created by {1}".
-                                       format(self.object.name, self.request.user.username))
+                                       description='{0} created new project named {1}'.format(
+                                           self.request.user.get_full_name(), self.object.name))
         result = {}
-        result['description'] = 'new project {0} created by {1}'.format(self.object.name, self.request.user.username)
+        result['description'] = noti.description
         result['url'] = noti.get_absolute_url()
         ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
 
         return HttpResponseRedirect(self.object.get_absolute_url())
@@ -584,13 +584,15 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
         self.object = form.save()
         noti = self.object.logs.create(source=self.request.user, type=3, title="new Project",
                                        organization=self.object.project.organization,
-                                       description="new site {0} created by {1}".
-                                       format(self.object.name, self.request.user.username))
+                                       project=self.object.project,
+                                       description='{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
+                                                                                 object.name, object.project.name))
         result = {}
-        result['description'] = 'new site {0} created by {1}'.format(self.object.name, self.request.user.username)
+        result['description'] = '{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
+                                                                                 object.name, object.project.name)
         result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
 
