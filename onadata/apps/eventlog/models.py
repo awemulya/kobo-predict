@@ -9,8 +9,6 @@ from django.db.models import Q
 
 from onadata.apps.fieldsight.models import Organization, Project, Site
 
-user_type = ContentType.objects.get(app_label="users", model="userprofile")
-
 
 class FieldSightLog(models.Model):
     ACTION_TYPES = (
@@ -62,6 +60,8 @@ class FieldSightLog(models.Model):
     def get_event_url(self):
         return self.content_object.get_absolute_url()
 
+    def get_source_url(self):
+        return self.source.user_profile.get_absolute_url()
 
 
 
