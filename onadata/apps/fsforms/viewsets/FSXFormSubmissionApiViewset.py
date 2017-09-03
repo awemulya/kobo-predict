@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
@@ -7,7 +9,7 @@ from onadata.apps.api.viewsets.xform_submission_api import XFormSubmissionApi
 from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.fsforms.serializers.FieldSightSubmissionSerializer import FieldSightSubmissionSerializer
 from ..fieldsight_logger_tools import safe_create_instance
-
+from channels import Group as ChannelGroup
 # 10,000,000 bytes
 DEFAULT_CONTENT_LENGTH = getattr(settings, 'DEFAULT_CONTENT_LENGTH', 10000000)
 
@@ -46,6 +48,22 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
                             headers=self.get_openrosa_headers(request),
                             template_name=self.template_name)
         error, instance = create_instance_from_xml(request, fsxfid, siteid, fs_proj_xf, proj_id, xform)
+
+        noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Submission",
+                                       organization=instance.fieldsight_instance.site.project.organization,
+                                       description='{0} submitted a response for {1} {2} in {3}'.format(
+                                           self.request.user.get_full_name(),
+                                           instance.fieldsight_instance.site_fxf.form_type,
+                                           instance.fieldsight_instance.site_fxf.xf.title,
+                                           instance.fieldsight_instance.site.name,
+                                       ))
+        result = {}
+        result['description'] = noti.description
+        result['url'] = noti.get_absolute_url()
+        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
+        ChannelGroup("site-{}".format(instance.fieldsight_instance.site.id)).send({"text": json.dumps(result)})
+
         # modify create instance
 
         if error or not instance:
