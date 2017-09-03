@@ -7,7 +7,7 @@ from onadata.apps.api.urls import XFormListApi
 from onadata.apps.api.urls import XFormSubmissionApi
 from onadata.apps.api.urls import BriefcaseApi
 
-# from django.contrib import admin
+from django.contrib import admin
 # admin.autodiscover()
 
 
@@ -27,9 +27,9 @@ urlpatterns = patterns(
     url(r'^api/v1', RedirectView.as_view(url='/api/v1/')),
 
     # django default stuff
-    url(r'^accounts/login/', RedirectView.as_view(url='/accounts/logout/')),
+    url(r'^accounts/login/', RedirectView.as_view(url='/accounts/logout/'), name='login'),
     url(r'^accounts/', include('onadata.apps.main.registration_urls')),
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # oath2_provider
@@ -296,4 +296,5 @@ urlpatterns += patterns('django.contrib.staticfiles.views',
 #     urlpatterns += patterns(
 #         '',
 #         url(r'^__debug__/', include(debug_toolbar.urls)),
+   
 #     )

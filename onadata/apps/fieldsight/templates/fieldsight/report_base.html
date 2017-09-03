@@ -98,80 +98,11 @@ notificationCount = parseInt(notificationCount);
 var id = "{{request.user.id}}";
 var channel_url = "{{channels_url}}";
 var orgid = "{{oid}}";
-var pid = "{{oid}}";
-var sid = "{{oid}}";
 var today = new Date().toDateString();
-
-
-// 20 types of notifications with their respqctive id's
-var types = {
-        0 : type0,
-        1 : type1,
-        2 : type2,
-        3 : type3,
-        4 : type4,
-        // 5 : type5,
-        // 6 : type6,
-        // 7 : type7,
-        // 8 : type8,
-        // 9 : type9,
-        // 10 : type10,
-        // 11 : type11,
-        // 12 : type12,
-        // 13 : type13,
-        // 14 : type14,
-        // 15 : type15,
-        // 16 : type16,
-        // 17 : type17,
-        // 18 : type18,
-        // 19 : type19,
-    }
-//notification message list builder with ahref links
-    function type0(text, desc){
-         content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.org_url + '">' + text.org_name + '</a></b>'+ desc[1] +'</span>';
-         return content;
-    }
-
-    function type1(text, desc){
-          content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.project_url + '">' + text.project_name + '</a></b>'+ desc[1] + '<b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
-              return content;
-    }
-
-    function type2(text, desc){
-           content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.site_url + '">' + text.site_name + '</a></b>'+ desc[1] + '<b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
-              return content;
-          
-    }
-    function type3(text, desc){
-          content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-                <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.site_url + '">' + text.site_name + '</a></b>'+ desc[1] + '<b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
-                return content;
-          
-    }
-    function type4(text, desc){
-           content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.site_url + '">' + text.site_name + '</a></b>'+ '</span>';
-              return content;
-    }
-
 const webSocketBridgeNotify = new channels.WebSocketBridge();
-const webSocketBridgeNotifyProject = new channels.WebSocketBridge();
-const webSocketBridgeNotifySite = new channels.WebSocketBridge();
-
 const webSocketBridgeChat = new channels.WebSocketBridge();
 
-// check type of user and connect it to its respective notification group
-if(orgid != ""){
 webSocketBridgeNotify.connect(channel_url+'notify/'+orgid+'/');
-}else if(pid != ""){
-webSocketBridgeNotifyProject.connect(channel_url+'project/'+pid+'/');
-}else if(sid != ""){
-  webSocketBridgeNotifySite.connect(channel_url+'site/'+sid+'/');
-}
-
 webSocketBridgeChat.connect(channel_url+'chat/'+id+'/');
 
 webSocketBridgeNotify.listen(function(text, byte) {
@@ -181,17 +112,14 @@ webSocketBridgeNotify.listen(function(text, byte) {
     }
     notificationCount += 1;
    
-
-
     $('#noti-count').text(notificationCount);
     description = text.description;
-    desc = description.split(",");
-    
-    typeid = text.typeid
-// get description for notificationaccotding to its type id
-    var content = types[typeid](text, desc);
-//append the text in main notificatin div
-    var new_li = '<li class="note-div-sm unread"> <a href='+ text.url +' class="full"> <div class="col-md-1">' + content + '<div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ today+' </div></div> </a> </li>';
+    not_url = text.url
+    new_li = '<li class="note-div-sm unread"> <a href='+not_url+' class="full"> <div class="col-md-1"> \
+                <i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
+                  <span class="detail-text1 notification-title-sm">'+description +'</span> \
+                  <div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ today+' </div>\
+                  </div> </a> </li>';
 
     $(new_li).prependTo($('#notification-ul'));
     document.getElementById('beep').play();
@@ -229,336 +157,63 @@ console.log(text.prop2);
 <!--header start-->
 <header class="header fixed-top clearfix row">
 <!--logo start-->
-<div class="brand col-sm-2">
-
-    <a href="{% url 'dashboard' %}" class="logo">
-        <!-- <img src="images/logo.png" alt=""> -->
-        <img src="{{STATIC_URL}}images/logo1.png" class="img-responsive1" />
-        
-    </a>
-    <div class="sidebar-toggle-box">
-        <div class="fa fa-bars"></div>
-    </div>
-</div>
-<div class="brand-side col-sm-10" style="z-index: 1">
-        <ol class="breadcrumb hidden-print col-sm-9" style="font-size: 16px;color: white !important;">
-                    {% block breadcrumbs_container %}
-                        <li><a href="{% url 'dashboard' %}">{% trans 'Home' %}</a></li>
-                        {% block breadcrumbs %}
-                            <li>{% usekwacro page-title %}</li>{% endblock %}
-                    {% endblock %}
-                </ol>
-
-                <div class="navbar-custom-menu notification-div col-sm-1">
-        <ul class="nav navbar-nav" style="margin-top: 3%;margin-left: 30%;">
-          <!-- Messages: style can be found in dropdown.less-->
-          {% if fieldsight_message.count %}
-          <li class="dropdown messages-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-envelope-o"></i>
-              <span class="label label-success">{{fieldsight_message.count}}</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="header">{% trans 'You have' %} {{fieldsight_message.count}} {% trans 'messages' %}</li>
-              <li>
-                <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                    {% for msg in fieldsight_message %}
-                  <li><!-- start message -->
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-
-                        <small><i class="fa fa-clock-o"></i> {{msg.date}}</small>
-                      </h4>
-                      <p>{{msg.msg_content}}</p>
-                    </a>
-                  </li>
-                    {% endfor %}
-                  <!-- end message -->
 
 
-
-                </ul>
-              </li>
-              <li class="footer"><a href="{% url 'eventlog:message-list' %}">See All Messages</a></li>
-            </ul>
-          </li>
-            {% endif %}
-            <!-- Notifications: style can be found in dropdown.less -->
-          <li class="dropdown notifications-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bell-o"></i>
-              <span class="label label-warning" id="noti-count">{% if notifications.count %} {{notifications.count }} {% endif %}</span>
-            </a>
-              {% if notifications.count %}
-            <ul class="dropdown-menu menu-top">
-                <ul class="menu" id="notification-ul">
-                    {% for noti in notifications %}
-                    {% if noti.type == 6 %}
-                    <li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
-                    <a href="{{noti.get_absolute_url}}" class="full">
-                 <div class="col-md-1">
-                      <!--<i class="fa fa-info-circle fa-1 note-icon-sm"></i>-->
-                     <img src="{{noti.content_object.user.user_profile.profile_picture.url}}" height="30" width="30">
-                 </div>
-                 <div class="col-md-10">
-                  <span class="detail-text1 notification-title-sm">{{noti.content_object.user.get_full_name}}
-                      {% trans 'joined ' %} {{noti.content_object.organization.name}} {% trans 'as ' %} {{noti.content_object.group.name}}</span>
-
-                  <div class="low">
-                    <i class="fa fa-clock-o space" aria-hidden="true"></i>
-                    {{noti.date}}
-                  </div>
-                  </div>
-                    </a>
-                  </li>
-                    {% else %}
-                  <li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
-                    <a href="{{noti.get_absolute_url}}" class="full">
-                 <div class="col-md-1">
-                      <i class="fa fa-info-circle fa-1 note-icon-sm"></i>
-                 </div>
-                 <div class="col-md-10">
-                  <span class="detail-text1 notification-title-sm">{{noti.description}}</span>
-                  
-                  <div class="low">
-                    <i class="fa fa-clock-o space" aria-hidden="true"></i>
-                    {{noti.date}}
-                  </div>
-                  </div>
-                    </a>
-                  </li>
-                    {% endif %}
-                {% endfor %}
-                </ul>
-              </li>
-              <li class="footer note-footer"><a href="{% url 'eventlog:notification-list' %}">{% if notifications.count %} {% trans 'View all' %} {% endif %}</a></li>
-            </ul>
-              {% endif %}
-          </li>
-        </ul>
-      </div>
-       <div class="dropdown pull-right top-menu top-nav clearfix">
-        
-        <!--<li>-->
-            <!--<input type="text" class="form-control search" placeholder=" Search">-->
-        <!--</li>-->
-        <!-- user login dropdown start-->
-        
-            <a  href="#" data-toggle="dropdown" class="dropdown-toggle" id="fs_drop_down"  border-radius: 4px;">
-                <img src="{{request.user.user_profile.profile_picture.url}}">
-                <span class="username1"> {% trans request.user.username %}</span>
-                <b class="caret" style="color: white;"></b>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-right extended logout" id="fs_drop_menu">
-                      <!--   {% if request.role %}
-                            <li >
-                                <a href="#" style="background: #e4e8ef; border-radius: 4px !important;" class="detail-text1"><h6>{% trans 'Using as' %} {{ request.role.group }}
-                                    {% if request.site%}
-                                    {% trans 'at Site ' %}{{request.site}}
-                                    {% endif %}
-                                    {% if request.project%}
-                                    {% trans 'at Project ' %}{{request.project}}
-                                    {% endif %}
-                                    {% if request.organization%}
-                                    {% trans 'at Org ' %} {{request.organization}}
-                                    {% endif %}
-                                    </h6>
-
-                                </a>
-                            </li>
-                        <li role="separator" class="divider"></li>
-                        {% endif %}
- -->
-                       <!--  {% for role in request.user.user_roles.all %}
-                            {% if role.id != request.role.id %}
-                                <li >
-                                    <a href="{% url 'role:set_role' role.id %}">{% trans 'Use as' %} {{ role.group }}
-                                    {% if role.site%}
-                                    {% trans 'at Site ' %}{{role.site}}
-                                    {% endif %}
-                                    {% if role.project%}
-                                    {% trans 'at Project ' %}{{role.project}}
-                                    {% endif %}
-                                    {% if role.organization%}
-                                    {% trans 'at Org ' %} {{role.organization}}
-                                    {% endif %}
-                                    
-                                    </a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-
-                        {% if request.user.roles.all.count > 1 %}
-                            <li role="separator" class="divider"></li>
-                        {% endif %} -->
-                <li><a href="{% url 'users:profile' 0 %}"><i class=" fa fa-suitcase"></i>Profile</a></li>
-                <li><a href="{% url 'auth_password_change' %}"><i class="fa fa-cog"></i> Change Password</a></li>
-                <li><a href="{% url 'auth_logout' %}"><i class="fa fa-key"></i> Log Out</a></li>
-            </ul>
-        
-        <!-- user login dropdown end -->
-        <!-- <li>
-            <div class="toggle-right-box">
-                <div class="fa fa-bars"></div>
-            </div>
-        </li> -->
-          </div>
-
-             
-</div>
-<!--logo end-->
-
-<!-- <div class="nav notify-row" id="top_menu">
-    
-    <ul class="nav top-menu">
-        <li>
-            {% block logo %}
-                <img src="{{STATIC_URL}}images/logo1.png" alt="">
-            {% endblock %}
-        </li>    
-    </ul>
-    
-</div> -->
-<ul class="top-nav main_ul clearfix" style="padding-right: 31px !important;">
-
-
-
-    <!--search & user info start-->
-    
-    <!--search & user info end-->
-</ul>
-</header>
-<!--header end-->
-<!--sidebar start-->
-<aside>
-    <div id="sidebar" class="nav-collapse">
-        <!-- sidebar menu start-->
-        <div class="leftside-navigation">
-            <ul class="sidebar-menu" id="nav-accordion">
-                <li>
-                    <a  href="{% url 'dashboard' %}">
-                        <i class="fa fa-dashboard"></i>
-                        <span>{% trans 'Dashboard' %}</span>
-                    </a>
-                </li>
-
-                {% ifrole "admin" %}
-
-                 <li class="sub-menu">
-                    <a href="{% url 'fieldsight:organizations-list' %}">
-                        <i class="fa fa-building-o"></i>
-                        <span>{% trans 'Organization' %}</span>
-                    </a>
-                    
-                </li>
-                {% endrole %}
-                <!--{% ifrole "Organization" %}-->
-               <!--<li class="sub-menu">-->
-                    <!--<a href="{% url 'fieldsight:projects-list' %}">-->
-                        <!--<i class="fa fa-building-o"></i>-->
-                        <!--<span>{% trans 'Projects' %}</span>-->
-                    <!--</a>-->
-                    <!---->
-                <!--</li>-->
-                <!--{% endrole %}-->
-
-                <!--{% ifrole "admin" %}-->
-
-                <!--<li class="sub-menu">-->
-                    <!--<a href="{% url 'users:users' %}">-->
-                        <!--<i class="fa fa-user"></i>-->
-                        <!--<span>{% trans 'Users' %}</span>-->
-                    <!--</a>-->
-
-                <!--</li>-->
-
-
-
-                <!--{% endrole %}-->
-                <!--{% ifrole "Reviewer" %}-->
-                 <!--<li class="sub-menu">-->
-                    <!--<a href="{% url 'fieldsight:sites-list' %}">-->
-                        <!--<i class="fa fa-picture-o"></i>-->
-                        <!--<span>{% trans 'Sites' %}</span>-->
-                    <!--</a>-->
-
-                <!--</li>-->
-
-                <!--{% endrole %}-->
-                {% ifrole "Site" %}
-                <li class="sub-menu">
-                    <a href="javascript:;">
-                        <i class="fa fa-file-text-o"></i>
-                        <span>{% trans 'Forms' %}</span>
-                    </a>
-                    <ul class="sub">
-                        <li><a href="{{ koboform_url }}#/forms/new">{% trans 'Create New' %}</a></li>
-                        <li><a href="{% url 'forms:forms-list' %}">{% trans 'My Forms' %}</a></li>
-
-                    </ul>
-                </li>
-                 <li class="sub-menu">
-                    <a href="javascript:;">
-                        <i class="fa fa-file-text-o"></i>
-                        <span>{% trans 'Library' %}</span>
-                    </a>
-                    <ul class="sub">
-                        <li><a href="{% url 'forms:library-forms-list' %}">{% trans 'Library Forms' %}</a></li>
-                        <li><a href="{% url 'forms:group-list' %}">{% trans 'Stages Library' %}</a></li>
-
-                    </ul>
-                </li>
-                {% endrole %}
-
-            </ul>            </div>
-        <!-- sidebar menu end-->
-    </div>
-</aside>
-
+  
 
 <!--main content start-->
-<section id="main-content">
+<section style="display: absolute; width:700px; margin-top: -100px; margin-left: 0px;" id="main-content">
         <section class="wrapper">
         <!-- page start-->
 
-        <div class="row">
-            <div class="col-sm-12">
-                <section class="panel  move_up">
-                    <header class="panel-heading">
-                      
-
-                        
-                        <div class="tools pull-right">
-
-                         {% block head %}
+                        {% block content %}
                            
                         {% endblock %}
-                            
-                         </div>
-                    </header>
-
-                    <div class="gap-high"></div>
-                    
-                    <div class="panel-body">
-
-    {% block messages %}
-        {% if messages %}
-            <script>
-                $(function () {
-                    {% for message in messages %}
-                        App.notifyUser('{{ message|remove_lines|safe }}', '{{ message.tags|last_word }}');
-                    {% endfor %}
-                });
-            </script>
-        {% endif %}
-    {% endblock %}
-                        {% block content %}
-                            This is a sample page
-                        {% endblock %}
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
+<br>sfddf
                     </div>
                 </section>
             </div>
@@ -642,7 +297,7 @@ console.log(text.prop2);
 </div> -->
 
         
-        </div>
+        
         </section>
     </section>
 

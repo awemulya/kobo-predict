@@ -10,7 +10,12 @@ from django.db.models.signals import post_save
 from django.utils.text import slugify
 from jsonfield import JSONField
 from .static_lists import COUNTRIES
+from django.contrib.auth.models import Group
 
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.utils.encoding import force_text
+from django.conf import settings
 
 class ExtraUserDetail(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='extra_details')
@@ -317,3 +322,39 @@ class ChatMessage(models.Model):
 
     class Meta:
         db_table = 'chat_message'
+
+class UserInvite(models.Model):
+    email=models.CharField(max_length=255)
+    by_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='invited_by_user')
+    is_used = models.BooleanField(default=False)
+    is_declied = models.BooleanField(default=False)
+    token = models.CharField(max_length=255)
+    group = models.ForeignKey(Group)
+    site = models.ForeignKey(Site, null=True, blank=True, related_name='invite_site_roles')
+    project = models.ForeignKey(Project, null=True, blank=True, related_name='invite_project_roles')
+    organization = models.ForeignKey(Organization, related_name='invite_organization_roles')
+    logs = GenericRelation('eventlog.FieldSightLog')
+    
+    def __unicode__(self):
+        return self.email + "-----" + str(self.is_used)
+
+    def save(self, *args, **kwargs):
+        if self.group.name == 'Super Admin':
+            self.organization = None
+            self.project = None
+            self.site = None
+        elif self.group.name == 'Organization Admin':
+            self.project = None
+            self.site = None
+        elif self.group.name == 'Project Manager':
+            self.site = None
+            self.organization = self.project.organization
+
+        elif self.group.name in ['Site Supervisor', 'Reviewer']:
+            self.project = self.site.project
+            self.organization = self.site.project.organization
+
+        super(UserInvite, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('fieldsight:activate-role', kwargs={'invite_idb64': urlsafe_base64_encode(force_bytes(self.pk)), 'token':self.token,})

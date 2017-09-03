@@ -52,14 +52,15 @@ class ProjectCreationViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         project = serializer.save()
-        project.save()
-        noti = project.logs.create(source=self.request.user, type=4, title="new Project", organization=project.organization,
-                                   description="new project {0} created by {1}".format(project.name, self.request.user.username))
+        # project.save()
+        noti = project.logs.create(source=self.request.user, type=10, title="new Project",
+                                       organization=project.organization,
+                                       description='{0} created new project named {1}'.format(
+                                           self.request.user.get_full_name(), project.name))
         result = {}
-        result['description'] = 'new project {0} created by {1}'.format(project.name, self.request.user.username)
+        result['description'] = noti.description
         result['url'] = noti.get_absolute_url()
         ChannelGroup("notify-{}".format(project.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
         return project
 
 

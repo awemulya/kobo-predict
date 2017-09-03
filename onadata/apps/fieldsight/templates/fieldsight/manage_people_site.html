@@ -47,8 +47,14 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               <div class="box-user-pop box-info">
             <div class="box-header with-border">
              <button class="btn btn-primary square" data-bind="click:$root.addUser">{% trans 'Create New User' %}</button>
+
+             <button class="btn btn-primary square" data-toggle="modal" data-target="#myorgModal">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            {% trans 'Invite User' %}
+             </button>
             </div>
-              
+
+            
                   <div class="available-users"  data-bind="visible:$root.available_users().length">
 
                   <h4> {% trans 'Select Users '%} </h4>
@@ -241,11 +247,20 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             {% trans 'Add New' %}
                     </button>
                 </div>
+                <div class="col-sm-2">
+                  <button class="btn btn-primary square" data-toggle="modal" data-target="#myorgModal">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            {% trans 'Invite User' %}
+                    </button>
+
+                   
+                </div>
                 <div class="col-sm-5">
                     <input type="text" class="current-input" placeholder="Search Supervisors" data-bind="value:search_key_supervisor, valueUpdate:'afterkeydown'">
                     <button type="submit" class="current-btn "  >
                         <i class="fa fa-search" aria-hidden="true"></i>
                     </button>
+                     <button></button>
 
                 </div>
             </div>
@@ -325,10 +340,15 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                     <i class="fa fa-plus" aria-hidden="true"></i>
                     {% trans 'Add New' %}
                 </button>
+                 <button class="btn btn-primary square" data-toggle="modal" data-target="#myorgModal">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            {% trans 'Invite User' %}
+                    </button>
                 </div>
             <div class="col-sm-5">
                 <input type="text" class="current-input" placeholder="Search Project Managers" data-bind="value:search_key, valueUpdate:'afterkeydown'">
                 <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+                <button></button>
             </div>
         </div>
     </div>
@@ -366,11 +386,22 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <i class="fa fa-plus" aria-hidden="true"></i>
                             {% trans 'Add New' %}
                     </button>
+
+                </div>
+                <div class="col-sm-2">
+                  <button class="btn btn-primary square" data-toggle="modal" data-target="#myorgModal">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            {% trans 'Invite User' %}
+                    </button>
+
+                   
                 </div>
                 <div class="col-sm-6">
                      <input type="text" class="current-input" placeholder="Search Admins" data-bind="value:search_key, valueUpdate:'afterkeydown'">
                     <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+
                 </div>
+
             </div>
         </div>
     </div>
@@ -390,13 +421,165 @@ vm = new ManagePeopleViewModel(pk, level, organization);
         </div>
         <div class="clearfixx"></div>
       </div>
-
     </div>
       </div>
     </div>
-
-
-
-
 </div>
+
+
+
+ <div class="modal fade" id="myorgModal" role="dialog" >
+                      <div class="modal-dialog">
+                      
+                        <!-- Modal content-->
+                        <div class="modal-content" style="margin-top: 15%;">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Invite User by Email</h4>
+                          </div>
+                          <div class="modal-body">
+                          <center>
+                            <div class="col-sm-5">
+                                
+                                  <label>Email:</label>
+                                  <input id="invite_email" type="email" name="email"><br>
+
+                                  <input type="button" id="retry" onclick="refresh()" value="check">
+                                  <input type="hidden" id="invite_organization_id" value="{{ organization }}">
+                                  <input type="hidden" id="invite_project_id" value="{{ project }}">
+                                  <input type="hidden" id="invite_site_id" value="{{ site }}">
+                                  {% if category == "site" %}
+                                  <input type="radio" name="group" id="invite_group" value="Reviewer" checked> Reviewer<br>
+                                  <input type="radio" name="group" id="invite_group" value="Site Supervisor"> Site Supervisor<br>
+                                  {% else %}
+                                  <input type="hidden" id="invite_group" value="{{ category }}">
+                                  {% endif %}
+                
+                                  <!-- <input type="button" id="sendinvite" value="submit" style="display:none;"> -->
+                            </div>
+                            <br>
+                            <div id="update-next-step">
+                              
+                            </div>
+                            </center>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                        
+                      </div>
+                    </div>
+<script>
+var ajax_call=false;
+
+function refresh(){
+  var email = $("#invite_email").val();
+  var atherate = email.indexOf("@");
+      // if(atherate == -1 ){ return false; }
+      var dot = email.indexOf(".", atherate);
+      // if(dot == -1 ){ return false; }
+      // ajax_call=true;
+      // checkemail(email);
+      if(atherate != -1 && dot != -1){
+        ajax_call = true;
+        checkemail(email);
+      }
+      else{
+        alert("Enter valid email address.")
+      }
+}
+
+
+ $('#invite_email').keydown(function(e) {
+      var email = $("#invite_email").val();
+     
+      // if(ajax_call == true){ return false; }
+       var atherate = email.indexOf("@");
+      // if(atherate == -1 ){ return false; }
+      var dot = email.indexOf(".", atherate);
+      // if(dot == -1 ){ return false; }
+      // ajax_call=true;
+      // checkemail(email);
+      if(ajax_call != true && atherate != -1 && dot != -1){
+        ajax_call = true;
+        checkemail(email);
+      }   
+    });
+
+ // $("#invite_email").keydown(function(e) {
+
+ //      var email = $("#invite_email").val();
+ //      console.log(email);
+ //      if(ajax_call == true){ return false; }
+ //      var atherate = email.indexOf("@");
+ //      if(atherate == -1 ){ return false; }
+ //      var dot = email.indexOf(".", atherate);
+ //      if(dot == -1 ){ return false; }
+ //      ajax_call=true;
+ //      checkemail(email);
+ //    });
+  function checkemail(email){
+        $.ajax({
+        url: "{% url 'fieldsight:check-email-for-invite' %}",
+        data: {'email': email, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        type: 'POST',
+        success: function (html) {
+           $('#update-next-step').html(html);
+           $('#retry').show();
+        }
+      });
+  }
+
+function sendnewuserinvite(){
+  var email = $("#invite_email").val();
+  sendinvite(email);
+}
+      
+
+  </script>
+{% if category == "site" %}
+
+<script>
+  function sendinvite(email){ 
+      var organization_id = $("#invite_organization_id").val();
+      var project_id = $("#invite_project_id").val();
+      var site_id = $("#invite_site_id").val();
+      var group =  $( 'input[id=invite_group]:checked' ).val();
+      alert(group);
+      console.log(group);
+      $.ajax({
+        url: "{% url 'fieldsight:senduserinvite' %}",
+        data: {'email': email, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        type: 'POST',
+        success: function (html) {
+           $('#update-next-step').html(html);
+        }
+      });
+    }
+</script>
+{% else %}
+<script>
+  function sendinvite(email){ 
+      var organization_id = $("#invite_organization_id").val();
+      var project_id = $("#invite_project_id").val();
+      var site_id = $("#invite_site_id").val();
+      var group =  $("#invite_group").val();
+      alert(group);
+      console.log(group);
+      $.ajax({
+        url: "{% url 'fieldsight:senduserinvite' %}",
+        data: {'email': email, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        type: 'POST',
+        success: function (html) {
+           $('#update-next-step').html(html);
+        }
+      });
+}
+</script>
+{% endif %}
 {% endblock %}
+
+
+
+

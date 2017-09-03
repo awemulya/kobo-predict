@@ -1,0 +1,128 @@
+
+
+
+
+
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    
+    
+    
+
+<link rel="stylesheet" href="/static/css/normalize.min.css">
+<link rel="stylesheet" href="/static/bs3/css/bootstrap.min.css">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>KoBoToolbox </title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/x-icon" href="/static/img/favicon.ico" />
+<!-- iPhone + iPad icons -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/img/apple-touch-icon-114x114.png">
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/img/apple-touch-icon-72x72-precomposed.png">
+<link rel="apple-touch-icon-precomposed" href="/static/img/apple-touch-icon-precomposed.png">
+<link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
+<link rel="stylesheet" href="/static/css/style.css">
+
+  
+
+</head>
+<body>
+
+
+<body class="login-body">
+
+    <div class="container">
+
+      <form class="form-signin" id="user_reg_form" method="POST" class="form-horizontal">
+{% csrf_token %}
+        <div class="login-heading-with-image">
+          <img class="form-signin-heading-img" src="/static/images/logo1.png" / >
+          <!-- <h2 class="form-signin-heading">sign in now</h2> -->
+        </div>
+        <div class="login-wrap">
+        
+            <div class="user-login-info">
+              
+                
+                <p></p>
+                <input type="text" class="form-control" placeholder="Username*" id="username" name="username" value="" autofocus required>
+                
+                <p></p>
+
+                <input type="text" class="form-control" placeholder="First Name*" id="firstname" name="firstname" value="" required>
+                
+                       
+                <p></p>
+
+                <input type="text" class="form-control" placeholder="Last Name*" id="lastname" name="lastname" value="" required>
+                               
+                <p></p>
+
+                <input type="password" class="form-control" placeholder="Password*" id="password1" name="password1" value="" required>
+                               
+                <p></p>
+
+                <input type="password" class="form-control" placeholder="Re-type Password*" id="password2" name="password2" value="">
+                <center><div id="alert" style="color: red;"></div><center>
+                
+            </div>
+           
+            <button onclick="validatepass()" class="btn btn-lg btn-login btn-block registration__action" type="button" value="Login" >Register</button>
+           
+
+
+        </div>
+
+          
+      </form>
+ 
+
+    </div>
+
+
+
+
+
+
+</body>
+<script>
+    function validatepass(){
+
+      var pass1 = document.getElementById("password1").value;
+      var pass2 = document.getElementById("password2").value;
+      var username = document.getElementById("username").value;
+      var firstname = document.getElementById("firstname").value;
+      var lastname = document.getElementById("lastname").value;
+
+      if(username.length < 1 || firstname.length < 1 || lastname.length < 1){
+        document.getElementById("alert").innerHTML = "* fields are mandatory.";
+      }
+
+      else if(username.length < 6){
+        document.getElementById("alert").innerHTML = "Username must be at least 6 characters long.";
+      }
+      else if(pass1.length < 8){
+        document.getElementById("alert").innerHTML = "Password must be atleast 8 characters long.";
+      }
+      
+      else
+      {
+        if(pass1 == pass2){
+          document.getElementById("user_reg_form").submit(); 
+        }
+        else{
+           document.getElementById("alert").innerHTML = "Passwords did not match.";
+        }
+      }
+    }
+
+
+   
+  </script>
+</html>

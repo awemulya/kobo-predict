@@ -28,7 +28,7 @@ class ProfileForm(forms.ModelForm):
         model = UserProfile
         fields = ['first_name','last_name','address','gender','phone','skype','primary_number','secondary_number'
             ,'office_number', 'viber', 'whatsapp', 'wechat', 'line', 'tango', 'hike', 'qq', 'google_talk', 'twitter',
-                  'profile_picture', ]
+                  'profile_picture',]
 
     def clean_profile_picture(self):
         image = self.cleaned_data.get('profile_picture')

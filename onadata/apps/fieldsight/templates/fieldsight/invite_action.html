@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body background="bgw.png">
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="container">
+  <div class="col-md-6 col-md-offset-3 ">
+  <div class="panel panel-primary class" >
+    <div class="panel-heading "><img src="logo1.png" class="img-responsive center-block" height="210px" width="210pxs"></div>
+
+<form class="panel-body text-center" id="action-form" method="POST">
+{% csrf_token %}
+  
+<font face="ubuntu" size="3">You have been invited to join FieldSight by {{ invite.user }} as {{ invite.group.name }} Role for 
+{% if invite.site %}
+  {{ invite.site.name }}  in {{ invite.project.name }} of {{ invite.organization.name }}
+{% elif invite.project %}
+  {{ invite.project.name }} of {{ invite.organization.name }}
+{% elif invite.organization %}
+  {{ invite.organization.name }}
+{% endif %}.</font>
+	<input type="hidden" name="response" id="response">
+	          <div class="form-group">        
+      <div class="col-sm-offset-3 col-sm-7">
+         <ul class="nav navbar-nav navbar-center">
+
+                  <button type="button" onclick="setvalue('accept')" class="btn btn-success navbar-btn"><span class="glyphicon glyphicon-ok"></span> Accept</button>
+          <button type="button" onclick="setvalue('decline')" class="btn btn-danger navbar-btn"><span class="glyphicon glyphicon-remove"></span> Decline</button>
+ 
+
+        </ul
+      </div>
+    </div>
+  
+  </form>
+
+	
+	 
+  </div>
+</div>
+</div>
+</div>
+</body>
+<script type="text/javascript">
+	function setvalue(status){
+		document.getElementById('response').value = status;
+		document.getElementById('action-form').submit();
+		alert();
+	}
+</script>
+</html>
+
+
+
+

@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from django.contrib.auth import logout
 from django.contrib.contenttypes.models import ContentType
 import os
 import json
@@ -19,7 +21,7 @@ from django.http import HttpResponseForbidden
 from django.http import HttpResponseNotFound
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseServerError
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.shortcuts import render
 from django.template import loader, RequestContext
 from django.utils.translation import ugettext as _
@@ -76,6 +78,9 @@ def login_redirect(request):
     return HttpResponseRedirect(reverse(profile,
                                 kwargs={'username': request.user.username}))
 
+def logout_view(request):
+    logout(request)
+    return redirect('kpi-logout')
 
 @require_POST
 @login_required

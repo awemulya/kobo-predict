@@ -1,0 +1,8 @@
+{% autoescape off %}
+Hi {{ email }},
+
+You have been invited to join FieldSight by {{ invite.user }} as {{ invite.group.name }} Role for {% if invite.site %} {{ invite.site.name }}  in {{ invite.project.name }} of {{ invite.organization.name }} {% elif invite.project %} {{ invite.project.name }} of {{ invite.organization.name }} {% elif invite.organization %} {{ invite.organization.name }}
+{% endif %}. Please use the link below to join {{ invite.organization.name }} in fieldsight.
+
+http://{{ domain }}{% url 'fieldsight:activate-role' invite_id token %}
+{% endautoescape %}

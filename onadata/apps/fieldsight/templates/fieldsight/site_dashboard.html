@@ -408,6 +408,14 @@
                               <li><a href="{% url 'fieldsight:manage-people-site' obj.pk %}">{% trans 'People' %}</a></li>
                                 <li><a href="{% url 'fieldsight:site-blue-prints' obj.pk %}">{% trans 'Add BluePrints' %}</a></li>
                             </ul>
+                        </li> 
+                        <li class="dropdown man-drop">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports <span class="caret span-manage"></span></a>
+                            <ul class="dropdown-menu">
+                              <li><a href="{% url 'fieldsight:site-summary-report' obj.pk %}">{% trans 'Summary Report' %}</a></li>
+                              <li><a href="{% url 'fieldsight:manage-people-site' obj.pk %}">{% trans 'People' %}</a></li>
+                                <li><a href="{% url 'fieldsight:site-blue-prints' obj.pk %}">{% trans 'Add BluePrints' %}</a></li>
+                            </ul>
                         </li>  
                        </ul>
 

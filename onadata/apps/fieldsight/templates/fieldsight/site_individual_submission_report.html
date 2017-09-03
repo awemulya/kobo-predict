@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Site Summary
+    </title>
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.12.0/semantic.min.css" />
+</head>
+
+<body>
+
+<div id="aasis" style="width:700px;">
+<style type="text/css">
+  body {
+    background-color:black; 
+  }
+  
+#aasis {
+ background-color: white; overflow:hidden;
+}
+#org-details {
+  width:350px;
+  height:880px;
+  background-color: red;
+  float: left;
+}
+
+
+
+#map {
+height: 300px;
+width: 300px;
+float: right;
+
+}
+
+</style>
+
+    <div id="org-details">
+      {{ obj.name }}
+  {{ obj.identifier }}
+                              
+    </div> 
+    <div id="map"></div>
+    <div id="more-details"></div>
+
+
+    </div>
+    </body>
+
+
+    
+                
+<input type="button" name="" value="print" onclick="PrintElem('aasis')">
+
+<script type="text/javascript">
+  function PrintElem(elem)
+{
+    var mywindow = window.open('', 'PRINT', 'height=400,width=700');
+
+    
+    mywindow.document.write(document.getElementById(elem).innerHTML);
+
+
+    mywindow.document.close(); // necessary for IE >= 10
+   // necessary for IE >= 10*/
+
+    mywindow.print();
+    // mywindow.close();
+
+    return true;
+}
+
+      function initMap() {
+        var uluru = {lat: -25.363, lng: 131.044};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: uluru
+        });
+        var marker = new google.maps.Marker({
+          position: uluru,
+          map: map
+        });
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDmkU1cjj2GkxzKoYWZV987q0sIGCL3Ps&callback=initMap">
+    </script>

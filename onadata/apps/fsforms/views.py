@@ -1322,16 +1322,21 @@ def instance_status(request, instance):
                 fi.save()
                 comment_url = reverse("forms:instance_status_change_detail",
                                                 kwargs={'pk': status_changed.id})
-                print("Comment url",comment_url)
                 send_message(fi.site_fxf, fi.form_status, message, comment_url)
                 org = fi.project.organization if fi.project else fi.site.project.organization
-                noti = status_changed.logs.create(source=request.user, type=8, title="form status changed",
-                            organization=org, description="submission status Changed")
+                noti = status_changed.logs.create(source=request.user, type=17, title="form status changed",
+                                                  organization=org,
+                                                  site = fi.site,
+                                                  description='{0} reviewed a response for {1} {2} in {3}'.format(
+                                                      request.user.get_full_name(),
+                                                      fi.site_fxf.form_type,
+                                                      fi.site_fxf.xf.title,
+                                                      fi.site.name
+                                                  ))
                 result = {}
-                result['description'] = "submission status Changed"
+                result['description'] = noti.description
                 result['url'] = noti.get_absolute_url()
-                ChannelGroup("notify-{}".format(org.id)).send({"text": json.dumps(result)})
-                ChannelGroup("notify-0").send({"text": json.dumps(result)})
+                ChannelGroup("site-{}".format(fi.site.id)).send({"text": json.dumps(result)})
 
         return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
     except Exception as e:

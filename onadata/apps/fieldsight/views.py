@@ -38,10 +38,21 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
 from .rolemixins import SiteSupervisorRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
-from .models import Organization, Project, Site, ExtraUserDetail, BluePrints
+from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo)
 from django.views.generic import TemplateView
+from django.core.mail import send_mail
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.utils.crypto import get_random_string
+from django.http import HttpResponse
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
+
+from django.core.files.storage import FileSystemStorage
 
 @login_required
 def dashboard(request):
@@ -50,7 +61,7 @@ def dashboard(request):
         if current_role[0].group.name == "Site Supervisor":
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role[0].site.pk}))
         if current_role[0].group.name == "Reviewer":
-            return HttpResponseRedirect(reverse("fieldsight:site-supervisor-dashboard", kwargs={'pk': current_role[0].site.pk}))
+            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role[0].site.pk}))
         if current_role[0].group.name == "Project Manager":
             return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role[0].project.pk}))
         if current_role[0].group.name == "Organization Admin":
@@ -264,14 +275,14 @@ class OrganizationListView(OrganizationView, LoginRequiredMixin, SuperAdminMixin
 class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save()
-        noti = self.object.logs.create(source=self.request.user, type=5, title="new Organization",
+        noti = self.object.logs.create(source=self.request.user, type=9, title="new Organization",
                                        organization=self.object, content_object=self.object,
-                                       description="new organization {0} created by {1}".
-                                       format(self.object.name, self.request.user.username))
+                                       description="{} created a new organization named {1}".
+                                       format(self.request.user.get_full_name(), self.object.name))
         result = {}
-        result['description'] = 'new organization {0} created by {1}'.format(self.object.name, self.request.user.username)
+        result['description'] = '{} created a new organization named {1} '.format(noti.source.get_full_name(), self.object.name)
         result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(self.object.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-{}".format(self.object.id)).send({"text": json.dumps(result)})
         ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
@@ -283,13 +294,12 @@ class OrganizationUpdateView(OrganizationView, OrganizationRoleMixin, UpdateView
 
     def form_valid(self, form):
         self.object = form.save()
-        noti = self.object.logs.create(source=self.request.user, type=5, title="new Site",
-                                       organization=self.object,
-                                       content_object=self.object,
-                                       description="new organization {0} updated by {1}".
-                                       format(self.object.name, self.request.user.username))
+        noti = self.object.logs.create(source=self.request.user, type=13, title="edit Organization",
+                                       organization=self.object, content_object=self.object,
+                                       description="{} changed the details of organization named {1}".
+                                       format(self.request.user.get_full_name(), self.object.name))
         result = {}
-        result['description'] = 'new organization {0} updated by {1}'.format(self.object.name, self.request.user.username)
+        result['description'] = noti.description
         result['url'] = noti.get_absolute_url()
         ChannelGroup("notify-{}".format(self.object.id)).send({"text": json.dumps(result)})
         ChannelGroup("notify-0").send({"text": json.dumps(result)})
@@ -501,15 +511,15 @@ class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
         self.object = form.save(commit=False)
         self.object.organization_id = self.kwargs.get('pk')
         self.object.save()
-        noti = self.object.logs.create(source=self.request.user, type=4, title="new Project",
+        noti = self.object.logs.create(source=self.request.user, type=10, title="new Project",
                                        organization=self.object.organization,
-                                       description="new project {0} created by {1}".
-                                       format(self.object.name, self.request.user.username))
+                                       description='{0} created new project named {1}'.format(
+                                           self.request.user.get_full_name(), self.object.name))
         result = {}
-        result['description'] = 'new project {0} created by {1}'.format(self.object.name, self.request.user.username)
+        result['description'] = noti.description
         result['url'] = noti.get_absolute_url()
         ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
 
         return HttpResponseRedirect(self.object.get_absolute_url())
@@ -521,15 +531,16 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        noti = self.object.logs.create(source=self.request.user, type=4, title="new Project",
+        noti = self.object.logs.create(source=self.request.user, type=14, title="Edit Project",
                                        organization=self.object.organization,
-                                       description="new project {0} updated by {1}".
-                                       format(self.object.name, self.request.user.username))
+                                       project=self.object,
+                                       description='{0} changed the details of project named {1}'.format(
+                                           self.request.user.get_full_name(), self.object.name))
         result = {}
-        result['description'] = 'new project {0} updated by {1}'.format(self.object.name, self.request.user.username)
+        result['description'] = noti.description
         result['url'] = noti.get_absolute_url()
         ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        ChannelGroup("project-{}".format(self.object.id)).send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -571,15 +582,17 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        noti = self.object.logs.create(source=self.request.user, type=3, title="new Project",
+        noti = self.object.logs.create(source=self.request.user, type=11, title="new Site",
                                        organization=self.object.project.organization,
-                                       description="new site {0} created by {1}".
-                                       format(self.object.name, self.request.user.username))
+                                       project=self.object.project,
+                                       description='{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
+                                                                                 object.name, object.project.name))
         result = {}
-        result['description'] = 'new site {0} created by {1}'.format(self.object.name, self.request.user.username)
+        result['description'] = '{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
+                                                                                 object.name, object.project.name)
         result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -591,15 +604,17 @@ class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        noti = self.object.logs.create(source=self.request.user, type=3, title="new Site",
+        noti = self.object.logs.create(source=self.request.user, type=15, title="edit Site",
                                        organization=self.object.project.organization,
-                                       description="new site {0} updated by {1}".
-                                       format(self.object.name, self.request.user.username))
+                                       description='{0} changed the details of site named {1}'.format(
+                                           self.request.user.get_full_name(), self.object.name))
         result = {}
         result['description'] = 'new site {0} updated by {1}'.format(self.object.name, self.request.user.username)
         result['url'] = noti.get_absolute_url()
         ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
+        ChannelGroup("site-{}".format(self.object.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -625,9 +640,11 @@ class SiteDeleteView(SiteView, ProjectRoleMixin, DeleteView):
 def ajax_upload_sites(request, pk):
     form = UploadFileForm(request.POST, request.FILES)
     if form.is_valid():
+        count = 0
         project = Project(pk=pk)
         try:
             sites = request.FILES['file'].get_records()
+            count = len(sites)
             with transaction.atomic():
                 for site in sites:
                     site = dict((k,v) for k,v in site.iteritems() if v is not '')
@@ -643,6 +660,16 @@ def ajax_upload_sites(request, pk):
                     _site.additional_desc = site.get("additional_desc")
                     _site.location=location
                     _site.save()
+            if count:
+                noti = project.logs.create(source=request.user, type=12, title="bulk Sites",
+                                       organization=project.organization,
+                                       project=project,
+                                       description='{0} created a {1} sites in {2}'.
+                                           format(request.user.get_full_name(), count, project.name))
+                result = {}
+                result['description'] = noti.description
+                result['url'] = noti.get_absolute_url()
+                ChannelGroup("project-{}".format(project.id)).send({"text": json.dumps(result)})
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'file':e.message}, status=status.HTTP_400_BAD_REQUEST)
@@ -792,20 +819,20 @@ class BluePrintsView(LoginRequiredMixin, TemplateView):
 
 class ManagePeopleSiteView(LoginRequiredMixin, ReviewerMixin, TemplateView):
     def get(self, request, pk):
-        organization = Site.objects.get(pk=pk).project.organization.id
-        return render(request, 'fieldsight/manage_people_site.html', {'pk':pk, 'level': "0", 'organization': organization})
+        project = Site.objects.get(pk=pk).project
+        return render(request, 'fieldsight/manage_people_site.html', {'pk':pk, 'level': "0", 'category':"site", 'organization': project.organization.id, 'project':project.id, 'site':pk})
 
 
 class ManagePeopleProjectView(LoginRequiredMixin, ProjectMixin, TemplateView):
     def get(self, request, pk):
         organization = Project.objects.get(pk=pk).organization.id
         return render(request, "fieldsight/manage_people_site.html",
-                      {'pk': pk, 'level': "1", 'organization': organization})
+                      {'pk': pk, 'level': "1", 'category':"Project Manager", 'organization': organization, 'project': pk})
 
 
 class ManagePeopleOrganizationView(LoginRequiredMixin, OrganizationMixin, TemplateView):
     def get(self, request, pk):
-        return render(request, 'fieldsight/manage_people_site.html', {'pk': pk, 'level': "2", 'organization': pk})
+        return render(request, 'fieldsight/manage_people_site.html', {'pk': pk, 'level': "2", 'category':"Organization Admin", 'organization': pk})
 
 
 def all_notification(user,  message):
@@ -888,3 +915,168 @@ class SiteUserList(ProjectRoleMixin, ListView):
     
         return queryset
 
+@login_required()
+def ajaxgetuser(request):
+    user = User.objects.filter(email=request.POST.get('email'))
+    html = render_to_string('fieldsight/ajax_temp/ajax_user.html', {'department': User.objects.filter(email=user)})
+    return HttpResponse(html)
+
+def RepresentsInt(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+@login_required()
+def senduserinvite(request):
+    user = User.objects.filter(email=request.POST.get('email'))
+    group = Group.objects.get(name=request.POST.get('group'))
+
+    organization_id = None
+    project_id =None
+    site_id =None
+
+    if RepresentsInt(request.POST.get('organization_id')):
+        organization_id = request.POST.get('organization_id')
+    if RepresentsInt(request.POST.get('project_id')):
+        project_id = request.POST.get('project_id')
+    if RepresentsInt(request.POST.get('site_id')):
+        site_id = request.POST.get('site_id')
+
+
+    userinvite = UserInvite.objects.filter(email=request.POST.get('email'), organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+
+    if userinvite:
+        return HttpResponse('<script> alert("Invite already sent."); <script>')
+
+    if user:
+        userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
+        
+        if userrole:
+            if userrole[0].ended_at==None:
+                return HttpResponse('Already has the role.') 
+        
+        invite = UserInvite(email=request.POST.get('email'), by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
+
+        invite.save()
+        organization = Organization.objects.get(pk=1)
+        noti = invite.logs.create(source=user[0], type=9, title="new Role",
+                                       organization_id=request.POST.get('organization_id'),
+                                       description="{0} sent you an invite to join {1} as the {2}.".
+                                       format(request.user.username, organization.name, invite.group.name,))
+        # result = {}
+        # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+        # result['url'] = noti.get_absolute_url()
+        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+    else:
+        invite = UserInvite(email=request.POST.get('email'), by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+        invite.save()
+    current_site = get_current_site(request)
+    subject = 'Invitation for Role'
+    message = render_to_string('fieldsight/email_sample.html',
+    {
+        'email': invite.email,
+        'domain': current_site.domain,
+        'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
+        'token': invite.token,
+        'invite': invite,
+        })
+    email_to = (invite.email,)
+    send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
+    return HttpResponse("<script> alert('Sucessfully invited for "+ group.name +" role.');</script>")
+
+# def activate_role(request, invite_idb64, token):
+#     try:
+#         invite_id = force_text(urlsafe_base64_decode(invite_idb64))
+#         invite = UserInvite.objects.filter(id=invite_id, token=token, is_used=False)
+#     except (TypeError, ValueError, OverflowError, UserInvite.DoesNotExist):
+#         invite = None
+#     if invite:
+#         user = User.objects.filter(email=invite[0].email)
+#         if user:
+#             userrole = UserRole(user=user[0], group=invite[0].group, organization=invite[0].organization, project=invite[0].project, site=invite[0].site)
+#             userrole.save()
+#             return HttpResponse("Sucess")
+#         else:
+
+#     return HttpResponse("Failed")
+   
+class ActivateRole(TemplateView):
+    def dispatch(self, request, invite_idb64, token):
+        invite_id = force_text(urlsafe_base64_decode(invite_idb64))
+        invite = UserInvite.objects.filter(id=invite_id, token=token, is_used=False)
+        if invite:
+            return super(ActivateRole, self).dispatch(request, invite[0], invite_idb64, token)
+        return HttpResponseRedirect(reverse('login'))
+
+    def get(self, request, invite, invite_idb64, token):
+        user = User.objects.filter(email=invite.email)
+        if invite.is_used==True:
+            return render(request, 'fieldsight/invite_action.html',{'invite':invite, 'is_used': True, })
+        if user:
+            return render(request, 'fieldsight/invite_action.html',{'invite':invite, 'is_used': False,})
+        else:
+            return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False,})
+        
+
+    def post(self, request, invite, *args, **kwargs):
+        user = User.objects.filter(email=invite.email)
+        if user:
+            if request.POST.get('response') == "accept":
+                userrole = UserRole(user=user[0], group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
+                userrole.save()
+            else:
+                invite.is_declined = True
+            invite.is_used = True
+            invite.save()
+            return HttpResponseRedirect(reverse('login'))
+        else:
+            user = User(username=request.POST.get('username'), email=invite.email, first_name=request.POST.get('firstname'), last_name=request.POST.get('lastname'))
+            user.set_password(request.POST.get('password1'))
+            user.save()
+            userrole = UserRole(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
+            userrole.save()
+            invite.is_used = True
+            invite.save()
+            return HttpResponseRedirect(reverse('login'))
+            
+@login_required()
+def checkemailforinvite(request):
+    user = User.objects.select_related('user_profile').filter(email__icontains=request.POST.get('email'))
+    if user:
+        return render(request, 'fieldsight/invite_response.html', {'users': user,})
+    else:
+        return HttpResponse("No existing User found.<a href='#' onclick='sendnewuserinvite()'>send</a>")
+
+
+class SummaryReport(TemplateView):
+    def get(self, request, pk):
+        site = Site.objects.select_related('project').get(pk=pk)
+        organization = site.project.organization
+        project_managers = site.project.project_roles.filter(group__name="Project_manager").order_by('user__first_name')
+        site_reviewers = site.site_roles.filter(group__name="Reviewer").order_by('user__first_name')
+        site_supervisors = site.site_roles.filter(group__name="Site Supervisor").order_by('user__first_name')
+        data = serialize('custom_geojson', [site], geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+
+        line_chart = LineChartGeneratorSite(site)
+        line_chart_data = line_chart.data()
+
+        outstanding, flagged, approved, rejected = site.get_site_submission()
+        dashboard_data = {
+            'site': site,
+            'obj':site,
+            'project': site.project,
+            'organization':organization,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+            'data': data,
+            'cumulative_data': line_chart_data.values(),
+            'cumulative_labels': line_chart_data.keys(),
+        }
+        return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)

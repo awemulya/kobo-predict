@@ -130,15 +130,15 @@ class SiteCreationSurveyViewSet(viewsets.ModelViewSet):
             group = Group.objects.get(name="Site Supervisor")
             UserRole.objects.get_or_create(user=self.request.user, site_id=site.id,
                                            project__id=site.project.id, group=group)
-            noti = site.logs.create(source=self.request.user, type=3, title="new Site",
-                                    organization=site.project.organization,
-                                    description="new site {0} created by {1}".format(
-                                        site.name, self.request.user.username))
+            noti = site.logs.create(source=self.request.user, type=11, title="new Site",
+                                       organization=site.project.organization,
+                                       project=site.project,
+                                       description='{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
+                                                                                 site, site.project.name))
             result = {}
-            result['description'] = 'new user {0} created by {1}'.format(site.name, self.request.user.username)
+            result['description'] = noti.description
             result['url'] = noti.get_absolute_url()
-            ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
-            ChannelGroup("notify-0").send({"text": json.dumps(result)})
+            ChannelGroup("project-{}".format(site.project.id)).send({"text": json.dumps(result)})
             return site
 
 
