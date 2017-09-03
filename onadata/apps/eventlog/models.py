@@ -8,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 
 from onadata.apps.fieldsight.models import Organization, Project, Site
-
+from onadata.apps.users.models import UserProfile
 
 class FieldSightLog(models.Model):
     ACTION_TYPES = (
@@ -61,8 +61,27 @@ class FieldSightLog(models.Model):
         return self.content_object.get_absolute_url()
 
     def get_source_url(self):
-        return self.source.user_profile.get_absolute_url()
+        try:
+            profile = self.source.user_profile
+        except UserProfile.DoesNotExist:
+            return None
+        else:
+            return profile.get_absolute_url()
 
+    def get_org_url(self):
+        if self.organization is None:
+            return None
+        return self.organization.get_absolute_url()
+
+    def get_project_url(self):
+        if self.project is None:
+            return None
+        return self.project.get_absolute_url()
+
+    def get_site_url(self):
+        if self.site is None:
+            return None
+        return self.site.get_absolute_url()
 
 
 class FieldSightMessage(models.Model):
