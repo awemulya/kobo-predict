@@ -50,13 +50,13 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
                                               project = fxf.project,
                                               description='{0} assigned new General form  {1} to {2} '.format(
                                                   self.request.user.get_full_name(),
-                                                  fxf.site_fxf.xf.title,
+                                                  fxf.xf.title,
                                                   fxf.project.name
                                               ))
             result = {}
             result['description'] = noti.description
             result['url'] = noti.get_absolute_url()
-            ChannelGroup("site-{}".format(fxf.site.id)).send({"text": json.dumps(result)})
+            # ChannelGroup("site-{}".format(fxf.site.id)).send({"text": json.dumps(result)})
             ChannelGroup("project-{}".format(fxf.project.id)).send({"text": json.dumps(result)})
         else:
             org = fxf.site.project.organization
@@ -66,7 +66,7 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
                                               site = fxf.site,
                                               description='{0} assigned new General form  {1} to {2} '.format(
                                                   self.request.user.get_full_name(),
-                                                  fxf.site_fxf.xf.title,
+                                                  fxf.xf.title,
                                                   fxf.site.name
                                               ))
             result = {}
