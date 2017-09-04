@@ -129,31 +129,31 @@ var types = {
 //notification message list builder with ahref links
     function type0(text, desc){
          content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.org_url + '">' + text.org_name + '</a></b>'+ desc[1] +'</span>';
+              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b> joined <b><a href="' +  text.org_url + '">' + text.get_org_name + '</a></b> as an Organization Admin.</span>';
          return content;
     }
 
     function type1(text, desc){
           content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.project_url + '">' + text.project_name + '</a></b>'+ desc[1] + '<b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
+              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b> was added as the Project Manager <b><a href="' +  text.get_project_url + '">' + text.project_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
               return content;
     }
 
     function type2(text, desc){
            content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.site_url + '">' + text.site_name + '</a></b>'+ desc[1] + '<b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
+              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b> was added as Reviewer of <b><a href="' +  text.site_url + '">' + text.site_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
               return content;
           
     }
     function type3(text, desc){
           content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-                <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.site_url + '">' + text.site_name + '</a></b>'+ desc[1] + '<b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
+                <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b> was added as Site Supervisor of <b><a href="' +  text.site_url + '">' + text.site_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
                 return content;
           
     }
     function type4(text, desc){
            content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.site_url + '">' + text.site_name + '</a></b>'+ '</span>';
+              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b> was assigned as an Organization Admin in <b><a href="' +  text.get_org_url + '">' + text.org_name + '</a></b>'+ '</span>';
               return content;
     }
 

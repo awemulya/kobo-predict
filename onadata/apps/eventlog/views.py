@@ -11,8 +11,10 @@ from rest_framework import serializers
 from onadata.apps.eventlog.models import FieldSightLog
 from rest_framework.pagination import PageNumberPagination
 from onadata.apps.fieldsight.rolemixins import LoginRequiredMixin
+from django.db.models import Q
+
 class LogSerializer(serializers.ModelSerializer):
-    source_name = serializers.ReadOnlyField(source='source.user.first_name', read_only=True)
+    source_name = serializers.ReadOnlyField(source='source.username', read_only=True)
     source_img = serializers.ReadOnlyField(source='source.user_profile.profile_picture.url', read_only=True)
     get_source_url = serializers.ReadOnlyField()
     
@@ -30,7 +32,7 @@ class LogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FieldSightLog
-        exclude = ('title', 'description', 'seen_by', 'content_type', 'organization', 'project', 'site', 'source', 'object_id')
+        exclude = ('title', 'description', 'seen_by', 'content_type', 'organization', 'project', 'site', 'object_id')
 
 
 
@@ -43,7 +45,7 @@ class NotificationListView(OrganizationMixin, ListView):
         return super(NotificationListView, self).get_queryset().order_by('-date')
 
 class LargeResultsSetPagination(PageNumberPagination):
-    page_size = 2
+    page_size = 20
 
 class NotificationViewSet(viewsets.ModelViewSet):
     """
@@ -55,7 +57,10 @@ class NotificationViewSet(viewsets.ModelViewSet):
     pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
-        return queryset.filter(id=38)
+        org_ids = self.request.roles.filter(group__name='Organization Admin').values('organization_id')
+        project_ids = self.request.roles.filter(group__name='Project Manager').values('project_id')
+        site_ids = self.request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')) .values('site_id')
+        return queryset.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids))
 
 
 class MessageListView(ListView):
