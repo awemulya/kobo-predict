@@ -1257,16 +1257,16 @@ def delete_substage(request, id):
         old_fsxf.is_deleted = True
         # old_fsxf.stage = None
         old_fsxf.save()
-        org = sub_stage.stage.project.organization if sub_stage.stage.project else sub_stage.stage.site.project.organization
-        desc = "deleted form of stage {} substage {} by {}".format(sub_stage.stage.name, sub_stage.name,
-                                                                   request.user.username)
-        noti = old_fsxf.logs.create(source=request.user, type=1, title="form Deleted",
-                organization=org, description=desc)
-        result = {}
-        result['description'] = desc
-        result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(org.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        # org = sub_stage.stage.project.organization if sub_stage.stage.project else sub_stage.stage.site.project.organization
+        # desc = "deleted form of stage {} substage {} by {}".format(sub_stage.stage.name, sub_stage.name,
+        #                                                            request.user.username)
+        # noti = old_fsxf.logs.create(source=request.user, type=1, title="form Deleted",
+        #         organization=org, description=desc)
+        # result = {}
+        # result['description'] = desc
+        # result['url'] = noti.get_absolute_url()
+        # ChannelGroup("notify-{}".format(org.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
         # sub_stage.delete()
         return Response({}, status=status.HTTP_200_OK)
     except Exception as e:
@@ -1286,15 +1286,15 @@ def delete_mainstage(request, id):
                     old_fsxf.is_deleted = True
                     old_fsxf.stage = None
                     old_fsxf.save()
-                    desc = "deleted form of stage {} substage {} by {}".format(sub_stage.stage.name, sub_stage.name,
-                                                                               request.user.username)
-                    noti = old_fsxf.logs.create(source=request.user, type=1, title="form Deleted",
-                            organization=org, description=desc)
-                    result = {}
-                    result['description'] = desc
-                    result['url'] = noti.get_absolute_url()
-                    ChannelGroup("notify-{}".format(org.id)).send({"text": json.dumps(result)})
-                    ChannelGroup("notify-0").send({"text": json.dumps(result)})
+                    # desc = "deleted form of stage {} substage {} by {}".format(sub_stage.stage.name, sub_stage.name,
+                    #                                                            request.user.username)
+                    # noti = old_fsxf.logs.create(source=request.user, type=1, title="form Deleted",
+                    #         organization=org, description=desc)
+                    # result = {}
+                    # result['description'] = desc
+                    # result['url'] = noti.get_absolute_url()
+                    # ChannelGroup("notify-{}".format(org.id)).send({"text": json.dumps(result)})
+                    # ChannelGroup("notify-0").send({"text": json.dumps(result)})
                 sub_stage.delete()
             stage.delete()
         return Response({}, status=status.HTTP_200_OK)
