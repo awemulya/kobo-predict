@@ -64,7 +64,7 @@ class ScheduleViewset(viewsets.ModelViewSet):
             result['description'] = noti.description
             result['url'] = noti.get_absolute_url()
             ChannelGroup("site-{}".format(fxf.site.id)).send({"text": json.dumps(result)})
-            ChannelGroup("project-{}".format(fxf.project.id)).send({"text": json.dumps(result)})
+            ChannelGroup("project-{}".format(fxf.site.project.id)).send({"text": json.dumps(result)})
         else:
             noti = fxf.logs.create(source=self.request.user, type=18, title="Schedule",
                       organization=fxf.project.organization,
