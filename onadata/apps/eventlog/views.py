@@ -18,8 +18,8 @@ class LogSerializer(serializers.ModelSerializer):
     source_img = serializers.ReadOnlyField(source='source.user_profile.profile_picture.url', read_only=True)
     get_source_url = serializers.ReadOnlyField()
     
-    #event = serializers.ReadOnlyField(source='content_object', read_only=True)
-    get_event_url = serializers.ReadOnlyField()
+    get_content_name = serializers.ReadOnlyField()
+    get_content_url = serializers.ReadOnlyField()
 
     org_name = serializers.ReadOnlyField(source='organization.name', read_only=True)
     get_org_url = serializers.ReadOnlyField()

@@ -83,6 +83,9 @@ class Organization(models.Model):
         if self.location:
             return self.location.x
 
+    def getname(self):
+        return self.name
+
     def __str__(self):
         return self.name
 
@@ -151,6 +154,9 @@ class Project(models.Model):
         if self.location:
             return self.location.x
 
+    def getname(self):
+        return self.name
+
     def __str__(self):
         return self.name
 
@@ -217,6 +223,9 @@ class Site(models.Model):
     def longitude(self):
         if self.location:
             return self.location.x
+
+    def getname(self):
+        return self.name
 
     def __str__(self):
         return self.name
@@ -337,6 +346,9 @@ class UserInvite(models.Model):
     
     def __unicode__(self):
         return self.email + "-----" + str(self.is_used)
+
+    def getname(self):
+        return str("invited")
 
     def save(self, *args, **kwargs):
         if self.group.name == 'Super Admin':

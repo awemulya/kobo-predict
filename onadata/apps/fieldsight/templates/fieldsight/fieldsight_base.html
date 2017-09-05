@@ -128,32 +128,79 @@ var types = {
     }
 //notification message list builder with ahref links
     function type0(text, desc){
-         content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b> joined <b><a href="' +  text.org_url + '">' + text.get_org_name + '</a></b> as an Organization Admin.</span>';
+         content = '<b>'+ text.actor_name +'</b> joined <b><a href="' +  text.org_url + '">' + text.get_org_name + '</a></b> as an Organization Admin.';
          return content;
     }
 
     function type1(text, desc){
-          content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b> was added as the Project Manager <b><a href="' +  text.get_project_url + '">' + text.project_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
+          content = '<b>'+ text.actor_name +'</b> was added as the Project Manager <b><a href="' +  text.get_project_url + '">' + text.project_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>';
               return content;
     }
 
     function type2(text, desc){
-           content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b> was added as Reviewer of <b><a href="' +  text.site_url + '">' + text.site_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
+           content = '<b>'+ text.actor_name +'</b> was added as Reviewer of <b><a href="' +  text.site_url + '">' + text.site_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>';
               return content;
           
     }
     function type3(text, desc){
-          content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-                <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b> was added as Site Supervisor of <b><a href="' +  text.site_url + '">' + text.site_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
+          content = '<b>'+ text.actor_name +'</b> was added as Site Supervisor of <b><a href="' +  text.site_url + '">' + text.site_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>';
                 return content;
           
     }
     function type4(text, desc){
-           content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b> was assigned as an Organization Admin in <b><a href="' +  text.get_org_url + '">' + text.org_name + '</a></b>'+ '</span>';
+           content = '<b>'+ text.actor_name +'</b> was assigned as an Organization Admin in <b><a href="' +  text.get_org_url + '">' + text.org_name + '</a></b>';
+              return content;
+    }
+    function type5(text, desc){
+           content = '<b>'+ text.actor_name +'</b> was assigned as a Project Manager in <b><a href="' +  text.get_project_url + '">' + text.project_name + '</a></b>';
+              return content;
+    }
+
+function type6(text, desc){
+           content = '<b>'+ text.actor_name +'</b> was assigned as a Reviewer in <b><a href="' +  text.get_site_url + '">' + text.site_name + '</a></b>';
+              return content;
+    }
+
+function type7(text, desc){
+           content = '<b>'+ text.actor_name +'</b> was assigned as a Site Supervisor in <b><a href="' +  text.get_site_url + '">' + text.site_name + '</a></b>';
+              return content;
+    }
+
+
+function type8(text, desc){
+           content = '<b>'+ text.actor_name +'</b> created a new organization named <b><a href="' +  text.get_org_url + '">' + text.org_name + '</a></b>';
+              return content;
+    }
+
+
+function type9(text, desc){
+           content = '<b>'+ text.actor_name +'</b> created a new project named <b><a href="' +  text.get_project_url + '">' + text.project_name + '</a></b>';
+              return content;
+    }
+
+
+function type10(text, desc){
+           content = '<b>'+ text.actor_name +'</b> created a new site named <b><a href="' +  text.get_site_url + '">' + text.site_name + '</a></b>';
+              return content;
+    }
+
+function type12(text, desc){
+           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_org_url + '">' + text.org_name + '</a></b>';
+              return content;
+    }       
+        
+function type13(text, desc){
+           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_project_url + '">' + text.project_name + '</a></b>';
+              return content;
+    } 
+
+function type14(text, desc){
+           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_site_url + '">' + text.site_name + '</a></b>';
+              return content;
+    }   
+
+function type19(text, desc){
+           content = '<b>'+ text.actor_name +'</b> edited <b><a href="' +  text.get_site_url + '">' + text.site_name + '</a></b> form.';
               return content;
     }
 
@@ -191,7 +238,7 @@ webSocketBridgeNotify.listen(function(text, byte) {
 // get description for notificationaccotding to its type id
     var content = types[typeid](text, desc);
 //append the text in main notificatin div
-    var new_li = '<li class="note-div-sm unread"> <a href='+ text.url +' class="full"> <div class="col-md-1">' + content + '<div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ today+' </div></div> </a> </li>';
+    var new_li = '<li class="note-div-sm unread"> <a href='+ text.url +' class="full"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div><div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ today+' </div></div> </a> </li>';
 
     $(new_li).prependTo($('#notification-ul'));
     document.getElementById('beep').play();

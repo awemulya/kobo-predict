@@ -31,6 +31,8 @@ class UserRole(models.Model):
         return dict(
             user = self.user.get_full_name(), email = self.user.email
             )
+    def getname(self):
+        return str("role")
 
     class Meta:
         unique_together = ('user', 'group', 'organization', 'project', 'site')
