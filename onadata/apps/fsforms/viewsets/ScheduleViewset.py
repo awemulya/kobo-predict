@@ -1,9 +1,11 @@
+import json
+
 from rest_framework import viewsets
 from rest_framework.response import Response
 
 from onadata.apps.fsforms.models import Schedule, Days, FieldSightXF
 from onadata.apps.fsforms.serializers.ScheduleSerializer import ScheduleSerializer, DaysSerializer
-
+from channels import Group as ChannelGroup
 
 class ScheduleViewset(viewsets.ModelViewSet):
     """
@@ -49,6 +51,34 @@ class ScheduleViewset(viewsets.ModelViewSet):
                                     project=schedule.project)
         if data.has_key("site"):
             fxf.is_deployed=True
+            noti = fxf.logs.create(source=self.request.user, type=19, title="Schedule",
+                                  organization=fxf.project.organization,
+                                  project = fxf.project,
+                                  site = fxf.site,
+                                  description='{0} assigned new Schedule form  {1} to {2} '.format(
+                                      self.request.user.get_full_name(),
+                                      fxf.xf.title,
+                                      fxf.site.name
+                                  ))
+            result = {}
+            result['description'] = noti.description
+            result['url'] = noti.get_absolute_url()
+            ChannelGroup("site-{}".format(fxf.site.id)).send({"text": json.dumps(result)})
+            ChannelGroup("project-{}".format(fxf.site.project.id)).send({"text": json.dumps(result)})
+        else:
+            noti = fxf.logs.create(source=self.request.user, type=18, title="Schedule",
+                      organization=fxf.project.organization,
+                      project = fxf.project,
+                      description='{0} assigned new Schedule form  {1} to {2} '.format(
+                          self.request.user.get_full_name(),
+                          fxf.xf.title,
+                          fxf.project.name
+                      ))
+            result = {}
+            result['description'] = noti.description
+            result['url'] = noti.get_absolute_url()
+            # ChannelGroup("site-{}".format(fxf.site.id)).send({"text": json.dumps(result)})
+            ChannelGroup("project-{}".format(fxf.project.id)).send({"text": json.dumps(result)})
         fxf.save()
 
 

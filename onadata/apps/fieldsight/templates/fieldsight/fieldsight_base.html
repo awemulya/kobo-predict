@@ -98,8 +98,8 @@ notificationCount = parseInt(notificationCount);
 var id = "{{request.user.id}}";
 var channel_url = "{{channels_url}}";
 var orgid = "{{oid}}";
-var pid = "{{oid}}";
-var sid = "{{oid}}";
+var pid = "{{pid}}";
+var sid = "{{sid}}";
 var today = new Date().toDateString();
 
 
@@ -211,12 +211,12 @@ const webSocketBridgeNotifySite = new channels.WebSocketBridge();
 const webSocketBridgeChat = new channels.WebSocketBridge();
 
 // check type of user and connect it to its respective notification group
-if(orgid != ""){
-webSocketBridgeNotify.connect(channel_url+'notify/'+orgid+'/');
-}else if(pid != ""){
+if(sid != "0"){
+webSocketBridgeNotify.connect(channel_url+'site/'+sid+'/');
+}else if(pid != "0"){
 webSocketBridgeNotifyProject.connect(channel_url+'project/'+pid+'/');
-}else if(sid != ""){
-  webSocketBridgeNotifySite.connect(channel_url+'site/'+sid+'/');
+}else{
+  webSocketBridgeNotifySite.connect(channel_url+'notify/'+orgid+'/');
 }
 
 webSocketBridgeChat.connect(channel_url+'chat/'+id+'/');
