@@ -53,6 +53,8 @@ class FieldSightLog(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
 
+    
+
     class Meta:
         get_latest_by = "-date"
         ordering = ["-date"]
@@ -63,7 +65,7 @@ class FieldSightLog(models.Model):
     def get_event_url(self):
         return self.content_object.get_absolute_url()
 
-    def get_content_name(self):
+    def get_event_name(self):
         return self.content_object.getname()
 
     def get_source_url(self):

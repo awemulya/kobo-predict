@@ -60,52 +60,98 @@
         2 : type2,
         3 : type3,
         4 : type4,
-        // 5 : type5,
-        // 6 : type6,
-        // 7 : type7,
-        // 8 : type8,
-        // 9 : type9,
-        // 10 : type10,
+        5 : type5,
+        6 : type6,
+        7 : type7,
+        8 : type8,
+        9 : type9,
+        10 : type10,
         // 11 : type11,
-        // 12 : type12,
-        // 13 : type13,
-        // 14 : type14,
+        12 : type12,
+        13 : type13,
+        14 : type14,
         // 15 : type15,
         // 16 : type16,
         // 17 : type17,
         // 18 : type18,
-        // 19 : type19,
+        19 : type19,
     }
 //notification message list builder with ahref links
     function type0(data){
-         content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b><a href="'+ data.get_source_url +'">' + data.source_name +'</a></b> joined <b><a href="' +  data.get_org_url + '">' + data.org_name + '</a></b> as an Organization Admin.</span>';
+         content = '<b><a href="'+ data.get_source_url +'">' + data.source_name +'</a></b> joined <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> as an Organization Admin.';
          return content;
     }
 
     function type1(data){
-          content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as the Project Manager <b><a href="' +  data.get_project_url + '">' + data.project_name + '</a></b> by <b><a href="' +  data.invitor_url + '">' + data.invitor_name + '</a></b>'+ '</span>';
+          content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as the Project Manager <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> by <b><a href="' +  data.invitor_url + '">' + data.invitor_name + '</a></b>';
               return content;
     }
 
     function type2(data){
-           content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Reviewer of <b><a href="' +  data.site_url + '">' + data.site_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>'+ '</span>';
+           content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Reviewer of <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>';
               return content;
           
     }
     function type3(data){
-          content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-                <span class="detail-text1 notification-title-sm">'+ '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Site Supervisor of <b><a href="' +  data.get_site_url + '">' + data.site_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>'+ '</span>';
+          content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Site Supervisor of <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>';
                 return content;
           
     }
     function type4(data){
-           content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div><div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as an Organization Admin in <b><a href="' +  data.get_org_url + '">' + data.org_name + '</a></b>'+ '</span>';
+           content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as an Organization Admin in <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
               return content;
     }
+    function type5(data){
+           content = '<b>'+ data.actor_name +'</b> was assigned as a Project Manager in <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
+              return content;
+    }
+    function type6(data){
+           content = '<b>'+ data.actor_name +'</b> was assigned as a Reviewer in <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
+              return content;
+    }
+
+    function type7(data){
+               content = '<b>'+ data.actor_name +'</b> was assigned as a Site Supervisor in <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
+                  return content;
+        }
+
+
+    function type8(data){
+               content = '<b>'+ data.actor_name +'</b> created a new organization named <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
+                  return content;
+        }
+
+
+    function type9(data){
+               content = '<b>'+ data.actor_name +'</b> created a new project named <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
+                  return content;
+        }
+
+
+    function type10(data){
+               content = '<b>'+ data.actor_name +'</b> created a new site named <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
+                  return content;
+        }
+
+    function type12(data){
+               content = '<b>'+ data.actor_name +'</b> changed the details of <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
+                  return content;
+        }       
+            
+    function type13(data){
+               content = '<b>'+ data.actor_name +'</b> changed the details of <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
+                  return content;
+        } 
+
+    function type14(data){
+               content = '<b>'+ data.actor_name +'</b> changed the details of <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
+                  return content;
+        }   
+
+    function type19(data){
+               content = '<b>'+ data.actor_name +'</b> edited <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> form.';
+                  return content;
+        }
 
 
 document.onload = getnotifdata('{% url 'eventlog:api-not' %}');
@@ -131,7 +177,7 @@ document.onload = getnotifdata('{% url 'eventlog:api-not' %}');
 
 function populatelist(data, index){
 
-    if(parseInt(data.type) < 5){
+    if(parseInt(data.type) < 11){
         console.log(data.type);
 
     typeid = data.type;
@@ -139,7 +185,7 @@ function populatelist(data, index){
 // get description for notificationaccotding to its type id
     var content = types[typeid](data);
 //append the data in main notificatin div
-    var new_li = '<li class="note-div-sm unread" id="'+data.id+'" style="display:none;"> <a href='+ data.url +' class="full"> <div class="col-md-1">' + content + '<div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ today+' </div></div> </a> </li>';
+    var new_li = '<li class="note-div-sm unread" id="'+data.id+'" style="display:none;"> <a href='+ data.url +' class="full"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.date+' </div></div> </a> </li>';
 
     // var div = document.getElementById('notifications');
 

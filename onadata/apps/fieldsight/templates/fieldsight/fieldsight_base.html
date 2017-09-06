@@ -110,16 +110,16 @@ var types = {
         2 : type2,
         3 : type3,
         4 : type4,
-        // 5 : type5,
-        // 6 : type6,
-        // 7 : type7,
-        // 8 : type8,
-        // 9 : type9,
-        // 10 : type10,
+        5 : type5,
+        6 : type6,
+        7 : type7,
+        8 : type8,
+        9 : type9,
+        10 : type10,
         // 11 : type11,
-        // 12 : type12,
-        // 13 : type13,
-        // 14 : type14,
+        12 : type12,
+        13 : type13,
+        14 : type14,
         // 15 : type15,
         // 16 : type16,
         // 17 : type17,
@@ -127,80 +127,80 @@ var types = {
         // 19 : type19,
     }
 //notification message list builder with ahref links
-    function type0(text, desc){
-         content = '<b>'+ text.actor_name +'</b> joined <b><a href="' +  text.org_url + '">' + text.get_org_name + '</a></b> as an Organization Admin.';
+    function type0(text){
+         content = '<b>'+ text.actor_name +'</b> joined <b><a href="' +  text.org_url + '">' + text.get_event_name + '</a></b> as an Organization Admin.';
          return content;
     }
 
-    function type1(text, desc){
+    function type1(text){
           content = '<b>'+ text.actor_name +'</b> was added as the Project Manager <b><a href="' +  text.get_project_url + '">' + text.project_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>';
               return content;
     }
 
-    function type2(text, desc){
+    function type2(text){
            content = '<b>'+ text.actor_name +'</b> was added as Reviewer of <b><a href="' +  text.site_url + '">' + text.site_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>';
               return content;
           
     }
-    function type3(text, desc){
-          content = '<b>'+ text.actor_name +'</b> was added as Site Supervisor of <b><a href="' +  text.site_url + '">' + text.site_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>';
+    function type3(text){
+          content = '<b>'+ text.actor_name +'</b> was added as Site Supervisor of <b><a href="' +  text.event_url + '">' + text.event_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>';
                 return content;
           
     }
-    function type4(text, desc){
-           content = '<b>'+ text.actor_name +'</b> was assigned as an Organization Admin in <b><a href="' +  text.get_org_url + '">' + text.org_name + '</a></b>';
+    function type4(text){
+           content = '<b>'+ text.actor_name +'</b> was assigned as an Organization Admin in <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
               return content;
     }
-    function type5(text, desc){
-           content = '<b>'+ text.actor_name +'</b> was assigned as a Project Manager in <b><a href="' +  text.get_project_url + '">' + text.project_name + '</a></b>';
-              return content;
-    }
-
-function type6(text, desc){
-           content = '<b>'+ text.actor_name +'</b> was assigned as a Reviewer in <b><a href="' +  text.get_site_url + '">' + text.site_name + '</a></b>';
+    function type5(text){
+           content = '<b>'+ text.actor_name +'</b> was assigned as a Project Manager in <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
               return content;
     }
 
-function type7(text, desc){
-           content = '<b>'+ text.actor_name +'</b> was assigned as a Site Supervisor in <b><a href="' +  text.get_site_url + '">' + text.site_name + '</a></b>';
+function type6(text){
+           content = '<b>'+ text.actor_name +'</b> was assigned as a Reviewer in <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
               return content;
     }
 
-
-function type8(text, desc){
-           content = '<b>'+ text.actor_name +'</b> created a new organization named <b><a href="' +  text.get_org_url + '">' + text.org_name + '</a></b>';
+function type7(text){
+           content = '<b>'+ text.actor_name +'</b> was assigned as a Site Supervisor in <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
               return content;
     }
 
 
-function type9(text, desc){
-           content = '<b>'+ text.actor_name +'</b> created a new project named <b><a href="' +  text.get_project_url + '">' + text.project_name + '</a></b>';
+function type8(text){
+           content = '<b>'+ text.actor_name +'</b> created a new organization named <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
               return content;
     }
 
 
-function type10(text, desc){
-           content = '<b>'+ text.actor_name +'</b> created a new site named <b><a href="' +  text.get_site_url + '">' + text.site_name + '</a></b>';
+function type9(text){
+           content = '<b>'+ text.actor_name +'</b> created a new project named <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
               return content;
     }
 
-function type12(text, desc){
-           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_org_url + '">' + text.org_name + '</a></b>';
+
+function type10(text){
+           content = '<b>'+ text.actor_name +'</b> created a new site named <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+              return content;
+    }
+
+function type12(text){
+           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
               return content;
     }       
         
-function type13(text, desc){
-           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_project_url + '">' + text.project_name + '</a></b>';
+function type13(text){
+           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
               return content;
     } 
 
-function type14(text, desc){
-           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_site_url + '">' + text.site_name + '</a></b>';
+function type14(text){
+           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
               return content;
     }   
 
-function type19(text, desc){
-           content = '<b>'+ text.actor_name +'</b> edited <b><a href="' +  text.get_site_url + '">' + text.site_name + '</a></b> form.';
+function type19(text){
+           content = '<b>'+ text.actor_name +'</b> edited <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b> form.';
               return content;
     }
 
