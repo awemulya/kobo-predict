@@ -512,7 +512,7 @@ class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
         self.object.organization_id = self.kwargs.get('pk')
         self.object.save()
         noti = self.object.logs.create(source=self.request.user, type=10, title="new Project",
-                                       organization=self.object.organization,
+                                       organization=self.object.organization, content_object=self.object,
                                        description='{0} created new project named {1}'.format(
                                            self.request.user.get_full_name(), self.object.name))
         result = {}
@@ -533,7 +533,7 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
         self.object = form.save()
         noti = self.object.logs.create(source=self.request.user, type=14, title="Edit Project",
                                        organization=self.object.organization,
-                                       project=self.object,
+                                       project=self.object, content_object=self.object,
                                        description='{0} changed the details of project named {1}'.format(
                                            self.request.user.get_full_name(), self.object.name))
         result = {}
@@ -549,15 +549,15 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
 class ProjectDeleteView(ProjectView, ProjectRoleMixinDeleteView, DeleteView):
     def delete(self,*args, **kwargs):
         self.object = self.get_object()
-        noti = self.object.logs.create(source=self.request.user, type=4, title="new Site",
-                                       organization=self.object.organization,
-                                       description="new project {0} deleted by {1}".
-                                       format(self.object.name, self.request.user.username))
-        result = {}
-        result['description'] = 'new project {0} deleted by {1}'.format(self.object.name, self.request.user.username)
-        result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        # noti = self.object.logs.create(source=self.request.user, type=4, title="new Site",
+        #                                organization=self.object.organization,
+        #                                description="new project {0} deleted by {1}".
+        #                                format(self.object.name, self.request.user.username))
+        # result = {}
+        # result['description'] = 'new project {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+        # result['url'] = noti.get_absolute_url()
+        # ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -584,7 +584,7 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
         self.object = form.save()
         noti = self.object.logs.create(source=self.request.user, type=11, title="new Site",
                                        organization=self.object.project.organization,
-                                       project=self.object.project,
+                                       project=self.object.project, content_object=self.object, extra_object=self.object.project,
                                        description='{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
                                                                                  object.name, object.project.name))
         result = {}
@@ -605,7 +605,7 @@ class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
     def form_valid(self, form):
         self.object = form.save()
         noti = self.object.logs.create(source=self.request.user, type=15, title="edit Site",
-                                       organization=self.object.project.organization,
+                                       organization=self.object.project.organization, project=self.object.project, content_object=self.object,
                                        description='{0} changed the details of site named {1}'.format(
                                            self.request.user.get_full_name(), self.object.name))
         result = {}
@@ -622,15 +622,15 @@ class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
 class SiteDeleteView(SiteView, ProjectRoleMixin, DeleteView):
     def delete(self,*args, **kwargs):
         self.object = self.get_object()
-        noti = self.object.logs.create(source=self.request.user, type=3, title="new Site",
-                                       organization=self.object.project.organization,
-                                       description="new site {0} deleted by {1}".
-                                       format(self.object.name, self.request.user.username))
-        result = {}
-        result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
-        result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        # noti = self.object.logs.create(source=self.request.user, type=3, title="new Site",
+        #                                organization=self.object.project.organization,
+        #                                description="new site {0} deleted by {1}".
+        #                                format(self.object.name, self.request.user.username))
+        # result = {}
+        # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+        # result['url'] = noti.get_absolute_url()
+        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -661,9 +661,9 @@ def ajax_upload_sites(request, pk):
                     _site.location=location
                     _site.save()
             if count:
-                noti = project.logs.create(source=request.user, type=12, title="bulk Sites",
+                noti = project.logs.create(source=request.user, type=12, title=count + " Sites",
                                        organization=project.organization,
-                                       project=project,
+                                       project=project, content_object=project,
                                        description='{0} created a {1} sites in {2}'.
                                            format(request.user.get_full_name(), count, project.name))
                 result = {}
@@ -781,14 +781,14 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
             org = Organization.objects.get(pk=organization)
             profile = UserProfile(user=new_user, organization=org)
             profile.save()
-            noti = profile.logs.create(source=self.request.user, type=0, title="new User",
-                                    organization=profile.organization, description="new user {0} created by {1}".
-                                    format(new_user.username, self.request.user.username))
-            result = {}
-            result['description'] = 'new user {0} created by {1}'.format(new_user.username, self.request.user.username)
-            result['url'] = noti.get_absolute_url()
-            ChannelGroup("notify-{}".format(profile.organization.id)).send({"text":json.dumps(result)})
-            ChannelGroup("notify-0").send({"text":json.dumps(result)})
+            # noti = profile.logs.create(source=self.request.user, type=0, title="new User",
+            #                         organization=profile.organization, description="new user {0} created by {1}".
+            #                         format(new_user.username, self.request.user.username))
+            # result = {}
+            # result['description'] = 'new user {0} created by {1}'.format(new_user.username, self.request.user.username)
+            # result['url'] = noti.get_absolute_url()
+            # ChannelGroup("notify-{}".format(profile.organization.id)).send({"text":json.dumps(result)})
+            # ChannelGroup("notify-0").send({"text":json.dumps(result)})
 
         return new_user
 
@@ -961,10 +961,10 @@ def senduserinvite(request):
 
         invite.save()
         organization = Organization.objects.get(pk=1)
-        noti = invite.logs.create(source=user[0], type=9, title="new Role",
-                                       organization_id=request.POST.get('organization_id'),
-                                       description="{0} sent you an invite to join {1} as the {2}.".
-                                       format(request.user.username, organization.name, invite.group.name,))
+        # noti = invite.logs.create(source=user[0], type=9, title="new Role",
+        #                                organization_id=request.POST.get('organization_id'),
+        #                                description="{0} sent you an invite to join {1} as the {2}.".
+        #                                format(request.user.username, organization.name, invite.group.name,))
         # result = {}
         # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
         # result['url'] = noti.get_absolute_url()
@@ -1032,7 +1032,6 @@ class ActivateRole(TemplateView):
                 invite.is_declined = True
             invite.is_used = True
             invite.save()
-            return HttpResponseRedirect(reverse('login'))
         else:
             user = User(username=request.POST.get('username'), email=invite.email, first_name=request.POST.get('firstname'), last_name=request.POST.get('lastname'))
             user.set_password(request.POST.get('password1'))
@@ -1041,7 +1040,30 @@ class ActivateRole(TemplateView):
             userrole.save()
             invite.is_used = True
             invite.save()
-            return HttpResponseRedirect(reverse('login'))
+
+        if invite.group.name == "Organization Admin":
+            noti_type = 1
+            content = invite.organization
+        elif invite.group.name == "Project Manager":
+            noti_type = 2
+            content = invite.project
+        elif invite.group.name == "Reviewer":
+            noti_type = 3
+            content = invite.site
+        elif invite.group.name == "Site Supervisor":
+            noti_type = 4
+            content = invite.site
+        
+        noti = invite.logs.create(source=user, type=noti_type, title="new Role",
+                                       organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.user,
+                                       description="{0} was added as the {1} of {2} by {3}.".
+                                       format(user.username, invite.group.name, content.name, invite.user ))
+        # result = {}
+        # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+        # result['url'] = noti.get_absolute_url()
+        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        return HttpResponseRedirect(reverse('login'))
             
 @login_required()
 def checkemailforinvite(request):

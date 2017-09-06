@@ -18,21 +18,26 @@ class LogSerializer(serializers.ModelSerializer):
     source_img = serializers.ReadOnlyField(source='source.user_profile.profile_picture.url', read_only=True)
     get_source_url = serializers.ReadOnlyField()
     
-    get_content_name = serializers.ReadOnlyField()
-    get_content_url = serializers.ReadOnlyField()
+    get_event_name = serializers.ReadOnlyField()
+    get_event_url = serializers.ReadOnlyField()
 
-    org_name = serializers.ReadOnlyField(source='organization.name', read_only=True)
-    get_org_url = serializers.ReadOnlyField()
+    get_extraobj_name = serializers.ReadOnlyField()
+    get_extraobj_url = serializers.ReadOnlyField()
 
-    project_name = serializers.ReadOnlyField(source='project.name', read_only=True)
-    get_project_url = serializers.ReadOnlyField()
+    get_absolute_url = serializers.ReadOnlyField()
+    
+    # org_name = serializers.ReadOnlyField(source='organization.name', read_only=True)
+    # get_org_url = serializers.ReadOnlyField()
 
-    site_name = serializers.ReadOnlyField(source='site.name', read_only=True)
-    get_site_url = serializers.ReadOnlyField()
+    # project_name = serializers.ReadOnlyField(source='project.name', read_only=True)
+    # get_project_url = serializers.ReadOnlyField()
+
+    # site_name = serializers.ReadOnlyField(source='site.name', read_only=True)
+    # get_site_url = serializers.ReadOnlyField()
 
     class Meta:
         model = FieldSightLog
-        exclude = ('title', 'description', 'seen_by', 'content_type', 'organization', 'project', 'site', 'object_id')
+        exclude = ('title', 'description', 'is_seen', 'content_type', 'organization', 'project', 'site', 'object_id', 'extra_object_id', 'source', 'extra_content_type',)
 
 
 

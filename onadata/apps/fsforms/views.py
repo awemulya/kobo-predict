@@ -1326,7 +1326,10 @@ def instance_status(request, instance):
                 org = fi.project.organization if fi.project else fi.site.project.organization
                 noti = status_changed.logs.create(source=request.user, type=17, title="form status changed",
                                                   organization=org,
+                                                  project=fi.project,
                                                   site = fi.site,
+                                                  content_object=fi.site,
+                                                  extra_message='{0} {1}'.format(fi.site_fxf.form_type, fi.site_fxf.xf.title),
                                                   description='{0} reviewed a response for {1} {2} in {3}'.format(
                                                       request.user.get_full_name(),
                                                       fi.site_fxf.form_type,
