@@ -113,6 +113,9 @@ class XForm(BaseModel):
     def file_name(self):
         return self.id_string + ".xml"
 
+    def getname(self):
+        return self.title
+
     def url(self):
         return reverse(
             "download_xform",
