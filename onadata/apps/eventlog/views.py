@@ -87,11 +87,10 @@ class MessageListView(ListView):
 class NotificationDetailView(View):
     def get(self, request, *args, **kwargs):
         notification = FieldSightLog.objects.get(pk=kwargs.get('pk'))
-        if not notification.is_seen:
-            notification.is_seen = True
-            notification.save()
+        if not notification.seen_by.filter(id=request.user.id).exists():
+            notification.seen_by.add(request.user)
         if notification.type == 0:
-            return redirect('/users/profile/{}'.format(notification.content_object.user.id))
+            return redirest('/users/profile/{}'.format(notification.content_object.user.id))
         url =  notification.content_object.get_absolute_url()
         return redirect(url)
 

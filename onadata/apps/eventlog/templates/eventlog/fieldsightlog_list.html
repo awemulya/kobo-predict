@@ -214,6 +214,10 @@ function populatelist(data, index){
         console.log(data.type);
 
     typeid = data.type;
+
+    if(data.seen_by.includes(1)){
+      alert();
+    }
     
 // get description for notificationaccotding to its type id
     var content = types[typeid](data);

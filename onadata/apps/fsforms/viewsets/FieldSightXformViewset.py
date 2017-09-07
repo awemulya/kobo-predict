@@ -49,7 +49,7 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
                                               organization=org,
                                               project = fxf.project,
                                               content_object=fxf.project,
-                                              extra_message='{0} {1}'.format(fxf.type, fxf.xf.title),
+                                              extra_message='{0} {1}'.format(fxf.form_type, fxf.xf.title),
                                               description='{0} assigned new General form  {1} to {2} '.format(
                                                   self.request.user.get_full_name(),
                                                   fxf.xf.title,
@@ -68,7 +68,7 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
                                               project=fxf.site.project,
                                               site = fxf.site,
                                               content_object=fxf.site,
-                                              extra_message='{0} {1}'.format(fxf.type, fxf.xf.title),
+                                              extra_message='{0} {1}'.format(fxf.form_type, fxf.xf.title),
                                               description='{0} assigned new General form  {1} to {2} '.format(
                                                   self.request.user.get_full_name(),
                                                   fxf.xf.title,
