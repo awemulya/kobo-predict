@@ -168,12 +168,12 @@
         }   
 
     function type18(data){
-               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> assigned a new '+ data.title +' <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> in project <b><a href="' + data.get_extraobj_url+ '">' + data.get_eventobj_url+'</a></b>';
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> assigned a new form'+ data.title +' in project <b><a href="' + data.get_content_url+ '">' + data.get_content_url+'</a></b>';
                   return content;
         }   
 
     function type19(data){
-               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> assigned a new '+ data.title +' <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> in site <b><a href="' + data.get_extraobj_url+ '">' + data.get_eventobj_url+'</a></b>';
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> assigned a new '+ data.title +' in site <b><a href="' + data.get_content_url+ '">' + data.get_content_url+'</a></b>';
                   return content;
         }   
 
@@ -214,15 +214,15 @@ function populatelist(data, index){
         console.log(data.type);
 
     typeid = data.type;
-
-    if(data.seen_by.includes(1)){
-      alert();
+    var readstatus='unread';
+    if(data.seen_by.includes({{ request.user.id }})){
+       readstatus='read';
     }
     
 // get description for notificationaccotding to its type id
     var content = types[typeid](data);
 //append the data in main notificatin div
-    var new_li = '<li class="note-div-sm unread" id="'+data.id+'" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.date+' </div></div>  </li>';
+    var new_li = '<li class="note-div-sm '+ readstatus +'" id="'+data.id+'" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.date+' </div></div>  </li>';
 
     // var div = document.getElementById('notifications');
 
