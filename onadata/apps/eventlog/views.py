@@ -52,6 +52,7 @@ class NotificationListView(OrganizationMixin, ListView):
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 20
 
+
 class NotificationViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing sites.
@@ -62,11 +63,18 @@ class NotificationViewSet(viewsets.ModelViewSet):
     pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
+        if self.request.role.group.name == "Super Admin":
+            return queryset 
         org_ids = self.request.roles.filter(group__name='Organization Admin').values('organization_id')
         project_ids = self.request.roles.filter(group__name='Project Manager').values('project_id')
         site_ids = self.request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')) .values('site_id')
         return queryset.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids))
 
+def getnotificationcount(request):
+    org_ids = self.request.roles.filter(group__name='Organization Admin').values('organization_id')
+    project_ids = self.request.roles.filter(group__name='Project Manager').values('project_id')
+    site_ids = self.request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')) .values('site_id')
+    return FieldSightLog.objects.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids)).exclude(seen_by__id=self.request.user.id).count()
 
 class MessageListView(ListView):
     model = FieldSightMessage

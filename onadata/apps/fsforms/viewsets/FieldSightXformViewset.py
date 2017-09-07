@@ -48,6 +48,8 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
             noti = fxf.logs.create(source=self.request.user, type=18, title="General",
                                               organization=org,
                                               project = fxf.project,
+                                              content_object=fxf.project,
+                                              extra_message='{0} {1}'.format(fxf.type, fxf.xf.title),
                                               description='{0} assigned new General form  {1} to {2} '.format(
                                                   self.request.user.get_full_name(),
                                                   fxf.xf.title,
@@ -63,7 +65,10 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
 
             noti = fxf.logs.create(source=self.request.user, type=19, title="General",
                                               organization=org,
+                                              project=fxf.site.project,
                                               site = fxf.site,
+                                              content_object=fxf.site,
+                                              extra_message='{0} {1}'.format(fxf.type, fxf.xf.title),
                                               description='{0} assigned new General form  {1} to {2} '.format(
                                                   self.request.user.get_full_name(),
                                                   fxf.xf.title,

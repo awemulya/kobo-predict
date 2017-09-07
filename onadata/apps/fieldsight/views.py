@@ -661,9 +661,10 @@ def ajax_upload_sites(request, pk):
                     _site.location=location
                     _site.save()
             if count:
-                noti = project.logs.create(source=request.user, type=12, title=count + " Sites",
+                noti = project.logs.create(source=request.user, type=12, title="Bulk Sites",
                                        organization=project.organization,
                                        project=project, content_object=project,
+                                       extra_message=count + "Sites",
                                        description='{0} created a {1} sites in {2}'.
                                            format(request.user.get_full_name(), count, project.name))
                 result = {}

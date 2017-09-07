@@ -205,6 +205,9 @@ document.onload = getnotifdata('{% url 'eventlog:api-not' %}');
 
 
 
+function redirect(url){
+  window.location = url;
+}
 function populatelist(data, index){
 
     if(parseInt(data.type) < 11){
@@ -215,7 +218,7 @@ function populatelist(data, index){
 // get description for notificationaccotding to its type id
     var content = types[typeid](data);
 //append the data in main notificatin div
-    var new_li = '<li class="note-div-sm unread" id="'+data.id+'" style="display:none;" onclick="alert();"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.date+' </div></div>  </li>';
+    var new_li = '<li class="note-div-sm unread" id="'+data.id+'" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.date+' </div></div>  </li>';
 
     // var div = document.getElementById('notifications');
 
@@ -226,7 +229,6 @@ $(new_li).appendTo("#notifications");
 $("#"+data.id).fadeIn(speed);
 }
 }
-
 
 
 </script>

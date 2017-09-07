@@ -54,7 +54,7 @@ class ProjectCreationViewSet(viewsets.ModelViewSet):
         project = serializer.save()
         # project.save()
         noti = project.logs.create(source=self.request.user, type=10, title="new Project",
-                                       organization=project.organization,
+                                       organization=project.organization, content_object=project,
                                        description='{0} created new project named {1}'.format(
                                            self.request.user.get_full_name(), project.name))
         result = {}

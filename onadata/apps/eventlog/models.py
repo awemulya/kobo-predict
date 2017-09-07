@@ -107,6 +107,8 @@ class FieldSightLog(models.Model):
         return self.site.get_absolute_url()
 
 
+
+
 class FieldSightMessage(models.Model):
     sender = models.ForeignKey(User, related_name="sender")
     receiver = models.ForeignKey(User, related_name="receiver")
