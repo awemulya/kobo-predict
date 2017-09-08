@@ -218,6 +218,9 @@ class FieldSightXF(models.Model):
             }
         )
 
+    def getname(self):
+        return self.xf.title
+
     def get_absolute_url(self):
         if self.project:
             return reverse('forms:project_html_export', kwargs={'fsxf_id': self.pk})

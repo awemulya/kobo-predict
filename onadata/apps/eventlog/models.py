@@ -8,32 +8,33 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 
 from onadata.apps.fieldsight.models import Organization, Project, Site
+from onadata.apps.users.models import UserProfile
 
 user_type = ContentType.objects.get(app_label="users", model="userprofile")
 
 
 class FieldSightLog(models.Model):
     ACTION_TYPES = (
-        (0, 'User joined Organization Name as an Organization Admin.'),
-        (1, 'User was added as the Project Manager of Project Name by Invitor Full Name.'),
-        (2, 'User was added as Reviewer of Site Name by Invitor Full Name.'),
-        (3, 'User was added as Site Supervisor of Site Name by Invitor Full Name.'),
-        (4, 'User was assigned as an Organization Admin in Organization Name.'),
-        (5, 'User was assigned as a Project Manager in Project Name.'),
-        (6, 'User was assigned as a Reviewer in Site Name.'),
-        (7, 'User was assigned as a Site Supervisor in Site Name.'),
-        (8, 'User created a new organization named Organization Name'),
-        (9, 'User created a new project named Project Name.'),
-        (10, 'User created a new site named Site Name in Project Name.'),
-        (11, 'User created number + sites in Project Name.'),
-        (12, 'User changed the details of Organization Name.'),
-        (13, 'User changed the details of Project Name.'),
-        (14, 'User changed the details of Site Name.'),
-        (15, 'User submitted a response for Form Type Form Name in Site Name.'),
-        (16, 'User reviewed a response for Form Type Form Name in Site Name.'),
-        (17, 'User assigned a new Form Type Form Name in Project Name.'),
-        (18, 'User assigned a new Form Type Form Name to Site Name.'),
-        (19, 'User edited Form Name form.'),
+        (1, 'User was added as the Organization Admin of Organization Name by Invitor Full Name.'),
+        (2, 'User was added as the Project Manager of Project Name by Invitor Full Name.'),
+        (3, 'User was added as Reviewer of Site Name by Invitor Full Name.'),
+        (4, 'User was added as Site Supervisor of Site Name by Invitor Full Name.'),
+        (5, 'User was assigned as an Organization Admin in Organization Name.'),
+        (6, 'User was assigned as a Project Manager in Project Name.'),
+        (7, 'User was assigned as a Reviewer in Site Name.'),
+        (8, 'User was assigned as a Site Supervisor in Site Name.'),
+        (9, 'User created a new organization named Organization Name'),
+        (10, 'User created a new project named Project Name.'),
+        (11, 'User created a new site named Site Name in Project Name.'),
+        (12, 'User created number + sites in Project Name.'),
+        (13, 'User changed the details of Organization Name.'),
+        (14, 'User changed the details of Project Name.'),
+        (15, 'User changed the details of Site Name.'),
+        (16, 'User submitted a response for Form Type Form Name in Site Name.'),
+        (17, 'User reviewed a response for Form Type Form Name in Site Name.'),
+        (18, 'User assigned a new Form Type Form Name in Project Name.'),
+        (19, 'User assigned a new Form Type Form Name to Site Name.'),
+        (20, 'User edited Form Name form.'),
     )
 
    
@@ -48,9 +49,16 @@ class FieldSightLog(models.Model):
     organization = models.ForeignKey(Organization, related_name="logs", null=True)
     project = models.ForeignKey(Project, related_name="logs", null=True)
     site = models.ForeignKey(Site, related_name="logs", null=True)
+    extra_message = models.CharField(max_length=255, blank=True, null=True)
+    
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
+
+    extra_content_type = models.ForeignKey(ContentType, related_name='notify_object', blank=True, null=True)
+    extra_object_id = models.CharField(max_length=255, blank=True, null=True)
+    extra_object = GenericForeignKey('extra_content_type', 'extra_object_id')
+    
 
     class Meta:
         get_latest_by = "-date"
@@ -61,6 +69,42 @@ class FieldSightLog(models.Model):
 
     def get_event_url(self):
         return self.content_object.get_absolute_url()
+
+    def get_event_name(self):
+        return self.content_object.getname()
+
+    def get_extraobj_url(self):
+        if self.extra_object is None:
+            return None
+        return self.extra_object.get_absolute_url()
+
+    def get_extraobj_name(self):
+        if self.extra_object is None:
+            return None
+        return self.extra_object.getname()
+
+    def get_source_url(self):
+        try:
+            profile = self.source.user_profile
+        except UserProfile.DoesNotExist:
+            return None
+        else:
+            return profile.get_absolute_url()
+
+    def get_org_url(self):
+        if self.organization is None:
+            return None
+        return self.organization.get_absolute_url()
+
+    def get_project_url(self):
+        if self.project is None:
+            return None
+        return self.project.get_absolute_url()
+
+    def get_site_url(self):
+        if self.site is None:
+            return None
+        return self.site.get_absolute_url()
 
 
 

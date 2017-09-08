@@ -98,8 +98,8 @@ notificationCount = parseInt(notificationCount);
 var id = "{{request.user.id}}";
 var channel_url = "{{channels_url}}";
 var orgid = "{{oid}}";
-var pid = "{{oid}}";
-var sid = "{{oid}}";
+var pid = "{{pid}}";
+var sid = "{{sid}}";
 var today = new Date().toDateString();
 
 
@@ -110,16 +110,16 @@ var types = {
         2 : type2,
         3 : type3,
         4 : type4,
-        // 5 : type5,
-        // 6 : type6,
-        // 7 : type7,
-        // 8 : type8,
-        // 9 : type9,
-        // 10 : type10,
+        5 : type5,
+        6 : type6,
+        7 : type7,
+        8 : type8,
+        9 : type9,
+        10 : type10,
         // 11 : type11,
-        // 12 : type12,
-        // 13 : type13,
-        // 14 : type14,
+        12 : type12,
+        13 : type13,
+        14 : type14,
         // 15 : type15,
         // 16 : type16,
         // 17 : type17,
@@ -127,33 +127,80 @@ var types = {
         // 19 : type19,
     }
 //notification message list builder with ahref links
-    function type0(text, desc){
-         content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.org_url + '">' + text.org_name + '</a></b>'+ desc[1] +'</span>';
+    function type0(text){
+         content = '<b>'+ text.actor_name +'</b> joined <b><a href="' +  text.org_url + '">' + text.get_event_name + '</a></b> as an Organization Admin.';
          return content;
     }
 
-    function type1(text, desc){
-          content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.project_url + '">' + text.project_name + '</a></b>'+ desc[1] + '<b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
+    function type1(text){
+          content = '<b>'+ text.actor_name +'</b> was added as the Project Manager <b><a href="' +  text.get_project_url + '">' + text.project_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>';
               return content;
     }
 
-    function type2(text, desc){
-           content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.site_url + '">' + text.site_name + '</a></b>'+ desc[1] + '<b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
+    function type2(text){
+           content = '<b>'+ text.actor_name +'</b> was added as Reviewer of <b><a href="' +  text.site_url + '">' + text.site_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>';
               return content;
           
     }
-    function type3(text, desc){
-          content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-                <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.site_url + '">' + text.site_name + '</a></b>'+ desc[1] + '<b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>'+ '</span>';
+    function type3(text){
+          content = '<b>'+ text.actor_name +'</b> was added as Site Supervisor of <b><a href="' +  text.event_url + '">' + text.event_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>';
                 return content;
           
     }
-    function type4(text, desc){
-           content = '<i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"> \
-              <span class="detail-text1 notification-title-sm">'+ '<b>'+ text.actor_name +'</b>' + desc[0] + '<b><a href="' +  text.site_url + '">' + text.site_name + '</a></b>'+ '</span>';
+    function type4(text){
+           content = '<b>'+ text.actor_name +'</b> was assigned as an Organization Admin in <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+              return content;
+    }
+    function type5(text){
+           content = '<b>'+ text.actor_name +'</b> was assigned as a Project Manager in <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+              return content;
+    }
+
+function type6(text){
+           content = '<b>'+ text.actor_name +'</b> was assigned as a Reviewer in <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+              return content;
+    }
+
+function type7(text){
+           content = '<b>'+ text.actor_name +'</b> was assigned as a Site Supervisor in <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+              return content;
+    }
+
+
+function type8(text){
+           content = '<b>'+ text.actor_name +'</b> created a new organization named <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+              return content;
+    }
+
+
+function type9(text){
+           content = '<b>'+ text.actor_name +'</b> created a new project named <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+              return content;
+    }
+
+
+function type10(text){
+           content = '<b>'+ text.actor_name +'</b> created a new site named <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+              return content;
+    }
+
+function type12(text){
+           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+              return content;
+    }       
+        
+function type13(text){
+           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+              return content;
+    } 
+
+function type14(text){
+           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+              return content;
+    }   
+
+function type19(text){
+           content = '<b>'+ text.actor_name +'</b> edited <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b> form.';
               return content;
     }
 
@@ -164,12 +211,12 @@ const webSocketBridgeNotifySite = new channels.WebSocketBridge();
 const webSocketBridgeChat = new channels.WebSocketBridge();
 
 // check type of user and connect it to its respective notification group
-if(orgid != ""){
-webSocketBridgeNotify.connect(channel_url+'notify/'+orgid+'/');
-}else if(pid != ""){
+if(sid != "0"){
+webSocketBridgeNotify.connect(channel_url+'site/'+sid+'/');
+}else if(pid != "0"){
 webSocketBridgeNotifyProject.connect(channel_url+'project/'+pid+'/');
-}else if(sid != ""){
-  webSocketBridgeNotifySite.connect(channel_url+'site/'+sid+'/');
+}else{
+  webSocketBridgeNotifySite.connect(channel_url+'notify/'+orgid+'/');
 }
 
 webSocketBridgeChat.connect(channel_url+'chat/'+id+'/');
@@ -191,7 +238,7 @@ webSocketBridgeNotify.listen(function(text, byte) {
 // get description for notificationaccotding to its type id
     var content = types[typeid](text, desc);
 //append the text in main notificatin div
-    var new_li = '<li class="note-div-sm unread"> <a href='+ text.url +' class="full"> <div class="col-md-1">' + content + '<div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ today+' </div></div> </a> </li>';
+    var new_li = '<li class="note-div-sm unread"> <a href='+ text.url +' class="full"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div><div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ today+' </div></div> </a> </li>';
 
     $(new_li).prependTo($('#notification-ul'));
     document.getElementById('beep').play();

@@ -44,3 +44,6 @@ class UserProfile(models.Model):
     def get_absolute_url(self):
         return reverse('users:profile', kwargs={'pk': self.pk})
 
+    def getname(self):
+        return self.user.username
+
