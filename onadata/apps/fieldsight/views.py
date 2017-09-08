@@ -1056,9 +1056,9 @@ class ActivateRole(TemplateView):
             content = invite.site
         
         noti = invite.logs.create(source=user, type=noti_type, title="new Role",
-                                       organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.user,
+                                       organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.by_user,
                                        description="{0} was added as the {1} of {2} by {3}.".
-                                       format(user.username, invite.group.name, content.name, invite.user ))
+                                       format(user.username, invite.group.name, content.name, invite.by_user ))
         # result = {}
         # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
         # result['url'] = noti.get_absolute_url()

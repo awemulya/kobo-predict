@@ -92,19 +92,13 @@
     <![endif]-->
 <audio id="beep" src="{{ STATIC_URL }}sound/notification.mp3"></audio>
 <script type="text/javascript">
-var notificationCount = $('#noti-count').text() || "0";
-notificationCount = parseInt(notificationCount);
+  
 
-var id = "{{request.user.id}}";
-var channel_url = "{{channels_url}}";
-var orgid = "{{oid}}";
-var pid = "{{pid}}";
-var sid = "{{sid}}";
-var today = new Date().toDateString();
+document.onload = getnotifdata('{% url 'eventlog:api-not' %}');
 
-
-// 20 types of notifications with their respqctive id's
-var types = {
+    var data = "";
+    var speed = 500;
+    var types = {
         0 : type0,
         1 : type1,
         2 : type2,
@@ -116,93 +110,192 @@ var types = {
         8 : type8,
         9 : type9,
         10 : type10,
-        // 11 : type11,
+        11 : type11,
         12 : type12,
         13 : type13,
         14 : type14,
-        // 15 : type15,
-        // 16 : type16,
-        // 17 : type17,
-        // 18 : type18,
-        // 19 : type19,
+        15 : type15,
+        16 : type16,
+        17 : type17,
+        18 : type18,
+        19 : type19,
+        20 : type20,
     }
+
 //notification message list builder with ahref links
-    function type0(text){
-         content = '<b>'+ text.actor_name +'</b> joined <b><a href="' +  text.org_url + '">' + text.get_event_name + '</a></b> as an Organization Admin.';
+    function type0(data){
+         content = '<b><a href="'+ data.get_source_url +'">' + data.source_name +'</a></b> joined <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> as an Organization Admin.';
+         return content;
+    }
+    function type1(data){
+         content = '<b><a href="'+ data.get_source_url +'">' + data.source_name +'</a></b> joined <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> as an Organization Admin.';
          return content;
     }
 
-    function type1(text){
-          content = '<b>'+ text.actor_name +'</b> was added as the Project Manager <b><a href="' +  text.get_project_url + '">' + text.project_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>';
+    function type2(data){
+          content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as the Project Manager <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.invitor_url + '">' + data.invitor_name + '</a></b>';
               return content;
     }
 
-    function type2(text){
-           content = '<b>'+ text.actor_name +'</b> was added as Reviewer of <b><a href="' +  text.site_url + '">' + text.site_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>';
+    function type3(data){
+           content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Reviewer of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>';
               return content;
           
     }
-    function type3(text){
-          content = '<b>'+ text.actor_name +'</b> was added as Site Supervisor of <b><a href="' +  text.event_url + '">' + text.event_name + '</a></b> by <b><a href="' +  text.invitor_url + '">' + text.invitor_name + '</a></b>';
+    function type4(data){
+          content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Site Supervisor of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>';
                 return content;
           
     }
-    function type4(text){
-           content = '<b>'+ text.actor_name +'</b> was assigned as an Organization Admin in <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+    function type5(data){
+           content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as an Organization Admin in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
               return content;
     }
-    function type5(text){
-           content = '<b>'+ text.actor_name +'</b> was assigned as a Project Manager in <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+    function type6(data){
+           content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as a Project Manager in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
               return content;
     }
-
-function type6(text){
-           content = '<b>'+ text.actor_name +'</b> was assigned as a Reviewer in <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
-              return content;
-    }
-
-function type7(text){
-           content = '<b>'+ text.actor_name +'</b> was assigned as a Site Supervisor in <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
+    function type7(data){
+           content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as a Reviewer in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
               return content;
     }
 
+    function type8(data){
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as a Site Supervisor in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+                  return content;
+        }
 
-function type8(text){
-           content = '<b>'+ text.actor_name +'</b> created a new organization named <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
-              return content;
+    function type9(data){
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created a new organization named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+                  return content;
+        }
+
+
+    function type10(data){
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created a new project named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+                  return content;
+        }
+
+
+    function type11(data){
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created a new site named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> in  <b><a href="' +  data.get_extraobj_url + '">' + data.get_extraobj_name + '</a></b>';
+                  return content;
+        }
+
+    function type12(data){
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created <b>'+ title +' in <a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+                  return content;
+        }
+
+    function type13(data){
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+                  return content;
+        }       
+            
+    function type14(data){
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+                  return content;
+        } 
+
+    function type15(data){
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+                  return content;
+        }   
+
+    function type16(data){
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> submitted a response for '+ data.extra_message +' <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
+                  return content;
+        }   
+
+    function type17(data){
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> reviewed a response '+ data.title +' <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> in site <b><a href="' + data.get_extraobj_url+ '">' + data.get_eventobj_url+'</a></b>';
+                  return content;
+        }   
+
+    function type18(data){
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> assigned a new form'+ data.title +' in project <b><a href="' + data.get_content_url+ '">' + data.get_content_url+'</a></b>';
+                  return content;
+        }   
+
+    function type19(data){
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> assigned a new '+ data.title +' in site <b><a href="' + data.get_content_url+ '">' + data.get_content_url+'</a></b>';
+                  return content;
+        }   
+
+
+    function type20(data){
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> edited <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> form.';
+                  return content;
+        }
+
+function redirect(url){
+  window.location = url;
+}
+
+
+
+function dateparser(date){
+   let months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+ 
+    var d = new Date(date);
+
+    month = d.getMonth();
+    time=d.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+    clean_date = months[month] +', '+ d.getDate() +', '+ d.getFullYear() +', '+ time.toLowerCase()+'.';
+    return clean_date;
+
+}
+  function getnotifdata(url){ 
+      $.ajax({
+        url: url,
+        type: 'GET',
+        success: function (data) {
+           data.results.forEach(populatelist);
+           speed=0;
+
+        }
+      });
+}
+
+
+
+
+function populatelist(data, index){
+
+   
+    typeid = data.type;
+    var readstatus='unread';
+    if(data.seen_by.includes({{ request.user.id }})){
+       readstatus='read';
     }
+// get description for notificationaccotding to its type id
+    var content = types[typeid](data);
+//append the data in main notificatin div
+    
+    var new_li = '<li class="note-div-sm '+ readstatus +'" id="'+data.id+'" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ dateparser(data.date)+' </div></div>  </li>';
+
+    // var div = document.getElementById('notifications');
+
+    // div.innerHTML += new_li;
+    speed = speed+200;
+
+$(new_li).appendTo("#notification-ul");
+$("#"+data.id).fadeIn(speed);
+}
 
 
-function type9(text){
-           content = '<b>'+ text.actor_name +'</b> created a new project named <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
-              return content;
-    }
+</script>
 
+<script type="text/javascript">
+var notificationCount = $('#noti-count').text() || "0";
+notificationCount = parseInt(notificationCount);
 
-function type10(text){
-           content = '<b>'+ text.actor_name +'</b> created a new site named <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
-              return content;
-    }
-
-function type12(text){
-           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
-              return content;
-    }       
-        
-function type13(text){
-           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
-              return content;
-    } 
-
-function type14(text){
-           content = '<b>'+ text.actor_name +'</b> changed the details of <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b>';
-              return content;
-    }   
-
-function type19(text){
-           content = '<b>'+ text.actor_name +'</b> edited <b><a href="' +  text.get_event_url + '">' + text.event_name + '</a></b> form.';
-              return content;
-    }
+var id = "{{request.user.id}}";
+var channel_url = "{{channels_url}}";
+var orgid = "{{oid}}";
+var pid = "{{pid}}";
+var sid = "{{sid}}";
+var today = new Date().toDateString();
 
 const webSocketBridgeNotify = new channels.WebSocketBridge();
 const webSocketBridgeNotifyProject = new channels.WebSocketBridge();
@@ -343,43 +436,14 @@ console.log(text.prop2);
               {% if notifications.count %}
             <ul class="dropdown-menu menu-top">
                 <ul class="menu" id="notification-ul">
-                    {% for noti in notifications %}
-                    {% if noti.type == 6 %}
-                    <li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
-                    <a href="{{noti.get_absolute_url}}" class="full">
-                 <div class="col-md-1">
-                      <!--<i class="fa fa-info-circle fa-1 note-icon-sm"></i>-->
-                     <img src="{{noti.content_object.user.user_profile.profile_picture.url}}" height="30" width="30">
-                 </div>
-                 <div class="col-md-10">
-                  <span class="detail-text1 notification-title-sm">{{noti.content_object.user.get_full_name}}
-                      {% trans 'joined ' %} {{noti.content_object.organization.name}} {% trans 'as ' %} {{noti.content_object.group.name}}</span>
+                 
 
-                  <div class="low">
-                    <i class="fa fa-clock-o space" aria-hidden="true"></i>
-                    {{noti.date}}
-                  </div>
-                  </div>
-                    </a>
-                  </li>
-                    {% else %}
-                  <li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
-                    <a href="{{noti.get_absolute_url}}" class="full">
-                 <div class="col-md-1">
-                      <i class="fa fa-info-circle fa-1 note-icon-sm"></i>
-                 </div>
-                 <div class="col-md-10">
-                  <span class="detail-text1 notification-title-sm">{{noti.description}}</span>
-                  
-                  <div class="low">
-                    <i class="fa fa-clock-o space" aria-hidden="true"></i>
-                    {{noti.date}}
-                  </div>
-                  </div>
-                    </a>
-                  </li>
-                    {% endif %}
-                {% endfor %}
+
+                    
+
+
+
+
                 </ul>
               </li>
               <li class="footer note-footer"><a href="{% url 'eventlog:notification-list' %}">{% if notifications.count %} {% trans 'View all' %} {% endif %}</a></li>
