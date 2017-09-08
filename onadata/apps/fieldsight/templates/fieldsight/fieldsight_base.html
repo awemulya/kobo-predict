@@ -188,17 +188,17 @@ document.onload = getnotifdata('{% url 'eventlog:api-not' %}');
         }
 
     function type13(data){
-               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of organization named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
                   return content;
         }       
             
     function type14(data){
-               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of project named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
                   return content;
         } 
 
     function type15(data){
-               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+               content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of site named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
                   return content;
         }   
 
