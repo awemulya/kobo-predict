@@ -131,8 +131,6 @@ var pk = "{{pk}}";
                      <td data-bind="text: date_created"></td>
                      <td><button class="btn " data-bind="click:deploy, css:{ 'btn-danger': is_deployed()== true}">
                          <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></button>
-                         <button class="btn btn-info" data-bind="click:deploy_to_remaining, visible:is_deployed()== true && $root.is_project ==1">
-                         <span>{% trans 'Deploy To remaining sites' %}</span></button>
                      </td>
                  </tr>
                  </tbody></table>
