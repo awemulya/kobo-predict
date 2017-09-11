@@ -15,31 +15,31 @@ ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 # your actual production settings go here...,.
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'formhub',
-        'USER': 'formhub_prod',
-        # the password must be stored in an environment variable
-        'PASSWORD': os.environ['FORMHUB_PROD_PW'],
-        # the server name may be in env
-        'HOST': os.environ.get("FORMHUB_DB_SERVER", 'dbserver.yourdomain.org'),
-        # Replacement for TransactionMiddleware
-        'ATOMIC_REQUESTS': True,
-        }
-    },
-    'gis': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'phis',
-        'USER': 'staff',
-        # the password must be stored in an environment variable
-        'PASSWORD': os.environ['PHIS_PW'],
-        'HOST': 'gisserver.yourdomain.org',
-        'OPTIONS': {
-            'autocommit': True,
-        }
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'formhub',
+#         'USER': 'formhub_prod',
+#         # the password must be stored in an environment variable
+#         'PASSWORD': os.environ['FORMHUB_PROD_PW'],
+#         # the server name may be in env
+#         'HOST': os.environ.get("FORMHUB_DB_SERVER", 'dbserver.yourdomain.org'),
+#         # Replacement for TransactionMiddleware
+#         'ATOMIC_REQUESTS': True,
+#         }
+#     },
+#     'gis': {
+#         'ENGINE': 'django.contrib.gis.db.backends.postgis',
+#         'NAME': 'phis',
+#         'USER': 'staff',
+#         # the password must be stored in an environment variable
+#         'PASSWORD': os.environ['PHIS_PW'],
+#         'HOST': 'gisserver.yourdomain.org',
+#         'OPTIONS': {
+#             'autocommit': True,
+#         }
+#     }
+# }
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -52,27 +52,27 @@ TIME_ZONE = 'Africa/Lagos'
 
 TOUCHFORMS_URL = 'http://localhost:9000/'
 
-MONGO_DATABASE = {
-    'HOST': 'localhost',
-    'PORT': 27017,
-    'NAME': 'formhub',
-    'USER': '',
-    'PASSWORD': ''
-}
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'mlfs33^s1l4xf6a36$0#j%dd*sisfo6HOktYXB9y'
-
-# Caching
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-        'LOCATION': '127.0.0.1:11211',
-    }
-}
-
-MIDDLEWARE_CLASSES += ('django.middleware.cache.UpdateCacheMiddleware',
-                       'django.middleware.common.CommonMiddleware',
-                       'django.middleware.cache.FetchFromCacheMiddleware',)
-
-CACHE_MIDDLEWARE_SECONDS = 3600  # 1 hour
-CACHE_MIDDLEWARE_KEY_PREFIX = ''
+# MONGO_DATABASE = {
+#     'HOST': 'localhost',
+#     'PORT': 27017,
+#     'NAME': 'formhub',
+#     'USER': '',
+#     'PASSWORD': ''
+# }
+# # Make this unique, and don't share it with anybody.
+# SECRET_KEY = 'mlfs33^s1l4xf6a36$0#j%dd*sisfo6HOktYXB9y'
+#
+# # Caching
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+#         'LOCATION': '127.0.0.1:11211',
+#     }
+# }
+#
+# MIDDLEWARE_CLASSES += ('django.middleware.cache.UpdateCacheMiddleware',
+#                        'django.middleware.common.CommonMiddleware',
+#                        'django.middleware.cache.FetchFromCacheMiddleware',)
+#
+# CACHE_MIDDLEWARE_SECONDS = 3600  # 1 hour
+# CACHE_MIDDLEWARE_KEY_PREFIX = ''

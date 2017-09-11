@@ -33,7 +33,7 @@ from onadata.libs.utils.viewer_tools import create_attachments_zipfile
 from onadata.libs.utils.common_tags import (
     ID, XFORM_ID_STRING, STATUS, ATTACHMENTS, GEOLOCATION, BAMBOO_DATASET_ID,
     DELETEDAT, USERFORM_ID, INDEX, PARENT_INDEX, PARENT_TABLE_NAME,
-    SUBMISSION_TIME, UUID, TAGS, NOTES)
+    SUBMISSION_TIME, UUID, TAGS, NOTES, SITE, FS_STATUS, FS_UUID, FS_PROJECT_UUID)
 from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
 
@@ -176,7 +176,7 @@ class ExportBuilder(object):
                        BAMBOO_DATASET_ID, DELETEDAT]
     # fields we export but are not within the form's structure
     EXTRA_FIELDS = [ID, UUID, SUBMISSION_TIME, INDEX, PARENT_TABLE_NAME,
-                    PARENT_INDEX, TAGS, NOTES]
+                    PARENT_INDEX, TAGS, NOTES, SITE, FS_PROJECT_UUID, FS_UUID, FS_STATUS]
     SPLIT_SELECT_MULTIPLES = True
     BINARY_SELECT_MULTIPLES = False
 
@@ -505,6 +505,7 @@ class ExportBuilder(object):
 
     def to_xls_export(self, path, data, *args):
         def write_row(data, work_sheet, fields, work_sheet_titles):
+            # work_sheet_titles = work_sheet_titles.append("fs_site")
             # update parent_table with the generated sheet's title
             data[PARENT_TABLE_NAME] = work_sheet_titles.get(
                 data.get(PARENT_TABLE_NAME))
@@ -783,6 +784,7 @@ def query_mongo(username, id_string, query=None, hide_deleted=True):
         if query else {}
     query = dict_for_mongo(query)
     query[USERFORM_ID] = u'{0}_{1}'.format(username, id_string)
+    # hack the query
     if hide_deleted:
         # display only active elements
         # join existing query with deleted_at_query on an $and
