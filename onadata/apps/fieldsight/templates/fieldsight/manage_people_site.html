@@ -335,20 +335,20 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 <div class="col-sm-12">
      <div class="panel panel-default">
         <div class="panel-body">
-            <div class="col-sm-2">
+            <div class="col-sm-6">
                 <button class="btn btn-primary square" data-bind="click:add">
                     <i class="fa fa-plus" aria-hidden="true"></i>
                     {% trans 'Add New' %}
                 </button>
-                 <button class="btn btn-primary square" data-toggle="modal" data-target="#myorgModal">
+                <button class="btn btn-primary square" data-toggle="modal" data-target="#myproject_multi_user_add" onclick="get_multi_user_data()">
                             <i class="fa fa-plus" aria-hidden="true"></i>
-                            {% trans 'Invite User' %}
+                            {% trans 'Assign multiple User' %}
                     </button>
                 </div>
             <div class="col-sm-5">
                 <input type="text" class="current-input" placeholder="Search Project Managers" data-bind="value:search_key, valueUpdate:'afterkeydown'">
                 <button type="submit" class="current-btn"><i class="fa fa-search" aria-hidden="true"></i></button>
-                <button></button>
+               
             </div>
         </div>
     </div>
@@ -470,6 +470,40 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                         
                       </div>
                     </div>
+
+
+<section id="multipleuser_modal">
+            <div class="modal fade" id="myproject_multi_user_add" role="dialog" >
+                      <div class="modal-dialog">
+                      
+                        <!-- Modal content-->
+                        <div class="modal-content" style="">
+
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Assign Users</h4>
+                          </div>
+
+                          <div class="modal-body">
+                         
+
+
+
+
+
+
+
+
+                          </div>
+
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                        
+                      </div>
+                    </div>
+</section>
 <script>
 var ajax_call=false;
 
@@ -489,7 +523,6 @@ function refresh(){
         alert("Enter valid email address.")
       }
 }
-
 
  $('#invite_email').keydown(function(e) {
       var email = $("#invite_email").val();
@@ -519,6 +552,7 @@ function refresh(){
  //      ajax_call=true;
  //      checkemail(email);
  //    });
+
   function checkemail(email){
         $.ajax({
         url: "{% url 'fieldsight:check-email-for-invite' %}",
@@ -577,6 +611,37 @@ function sendnewuserinvite(){
       });
 }
 </script>
+
+
+
+<script type="text/javascript">
+  function get_multi_user_data(email){
+        $.ajax({
+        url: "{% url 'fieldsight:check-email-for-invite' %}",
+        type: 'GET',
+        success: function (html) {
+           $('#update-users-list').html(html);
+           $('#retry').show();
+        }
+      });
+  }
+
+
+  function get_multi_site_data(email){
+        $.ajax({
+        url: "{% url 'fieldsight:check-email-for-invite' %}",
+        type: 'GET',
+        success: function (html) {
+           $('#update-sites-list').html(html);
+           $('#retry').show();
+        }
+      });
+  }
+
+
+
+</script>
+
 {% endif %}
 {% endblock %}
 
