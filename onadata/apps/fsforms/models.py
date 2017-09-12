@@ -132,20 +132,6 @@ class Stage(models.Model):
         return getattr(self, "name", "")
 
 
-class EducationMaterial(models.Model):
-    is_pdf = models.BooleanField(default=False)
-    pdf = models.FileField(upload_to="education-material-pdf", null=True, blank=True)
-    title = models.CharField(max_length=31, blank=True, null=True)
-    text = models.TextField(blank=True, null=True)
-    stage = models.OneToOneField(Stage, related_name="em")
-
-
-class EducationalImages(models.Model):
-    educational_material = models.ForeignKey(EducationMaterial, related_name="em_images")
-    image = models.ImageField(upload_to="education-material-images",
-                              verbose_name='Education Images',)
-
-
 class Days(models.Model):
     day = models.CharField(max_length=9)
     index = models.IntegerField()
@@ -236,7 +222,6 @@ class FieldSightXF(models.Model):
         if self.is_scheduled and self.schedule: return self.schedule.id
         if self.is_staged and self.stage: return self.stage.id
         return None
-
 
     def stage_name(self):
         if self.stage: return self.stage.name
@@ -390,6 +375,20 @@ class FieldSightFormLibrary(models.Model):
         ordering = ("-shared_date",)
 
 
+class EducationMaterial(models.Model):
+    is_pdf = models.BooleanField(default=False)
+    pdf = models.FileField(upload_to="education-material-pdf", null=True, blank=True)
+    title = models.CharField(max_length=31, blank=True, null=True)
+    text = models.TextField(blank=True, null=True)
+    stage = models.OneToOneField(Stage, related_name="em", null=True, blank=True)
+    fsxf = models.OneToOneField(FieldSightXF, related_name="em", null=True, blank=True)
+
+
+class EducationalImages(models.Model):
+    educational_material = models.ForeignKey(EducationMaterial, related_name="em_images")
+    image = models.ImageField(upload_to="education-material-images",
+                              verbose_name='Education Images',)
+
 @receiver(post_save, sender=Site)
 def copy_stages_from_project(sender, **kwargs):
     site = kwargs.get('instance')
@@ -409,4 +408,18 @@ def copy_stages_from_project(sender, **kwargs):
                     fsxf = pss.stage_forms
                     site_form = FieldSightXF(is_staged=True, xf=fsxf.xf, site=site,fsform=fsxf, stage=site_sub_stage, is_deployed=True)
                     site_form.save()
+        general_forms = project.project_forms.filter(is_staged=False, is_scheduled=False, is_deployed=True, is_deleted=False)
+        for general_form in general_forms:
+            FieldSightXF.objects.create(is_staged=False, is_scheduled=False, is_deployed=True, site=site,
+                                        xf=general_form.xf, fsform=general_form)
 
+        schedule_forms = project.project_forms.filter(is_scheduled=True, is_deployed=True, is_deleted=False)
+        for schedule_form in schedule_forms:
+            schedule = schedule_form.schedule
+            selected_days = tuple(schedule.selected_days.all())
+            s = Schedule.objects.create(name=schedule.name, site=site, date_range_start=schedule.date_range_start,
+                                        date_range_end=schedule.date_range_end)
+            s.selected_days.add(*selected_days)
+            s.save()
+            FieldSightXF.objects.create(is_scheduled=True, xf=schedule_form.xf, site=site, fsform=schedule_form,
+                                             schedule=s, is_deployed=True)

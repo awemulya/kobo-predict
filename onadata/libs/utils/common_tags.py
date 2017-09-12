@@ -5,6 +5,10 @@
 INSTANCE_DOC_NAME = u"_name"
 ID = u"_id"
 UUID = u"_uuid"
+SITE = u"fs_site"
+FS_STATUS = u"fs_status"
+FS_UUID = u"fs_uuid"
+FS_PROJECT_UUID = u"fs_project_uuid"
 PICTURE = u"picture"
 GPS = u"location/gps"
 SURVEY_TYPE = u'_survey_type_slug'

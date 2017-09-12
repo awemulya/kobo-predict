@@ -57,7 +57,7 @@ def build_export_context(request,xform, id_string):
                'lang': lang,
                'hierarchy_in_labels': hierarchy_in_labels,
                # 'copy_fields': ('_id', '_uuid', '_submission_time''),
-               'copy_fields': ('_id','_submission_time', '_submitted_by'),
+               'copy_fields': ('_id','_submission_time', '_submitted_by', 'fs_site'),
                # 'force_index': True
                'force_index': False
                }
