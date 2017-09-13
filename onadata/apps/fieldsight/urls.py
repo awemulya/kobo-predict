@@ -40,7 +40,7 @@ from .views import (
     UserListView, site_images, FilterUserView,  UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
     ManagePeopleProjectView, ManagePeopleOrganizationView, SiteSurveyListView, ajax_upload_sites, ajax_save_site,
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList, 
-    senduserinvite, ActivateRole, checkemailforinvite, SummaryReport)
+    senduserinvite, ActivateRole, checkemailforinvite, SummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView)
 
 
 urlpatterns = [
@@ -112,6 +112,9 @@ urlpatterns = [
     url(r'^manage/people/site/(?P<pk>\d+)/$', ManagePeopleSiteView.as_view(), name='manage-people-site'),
     url(r'^manage/people/project/(?P<pk>\d+)/$', ManagePeopleProjectView.as_view(), name='manage-people-project'),
     url(r'^manage/people/organization/(?P<pk>\d+)/$', ManagePeopleOrganizationView.as_view(), name='manage-people-organization'),
+
+    url(r'^multi-user-assign-site/(?P<pk>\d+)/$', MultiUserAssignSiteView.as_view(), name='multi_user_site_assign'),
+    url(r'^multi-user-assign-project/(?P<pk>\d+)/$', MultiUserAssignProjectView.as_view(), name='multi_user_project_assign'),
 
     url(r'^accounts/create/$', CreateUserView.as_view(
         form_class=RegistrationForm), name='user-create'),

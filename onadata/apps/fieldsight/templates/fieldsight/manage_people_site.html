@@ -471,39 +471,6 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                       </div>
                     </div>
 
-
-<section id="multipleuser_modal">
-            <div class="modal fade" id="myproject_multi_user_add" role="dialog" >
-                      <div class="modal-dialog">
-                      
-                        <!-- Modal content-->
-                        <div class="modal-content" style="">
-
-                          <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Assign Users</h4>
-                          </div>
-
-                          <div class="modal-body">
-                         
-
-
-
-
-
-
-
-
-                          </div>
-
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                          </div>
-                        </div>
-                        
-                      </div>
-                    </div>
-</section>
 <script>
 var ajax_call=false;
 
@@ -614,33 +581,8 @@ function sendnewuserinvite(){
 
 
 
-<script type="text/javascript">
-  function get_multi_user_data(email){
-        $.ajax({
-        url: "{% url 'fieldsight:check-email-for-invite' %}",
-        type: 'GET',
-        success: function (html) {
-           $('#update-users-list').html(html);
-           $('#retry').show();
-        }
-      });
-  }
 
 
-  function get_multi_site_data(email){
-        $.ajax({
-        url: "{% url 'fieldsight:check-email-for-invite' %}",
-        type: 'GET',
-        success: function (html) {
-           $('#update-sites-list').html(html);
-           $('#retry').show();
-        }
-      });
-  }
-
-
-
-</script>
 
 {% endif %}
 {% endblock %}

@@ -1,0 +1,140 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{% trans 'Assign Multi User'  %}
+
+{% endblock %}
+
+{% block head %}
+    
+{% endblock %}
+
+{% block content %}
+
+{% if type == "site" %}
+<script>
+var otherurl = '{% url 'role:multi_ops_list' 0 pk %}';
+</script>
+
+
+{% elif type == "project" %}
+<script>
+var otherurl = '{% url 'role:multi_ops_list' 1 pk %}';
+</script>
+
+
+{% else %}
+<h1>Permission denied.</h1>
+{% endif %}
+<div id="users-list">
+  
+</div>
+<div id="other-list">
+  
+</div>
+
+<script type="text/javascript">
+alert(otherurl);
+var userurl = '{% url 'role:multi_user_list' 1 1 %}';
+
+
+
+document.onload = getuserlist('{% url 'eventlog:api-not' %}');
+
+  function getuserlist(url){
+   
+      $.ajax({
+        url: url,
+        type: 'GET',
+        success: function (data) {
+           data.results.forEach(populatedatalist);
+           speed=0;
+           if (data.next == null){
+            document.getElementById('getnextlist').style.display = 'none';
+           }else{
+            document.getElementById('getnextlist').style.display = 'block';
+            document.getElementById("getnextlist").setAttribute( "onClick", "javascript: getnotifdata('"+ data.next+"');" );
+        }
+        }
+      });
+}
+
+
+function populateuserlist(data, index){
+
+  
+    typeid = data.type;
+    var readstatus='unread';
+    if(data.seen_by.includes({{ request.user.id }})){
+       readstatus='read';
+    }
+// get description for notificationaccotding to its type id
+    var content = types[typeid](data);
+//append the data in main notificatin div
+   
+    var new_li = '<li class="note-div-sm '+ readstatus +'" id="'+data.id+'userlist" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ dateparser(data.date) +' </div></div>  </li>';
+
+    // var div = document.getElementById('notifications');
+
+    // div.innerHTML += new_li;
+    speed = speed+200;
+
+$(user_list).appendTo("#notifications");
+$("#"+data.id+"userlist").fadeIn(speed);
+}
+
+
+
+
+
+
+
+document.onload = getotherlist('{% url 'eventlog:api-not' %}');
+
+  function getotherlist(url){
+   
+      $.ajax({
+        url: url,
+        type: 'GET',
+        success: function (data) {
+           data.results.forEach(populatedatalist);
+           speed=0;
+           if (data.next == null){
+            document.getElementById('getnextlist').style.display = 'none';
+           }else{
+            document.getElementById('getnextlist').style.display = 'block';
+            document.getElementById("getnextlist").setAttribute( "onClick", "javascript: getnotifdata('"+ data.next+"');" );
+        }
+        }
+      });
+}
+
+
+function populateotherlist(data, index){
+
+  
+    typeid = data.type;
+    var readstatus='unread';
+    if(data.seen_by.includes({{ request.user.id }})){
+       readstatus='read';
+    }
+// get description for notificationaccotding to its type id
+    var content = types[typeid](data);
+//append the data in main notificatin div
+   
+    var new_li = '<li class="note-div-sm '+ readstatus +'" id="'+data.id+'otherlist" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ dateparser(data.date) +' </div></div>  </li>';
+
+    // var div = document.getElementById('notifications');
+
+    // div.innerHTML += new_li;
+    speed = speed+200;
+
+$(other_list).appendTo("#notifications");
+$("#"+data.id+"otherlist").fadeIn(speed);
+}
+
+
+
+</script>
+
+{% endblock %}

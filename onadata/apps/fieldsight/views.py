@@ -16,6 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
 from django.forms.forms import NON_FIELD_ERRORS
 
+from fcm.utils import get_device_model
 
 import django_excel as excel
 from registration.backends.default.views import RegistrationView
@@ -1103,3 +1104,64 @@ class SummaryReport(TemplateView):
             'cumulative_labels': line_chart_data.keys(),
         }
         return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)
+
+class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
+    def get(self, request, pk):
+        project_obj = Project.objects.get(pk=pk)
+        return render(request, 'fieldsight/multi_user_assign.html',{'type': "site", 'pk':pk})
+
+    def post(self, request, *args, **kwargs):
+        data = self.request.data
+        for site_id in data.get('sites'):
+            site = Site.objects.get(pk=site_id)
+            for user in data.get('users'):
+                role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
+                                                               project__id=site.project.id, group=group)
+                if created:
+                    description = "{0} was assigned  as {1} in {2}".format(
+                        role.user.get_full_name(), role.lgroup.name, role.project)
+                    noti_type = 8
+
+                    if data.get('group') == "Reviewer":
+                        noti_type =7
+                    
+                    noti = role.logs.create(source=role.user, type=noti_type, title=description,
+                                            description=description, content_type=site, extra_object=self.request.user,
+                                            site=role.site)
+                    result = {}
+                    result['description'] = description
+                    result['url'] = noti.get_absolute_url()
+                    ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                    ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
+                    ChannelGroup("site-{}".format(role.site.id)).send({"text": json.dumps(result)})
+                    ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+                Device = get_device_model()
+                if Device.objects.filter(name=role.user.email).exists():
+                    message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
+                    Device.objects.filter(name=role.user.email).send_message(message)    
+
+class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
+    def get(self, request, pk):
+        org_obj = Organization.objects.get(pk=pk)
+        return render(request, 'fieldsight/multi_user_assign.html',{'type': "project", 'pk':pk})
+
+    def post(self, request, *args, **kwargs):
+        for project_id in data.get('projects'):
+            project = Project.objects.get(pk=project_id)
+            for user in data.get('users'):
+                role, created = UserRole.objects.get_or_create(user_id=user, project_id=project_id,
+                                                               organization__id=project.organization.id,
+                                                               project__id=project_id,
+                                                               group=group)
+                if created:
+                    description = "{0} was assigned  as Project Manager in {1}".format(
+                        role.user.get_full_name(), role.project)
+                    noti = role.logs.create(source=role.user, type=6, title=description, description=description,
+                     content_type=project, extra_object=self.request.user)
+                    result = {}
+                    result['description'] = description
+                    result['url'] = noti.get_absolute_url()
+                    ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                    ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
+                    ChannelGroup("notify-0").send({"text": json.dumps(result)})
