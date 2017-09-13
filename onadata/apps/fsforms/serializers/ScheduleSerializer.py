@@ -79,8 +79,9 @@ class ScheduleSerializer(serializers.ModelSerializer):
             return FieldSightXF.objects.get(schedule=obj).is_deployed
 
     def get_education_material(self, obj):
-        if not EducationMaterial.objects.filter(fsxf=obj.schedule_forms).exists():
-            return {}
-        em =  EducationMaterial.objects.get(fsxf=obj.schedule_forms)
+        # if not EducationMaterial.objects.filter(fsxf=obj.schedule_forms).exists():
+        #     return {}
+        # em =  EducationMaterial.objects.get(fsxf=obj.schedule_forms)
+        em =  EducationMaterial.objects.first()
         return EMSerializer(em).data
 
