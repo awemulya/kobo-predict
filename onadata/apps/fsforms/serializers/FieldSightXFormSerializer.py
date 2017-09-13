@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
-from onadata.apps.fsforms.models import FieldSightXF
+from onadata.apps.fsforms.models import FieldSightXF, EducationalImages, EducationMaterial
 from onadata.apps.logger.models import XForm
 from onadata.libs.utils.decorators import check_obj
 
@@ -118,7 +118,20 @@ class FSXFormListSerializer(serializers.ModelSerializer):
         return reverse('forms:manifest-url', kwargs=kwargs, request=request)
 
 
+class EMImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EducationalImages
+        exclude = ("educational_material",)
+
+
+class EMSerializer(serializers.ModelSerializer):
+    em_images = EMImagesSerializer(many=True, read_only=True)
+    class Meta:
+        model = EducationMaterial
+        exclude = ('stage',)
+
 class FSXFormSerializer(serializers.ModelSerializer):
+    em = EMSerializer(read_only=True)
     name = serializers.SerializerMethodField('get_title', read_only=True)
 
     def validate(self, data):

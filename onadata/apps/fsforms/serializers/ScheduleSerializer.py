@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from onadata.apps.fsforms.models import Schedule, Days, FieldSightXF
+from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormSerializer
 
 
 class DaysSerializer(serializers.ModelSerializer):
@@ -15,7 +16,7 @@ class DaysSerializer(serializers.ModelSerializer):
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
-
+    schedule_forms = FSXFormSerializer(read_only=True)
     days = serializers.SerializerMethodField('get_all_days', read_only=True)
     form = serializers.SerializerMethodField('get_assigned_form', read_only=True)
     xf = serializers.CharField()
