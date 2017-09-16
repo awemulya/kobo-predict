@@ -222,119 +222,120 @@ var pk = "{{pk}}";
               
               <div class="clearfixx"></div>
           </div>
-             <table class="table">
-                 <thead> <tr>
-                     <th>{% trans 'SN' %}</th>
-                     <th>{% trans 'Schedule Name' %}</th>
-                     <th>{% trans 'Form Name' %}</th>
-                     <th>{% trans 'Start' %}</th>
-                     <th>{% trans 'End' %}</th>
-                     <th>{% trans 'Days' %}</th>
-                     <th>{% trans 'Education' %}</th>
-                     <th>{% trans 'Deploy Action' %}</th>
-                 </tr> </thead>
-                 <tbody  data-bind="foreach: forms">
-                     <tr>
-                      <!--<div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">-->
-                        <!--<div data-bind="with: em">-->
-                          <!--<div class="modal-dialog form-modal" role="document">-->
-                            <!--<div class="modal-content">-->
-                              <!--<div class="modal-header">-->
-                                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
-                                <!--<h4 class="modal-title">{% trans 'Education Material' %}</h4>-->
-                              <!--</div>-->
-                              <!--<div class="modal-body">-->
-                                  <!--<div class="col-sm-8">-->
-                                      <!--<h3>Create A Education Material</h3>-->
+             <div class="col-sm-12">
+                  <div class="row">
+                     <div class="col-sm-1">{% trans 'SN' %}</div>
+                     <div class="col-sm-2">{% trans 'Schedule Name' %}</div>
+                     <div class="col-sm-2">{% trans 'Form Name' %}</div>
+                     <div class="col-sm-1">{% trans 'Start' %}</div>
+                     <div class="col-sm-1">{% trans 'End' %}</div>
+                     <div class="col-sm-3">{% trans 'Days' %}</div>
+                     <div class="col-sm-1">{% trans 'Education' %}</div>
+                     <div class="col-sm-1">{% trans 'Deploy Action' %}</div>
+                 </div>
+                 <div data-bind="foreach: forms">
+                    <div class="row">
+                      <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
+                        <div data-bind="with: em">
+                          <div class="modal-dialog form-modal" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">{% trans 'Education Material' %}</h4>
+                              </div>
+                              <div class="modal-body">
+                                  <div class="col-sm-8">
+                                      <h3>Create A Education Material</h3>
 
-                                    <!--<div class="form-group">-->
-                                      <!--<label for="title" id="sizing-addon2"><h4>Title</h4></label>-->
-                                      <!--<textarea data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></textarea>-->
-                                    <!--</div>-->
-
-
+                                    <div class="form-group">
+                                      <label for="title" id="sizing-addon2"><h4>Title</h4></label>
+                                      <textarea data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></textarea>
+                                    </div>
 
 
 
-                                    <!--<div class="form-group">-->
-                                      <!--<label for="comment" id="sizing-addon2"><h4>Text</h4></label>-->
-                                      <!--<textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="3" id="comment"></textarea>-->
-                                    <!--</div>-->
+
+
+                                    <div class="form-group">
+                                      <label for="comment" id="sizing-addon2"><h4>Text</h4></label>
+                                      <textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="3" id="comment"></textarea>
+                                    </div>
 
 
 
-                                  <!--<div>-->
-                                          <!--<div data-bind="visible:em_images().length">-->
-                                              <!--<p>Saved Images</p>-->
-                                              <!--<div data-bind="foreach:em_images">-->
-                                                  <!--<img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">-->
-                                              <!--</div>-->
-                                          <!--</div>-->
-                                        <!--<h4>Multiple Images Uploads</h4>-->
-                                            <!--<div class="well" data-bind="fileDrag: multiFileData">-->
-                                                <!--<div class="form-group row">-->
-                                                    <!--<div class="col-md-6">-->
-                                                              <!--&lt;!&ndash; ko foreach: {data: multiFileData().dataURLArray, as: 'dataURL'} &ndash;&gt;-->
-                                                              <!--<img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">-->
-                                                              <!--&lt;!&ndash; /ko &ndash;&gt;-->
-                                                        <!--<div data-bind="ifnot: multiFileData().fileArray">-->
-                                                            <!--<label class="drag-label">Drag files here</label>-->
-                                                        <!--</div>-->
-                                                    <!--</div>-->
-                                                    <!--<div class="col-md-6">-->
-                                                        <!--<input type="file" multiple data-bind="fileInput: multiFileData, customFileInput: {-->
-                                                          <!--buttonClass: 'btn btn-success',-->
-                                                          <!--fileNameClass: 'disabled form-control',-->
-                                                          <!--onClear: onClear,-->
-                                                        <!--}" accept="image/*">-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-                                            <!--</div>-->
-                                     <!--</div>-->
-                                      <!--</div>-->
+                                  <div>
+                                          <div data-bind="visible:em_images().length">
+                                              <p>Saved Images</p>
+                                              <div data-bind="foreach:em_images">
+                                                  <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
+                                              </div>
+                                          </div>
+                                        <h4>Multiple Images Uploads</h4>
+                                            <div class="well" data-bind="fileDrag: multiFileData">
+                                                <div class="form-group row">
+                                                    <div class="col-md-6">
+                                                              <!-- ko foreach: {data: multiFileData().dataURLArray, as: 'dataURL'} -->
+                                                              <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">
+                                                              <!-- /ko -->
+                                                        <div data-bind="ifnot: multiFileData().fileArray">
+                                                            <label class="drag-label">Drag files here</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input type="file" multiple data-bind="fileInput: multiFileData, customFileInput: {
+                                                          buttonClass: 'btn btn-success',
+                                                          fileNameClass: 'disabled form-control',
+                                                          onClear: onClear,
+                                                        }" accept="image/*">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                     </div>
+                                      </div>
 
-                                  <!--<div class="col-sm-4">-->
-                                      <!--<h4> Upload PDF OF Education Material</h4>-->
-                                      <!--<div>-->
-                                        <!--<div class="well">-->
-                                            <!--<div class="form-group row">-->
-                                                <!--<div class="col-sm-12">-->
-                                                    <!--<div data-bind="visible:pdf">-->
-                                                        <!--Current pdf-->
-                                                        <!--<a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank"> View </a>-->
+                                  <div class="col-sm-4">
+                                      <h4> Upload PDF OF Education Material</h4>
+                                      <div>
+                                        <div class="well">
+                                            <div class="form-group row">
+                                                <div class="col-sm-12">
+                                                    <div data-bind="visible:pdf">
+                                                        Current pdf
+                                                        <a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank"> View </a>
 
-                                              <!--&lt;!&ndash;<button data-bind="click: addPdf">Load PDF</button>&ndash;&gt;-->
-                                            <!--&lt;!&ndash;<div class="documentviewerpdf"></div>&ndash;&gt;-->
-                                          <!--</div>-->
-                                                    <!--</div>-->
-                                                <!--<div class="col-sm-12">-->
-                                                    <!--<span>Change PDf File</span>-->
-                                                    <!--<input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">-->
-                                                <!--</div>-->
-                                            <!--</div>-->
-                                        <!--</div>-->
-                                     <!--</div>-->
+                                              <!--<button data-bind="click: addPdf">Load PDF</button>-->
+                                            <!--<div class="documentviewerpdf"></div>-->
+                                          </div>
+                                                    </div>
+                                                <div class="col-sm-12">
+                                                    <span>Change PDf File</span>
+                                                    <input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">
+                                                </div>
+                                            </div>
+                                        </div>
+                                     </div>
 
-                                  <!--</div>-->
-                                  <!--<button class="btn btn-primary marg3" data-bind="click:$parent.save_em">Save </button>-->
-                              <!--</div>-->
-                            <!--</div>-->
-                          <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                     <th scope="row" data-bind='text: $index()+1'></th>
-                     <td data-bind="text: name"></td>
-                     <td data-bind="text: form_name"></td>
-                     <td data-bind="text: date_range_start"></td>
-                     <td data-bind="text: date_range_start"></td>
-                     <td data-bind="text: days"></td>
-                     <td><a  title="Educational Material" data-bind="click:education_material"><i class="fa fa-book"></i> </a></td>
-                     <td><button class="btn" data-bind="click:deploy, css:{ 'btn-danger': is_deployed()== true}"><span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></button></td>
-                 </tr>
-                 </tbody></table>
+                                  </div>
+                                  <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">Save </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                        </div>
+                     <div class="row">
+                     <div class="col-sm-1" data-bind='text: $index()+1'></div>
+                     <div  class="col-sm-2"data-bind="text: name"></div>
+                     <div class="col-sm-2" data-bind="text: form_name"></div>
+                     <div class="col-sm-1"  data-bind="text: date_range_start"></div>
+                     <div class="col-sm-1" data-bind="text: date_range_start"></div>
+                     <div class="col-sm-3" data-bind="text: days"></div>
+                     <div class="col-sm-1"><a  title="Educational Material" data-bind="click:education_material"><i class="fa fa-book"></i> </a></div>
+                     <div class="col-sm-1"><button class="btn" data-bind="click:deploy, css:{ 'btn-danger': is_deployed()== true}"><span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></button></div>
+                 </div>
+                     </div>
+                 </div></div>
         </div>
-    </div>
-</div>
 
 <div class="row" data-bind="visible: currentVm() == 'stages'" style="display:none;">
     <div data-bind="with:stagesVm">
