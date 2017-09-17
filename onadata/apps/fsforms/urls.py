@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from onadata.apps.fsforms.viewsets.FieldSightXformViewset import GeneralFormsViewSet
+from onadata.apps.fsforms.viewsets.FieldSightXformViewset import GeneralFormsViewSet, SurveyFormsViewSet
 from onadata.apps.fsforms.viewsets.InstanceHistoryViewSet import InstanceHistoryViewSet, InstanceHistoryDetailViewSet
 from onadata.apps.fsforms.viewsets.ScheduleViewset import ScheduleViewset, DayViewset
 from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXFormListApi
@@ -174,6 +174,7 @@ urlpatterns = urlpatterns + [
     url(r'^api/instance/status-history/(?P<pk>\d+)$', InstanceHistoryViewSet.as_view({'get': 'list'}), name='instance_history'),
     url(r'^api/instance/change_status-detail/(?P<pk>\d+)$', InstanceHistoryDetailViewSet.as_view({'get': 'retrieve'}), name='instance_status_change_detail'),
     url(r'^api/instance/status-detail/(?P<pk>\d+)$', AlterStatusDetailView.as_view(), name='alter-status-detail'),
+    url(r'^api/survey/(?P<is_project>\d)/(?P<pk>\d+)$', SurveyFormsViewSet.as_view({'get': 'list'}), name='survey_forms'),
     url(r'^api/general/(?P<is_project>\d)/(?P<pk>\d+)$', GeneralFormsViewSet.as_view({'get': 'list'}), name='general_forms'),
     url(r'^api/schedule/$', ScheduleViewset.as_view({'post': 'create','put': 'update','get': 'list'})),
     url(r'^api/stage/(?P<is_project>\d)/(?P<pk>\d+)$', StageViewSet.as_view({'post': 'create','get': 'list'})),

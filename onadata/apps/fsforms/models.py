@@ -186,6 +186,7 @@ class FieldSightXF(models.Model):
     fsform = models.ForeignKey('self', blank=True, null=True, related_name="parent")
     is_deployed = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
+    is_survey = models.BooleanField(default=False)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
