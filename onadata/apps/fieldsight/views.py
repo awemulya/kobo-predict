@@ -679,8 +679,15 @@ def ajax_upload_sites(request, pk):
 
 @group_required("Project")
 @api_view(['POST'])
-def ajax_save_site(request, pk):
-    form = SiteForm(request.POST, request.FILES)
+def ajax_save_site(request):
+    id = request.POST.get('id', False)
+    if id =="undefined":
+        id = False
+    if id:
+        instance = Site.objects.get(pk=id)
+        form = SiteForm(request.POST, request.FILES, instance)
+    else:
+        form = SiteForm(request.POST, request.FILES)
     if form.is_valid():
         form.save()
         return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
@@ -690,7 +697,14 @@ def ajax_save_site(request, pk):
 @group_required("Organization")
 @api_view(['POST'])
 def ajax_save_project(request):
-    form = ProjectFormKo(request.POST, request.FILES)
+    id = request.POST.get('id', False)
+    if id =="undefined":
+        id = False
+    if id:
+        instance = Project.objects.get(pk=id)
+        form = ProjectFormKo(request.POST, request.FILES, instance)
+    else:
+        form = ProjectFormKo(request.POST, request.FILES)
     if form.is_valid():
         form.save()
         return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
