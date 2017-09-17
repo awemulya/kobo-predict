@@ -31,6 +31,7 @@
               <th>{% trans 'Form Name' %}</th>
               <th>{% trans 'Created Date' %}</th>
               <th>{% trans 'Submissions' %}</th>
+              <th>{% trans 'Download' %}</th>
               </thead>
               <tbody>
               {% for obj in generals %}
@@ -51,6 +52,10 @@
                           {% endwith %}
 
                       </td>
+                      <td>
+                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.xf.id_string 'xls' %}">
+                          <i class="fa fa-download" aria-hidden="true"></i></a>
+                      </td>
                   </tr>
               {% endfor %}
               </tbody>
@@ -69,15 +74,16 @@
               <th>{% trans 'Form Name' %}</th>
               <th>{% trans 'Created Date' %}</th>
               <th>{% trans 'Submissions' %}</th>
+              <th>{% trans 'Download' %}</th>
               </thead>
               <tbody>
               {% for obj in schedules %}
                   <tr>
                       <td>
-                          {{ obj.name}}</a>
+                          {{ obj.name}}
                       </td>
                       <td>
-                          {{ obj.schedule_forms.xf.title }}</a>
+                          {{ obj.schedule_forms.xf.title }}
                       </td>
                       <td>
                           {{ obj.date_created }}
@@ -90,6 +96,10 @@
                                {% trans ' View ' %}</a>
                           {% endif %}
                           {% endwith %}
+                      </td>
+                      <td>
+                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.schedule_forms.xf.id_string 'xls' %}">
+                          <i class="fa fa-download" aria-hidden="true"></i></a>
                       </td>
                   </tr>
               {% endfor %}
@@ -120,6 +130,7 @@
                       <th>{% trans 'Order' %}</th>
                       <th>{% trans 'Form Name' %}</th>
                       <th>{% trans 'Submissions' %}</th>
+                      <th>{% trans 'Download' %}</th>
                       </thead>
                       <tbody>
                       {% for obj in stage.active_substages %}
@@ -140,6 +151,10 @@
                           {% endif %}
                           {% endwith %}
                               </td>
+                              <td>
+                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.stage_forms.xf.id_string 'xls' %}">
+                          <i class="fa fa-download" aria-hidden="true"></i></a>
+                      </td>
                           </tr>
                       {% endfor %}
                       </tbody>
