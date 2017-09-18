@@ -78,8 +78,8 @@ class FSXFormListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FieldSightXF
-        fields = ('id', 'site_name', 'site','is_staged', 'is_scheduled', 'downloadUrl', 'manifestUrl', 'name',
-                  'descriptionText','formID', 'majorMinorVersion','version', 'hash')
+        fields = ('id', 'site_name', 'site','is_staged', 'is_scheduled', 'is_survey', 'downloadUrl', 'manifestUrl',
+                  'name', 'descriptionText','formID', 'majorMinorVersion','version', 'hash')
 
     def get_version(self, obj):
         return None
@@ -112,7 +112,8 @@ class FSXFormListSerializer(serializers.ModelSerializer):
 
     @check_obj
     def get_manifest_url(self, obj):
-        kwargs = {'pk': obj.pk, 'site_id':obj.site.id}
+        site_id = obj.site.id if obj.site else 0
+        kwargs = {'pk': obj.pk, 'site_id': site_id}
         request = self.context.get('request')
 
         return reverse('forms:manifest-url', kwargs=kwargs, request=request)
