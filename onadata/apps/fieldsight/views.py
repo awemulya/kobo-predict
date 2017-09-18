@@ -932,7 +932,7 @@ def RepresentsInt(s):
 
 @login_required()
 def senduserinvite(request):
-    user = User.objects.filter(email=request.POST.get('email'))
+    emails = User.objects.filter(email=request.POST.get('email'))
     group = Group.objects.get(name=request.POST.get('group'))
 
     organization_id = None
@@ -946,49 +946,54 @@ def senduserinvite(request):
     if RepresentsInt(request.POST.get('site_id')):
         site_id = request.POST.get('site_id')
 
+    response=""
 
-    userinvite = UserInvite.objects.filter(email=request.POST.get('email'), organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+    for user in emails:
+        userinvite = UserInvite.objects.filter(email=user, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
 
-    if userinvite:
-        return HttpResponse('<script> alert("Invite already sent."); <script>')
+        if userinvite:
+            return HttpResponse('<script> alert("Invite already sent for '+ user +' for '+ group.name +' role."); <script>')
 
-    if user:
-        userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
-        
-        if userrole:
-            if userrole[0].ended_at==None:
-                return HttpResponse('Already has the role.') 
-        
-        invite = UserInvite(email=request.POST.get('email'), by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
+        if user:
+            userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
+            
+            if userrole:
+                if userrole[0].ended_at==None:
+                    return HttpResponse(user + 'already has the role for '+group.name+'.') 
+            
+            invite = UserInvite(email=user, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
 
-        invite.save()
-        organization = Organization.objects.get(pk=1)
-        # noti = invite.logs.create(source=user[0], type=9, title="new Role",
-        #                                organization_id=request.POST.get('organization_id'),
-        #                                description="{0} sent you an invite to join {1} as the {2}.".
-        #                                format(request.user.username, organization.name, invite.group.name,))
-        # result = {}
-        # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
-        # result['url'] = noti.get_absolute_url()
-        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+            invite.save()
+            organization = Organization.objects.get(pk=1)
+            # noti = invite.logs.create(source=user[0], type=9, title="new Role",
+            #                                organization_id=request.POST.get('organization_id'),
+            #                                description="{0} sent you an invite to join {1} as the {2}.".
+            #                                format(request.user.username, organization.name, invite.group.name,))
+            # result = {}
+            # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+            # result['url'] = noti.get_absolute_url()
+            # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+            # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
-    else:
-        invite = UserInvite(email=request.POST.get('email'), by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
-        invite.save()
-    current_site = get_current_site(request)
-    subject = 'Invitation for Role'
-    message = render_to_string('fieldsight/email_sample.html',
-    {
-        'email': invite.email,
-        'domain': current_site.domain,
-        'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
-        'token': invite.token,
-        'invite': invite,
-        })
-    email_to = (invite.email,)
-    send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
-    return HttpResponse("<script> alert('Sucessfully invited for "+ group.name +" role.');</script>")
+        else:
+            invite = UserInvite(email=user, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+            invite.save()
+        current_site = get_current_site(request)
+        subject = 'Invitation for Role'
+        message = render_to_string('fieldsight/email_sample.html',
+        {
+            'email': invite.email,
+            'domain': current_site.domain,
+            'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
+            'token': invite.token,
+            'invite': invite,
+            })
+        email_to = (invite.email,)
+        send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
+        return HttpResponse("<script> alert('Sucessfully invited "+ user +"for "+ group.name +" role.');</script>")
+    return HttpResponse(response)
+
+
 
 # def activate_role(request, invite_idb64, token):
 #     try:

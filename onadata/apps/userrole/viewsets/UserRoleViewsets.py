@@ -19,6 +19,7 @@ from onadata.apps.userrole.models import UserRole
 from django.db.models import Q
 from django.views.generic import View
 from django.http import HttpResponse
+from rest_framework.pagination import PageNumberPagination
 
 SAFE_METHODS = ('GET', 'POST')
 
@@ -204,10 +205,13 @@ class MultiUserAssignRoleViewSet(View):
             })
         return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
 
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 2
+
 class MultiUserlistViewSet(viewsets.ModelViewSet):
     serializer_class = UserRoleSerializer
     permission_classes = (IsAuthenticated, ManagePeoplePermission)
-
+    pagination_class = LargeResultsSetPagination
     def get_queryset(self):
         queryset = UserRole.objects.filter(organization__isnull=False, ended_at__isnull=True)
         level = self.kwargs.get('level', None)
@@ -232,7 +236,7 @@ class MultiUserlistViewSet(viewsets.ModelViewSet):
 
 class MultiOPSlistViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, ManagePeoplePermission)
-
+    pagination_class = LargeResultsSetPagination
     def get_serializer_class(self):
         if self.kwargs.get('level') == "0":
             return SiteSerializer

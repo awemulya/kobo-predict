@@ -442,9 +442,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <div class="col-sm-5">
                                 
                                   <label>Email:</label>
-                                  <input id="invite_email" type="email" name="email"><br>
+                                  <input id="invite_email" type="text" name="email"><br>
 
-                                  <input type="button" id="retry" onclick="refresh()" value="check">
+                                  <input type="button" id="retry" onclick="refresh()" value="Search User">
                                   <input type="hidden" id="invite_organization_id" value="{{ organization }}">
                                   <input type="hidden" id="invite_project_id" value="{{ project }}">
                                   <input type="hidden" id="invite_site_id" value="{{ site }}">
@@ -476,49 +476,95 @@ var ajax_call=false;
 
 function refresh(){
   var email = $("#invite_email").val();
+  
+
+  if(email.indexOf(',') > -1){
+
+        // alert('ola');
+        sendmultiplerequest(email);
+
+        return false;  
+  }
+  else{
+  data = validateemail(email);
+  
+  if(data.status == false){
+    return false;
+  }
+
+  ajax_call = true;
+  checkemail(email);
+  }   
+}
+function validateemail(email){
   var atherate = email.indexOf("@");
-      // if(atherate == -1 ){ return false; }
-      var dot = email.indexOf(".", atherate);
-      // if(dot == -1 ){ return false; }
-      // ajax_call=true;
-      // checkemail(email);
+  var dot = email.indexOf(".", atherate);
+    
       if(atherate != -1 && dot != -1){
-        ajax_call = true;
-        checkemail(email);
+        return {
+        status: true,
+        email: email
+        };
       }
       else{
-        alert("Enter valid email address.")
+        // alert("Enter valid email address.");
+        return {
+        status: false,
+        email: email
+        };
       }
 }
+ function getNewInsertion(newValue) {
+     if(newValue.indexOf(',') > -1){
+        $("#retry").val('Invite Users');  
+        }
+     else{
+       $("#retry").val('Search User');
+     }
+}
 
- $('#invite_email').keydown(function(e) {
-      var email = $("#invite_email").val();
-     
-      // if(ajax_call == true){ return false; }
-       var atherate = email.indexOf("@");
-      // if(atherate == -1 ){ return false; }
-      var dot = email.indexOf(".", atherate);
-      // if(dot == -1 ){ return false; }
-      // ajax_call=true;
-      // checkemail(email);
-      if(ajax_call != true && atherate != -1 && dot != -1){
-        ajax_call = true;
-        checkemail(email);
-      }   
+
+function sendmultiplerequest(email){
+    emails = email.split(",");
+
+    emails.forEach(function(entry) {
+    console.log(entry);
+    email_res = validateemail(entry);
+    if(email_res.status == false){
+      
+      var email_input = document.getElementById("invite_email");
+      start = email.search(email_res.email);
+      end = email.indexOf(",", start);
+      // console.log(start +" "+ end);
+      email_input.setSelectionRange(start, end);
+      email_input.focus();
+    }
     });
+}
 
- // $("#invite_email").keydown(function(e) {
+$(function(){
 
- //      var email = $("#invite_email").val();
- //      console.log(email);
- //      if(ajax_call == true){ return false; }
- //      var atherate = email.indexOf("@");
- //      if(atherate == -1 ){ return false; }
- //      var dot = email.indexOf(".", atherate);
- //      if(dot == -1 ){ return false; }
- //      ajax_call=true;
- //      checkemail(email);
- //    });
+    $("#invite_email").bind("paste cut keydown",function(e) {
+        var that = this;
+        
+        setTimeout(function() {
+                
+                if(typeof $(that).data("old_value") == "undefined") {
+                    $(that).data("old_value",$(that).val());
+                }
+                
+                getNewInsertion($(that).val());
+
+            },200);
+
+    })
+
+}); 
+
+
+function log(val) {
+    console.log(val);
+}
 
   function checkemail(email){
         $.ajax({
