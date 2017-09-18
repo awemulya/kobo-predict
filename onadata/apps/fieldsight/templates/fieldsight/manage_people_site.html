@@ -439,7 +439,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                           </div>
                           <div class="modal-body">
                           <center>
-                            <div class="col-sm-5">
+                            <div class="col-sm-5" id="results">
                                 
                                   <label>Email:</label>
                                   <input id="invite_email" type="text" name="email"><br>
@@ -473,7 +473,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
 <script>
 var ajax_call=false;
-
+var status = true;
 function refresh(){
   var email = $("#invite_email").val();
   
@@ -525,22 +525,29 @@ function validateemail(email){
 
 
 function sendmultiplerequest(email){
+    status=true;
     emails = email.split(",");
+    emails.forEach(multiemailvalidate);
+    if(status == "true" ){ sendinvite(emails); }
+    else{ alert('failed'); }
+}
 
-    emails.forEach(function(entry) {
-    console.log(entry);
+function multiemailvalidate(entry) {
     email_res = validateemail(entry);
     if(email_res.status == false){
       
       var email_input = document.getElementById("invite_email");
+      email = email_input.value;
       start = email.search(email_res.email);
       end = email.indexOf(",", start);
       // console.log(start +" "+ end);
       email_input.setSelectionRange(start, end);
       email_input.focus();
+      status=false;
+
+
+      }
     }
-    });
-}
 
 $(function(){
 
@@ -579,8 +586,10 @@ function log(val) {
   }
 
 function sendnewuserinvite(){
+  emails = [];
   var email = $("#invite_email").val();
-  sendinvite(email);
+  emails.push(email);
+  sendinvite(emails);
 }
       
 
@@ -588,16 +597,16 @@ function sendnewuserinvite(){
 {% if category == "site" %}
 
 <script>
-  function sendinvite(email){ 
+  function sendinvite(emails){ 
       var organization_id = $("#invite_organization_id").val();
       var project_id = $("#invite_project_id").val();
       var site_id = $("#invite_site_id").val();
       var group =  $( 'input[id=invite_group]:checked' ).val();
-      alert(group);
+      alert(emails);
       console.log(group);
       $.ajax({
         url: "{% url 'fieldsight:senduserinvite' %}",
-        data: {'email': email, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        data: {'emails[]': emails, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
         type: 'POST',
         success: function (html) {
            $('#update-next-step').html(html);
@@ -607,16 +616,16 @@ function sendnewuserinvite(){
 </script>
 {% else %}
 <script>
-  function sendinvite(email){ 
+  function sendinvite(emails){ 
       var organization_id = $("#invite_organization_id").val();
       var project_id = $("#invite_project_id").val();
       var site_id = $("#invite_site_id").val();
       var group =  $("#invite_group").val();
-      alert(group);
+      alert(emails);
       console.log(group);
       $.ajax({
         url: "{% url 'fieldsight:senduserinvite' %}",
-        data: {'email': email, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        data: {'emails[]': emails, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
         type: 'POST',
         success: function (html) {
            $('#update-next-step').html(html);

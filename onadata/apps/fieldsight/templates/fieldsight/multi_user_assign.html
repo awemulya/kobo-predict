@@ -22,6 +22,9 @@ var proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
   </tbody>
 </table>
  <input style="display:none;" type="button" id="getnextlist" onclick="" value="load more">
+
+  <input type="radio" name="group" id="group" value="Reviewer" checked> Reviewer<br>
+  <input type="radio" name="group" id="group" value="Site Supervisor"> Site Supervisor<br>
 <br>
 <br>
 <br>
@@ -43,6 +46,7 @@ var proj_site_url = '{% url 'role:multi_ops_list' 1 pk %}';
   </tbody>
 </table>
  <input style="display:none;" type="button" id="getnextlist" onclick="" value="load more">
+ <input type="radio" style="display:none;" name="group" id="group" value="Project Manager" checked> Project Manager<br>
 <br><br><br>
 <table id="proj_site">
 <tbody id="proj_site_list">
@@ -54,6 +58,7 @@ var proj_site_url = '{% url 'role:multi_ops_list' 1 pk %}';
 {% else %}
 <h1>Permission denied.</h1>
 {% endif %}
+<input type="button" name="submit" onclick="assignusers()">
 
 
 
@@ -61,7 +66,8 @@ var proj_site_url = '{% url 'role:multi_ops_list' 1 pk %}';
 <script type="text/javascript">
 // alert(proj_site_url);
 var userurl = '{% url 'role:multi_user_list' 1 1 %}';
-
+var selected_proj_site = [];
+var selected_users = [];
 
 
 document.onload = getuserlist(userurl);
@@ -88,8 +94,7 @@ document.onload = getuserlist(userurl);
 
 function populateuserlist(data, index){
 
-   
-    var user_list = '<li class="note-div-sm '+ data.id +'" id="'+data.id+'usersli" style="display:none;" onclick="redirect(`'+data.username+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">'+ data.username +'</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.email +' </div></div>  </li>';
+    var user_list = '<li class="note-div-sm '+ data.id +'" id="'+data.id+'usersli" style="display:none;" onclick="checkifuserisselected(`'+ data.user.id +'`)"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">'+ data.user.username +'</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.user.email +' </div></div>  </li>';
 
     // var div = document.getElementById('notifications');
 
@@ -131,7 +136,7 @@ function getproj_site_url_list(url){
 function populate_proj_site_list(data, index){
 
    
-    var new_proj_site_list = '<li class="note-div-sm '+ data.id +'" id="'+data.id+'proj_site_list" style="display:none;" onclick="redirect(`'+data.name+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + data.address + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.phone +' </div></div>  </li>';
+    var new_proj_site_list = '<li class="note-div-sm '+ data.id +'" id="'+data.id+'proj_site_list" style="display:none;" onclick="checkifproj_siteisselected(`'+ data.id +'`)"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + data.address + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.phone +' </div></div>  </li>';
 
     // var div = document.getElementById('notifications');
 
@@ -152,18 +157,37 @@ function checkifuserisselected(id){
   else{
     selected_users.push(id);
   }
+  console.log(selected_users);
 }
 
 function checkifproj_siteisselected(id){
 
-  res = selected_users.indexOf(id);
+  res = selected_proj_site.indexOf(id);
   if(res > -1){
-    selected_users.splice(res, 1);
+    selected_proj_site.splice(res, 1);
   }
   else{
-    selected_users.push(id);
+    selected_proj_site.push(id);
   }
+    console.log(selected_proj_site);
 }
+
+function assignusers(){
+
+      group = $( 'input[id=group]:checked' ).val();
+      alert(group);
+      alert(selected_users);
+      alert(selected_proj_site);
+      $.ajax({
+        url:'',
+        data: {'users[]': selected_users, 'proj_site[]':selected_proj_site, 'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        type: 'POST',
+        success: function (html) {
+           $('#update-next-step').html(html);
+        }
+
+});
+    }
 
 
 </script>
