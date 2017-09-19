@@ -30,6 +30,274 @@
 
 		<script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery-2.1.4.min.js"></script>
 		<script type="text/javascript" src="{{ STATIC_URL }}js/libs/knockout.js" ></script>
+		<script type="text/javascript">
+
+
+		document.onload = getnotifdata('{% url 'eventlog:api-not' %}');
+
+			var data = "";
+			var speed = 500;
+			var types = {
+				0 : type0,
+				1 : type1,
+				2 : type2,
+				3 : type3,
+				4 : type4,
+				5 : type5,
+				6 : type6,
+				7 : type7,
+				8 : type8,
+				9 : type9,
+				10 : type10,
+				11 : type11,
+				12 : type12,
+				13 : type13,
+				14 : type14,
+				15 : type15,
+				16 : type16,
+				17 : type17,
+				18 : type18,
+				19 : type19,
+				20 : type20,
+			}
+
+		//notification message list builder with ahref links
+			function type0(data){
+				 content = '<b><a href="'+ data.get_source_url +'">' + data.source_name +'</a></b> joined <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> as an Organization Admin.';
+				 return content;
+			}
+			function type1(data){
+				 content = '<b><a href="'+ data.get_source_url +'">' + data.source_name +'</a></b> joined <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> as an Organization Admin.';
+				 return content;
+			}
+
+			function type2(data){
+				  content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as the Project Manager <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.invitor_url + '">' + data.invitor_name + '</a></b>';
+					  return content;
+			}
+
+			function type3(data){
+				   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Reviewer of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>';
+					  return content;
+
+			}
+			function type4(data){
+				  content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Site Supervisor of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>';
+						return content;
+
+			}
+			function type5(data){
+				   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as an Organization Admin in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+					  return content;
+			}
+			function type6(data){
+				   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as a Project Manager in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+					  return content;
+			}
+			function type7(data){
+				   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as a Reviewer in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+					  return content;
+			}
+
+			function type8(data){
+					   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as a Site Supervisor in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+						  return content;
+				}
+
+			function type9(data){
+					   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created a new organization named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+						  return content;
+				}
+
+
+			function type10(data){
+					   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created a new project named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+						  return content;
+				}
+
+
+			function type11(data){
+					   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created a new site named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> in  <b><a href="' +  data.get_extraobj_url + '">' + data.get_extraobj_name + '</a></b>';
+						  return content;
+				}
+
+			function type12(data){
+					   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created <b>'+ title +' in <a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+						  return content;
+				}
+
+
+			function type13(data){
+					   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of organization named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+						  return content;
+				}
+
+			function type14(data){
+					   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of project named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+						  return content;
+				}
+
+			function type15(data){
+					   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of site named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+						  return content;
+				}
+
+			function type16(data){
+					   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> submitted a response for '+ data.extra_message +' <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
+						  return content;
+				}
+
+			function type17(data){
+					   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> reviewed a response '+ data.title +' <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> in site <b><a href="' + data.get_extraobj_url+ '">' + data.get_eventobj_url+'</a></b>';
+						  return content;
+				}
+
+			function type18(data){
+					   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> assigned a new form'+ data.title +' in project <b><a href="' + data.get_content_url+ '">' + data.get_content_url+'</a></b>';
+						  return content;
+				}
+
+			function type19(data){
+					   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> assigned a new '+ data.title +' in site <b><a href="' + data.get_content_url+ '">' + data.get_content_url+'</a></b>';
+						  return content;
+				}
+
+
+			function type20(data){
+					   content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> edited <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> form.';
+						  return content;
+				}
+
+		function redirect(url){
+		  window.location = url;
+		}
+
+
+
+		function dateparser(date){
+		   let months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+
+			var d = new Date(date);
+
+			month = d.getMonth();
+			time=d.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+			clean_date = months[month] +', '+ d.getDate() +', '+ d.getFullYear() +', '+ time.toLowerCase()+'.';
+			return clean_date;
+
+		}
+		  function getnotifdata(url){
+			  $.ajax({
+				url: url,
+				type: 'GET',
+				success: function (data) {
+				   data.results.forEach(populatelist);
+				   speed=0;
+
+				}
+			  });
+		}
+
+
+
+
+		function populatelist(data, index){
+
+
+			typeid = data.type;
+			var readstatus='unread';
+			if(data.seen_by.includes({{ request.user.id }})){
+			   readstatus='read';
+			}
+		// get description for notificationaccotding to its type id
+			var content = types[typeid](data);
+		//append the data in main notificatin div
+
+			var new_li = '<li class="note-div-sm '+ readstatus +'" id="'+data.id+'" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ dateparser(data.date)+' </div></div>  </li>';
+
+			// var div = document.getElementById('notifications');
+
+			// div.innerHTML += new_li;
+			speed = speed+200;
+
+		$(new_li).appendTo("#notification-ul");
+		$("#"+data.id).fadeIn(speed);
+		}
+
+
+		</script>
+
+		<script type="text/javascript">
+		var notificationCount = $('#noti-count').text() || "0";
+		notificationCount = parseInt(notificationCount);
+
+		var id = "{{request.user.id}}";
+		var channel_url = "{{channels_url}}";
+		var orgid = "{{oid}}";
+		var pid = "{{pid}}";
+		var sid = "{{sid}}";
+		var today = new Date().toDateString();
+
+		const webSocketBridgeNotify = new channels.WebSocketBridge();
+		const webSocketBridgeNotifyProject = new channels.WebSocketBridge();
+		const webSocketBridgeNotifySite = new channels.WebSocketBridge();
+
+		const webSocketBridgeChat = new channels.WebSocketBridge();
+
+		// check type of user and connect it to its respective notification group
+		if(sid != "0"){
+		webSocketBridgeNotify.connect(channel_url+'site/'+sid+'/');
+		}else if(pid != "0"){
+		webSocketBridgeNotifyProject.connect(channel_url+'project/'+pid+'/');
+		}else{
+		  webSocketBridgeNotifySite.connect(channel_url+'notify/'+orgid+'/');
+		}
+
+		webSocketBridgeChat.connect(channel_url+'chat/'+id+'/');
+
+		webSocketBridgeNotify.listen(function(text, byte) {
+			if(notificationCount == 0){
+				notificationCount = $('#noti-count').text() || "0";
+				notificationCount = parseInt(notificationCount);
+			}
+			notificationCount += 1;
+
+
+
+			$('#noti-count').text(notificationCount);
+			description = text.description;
+			desc = description.split(",");
+
+			typeid = text.typeid
+		// get description for notificationaccotding to its type id
+			var content = types[typeid](text, desc);
+		//append the text in main notificatin div
+			var new_li = '<li class="note-div-sm unread"> <a href='+ text.url +' class="full"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div><div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ today+' </div></div> </a> </li>';
+
+			$(new_li).prependTo($('#notification-ul'));
+			document.getElementById('beep').play();
+		});
+
+
+		webSocketBridgeChat.listen(function(text, byte) {
+		console.log("chat received");
+		console.log(text.prop1);
+		console.log(text.prop2);
+		});
+
+		</script>
+		<script type="text/javascript">
+
+			function showMenu(){
+			if ($('#fs_drop_menu').is(":hidden")){
+			 $('#fs_drop_menu').show();
+			}else{
+
+			$("#fs_drop_menu").hide();
+		}
+		}
+
+
+		</script>
 		{%block kocript %}
     	{% endblock %}
 	</head>
@@ -51,58 +319,61 @@
 					<li class="dropdown">
 						<a href="#" id="dropdownMenuButtonNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<i class="la la-bell"></i>
-							<span class="badge badge-warning">4</span>
+							<span class="badge badge-warning">{% if notifications.count %} {{notifications.count }} {% endif %}</span>
 						</a>
+						{% if notifications.count %}
 						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification">
-							<div class="dropdown-header">Notifications (12)</div>
-							<a class="dropdown-item" href="#">
+							<div class="dropdown-header">New Notifications ({% if notifications.count %} {{notifications.count }} {% endif %})</div>
+							<ul class="menu" id="notification-ul">
+							{% for noti in notifications %}
+                    		{% if noti.type == 6 %}
+							<li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
+							<a class="dropdown-item" href="{{noti.get_absolute_url}}">
 								<div class="notification-item">
 									<div class="notification-avatar pull-left" href="">
 										<i class="avatar-icon la la-bolt"></i>
 									</div>
 									<div class="notification-highlight">
-										<p class="notification-highlight-excerpt"><b>Server Error Report</b></p>
-										<p class="notification-highlight-time">1.2 hours ago</p>
+										<p class="notification-highlight-excerpt"><b>{{noti.content_object.user.get_full_name}}
+                      {% trans 'joined ' %} {{noti.content_object.organization.name}} {% trans 'as ' %} {{noti.content_object.group.name}}</b></p>
+										<p class="notification-highlight-time">{{noti.date}}</p>
 									</div>
 								</div>
 							</a>
-							<a class="dropdown-item" href="#">
+							</li>
+							{% else %}
+							<li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
+							<a class="dropdown-item" href="{{noti.get_absolute_url}}">
 								<div class="notification-item">
 									<div class="notification-avatar pull-left" href="">
 										<i class="avatar-icon la la-bolt"></i>
 									</div>
 									<div class="notification-highlight">
-										<p class="notification-highlight-excerpt"><b>Server Error Report</b></p>
-										<p class="notification-highlight-time">1.2 hours ago</p>
+										<p class="notification-highlight-excerpt"><b>{{noti.description}}</b></p>
+										<p class="notification-highlight-time">{{noti.date}}</p>
 									</div>
 								</div>
 							</a>
-							<a class="dropdown-item" href="#">
-								<div class="notification-item">
-									<div class="notification-avatar pull-left" href="">
-										<i class="avatar-icon la la-bolt"></i>
-									</div>
-									<div class="notification-highlight">
-										<p class="notification-highlight-excerpt"><b>Server Error Report</b></p>
-										<p class="notification-highlight-time">1.2 hours ago</p>
-									</div>
-								</div>
-							</a>
+							</li>
+							{% endif %}
+                			{% endfor %}
+							</ul>
 							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="#">View All</a>
+							<a class="dropdown-item" href="{% url 'eventlog:notification-list' %}">{% if notifications.count %} {% trans 'View all' %} {% endif %}</a>
 						</div>
+						{% endif %}
 					</li>
 					<li class="dropdown">
 						<a href="#" id="dropdownMenuButtonUser" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<div class="user-avatar">
-								<img src="assets/img/img-avatar.jpg" alt="">
+								<img src="{{request.user.user_profile.profile_picture.url}}" alt="">
 							</div>
-							<span class="hidden-sm hidden-xs">Bikrant</span>
+							<span class="hidden-sm hidden-xs">{% trans request.user.username %}</span>
 						</a>
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonUser">
-							<a class="dropdown-item" href="#"><i class="la la-user"></i> My Profile</a>
-							<a class="dropdown-item" href="#"><i class="la la-key"></i> Change Password</a>
-							<a class="dropdown-item" href="#"><i class="la la-sign-out"></i> Logout</a>
+							<a class="dropdown-item" href="{% url 'users:profile' 0 %}"><i class="la la-user"></i> My Profile</a>
+							<a class="dropdown-item" href="{% url 'auth_password_change' %}"><i class="la la-key"></i> Change Password</a>
+							<a class="dropdown-item" href="{% url 'auth_logout' %}"><i class="la la-sign-out"></i> Logout</a>
 						</div>
 					</li>
 				</ul>

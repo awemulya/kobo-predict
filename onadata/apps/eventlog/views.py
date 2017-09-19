@@ -90,7 +90,7 @@ class NotificationDetailView(View):
         if not notification.seen_by.filter(id=request.user.id).exists():
             notification.seen_by.add(request.user)
         if notification.type == 0:
-            return redirest('/users/profile/{}'.format(notification.content_object.user.id))
+            return redirect('/users/profile/{}'.format(notification.content_object.user.id))
         url =  notification.content_object.get_absolute_url()
         return redirect(url)
 
