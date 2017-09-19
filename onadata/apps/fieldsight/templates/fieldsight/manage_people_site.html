@@ -518,18 +518,23 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-4">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Current Project Managers</h4>
+                <h4>Current Organization Admins</h4>
               </div>
               <div class="widget-body max-513-scolling" data-bind="foreach:admins">
-                <div class="project-item-wrap clearfix">
+                <div class="project-item-wrap clearfix" data-bind="click:detail">
                   <div class="project-logo">
-                    <img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
+                    <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
                   </div>
                   <div class="project-basic-info">
-                    <h4>Bikrant Giri</h4>
-                    <p>Old Baneshwor, Kathmandu, Nepal</p>
+                    <h4 data-bind="text:user().full_name"></h4>
+                    <p data-bind="text:user().email"></p>
                   </div>
-                  <a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
+                  <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this Organization Admin?', click: detail }"><i class="la la-close"></i></a>
+
+
+
+          <span class="closebtn-cu"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
                 </div>
                 
             </div>
@@ -544,14 +549,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
 	{% endblock %}
     {%block extrascript %}
-       <script>
-			$(document).ready(function(){
-
-				$(".max-513-scolling").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
-				$(".max-260-scroll").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
-
-			});
-		</script>
+     
     <script>
 var ajax_call=false;
 
