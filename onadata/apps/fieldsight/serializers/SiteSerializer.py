@@ -1,6 +1,6 @@
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
-from onadata.apps.fieldsight.models import Site, SiteCreateSurveyImages, ProjectType
+from onadata.apps.fieldsight.models import Site, SiteCreateSurveyImages, ProjectType, Project
 
 
 class SiteSerializer(serializers.ModelSerializer):
@@ -21,6 +21,18 @@ class SiteSerializer(serializers.ModelSerializer):
         data = obj.blueprints.all()
         return [m.image.url for m in data]
 
+
+class SiteUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Site
+        exclude = ('project',)
+        read_only_fields = ('is_active',)
+
+
+class ProjectUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        exclude = ('organization',)
 
 class PhotoSerializer(serializers.ModelSerializer):
 
