@@ -1,0 +1,195 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n %}
+
+{% block page-title %}{% trans 'Assign Multi User'  %}
+
+{% endblock %}
+
+{% block head %}
+    
+{% endblock %}
+
+{% block content %}
+
+{% if type == "site" %}
+<script>
+var proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
+</script>
+
+<table id="users">
+  <tbody id="usersli">
+    
+  </tbody>
+</table>
+ <input style="display:none;" type="button" id="getnextlist" onclick="" value="load more">
+
+  <input type="radio" name="group" id="group" value="Reviewer" checked> Reviewer<br>
+  <input type="radio" name="group" id="group" value="Site Supervisor"> Site Supervisor<br>
+<br>
+<br>
+<br>
+<table id="proj_site">
+<tbody id="proj_site_list">
+  
+</tbody>
+</table>
+<input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more">
+
+
+{% elif type == "project" %}
+<script>
+var proj_site_url = '{% url 'role:multi_ops_list' 1 pk %}';
+</script>
+<table id="users">
+  <tbody id="usersli">
+    
+  </tbody>
+</table>
+ <input style="display:none;" type="button" id="getnextlist" onclick="" value="load more">
+ <input type="radio" style="display:none;" name="group" id="group" value="Project Manager" checked> Project Manager<br>
+<br><br><br>
+<table id="proj_site">
+<tbody id="proj_site_list">
+  
+</tbody>
+
+</table>
+ <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more">
+{% else %}
+<h1>Permission denied.</h1>
+{% endif %}
+<input type="button" name="submit" onclick="assignusers()">
+
+
+
+
+<script type="text/javascript">
+// alert(proj_site_url);
+var userurl = '{% url 'role:multi_user_list' 1 1 %}';
+var selected_proj_site = [];
+var selected_users = [];
+
+
+document.onload = getuserlist(userurl);
+
+  function getuserlist(url){
+   
+      $.ajax({
+        url: url,
+        type: 'GET',
+        success: function (data) {
+           data.results.forEach(populateuserlist);
+           speed=0;
+           if (data.next == null){
+            document.getElementById('getnextlist').style.display = 'none';
+           }else{
+            document.getElementById('getnextlist').style.display = 'block';
+            document.getElementById("getnextlist").setAttribute( "onClick", "javascript: getuserlist('"+ data.next+"');" );
+        }
+        console.log(data);
+        }
+      });
+}
+
+
+function populateuserlist(data, index){
+
+    var user_list = '<li class="note-div-sm '+ data.id +'" id="'+data.id+'usersli" style="display:none;" onclick="checkifuserisselected(`'+ data.user.id +'`)"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">'+ data.user.username +'</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.user.email +' </div></div>  </li>';
+
+    // var div = document.getElementById('notifications');
+
+    // div.innerHTML += new_li;
+    speed = speed+200;
+
+$(user_list).appendTo("#usersli");
+$("#"+data.id+"usersli").fadeIn(speed);
+}
+
+
+
+
+
+
+
+document.onload = getproj_site_url_list(proj_site_url);
+
+function getproj_site_url_list(url){
+   
+      $.ajax({
+        url: url,
+        type: 'GET',
+        success: function (data) {
+           speed_proj_site=0;
+           data.results.forEach(populate_proj_site_list);
+           
+           if (data.next == null){
+            document.getElementById('getnextproj_site_list').style.display = 'none';
+           }else{
+            document.getElementById('getnextproj_site_list').style.display = 'block';
+            document.getElementById("getnextproj_site_list").setAttribute( "onClick", "javascript: getproj_site_url_list('"+ data.next+"');" );
+        }
+        }
+      });
+}
+
+
+function populate_proj_site_list(data, index){
+
+   
+    var new_proj_site_list = '<li class="note-div-sm '+ data.id +'" id="'+data.id+'proj_site_list" style="display:none;" onclick="checkifproj_siteisselected(`'+ data.id +'`)"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + data.address + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.phone +' </div></div>  </li>';
+
+    // var div = document.getElementById('notifications');
+
+    // div.innerHTML += new_li;
+    speed_proj_site = speed_proj_site+200;
+
+$(new_proj_site_list).appendTo("#proj_site_list");
+$("#"+data.id+"proj_site_list").fadeIn(speed_proj_site);
+}
+
+
+function checkifuserisselected(id){
+
+  res = selected_users.indexOf(id);
+  if(res > -1){
+    selected_users.splice(res, 1);
+  }
+  else{
+    selected_users.push(id);
+  }
+  console.log(selected_users);
+}
+
+function checkifproj_siteisselected(id){
+
+  res = selected_proj_site.indexOf(id);
+  if(res > -1){
+    selected_proj_site.splice(res, 1);
+  }
+  else{
+    selected_proj_site.push(id);
+  }
+    console.log(selected_proj_site);
+}
+
+function assignusers(){
+
+      group = $( 'input[id=group]:checked' ).val();
+      alert(group);
+      alert(selected_users);
+      alert(selected_proj_site);
+      $.ajax({
+        url:'',
+        data: {'users[]': selected_users, 'proj_site[]':selected_proj_site, 'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        type: 'POST',
+        success: function (html) {
+           $('#update-next-step').html(html);
+        }
+
+});
+    }
+
+
+</script>
+
+{% endblock %}

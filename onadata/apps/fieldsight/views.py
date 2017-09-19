@@ -16,6 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
 from django.forms.forms import NON_FIELD_ERRORS
 
+from fcm.utils import get_device_model
 
 import django_excel as excel
 from registration.backends.default.views import RegistrationView
@@ -946,7 +947,7 @@ def RepresentsInt(s):
 
 @login_required()
 def senduserinvite(request):
-    user = User.objects.filter(email=request.POST.get('email'))
+    emails =request.POST.getlist('emails[]')
     group = Group.objects.get(name=request.POST.get('group'))
 
     organization_id = None
@@ -960,49 +961,56 @@ def senduserinvite(request):
     if RepresentsInt(request.POST.get('site_id')):
         site_id = request.POST.get('site_id')
 
+    response=""
 
-    userinvite = UserInvite.objects.filter(email=request.POST.get('email'), organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+    for email in emails:
+        user = User.objects.filter(email=email)
+        userinvite = UserInvite.objects.filter(email=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
 
-    if userinvite:
-        return HttpResponse('<script> alert("Invite already sent."); <script>')
+        if userinvite:
+            response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
+            continue
+        if user:
+            userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
+            
+            if userrole:
+                if userrole[0].ended_at==None:
+                    response += email + ' already has the role for '+group.name+'.<br>' 
+                    continue
+            invite = UserInvite(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
 
-    if user:
-        userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
-        
-        if userrole:
-            if userrole[0].ended_at==None:
-                return HttpResponse('Already has the role.') 
-        
-        invite = UserInvite(email=request.POST.get('email'), by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
+            invite.save()
+            organization = Organization.objects.get(pk=1)
+            # noti = invite.logs.create(source=user[0], type=9, title="new Role",
+            #                                organization_id=request.POST.get('organization_id'),
+            #                                description="{0} sent you an invite to join {1} as the {2}.".
+            #                                format(request.user.username, organization.name, invite.group.name,))
+            # result = {}
+            # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+            # result['url'] = noti.get_absolute_url()
+            # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+            # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
-        invite.save()
-        organization = Organization.objects.get(pk=1)
-        # noti = invite.logs.create(source=user[0], type=9, title="new Role",
-        #                                organization_id=request.POST.get('organization_id'),
-        #                                description="{0} sent you an invite to join {1} as the {2}.".
-        #                                format(request.user.username, organization.name, invite.group.name,))
-        # result = {}
-        # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
-        # result['url'] = noti.get_absolute_url()
-        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        else:
+            invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+            invite.save()
+        current_site = get_current_site(request)
+        subject = 'Invitation for Role'
+        message = render_to_string('fieldsight/email_sample.html',
+        {
+            'email': invite.email,
+            'domain': current_site.domain,
+            'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
+            'token': invite.token,
+            'invite': invite,
+            })
+        email_to = (invite.email,)
+        send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
+        response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
+        continue
+    return HttpResponse(response)
 
-    else:
-        invite = UserInvite(email=request.POST.get('email'), by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
-        invite.save()
-    current_site = get_current_site(request)
-    subject = 'Invitation for Role'
-    message = render_to_string('fieldsight/email_sample.html',
-    {
-        'email': invite.email,
-        'domain': current_site.domain,
-        'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
-        'token': invite.token,
-        'invite': invite,
-        })
-    email_to = (invite.email,)
-    send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
-    return HttpResponse("<script> alert('Sucessfully invited for "+ group.name +" role.');</script>")
+
 
 # def activate_role(request, invite_idb64, token):
 #     try:
@@ -1118,3 +1126,75 @@ class SummaryReport(TemplateView):
             'cumulative_labels': line_chart_data.keys(),
         }
         return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)
+
+class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
+    def get(self, request, pk):
+        project_obj = Project.objects.get(pk=pk)
+        return render(request, 'fieldsight/multi_user_assign.html',{'type': "site", 'pk':pk})
+
+    def post(self, request, *args, **kwargs):
+        sites = request.POST.getlist('proj_site[]')
+        users = request.POST.getlist('users[]')
+        group = Group.objects.get(name=request.POST.get('group'))
+        response = ""
+        for site_id in sites:
+            site = Site.objects.get(pk=site_id)
+
+            for user in users:
+                role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
+                                                               project__id=site.project.id, group=group)
+                if created:
+                    # description = "{0} was assigned  as {1} in {2}".format(
+                    #     role.user.get_full_name(), role.lgroup.name, role.project)
+                    noti_type = 8
+
+                    # if data.get('group') == "Reviewer":
+                    #     noti_type =7
+                    
+                    # noti = role.logs.create(source=role.user, type=noti_type, title=description,
+                    #                         description=description, content_type=site, extra_object=self.request.user,
+                    #                         site=role.site)
+                    # result = {}
+                    # result['description'] = description
+                    # result['url'] = noti.get_absolute_url()
+                    # ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                    # ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
+                    # ChannelGroup("site-{}".format(role.site.id)).send({"text": json.dumps(result)})
+                    # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+                    # Device = get_device_model()
+                    # if Device.objects.filter(name=role.user.email).exists():
+                    #     message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
+                    #     Device.objects.filter(name=role.user.email).send_message(message)
+                else:
+                    response += "Already exists."
+        return HttpResponse(response)
+
+
+class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
+    def get(self, request, pk):
+        org_obj = Organization.objects.get(pk=pk)
+        return render(request, 'fieldsight/multi_user_assign.html',{'type': "project", 'pk':pk})
+
+    def post(self, request, *args, **kwargs):
+        projects = request.POST.getlist('proj_site[]')
+        users = request.POST.getlist('users[]')
+        group = Group.objects.get(name="Project Manager")
+        for project_id in projects:
+            project = Project.objects.get(pk=project_id)
+            for user in users:
+                role, created = UserRole.objects.get_or_create(user_id=user, project_id=project_id,
+                                                               organization__id=project.organization.id,
+                                                               project__id=project_id,
+                                                               group=group)
+                if created:
+                    description = "{0} was assigned  as Project Manager in {1}".format(
+                        role.user.get_full_name(), role.project)
+                    noti = role.logs.create(source=role.user, type=6, title=description, description=description,
+                     content_type=project, extra_object=self.request.user)
+                    result = {}
+                    result['description'] = description
+                    result['url'] = noti.get_absolute_url()
+                    ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                    ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
+                    ChannelGroup("notify-0").send({"text": json.dumps(result)})
