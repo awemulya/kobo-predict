@@ -1,0 +1,223 @@
+{% load staticfiles i18n filters %}
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"  lang="en"> <!--<![endif]-->
+    <head>
+        {% load staticfiles %}
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>
+        {% block whole_title %}
+
+            {% block title %}{% trans 'Fieldsight' %}
+
+        {% endblock %}{% endblock %}
+		</title>
+		<!--Core CSS -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		{%block extracss %}
+		{% endblock %}
+
+		<link rel="apple-touch-icon" href="{% static 'dummy/apple-touch-icon.png' %}">
+		<link rel="stylesheet" href="{% static 'dummy/assets/css/style.css' %}">
+        <script src="{% static 'dummy/assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
+
+
+		<script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery-2.1.4.min.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}js/libs/knockout.js" ></script>
+		{%block kocript %}
+    	{% endblock %}
+	</head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+			<header id="header" class="main-header clearfix">
+			<div class="brand clearfix">
+				<a href="#" title="" class="logo">
+					<img src="{% static 'dummy/assets/img/logo.png' %}" alt="Field Sight" width="168" height="32">
+				</a>
+				<div class="sidebar-toggle-box">
+					<span class="la la-bars"></span>
+				</div>
+			</div>
+			<div class="top-nav clearfix">
+				<ul class="right-nav clearfix">
+					<li class="dropdown">
+						<a href="#" id="dropdownMenuButtonNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<i class="la la-bell"></i>
+							<span class="badge badge-warning">4</span>
+						</a>
+						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification">
+							<div class="dropdown-header">Notifications (12)</div>
+							<a class="dropdown-item" href="#">
+								<div class="notification-item">
+									<div class="notification-avatar pull-left" href="">
+										<i class="avatar-icon la la-bolt"></i>
+									</div>
+									<div class="notification-highlight">
+										<p class="notification-highlight-excerpt"><b>Server Error Report</b></p>
+										<p class="notification-highlight-time">1.2 hours ago</p>
+									</div>
+								</div>
+							</a>
+							<a class="dropdown-item" href="#">
+								<div class="notification-item">
+									<div class="notification-avatar pull-left" href="">
+										<i class="avatar-icon la la-bolt"></i>
+									</div>
+									<div class="notification-highlight">
+										<p class="notification-highlight-excerpt"><b>Server Error Report</b></p>
+										<p class="notification-highlight-time">1.2 hours ago</p>
+									</div>
+								</div>
+							</a>
+							<a class="dropdown-item" href="#">
+								<div class="notification-item">
+									<div class="notification-avatar pull-left" href="">
+										<i class="avatar-icon la la-bolt"></i>
+									</div>
+									<div class="notification-highlight">
+										<p class="notification-highlight-excerpt"><b>Server Error Report</b></p>
+										<p class="notification-highlight-time">1.2 hours ago</p>
+									</div>
+								</div>
+							</a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="#">View All</a>
+						</div>
+					</li>
+					<li class="dropdown">
+						<a href="#" id="dropdownMenuButtonUser" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<div class="user-avatar">
+								<img src="assets/img/img-avatar.jpg" alt="">
+							</div>
+							<span class="hidden-sm hidden-xs">Bikrant</span>
+						</a>
+						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonUser">
+							<a class="dropdown-item" href="#"><i class="la la-user"></i> My Profile</a>
+							<a class="dropdown-item" href="#"><i class="la la-key"></i> Change Password</a>
+							<a class="dropdown-item" href="#"><i class="la la-sign-out"></i> Logout</a>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</header>
+		<div id="main-container" class="minified">
+			<div id="sidebar" data-toggle="affix">
+				<div class="leftside-navigation">
+					<ul class="sidebar-menu" id="nav-accordion">
+						<li>
+							<a class="" href="{% url 'dashboard' %}">
+								<i class="la la-dashboard"></i>
+								<span>{% trans 'Dashboard' %}</span>
+							</a>
+						</li>
+						{% ifrole "admin" %}
+						<li class="sub-menu">
+							<a href="{% url 'fieldsight:organizations-list' %}">
+								<i class="la la-building"></i>
+								<span>{% trans 'Organization' %}</span>
+							</a>
+							<!--<ul class="sub">-->
+								<!--<li><a href="organization.php">All Organizations</a></li>-->
+								<!--<li><a href="new-organization.php">New Organization</a></li>-->
+							<!--</ul>-->
+						</li>
+						{% endrole %}
+						<!--<li class="sub-menu">-->
+							<!--<a href="javascript:;">-->
+								<!--<i class="la la-tasks"></i>-->
+								<!--<span>Projects</span>-->
+							<!--</a>-->
+							<!--<ul class="sub">-->
+								<!--<li><a href="#">All Projects</a></li>-->
+								<!--<li><a href="#">New Project</a></li>-->
+							<!--</ul>-->
+						<!--</li>-->
+						{% ifrole "Site" %}
+						<li class="sub-menu">
+							<a href="javascript:;">
+								<i class="la la-clipboard"></i>
+								<span>{% trans 'Forms' %}</span>
+							</a>
+							<ul class="sub">
+								<li><a href="{{ koboform_url }}#/forms/new">{% trans 'Create New' %}</a></li>
+								<li><a href="{% url 'forms:forms-list' %}">{% trans 'My Forms' %}</a></li>
+							</ul>
+						</li>
+						<!--<li class="sub-menu">-->
+							<!--<a href="javascript:;">-->
+								<!--<i class="la la-users"></i>-->
+								<!--<span>Users</span>-->
+							<!--</a>-->
+							<!--<ul class="sub">-->
+								<!--<li><a href="#">All Users</a></li>-->
+								<!--<li><a href="#">New User</a></li>-->
+							<!--</ul>-->
+						<!--</li>-->
+						<li class="sub-menu">
+							<a href="javascript:;">
+								<i class="la la-book"></i>
+								<span>{% trans 'Library' %}</span>
+							</a>
+							<ul class="sub">
+								<li><a href="{% url 'forms:library-forms-list' %}">{% trans 'Library Forms' %}</a></li>
+								<li><a href="{% url 'forms:group-list' %}">{% trans 'Stages Library' %}</a></li>
+							</ul>
+						</li>
+						 {% endrole %}
+					</ul>
+				</div>
+			</div>
+			{% block content %}
+			{% endblock %}
+		</div>
+		<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="myModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+			<div class="modal-content modal-lg">
+				<div class="modal-header">
+					<h5 class="modal-title">&nbsp;</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					  <span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+
+				</div>
+			</div>
+		  </div>
+		</div>
+		<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="assets/js/vendor/jquery-3.2.1.min.js"><\/script>')</script>-->
+        <script>window.jQuery || document.write('<script src="{% static 'dummy/assets/js/vendor/jquery-1.11.2.min.js' %}"><\/script>')</script>
+		<script src="{% static 'dummy/assets/js/vendor/popper.min.js' %}"></script>
+        <script src="{% static 'dummy/assets/js/vendor/bootstrap.min.js' %}"></script>
+
+		<script src="{% static 'dummy/assets/js/vendor/jquery.cookie.js' %}"></script>
+		<script src="{% static 'dummy/assets/js/vendor/jquery.dcjqaccordion.2.7.min.js' %}"></script>
+		<script src="{% static 'dummy/assets/js/vendor/jquery.slimscroll.min.js' %}"></script>
+		<script src="{% static 'dummy/assets/js/vendor/jquery.nicescroll.min.js' %}"></script>
+
+		<script src="{% static 'dummy/assets/js/vendor/leaflet.js' %}"></script>
+		<script>
+			var map = L.map('map', {
+				center: [51.505, -0.09],
+				zoom: 13
+			});
+
+
+		</script>
+
+        <script src="{% static 'dummy/assets/js/plugins.js' %}"></script>
+        <script src="{% static 'dummy/assets/js/main.js' %}"></script>
+
+    </body>
+	{%block extrascript %}
+    {% endblock %}
+</html>

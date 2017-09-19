@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
+from django.db.models import Q
 
-from onadata.apps.main.models.meta_data import MetaData
+from onadata.apps.fieldsight.models import Site
+# from onadata.apps.main.models.meta_data import MetaData
 from onadata.apps.api.viewsets.xform_list_api import XFormListApi
 from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormListSerializer
@@ -18,15 +20,15 @@ class AssignedXFormListApi(XFormListApi):
         if self.request.user.is_anonymous():
             self.permission_denied(self.request)
         site_id = self.kwargs.get('site_id', None)
-        site_id = int(site_id)
-        queryset = queryset.filter(site__id=site_id, is_deployed=True)
+        project_id = Site.objects.get(pk=site_id).project.id if Site.objects.filter(pk=site_id).exists() else 0
+        queryset = queryset.filter(Q(site__id=site_id, site__isnull=False, is_deployed=True) |
+                                   Q(project__id=project_id, project__isnull=False, is_survey=True))
         return queryset
 
     @detail_route(methods=['GET'])
     def manifest(self, request, *args, **kwargs):
         self.object = self.get_object()
-        object_list = MetaData.objects.filter(data_type='media',
-                                              xform=self.object.xf)
+        object_list = []
         context = self.get_serializer_context()
         serializer = FSXFormManifestSerializer(object_list, many=True,
                                              context=context)

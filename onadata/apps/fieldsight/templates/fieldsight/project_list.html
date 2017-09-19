@@ -1,123 +1,79 @@
-{% extends "fieldsight/fieldsight_base.html" %}
+{% extends "fieldsight/fieldsight_base1.html" %}
 {% load i18n staticfiles %}
 {% load filters %}
-
-{% block page-title %}
-{% trans 'Projects ' %}
-{% endblock %}
-{% block head %}
-
-    <a class="btn btn-primary btn-raised" href="{% url 'fieldsight:project-add' pk%}">{% trans 'New' %} {% trans 'Project' %}</a>
-
-
-{% endblock %}
-
 {% block content %}
-
-    {% load pagination_tags %}
+ {% load pagination_tags %}
     {% load sorting_tags %}
     {% load filters %}
 
-    
+
 
         {% autosort object_list as sorted_objects %}
         {% autopaginate object_list 25 as paginated_objects %}
+<div id="main-content" class="padding">
+				<section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-tasks"></i>{% block page-title %}{% trans 'Projects' %}{% endblock %}</h3>
+						<div class="panel-heading-right">
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i> Search</a>
+							<a href="{% url 'fieldsight:project-add' pk%}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Add' %} {% trans 'New'%}</a>
+						</div>
+                    </header>
+					<div class="panel-body">
+						<!--Search Organization-->
+						<div class="collapse margin-top" id="searchOrganization">
+							<form class="padding">
+								<div class="row">
+									<div class="col-md-6 ml-md-auto">
+										<div class="input-group">
+										  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+										  <span class="input-group-btn">
+											<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+										  </span>
+										</div>
+									</div>
+									<div class="col-md-3"></div>
+								</div>
+							</form>
+						</div>
+						<!--Organization Listing-->
+						<div class="row">
+                            {% for obj in paginated_objects %}
+							<div class="col-md-4 col-sm-6">
+								<div class="organization-item-wrap  margin-top clearfix">
+									<div class="logo">
+										<img src="{{ obj.logo.url }}" alt="" width="80" height="80">
+									</div>
+									<div class="basic-info">
+										<h4>{{ obj.name }}</h4>
+										<p>{{ obj.address }}</p>
+                                        <p>{{ obj.get_country_display }}</p>
+									</div>
+									<div class="action-button margin-top">
+										<a href="{% url 'fieldsight:project-dashboard' obj.pk %}" title="" class="btn btn-sm btn-primary">{% trans 'View' %}</a>
+										<a href="{% url 'fieldsight:project-edit' obj.pk %}" title="" class="btn btn-sm btn-primary">{% trans 'Edit' %}</a>
+									</div>
+								</div>
+							</div>
+                            {% endfor %}
+						</div>
+                        {% paginate %}
+					</div>
+					<!--Pagination-->
+						<nav class="margin-top" aria-label="page-navigation">
+						  <ul class="pagination justify-content-center">
+							<li class="page-item disabled">
+							  <a class="page-link" href="#" tabindex="-1">Previous</a>
+							</li>
+							<li class="page-item active"><a class="page-link" href="#">1</a></li>
+							<li class="page-item"><a class="page-link" href="#">2</a></li>
+							<li class="page-item"><a class="page-link" href="#">3</a></li>
+							<li class="page-item">
+							  <a class="page-link" href="#">Next</a>
+							</li>
+						  </ul>
+						</nav>
+                </section>
 
-        <!--<table class="table table-striped">-->
-            <!--<thead>-->
-            <!--<th>{% anchor name _('Name') %}</th>-->
-            <!--<th>{% anchor organization _('Organization') %}</th>-->
-            <!--<th>{% anchor address _('Address') %}</th>-->
-            <!--<th>{% anchor phone _('Phone') %}</th>-->
-            <!--<th>{% anchor email _('Email') %}</th>-->
-            <!--<th>{% anchor fax _('Fax') %}</th>-->
-            <!--<th>{% anchor website _('Website') %}</th>-->
-            <!--<th>{% trans 'Projects Managers ' %}</th>-->
-            <!--<th>{% anchor is_active _('Status') %}</th>-->
-            <!--</thead>-->
-            <!--<tbody>-->
-            <!--{% for obj in paginated_objects %}-->
-                <!--<tr>-->
-                    <!--<td>-->
-                        <!--<a href="{% url 'fieldsight:project-edit' obj.pk %}">{{ obj.name }}</a>-->
-                    <!--</td>-->
-                    <!--<td>-->
-                        <!--{{ obj.organization }}-->
-                    <!--</td>-->
-                    <!--<td>-->
-                        <!--{{ obj.address }}-->
-                    <!--</td>-->
-                    <!--<td>-->
-                        <!--{{ obj.phone }}-->
-                    <!--</td>-->
-                    <!--<td>-->
-                        <!--{{ obj.email }}-->
-                    <!--</td>-->
-                    <!--<td>-->
-                        <!--{{ obj.fax }}-->
-                    <!--</td>-->
-                    <!--<td>-->
-                        <!--{{ obj.website }}-->
-                    <!--</td>-->
-                    <!--<td>-->
-                        <!--{{ obj.get_staffs }}<a class="fa fa-plus" title="Add Project Manager"-->
-                                               <!--href="{% url 'fieldsight:add_proj_manager' pk=obj.id %}"></a>-->
-                    <!--</td>-->
-                    <!--<td>-->
-                        <!--{{ obj.is_active|activeness }}-->
-                    <!--</td>-->
-                     <!--<td>-->
-                        <!--<a class="btn btn-success btn-raised" href="{% url 'fieldsight:alter_proj_status' pk=obj.id %}">-->
-                            <!--&lt;!&ndash;later with js framework ko in some and angular in some&ndash;&gt;-->
-                            <!--{{ obj.is_active|alter_status }} {% trans 'Project' %}</a>-->
-                    <!--</td>-->
-                <!--</tr>-->
-            <!--{% endfor %}-->
-            <!--</tbody>-->
-        <!--</table>-->
-        <div class="gap"></div>
-        {% for obj in paginated_objects %}
-        <div class="organization-list">
-            <div class="col-md-4 col-sm-4 col-xs-12 project_list_img">
-                <a href="{% url 'fieldsight:project-dashboard' obj.pk %}">
-
-
-                    <div class="card">
-
-                        <!--Card image-->
-
-                        <div class="card-image list-img">
-                            <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" class="sixty" />
-
-                        </div>
-                        <!--/.Card image-->
-
-                        <!--Card content-->
-                        <div class="card-block">
-                            <!--Title-->
-                            <h4 class="card-title">{{ obj.name }}</h4>
-                            <hr class="colour">
-                            <!--Text-->
-                            <p class="card-text"><span><i class="fa fa-map-marker space" aria-hidden="true"></i></span>{{ obj.address }}, {{ obj.get_country_display }}</p>
- 
-                            <a href="{% url 'fieldsight:project-dashboard' obj.pk %}" class="btn btn-primary">GO <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-</a>
-                        </div>
-                        <!--/.Card content-->
-
-                    </div>
-
-                    </a>
-                    </div>
-                    </div>
-
-
-
-              {% endfor %}
-        {% paginate %}
-
-    
-
-
-
+			</div>
 {% endblock %}

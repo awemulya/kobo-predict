@@ -1,25 +1,11 @@
-{% extends "fieldsight/fieldsight_base.html" %}
+{% extends "fieldsight/fieldsight_base1.html" %}
 {% load i18n staticfiles %}
 {% load filters %}
-
-{% block page-title %}{% trans 'Manage Forms' %}{% endblock %}
-
-   {%block extracss %}
+ {%block extracss %}
 <link rel="stylesheet" href="{% static 'css/knockout-file-bindings.css' %}">
     {% endblock %}
 
-{% block head %}
-{% endblock %}
-{% block breadcrumbs %}
-{% if is_project == "0" %}
-<li><a href="{% url 'fieldsight:site-dashboard' pk %}">
-     {% trans 'Site Dashboard' %}</a></li>
-{% else %}
-<li><a href="{% url 'fieldsight:project-dashboard' pk %}">
-     {% trans 'Project Dashboard' %}</a></li>
-{% endif %}
-<li>{% trans 'Manage Forms' %}</li>
-{% endblock %}
+
 
 {%block kocript %}
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
@@ -30,7 +16,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/knockout-sortable.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js?v=1.1"></script>
 
 <script>
 
@@ -45,522 +31,912 @@ var pk = "{{pk}}";
 
 </script>
 {% endblock %}
-
 {% block content %}
-<div class="btn-group-nav" role="group" aria-label="...">
-  <button type="button" class="btn" data-bind="css: {'btn-primary': currentVm() == 'general', 'btn-default': !currentVm() == 'general'}, click: function () {setSelectedVm('general')}">{% trans 'General Forms' %}</button>
-  <button type="button" class="btn" data-bind="css: {'btn-primary': currentVm() == 'schedules', 'btn-default': !currentVm() == 'schedules'}, click: function () {setSelectedVm('schedules')}">{% trans 'Schedules' %}</button>
-  <button type="button" class="btn" data-bind="css: {'btn-primary': currentVm() == 'stages', 'btn-default': !currentVm() == 'stages'}, click: function () {setSelectedVm('stages')}">{% trans 'Stages' %}</button>
-</div>
+<div id="main-content" class="padding">
+				<!-- Nav tabs -->
+				<div class="tabbing">
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">General Forms</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Scheduled Forms</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Staged Form</a>
+						</li>
+					</ul>
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div class="tab-pane active" id="tab001" role="tabpanel">
+							<a href="#" title="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#assignModal"><i class="la la-upload"></i> Assign New Form</a>
+							<!--Assign Form-->
+							<div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-labelledby="assignModalLabel" aria-hidden="true">
+								<div class="modal-dialog model-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="assignModalLabel">Assign New Form</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<div class="row">
+												<div class="col-md-6 col-sm-12">
+													<div class="widget-info margin-top">
+														<div class="widget-head">
+															<h4>My Forms</h4>
+														</div>
+														<div class="widget-body">
+															<div class="input-group input-group-sm margin-top">
+																<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+															</div>
+															<div class="form-group margin-top">
+																<label class="custom-control custom-radio">
+																  <input id="radio1" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
 
-<div class="row" data-bind="visible: currentVm() == 'general'" style="display:none;">
-    <div data-bind="with:generalVm">
-        {% csrf_token %}
+														</div>
+													</div>
+												</div>
+												<div class="col-md-6 col-sm-12">
+													<div class="widget-info margin-top">
+														<div class="widget-head">
+															<h4>Library Forms</h4>
+														</div>
+														<div class="widget-body margin-top">
+															<div class="input-group input-group-sm margin-top">
+																<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+															</div>
+															<div class="form-group margin-top">
+																<label class="custom-control custom-radio">
+																  <input id="radio11" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
 
-        <div data-bind="with:current_form">
-    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.general_form_modal_visibility">
-  <div class="modal-dialog small-modal" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Select Form</h4>
-      </div>
-      <div class="modal-body">
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-primary"><i class="la la-upload"></i> Assign Form</button>
+											<a href="#" class="btn btn-secondary"><i class="la la-file-text"></i> New Form</a>
+										</div>
+									</div>
+								</div>
+							</div>
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForm" aria-expanded="false" aria-controls="searchForm"><i class="la la-search"></i> Search</a>
+							<!--Search Form-->
+							<div class="collapse margin-top" id="searchForm">
+								<form class="padding">
+									<div class="row">
+										<div class="col-md-6 ml-md-auto">
+											<div class="input-group">
+											  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+											  <span class="input-group-btn">
+												<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+											  </span>
+											</div>
+										</div>
+										<div class="col-md-3"></div>
+									</div>
+								</form>
+							</div>
+							<!--Form List-->
+							<table class="table table-responsive table-hover margin-top">
+								<thead class="thead-default">
+									<tr>
+										<th>S.N.</th>
+										<th>Form Title</th>
+										<th>Assigned Date</th>
+										<th>Responses</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">1</th>
+										<td>Daily Activity Report</td>
+										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
+										<td>10</td>
+										<td>
+											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
+											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
+										</td>
+									</tr>
 
-          <form method="post">
-            <div class="col-sm-12 registration_field">
-               {{ form.non_field_errors }}
-               </div>
+								</tbody>
+							</table>
+						</div>
+						<div class="tab-pane" id="tab002" role="tabpanel">...</div>
+						<div class="tab-pane" id="tab003" role="tabpanel">...</div>
+					</div>
+				</div>
+			</div>
 
-            {% csrf_token %}
-              {{form.as_p}}
-        <div class="gap"></div>
-        <button class="btn  btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Save' %}</button>
-        <div class="gap"></div>
-    </form>
+<!--<div class="btn-group-nav" role="group" aria-label="...">-->
+  <!--<button type="button" class="btn" data-bind="visible:is_project=='1', css: {'btn-primary': currentVm() == 'survey', 'btn-default': !currentVm() == 'survey'}, click: function () {setSelectedVm('survey')}">{% trans 'Survey Forms' %}</button>-->
+  <!--<button type="button" class="btn" data-bind="css: {'btn-primary': currentVm() == 'general', 'btn-default': !currentVm() == 'general'}, click: function () {setSelectedVm('general')}">{% trans 'General Forms' %}</button>-->
+  <!--<button type="button" class="btn" data-bind="css: {'btn-primary': currentVm() == 'schedules', 'btn-default': !currentVm() == 'schedules'}, click: function () {setSelectedVm('schedules')}">{% trans 'Schedules' %}</button>-->
+  <!--<button type="button" class="btn" data-bind="css: {'btn-primary': currentVm() == 'stages', 'btn-default': !currentVm() == 'stages'}, click: function () {setSelectedVm('stages')}">{% trans 'Stages' %}</button>-->
+<!--</div>-->
 
+<!--<div class="row" data-bind="visible: currentVm() == 'survey'" style="display:none;">-->
+    <!--<div data-bind="with:surveyVm">-->
+        <!--{% csrf_token %}-->
 
+        <!--<div data-bind="with:current_form">-->
+    <!--<div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.general_form_modal_visibility">-->
+  <!--<div class="modal-dialog small-modal" role="document">-->
+    <!--<div class="modal-content">-->
+      <!--<div class="modal-header">-->
+        <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+        <!--<h4 class="modal-title">Select Form</h4>-->
+      <!--</div>-->
+      <!--<div class="modal-body">-->
 
-      </div>
-    </div>
-  </div>
-</div>
-</div>
+          <!--<form method="post">-->
+            <!--<div class="col-sm-12 registration_field">-->
+               <!--{{ form.non_field_errors }}-->
+               <!--</div>-->
 
-        <div class="panel panel">
-          <div class="panel-heading">
-            <h3 class="panel-title">
-
-                <div class="gap">
-                </div>
-                <div class="col-sm-2">
-                <button class="btn btn-primary square sq" style="border-radius: 0px;" data-bind="click:add_form">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                        {% trans 'Add New' %}
-                </button>
-                </div>
-
-                
-                <div class="col-sm-5">
-                
-                  <input type="text" class="form-control-search current-input" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'">
-                  
-                  <button type="submit" class="current-btn" style="padding: 8px 10px 12px 10px !important;margin-left:-1px;  "><i class="fa fa-search" aria-hidden="true"></i></button>
-
-              </div>
-
-              </h3>
-              </div >
-
-            
-          </div>
-            <div class="panel-body">
-              <div class="clearfixx"></div>
-          </div>
-             <table class="table">
-                 <thead> <tr>
-                     <th>{% trans 'SN' %}</th>
-                     <th>{% trans 'Form ' %}</th>
-                     <th>{% trans 'Assigned Date' %}</th>
-                     <th colspan="2">{% trans 'Deploy Action' %}</th>
-                 </tr> </thead>
-                 <tbody  data-bind="foreach: forms">
-                 <tr>
-                     <th scope="row" data-bind='text: $index()+1'></th>
-                     <td data-bind="text: name"></td>
-                     <td data-bind="text: date_created"></td>
-                     <td><button class="btn " data-bind="click:deploy, css:{ 'btn-danger': is_deployed()== true}">
-                         <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></button>
-                     </td>
-                 </tr>
-                 </tbody></table>
-        </div>
-    </div>
-</div>
-
-<div class="row" data-bind="visible: currentVm() == 'schedules'" style="display:none;">
-      <div data-bind="with:scheduleVm">
-          {% csrf_token %}
-
-        <div data-bind="with:current_form">
-    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.schedule_form_modal_visibility">
-  <div class="modal-dialog form-modal" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Create Schedule</h4>
-      </div>
-      <div class="modal-body">
-
-          <form method="post">
-            <div class="col-sm-12 registration_field">
-               {{ general_form.non_field_errors }}
-               </div>
-
-            {% csrf_token %}
-              {{schedule_form.as_p}}
-              <div class="form-group date1">
-                  <label for="start">Start :</label>
-                  <input data-bind="datePicker : date_range_start" type="date" id="start">
-              </div>
-              <div class="form-group date2">
-                  <label for="End"> End:</label>
-                  <input data-bind="datePicker : date_range_end" type="date" id="End">
-              </div>
-           <div class="form-group">
-              <span style="font-weight: bold;">Days:</span>
-                <div data-bind="foreach: $parent.days">
-                    <div class="col-sm-1" style="width: 14.28% !important">
-                        <span data-bind="text:day"></span>
-                    <input type="checkbox" class="day-schedule" 
-                           data-bind="checkedValue: id, checked: $parent.selected_days">
-                        </div>
-            </div>
-            </div>
-
-            <div class="gap-high"></div>
-            <button class="btn g btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Create' %}</button>
-
-            <div class="gap-medium"></div>
-            
-
-    </form>
-
-
-
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-        <div class="panel panel">
-          <div class="panel-heading">
-            <div class="gap">
-                </div>
-            <div class="col-sm-2">
-                <h3 class="panel-title">
-                <button class="btn btn-primary square sq" style="border-radius: 0px;"data-bind="click:add_form">
-                            <i class="fa fa-plus" aria-hidden="true"></i>
-                            {% trans 'Add New' %}
-                </button>
-                </h3>
-            </div>
-            <div class="col-sm-5">
-
-                <input type="text" class="form-control-search current-input" placeholder="Search1"  data-bind="value:search_key, valueUpdate:'afterkeydown'">
-                <button type="submit" class="current-btn" style="margin-left:-1px; ">
-                  <i class="fa fa-search" aria-hidden="true"></i>
-                </button>
-              </div>
-
-            </div>
+            <!--{% csrf_token %}-->
+              <!--{{form.as_p}}-->
+        <!--<div class="gap"></div>-->
+        <!--<button class="btn  btn-primary registration__action" type="submit" data-bind="click:save_survey">{% trans 'Save' %}</button>-->
+        <!--<div class="gap"></div>-->
+    <!--</form>-->
 
 
-          </div>
-            <div class="panel-body">
-              
-              <div class="clearfixx"></div>
-          </div>
-             <table class="table">
-                 <thead> <tr>
-                     <th>{% trans 'SN' %}</th>
-                     <th>{% trans 'Schedule Name' %}</th>
-                     <th>{% trans 'Form Name' %}</th>
-                     <th>{% trans 'Start' %}</th>
-                     <th>{% trans 'End' %}</th>
-                     <th>{% trans 'Days' %}</th>
-                     <th>{% trans 'Deploy Action' %}</th>
-                 </tr> </thead>
-                 <tbody  data-bind="foreach: forms">
-                 <tr>
-                     <th scope="row" data-bind='text: $index()+1'></th>
-                     <td data-bind="text: name"></td>
-                     <td data-bind="text: form_name"></td>
-                     <td data-bind="text: date_range_start"></td>
-                     <td data-bind="text: date_range_start"></td>
-                     <td data-bind="text: days"></td>
-                     <td><button class="btn" data-bind="click:deploy, css:{ 'btn-danger': is_deployed()== true}"><span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></button></td>
-                 </tr>
-                 </tbody></table>
-        </div>
-    </div>
-</div>
 
-<div class="row" data-bind="visible: currentVm() == 'stages'" style="display:none;">
-    <div data-bind="with:stagesVm">
-        <div class="stage-container">
-          <div class="stage-container-heading">
-          <div class="panel-heading">
-              <div class="button-row" style="padding: 0px 30px !important;">
-                  <button class="btn btn-primary square" data-bind="click:add_stage">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                        {% trans 'Add Stage' %}
-                    </button>
-                    {% csrf_token %}
-                    <!--<button class="btn btn-info" style="float:right;margin-left:50px;" data-bind="visible:stages().length > 0, confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">-->
-                        <!--<i class="fa fa-code-fork" aria-hidden="true"></i>-->
-                        <!--{% trans 'Deploy to Remaining Sites' %}-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
+<!--</div>-->
+
+        <!--<div class="panel panel">-->
+          <!--<div class="panel-heading">-->
+            <!--<h3 class="panel-title">-->
+
+                <!--<div class="gap">-->
+                <!--</div>-->
+                <!--<div class="col-sm-2">-->
+                <!--<button class="btn btn-primary square sq" style="border-radius: 0px;" data-bind="click:add_form">-->
+                        <!--<i class="fa fa-plus" aria-hidden="true"></i>-->
+                        <!--{% trans 'Add New' %}-->
+                <!--</button>-->
+                <!--</div>-->
+
+
+                <!--<div class="col-sm-5">-->
+
+                  <!--<input type="text" class="form-control-search current-input" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'">-->
+
+                  <!--<button type="submit" class="current-btn" style="padding: 8px 10px 12px 10px !important;margin-left:-1px;  "><i class="fa fa-search" aria-hidden="true"></i></button>-->
+
+              <!--</div>-->
+
+              <!--</h3>-->
+              <!--</div >-->
+
+
+          <!--</div>-->
+            <!--<div class="panel-body">-->
+              <!--<div class="clearfixx"></div>-->
+          <!--</div>-->
+             <!--<div class="col-sm-12">-->
+
+                     <!--<div class="col-sm-2">{% trans 'SN' %}</div>-->
+                     <!--<div class="col-sm-4">{% trans 'Form ' %}</div>-->
+                     <!--<div class="col-sm-6">{% trans 'Assigned Date' %}</div>-->
+             <!--<div>-->
+                 <!--<div  data-bind="foreach: surveyForms">-->
+                     <!--<div class="col-sm-2" data-bind='text: $index()+1'></div>-->
+                     <!--<div class="col-sm-4" data-bind="text: name"></div>-->
+                     <!--<div class="col-sm-6" data-bind="text: date_created"></div>-->
+                 <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+<!--</div>-->
+
+<!--<div class="row" data-bind="visible: currentVm() == 'general'" style="display:none;">-->
+    <!--<div data-bind="with:generalVm">-->
+        <!--{% csrf_token %}-->
+
+        <!--<div data-bind="with:current_form">-->
+    <!--<div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.general_form_modal_visibility">-->
+  <!--<div class="modal-dialog small-modal" role="document">-->
+    <!--<div class="modal-content">-->
+      <!--<div class="modal-header">-->
+        <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+        <!--<h4 class="modal-title">Select Form</h4>-->
+      <!--</div>-->
+      <!--<div class="modal-body">-->
+
+          <!--<form method="post">-->
+            <!--<div class="col-sm-12 registration_field">-->
+               <!--{{ form.non_field_errors }}-->
+               <!--</div>-->
+
+            <!--{% csrf_token %}-->
+              <!--{{form.as_p}}-->
+        <!--<div class="gap"></div>-->
+        <!--<button class="btn  btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Save' %}</button>-->
+        <!--<div class="gap"></div>-->
+    <!--</form>-->
+
+
+
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
+<!--</div>-->
+
+        <!--<div class="panel panel">-->
+          <!--<div class="panel-heading">-->
+            <!--<h3 class="panel-title">-->
+
+                <!--<div class="gap">-->
+                <!--</div>-->
+                <!--<div class="col-sm-2">-->
+                <!--<button class="btn btn-primary square sq" style="border-radius: 0px;" data-bind="click:add_form">-->
+                        <!--<i class="fa fa-plus" aria-hidden="true"></i>-->
+                        <!--{% trans 'Add New' %}-->
+                <!--</button>-->
+                <!--</div>-->
+
+                <!---->
+                <!--<div class="col-sm-5">-->
+                <!---->
+                  <!--<input type="text" class="form-control-search current-input" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'">-->
+                  <!---->
+                  <!--<button type="submit" class="current-btn" style="padding: 8px 10px 12px 10px !important;margin-left:-1px;  "><i class="fa fa-search" aria-hidden="true"></i></button>-->
+
+              <!--</div>-->
+
+              <!--</h3>-->
+              <!--</div >-->
+
+            <!---->
+          <!--</div>-->
+            <!--<div class="panel-body">-->
+              <!--<div class="clearfixx"></div>-->
+          <!--</div>-->
+             <!--<div class="col-sm-12">-->
+
+                     <!--<div class="col-sm-2">{% trans 'SN' %}</div>-->
+                     <!--<div class="col-sm-3">{% trans 'Form ' %}</div>-->
+                     <!--<div class="col-sm-3">{% trans 'Assigned Date' %}</div>-->
+                     <!--<div class="col-sm-2">{% trans 'Education Material' %}</div>-->
+                     <!--<div class="col-sm-2">{% trans 'Deploy Action' %}</div>-->
+             <!--<div>-->
+                 <!--<div  data-bind="foreach: forms">-->
+
+                     <!--<div class="row">-->
+                      <!--<div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">-->
+                        <!--<div data-bind="with: em">-->
+                          <!--<div class="modal-dialog form-modal" role="document">-->
+                            <!--<div class="modal-content">-->
+                              <!--<div class="modal-header">-->
+                                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                                <!--<h4 class="modal-title">{% trans 'Education Material' %}</h4>-->
+                              <!--</div>-->
+                              <!--<div class="modal-body">-->
+                                  <!--<div class="col-sm-8">-->
+                                      <!--<h3>Create A Education Material</h3>-->
+
+                                    <!--<div class="form-group">-->
+                                      <!--<label for="title" id="sizing-addon2"><h4>Title</h4></label>-->
+                                      <!--<textarea data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></textarea>-->
+                                    <!--</div>-->
+
+
+
+
+
+                                    <!--<div class="form-group">-->
+                                      <!--<label for="comment" id="sizing-addon2"><h4>Text</h4></label>-->
+                                      <!--<textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="3" id="comment"></textarea>-->
+                                    <!--</div>-->
+
+
+
+                                  <!--<div>-->
+                                          <!--<div data-bind="visible:em_images().length">-->
+                                              <!--<p>Saved Images</p>-->
+                                              <!--<div data-bind="foreach:em_images">-->
+                                                  <!--<img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">-->
+                                              <!--</div>-->
+                                          <!--</div>-->
+                                        <!--<h4>Multiple Images Uploads</h4>-->
+                                            <!--<div class="well" data-bind="fileDrag: multiFileData">-->
+                                                <!--<div class="form-group row">-->
+                                                    <!--<div class="col-md-6">-->
+                                                              <!--&lt;!&ndash; ko foreach: {data: multiFileData().dataURLArray, as: 'dataURL'} &ndash;&gt;-->
+                                                              <!--<img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">-->
+                                                              <!--&lt;!&ndash; /ko &ndash;&gt;-->
+                                                        <!--<div data-bind="ifnot: multiFileData().fileArray">-->
+                                                            <!--<label class="drag-label">Drag files here</label>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="col-md-6">-->
+                                                        <!--<input type="file" multiple data-bind="fileInput: multiFileData, customFileInput: {-->
+                                                          <!--buttonClass: 'btn btn-success',-->
+                                                          <!--fileNameClass: 'disabled form-control',-->
+                                                          <!--onClear: onClear,-->
+                                                        <!--}" accept="image/*">-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                     <!--</div>-->
+                                      <!--</div>-->
+
+                                  <!--<div class="col-sm-4">-->
+                                      <!--<h4> Upload PDF OF Education Material</h4>-->
+                                      <!--<div>-->
+                                        <!--<div class="well">-->
+                                            <!--<div class="form-group row">-->
+                                                <!--<div class="col-sm-12">-->
+                                                    <!--<div data-bind="visible:pdf">-->
+                                                        <!--Current pdf-->
+                                                        <!--<a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank"> View </a>-->
+
+                                              <!--&lt;!&ndash;<button data-bind="click: addPdf">Load PDF</button>&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<div class="documentviewerpdf"></div>&ndash;&gt;-->
+                                          <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--<div class="col-sm-12">-->
+                                                    <!--<span>Change PDf File</span>-->
+                                                    <!--<input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                     <!--</div>-->
+
+                                  <!--</div>-->
+                                  <!--<button class="btn btn-primary marg3" data-bind="click:$parent.save_em">Save </button>-->
+                              <!--</div>-->
+                            <!--</div>-->
+                          <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                        <!--</div>-->
+
+                     <!--<div class="col-sm-2" data-bind='text: $index()+1'></div>-->
+                     <!--<div class="col-sm-3" data-bind="text: name"></div>-->
+                     <!--<div class="col-sm-3" data-bind="text: date_created"></div>-->
+                     <!--<div class="col-sm-2"><a  title="Educational Material" data-bind="click:education_material"><i class="fa fa-book"></i> </a></div>-->
+                     <!--<div class="col-sm-2"><button class="btn " data-bind="click:deploy, css:{ 'btn-danger': is_deployed()== true}">-->
+                         <!--<span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></button>-->
+                     <!--</div>-->
+                 <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+
+<!--<div class="row" data-bind="visible: currentVm() == 'schedules'" style="display:none;">-->
+      <!--<div data-bind="with:scheduleVm">-->
+          <!--{% csrf_token %}-->
+
+        <!--<div data-bind="with:current_form">-->
+    <!--<div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.schedule_form_modal_visibility">-->
+  <!--<div class="modal-dialog form-modal" role="document">-->
+    <!--<div class="modal-content">-->
+      <!--<div class="modal-header">-->
+        <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+        <!--<h4 class="modal-title">Create Schedule</h4>-->
+      <!--</div>-->
+      <!--<div class="modal-body">-->
+
+          <!--<form method="post">-->
+            <!--<div class="col-sm-12 registration_field">-->
+               <!--{{ general_form.non_field_errors }}-->
+               <!--</div>-->
+
+            <!--{% csrf_token %}-->
+              <!--{{schedule_form.as_p}}-->
+              <!--<div class="form-group date1">-->
+                  <!--<label for="start">Start :</label>-->
+                  <!--<input data-bind="datePicker : date_range_start" type="date" id="start">-->
+              <!--</div>-->
+              <!--<div class="form-group date2">-->
+                  <!--<label for="End"> End:</label>-->
+                  <!--<input data-bind="datePicker : date_range_end" type="date" id="End">-->
+              <!--</div>-->
+           <!--<div class="form-group">-->
+              <!--<span style="font-weight: bold;">Days:</span>-->
+                <!--<div data-bind="foreach: $parent.days">-->
+                    <!--<div class="col-sm-1" style="width: 14.28% !important">-->
+                        <!--<span data-bind="text:day"></span>-->
+                    <!--<input type="checkbox" class="day-schedule" -->
+                           <!--data-bind="checkedValue: id, checked: $parent.selected_days">-->
+                        <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+
+            <!--<div class="gap-high"></div>-->
+            <!--<button class="btn g btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Create' %}</button>-->
+
+            <!--<div class="gap-medium"></div>-->
+            <!---->
+
+    <!--</form>-->
+
+
+
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
+<!--</div>-->
+
+        <!--<div class="panel panel">-->
+          <!--<div class="panel-heading">-->
+            <!--<div class="gap">-->
+                <!--</div>-->
+            <!--<div class="col-sm-2">-->
+                <!--<h3 class="panel-title">-->
+                <!--<button class="btn btn-primary square sq" style="border-radius: 0px;"data-bind="click:add_form">-->
+                            <!--<i class="fa fa-plus" aria-hidden="true"></i>-->
+                            <!--{% trans 'Add New' %}-->
+                <!--</button>-->
+                <!--</h3>-->
+            <!--</div>-->
+            <!--<div class="col-sm-5">-->
+
+                <!--<input type="text" class="form-control-search current-input" placeholder="Search1"  data-bind="value:search_key, valueUpdate:'afterkeydown'">-->
+                <!--<button type="submit" class="current-btn" style="margin-left:-1px; ">-->
+                  <!--<i class="fa fa-search" aria-hidden="true"></i>-->
+                <!--</button>-->
+              <!--</div>-->
+
+            <!--</div>-->
+
+
+          <!--</div>-->
+            <!--<div class="panel-body">-->
+              <!---->
+              <!--<div class="clearfixx"></div>-->
+          <!--</div>-->
+             <!--<div class="col-sm-12">-->
+                  <!--<div class="row">-->
+                     <!--<div class="col-sm-1">{% trans 'SN' %}</div>-->
+                     <!--<div class="col-sm-2">{% trans 'Schedule Name' %}</div>-->
+                     <!--<div class="col-sm-2">{% trans 'Form Name' %}</div>-->
+                     <!--<div class="col-sm-1">{% trans 'Start' %}</div>-->
+                     <!--<div class="col-sm-1">{% trans 'End' %}</div>-->
+                     <!--<div class="col-sm-3">{% trans 'Days' %}</div>-->
+                     <!--<div class="col-sm-1">{% trans 'Education' %}</div>-->
+                     <!--<div class="col-sm-1">{% trans 'Deploy Action' %}</div>-->
+                 <!--</div>-->
+                 <!--<div data-bind="foreach: forms">-->
+                    <!--<div class="row">-->
+                      <!--<div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">-->
+                        <!--<div data-bind="with: em">-->
+                          <!--<div class="modal-dialog form-modal" role="document">-->
+                            <!--<div class="modal-content">-->
+                              <!--<div class="modal-header">-->
+                                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                                <!--<h4 class="modal-title">{% trans 'Education Material' %}</h4>-->
+                              <!--</div>-->
+                              <!--<div class="modal-body">-->
+                                  <!--<div class="col-sm-8">-->
+                                      <!--<h3>Create A Education Material</h3>-->
+
+                                    <!--<div class="form-group">-->
+                                      <!--<label for="title" id="sizing-addon2"><h4>Title</h4></label>-->
+                                      <!--<textarea data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></textarea>-->
+                                    <!--</div>-->
+
+
+
+
+
+                                    <!--<div class="form-group">-->
+                                      <!--<label for="comment" id="sizing-addon2"><h4>Text</h4></label>-->
+                                      <!--<textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="3" id="comment"></textarea>-->
+                                    <!--</div>-->
+
+
+
+                                  <!--<div>-->
+                                          <!--<div data-bind="visible:em_images().length">-->
+                                              <!--<p>Saved Images</p>-->
+                                              <!--<div data-bind="foreach:em_images">-->
+                                                  <!--<img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">-->
+                                              <!--</div>-->
+                                          <!--</div>-->
+                                        <!--<h4>Multiple Images Uploads</h4>-->
+                                            <!--<div class="well" data-bind="fileDrag: multiFileData">-->
+                                                <!--<div class="form-group row">-->
+                                                    <!--<div class="col-md-6">-->
+                                                              <!--&lt;!&ndash; ko foreach: {data: multiFileData().dataURLArray, as: 'dataURL'} &ndash;&gt;-->
+                                                              <!--<img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">-->
+                                                              <!--&lt;!&ndash; /ko &ndash;&gt;-->
+                                                        <!--<div data-bind="ifnot: multiFileData().fileArray">-->
+                                                            <!--<label class="drag-label">Drag files here</label>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="col-md-6">-->
+                                                        <!--<input type="file" multiple data-bind="fileInput: multiFileData, customFileInput: {-->
+                                                          <!--buttonClass: 'btn btn-success',-->
+                                                          <!--fileNameClass: 'disabled form-control',-->
+                                                          <!--onClear: onClear,-->
+                                                        <!--}" accept="image/*">-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                     <!--</div>-->
+                                      <!--</div>-->
+
+                                  <!--<div class="col-sm-4">-->
+                                      <!--<h4> Upload PDF OF Education Material</h4>-->
+                                      <!--<div>-->
+                                        <!--<div class="well">-->
+                                            <!--<div class="form-group row">-->
+                                                <!--<div class="col-sm-12">-->
+                                                    <!--<div data-bind="visible:pdf">-->
+                                                        <!--Current pdf-->
+                                                        <!--<a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank"> View </a>-->
+
+                                              <!--&lt;!&ndash;<button data-bind="click: addPdf">Load PDF</button>&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<div class="documentviewerpdf"></div>&ndash;&gt;-->
+                                          <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--<div class="col-sm-12">-->
+                                                    <!--<span>Change PDf File</span>-->
+                                                    <!--<input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                     <!--</div>-->
+
+                                  <!--</div>-->
+                                  <!--<button class="btn btn-primary marg3" data-bind="click:$parent.save_em">Save </button>-->
+                              <!--</div>-->
+                            <!--</div>-->
+                          <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                        <!--</div>-->
+                     <!--<div class="row">-->
+                     <!--<div class="col-sm-1" data-bind='text: $index()+1'></div>-->
+                     <!--<div  class="col-sm-2"data-bind="text: name"></div>-->
+                     <!--<div class="col-sm-2" data-bind="text: form_name"></div>-->
+                     <!--<div class="col-sm-1"  data-bind="text: date_range_start"></div>-->
+                     <!--<div class="col-sm-1" data-bind="text: date_range_start"></div>-->
+                     <!--<div class="col-sm-3" data-bind="text: days"></div>-->
+                     <!--<div class="col-sm-1"><a  title="Educational Material" data-bind="click:education_material"><i class="fa fa-book"></i> </a></div>-->
+                     <!--<div class="col-sm-1"><button class="btn" data-bind="click:deploy, css:{ 'btn-danger': is_deployed()== true}"><span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></button></div>-->
+                 <!--</div>-->
+                     <!--</div>-->
+                 <!--</div></div>-->
+        <!--</div>-->
+
+<!--<div class="row" data-bind="visible: currentVm() == 'stages'" style="display:none;">-->
+    <!--<div data-bind="with:stagesVm">-->
+        <!--<div class="stage-container">-->
+          <!--<div class="stage-container-heading">-->
+          <!--<div class="panel-heading">-->
+              <!--<div class="button-row" style="padding: 0px 30px !important;">-->
+                  <!--<button class="btn btn-primary square" data-bind="click:add_stage">-->
+                        <!--<i class="fa fa-plus" aria-hidden="true"></i>-->
+                        <!--{% trans 'Add Stage' %}-->
                     <!--</button>-->
-                    <a class="btn btn-danger square" style="float:right;" data-bind="visible:stages().length > 0,
-                    confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">
-                        <i class="fa fa-upload" aria-hidden="true"></i>
-                        {% trans 'Deploy to Mobile' %}
-                    </a>
-              </div>
-          </div>
-          <hr>
-          </div>
+                    <!--{% csrf_token %}-->
+                    <!--&lt;!&ndash;<button class="btn btn-info" style="float:right;margin-left:50px;" data-bind="visible:stages().length > 0, confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<i class="fa fa-code-fork" aria-hidden="true"></i>&ndash;&gt;-->
+                        <!--&lt;!&ndash;{% trans 'Deploy to Remaining Sites' %}&ndash;&gt;-->
+                    <!--&lt;!&ndash;</button>&ndash;&gt;-->
+                    <!--<a class="btn btn-danger square" style="float:right;" data-bind="visible:stages().length > 0,-->
+                    <!--confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">-->
+                        <!--<i class="fa fa-upload" aria-hidden="true"></i>-->
+                        <!--{% trans 'Deploy to Mobile' %}-->
+                    <!--</a>-->
+              <!--</div>-->
+          <!--</div>-->
+          <!--<hr>-->
+          <!--</div>-->
 
-                 <div class="container" style="margin:0px !important;"
-                        data-bind="visible:stages().length > 0, sortable: {data: stages, afterMove: orderChanged}">
-                    <div class="item">
-                     <div class="row">
-                        <div class="col-sm-12" style="padding: 8px 24px 8px 14px; font-size: 14px !important;">
-                          <a class="stage-name-c">{% trans 'Stage' %} <span data-bind='text: $index()+1'></span>:</a>
-                              <a class="name-stage-grp" data-bind="text: name, click:setShowSubstages"></a>
-                            <a  title="Delete" data-bind="confirmClick: { message: ' Submissions data of this stage will be lost.\n Are you sure ?',
-                              click: delete_stage }"> <i class="fa fa-trash-o">
-                              </i> </a>
-                              <a  title="Edit" data-bind="click:edit"> <i class="fa fa-edit edit1">
-                              </i> </a>
-
-
-                        </div>
-                         <div class="col-sm-12" data-bind="visible:show_substages" style="padding: 8px 24px 8px 14px; font-size: 14px !important;">
-                             {% trans 'Stage' %} <span data-bind='text: $index()+1'></span>: {% trans 'Description  ' %}<span data-bind="text:description"></span>
-                         </div>
-                     </div>
-
-                        <div class="row"  data-bind="visible:show_substages">
-                        <div class="all-sub-grp">
-                          <div class="row" data-bind="foreach: parent">
-
-  <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
-    <div data-bind="with: em">
-      <div class="modal-dialog form-modal" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">{% trans 'Education Material' %}</h4>
-          </div>
-          <div class="modal-body">
-              <div class="col-sm-8">
-                  <h3>Create A Education Material</h3>
-
-                <div class="form-group">
-                  <label for="title" id="sizing-addon2"><h4>Title</h4></label>
-                  <textarea data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></textarea>
-                </div>
+                 <!--<div class="container" style="margin:0px !important;"-->
+                        <!--data-bind="visible:stages().length > 0, sortable: {data: stages, afterMove: orderChanged}">-->
+                    <!--<div class="item">-->
+                     <!--<div class="row">-->
+                        <!--<div class="col-sm-12" style="padding: 8px 24px 8px 14px; font-size: 14px !important;">-->
+                          <!--<a class="stage-name-c">{% trans 'Stage' %} <span data-bind='text: $index()+1'></span>:</a>-->
+                              <!--<a class="name-stage-grp" data-bind="text: name, click:setShowSubstages"></a>-->
+                            <!--<a  title="Delete" data-bind="confirmClick: { message: ' Submissions data of this stage will be lost.\n Are you sure ?',-->
+                              <!--click: delete_stage }"> <i class="fa fa-trash-o">-->
+                              <!--</i> </a>-->
+                              <!--<a  title="Edit" data-bind="click:edit"> <i class="fa fa-edit edit1">-->
+                              <!--</i> </a>-->
 
 
+                        <!--</div>-->
+                         <!--<div class="col-sm-12" data-bind="visible:show_substages" style="padding: 8px 24px 8px 14px; font-size: 14px !important;">-->
+                             <!--{% trans 'Stage' %} <span data-bind='text: $index()+1'></span>: {% trans 'Description  ' %}<span data-bind="text:description"></span>-->
+                         <!--</div>-->
+                     <!--</div>-->
 
+                        <!--<div class="row"  data-bind="visible:show_substages">-->
+                        <!--<div class="all-sub-grp">-->
+                          <!--<div class="row" data-bind="foreach: parent">-->
 
+  <!--<div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">-->
+    <!--<div data-bind="with: em">-->
+      <!--<div class="modal-dialog form-modal" role="document">-->
+        <!--<div class="modal-content">-->
+          <!--<div class="modal-header">-->
+            <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+            <!--<h4 class="modal-title">{% trans 'Education Material' %}</h4>-->
+          <!--</div>-->
+          <!--<div class="modal-body">-->
+              <!--<div class="col-sm-8">-->
+                  <!--<h3>Create A Education Material</h3>-->
 
-                <div class="form-group">
-                  <label for="comment" id="sizing-addon2"><h4>Text</h4></label>
-                  <textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="3" id="comment"></textarea>
-                </div>
+                <!--<div class="form-group">-->
+                  <!--<label for="title" id="sizing-addon2"><h4>Title</h4></label>-->
+                  <!--<textarea data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></textarea>-->
+                <!--</div>-->
 
 
 
-              <div>
-                      <div data-bind="visible:em_images().length">
-                          <p>Saved Images</p>
-                          <div data-bind="foreach:em_images">
-                              <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
-                          </div>
-                      </div>
-                    <h4>Multiple Images Uploads</h4>
-                        <div class="well" data-bind="fileDrag: multiFileData">
-                            <div class="form-group row">
-                                <div class="col-md-6">
-                                          <!-- ko foreach: {data: multiFileData().dataURLArray, as: 'dataURL'} -->
-                                          <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">
-                                          <!-- /ko -->
-                                    <div data-bind="ifnot: multiFileData().fileArray">
-                                        <label class="drag-label">Drag files here</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="file" multiple data-bind="fileInput: multiFileData, customFileInput: {
-                                      buttonClass: 'btn btn-success',
-                                      fileNameClass: 'disabled form-control',
-                                      onClear: onClear,
-                                    }" accept="image/*">
-                                </div>
-                            </div>
-                        </div>
-                 </div>
-                  </div>
-
-              <div class="col-sm-4">
-                  <h4> Upload PDF OF Education Material</h4>
-                  <div>
-                    <div class="well">
-                        <div class="form-group row">
-                            <div class="col-sm-12">
-                                <div data-bind="visible:pdf">
-                                    Current pdf
-                                    <a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank"> View </a>
-
-                          <!--<button data-bind="click: addPdf">Load PDF</button>-->
-                        <!--<div class="documentviewerpdf"></div>-->
-                      </div>
-                                </div>
-                            <div class="col-sm-12">
-                                <span>Change PDf File</span>
-                                <input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">
-                            </div>
-                        </div>
-                    </div>
-                 </div>
-
-              </div>
-              <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">Save </button>
-          </div>
-        </div>
-      </div>
-    </div>
-</div>
 
 
-                            <div class="each-stage-grp">
-                              <div class="col-sm-1"></div>
-                              <div class="col-sm-10" data-bind="visible:!editable()">
-                                <div class="substage-name sub-stage-name-c">{% trans 'Sub Stage' %}
+                <!--<div class="form-group">-->
+                  <!--<label for="comment" id="sizing-addon2"><h4>Text</h4></label>-->
+                  <!--<textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="3" id="comment"></textarea>-->
+                <!--</div>-->
 
-                                        <span data-bind='text: $index()+1'></span>:
-                                        <span class="name-stage-grp" style="padding:5px 1px;" data-bind="text: name"></span>
-                                    </div>
-                                    <div class="form-description">
-                                        <i class="fa fa-file" aria-hidden="true"></i>
-                                        <span class="name-stage-grp" data-bind="text: stage_forms().xf().label"></span>
-                                    </div>
-                                    <a  title="Edit SubStage" data-bind="click:edit"><i class="fa fa-edit edit2"></i> </a>
-                                    <a  title="Educational Material" data-bind="click:education_material"><i class="fa fa-book"></i> </a>
 
-                              </div>
-                                <div class="col-sm-8 substage" data-bind="visible:editable">
-                                <div class="sub-stage-name-c">{% trans 'Sub Stage' %}
-                                    <span data-bind='text: $index()+1'></span><br>
-                                    {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name"><br>
-                                    {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description"><br>
-                                    {% trans 'Form Assigned: ' %}
-                                    <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
-                                        value: stage_forms().xf().id">
-                                    </select>
 
-                                    <br>
+              <!--<div>-->
+                      <!--<div data-bind="visible:em_images().length">-->
+                          <!--<p>Saved Images</p>-->
+                          <!--<div data-bind="foreach:em_images">-->
+                              <!--<img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">-->
+                          <!--</div>-->
+                      <!--</div>-->
+                    <!--<h4>Multiple Images Uploads</h4>-->
+                        <!--<div class="well" data-bind="fileDrag: multiFileData">-->
+                            <!--<div class="form-group row">-->
+                                <!--<div class="col-md-6">-->
+                                          <!--&lt;!&ndash; ko foreach: {data: multiFileData().dataURLArray, as: 'dataURL'} &ndash;&gt;-->
+                                          <!--<img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">-->
+                                          <!--&lt;!&ndash; /ko &ndash;&gt;-->
+                                    <!--<div data-bind="ifnot: multiFileData().fileArray">-->
+                                        <!--<label class="drag-label">Drag files here</label>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="col-md-6">-->
+                                    <!--<input type="file" multiple data-bind="fileInput: multiFileData, customFileInput: {-->
+                                      <!--buttonClass: 'btn btn-success',-->
+                                      <!--fileNameClass: 'disabled form-control',-->
+                                      <!--onClear: onClear,-->
+                                    <!--}" accept="image/*">-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                 <!--</div>-->
+                  <!--</div>-->
 
-                                    <button   data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
-                                    <button  data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
-                                </div>
+              <!--<div class="col-sm-4">-->
+                  <!--<h4> Upload PDF OF Education Material</h4>-->
+                  <!--<div>-->
+                    <!--<div class="well">-->
+                        <!--<div class="form-group row">-->
+                            <!--<div class="col-sm-12">-->
+                                <!--<div data-bind="visible:pdf">-->
+                                    <!--Current pdf-->
+                                    <!--<a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank"> View </a>-->
 
-                              </div>
-                              <div class="col-md-3"></div>
+                          <!--&lt;!&ndash;<button data-bind="click: addPdf">Load PDF</button>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<div class="documentviewerpdf"></div>&ndash;&gt;-->
+                      <!--</div>-->
+                                <!--</div>-->
+                            <!--<div class="col-sm-12">-->
+                                <!--<span>Change PDf File</span>-->
+                                <!--<input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                 <!--</div>-->
+
+              <!--</div>-->
+              <!--<button class="btn btn-primary marg3" data-bind="click:$parent.save_em">Save </button>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+
+
+                            <!--<div class="each-stage-grp">-->
+                              <!--<div class="col-sm-1"></div>-->
+                              <!--<div class="col-sm-10" data-bind="visible:!editable()">-->
+                                <!--<div class="substage-name sub-stage-name-c">{% trans 'Sub Stage' %}-->
+
+                                        <!--<span data-bind='text: $index()+1'></span>:-->
+                                        <!--<span class="name-stage-grp" style="padding:5px 1px;" data-bind="text: name"></span>-->
+                                    <!--</div>-->
+                                    <!--<div class="form-description">-->
+                                        <!--<i class="fa fa-file" aria-hidden="true"></i>-->
+                                        <!--<span class="name-stage-grp" data-bind="text: stage_forms().xf().label"></span>-->
+                                    <!--</div>-->
+                                    <!--<a  title="Edit SubStage" data-bind="click:edit"><i class="fa fa-edit edit2"></i> </a>-->
+                                    <!--<a  title="Educational Material" data-bind="click:education_material"><i class="fa fa-book"></i> </a>-->
+
+                              <!--</div>-->
+                                <!--<div class="col-sm-8 substage" data-bind="visible:editable">-->
+                                <!--<div class="sub-stage-name-c">{% trans 'Sub Stage' %}-->
+                                    <!--<span data-bind='text: $index()+1'></span><br>-->
+                                    <!--{% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name"><br>-->
+                                    <!--{% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description"><br>-->
+                                    <!--{% trans 'Form Assigned: ' %}-->
+                                    <!--<select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',-->
+                                        <!--value: stage_forms().xf().id">-->
+                                    <!--</select>-->
+
+                                    <!--<br>-->
+
+                                    <!--<button   data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>-->
+                                    <!--<button  data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>-->
+                                <!--</div>-->
+
+                              <!--</div>-->
+                              <!--<div class="col-md-3"></div>-->
+                              <!--&lt;!&ndash;<div class="clearfixx"></div>&ndash;&gt;-->
+                            <!--</div>-->
+                              <!--<hr style="color:red">-->
+                          <!--</div>-->
+
+                        <!--</div>-->
+                      <!--</div>-->
+                         <!--<div class="row">-->
+                     <!--<a class="btn btn-small btn-primary square" style="margin-left:58px;" data-bind="visible:stageChanged ,confirmClick: { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }"><i class="fa fa-save" aria-hidden="true"></i>  {% trans 'Save' %}</a>-->
+                      <!--</div>-->
+                    <!--</div>-->
+
+                 <!--</div>-->
+
+
+    <!--<div class="modal" tabindex="-1" role="dialog" data-bind="modal:stage_form_modal_visibility">-->
+<!--<div data-bind="with: current_stage">-->
+  <!--<div class="modal-dialog form-modal" role="document">-->
+    <!--<div class="modal-content">-->
+      <!--<div class="modal-header">-->
+        <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+        <!--<h4 class="modal-title">{% trans 'Stage Data' %}</h4>-->
+      <!--</div>-->
+      <!--<div class="modal-body">-->
+                    <!--<form method="post" class="">-->
+                        <!--{% csrf_token %}-->
+                    <!--<div class="each-stage-grp">-->
+                     <!--<div class="row">-->
+                        <!--<div class="col-sm-12">-->
+                          <!--<div class="form-group">-->
+                              <!--<label for="stagename"><span class="stage-label">Stage Name:</span></label>-->
+                              <!--<input class="form-control"  id="stagename" data-bind="value: name" placeholder="Name Of Stage" required="required">-->
+                              <!--</div>-->
+                        <!---->
+                              <!--<div class="gap"></div>-->
+                        <!--</div>-->
+
+                        <!--<div class="col-sm-12">-->
+                        <!--<div class="form-group">-->
+                              <!--<label for="description"><span class="stage-label"fstage data>Description:</span></label>-->
+                              <!--<input class="form-control my-input" id="description" data-bind="value: description" placeholder="Description Of Stage">-->
+                        <!--</div>-->
+                         <!--</div>-->
+                       <!--</div>-->
+                        <!--<div class="row">-->
+                        <!--<div class="all-sub-grp">-->
+                          <!--<div class="container" data-bind="sortable: parent">-->
+                            <!--<div class="item">-->
+                              <!--<div class="col-sm-0"></div>-->
+                              <!--<div class="col-sm-12" data-bind="visible:!editable()">-->
+                                <!--<a class="sub-stage-name-c">{% trans 'Sub Stage' %}-->
+                                    <!--<span data-bind='text: $index()+1'></span>:-->
+                                    <!--<span class="name-stage-grp"  data-bind="text: name"></span></a>-->
+                                    <!--<a class="sub-stage-name-c"><i class="fa fa-file" aria-hidden="true"></i>-->
+                                    <!--<span class="name-stage-grp"  data-bind="text: stage_forms().xf().label"></span>-->
+                                        <!--<a title="Edit Substage" data-bind="click:edit"><i class="fa fa-edit edit2"></i></a>-->
+                                <!--</a>-->
+                              <!--</div>-->
+                                <!--<div class="col-sm-10" data-bind="visible:editable">-->
+                                <!--<div class="sub-stage-name-c">{% trans 'Sub Stage' %}-->
+                                    <!--<span data-bind='text: $index()+1'></span><br>-->
+                                    <!--{% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Sub Stage Name"><br>-->
+                                    <!--{% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br>-->
+                                    <!--{% trans 'Form Assigned: ' %}-->
+                                    <!--<select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',-->
+                                        <!--value: stage_forms().xf().id">-->
+                                    <!--</select>-->
+
+                                    <!--<br>-->
+
+                                    <!--<button   data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>-->
+                                    <!--<button  data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>-->
+                                <!--</div>-->
+
+                              <!--</div>-->
+                              <!--<div class="col-md-3"></div>-->
                               <!--<div class="clearfixx"></div>-->
-                            </div>
-                              <hr style="color:red">
-                          </div>
+                            <!--</div>-->
+                          <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="all-sub-grp">-->
+                          <!--<div class="row" data-bind="with:newSubstage, visible:addSubStageMode()">-->
+                            <!--<div class="each-sub-grp">-->
+                              <!--<div class="col-sm-1"></div>-->
+                              <!--<div class="col-sm-8">-->
+                                  <!--<form method="post">-->
+                                          <!--<h5 class="sub-stage-name-c">{% trans 'New Sub Stage' %} <span data-bind='text: $parent.parent().length+1'></span></h5>-->
+                                            <!--{% csrf_token %}-->
+                                      <!--<div>-->
+                                        <!--{% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name of SUb Stage "><br>-->
+                                        <!--{% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br>-->
+                                        <!--{% trans 'Form Assigned: ' %}-->
+                                        <!--<select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',-->
+                                            <!--value: stage_forms().xf().id">-->
+                                        <!--</select>-->
 
-                        </div>
-                      </div>
-                         <div class="row">
-                     <a class="btn btn-small btn-primary square" style="margin-left:58px;" data-bind="visible:stageChanged ,confirmClick: { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }"><i class="fa fa-save" aria-hidden="true"></i>  {% trans 'Save' %}</a>
-                      </div>
-                    </div>
-
-                 </div>
-
-
-    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:stage_form_modal_visibility">
-<div data-bind="with: current_stage">
-  <div class="modal-dialog form-modal" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">{% trans 'Stage Data' %}</h4>
-      </div>
-      <div class="modal-body">
-                    <form method="post" class="">
-                        {% csrf_token %}
-                    <div class="each-stage-grp">
-                     <div class="row">
-                        <div class="col-sm-12">
-                          <div class="form-group">
-                              <label for="stagename"><span class="stage-label">Stage Name:</span></label>
-                              <input class="form-control"  id="stagename" data-bind="value: name" placeholder="Name Of Stage" required="required">
-                              </div>
-                        
-                              <div class="gap"></div>
-                        </div>
-
-                        <div class="col-sm-12">
-                        <div class="form-group">
-                              <label for="description"><span class="stage-label"fstage data>Description:</span></label>
-                              <input class="form-control my-input" id="description" data-bind="value: description" placeholder="Description Of Stage">
-                        </div>
-                         </div>
-                       </div>
-                        <div class="row">
-                        <div class="all-sub-grp">
-                          <div class="container" data-bind="sortable: parent">
-                            <div class="item">
-                              <div class="col-sm-0"></div>
-                              <div class="col-sm-12" data-bind="visible:!editable()">
-                                <a class="sub-stage-name-c">{% trans 'Sub Stage' %}
-                                    <span data-bind='text: $index()+1'></span>:
-                                    <span class="name-stage-grp"  data-bind="text: name"></span></a>
-                                    <a class="sub-stage-name-c"><i class="fa fa-file" aria-hidden="true"></i>
-                                    <span class="name-stage-grp"  data-bind="text: stage_forms().xf().label"></span>
-                                        <a title="Edit Substage" data-bind="click:edit"><i class="fa fa-edit edit2"></i></a>
-                                </a>
-                              </div>
-                                <div class="col-sm-10" data-bind="visible:editable">
-                                <div class="sub-stage-name-c">{% trans 'Sub Stage' %}
-                                    <span data-bind='text: $index()+1'></span><br>
-                                    {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Sub Stage Name"><br>
-                                    {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br>
-                                    {% trans 'Form Assigned: ' %}
-                                    <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
-                                        value: stage_forms().xf().id">
-                                    </select>
-
-                                    <br>
-
-                                    <button   data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
-                                    <button  data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
-                                </div>
-
-                              </div>
-                              <div class="col-md-3"></div>
-                              <div class="clearfixx"></div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="all-sub-grp">
-                          <div class="row" data-bind="with:newSubstage, visible:addSubStageMode()">
-                            <div class="each-sub-grp">
-                              <div class="col-sm-1"></div>
-                              <div class="col-sm-8">
-                                  <form method="post">
-                                          <h5 class="sub-stage-name-c">{% trans 'New Sub Stage' %} <span data-bind='text: $parent.parent().length+1'></span></h5>
-                                            {% csrf_token %}
-                                      <div>
-                                        {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name of SUb Stage "><br>
-                                        {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br>
-                                        {% trans 'Form Assigned: ' %}
-                                        <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
-                                            value: stage_forms().xf().id">
-                                        </select>
-
-                                        <br>
+                                        <!--<br>-->
 
 
-                                      </div>
+                                      <!--</div>-->
 
-                                </form>
-                              </div>
-                              <div class="col-md-3"></div>
-                              <div class="clearfixx"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                      <div class="col-md-1"></div>
-                      <div class="col-sm-2">
-                          <a class="manage-button modal-manage square"
-                             data-bind="click:save_sub_stage, visible:addSubStageMode()">
-                              <i class="fa fa-plus" aria-hidden="true"></i> {% trans 'Add' %}</a>
+                                <!--</form>-->
+                              <!--</div>-->
+                              <!--<div class="col-md-3"></div>-->
+                              <!--<div class="clearfixx"></div>-->
+                            <!--</div>-->
+                          <!--</div>-->
+                        <!--</div>-->
+                      <!--</div>-->
+                      <!--<div class="row">-->
+                      <!--<div class="col-md-1"></div>-->
+                      <!--<div class="col-sm-2">-->
+                          <!--<a class="manage-button modal-manage square"-->
+                             <!--data-bind="click:save_sub_stage, visible:addSubStageMode()">-->
+                              <!--<i class="fa fa-plus" aria-hidden="true"></i> {% trans 'Add' %}</a>-->
 
-                      </div>
-                         <div class="col-sm-8">
-                         </div>
-                      </div>
-                    </div>
+                      <!--</div>-->
+                         <!--<div class="col-sm-8">-->
+                         <!--</div>-->
+                      <!--</div>-->
+                    <!--</div>-->
 
-                    <br>
+                    <!--<br>-->
 
-                </form>
-                 </div>
+                <!--</form>-->
+                 <!--</div>-->
 
 
-      <div class="modal-footer stage-footer">
-           <div class="col-sm-3">
-            <a class="btn btn-primary " style="margin-right:-4px !important;"  data-bind="confirmClick:
-            { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }">
-                 <i class="fa fa-floppy-o" aria-hidden="true"></i>  {% trans 'Save' %}</a>
-          </div>
-      </div>
-    </div>
-  </div>
-</div>
-             </div>
+      <!--<div class="modal-footer stage-footer">-->
+           <!--<div class="col-sm-3">-->
+            <!--<a class="btn btn-primary " style="margin-right:-4px !important;"  data-bind="confirmClick:-->
+            <!--{ message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }">-->
+                 <!--<i class="fa fa-floppy-o" aria-hidden="true"></i>  {% trans 'Save' %}</a>-->
+          <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
+             <!--</div>-->
 
-        </div>
+        <!--</div>-->
 
-     </div>
+     <!--</div>-->
+
 
 {% endblock %}

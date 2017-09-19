@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from onadata.apps.fsforms.models import Schedule, Days, FieldSightXF
+from onadata.apps.fsforms.models import Schedule, Days, FieldSightXF, EducationMaterial
+from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import EMSerializer
 
 
 class DaysSerializer(serializers.ModelSerializer):
@@ -15,9 +16,10 @@ class DaysSerializer(serializers.ModelSerializer):
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
-
+    em = serializers.SerializerMethodField('get_education_material', read_only=True)
     days = serializers.SerializerMethodField('get_all_days', read_only=True)
     form = serializers.SerializerMethodField('get_assigned_form', read_only=True)
+    project_form = serializers.SerializerMethodField('get_assigned_project_form', read_only=True)
     xf = serializers.CharField()
     form_name = serializers.SerializerMethodField('get_assigned_form_name', read_only=True)
     is_deployed = serializers.SerializerMethodField('get_is_deployed_status', read_only=True)
@@ -61,9 +63,25 @@ class ScheduleSerializer(serializers.ModelSerializer):
                 return fsxf.xf.title
         return None
 
+    def get_assigned_project_form(self, obj):
+        if not FieldSightXF.objects.filter(schedule=obj, fsform__isnull=False).exists():
+            return None
+        else:
+            fsxf = FieldSightXF.objects.get(schedule=obj, fsform__isnull=False)
+            if fsxf.fsform:
+                return fsxf.fsform.id
+        return None
+
     def get_is_deployed_status(self, obj):
         if not FieldSightXF.objects.filter(schedule=obj).exists():
             return False
         else:
             return FieldSightXF.objects.get(schedule=obj).is_deployed
+
+    def get_education_material(self, obj):
+        if not EducationMaterial.objects.filter(fsxf=obj.schedule_forms).exists():
+            return {}
+        em =  EducationMaterial.objects.get(fsxf=obj.schedule_forms)
+        # em =  EducationMaterial.objects.first()
+        return EMSerializer(em).data
 

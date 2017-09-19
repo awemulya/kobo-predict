@@ -79,7 +79,7 @@ urlpatterns = [
 
     url(r'^upload/(?P<pk>\d+)/$', UploadSitesView.as_view(), name='site-upload'),
     url(r'^api/bulk_upload_site/(?P<pk>\d+)/$', ajax_upload_sites),
-    url(r'^api/async_save_site/(?P<pk>\d+)/$', ajax_save_site),
+    url(r'^api/async_save_site/$', ajax_save_site),
     url(r'^project/delete/(?P<pk>\d+)/$', ProjectDeleteView.as_view(), name='project-delete'),
     url(r'^project/alter-status/(?P<pk>\d+)/$', alter_proj_status, name='alter_proj_status'),
     url(r'^project/add-proj-manager/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
