@@ -680,8 +680,15 @@ def ajax_upload_sites(request, pk):
 
 @group_required("Project")
 @api_view(['POST'])
-def ajax_save_site(request, pk):
-    form = SiteForm(request.POST, request.FILES)
+def ajax_save_site(request):
+    id = request.POST.get('id', False)
+    if id =="undefined":
+        id = False
+    if id:
+        instance = Site.objects.get(pk=id)
+        form = SiteForm(request.POST, request.FILES, instance)
+    else:
+        form = SiteForm(request.POST, request.FILES)
     if form.is_valid():
         form.save()
         return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
@@ -691,7 +698,14 @@ def ajax_save_site(request, pk):
 @group_required("Organization")
 @api_view(['POST'])
 def ajax_save_project(request):
-    form = ProjectFormKo(request.POST, request.FILES)
+    id = request.POST.get('id', False)
+    if id =="undefined":
+        id = False
+    if id:
+        instance = Project.objects.get(pk=id)
+        form = ProjectFormKo(request.POST, request.FILES, instance)
+    else:
+        form = ProjectFormKo(request.POST, request.FILES)
     if form.is_valid():
         form.save()
         return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
@@ -1057,9 +1071,9 @@ class ActivateRole(TemplateView):
             content = invite.site
         
         noti = invite.logs.create(source=user, type=noti_type, title="new Role",
-                                       organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.user,
+                                       organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.by_user,
                                        description="{0} was added as the {1} of {2} by {3}.".
-                                       format(user.username, invite.group.name, content.name, invite.user ))
+                                       format(user.username, invite.group.name, content.name, invite.by_user ))
         # result = {}
         # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
         # result['url'] = noti.get_absolute_url()

@@ -19,7 +19,7 @@ class EMSerializer(serializers.ModelSerializer):
     em_images = EMImagesSerializer(many=True, read_only=True)
     class Meta:
         model = EducationMaterial
-        exclude = ('stage',)
+        exclude = ('stage','fsxf')
 
 class SubStageSerializer1(serializers.ModelSerializer):
     stage_forms = FSXFSerializer()
