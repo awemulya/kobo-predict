@@ -23,12 +23,17 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 {% block content %}
 
 
+
+
 			<div id="main-content" class="padding">
-				<div class="row">
+				<div class="row" data-bind="with:siteVm ,visible: currentVm() == 'site'" style="display:none;">
+
+
+
 					<div class="col-md-8">
 						<div class="widget-info margin-top bg-white padding">
 							<div class="widget-head">
-								<h4>Project Managers</h4>
+								<h4>Site Users</h4>
 							</div>
 							<div class="widget-body">
 								<form>
@@ -39,6 +44,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 										</span>
 									</div>
 								</form>
+
+
+               
 								<h4 class="text-center margin-top">
 								<strong>OR</strong>
 								</h4>
@@ -69,207 +77,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 											</span>
 										</label>
 									</li>
-									<li class="col-md-4">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input">
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="col-md-4">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input">
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="clearfix"></li>
-									<li class="col-md-4">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input">
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="col-md-4">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input">
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="col-md-4">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input">
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="clearfix"></li>
-									<li class="col-md-4">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input">
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="col-md-4">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input">
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="col-md-4">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input">
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="clearfix"></li>
-									<li class="col-md-4">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input">
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="col-md-4">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input">
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="col-md-4">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input">
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
+									
 									<li class="clearfix"></li>
 								</ul>
 								<div class="margin-top">
@@ -285,9 +93,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 							<div class="widget-head">
 								<h4>Current Project Managers</h4>
 							</div>
-							<div class="widget-body max-513-scolling">
+							<div class="widget-body max-513-scolling" data-bind="foreach:admins">
 								<div class="project-item-wrap clearfix">
-									<div class="project-logo">
+                	<div class="project-logo">
 										<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
 									</div>
 									<div class="project-basic-info">
@@ -296,101 +104,14 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 									</div>
 									<a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
 								</div>
-								<div class="project-item-wrap margin-top clearfix">
-									<div class="project-logo">
-										<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-									</div>
-									<div class="project-basic-info">
-										<h4>Bikrant Giri</h4>
-										<p>Old Baneshwor, Kathmandu, Nepal</p>
-									</div>
-									<a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
-								</div>
-								<div class="project-item-wrap margin-top clearfix">
-									<div class="project-logo">
-										<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-									</div>
-									<div class="project-basic-info">
-										<h4>Bikrant Giri</h4>
-										<p>Old Baneshwor, Kathmandu, Nepal</p>
-									</div>
-									<a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
-								</div>
-								<div class="project-item-wrap margin-top clearfix">
-									<div class="project-logo">
-										<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-									</div>
-									<div class="project-basic-info">
-										<h4>Bikrant Giri</h4>
-										<p>Old Baneshwor, Kathmandu, Nepal</p>
-									</div>
-									<a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
-								</div>
-								<div class="project-item-wrap margin-top clearfix">
-									<div class="project-logo">
-										<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-									</div>
-									<div class="project-basic-info">
-										<h4>Bikrant Giri</h4>
-										<p>Old Baneshwor, Kathmandu, Nepal</p>
-									</div>
-									<a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
-								</div>
-								<div class="project-item-wrap margin-top clearfix">
-									<div class="project-logo">
-										<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-									</div>
-									<div class="project-basic-info">
-										<h4>Bikrant Giri</h4>
-										<p>Old Baneshwor, Kathmandu, Nepal</p>
-									</div>
-									<a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
-								</div>
-								<div class="project-item-wrap margin-top clearfix">
-									<div class="project-logo">
-										<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-									</div>
-									<div class="project-basic-info">
-										<h4>Bikrant Giri</h4>
-										<p>Old Baneshwor, Kathmandu, Nepal</p>
-									</div>
-									<a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
-								</div>
-								<div class="project-item-wrap margin-top clearfix">
-									<div class="project-logo">
-										<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-									</div>
-									<div class="project-basic-info">
-										<h4>Bikrant Giri</h4>
-										<p>Old Baneshwor, Kathmandu, Nepal</p>
-									</div>
-									<a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
-								</div>
-								<div class="project-item-wrap margin-top clearfix">
-									<div class="project-logo">
-										<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-									</div>
-									<div class="project-basic-info">
-										<h4>Bikrant Giri</h4>
-										<p>Old Baneshwor, Kathmandu, Nepal</p>
-									</div>
-									<a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
-								</div>
-								<div class="project-item-wrap margin-top clearfix">
-									<div class="project-logo">
-										<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-									</div>
-									<div class="project-basic-info">
-										<h4>Bikrant Giri</h4>
-										<p>Old Baneshwor, Kathmandu, Nepal</p>
-									</div>
-									<a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
-								</div>
-							</div>
+								
 						</div>
 					</div>
 				</div>
-				<div class="row">
+        
+
+
+			<!-- 	<div class="row">
 					<div class="col-md-6">
 						<div class="widget-info margin-top bg-white padding">
 							<div class="widget-head">
@@ -633,13 +354,194 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="margin-top">
+				</div> -->
+				<!-- <div class="margin-top">
 					<div class="padding bg-white">
 						<button type="submit" class="btn btn-primary btn-block"><i class="la la-user-plus"></i> Assign Users</button>
 					</div>
-				</div>
+				</div> -->
 			</div>
+
+
+
+      <!-- for project -->
+
+      <div class="row" data-bind="with:projectVm ,visible: currentVm() == 'project'" style="display:none;">
+
+
+
+          <div class="col-md-8">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Project Managers</h4>
+              </div>
+              <div class="widget-body">
+                <form>
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" type="button"><i class="la la-user-plus"></i> Invite</button>
+                    </span>
+                  </div>
+                </form>
+
+
+               
+                <h4 class="text-center margin-top">
+                <strong>OR</strong>
+                </h4>
+                <p class="text-center">
+                Select from available Users
+                </p>
+                <form class="margin-top">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search..." aria-label="Search...">
+                  </div>
+                </form>
+                <ul class="row max-260-scroll">
+                  <li class="col-md-4">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" checked>
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                          <div class="project-logo">
+                            <img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
+                          </div>
+                          <div class="project-basic-info">
+                            <h4>Bikrant Giri</h4>
+                            <p>Old Baneshwor, Kathmandu, Nepal</p>
+                          </div>
+                        </div>
+                        <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+                      </span>
+                    </label>
+                  </li>
+                  
+                  <li class="clearfix"></li>
+                </ul>
+                <div class="margin-top">
+                3 Users Selected.<br/>
+                <button type="submit" class="btn btn-primary margin-top"><i class="la la-user-plus"></i> Assign Managers</button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Current Project Users</h4>
+              </div>
+              <div class="widget-body max-513-scolling" data-bind="foreach:admins">
+                <div class="project-item-wrap clearfix">
+                  <div class="project-logo">
+                    <img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
+                  </div>
+                  <div class="project-basic-info">
+                    <h4>Bikrant Giri</h4>
+                    <p>Old Baneshwor, Kathmandu, Nepal</p>
+                  </div>
+                  <a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
+                </div>
+                
+            </div>
+          </div>
+        </div>
+        </div>
+
+
+ <!-- for project -->
+
+      <div class="row" data-bind="with:orgVm, visible: currentVm() == 'organization'" style="display:none;">
+
+
+
+          <div class="col-md-8">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Organization Users</h4>
+              </div>
+              <div class="widget-body">
+                <form>
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" type="button"><i class="la la-user-plus"></i> Invite</button>
+                    </span>
+                  </div>
+                </form>
+
+
+               
+                <h4 class="text-center margin-top">
+                <strong>OR</strong>
+                </h4>
+                <p class="text-center">
+                Select from available Users
+                </p>
+                <form class="margin-top">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search..." aria-label="Search...">
+                  </div>
+                </form>
+                <ul class="row max-260-scroll">
+                  <li class="col-md-4">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" checked>
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                          <div class="project-logo">
+                            <img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
+                          </div>
+                          <div class="project-basic-info">
+                            <h4>Bikrant Giri</h4>
+                            <p>Old Baneshwor, Kathmandu, Nepal</p>
+                          </div>
+                        </div>
+                        <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+                      </span>
+                    </label>
+                  </li>
+                  
+                  <li class="clearfix"></li>
+                </ul>
+                <div class="margin-top">
+                3 Users Selected.<br/>
+                <button type="submit" class="btn btn-primary margin-top"><i class="la la-user-plus"></i> Assign Managers</button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Current Project Managers</h4>
+              </div>
+              <div class="widget-body max-513-scolling" data-bind="foreach:admins">
+                <div class="project-item-wrap clearfix">
+                  <div class="project-logo">
+                    <img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
+                  </div>
+                  <div class="project-basic-info">
+                    <h4>Bikrant Giri</h4>
+                    <p>Old Baneshwor, Kathmandu, Nepal</p>
+                  </div>
+                  <a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
+                </div>
+                
+            </div>
+          </div>
+        </div>
+        </div>
+
+
+
+
+
+
 	{% endblock %}
     {%block extrascript %}
        <script>
@@ -650,4 +552,112 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
 			});
 		</script>
+    <script>
+var ajax_call=false;
+
+function refresh(){
+  var email = $("#invite_email").val();
+  var atherate = email.indexOf("@");
+      // if(atherate == -1 ){ return false; }
+      var dot = email.indexOf(".", atherate);
+      // if(dot == -1 ){ return false; }
+      // ajax_call=true;
+      // checkemail(email);
+      if(atherate != -1 && dot != -1){
+        ajax_call = true;
+        checkemail(email);
+      }
+      else{
+        alert("Enter valid email address.")
+      }
+}
+
+
+ $('#invite_email').keydown(function(e) {
+      var email = $("#invite_email").val();
+     
+      // if(ajax_call == true){ return false; }
+       var atherate = email.indexOf("@");
+      // if(atherate == -1 ){ return false; }
+      var dot = email.indexOf(".", atherate);
+      // if(dot == -1 ){ return false; }
+      // ajax_call=true;
+      // checkemail(email);
+      if(ajax_call != true && atherate != -1 && dot != -1){
+        ajax_call = true;
+        checkemail(email);
+      }   
+    });
+
+ // $("#invite_email").keydown(function(e) {
+
+ //      var email = $("#invite_email").val();
+ //      console.log(email);
+ //      if(ajax_call == true){ return false; }
+ //      var atherate = email.indexOf("@");
+ //      if(atherate == -1 ){ return false; }
+ //      var dot = email.indexOf(".", atherate);
+ //      if(dot == -1 ){ return false; }
+ //      ajax_call=true;
+ //      checkemail(email);
+ //    });
+  function checkemail(email){
+        $.ajax({
+        url: "{% url 'fieldsight:check-email-for-invite' %}",
+        data: {'email': email, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        type: 'POST',
+        success: function (html) {
+           $('#update-next-step').html(html);
+           $('#retry').show();
+        }
+      });
+  }
+
+function sendnewuserinvite(){
+  var email = $("#invite_email").val();
+  sendinvite(email);
+}
+      
+
+  </script>
+{% if category == "site" %}
+
+<script>
+  function sendinvite(email){ 
+      var organization_id = $("#invite_organization_id").val();
+      var project_id = $("#invite_project_id").val();
+      var site_id = $("#invite_site_id").val();
+      var group =  $( 'input[id=invite_group]:checked' ).val();
+      alert(group);
+      console.log(group);
+      $.ajax({
+        url: "{% url 'fieldsight:senduserinvite' %}",
+        data: {'email': email, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        type: 'POST',
+        success: function (html) {
+           $('#update-next-step').html(html);
+        }
+      });
+    }
+</script>
+{% else %}
+<script>
+  function sendinvite(email){ 
+      var organization_id = $("#invite_organization_id").val();
+      var project_id = $("#invite_project_id").val();
+      var site_id = $("#invite_site_id").val();
+      var group =  $("#invite_group").val();
+      alert(group);
+      console.log(group);
+      $.ajax({
+        url: "{% url 'fieldsight:senduserinvite' %}",
+        data: {'email': email, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        type: 'POST',
+        success: function (html) {
+           $('#update-next-step').html(html);
+        }
+      });
+}
+</script>
+{% endif %}
     {% endblock %}
