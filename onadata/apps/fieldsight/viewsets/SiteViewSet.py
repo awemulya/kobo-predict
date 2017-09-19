@@ -8,9 +8,9 @@ from channels import Group as ChannelGroup
 
 
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
-from onadata.apps.fieldsight.models import Site, ProjectType
+from onadata.apps.fieldsight.models import Site, ProjectType, Project
 from onadata.apps.fieldsight.serializers.SiteSerializer import SiteSerializer, SiteCreationSurveySerializer, \
-    SiteReviewSerializer, ProjectTypeSerializer
+    SiteReviewSerializer, ProjectTypeSerializer, SiteUpdateSerializer, ProjectUpdateSerializer
 from onadata.apps.userrole.models import UserRole
 from django.contrib.auth.models import Group
 from django.db import transaction
@@ -83,6 +83,40 @@ class SiteViewSet(viewsets.ModelViewSet):
     def filter_queryset(self, queryset):
         project = self.kwargs.get('pk', None)
         return queryset.filter(project__id=project, is_active=True)
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
+class SiteUpdateViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing sites.
+    """
+    queryset = Site.objects.all()
+    serializer_class = SiteUpdateSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    # permission_classes = (SiteViewPermission,)
+    parser_classes = (MultiPartParser, FormParser,)
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(pk=self.kwargs.get('pk', None))
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
+class ProjectUpdateViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing sites.
+    """
+    queryset = Project.objects.all()
+    serializer_class = ProjectUpdateSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    # permission_classes = (SiteViewPermission,)
+    parser_classes = (MultiPartParser, FormParser,)
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(pk=self.kwargs.get('pk', None))
 
     def get_serializer_context(self):
         return {'request': self.request}

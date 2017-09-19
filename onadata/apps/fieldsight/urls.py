@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.views.decorators.csrf import csrf_exempt
 from fcm.views import DeviceViewSet
 from onadata.apps.fieldsight.viewsets.FieldsightFcmViewset import FcmDeviceViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProjectViewSet
@@ -9,7 +10,8 @@ from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, 
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProjectViewSet
 
 from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
-    SiteReviewViewSet, ProjectTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet
+    SiteReviewViewSet, ProjectTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet, SiteUpdateViewSet, \
+    ProjectUpdateViewSet
 from .forms import RegistrationForm
 
 from .views import (
@@ -79,12 +81,14 @@ urlpatterns = [
 
     url(r'^upload/(?P<pk>\d+)/$', UploadSitesView.as_view(), name='site-upload'),
     url(r'^api/bulk_upload_site/(?P<pk>\d+)/$', ajax_upload_sites),
-    url(r'^api/async_save_site/$', ajax_save_site),
+    url(r'^api/async_save_site/$', csrf_exempt(ajax_save_site)),
     url(r'^project/delete/(?P<pk>\d+)/$', ProjectDeleteView.as_view(), name='project-delete'),
     url(r'^project/alter-status/(?P<pk>\d+)/$', alter_proj_status, name='alter_proj_status'),
     url(r'^project/add-proj-manager/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
     url(r'^project/add-role/(?P<pk>\d+)/$', add_project_role, name='add_project_staffs'),
     url(r'^api/project-sites/(?P<pk>\d+)/$', SiteViewSet.as_view({'get': 'list'}), name='project_sites'),
+    url(r'^api/update-site/(?P<pk>\d+)$', SiteUpdateViewSet.as_view({'put': 'update'}), name='update_site_api'),
+    url(r'^api/update-project/(?P<pk>\d+)$', ProjectUpdateViewSet.as_view({'put': 'update'}), name='update_project_api'),
 
 
     url(r'^survey-sites/(?P<pk>\d+)$', SiteSurveyListView.as_view(), name='site-survey-list'),
