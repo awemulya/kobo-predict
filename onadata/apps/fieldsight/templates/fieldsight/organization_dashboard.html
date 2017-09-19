@@ -1,17 +1,8 @@
-{% extends "fieldsight/fieldsight_base.html" %}
+{% extends "fieldsight/fieldsight_base1.html" %}
 {% load i18n staticfiles %}
 {% load filters %}
-
-{% block logo %}
-    <img src="{{STATIC_URL}}images/bucket-logo.png" alt="">
-{% endblock %}
-{% block page-title %}{% trans 'Organizations' %}{% endblock %}
-
-{% block breadcrumbs %}
-    <li><a href="{% url 'fieldsight:organizations-dashboard' obj.pk %}">{{obj.name}}</a></li>
-{% endblock %}
 {%block extracss %}
-    
+
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
@@ -22,11 +13,7 @@
 
 {% endblock %}
 
-{% block head %}
-    <a class="setting-btn" title="Edit" href="{% url 'fieldsight:organization-edit' obj.pk %}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-{% endblock %}
-
- {%block kocript %}
+{%block kocript %}
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
@@ -44,664 +31,362 @@ var org = "{{obj.pk}}";
     </script>
 
 {% endblock %}
-
 {% block content %}
 
-<div data-bind="with:current_site">
-<div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.site_add_visibility">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-bind="click:$parent.clearSite"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">{% trans 'Add New Project' %}</h4>
-      </div>
-      <div class="modal-body">
-          <form enctype="multipart/form-data">
-         {% csrf_token %}
-              <div class="col-sm-12 registration_field">
-                <div class="col-sm-2 field-label"> {% trans 'Name' %}</div>
-                 <div class="col-sm-4">
-                 <input data-bind="value: name" required />
-                 </div>
-                 <div class="col-sm-6"></div>
-               </div>
-              <div class="col-sm-12 registration_field">
-                <div class="col-sm-2 field-label"> {% trans 'Address' %}</div>
-                 <div class="col-sm-4">
-                 <input data-bind="value: address" />
-                 </div>
-                 <div class="col-sm-6"></div>
-               </div>
-              <div class="col-sm-12 registration_field">
-                <div class="col-sm-2 field-label"> {% trans 'Phone' %}</div>
-                 <div class="col-sm-4">
-                 <input data-bind="value: phone" />
-                 </div>
-                 <div class="col-sm-6"></div>
-               </div>
-              <div class="col-sm-12 registration_field">
-                <div class="col-sm-2 field-label"> {% trans 'Public Description' %}</div>
-                 <div class="col-sm-4">
-                 <input data-bind="value: public_desc" />
-                 </div>
-                 <div class="col-sm-6"></div>
-               </div>
-              <div class="col-sm-12 registration_field">
-                <div class="col-sm-2 field-label"> {% trans 'Additional Description' %}</div>
-                 <div class="col-sm-4">
-                 <input data-bind="value: additional_desc" />
-                 </div>
-                 <div class="col-sm-6"></div>
-               </div>
-                   <div class="col-sm-12 registration_field">
-                <div class="col-sm-2 field-label"> {% trans 'Donor' %}</div>
-                 <div class="col-sm-4">
-                 <input data-bind="value: donor"  />
-                 </div>
-                 <div class="col-sm-6"></div>
-               </div>
-              <div class="col-sm-12 registration_field">
-                <div class="col-sm-2 field-label"> {% trans 'Logo' %}</div>
-                 <div class="col-sm-4">
-                 <input type="file" data-bind="fileUpload: logo" accept="image/png">
-                 </div>
-                 <div class="col-sm-6"></div>
-               </div>
-              <div class="col-sm-12 registration_field">
-                <div class="col-sm-2 field-label"> {% trans 'Type' %}</div>
-                 <div class="col-sm-4">
-                 <select data-bind="options: $parent.typeList,
-                       optionsText: 'name',
-                       optionsValue: 'id',
-                       value: type().id"></select>
+{% load filters %}
 
-                 </div>
-                 <div class="col-sm-6"></div>
-               </div>
-             <div class="col-sm-12 registration_field">
-                 <div class="col-sm-2 field-label"> {% trans 'Latitude' %}</div>
-                 <div class="col-sm-4">
-                 <input data-bind="value: mapOne().lat" />
-                     </div>
-                 <div class="col-sm-6"></div>
-               </div>
+				<div id="main-content" class="padding">
+				<div class="org-profile-top-action">
+					<div class="action-left">
 
-          <div class="col-sm-12 registration_field">
-                 <div class="col-sm-2 field-label"> {% trans 'Longitude' %}</div>
-                 <div class="col-sm-4">
-                 <input data-bind="value: mapOne().lng" />
-                     </div>
-                 <div class="col-sm-6"></div>
-          </div>
-          <div class="gap"></div>
-
-          <div id="map1Div" class="map-right" data-bind="style:{width:'80%',height:'300px'}, map:mapOne"></div>
-
-              <div class="gap"></div>
-              <div class="gap"></div>
-
-        <button class="btn btn-primary registration__action map-right" data-bind="click:$parent.saveSite" >
-            {% trans 'Save Project' %}</button>
-        <div class="gap"></div>
-
-    </form>
-
-
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-<div id="organization_more" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Read More About our Organization</h4>
-      </div>
-      <div class="modal-body">
-          <div class="abt-org1">
-                            <div class="col-md-12">
-                                  
-                                <h5 class="organization_name">{{ obj.name }}</h5>
-                            </div>
-                            <div class="col-md-12 detail read-more-description">
-                              <div class="col-md-8 bottom-push">
-                                  <div class="well well-sm our-office">
-                                  <span class="well-header">
-                                      <i class="fa fa-location-arrow blue" aria-hidden="true"></i>
-                                        Our Office  
-                                    </span>
-                                   </div>
-                                  <div class="office-information">
-                                      <p class="address information"><span><i class="fa fa-map-marker space " aria-hidden="true"></i></span>{{ obj.address }}, {{ obj.get_country_display }}</p>
-                                      <p class="contact information"><span><i class="fa fa-phone space " aria-hidden="true"></i></span>
-
-                                      {% if obj.phone %} 
-                                        <span>{{ obj.phone}}</span>
-                                      {% else %}
-                                        <span>N/A</span>
-
-                                       {% endif %}</p>
-                                      <p class="fax information"><span><i class="fa fa-fax space " aria-hidden="true"></i></span>
-                                        {% if obj.fax %} 
-                                        <span>{{ obj.fax }}</span>
-                                      {% else %}
-                                        <span>N/A</span>
-
-                                       {% endif %}</p>
-
-                                      <p class="website information"><span><i class="fa fa-internet-explorer space " aria-hidden="true"></i></span>
-
-                                      {% if obj.website %} 
-                                        <span>{{ obj.website }}</span>
-                                      {% else %}
-                                        <span>N/A</span>
-
-                                       {% endif %}
-                                       </p>
-
-                                       <p class="website information">
-                                          <span>
-                                            <i class="fa fa-envelope-o space" aria-hidden="true"></i>
-                                          </span>
-                                        {% if obj.phone %} 
-                                            <span>{{ obj.email }}</span>
-                                          {% else %}
-                                            <span>N/A</span>
-
-                                           {% endif %}
-                                            </p>
-                                  </div>
-                              </div>
-
-                              <div class="gap-high"></div>
-
-                                <div class="col-md-12">
-                                 <div class=" well well-sm our-office">
-                                    <span class="well-header">
-                                      <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                        Our Introduction
-                                    </span>
-                                  </div>
-                                  <div class="office-information">
-                                    <!-- <div class="gap"></div> -->
-                                    <!-- <p class="short-detail">{{ obj.description }}</p> -->
-                                    <span class="line-header">Public Description</span>
-                                    <div class="gap"></div>
-                                    <div class="public_desc">
-                                        <p class="short-detail">{{ obj.public_desc}}</p>
-                                      
-                                    </div>
-                                    <div class="gap-high"></div>
-                                    <span class="line-header">Additional Description</span>
-                                    <div class="gap"></div>
-                                    <div class="additional_desc">
-                                        <p class="short-detail">{{ obj.additional_desc }}</p>
-                                    </div>
-                                    <div class="gap"></div>
-                                </div>
-                                </div>
-                            </div>
-                            
-                        </div>
-      </div>
-      <div class="gap"></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-
-	<div class="organization-detail-page">
-       <div class="organization-short-detail" >
-                <div class="org-grg">
-                  <div class="card col-md-9 col-sm-12">
-                    <div class="col-md-4 col-sm-7">
-                        <div class="org-logo">
-                            <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" />
-                        </div>
+					</div>
+					<div class="action-right">
+						<span class="dropdown">
+							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="la la-cogs"></i> Manage
+							</a>
+							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
+								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-organization' obj.pk %}"><i class="la la-user"></i>{% trans 'People' %}</a>
+								<a class="dropdown-item" href="{% url 'fieldsight:project-add' obj.pk%}"><i class="la la-tasks"></i>{% trans 'Add Project' %}</a>
+							</div>
+						</span>
+						<a href="{% url 'fieldsight:organization-edit' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
+					</div>
+				</div>
+				<section class="org-profile-body margin-top">
+					<div class="org-profile-head padding clearfix bg-white">
+						<div class="row">
+							<div class="col-lg-6 col-sm-12">
+								<div class="org-profile-basic-info-left clearfix ">
+									<div class="org-profile-logo">
+										<img src="{{ obj.logo.url }}" width="123" height="123" alt="">
+									</div>
+									<div class="org-profile-basic-info">
+										<h2>{{ obj.name }}</h2>
+										<p>
+										{{ obj.address }}<br/>
+										{{ obj.get_country_display }}
+										</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-6 col-sm-12">
+								<ul class="org-profile-stat-list clearfix margin-top">
+									<li>
+										<a href="{% url 'fieldsight:manage-people-organization' obj.pk %}" class="org-profile-stat-item" title="">
+											<i class="la la-users"></i>
+											<div class="org-mini-stat-info">
+												<span>{{total_users}}</span>
+												 {% trans 'Users ' %}
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="{% url 'fieldsight:org-project-list' obj.id%}" class="org-profile-stat-item" title="">
+											<i class="la la-tasks"></i>
+											<div class="org-mini-stat-info">
+												<span>{{total_projects}}</span>
+												{% trans 'Projects ' %}
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="{% url 'fieldsight:org-site-list' obj.id%}" title="" class="org-profile-stat-item">
+											<i class="la la-map-marker"></i>
+											<div class="org-mini-stat-info">
+												<span>{{total_sites}}</span>
+												{% trans 'Sites ' %}
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
                     </div>
-                    <div class="col-md-8 col-sm-5">
-                        <div class="abt-org1">
-                            <div class="col-md-12">
-                                <h5 class="organization_name">{{ obj.name }}</h5>
-                            </div>
-                            <div class="col-md-8 detail">
-                                <p class="address information"><span><i class="fa fa-map-marker space" aria-hidden="true"></i></span>
+					<div class="row">
+						<div class="col-lg-8 col-md-12">
+							<div class="widget-info margin-top bg-white padding">
+								<div class="widget-head">
+									<h4>{% trans 'About ' %}</h4>
+								</div>
+								<div class="widget-body">
+									<p>
+									{{ obj.public_desc}}
+									</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-4 col-md-12">
+							<div class="widget-info margin-top bg-white padding">
+								<div class="widget-head">
+									<h4>Contact Info</h4>
+								</div>
+								<div class="widget-body">
+									<ul class="contact-info-list">
+
+										<li>
+										{% if obj.phone %}
+											<i class="la la-phone"></i>{{ obj.phone}}
+										{% else %}
+											<i class="la la-phone"></i>Not Available
+											{% endif %}
+										</li>
+										<li>
+										{% if obj.fax %}
+											<i class="la la-fax"></i>{{ obj.fax}}
+										{% else %}
+											<i class="la la-fax"></i>Not Available
+											{% endif %}
+										</li>
+										<li>
+										{% if obj.email %}
+											<i class="la la-envelope-o"></i>{{ obj.email}}
+										{% else %}
+											<i class="la la-envelope-o"></i>Not Available
+											{% endif %}
+										</li>
+										<li>
+										{% if obj.website %}
+											<i class="la la-globe"></i>{{ obj.website}}
+										{% else %}
+											<i class="la la-globe"></i>Not Available
+											{% endif %}
+										</li>
 
 
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="#" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
+								<div class="mini-stat-info">
+									<span>{{rejected}}</span>
+									{% trans 'Rejected Submissions' %}
+								</div>
+							</a>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="#" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
+								<div class="mini-stat-info">
+									<span>{{flagged}}</span>
+									{% trans 'flagged Submissions' %}
+								</div>
+							</a>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<div class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
+								<div class="mini-stat-info">
+									<span>{{outstanding}}</span>
+									{% trans 'Pending Submissions' %}
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<div class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-thumbs-up"></i></span>
+								<div class="mini-stat-info">
+									<span>{{approved}}</span>
+									{% trans 'Approved Submissions' %}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-6 col-sm-12">
+							<div class="widget-info margin-top bg-white padding">
+								<div class="widget-head">
+									<h4>Project Map</h4>
+								</div>
+								<div class="widget-body">
+									<div id="map" class="full-map"></div>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-6 col-sm-12">
+							<div class="row">
+								<div class="col-md-6 col-sm-12">
+									<div class="widget-info widget-scolling-list margin-top bg-white padding">
+										<div class="widget-head">
+											<h4>Projects</h4>
+											<a class="btn btn-xs btn-primary" data-toggle="modal" href="#addProject" data-target="#projectModal"><i class="la la-plus"></i></a>
+											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchProject" aria-expanded="false" aria-controls="searchProject"><i class="la la-search"></i></a>
+										</div>
+										<div class="widget-body">
+											<!--Search Projects-->
+											<div class="collapse margin-bottom" id="searchProject">
+												<form>
+													<div class="input-group input-group-sm">
+														<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for..." data-bind="value:search_key, valueUpdate:'afterkeydown'">
+														<span class="input-group-btn">
+															<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+														</span>
+													</div>
+												</form>
+											</div>
+											<!--<a href="#" class="project-item-wrap clearfix">-->
+												<div class="org-site-list current-person row top3 site-nav" data-bind="foreach: sites" >
+
+													<a data-bind="attr: { href: url }" class="project-item-wrap clearfix">
+														<div class="org-site" style="width: 100% !important;">
+															<div class="col-md-5 col-sm-5 "  >
+																<div class="image-org ">
+																	 <img data-bind="attr:{src: logo}" />
+																</div>
+															</div>
+
+																<div class="detail-org">
+																	<h6 class="site-title-org" data-bind="text:name"></h6>
+																	<p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span><span data-bind="text:address"></span></p>
+																	<p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span><span data-bind="text:phone"></span></p>
+																</div>
 
 
-                                {{ obj.address }}, {{ obj.get_country_display }}</p>
-                                <p class="contact information"><span><i class="fa fa-phone space" aria-hidden="true"></i></span>
-                                  {% if obj.phone %} 
-                                        <span>{{ obj.phone }}</span>
-                                      {% else %}
-                                        <span>N/A</span>
+														</div>
+													</a>
 
-                                       {% endif %}
+												</div>
+											<!--</a>-->
 
-                                </p>
-                                <p class="fax information"><span><i class="fa fa-fax space" aria-hidden="true"></i></span>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6 col-sm-12">
+									<div class="widget-info widget-scolling-list margin-top bg-white padding">
+										<div class="widget-head">
+											<h4>{% trans 'Organization Admins' %}</h4>
+											<a class="btn btn-xs btn-primary "href="{% url 'fieldsight:manage-people-organization' obj.pk %}"><i class="la la-plus"></i></a>
+											<!--<div class="modal fade" id="adminModal" tabindex="-1" role="dialog" aria-labelledby="projectModalLabel" aria-hidden="true">-->
+												<!--<div class="modal-dialog" role="document">-->
+													<!--<div class="modal-content">-->
+														<!--<div class="modal-header">-->
+															<!--<h5 class="modal-title" id="projectModalLabel">New Admin</h5>-->
+															<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+															  <!--<span aria-hidden="true">&times;</span>-->
+															<!--</button>-->
+														<!--</div>-->
+														<!--<div class="modal-body">-->
+															<!--<form>-->
+															  <!--<div class="form-group">-->
+																<!--<label for="recipient-name" class="form-control-label">Input Field:</label>-->
+																<!--<input type="text" class="form-control" id="recipient-name">-->
+															  <!--</div>-->
 
+															<!--</form>-->
+														<!--</div>-->
+														<!--<div class="modal-footer">-->
+															<!--<button type="button" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add Admin</button>-->
+															<!--<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>-->
+														<!--</div>-->
+													<!--</div>-->
+												<!--</div>-->
+											<!--</div>-->
+											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchAdmin" aria-expanded="false" aria-controls="searchAdmin"><i class="la la-search"></i></a>
+										</div>
+										<div class="widget-body">
+											<!--Search Projects-->
+											<div class="collapse margin-bottom" id="searchAdmin">
+												<form>
+													<div class="input-group input-group-sm">
+														<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+														<span class="input-group-btn">
+															<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+														</span>
+													</div>
+												</form>
+											</div>
+											{% for role in peoples_involved %}
+											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap clearfix">
+												<div class="project-logo">
+													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
+												</div>
+												<div class="project-basic-info">
+													<h4>{{role.user.get_full_name}}</h4>
+													<p>{{ role.user.email }}</p>
+													<p>{{ role.user.user_profile.phone }}</p>
+												</div>
+											</a>
+											{% empty %}
+											<h6><small>No user assigned to this organization.</small></h6>
+                                  			{% endfor %}
 
-                                  {% if obj.fax %} 
-                                        <span>{{ obj.fax }}</span>
-                                      {% else %}
-                                        <span>N/A</span>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="widget-info module-slick-slider margin-top bg-white padding">
+										<div class="widget-head">
+											<h4>Recent Pictures</h4>
+										</div>
+										<div class="scrollingSlider">
+											<!--<div>-->
+												<!--<div class="photo-item">-->
+													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+												<!--</div>-->
+											<!--</div>-->
+											<!--<div>-->
+												<!--<div class="photo-item">-->
+													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+												<!--</div>-->
+											<!--</div>-->
+											<!--<div>-->
+												<!--<div class="photo-item">-->
+													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+												<!--</div>-->
+											<!--</div>-->
+											<!--<div>-->
+												<!--<div class="photo-item">-->
+													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+												<!--</div>-->
+											<!--</div>-->
+											<!--<div>-->
+												<!--<div class="photo-item">-->
+													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+												<!--</div>-->
+											<!--</div>-->
+										</div>
+									</div>
+								</div>
+							</div>
 
-                                       {% endif %}
-                                </p>
-                                <p class="website information"><span><i class="fa fa-internet-explorer space" aria-hidden="true"></i></span>
+						</div>
 
-                                {% if obj.website %} 
-                                        <span>{{ obj.website }}</span>
-                                      {% else %}
-                                        <span>N/A</span>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="widget-info margin-top bg-white padding">
+								<div class="widget-head">
+									<h4>Form Submissions</h4>
+								</div>
+								<div class="widget-body">
+									<div id="submission-chart"></div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="widget-info margin-top bg-white padding">
+								<div class="widget-head">
+									<h4>Site Progress</h4>
+								</div>
+								<div class="widget-body">
+									<div id="siteprogress-chart"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+                </section>
 
-                                       {% endif %}
-                                </p>
-                                
-                                 <p class="website information"><span><i class="fa fa-envelope space space" aria-hidden="true"></i></span>
-
-                                    {% if obj.description %} 
-                                        <span>{{ obj.description }}</span>
-                                      {% else %}
-                                        <span>N/A</span>
-
-                                       {% endif %}
-
-
-                                 {{ obj.email }}</p>
-    							   <p class="short-detail">              
-                      {{ obj.description }}</p>
-                            </div>
-                            
-                        </div>
-                    </div>
-
-                    </div>
-
-                    <div class="col-md-3 col-sm-12">
-
-                                <div class="mini-stat clearfix col-sm-2 col-md-12">
-                                    <!--{% url 'fieldsight:user-list'%}-->
-                                    <!--<a href="{% url 'fieldsight:org-user-list' obj.id%}">-->
-                                    <a href="{% url 'fieldsight:manage-people-organization' obj.pk %}">
-                                      <span class="mini-stat-icon box-side"><i class="fa fa-users"></i></span>
-                                      <div class="mini-stat-info">
-                                          <span>{{total_users}}</span>
-                                          {% trans 'Users ' %}
-                                      </div>
-                                    </a>
-                                </div>
-                                <div class="mini-stat clearfix col-sm-4 col-md-12">
-                                    <!--{% url 'fieldsight:project-list'%}-->
-                                    <a href="{% url 'fieldsight:org-project-list' obj.id%}">
-                                          <span class="mini-stat-icon box-side"><i class="fa fa-building-o"></i></span>
-                                          <div class="mini-stat-info">
-                                              <span>{{total_projects}}</span>
-                                              {% trans 'Projects ' %}
-                                          </div>
-                                    </a>
-                                </div>
-                               <div class="mini-stat clearfix col-sm-4 col-md-12">
-                                   <!--{% url 'fieldsight:site-list'%}-->
-                                   <a href="{% url 'fieldsight:org-site-list' obj.id%}">
-                                    <span class="mini-stat-icon box-side"><i class="fa fa-picture-o"></i></span>
-                                    <div class="mini-stat-info">
-                                        <span>{{total_sites}}</span>
-                                        {% trans 'Sites ' %}
-                                    </div>
-                                   </a>
-                              </div>
-
-
-                    </div> 
-                    </div>
-                    <div class="row1">
-                      <div class="col-md-9 org-description">
-                         <div class="post clearfix ">
-                                      <div class="user-block1 ">
-                                      <div class="gap"></div>
-                                            <span class="title1">
-                                             {% trans 'About ' %}
-                                              
-                                            </span>
-                                      </div >
-                                      <div class="text-wrapper">
-                                      <!-- /.user-block -->
-                                      <p class="detail-text">
-                                         {{ obj.public_desc}}
-                                        </p>
-                                        <button class="button_hover button" data-toggle="modal" data-target="#organization_more"><span>Read more</span></button>
-
-                                      </div>
-                                        
-
-                                      <!-- <form class="form-horizontal">
-                                        <div class="form-group margin-bottom-none">
-                                          <div class="col-sm-9">
-                                            <input class="form-control input-sm" placeholder="Response">
-                                          </div>
-                                          <div class="col-sm-3">
-                                            <button type="submit" class="btn btn-danger pull-right btn-block btn-sm">Send</button>
-                                          </div>
-                                        </div>
-                                      </form> -->
-                                     
-                                    </div>
-                      </div>
-                      <div class="col-md-3 admin-list">
-                      <div class="user-block">
-                          <span class="username">
-                                <a href="#">{% trans 'Admin' %}</a>
-                          </span>
-                      </div>
-                        <ul>
-                          
-                                    
-                              {% for role in peoples_involved %}
-                                <li class="user-block ">
-                                    <a href="{% url 'users:profile' role.user.id %}">
-                                                     <img class="img-circle img-bordered-sm" src="{{ role.user.user_profile.profile_picture.url }}" alt="user image"/>
-                                                    
-                                                      <span class="adminname">
-                                                      {{role.user.get_full_name}}</span>
-                                                      
-                                                      <p class="address description"><span><i class="fa fa-envelope space" aria-hidden="true"></i></span>{{ role.user.email }}</p>    
-                                    </a>
-                                    </li>
-                               {% empty %}
-                               <li>No user assigned to this organization.</li>
-                                  {% endfor %}
-                              </div>
-                                      
-
-                          <!-- <li class="user-block ">
-                                      <div class="gap"></div>
-                                        <img class="img-circle img-bordered-sm" src="/media/logo/default_user.png" alt="User Image">
-                                            <span class="adminname">
-                                              <a href="#">{% trans 'Admin user2' %}</a>
-                                              
-                                            </span>
-                                        <span class="description">{% trans 'admin2@gmail.com' %}</span>
-                                      </li>
- -->
-
-        
-                        </ul>
-                      </div>
-                       <div class="gap-medium"></div>
-
-                    <div class="row">
-                  <div class="col-md-3 col-sm-6 col-xs-6">
-                    <div class="info-box">
-                      <span class=" info-box-icon bg-red"><i class="fa fa-window-close" aria-hidden="true"></i></span>
-
-                      <div class="info-box-content">
-                          <span class="info-box-number">{{rejected}}</span>
-                          <span class="info-box-text">{%trans 'Rejected Submissions' %}</span>
-                        
-                        
-                      </div>
-                      <!-- /.info-box-content -->
-                    </div>
-                    <!-- /.info-box -->
-                  </div>
-        <!-- /.col -->
-
-        <!-- fix for small devices only -->
-                  <div class="clearfix visible-sm-block"></div>
-
-                  <div class="col-md-3 col-sm-6 col-xs-6">
-                    <div class="info-box">
-                      <span class="info-box-icon bg-yellow "><i class="fa fa-flag-checkered" aria-hidden="true"></i></span>
-
-                      <div class="info-box-content">
-                        
-                        <span class="info-box-number">{{flagged}}</span>
-                        <span class="info-box-text">{% trans 'flagged Submissions' %}</span>
-                      </div>
-                      <!-- /.info-box-content -->
-                    </div>
-                    <!-- /.info-box -->
-                  </div>
-        <!-- /.col -->
-
-                  <div class="col-md-3 col-sm-6 col-xs-6">
-          <div class="info-box">
-            <span class="info-box-icon bg-aqua"><i class="fa fa-hourglass-half" aria-hidden="true"></i></span>
-
-            <div class="info-box-content">
-                <span class="info-box-number">{{outstanding}}</span>
-                <span class="info-box-text">{% trans 'Pending Submissions' %}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-                  </div>
-                  <div class="col-md-3 col-sm-6 col-xs-6">
-          <div class="info-box">
-            <span class="info-box-icon bg-green"><i class="fa fa-check-square-o" aria-hidden="true"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-number">{{approved}}</span>
-              <span class="info-box-text">{% trans 'Approved Submissions' %}</span>
-              
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-                  </div>
-        <!-- /.col -->
-      </div>
-                            
-                    <div class="clearfixx"></div>
-                </div>
-            
-        </div>
-         <div class="organization-long-detail">
-          <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#org-map">Map</a></li>
-              <li><a data-toggle="tab" href="#org-list-proj">Projects</a></li>
-        <!--<li><a data-toggle="tab" href="#org-list-site">List of Sites</a></li>-->
-        <li><a data-toggle="tab" href="#org-people">{% trans 'Admins' %}</a></li>
-        <!-- <li><a data-toggle="tab" href="#org-about">About Organization</a></li> -->
-              <ul class="nav navbar-nav navbar-right">
-                 <li class="dropdown man-drop">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage <span class="caret span-manage"></span></a>
-                    <ul class="dropdown-menu">
-                         <li class="drop-down-item"><a href="{% url 'fieldsight:project-add' obj.pk%}"> {% trans 'Add Project' %}</a></li>
-                      <li><a href="{% url 'fieldsight:manage-people-organization' obj.pk %}">{% trans 'People' %}</a></li>
-                    </ul>
-                </li>  
-               </ul>
+			</div>
 
 
-      </ul>
-
-      <div class="tab-content">
-        <div id="org-map" class="tab-pane fade in  active">
-           <div class="map-container-fieldsight">
-            <div class="radio-div card">
-                    <div class="radio">
-                  <label><input class = "switch" id = "form_status" type="radio" name="status" value="male" checked="checked"> Form Status</label><br>
-              </div>
-               <div class="radio">
-                  <label><input class = "switch" id = "project_progress" type="radio" name="progress" value="male"> Site Progress</label><br>
-               </div>
-               </div>
-                    <div id="map"></div>  
-                    <div class="popop-container" style="display:none">
-                        <h3 class="popop-head"></h3>
-                        <p class="address-popop"></p>
-                        <p class="contact-popop"></p>
-                        <div class="responsive">
-                            
-                        </div>
-
-                    </div>
-
-              
-                  </div>
-        </div>
-        <div id="org-list-proj" class="tab-pane  fade">
-                    <div class="input-group col-md-6">
-                        <input type="text" class="form-control" placeholder="Search Project" data-bind="value:search_key, valueUpdate:'afterkeydown'">
-                        <div class="input-group-btn">
-                            <button class="btn btn-primary" data-bind="click:$root.addSite">{% trans 'Add Project' %}</button>
-                        </div>
-                    </div>
-           <div class="org-site-list current-person row top3 site-nav" data-bind="foreach: sites">
-                    <div class="col-md-6 col-sm-12">
-                    <a data-bind="attr: { href: url }">
-                        <div class="org-site" style="width: 100% !important;">
-                            <div class="col-md-5 col-sm-5 "  >
-                                <div class="image-org ">
-                                     <img data-bind="attr:{src: logo}" />
-                                </div>
-                            </div>    
-                            <div class="col-md-7 col-sm-7">
-                                <div class="detail-org">
-                                    <h4 class="site-title-org" data-bind="text:name"></h4>
-                                    <p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span><span data-bind="text:address"></span></p>
-                                    <p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span><span data-bind="text:phone"></span></p>
-                                </div>
-                            </div>
-                            <div class="clearfixx"></div>    
-                        </div>
-                    </a>
-                  </div>
-
-                 </div>  
-        </div>
-
-        <div id="org-people" class="tab-pane fade">
-           <div class="org-site-list row">
-                 
-                    {% for role in peoples_involved %}
-
-                    <a href="{% url 'users:profile' role.user.id %}">
-                        <div class="org-site col-md-6">
-                            <div class="col-md-3">
-                                <div class="image-org1" style="margin-top: 12px">
-                                     <img src="{{ role.user.user_profile.profile_picture.url }}"  style="border-radius: 8px" />
-                                </div>
-                            </div>    
-                            <div class="col-md-9">
-                                <div class="detail-org">
-                                    <h3 class="pople-Name-org">{{role.user.get_full_name}}</h3>
-                                    <p class="address"><span><i class="fa fa-user" aria-hidden="true"></i></span>{{ role.user.username }}</p>
-                                    <p class="address"><span><i class="fa fa-envelope" aria-hidden="true"></i></span>{{ role.user.email }}</p>
-                                    <p class="address"><span><i class="fa fa-phone" aria-hidden="true"></i></span>{{ role.user.user_profile.phone }}</p>
-                                    <!--<p class="contact"><span><i class="fa fa-minus" aria-hidden="true"></i></span>-->
-                                    <!--{{ role.group }}-->
-                                    <!--</p>-->
-                                </div>
-                            </div>
-                            <div class="clearfixx"></div>    
-                        </div>
-                    </a>
-                     {% empty %}
-                     <li>No user assigned to this organization.</li>
-                        {% endfor %}
-                 </div>
-        </div>
-        <div id="org-about" class="tab-pane fade">
-           <div class="about-organization">
-                  <p>{{obj.public_desc}}</p>      
-                 </div>  
-        </div>
-      </div>
-        </div>
-        
-        
-
-    </div>
-
-{% endblock %}    
-
-{% block all_diagrams %} 
-    <section class=" row panel bar-gauge-diagrams">
-        <div class="col-sm-6">
-
-              <div id="submission-chart" style="width:100%; display: block;">
-                  <canvas id="myChart" width="500" height="347"></canvas>
-
-              </div>
-              <h4 class="widget-h">{% trans 'Form Submissions' %}</h4>
-
-        </div>
-        <div class="col-sm-6  progress_col">
-
-             <div id="progress-bar">
-                 <canvas id="myBar" width="500" height="347"></canvas>
-
-             </div>
-             <h4 class="widget-h">Site Progress</h4>
-
-        </div>
-        <div class="clearfixx"></div>
-        
-        
-
-        
-
-
-
-
-    </section>
-
-
-  {% endblock %} 
-
-{% block total_users %}
-
-
-
-
-
-<!-- <div class="row">
-    <div class="col-md-4">
-        <div class="mini-stat clearfix">
-            <span class="mini-stat-icon orange"><i class="fa fa-users"></i></span>
-            <div class="mini-stat-info">
-                <span>{{total_users}}</span>
-                Total Users
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="mini-stat clearfix">
-            <span class="mini-stat-icon pink"><i class="fa fa-building-o"></i></span>
-            <div class="mini-stat-info">
-                <span>{{total_projects}}</span>
-                Total Projects
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="mini-stat clearfix">
-            <span class="mini-stat-icon green"><i class="fa fa-picture-o"></i></span>
-            <div class="mini-stat-info">
-                <span>{{total_sites}}</span>
-                Total Sites
-            </div>
-        </div>
-    </div>
-</div> -->
 {% endblock %}
 
-    {%block extrascript %}
+{%block extrascript %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
 

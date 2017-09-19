@@ -1,122 +1,73 @@
-{% extends "fieldsight/fieldsight_base.html" %}
+{% extends "fieldsight/fieldsight_base1.html" %}
 {% load i18n staticfiles %}
-{% load filters %}  
-
-{% block page-title %}{% trans 'Sites' %}{% endblock %}
-
-{% block head %}
-
-    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:site-add' %}">{% trans 'New' %} {% trans 'Site' %}</a>
-    <div class="gap"></div>
-    <!--<a class="btn btn-success btn-raised" data-bind="click:add_site">{% trans 'New' %} {% trans 'Site' %}</a>-->
-
-{% endblock %}
- {%block kocript %}
- <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
-    <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
-<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/sites.js"></script>
-
-    <script>
-
-$(document).ready(function() {
- vm = new SitesViewModel();
- ko.applyBindings(vm);
-});
-
-    </script>
-
-{% endblock %}
-
+{% load filters %}
 {% block content %}
-<div data-bind="with:current_site">
-    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.site_modal_visibility">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Modal title</h4>
-      </div>
-      <div class="modal-body">
-          <form>
-         {% csrf_token %}
-             {{ form.media }}
-             <div class="col-sm-9 registration_field">
-            {% for field in form %}
-               <div class="col-sm-12 registration_field">
-                 <div class="col-sm-2"> {{ field.label }}</div>
-                 <div class="col-sm-4">      {{ field }}</div>
-                 <div class="col-sm-6">      {{ field.errors }}</div>
-               </div>
-            {% endfor %}
-        </div>
-             <div class="col-sm-12 registration_field">
-                 <div class="col-sm-2"> {% trans 'Latitude' %}</div>
-                 <div class="col-sm-4">
-                 <input data-bind="value: mapOne().lat" />
-                     </div>
-                 <div class="col-sm-6"></div>
-               </div>
-
-          <div class="col-sm-12 registration_field">
-                 <div class="col-sm-2"> {% trans 'Longitude' %}</div>
-                 <div class="col-sm-4">
-                 <input data-bind="value: mapOne().lng" />
-                     </div>
-                 <div class="col-sm-6"></div>
-               </div>
-          <div id="map1Div" data-bind="style:{width:'100%',height:'500px'},map:mapOne"></div>
-
-        <!-- <input type="submit" class='btn btn-info btn-raised' value="{% trans 'Save' %}"> -->
-        <button class="btn btn-lg btn-primary registration__action" type="submit" data-bind="click:save" >{% trans 'Save1' %}</button>
-        {% if form.instance.id %}
-            <a href="{% url 'fieldsight:project-delete' form.instance.id %}" class="btn btn-danger btn-raised">
-                {% trans 'Delete' %}</a>
-        {% endif %}
-    </form>
-
-
-      </div>
-      <!--<div class="modal-footer">-->
-        <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
-        <!--<button type="button" class="btn btn-primary">Save changes</button>-->
-      <!--</div>-->
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-</div>
+{% load filters %}
+<div id="main-content" class="padding">
+				<section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-building"></i>Sites</h3>
+						<div class="panel-heading-right">
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i> Search</a>
+							<a href="{% url 'fieldsight:site-add' %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Add' %}{% trans 'New' %} </a>
+						</div>
+                    </header>
+					<div class="panel-body">
+						<!--Search Organization-->
+						<div class="collapse margin-top" id="searchOrganization">
+							<form class="padding">
+								<div class="row">
+									<div class="col-md-6 ml-md-auto">
+										<div class="input-group">
+										  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+										  <span class="input-group-btn">
+											<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+										  </span>
+										</div>
+									</div>
+									<div class="col-md-3"></div>
+								</div>
+							</form>
+						</div>
+						<!--Organization Listing-->
+						<div class="row">
+                            {% for obj in object_list %}
+							<div class="col-md-4 col-sm-6">
+								<div class="organization-item-wrap  margin-top clearfix">
+									<div class="logo">
+										<img src="{{ obj.logo.url }}" alt="" width="80" height="80">
+									</div>
+									<div class="basic-info">
+										<h4>{{ obj.name }}</h4>
+										<p>{{ obj.address }}, {{ obj.get_country_display }}</p>
+                                        <p>{{ obj.phone }}</p>
+									</div>
+									<div class="action-button margin-top">
+										<a href="{% url 'fieldsight:site-dashboard' obj.pk %}" title="" class="btn btn-sm btn-primary">{% trans 'View' %}</a>
+										<a href="{% url 'fieldsight:site-edit' obj.pk %}" title="" class="btn btn-sm btn-primary">{% trans 'Edit' %}</a>
+									</div>
+								</div>
+							</div>
+                            {% endfor %}
 
 
-    <div class="col-sm-12 " style="padding: 0px;">
-          <div class=" col-sm-offset-1 col-sm-10" style="padding: 0px;">
-            <input type="text" class="form-control no-btn-search" placeholder="Search . . . . . "  data-bind="value:search_key, valueUpdate:'afterkeydown'">
-          </div>
-    </div>
-<hr class="divider-line col-sm-12">
-    <div class="gap-medium"></div>
+						</div>
+					</div>
+					<!--Pagination-->
+						<nav class="margin-top" aria-label="page-navigation">
+						  <ul class="pagination justify-content-center">
+							<li class="page-item disabled">
+							  <a class="page-link" href="#" tabindex="-1">Previous</a>
+							</li>
+							<li class="page-item active"><a class="page-link" href="#">1</a></li>
+							<li class="page-item"><a class="page-link" href="#">2</a></li>
+							<li class="page-item"><a class="page-link" href="#">3</a></li>
+							<li class="page-item">
+							  <a class="page-link" href="#">Next</a>
+							</li>
+						  </ul>
+						</nav>
+                </section>
 
-    <div class='adv-table' data-bind="foreach: sites">
-
-         <a data-bind="attr: { href: url }">
-                         <div class="col-sm-4">
-                             <div class="site-list" style="margin-top:20px">
-                                <div class="logo-image circle col-sm-3">
-                                  <img src="/media/logo/default_user.png"></div>
-                                
-                                 <span  class="detail-text1" data-bind="text: name"></span>
-                              </a>
-                                 
-                                 <p class="address"><i class="fa fa-map-marker" aria-hidden="true"></i> <span  class="detail-text1" data-bind="text: name"></span></p>
-                                 </div>
-                            </div>
-                         </div>
-         
-
-    </div>
-{% endblock %}
-
-{%block extrascript %}
+			</div>
 {% endblock %}

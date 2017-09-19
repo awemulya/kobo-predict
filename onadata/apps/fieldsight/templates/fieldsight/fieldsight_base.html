@@ -140,12 +140,12 @@ document.onload = getnotifdata('{% url 'eventlog:api-not' %}');
     function type3(data){
            content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Reviewer of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>';
               return content;
-          
+
     }
     function type4(data){
           content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Site Supervisor of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>';
                 return content;
-          
+
     }
     function type5(data){
            content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as an Organization Admin in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
@@ -186,6 +186,7 @@ document.onload = getnotifdata('{% url 'eventlog:api-not' %}');
                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created <b>'+ title +' in <a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
                   return content;
         }
+
 
     function type13(data){
                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of organization named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
@@ -320,13 +321,13 @@ webSocketBridgeNotify.listen(function(text, byte) {
         notificationCount = parseInt(notificationCount);
     }
     notificationCount += 1;
-   
+
 
 
     $('#noti-count').text(notificationCount);
     description = text.description;
     desc = description.split(",");
-    
+
     typeid = text.typeid
 // get description for notificationaccotding to its type id
     var content = types[typeid](text, desc);
@@ -374,7 +375,7 @@ console.log(text.prop2);
     <a href="{% url 'dashboard' %}" class="logo">
         <!-- <img src="images/logo.png" alt=""> -->
         <img src="{{STATIC_URL}}images/logo1.png" class="img-responsive1" />
-        
+
     </a>
     <div class="sidebar-toggle-box">
         <div class="fa fa-bars"></div>
@@ -436,13 +437,44 @@ console.log(text.prop2);
               {% if notifications.count %}
             <ul class="dropdown-menu menu-top">
                 <ul class="menu" id="notification-ul">
-                 
 
+                    {% for noti in notifications %}
+                    {% if noti.type == 6 %}
+                    <li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
+                    <a href="{{noti.get_absolute_url}}" class="full">
+                 <div class="col-md-1">
+                      <!--<i class="fa fa-info-circle fa-1 note-icon-sm"></i>-->
+                     <img src="{{noti.content_object.user.user_profile.profile_picture.url}}" height="30" width="30">
+                 </div>
+                 <div class="col-md-10">
+                  <span class="detail-text1 notification-title-sm">{{noti.content_object.user.get_full_name}}
+                      {% trans 'joined ' %} {{noti.content_object.organization.name}} {% trans 'as ' %} {{noti.content_object.group.name}}</span>
 
-                    
+                  <div class="low">
+                    <i class="fa fa-clock-o space" aria-hidden="true"></i>
+                    {{noti.date}}
+                  </div>
+                  </div>
+                    </a>
+                  </li>
+                    {% else %}
+                  <li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
+                    <a href="{{noti.get_absolute_url}}" class="full">
+                 <div class="col-md-1">
+                      <i class="fa fa-info-circle fa-1 note-icon-sm"></i>
+                 </div>
+                 <div class="col-md-10">
+                  <span class="detail-text1 notification-title-sm">{{noti.description}}</span>
 
-
-
+                  <div class="low">
+                    <i class="fa fa-clock-o space" aria-hidden="true"></i>
+                    {{noti.date}}
+                  </div>
+                  </div>
+                    </a>
+                  </li>
+                    {% endif %}
+                {% endfor %}
 
                 </ul>
               </li>
@@ -453,12 +485,12 @@ console.log(text.prop2);
         </ul>
       </div>
        <div class="dropdown pull-right top-menu top-nav clearfix">
-        
+
         <!--<li>-->
             <!--<input type="text" class="form-control search" placeholder=" Search">-->
         <!--</li>-->
         <!-- user login dropdown start-->
-        
+
             <a  href="#" data-toggle="dropdown" class="dropdown-toggle" id="fs_drop_down"  border-radius: 4px;">
                 <img src="{{request.user.user_profile.profile_picture.url}}">
                 <span class="username1"> {% trans request.user.username %}</span>
@@ -497,7 +529,7 @@ console.log(text.prop2);
                                     {% if role.organization%}
                                     {% trans 'at Org ' %} {{role.organization}}
                                     {% endif %}
-                                    
+
                                     </a>
                                 </li>
                             {% endif %}
@@ -510,7 +542,7 @@ console.log(text.prop2);
                 <li><a href="{% url 'auth_password_change' %}"><i class="fa fa-cog"></i> Change Password</a></li>
                 <li><a href="{% url 'auth_logout' %}"><i class="fa fa-key"></i> Log Out</a></li>
             </ul>
-        
+
         <!-- user login dropdown end -->
         <!-- <li>
             <div class="toggle-right-box">
@@ -519,27 +551,27 @@ console.log(text.prop2);
         </li> -->
           </div>
 
-             
+
 </div>
 <!--logo end-->
 
 <!-- <div class="nav notify-row" id="top_menu">
-    
+
     <ul class="nav top-menu">
         <li>
             {% block logo %}
                 <img src="{{STATIC_URL}}images/logo1.png" alt="">
             {% endblock %}
-        </li>    
+        </li>
     </ul>
-    
+
 </div> -->
 <ul class="top-nav main_ul clearfix" style="padding-right: 31px !important;">
 
 
 
     <!--search & user info start-->
-    
+
     <!--search & user info end-->
 </ul>
 </header>
@@ -564,7 +596,7 @@ console.log(text.prop2);
                         <i class="fa fa-building-o"></i>
                         <span>{% trans 'Organization' %}</span>
                     </a>
-                    
+
                 </li>
                 {% endrole %}
                 <!--{% ifrole "Organization" %}-->
@@ -640,20 +672,20 @@ console.log(text.prop2);
             <div class="col-sm-12">
                 <section class="panel  move_up">
                     <header class="panel-heading">
-                      
 
-                        
+
+
                         <div class="tools pull-right">
 
                          {% block head %}
-                           
+
                         {% endblock %}
-                            
+
                          </div>
                     </header>
 
                     <div class="gap-high"></div>
-                    
+
                     <div class="panel-body">
 
     {% block messages %}
@@ -676,17 +708,17 @@ console.log(text.prop2);
         </div>
         <!-- page end-->
         <div class="total_all_total">
-          {% block total_users %}           
+          {% block total_users %}
           {% endblock %}
         </div>
 
         <div class="flagged_forms_all">
-          {% block all_flagged_forms %}              
+          {% block all_flagged_forms %}
           {% endblock %}
         </div>
         <div class="diagrams">
-           {% block all_diagrams %}              
-          {% endblock %} 
+           {% block all_diagrams %}
+          {% endblock %}
         </div>
 
         <!-- <div class="chat-widget">
@@ -697,9 +729,9 @@ console.log(text.prop2);
          <a href="#" class="chatminimize" onclick="return false">
             <div class="panel-heading heading1-chat ">
              <span class="glyphicon glyphicon-comment"></span> Chat</a>
-                
+
                <div class="btn-group pull-right drop-btn">
-                  <button type="button" class="btn btn-warning btn-xs dropdown-toggle" data-toggle="dropdown"> <span class="glyphicon glyphicon-chevron-down"></span> </button> 
+                  <button type="button" class="btn btn-warning btn-xs dropdown-toggle" data-toggle="dropdown"> <span class="glyphicon glyphicon-chevron-down"></span> </button>
                   <ul class="dropdown-menu slidedown">
                      <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-refresh"> </span>Refresh</a></li>
                      <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-ok-sign"> </span>Available</a></li>
@@ -710,32 +742,32 @@ console.log(text.prop2);
                   </ul>
                </div>
             </div>
-            
+
                 <div class="panel-body chat-body">
                    <ul class="chat">
                       <li class="left clearfix">
-                         <span class="chat-img pull-left"> <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" /> </span> 
+                         <span class="chat-img pull-left"> <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" /> </span>
                          <div class="chat-body clearfix">
                             <div class="header1"> <strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted"> <span class="glyphicon glyphicon-time"></span>12 mins ago</small> </div>
                             <p class="main-message"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales. </p>
                          </div>
                       </li>
                       <li class="right clearfix">
-                         <span class="chat-img pull-right"> <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" /> </span> 
+                         <span class="chat-img pull-right"> <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" /> </span>
                          <div class="chat-body clearfix">
                             <div class="header1">  <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>13 mins ago</small> <strong class="pull-right primary-font">Bhaumik Patel</strong> </div>
                             <p class="main-message"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales. </p>
                          </div>
                       </li>
                       <li class="left clearfix">
-                         <span class="chat-img pull-left"> <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" /> </span> 
+                         <span class="chat-img pull-left"> <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" /> </span>
                          <div class="chat-body clearfix">
                             <div class="header1"> <strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted"> <span class="glyphicon glyphicon-time"></span>14 mins ago</small> </div>
                             <p class="main-message"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales. </p>
                          </div>
                       </li>
                       <li class="right clearfix">
-                         <span class="chat-img pull-right"> <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" /> </span> 
+                         <span class="chat-img pull-right"> <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" /> </span>
                          <div class="chat-body clearfix">
                             <div class="header1"> <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>15 mins ago</small> <strong class="pull-right primary-font">Sushila pokhrel</strong> </div>
                             <p class="main-message"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales. </p>
@@ -746,13 +778,13 @@ console.log(text.prop2);
                 <div class="panel-footer">
                    <div class="input-group"> <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..."  name="message-input" /> <span class="input-group-btn"> <button class="btn btn-warning btn-sm" id="btn-chat"> Send</button> </span> </div>
                 </div>
-            
+
          </div>
       </div>
    </div>
 </div> -->
 
-        
+
         </div>
         </section>
     </section>

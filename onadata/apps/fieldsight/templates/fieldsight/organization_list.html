@@ -1,63 +1,73 @@
-{% extends "fieldsight/fieldsight_base.html" %}
+{% extends "fieldsight/fieldsight_base1.html" %}
 {% load i18n staticfiles %}
 {% load filters %}
-
-{% block page-title %}{% trans 'Organizations' %}{% endblock %}
-{% block breadcrumbs %}
-
-{% endblock %}
-
-{% block head %}
-    <a class="btn btn-primary btn-raised square" href="{% url 'fieldsight:organization-add'%}">{% trans 'New' %} {% trans 'Organization' %}</a>
-{% endblock %}
-
 {% block content %}
+{% load filters %}
+<div id="main-content" class="padding">
+				<section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-building"></i>{% block page-title %}{% trans 'Organizations' %}{% endblock %}</h3>
+						<div class="panel-heading-right">
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i> Search</a>
+							<a href="{% url 'fieldsight:organization-add'%}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Add' %} {% trans 'New'%} </a>
+						</div>
+                    </header>
+					<div class="panel-body">
+						<!--Search Organization-->
+						<div class="collapse margin-top" id="searchOrganization">
+							<form class="padding">
+								<div class="row">
+									<div class="col-md-6 ml-md-auto">
+										<div class="input-group">
+										  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+										  <span class="input-group-btn">
+											<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+										  </span>
+										</div>
+									</div>
+									<div class="col-md-3"></div>
+								</div>
+							</form>
+						</div>
+						<!--Organization Listing-->
+						<div class="row">
+							 {% for obj in object_list %}
+							<div class="col-md-4 col-sm-6">
+								<div class="organization-item-wrap  margin-top clearfix">
+									<div class="logo">
+										<img src="{{ obj.logo.url }}" alt="" width="80" height="80">
+									</div>
+									<div class="basic-info">
+										<h4>{{ obj.name }}</h4>
+										<p>{{ obj.address }}</p>
+										<p>{{ obj.get_country_display }}</p>
+									</div>
+									<div class="action-button margin-top">
+										<a href="{% url 'fieldsight:organizations-dashboard' obj.pk %}" title="" class="btn btn-sm btn-primary">View</a>
+										<a href="{% url 'fieldsight:organization-edit' obj.pk %}" title="" class="btn btn-sm btn-primary">{% trans 'Edit' %}</a>
+									</div>
+								</div>
+							</div>
+							{% empty %}
+							<p class="emptylist">Sorry, no organizations.</p>
+							{% endfor %}
+						</div>
+					</div>
+					<!--Pagination-->
+						<nav class="margin-top" aria-label="page-navigation">
+						  <ul class="pagination justify-content-center">
+							<li class="page-item disabled">
+							  <a class="page-link" href="#" tabindex="-1">Previous</a>
+							</li>
+							<li class="page-item active"><a class="page-link" href="#">1</a></li>
+							<li class="page-item"><a class="page-link" href="#">2</a></li>
+							<li class="page-item"><a class="page-link" href="#">3</a></li>
+							<li class="page-item">
+							  <a class="page-link" href="#">Next</a>
+							</li>
+						  </ul>
+						</nav>
+                </section>
 
-    {% load filters %}
-
-    <div class="organization-lsit-all ">
-
-        {% for obj in object_list %}
-        <div class="organization-list  {{obj.is_active|activeness}}">
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <a href="{% url 'fieldsight:organizations-dashboard' obj.pk %}" >
-
-
-                    <div class="card ">
-
-                        <!--Card image-->
-
-                        <div class="card-image list-img">
-                            <img src="{{ obj.logo.url }}" title="{{ obj.logo}}" class="sixty" />
-                        </div>
-                        <!--/.Card image-->
-
-                        <!--Card content-->
-                        <div class="card-block">
-                            <!--Title-->
-                            <h4 class="card-title">{{ obj.name }}</h4>
-                            <hr class="colour">
-                            <!--Text-->
-                            <p class="card-text"><span><i class="fa fa-map-marker space" aria-hidden="true"></i></span>
-
-                            {{ obj.address }}, {{ obj.get_country_display }}</p>
- 
-                            <a href="{% url 'fieldsight:organizations-dashboard' obj.pk %}" class="btn btn-primary">GO <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                        <!--/.Card content-->
-
-                    </div>
-
-                </a>
-
-            </div>
-        </div>
-        {% empty %}
-        <p class="emptylist">Sorry, no organizations.</p>
-        {% endfor %}
-
-    </div>
+			</div>
 {% endblock %}
-
-

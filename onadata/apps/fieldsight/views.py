@@ -180,6 +180,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         line_chart = LineChartGenerator(obj)
         line_chart_data = line_chart.data()
         dashboard_data = {
+            'sites': sites,
             'obj': obj,
             'peoples_involved': peoples_involved,
             'total_sites': total_sites,

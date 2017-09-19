@@ -751,6 +751,7 @@ data (instance/submission per row)
         owner = _get_owner(request)
         survey = utils.publish_xlsform(request, owner)
 
+
         if isinstance(survey, XForm):
             xform = XForm.objects.get(pk=survey.pk)
             # The XForm has been created, but `publish_xlsform` relies on
