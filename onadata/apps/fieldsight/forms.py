@@ -66,9 +66,10 @@ class OrganizationForm(forms.ModelForm):
 
     class Meta:
         model = Organization
-        exclude = []
+        exclude = ['is_active']
         # exclude = ['organizaton']
         widgets = {
+        'is_active': forms.HiddenInput(),
         'location': forms.HiddenInput(),
         'address': forms.TextInput(),
         'logo': AdminImageWidget()
@@ -202,10 +203,12 @@ class ProjectForm(forms.ModelForm):
         #self.fields['organization'].empty_label = None
 
     class Meta:
+        exclude = ['is_active']
         model = Project
         exclude = ['organization']
         #organization_filters = ['organization']
         widgets = {
+        'is_active': forms.HiddenInput(),
         'address': forms.TextInput(),
         'location': forms.HiddenInput(),
         'logo': AdminImageWidget()
@@ -230,11 +233,13 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
 
     class Meta:
         model = Site
+        exclude = ['project']
         exclude = ['is_survey']
-        project_filters = ['project']
+        # project_filters = ['project']
         widgets = {
         'address': forms.TextInput(),
         # 'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
+        # 'project' : forms.HiddenInput(),
         'location': forms.HiddenInput(),
         'logo': AdminImageWidget()
         }
