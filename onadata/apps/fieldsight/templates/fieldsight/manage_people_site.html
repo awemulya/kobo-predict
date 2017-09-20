@@ -14,6 +14,8 @@ $(document).ready(function() {
 var pk = "{{pk}}";
 var level = "{{level}}";
 var organization = "{{organization}}";
+var csrf_token = "{{csrf_token}}";
+assigntoken(csrf_token);
 vm = new ManagePeopleViewModel(pk, level, organization);
  ko.applyBindings(vm);
 });
@@ -485,7 +487,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                     <input type="text" class="form-control" placeholder="Search..." aria-label="Search...">
                   </div>
                 </form>
-                <ul class="row max-260-scroll">
+                <ul class="row max-260-scroll" data-bind="foreach:$root.available_users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox">
                       <input type="checkbox" class="custom-control-input" checked>
@@ -521,7 +523,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <h4>Current Organization Admins</h4>
               </div>
               <div class="widget-body max-513-scolling" data-bind="foreach:admins">
-                <div class="project-item-wrap clearfix" data-bind="click:detail">
+                <div class="project-item-wrap clearfix">
                   <div class="project-logo">
                     <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
                   </div>
@@ -529,7 +531,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                     <h4 data-bind="text:user().full_name"></h4>
                     <p data-bind="text:user().email"></p>
                   </div>
-                  <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this Organization Admin?', click: detail }"><i class="la la-close"></i></a>
+                  <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this Organization Admin?', click:rmrole }"><i class="la la-close"></i></a>
 
 
 
@@ -656,6 +658,8 @@ function sendnewuserinvite(){
         }
       });
 }
+
 </script>
+<script type="text/javascript" src="/static/js/ko_lib.js" ></script>
 {% endif %}
     {% endblock %}
