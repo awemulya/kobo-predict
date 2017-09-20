@@ -231,7 +231,15 @@ class MultiUserlistViewSet(viewsets.ModelViewSet):
                 raise ValidationError({
                     "No such project exists ".format(str(e)),
                 })
-            queryset = queryset.filter(project__id=project.organization_id).distinct('user_id')
+            queryset = queryset.filter(organization__id=project.organization_id).distinct('user_id')
+        elif level == "2":
+            try:
+                org = Organization.objects.get(pk=pk)
+            except Exception as e:
+                raise ValidationError({
+                    "No such organizations exists ".format(str(e)),
+                })
+            queryset = queryset.filter(organization__id=organization_id).distinct('user_id')
         return queryset
 
 class MultiOPSlistViewSet(viewsets.ModelViewSet):

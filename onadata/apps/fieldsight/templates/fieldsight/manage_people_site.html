@@ -9,12 +9,30 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/manage_people_site.js"></script>
 
 <script>
+var proj_site_url = "";
+var userurl = "";
+var speed=0;
+var selected_users=[];
+var all_users=[];
+var selected_proj_site=[];
+var all_proj_site=[];
+
+{% if type == "project" %}
+  proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
+  userurl = '{% url 'role:multi_user_list' 1 pk %}';
+
+{% elif type == "org" %}
+  proj_site_url = '{% url 'role:multi_ops_list' 1 pk %}';
+  userurl = '{% url 'role:multi_user_list' 1 pk %}';
+
+{% endif %}
 
 $(document).ready(function() {
 var pk = "{{pk}}";
 var level = "{{level}}";
 var organization = "{{organization}}";
 var csrf_token = "{{csrf_token}}";
+
 assigntoken(csrf_token);
 vm = new ManagePeopleViewModel(pk, level, organization);
  ko.applyBindings(vm);
@@ -24,7 +42,15 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 {% endblock %}
 {% block content %}
 
-
+<input type="hidden" id="invite_organization_id" value="{{ organization }}">
+<input type="hidden" id="invite_project_id" value="{{ project }}">
+<input type="hidden" id="invite_site_id" value="{{ site }}">
+{% if category == "site" %}
+<input type="radio" name="group" id="invite_group" value="Reviewer" checked> Reviewer<br>
+<input type="radio" name="group" id="invite_group" value="Site Supervisor"> Site Supervisor<br>
+{% else %}
+<input type="hidden" id="invite_group" value="{{ category }}">
+{% endif %}
 
 
 			<div id="main-content" class="padding">
@@ -40,9 +66,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 							<div class="widget-body">
 								<form>
 									<div class="input-group">
-										<input type="text" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+										<input type="text" id="invite_email" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
 										<span class="input-group-btn">
-											<button class="btn btn-primary" type="button"><i class="la la-user-plus"></i> Invite</button>
+											<button class="btn btn-primary" id="retry" onclick="refresh()" type="button"><i class="la la-user-plus"></i> Invite</button>
 										</span>
 									</div>
 								</form>
@@ -380,9 +406,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
                     <span class="input-group-btn">
-                      <button class="btn btn-primary" type="button"><i class="la la-user-plus"></i> Invite</button>
+                      <button class="btn btn-primary" id="retry" onclick="refresh()" type="button"><i class="la la-user-plus"></i> Invite</button>
                     </span>
                   </div>
                 </form>
@@ -467,9 +493,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
                     <span class="input-group-btn">
-                      <button class="btn btn-primary" type="button"><i class="la la-user-plus"></i> Invite</button>
+                      <button class="btn btn-primary" id="retry" onclick="refresh()" type="button"><i class="la la-user-plus"></i> Invite</button>
                     </span>
                   </div>
                 </form>
@@ -541,66 +567,202 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 
             </div>
           </div>
+
+
+
+             <div class="row">
+          <div class="col-md-6">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Users</h4>
+              </div>
+              <div class="widget-body">
+                <ul class="row max-260-scroll" id="multi-ass-users">
+                <input type="button" name="" onclick="selectall('users')">
+                 <input type="button" name="" onclick="unselectall('users')">
+                  
+
+                 
+                </ul>
+                <input style="display:none;" type="button" id="getnextlist" onclick="" value="load more">
+                <input type="radio" style="display:none;" name="group" id="group" value="Project Manager" checked>
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="col-md-6">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Projects</h4>
+              </div>
+              <div class="widget-body">
+                <ul class="row max-260-scroll">
+                 
+                 
+                  
+                  
+                  
+                  <li class="col-md-6">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" checked>
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                          <div class="project-logo">
+                            <img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">
+                          </div>
+                          <div class="project-basic-info">
+                            <h4>Organization Name</h4>
+                            <p>Old Baneshwor, Kathmandu, Nepal</p>
+                          </div>
+                        </div>
+                        <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+                      </span>
+                    </label>
+                  </li>
+               
+
+                </ul>
+                <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more">
+              </div>
+            </div>
+          </div>
         </div>
+        <!-- <div class="margin-top">
+          <div class="padding bg-white">
+            <button type="submit" class="btn btn-primary btn-block"><i class="la la-user-plus"></i> Assign Users</button>
+          </div>
+        </div> -->
         </div>
+        </div><div class="modal fade" id="myinvitemodal" role="dialog" >
+                      <div class="modal-dialog">
+                      
+                        <!-- Modal content-->
+                        <div class="modal-content" style="margin-top: 15%;">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Invite Status</h4>
+                          </div>
+                          <div class="modal-body">
+                          <center>
+                            <div id="update-next-step">
+                            <h2>Inviting ...</h2>
+                          
+                            </div>
+                            </center>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                        
+                      </div>
+                    </div>
 
-
-
-
-
-
-	{% endblock %}
-    {%block extrascript %}
-     
-    <script>
+<script>
 var ajax_call=false;
-
+var status = true;
 function refresh(){
   var email = $("#invite_email").val();
+  
+
+  // if(email.indexOf(',') > -1){
+
+  //       // alert('ola');
+        sendmultiplerequest(email);
+
+  //       return false;  
+  // }
+  // else{
+  // data = validateemail(email);
+  
+  // if(data.status == false){
+  //   return false;
+  // }
+
+  // ajax_call = true;
+  // checkemail(email);
+  // }   
+}
+function validateemail(email){
   var atherate = email.indexOf("@");
-      // if(atherate == -1 ){ return false; }
-      var dot = email.indexOf(".", atherate);
-      // if(dot == -1 ){ return false; }
-      // ajax_call=true;
-      // checkemail(email);
+  var dot = email.indexOf(".", atherate);
+    
       if(atherate != -1 && dot != -1){
-        ajax_call = true;
-        checkemail(email);
+        return {
+        status: true,
+        email: email
+        };
       }
       else{
-        alert("Enter valid email address.")
+        // alert("Enter valid email address.");
+        return {
+        status: false,
+        email: email
+        };
       }
+}
+ function getNewInsertion(newValue) {
+     if(newValue.indexOf(',') > -1){
+        $("#retry").val('Invite Users');  
+        }
+     else{
+       $("#retry").val('Search User');
+     }
 }
 
 
- $('#invite_email').keydown(function(e) {
-      var email = $("#invite_email").val();
-     
-      // if(ajax_call == true){ return false; }
-       var atherate = email.indexOf("@");
-      // if(atherate == -1 ){ return false; }
-      var dot = email.indexOf(".", atherate);
-      // if(dot == -1 ){ return false; }
-      // ajax_call=true;
-      // checkemail(email);
-      if(ajax_call != true && atherate != -1 && dot != -1){
-        ajax_call = true;
-        checkemail(email);
-      }   
-    });
+function sendmultiplerequest(email){
+    status=true;
+    emails = email.split(",");
+    emails.forEach(multiemailvalidate);
+    if(status == "true" ){ sendinvite(emails); }
+    else{ alert('failed'); }
+}
 
- // $("#invite_email").keydown(function(e) {
+function multiemailvalidate(entry) {
+    email_res = validateemail(entry);
+    if(email_res.status == false){
+      
+      var email_input = document.getElementById("invite_email");
+      email = email_input.value;
+      start = email.search(email_res.email);
+      end = email.indexOf(",", start);
+      // console.log(start +" "+ end);
+      email_input.setSelectionRange(start, end);
+      email_input.focus();
+      status=false;
 
- //      var email = $("#invite_email").val();
- //      console.log(email);
- //      if(ajax_call == true){ return false; }
- //      var atherate = email.indexOf("@");
- //      if(atherate == -1 ){ return false; }
- //      var dot = email.indexOf(".", atherate);
- //      if(dot == -1 ){ return false; }
- //      ajax_call=true;
- //      checkemail(email);
- //    });
+
+      }
+    }
+
+$(function(){
+
+    $("#invite_email").bind("paste cut keydown",function(e) {
+        var that = this;
+        
+        setTimeout(function() {
+                
+                if(typeof $(that).data("old_value") == "undefined") {
+                    $(that).data("old_value",$(that).val());
+                }
+                
+                getNewInsertion($(that).val());
+
+            },200);
+
+    })
+
+}); 
+
+
+function log(val) {
+    console.log(val);
+}
+
   function checkemail(email){
         $.ajax({
         url: "{% url 'fieldsight:check-email-for-invite' %}",
@@ -614,8 +776,10 @@ function refresh(){
   }
 
 function sendnewuserinvite(){
+  emails = [];
   var email = $("#invite_email").val();
-  sendinvite(email);
+  emails.push(email);
+  sendinvite(emails);
 }
       
 
@@ -623,16 +787,20 @@ function sendnewuserinvite(){
 {% if category == "site" %}
 
 <script>
-  function sendinvite(email){ 
+  function sendinvite(emails){
+      $('#myinvitemodal').modal(); 
       var organization_id = $("#invite_organization_id").val();
       var project_id = $("#invite_project_id").val();
       var site_id = $("#invite_site_id").val();
       var group =  $( 'input[id=invite_group]:checked' ).val();
-      alert(group);
-      console.log(group);
+      // console.log(emails);
+      // console.log(group);
+      // console.log(project_id);
+      // console.log(site_id);
+      // console.log(organization_id);
       $.ajax({
         url: "{% url 'fieldsight:senduserinvite' %}",
-        data: {'email': email, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        data: {'emails[]': emails, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
         type: 'POST',
         success: function (html) {
            $('#update-next-step').html(html);
@@ -642,24 +810,213 @@ function sendnewuserinvite(){
 </script>
 {% else %}
 <script>
-  function sendinvite(email){ 
+  function sendinvite(emails){ 
+      $('#myinvitemodal').modal(); 
       var organization_id = $("#invite_organization_id").val();
       var project_id = $("#invite_project_id").val();
       var site_id = $("#invite_site_id").val();
       var group =  $("#invite_group").val();
-      alert(group);
-      console.log(group);
+      
       $.ajax({
         url: "{% url 'fieldsight:senduserinvite' %}",
-        data: {'email': email, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        data: {'emails[]': emails, 'organization_id':organization_id,'project_id':project_id,'site_id':site_id,'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
         type: 'POST',
         success: function (html) {
+
            $('#update-next-step').html(html);
+            
         }
       });
 }
 
+
+
+
+
+
+
+
+
+
+
 </script>
-<script type="text/javascript" src="/static/js/ko_lib.js" ></script>
+
 {% endif %}
+
+<script type="text/javascript">
+///// Multi user assign starts here.
+console.log(userurl);
+
+
+
+document.onload = getuserlist(userurl);
+
+  function getuserlist(url){
+   
+      $.ajax({
+        url: url,
+        type: 'GET',
+        success: function (data) {
+           data.results.forEach(populateuserlist);
+           speed=0;
+           if (data.next == null){
+            document.getElementById('getnextlist').style.display = 'none';
+           }else{
+            document.getElementById('getnextlist').style.display = 'block';
+            document.getElementById("getnextlist").setAttribute( "onClick", "javascript: getuserlist('"+ data.next+"');" );
+        }
+        console.log(data);
+        }
+      });
+}
+
+
+function populateuserlist(data, index){
+
+all_users.push(data.user.id);
+
+var user_list = '<li class="col-md-12" id="'+data.user.id+'usersli">'+
+                    '<label class="custom-control margin-top user-checkbox custom-checkbox">'+
+                      '<input type="checkbox" class="custom-control-input">'+
+                      '<span class="custom-control-indicator"></span>'+
+                      '<span class="custom-control-description">'+
+                        '<div class="project-item-wrap clearfix">'+
+                          '<div class="project-logo">'+
+                            '<img src="'+ data.user.profile_picture +'" alt="" width="50" height="50">'+
+                          '</div>'+
+                          '<div class="project-basic-info">'+
+                            '<h4>' + data.user.first_name +' '+ data.user.last_name+ '</h4>'+
+                            '<p>'+ data.user.email +'</p>'+
+                          '</div>'+
+                        '</div>'+
+                        '<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>'+
+                      '</span>'+
+                    '</label>'+
+                  '</li>';
+
+
+    // var user_list = '<li class="note-div-sm '+ data.id +'" id="'+data.id+'usersli" style="display:none;" onclick="checkifuserisselected(`'+ data.user.id +'`)"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">'+ data.user.username +'</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.user.email +' </div></div>  </li>';
+
+    // var div = document.getElementById('notifications');
+
+    // div.innerHTML += new_li;
+    speed = speed+200;
+
+$(user_list).appendTo("#multi-ass-users");
+$("#"+data.id+"usersli").fadeIn(speed);
+}
+
+
+
+document.onload = getproj_site_url_list(proj_site_url);
+
+function getproj_site_url_list(url){
+   
+      $.ajax({
+        url: url,
+        type: 'GET',
+        success: function (data) {
+           speed_proj_site=0;
+           data.results.forEach(populate_proj_site_list);
+           
+           if (data.next == null){
+            document.getElementById('getnextproj_site_list').style.display = 'none';
+           }else{
+            document.getElementById('getnextproj_site_list').style.display = 'block';
+            document.getElementById("getnextproj_site_list").setAttribute( "onClick", "javascript: getproj_site_url_list('"+ data.next+"');" );
+        }
+        }
+      });
+}
+
+
+function populate_proj_site_list(data, index){
+
+   
+    var new_proj_site_list = '<li class="note-div-sm '+ data.id +'" id="'+data.id+'proj_site_list" style="display:none;" onclick="checkifproj_siteisselected(`'+ data.id +'`)"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + data.address + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.phone +' </div></div>  </li>';
+
+    // var div = document.getElementById('notifications');
+
+    // div.innerHTML += new_li;
+    speed_proj_site = speed_proj_site+200;
+
+$(new_proj_site_list).appendTo("#proj_site_list");
+$("#"+data.id+"proj_site_list").fadeIn(speed_proj_site);
+}
+
+
+function checkifuserisselected(id){
+
+  res = selected_users.indexOf(id);
+  if(res > -1){
+    selected_users.splice(res, 1);
+  }
+  else{
+    selected_users.push(id);
+  }
+  console.log(selected_users);
+}
+
+function selectall(type){
+  if(type=="users"){
+  selected_users = all_users;
+  $('#multi-ass-users').find(':checkbox').each(function(){
+        $(this).attr('checked', true); 
+   });
+
+  }
+
+  else if(type=="proj_site"){
+    selected_proj_site = all_proj_site;
+    $('#multi-ass-users').find(':checkbox').each(function(){
+        $(this).attr('checked', true); 
+   });
+ }
+}
+
+function unselectall(type){
+  if(type=="users"){
+  selected_users = [];
+    $('#multi-ass-users').find(':checkbox').each(function(){
+        $(this).attr('checked', false); 
+   });
+  }
+  
+  else if(type=="proj_site"){
+    selected_proj_site = [];
+  }
+}
+
+
+function checkifproj_siteisselected(id){
+
+  res = selected_proj_site.indexOf(id);
+  if(res > -1){
+    selected_proj_site.splice(res, 1);
+  }
+  else{
+    selected_proj_site.push(id);
+  }
+    console.log(selected_proj_site);
+}
+
+function assignusers(){
+
+      group = $( 'input[id=group]:checked' ).val();
+      alert(group);
+      alert(selected_users);
+      alert(selected_proj_site);
+      $.ajax({
+        url:'',
+        data: {'users[]': selected_users, 'proj_site[]':selected_proj_site, 'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        type: 'POST',
+        success: function (html) {
+           $('#update-next-step').html(html);
+        }
+
+});
+    }
+
+
+</script>
     {% endblock %}

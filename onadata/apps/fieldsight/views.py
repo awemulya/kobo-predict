@@ -844,12 +844,12 @@ class ManagePeopleProjectView(LoginRequiredMixin, ProjectMixin, TemplateView):
     def get(self, request, pk):
         organization = Project.objects.get(pk=pk).organization.id
         return render(request, "fieldsight/manage_people_site.html",
-                      {'pk': pk, 'level': "1", 'category':"Project Manager", 'organization': organization, 'project': pk})
+                      {'pk': pk, 'level': "1", 'category':"Project Manager", 'organization': organization, 'project': pk, 'type':'project'})
 
 
 class ManagePeopleOrganizationView(LoginRequiredMixin, OrganizationMixin, TemplateView):
     def get(self, request, pk):
-        return render(request, 'fieldsight/manage_people_site.html', {'pk': pk, 'level': "2", 'category':"Organization Admin", 'organization': pk})
+        return render(request, 'fieldsight/manage_people_site.html', {'pk': pk, 'level': "2", 'category':"Organization Admin", 'organization': pk, 'type':'org'})
 
 
 def all_notification(user,  message):
@@ -884,6 +884,7 @@ class OrgSiteList(OrganizationRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(OrgSiteList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        
         return context
     def get_queryset(self):
         queryset = Site.objects.filter(project__organization_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
@@ -916,6 +917,7 @@ class ProjUserList(ProjectRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ProjUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['type'] = "project"
         return context
     def get_queryset(self):
         queryset = UserRole.objects.select_related('user').filter(project_id=self.kwargs.get('pk')).distinct('user_id')
@@ -926,6 +928,7 @@ class SiteUserList(ProjectRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(SiteUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['type'] = "site"
         return context
     def get_queryset(self):
         queryset = UserRole.objects.select_related('user').filter(site_id=self.kwargs.get('pk')).distinct('user_id')
