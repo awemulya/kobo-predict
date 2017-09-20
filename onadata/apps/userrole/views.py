@@ -19,7 +19,7 @@ from onadata.apps.userrole.serializers.UserRoleSerializer import UserRoleSeriali
 from onadata.apps.userrole.viewsets.UserRoleViewsets import ManagePeoplePermission
 from .forms import UserRoleForm, UserForm
 from .models import UserRole as Role, UserRole
-
+from django.views.decorators.csrf import csrf_exempt
 
 def set_role(request, pk):
     role = Role.objects.get(pk=pk, user=request.user)
@@ -102,6 +102,7 @@ class UserCreate(LoginRequiredMixin, AjaxableResponseMixinUser, UserView, Create
 
 @api_view(['POST'])
 @permission_classes([ManagePeoplePermission])
+@csrf_exempt
 def remove_role(request):
     try:
         role = UserRole.objects.get(pk=request.data.get("id"))
