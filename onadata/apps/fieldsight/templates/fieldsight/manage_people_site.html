@@ -20,10 +20,12 @@ var all_proj_site=[];
 {% if type == "project" %}
   proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
   userurl = '{% url 'role:multi_user_list' 1 pk %}';
+  assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
 
 {% elif type == "org" %}
   proj_site_url = '{% url 'role:multi_ops_list' 1 pk %}';
   userurl = '{% url 'role:multi_user_list' 1 pk %}';
+  assignurl = '{% url 'fieldsight:multi_user_project_assign' pk %}'
 
 {% endif %}
 
@@ -578,8 +580,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               </div>
               <div class="widget-body">
                 <ul class="row max-260-scroll" id="multi-ass-users">
-                <input type="button" name="" onclick="selectall('users')">
-                 <input type="button" name="" onclick="unselectall('users')">
+                <input type="button" value="Select All" onclick="selectall('users')">
+                 <input type="button" value="Unselect All" onclick="unselectall('users')">
                   
 
                  
@@ -598,37 +600,16 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <h4>Projects</h4>
               </div>
               <div class="widget-body">
-                <ul class="row max-260-scroll">
-                 
-                 
-                  
-                  
-                  
-                  <li class="col-md-6">
-                    <label class="custom-control margin-top user-checkbox custom-checkbox">
-                      <input type="checkbox" class="custom-control-input" checked>
-                      <span class="custom-control-indicator"></span>
-                      <span class="custom-control-description">
-                        <div class="project-item-wrap clearfix">
-                          <div class="project-logo">
-                            <img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">
-                          </div>
-                          <div class="project-basic-info">
-                            <h4>Organization Name</h4>
-                            <p>Old Baneshwor, Kathmandu, Nepal</p>
-                          </div>
-                        </div>
-                        <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-                      </span>
-                    </label>
-                  </li>
-               
+                <ul class="row max-260-scroll" id="multi-ass-proj_site">
+                  <input type="button" value="Select All" onclick="selectall('proj_site')">
+                 <input type="button" value="Unselect All" onclick="unselectall('proj_site')">
 
                 </ul>
                 <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more">
               </div>
             </div>
           </div>
+          <input type="button" name="assign" onclick="assignusers(assignurl)" value="Assign All selected Users">
         </div>
         <!-- <div class="margin-top">
           <div class="padding bg-white">
@@ -828,30 +809,25 @@ function sendnewuserinvite(){
         }
       });
 }
-
-
-
-
-
-
-
-
-
-
-
+///////////////////// END OF USER INVITE SCRIPT
 </script>
 
 {% endif %}
 
+
 <script type="text/javascript">
+
+
 ///// Multi user assign starts here.
 console.log(userurl);
 
 
 
 document.onload = getuserlist(userurl);
+document.onload = getproj_site_url_list(proj_site_url);
 
-  function getuserlist(url){
+
+function getuserlist(url){
    
       $.ajax({
         url: url,
@@ -870,6 +846,27 @@ document.onload = getuserlist(userurl);
       });
 }
 
+function getproj_site_url_list(url){
+   alert(url);
+      $.ajax({
+        url: url,
+
+        type: 'GET',
+        success: function (data) {
+           speed_proj_site=0;
+           data.results.forEach(populate_proj_site_list);
+           
+           if (data.next == null){
+            document.getElementById('getnextproj_site_list').style.display = 'none';
+           }else{
+            document.getElementById('getnextproj_site_list').style.display = 'block';
+            document.getElementById("getnextproj_site_list").setAttribute( "onClick", "javascript: getproj_site_url_list('"+ data.next+"');" );
+        }
+        }
+      });
+}
+
+////////////////////////////////--- Populate Lists
 
 function populateuserlist(data, index){
 
@@ -877,7 +874,7 @@ all_users.push(data.user.id);
 
 var user_list = '<li class="col-md-12" id="'+data.user.id+'usersli">'+
                     '<label class="custom-control margin-top user-checkbox custom-checkbox">'+
-                      '<input type="checkbox" class="custom-control-input">'+
+                      '<input type="checkbox" class="custom-control-input" onclick="checkifuserisselected('+ data.user.id +')">'+
                       '<span class="custom-control-indicator"></span>'+
                       '<span class="custom-control-description">'+
                         '<div class="project-item-wrap clearfix">'+
@@ -908,54 +905,38 @@ $("#"+data.id+"usersli").fadeIn(speed);
 
 
 
-document.onload = getproj_site_url_list(proj_site_url);
-
-function getproj_site_url_list(url){
-   
-      $.ajax({
-        url: url,
-        type: 'GET',
-        success: function (data) {
-           speed_proj_site=0;
-           data.results.forEach(populate_proj_site_list);
-           
-           if (data.next == null){
-            document.getElementById('getnextproj_site_list').style.display = 'none';
-           }else{
-            document.getElementById('getnextproj_site_list').style.display = 'block';
-            document.getElementById("getnextproj_site_list").setAttribute( "onClick", "javascript: getproj_site_url_list('"+ data.next+"');" );
-        }
-        }
-      });
-}
-
-
 function populate_proj_site_list(data, index){
 
-   
-    var new_proj_site_list = '<li class="note-div-sm '+ data.id +'" id="'+data.id+'proj_site_list" style="display:none;" onclick="checkifproj_siteisselected(`'+ data.id +'`)"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + data.address + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ data.phone +' </div></div>  </li>';
+all_proj_site.push(data.id);
 
+    var new_proj_site_list = '<li class="col-md-12" id="'+data.id+'proj_site_li">'+
+                    '<label class="custom-control margin-top user-checkbox custom-checkbox">'+
+                      '<input type="checkbox" class="custom-control-input" onclick="checkifproj_siteisselected('+ data.id +')">'+
+                      '<span class="custom-control-indicator"></span>'+
+                      '<span class="custom-control-description">'+
+                        '<div class="project-item-wrap clearfix">'+
+                          '<div class="project-logo">'+
+                            '<img src="'+ data.logo +'" alt="" width="50" height="50">'+
+                          '</div>'+
+                          '<div class="project-basic-info">'+
+                            '<h4>' + data.name + '</h4>'+
+                            '<p>'+ data.type_label +'</p>'+
+                          '</div>'+
+                        '</div>'+
+                        '<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>'+
+                      '</span>'+
+                    '</label>'+
+                  '</li>';
     // var div = document.getElementById('notifications');
 
     // div.innerHTML += new_li;
     speed_proj_site = speed_proj_site+200;
 
-$(new_proj_site_list).appendTo("#proj_site_list");
-$("#"+data.id+"proj_site_list").fadeIn(speed_proj_site);
+$(new_proj_site_list).appendTo("#multi-ass-proj_site");
+$("#"+data.id+"proj_site_li").fadeIn(speed_proj_site);
 }
 
-
-function checkifuserisselected(id){
-
-  res = selected_users.indexOf(id);
-  if(res > -1){
-    selected_users.splice(res, 1);
-  }
-  else{
-    selected_users.push(id);
-  }
-  console.log(selected_users);
-}
+///////////////---- Multiple Select / Unselect
 
 function selectall(type){
   if(type=="users"){
@@ -968,7 +949,7 @@ function selectall(type){
 
   else if(type=="proj_site"){
     selected_proj_site = all_proj_site;
-    $('#multi-ass-users').find(':checkbox').each(function(){
+    $('#multi-ass-proj_site').find(':checkbox').each(function(){
         $(this).attr('checked', true); 
    });
  }
@@ -984,9 +965,27 @@ function unselectall(type){
   
   else if(type=="proj_site"){
     selected_proj_site = [];
+    $('#multi-ass-proj_site').find(':checkbox').each(function(){
+        $(this).attr('checked', false); 
+   });
   }
 }
 
+
+///////////////////------ Unassign / Assign individually checked list
+
+
+function checkifuserisselected(id){
+
+  res = selected_users.indexOf(id);
+  if(res > -1){
+    selected_users.splice(res, 1);
+  }
+  else{
+    selected_users.push(id);
+  }
+  console.log(selected_users);
+}
 
 function checkifproj_siteisselected(id){
 
@@ -1000,14 +999,18 @@ function checkifproj_siteisselected(id){
     console.log(selected_proj_site);
 }
 
-function assignusers(){
+
+////////////////// - -------- Finally Send request to server.
+
+
+function assignusers(url){
 
       group = $( 'input[id=group]:checked' ).val();
       alert(group);
       alert(selected_users);
       alert(selected_proj_site);
       $.ajax({
-        url:'',
+        url:url,
         data: {'users[]': selected_users, 'proj_site[]':selected_proj_site, 'group':group, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
         type: 'POST',
         success: function (html) {
