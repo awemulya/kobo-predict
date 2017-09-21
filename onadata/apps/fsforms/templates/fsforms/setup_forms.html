@@ -137,41 +137,36 @@ var pk = "{{pk}}";
 <div class="row" data-bind="visible: currentVm() == 'general'" style="display:none;">
     <div data-bind="with:generalVm">
         {% csrf_token %}
-
         <div data-bind="with:current_form">
-    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.general_form_modal_visibility">
-  <div class="modal-dialog small-modal" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Select Form</h4>
-      </div>
-      <div class="modal-body">
+            <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.general_form_modal_visibility">
+                <div class="modal-dialog small-modal" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Select Form</h4>
+                        </div>
+                        <div class="modal-body">
 
-          <form method="post">
-            <div class="col-sm-12 registration_field">
-               {{ form.non_field_errors }}
-               </div>
+                        <form method="post">
+                        <div class="col-sm-12 registration_field">
+                        {{ form.non_field_errors }}
+                        </div>
 
-            {% csrf_token %}
-              {{form.as_p}}
-        <div class="gap"></div>
-        <button class="btn  btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Save' %}</button>
-        <div class="gap"></div>
-    </form>
-
-
-
-      </div>
-    </div>
-  </div>
-</div>
-</div>
+                        {% csrf_token %}
+                        {{form.as_p}}
+                        <div class="gap"></div>
+                        <button class="btn  btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Save' %}</button>
+                        <div class="gap"></div>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="panel panel">
           <div class="panel-heading">
             <h3 class="panel-title">
-
                 <div class="gap">
                 </div>
                 <div class="col-sm-2">
@@ -180,31 +175,24 @@ var pk = "{{pk}}";
                         {% trans 'Add New' %}
                 </button>
                 </div>
-
-
                 <div class="col-sm-5">
-
                   <input type="text" class="form-control-search current-input" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'">
-
                   <button type="submit" class="current-btn" style="padding: 8px 10px 12px 10px !important;margin-left:-1px;  "><i class="fa fa-search" aria-hidden="true"></i></button>
 
-              </div>
+                </div>
 
-              </h3>
-              </div >
-
-
+            </h3>
           </div>
-            <div class="panel-body">
+        </div>
+        <div class="panel-body">
               <div class="clearfixx"></div>
-          </div>
-             <div class="col-sm-12">
-
-                     <div class="col-sm-2">{% trans 'SN' %}</div>
-                     <div class="col-sm-3">{% trans 'Form ' %}</div>
-                     <div class="col-sm-3">{% trans 'Assigned Date' %}</div>
-                     <div class="col-sm-2">{% trans 'Education Material' %}</div>
-                     <div class="col-sm-2">{% trans 'Deploy Action' %}</div>
+        </div>
+        <div class="col-sm-12">
+             <div class="col-sm-2">{% trans 'SN' %}</div>
+             <div class="col-sm-3">{% trans 'Form ' %}</div>
+             <div class="col-sm-3">{% trans 'Assigned Date' %}</div>
+             <div class="col-sm-2">{% trans 'Education Material' %}</div>
+             <div class="col-sm-2">{% trans 'Deploy Action' %}</div>
              <div>
                  <div  data-bind="foreach: forms">
 
@@ -225,27 +213,19 @@ var pk = "{{pk}}";
                                       <label for="title" id="sizing-addon2"><h4>Title</h4></label>
                                       <textarea data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></textarea>
                                     </div>
-
-
-
-
-
                                     <div class="form-group">
                                       <label for="comment" id="sizing-addon2"><h4>Text</h4></label>
                                       <textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="3" id="comment"></textarea>
                                     </div>
-
-
-
-                                  <div>
-                                          <div data-bind="visible:em_images().length">
-                                              <p>Saved Images</p>
-                                              <div data-bind="foreach:em_images">
-                                                  <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
-                                              </div>
+                                    <div>
+                                      <div data-bind="visible:em_images().length">
+                                          <p>Saved Images</p>
+                                          <div data-bind="foreach:em_images">
+                                              <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
                                           </div>
-                                        <h4>Multiple Images Uploads</h4>
-                                            <div class="well" data-bind="fileDrag: multiFileData">
+                                      </div>
+                                      <h4>Multiple Images Uploads</h4>
+                                      <div class="well" data-bind="fileDrag: multiFileData">
                                                 <div class="form-group row">
                                                     <div class="col-md-6">
                                                               <!-- ko foreach: {data: multiFileData().dataURLArray, as: 'dataURL'} -->
@@ -265,7 +245,7 @@ var pk = "{{pk}}";
                                                 </div>
                                             </div>
                                      </div>
-                                      </div>
+                                  </div>
 
                                   <div class="col-sm-4">
                                       <h4> Upload PDF OF Education Material</h4>
@@ -277,10 +257,10 @@ var pk = "{{pk}}";
                                                         Current pdf
                                                         <a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank"> View </a>
 
-                                              <!--<button data-bind="click: addPdf">Load PDF</button>-->
-                                            <!--<div class="documentviewerpdf"></div>-->
-                                          </div>
+                                                          <!--<button data-bind="click: addPdf">Load PDF</button>-->
+                                                        <!--<div class="documentviewerpdf"></div>-->
                                                     </div>
+                                                </div>
                                                 <div class="col-sm-12">
                                                     <span>Change PDf File</span>
                                                     <input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">
@@ -295,8 +275,8 @@ var pk = "{{pk}}";
                             </div>
                           </div>
                         </div>
-                    </div>
-                        </div>
+                      </div>
+                     </div>
 
                      <div class="col-sm-2" data-bind='text: $index()+1'></div>
                      <div class="col-sm-3" data-bind="text: name"></div>
@@ -306,6 +286,7 @@ var pk = "{{pk}}";
                          <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></button>
                      </div>
                  </div>
+            </div>
         </div>
     </div>
 </div>
