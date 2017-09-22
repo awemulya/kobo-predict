@@ -16,6 +16,7 @@ var selected_users=[];
 var all_users=[];
 var selected_proj_site=[];
 var all_proj_site=[];
+var CSRF_TOKEN = '{{ csrf_token }}';
 
 {% if type == "project" %}
   proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
@@ -512,22 +513,22 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </p>
                 <form class="margin-top">
                   <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search..." aria-label="Search...">
+                    <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   </div>
                 </form>
-                <ul class="row max-260-scroll" data-bind="foreach:$root.available_users">
+                <ul class="row max-260-scroll" data-bind="foreach:users">
                   <li class="col-md-4">
-                    <label class="custom-control margin-top user-checkbox custom-checkbox">
-                      <input type="checkbox" class="custom-control-input" checked>
+                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: false, click:$root.setSelected">
                       <span class="custom-control-indicator"></span>
                       <span class="custom-control-description">
                         <div class="project-item-wrap clearfix">
                           <div class="project-logo">
-                            <img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
+                            <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
                           </div>
                           <div class="project-basic-info">
-                            <h4>Bikrant Giri</h4>
-                            <p>Old Baneshwor, Kathmandu, Nepal</p>
+                            <h4 data-bind="text:user().full_name"></h4>
+                            <p data-bind="text:user().email"></p>
                           </div>
                         </div>
                         <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
@@ -539,7 +540,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </ul>
                 <div class="margin-top">
                 3 Users Selected.<br/>
-                <button type="submit" class="btn btn-primary margin-top"><i class="la la-user-plus"></i> Assign Managers</button>
+                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.doAssign"><i class="la la-user-plus"></i> Assign Managers</button>
                 </div>
 
               </div>
@@ -609,7 +610,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               </div>
             </div>
           </div>
-          <input type="button" name="assign" onclick="assignusers(assignurl)" value="Assign All selected Users">
+          <input type="button" name="assign" class="btn btn-primary margin-top" onclick="assignusers(assignurl)" value="Assign All selected Users">
         </div>
         <!-- <div class="margin-top">
           <div class="padding bg-white">
@@ -833,7 +834,7 @@ function getuserlist(url){
         url: url,
         type: 'GET',
         success: function (data) {
-           data.results.forEach(populateuserlist);
+           data.forEach(populateuserlist);
            speed=0;
            if (data.next == null){
             document.getElementById('getnextlist').style.display = 'none';
@@ -847,14 +848,13 @@ function getuserlist(url){
 }
 
 function getproj_site_url_list(url){
-   alert(url);
       $.ajax({
         url: url,
 
         type: 'GET',
         success: function (data) {
            speed_proj_site=0;
-           data.results.forEach(populate_proj_site_list);
+           data.forEach(populate_proj_site_list);
            
            if (data.next == null){
             document.getElementById('getnextproj_site_list').style.display = 'none';
@@ -886,7 +886,7 @@ var user_list = '<li class="col-md-12" id="'+data.user.id+'usersli">'+
                             '<p>'+ data.user.email +'</p>'+
                           '</div>'+
                         '</div>'+
-                        '<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>'+
+                        // '<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>'+
                       '</span>'+
                     '</label>'+
                   '</li>';
@@ -923,7 +923,7 @@ all_proj_site.push(data.id);
                             '<p>'+ data.type_label +'</p>'+
                           '</div>'+
                         '</div>'+
-                        '<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>'+
+                        // '<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>'+
                       '</span>'+
                     '</label>'+
                   '</li>';
