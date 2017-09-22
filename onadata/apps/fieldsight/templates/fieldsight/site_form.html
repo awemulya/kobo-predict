@@ -25,16 +25,16 @@
 									{% endfor %}
 
 									<div class="form-group col-md-6">
-									  <label for="input11" class="col-form-label">Latitude :</label>
-									  <input type="text" class="form-control" id="input11">
+									  <label class="col-form-label">Latitude :</label>
+									  <input type="text" class="form-control" id="Latitude" name="Latitude" class="LatLon"/>
 									</div>
 									<div class="form-group col-md-6">
-									  <label for="input12" class="col-form-label">Longitude :</label>
-									  <input type="text" class="form-control" id="input12">
+									  <label class="col-form-label">Longitude :</label>
+									  <input type="text" class="form-control" id="Longitude" name="Longitude" class="LatLon"/>
 									</div>
 
 									<div class="form-group col-md-12">
-										<div id="osMap" class="full-map margin-top"></div>
+										<div id="map" class="full-map margin-top"></div>
 									</div>
 								</div>
 								<button class="btn btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
@@ -44,4 +44,14 @@
                 </section>
 
 			</div>
+{% endblock %}
+ {%block extrascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
+    <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
+  <script type="text/javascript">
+     var static_url ="{{ STATIC_URL }}";
+     var elat = "{{form.instance.latitude}}";
+     var elong = "{{form.instance.longitude}}";
+    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/addmarker.js"></script>
 {% endblock %}

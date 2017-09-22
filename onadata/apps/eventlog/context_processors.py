@@ -16,16 +16,16 @@ def events(request):
     logs = []
     if request.group is not None:
         if request.group.name == "Super Admin":
-           logs = FieldSightLog.objects.filter(is_seen=False)[:100]
+           logs = FieldSightLog.objects.filter(is_seen=False)[:10]
            oid = 0
         elif request.group.name == "Organization Admin":
-            logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:100]
+            logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:10]
             oid = request.organization.id
         elif request.group.name == "Project Manager":
-            logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:100]
+            logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:10]
             pid = request.project.id
         elif request.group.name in ["Reviewer", "Site Supevisor"]:
-            logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:100]
+            logs = FieldSightLog.objects.filter(organization=request.organization).filter(is_seen=False)[:10]
             sid = request.site.id
     else:
         logs = []

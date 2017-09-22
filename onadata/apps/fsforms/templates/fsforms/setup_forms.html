@@ -59,79 +59,65 @@ var pk = "{{pk}}";
         {% csrf_token %}
 
         <div data-bind="with:current_form">
-    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.general_form_modal_visibility">
-  <div class="modal-dialog small-modal" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Select Form</h4>
-      </div>
-      <div class="modal-body">
+            <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.general_form_modal_visibility">
+                <div class="modal-dialog small-modal" role="document">
+                     <div class="modal-content">
+                        <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Select Form</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post">
+                                <div class="col-sm-12 registration_field">
+                                    {{ form.non_field_errors }}
+                                </div>
 
-          <form method="post">
-            <div class="col-sm-12 registration_field">
-               {{ form.non_field_errors }}
-               </div>
-
-            {% csrf_token %}
-              {{form.as_p}}
-        <div class="gap"></div>
-        <button class="btn  btn-primary registration__action" type="submit" data-bind="click:save_survey">{% trans 'Save' %}</button>
-        <div class="gap"></div>
-    </form>
-
-
-
-      </div>
-    </div>
-  </div>
-</div>
-</div>
+                                {% csrf_token %}
+                                {{form.as_p}}
+                                 <div class="gap"></div>
+                                <button class="btn  btn-primary registration__action" type="submit" data-bind="click:save_survey">{% trans 'Save' %}</button>
+                                <div class="gap"></div>
+                             </form>
+                        </div>
+                     </div>
+                 </div>
+            </div>
+        </div>
 
         <div class="panel panel">
-          <div class="panel-heading">
-            <h3 class="panel-title">
-
-                <div class="gap">
-                </div>
-                <div class="col-sm-2">
-                <button class="btn btn-primary square sq" style="border-radius: 0px;" data-bind="click:add_form">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                        {% trans 'Add New' %}
-                </button>
-                </div>
-
-
-                <div class="col-sm-5">
-
-                  <input type="text" class="form-control-search current-input" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'">
-
-                  <button type="submit" class="current-btn" style="padding: 8px 10px 12px 10px !important;margin-left:-1px;  "><i class="fa fa-search" aria-hidden="true"></i></button>
-
-              </div>
-
-              </h3>
-              </div >
-
-
-          </div>
-            <div class="panel-body">
-              <div class="clearfixx"></div>
-          </div>
-             <div class="col-sm-12">
-
-                     <div class="col-sm-2">{% trans 'SN' %}</div>
-                     <div class="col-sm-4">{% trans 'Form ' %}</div>
-                     <div class="col-sm-6">{% trans 'Assigned Date' %}</div>
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <div class="gap">
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="btn btn-primary square sq" style="border-radius: 0px;" data-bind="click:add_form">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            {% trans 'Add New' %}
+                        </button>
+                    </div>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control-search current-input" placeholder="Search"  data-bind="value:search_key, valueUpdate:'afterkeydown'">
+                      <button type="submit" class="current-btn" style="padding: 8px 10px 12px 10px !important;margin-left:-1px;  "><i class="fa fa-search" aria-hidden="true"></i></button>
+                  </div>
+                </h3>
+            </div >
+        </div>
+        <div class="panel-body">
+            <div class="clearfixx"></div>
+        </div>
+        <div class="col-sm-12">
+            <div class="col-sm-2">{% trans 'SN' %}</div>
+            <div class="col-sm-4">{% trans 'Form ' %}</div>
+            <div class="col-sm-6">{% trans 'Assigned Date' %}</div>
              <div>
                  <div  data-bind="foreach: surveyForms">
                      <div class="col-sm-2" data-bind='text: $index()+1'></div>
                      <div class="col-sm-4" data-bind="text: name"></div>
                      <div class="col-sm-6" data-bind="text: date_created"></div>
                  </div>
+            </div>
         </div>
     </div>
-</div>
 </div>
 
 <div class="row" data-bind="visible: currentVm() == 'general'" style="display:none;">
@@ -805,5 +791,6 @@ var pk = "{{pk}}";
         </div>
 
      </div>
+</div>
 
 {% endblock %}

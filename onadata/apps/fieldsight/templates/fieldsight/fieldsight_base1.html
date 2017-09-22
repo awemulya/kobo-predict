@@ -39,7 +39,7 @@
         <![endif]-->
 			<header id="header" class="main-header clearfix">
 			<div class="brand clearfix">
-				<a href="#" title="" class="logo">
+				<a href="{% url 'dashboard' %}" title="" class="logo">
 					<img src="{% static 'dummy/assets/img/logo.png' %}" alt="Field Sight" width="168" height="32">
 				</a>
 				<div class="sidebar-toggle-box">
@@ -125,7 +125,7 @@
 						<li class="sub-menu">
 							<a href="{% url 'fieldsight:organizations-list' %}">
 								<i class="la la-building"></i>
-								<span>{% trans 'Organization' %}</span>
+								<span>{% trans 'Organizations' %}</span>
 							</a>
 							<!--<ul class="sub">-->
 								<!--<li><a href="organization.php">All Organizations</a></li>-->

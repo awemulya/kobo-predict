@@ -32,13 +32,24 @@ var project = "{{obj.pk}}";
 
 					</div>
 					<div class="action-right">
+						<a href="#" title="" class="btn btn-sm btn-xs btn-primary"><i class=""></i> Response</a>
+
+						<span class="dropdown">
+							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="la la-cogs"></i>Reports
+							</a>
+							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
+								<a class="dropdown-item" href="#"><i class="la la-user"></i>{% trans 'Project Summary Report' %}</a>
+								<a class="dropdown-item" href="#"><i class="la la-clipboard"></i>{% trans 'Project Detail Report' %}</a>
+								<a class="dropdown-item" href="#"><i class="la la-clipboard"></i>{% trans 'Excel Report' %}</a>
+							</div>
+						</span>
 						<span class="dropdown">
 							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="la la-cogs"></i> Manage
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-project' obj.pk %}"><i class="la la-user"></i>{% trans 'People' %}</a>
-								<a class="dropdown-item" href="{% url 'fieldsight:site-add'%}"><i class="la la-clipboard"></i>{% trans 'Sites' %}</a>
 								<a class="dropdown-item" href="{% url 'forms:setup-forms' 1 obj.pk %}"><i class="la la-clipboard"></i>{% trans 'Setup Forms' %}</a>
 							</div>
 						</span>
@@ -204,16 +215,13 @@ var project = "{{obj.pk}}";
 													</div>
 												</form>
 											</div>
-                                            <div class='adv-table row' data-bind="foreach: sites">
-												<a data-bind="attr:{ href: url }">
-
-																<div class="col-md-4 col-sm-4 "  >
-																	<div class="image-org ">
-																		 <img data-bind="attr:{src: logo}" />
-																	</div>
-																</div>
-																 <div  class="col-md-8 col-sm-8">
-																	 <span class="space site-label"></span>
+											<div class='adv-table row' data-bind="foreach: sites">
+											<a data-bind="attr:{ href: url }" class="project-item-wrap clearfix">
+												<div class="project-logo">
+													<img data-bind="attr:{src: logo}" />
+												</div>
+												<div class="project-basic-info">
+													<span class="space site-label"></span>
 																	 <span data-bind="text: name" class="detail-text">
 																	 <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
 
@@ -224,9 +232,11 @@ var project = "{{obj.pk}}";
 																	 <span class="space site-label"></span>
 																	 <span data-bind="text: address" class="detail-text1">
 																	 <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
-																</div>
-											   </a>
+
+												</div>
+											</a>
 											</div>
+
 										</div>
 									</div>
 								</div>

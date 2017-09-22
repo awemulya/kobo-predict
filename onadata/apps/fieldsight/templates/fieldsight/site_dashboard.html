@@ -16,13 +16,14 @@
 
 					</div>
 					<div class="action-right">
+						<a href="#" title="" class="btn btn-sm btn-xs btn-primary"><i class=""></i>Response</a>
 						<span class="dropdown">
 							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="la la-cogs"></i> Manage
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-site' obj.pk %}"><i class="la la-user"></i> People</a>
-								<!--<a class="dropdown-item" href="#"><i class="la la-tasks"></i> Projects</a>-->
+								<a class="dropdown-item" href="#"><i class="la la-forms"></i>Forms</a>
 							</div>
 						</span>
 						<a href="{% url 'fieldsight:site-edit' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-edit"></i> Edit</a>

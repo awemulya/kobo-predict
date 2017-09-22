@@ -211,6 +211,31 @@ var org = "{{obj.pk}}";
 										<div class="widget-head">
 											<h4>Projects</h4>
 											<a class="btn btn-xs btn-primary" data-toggle="modal" href="#addProject" data-target="#projectModal"><i class="la la-plus"></i></a>
+											<div class="modal fade" id="projectModal" tabindex="-1" role="dialog" aria-labelledby="projectModalLabel" aria-hidden="true">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title" id="projectModalLabel">New Project</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															  <span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+															<form>
+															  <div class="form-group">
+																<label for="recipient-name" class="form-control-label">Input Field:</label>
+																<input type="text" class="form-control" id="recipient-name">
+															  </div>
+
+															</form>
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add Project</button>
+															<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+														</div>
+													</div>
+												</div>
+											</div>
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchProject" aria-expanded="false" aria-controls="searchProject"><i class="la la-search"></i></a>
 										</div>
 										<div class="widget-body">
@@ -220,68 +245,57 @@ var org = "{{obj.pk}}";
 													<div class="input-group input-group-sm">
 														<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for..." data-bind="value:search_key, valueUpdate:'afterkeydown'">
 														<span class="input-group-btn">
-															<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+															<button class="btn btn-primary" type="button"><i class="la la-search"></i> </button>
 														</span>
 													</div>
 												</form>
 											</div>
-											<!--<a href="#" class="project-item-wrap clearfix">-->
-												<div class="org-site-list current-person row top3 site-nav" data-bind="foreach: sites" >
 
-													<a data-bind="attr: { href: url }" class="project-item-wrap clearfix">
-														<div class="org-site" style="width: 100% !important;">
-															<div class="col-md-5 col-sm-5 "  >
-																<div class="image-org ">
-																	 <img data-bind="attr:{src: logo}" />
-																</div>
-															</div>
-
-																<div class="detail-org">
-																	<h6 class="site-title-org" data-bind="text:name"></h6>
-																	<p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span><span data-bind="text:address"></span></p>
-																	<p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span><span data-bind="text:phone"></span></p>
-																</div>
-
-
-														</div>
-													</a>
-
+											<div class="org-site-list current-person row top3 site-nav" data-bind="foreach: sites" >
+											<a data-bind="attr: { href: url }" class="project-item-wrap clearfix">
+												<div class="project-logo">
+													 <img data-bind="attr:{src: logo}">
 												</div>
-											<!--</a>-->
-
+												<div class="project-basic-info">
+													<h6 class="site-title-org" data-bind="text:name"></h6>
+													<p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span><span data-bind="text:address"></span></p>
+												<p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span><span data-bind="text:phone"></span></p>
+												</div>
+											</a>
+											</div>
 										</div>
 									</div>
 								</div>
 								<div class="col-md-6 col-sm-12">
 									<div class="widget-info widget-scolling-list margin-top bg-white padding">
 										<div class="widget-head">
-											<h4>{% trans 'Organization Admins' %}</h4>
-											<a class="btn btn-xs btn-primary "href="{% url 'fieldsight:manage-people-organization' obj.pk %}"><i class="la la-plus"></i></a>
-											<!--<div class="modal fade" id="adminModal" tabindex="-1" role="dialog" aria-labelledby="projectModalLabel" aria-hidden="true">-->
-												<!--<div class="modal-dialog" role="document">-->
-													<!--<div class="modal-content">-->
-														<!--<div class="modal-header">-->
-															<!--<h5 class="modal-title" id="projectModalLabel">New Admin</h5>-->
-															<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-															  <!--<span aria-hidden="true">&times;</span>-->
-															<!--</button>-->
-														<!--</div>-->
-														<!--<div class="modal-body">-->
-															<!--<form>-->
-															  <!--<div class="form-group">-->
-																<!--<label for="recipient-name" class="form-control-label">Input Field:</label>-->
-																<!--<input type="text" class="form-control" id="recipient-name">-->
-															  <!--</div>-->
+											<h4>Admins</h4>
+											<a class="btn btn-xs btn-primary" data-toggle="modal" href="#addAdmin" data-target="#adminModal"><i class="la la-plus"></i></a>
+											<div class="modal fade" id="adminModal" tabindex="-1" role="dialog" aria-labelledby="projectModalLabel" aria-hidden="true">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title" id="projectModalLabel">New Admin</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															  <span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+															<form>
+															  <div class="form-group">
+																<label for="recipient-name" class="form-control-label">Input Field:</label>
+																<input type="text" class="form-control" id="recipient-name">
+															  </div>
 
-															<!--</form>-->
-														<!--</div>-->
-														<!--<div class="modal-footer">-->
-															<!--<button type="button" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add Admin</button>-->
-															<!--<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>-->
-														<!--</div>-->
-													<!--</div>-->
-												<!--</div>-->
-											<!--</div>-->
+															</form>
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add Admin</button>
+															<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+														</div>
+													</div>
+												</div>
+											</div>
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchAdmin" aria-expanded="false" aria-controls="searchAdmin"><i class="la la-search"></i></a>
 										</div>
 										<div class="widget-body">
@@ -297,19 +311,18 @@ var org = "{{obj.pk}}";
 												</form>
 											</div>
 											{% for role in peoples_involved %}
-											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap clearfix">
+											<a href="#" class="project-item-wrap clearfix">
 												<div class="project-logo">
 													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
 												</div>
 												<div class="project-basic-info">
 													<h4>{{role.user.get_full_name}}</h4>
 													<p>{{ role.user.email }}</p>
-													<p>{{ role.user.user_profile.phone }}</p>
 												</div>
 											</a>
 											{% empty %}
-											<h6><small>No user assigned to this organization.</small></h6>
-                                  			{% endfor %}
+											 <li>No user assigned to this organization.</li>
+												{% endfor %}
 
 										</div>
 									</div>
