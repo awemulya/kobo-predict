@@ -97,6 +97,10 @@ class Stage(models.Model):
     def xf(self):
         return FieldSightXF.objects.filter(stage=self)[0].xf.pk if self.form_exists() else None
 
+    @property
+    def form_status(self):
+        return 0
+
     @classmethod
     def get_order(cls, site, project, stage):
         if site:

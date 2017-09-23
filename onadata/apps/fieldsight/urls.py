@@ -39,10 +39,11 @@ from .views import (
     CreateUserView,
 
 
-    UserListView, site_images, FilterUserView,  UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
+    UserListView, site_images, FilterUserView, UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
     ManagePeopleProjectView, ManagePeopleOrganizationView, SiteSurveyListView, ajax_upload_sites, ajax_save_site,
-    ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList, 
-    senduserinvite, ActivateRole, checkemailforinvite, SummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView)
+    ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList,
+    senduserinvite, ActivateRole, checkemailforinvite, SummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView,
+    stages_status_download)
 
 
 urlpatterns = [
@@ -84,6 +85,7 @@ urlpatterns = [
     url(r'^api/async_save_site/$', csrf_exempt(ajax_save_site)),
     url(r'^project/delete/(?P<pk>\d+)/$', ProjectDeleteView.as_view(), name='project-delete'),
     url(r'^project/alter-status/(?P<pk>\d+)/$', alter_proj_status, name='alter_proj_status'),
+    url(r'^project/stages_status_report/(?P<pk>\d+)/$', stages_status_download, name='download-stages'),
     url(r'^project/add-proj-manager/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
     url(r'^project/add-role/(?P<pk>\d+)/$', add_project_role, name='add_project_staffs'),
     url(r'^api/project-sites/(?P<pk>\d+)/$', SiteViewSet.as_view({'get': 'list'}), name='project_sites'),
