@@ -513,13 +513,15 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </p>
                 <form class="margin-top">
                   <div class="input-group">
-                    <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                    <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   </div>
                 </form>
-                <ul class="row max-260-scroll" data-bind="foreach:users">
+                 <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+                <ul class="row max-260-scroll" data-bind="foreach:$root.users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
-                      <input type="checkbox" class="custom-control-input" data-bind="checked: false, click:$root.setSelected">
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
                       <span class="custom-control-indicator"></span>
                       <span class="custom-control-description">
                         <div class="project-item-wrap clearfix">
@@ -540,7 +542,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </ul>
                 <div class="margin-top">
                 3 Users Selected.<br/>
-                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.doAssign"><i class="la la-user-plus"></i> Assign Managers</button>
+                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.doAssign"><i class="la la-user-plus"></i> Assign Organization Admin</button>
                 </div>
 
               </div>
@@ -551,6 +553,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               <div class="widget-head">
                 <h4>Current Organization Admins</h4>
               </div>
+
               <div class="widget-body max-513-scolling" data-bind="foreach:admins">
                 <div class="project-item-wrap clearfix">
                   <div class="project-logo">
@@ -580,12 +583,40 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <h4>Users</h4>
               </div>
               <div class="widget-body">
-                <ul class="row max-260-scroll" id="multi-ass-users">
+
+                <!-- <ul class="row max-260-scroll" id="multi-ass-users">
                 <input type="button" value="Select All" onclick="selectall('users')">
                  <input type="button" value="Unselect All" onclick="unselectall('users')">
+
+
                   
 
                  
+                </ul> -->
+                  <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                  <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+                <ul class="row max-260-scroll" data-bind="foreach:$root.users">
+                  <li class="col-md-12">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                          <div class="project-logo">
+                            <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                          </div>
+                          <div class="project-basic-info">
+                            <h4 data-bind="text:user().full_name"></h4>
+                            <p data-bind="text:user().email"></p>
+                          </div>
+                        </div>
+                       
+                      </span>
+                    </label>
+                  </li>
+                  
+                  <li class="clearfix"></li>
                 </ul>
                 <input style="display:none;" type="button" id="getnextlist" onclick="" value="load more">
                 <input type="radio" style="display:none;" name="group" id="group" value="Project Manager" checked>
@@ -824,7 +855,7 @@ console.log(userurl);
 
 
 
-document.onload = getuserlist(userurl);
+// document.onload = getuserlist(userurl);
 document.onload = getproj_site_url_list(proj_site_url);
 
 
@@ -842,7 +873,7 @@ function getuserlist(url){
             document.getElementById('getnextlist').style.display = 'block';
             document.getElementById("getnextlist").setAttribute( "onClick", "javascript: getuserlist('"+ data.next+"');" );
         }
-        console.log(data);
+        // console.log(data);
         }
       });
 }

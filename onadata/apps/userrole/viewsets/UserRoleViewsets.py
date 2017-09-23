@@ -55,10 +55,14 @@ class UserRoleViewSet(viewsets.ModelViewSet):
 
     def custom_create(self, * args, **kwargs):
         data = self.request.data
+        # print "======================================================="
+        # print data
+        # print data.get('users')
+       
         level = self.kwargs.get('level')
         # try:
         with transaction.atomic():
-            group = Group.objects.get(name='Organization Admin')
+            group = Group.objects.get(name=data.get('group'))
             for user in data.get('users'):
                 if level == "0":
                     site = Site.objects.get(pk=self.kwargs.get('pk'))
