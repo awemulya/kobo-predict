@@ -204,7 +204,7 @@ var project = "{{obj.pk}}";
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i></a>
 										</div>
 										<div class="widget-body">
-											<!--Search Projects-->
+											<!--Search Sites-->
 											<div class="collapse margin-bottom" id="searchSite">
 												<form>
 													<div class="input-group input-group-sm">
@@ -218,20 +218,22 @@ var project = "{{obj.pk}}";
 											<div class='adv-table row' data-bind="foreach: sites">
 											<a data-bind="attr:{ href: url }" class="project-item-wrap clearfix">
 												<div class="project-logo">
-													<img data-bind="attr:{src: logo}" />
+													<img data-bind="attr:{src: logo}" width="50" height="50"/>
 												</div>
 												<div class="project-basic-info">
-													<span class="space site-label"></span>
-																	 <span data-bind="text: name" class="detail-text">
-																	 <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
+													<h4 data-bind="text: name"></h4>
+													<p data-bind="text: address"></p>
+													<!--<span class="space site-label"></span>-->
+																	 <!--<span data-bind="text: name" class="detail-text">-->
+																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
 
-																	 <span class="space site-label"></span>
-																	 <span data-bind="text: identifier">
-																	 <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
-																	 <br>
-																	 <span class="space site-label"></span>
-																	 <span data-bind="text: address" class="detail-text1">
-																	 <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
+																	 <!--<span class="space site-label"></span>-->
+																	 <!--<span data-bind="text: identifier">-->
+																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
+																	 <!--<br>-->
+																	 <!--<span class="space site-label"></span>-->
+																	 <!--<span data-bind="text: address" class="detail-text1">-->
+																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
 
 												</div>
 											</a>
@@ -312,31 +314,31 @@ var project = "{{obj.pk}}";
 											<h4>Recent Pictures</h4>
 										</div>
 										<div class="scrollingSlider">
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
-												<!--</div>-->
-											<!--</div>-->
+											<div>
+												<div class="photo-item">
+													<img src="dummy/assets/img/img-gallery.jpg" img-title="Image Title" alt="">
+												</div>
+											</div>
+											<div>
+												<div class="photo-item">
+													<img src="dummy/assets/img/img-gallery.jpg" img-title="Image Title" alt="">
+												</div>
+											</div>
+											<div>
+												<div class="photo-item">
+													<img src="dummy/assets/img/img-gallery.jpg" img-title="Image Title" alt="">
+												</div>
+											</div>
+											<div>
+												<div class="photo-item">
+													<img src="dummy/assets/img/img-gallery.jpg" img-title="Image Title" alt="">
+												</div>
+											</div>
+											<div>
+												<div class="photo-item">
+													<img src="dummy/assets/img/img-gallery.jpg" img-title="Image Title" alt="">
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -401,6 +403,7 @@ var project = "{{obj.pk}}";
 			</div>
 {% endblock %}
 {%block extrascript %}
+
 	<script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.ajax.min.js"></script>
