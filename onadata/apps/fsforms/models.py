@@ -99,7 +99,11 @@ class Stage(models.Model):
 
     @property
     def form_status(self):
-        return 0
+        status = 0
+        if self.stage_forms.site_form_instances.filter(form_status=3).exists():
+            status = 1
+        return status
+
 
     @classmethod
     def get_order(cls, site, project, stage):
