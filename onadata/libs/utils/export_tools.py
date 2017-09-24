@@ -23,6 +23,7 @@ from pyxform.section import Section, RepeatingSection
 from savReaderWriter import SavWriter
 from json2xlsclient.client import Client
 
+from onadata.apps.fieldsight.models import Site
 from onadata.apps.logger.models import Attachment, Instance, XForm
 from onadata.apps.main.models.meta_data import MetaData
 from onadata.apps.viewer.models.export import Export
@@ -33,7 +34,8 @@ from onadata.libs.utils.viewer_tools import create_attachments_zipfile
 from onadata.libs.utils.common_tags import (
     ID, XFORM_ID_STRING, STATUS, ATTACHMENTS, GEOLOCATION, BAMBOO_DATASET_ID,
     DELETEDAT, USERFORM_ID, INDEX, PARENT_INDEX, PARENT_TABLE_NAME,
-    SUBMISSION_TIME, UUID, TAGS, NOTES, SITE, FS_STATUS, FS_UUID, FS_PROJECT_UUID)
+    SUBMISSION_TIME, UUID, TAGS, NOTES, SITE, FS_STATUS, FS_UUID, FS_PROJECT_UUID, FS_SITE_IDENTIFIER, FS_SITE_NAME,
+    FS_SITE_ADDRESS, FS_SITE_PHONE)
 from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
 
@@ -176,7 +178,8 @@ class ExportBuilder(object):
                        BAMBOO_DATASET_ID, DELETEDAT]
     # fields we export but are not within the form's structure
     EXTRA_FIELDS = [ID, UUID, SUBMISSION_TIME, INDEX, PARENT_TABLE_NAME,
-                    PARENT_INDEX, TAGS, NOTES, SITE, FS_PROJECT_UUID, FS_UUID, FS_STATUS]
+                    PARENT_INDEX, TAGS, NOTES, SITE, FS_PROJECT_UUID, FS_UUID,
+                    FS_STATUS, FS_SITE_IDENTIFIER, FS_SITE_NAME, FS_SITE_ADDRESS, FS_SITE_PHONE]
     SPLIT_SELECT_MULTIPLES = True
     BINARY_SELECT_MULTIPLES = False
 
@@ -410,7 +413,12 @@ class ExportBuilder(object):
                     and value is not None and value != '':
                 row[elm['xpath']] = ExportBuilder.convert_type(
                     value, elm['type'])
-
+        site_id = row['fs_site']
+        site = Site.objects.get(pk=site_id)
+        row['site_name'] = site.name
+        row['address'] = site.address
+        row['phone'] = site.phone
+        row['id'] = site.identifier
         return row
 
     def to_zipped_csv(self, path, data, *args):
@@ -467,6 +475,8 @@ class ExportBuilder(object):
                         write_row(
                             self.pre_process_row(child_row, section),
                             csv_writer, fields)
+
+
             index += 1
 
         # write zipfile
