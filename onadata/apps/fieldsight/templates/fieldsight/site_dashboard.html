@@ -164,27 +164,37 @@
 										<div class="scrollingSlider">
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
+												<!--</div>-->
+											<!--</div>-->
+											<!--<div>-->
+												<!--<div class="photo-item">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
+												<!--</div>-->
+											<!--</div>-->
+											<!--<div>-->
+												<!--<div class="photo-item">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
 												<!--</div>-->
 											<!--</div>-->
 										</div>
@@ -254,7 +264,9 @@
 
 {% endblock %}
 {%block extrascript %}
- <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js" type="text/javascript"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+ 	<script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
 
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.ajax.min.js"></script>
