@@ -1,25 +1,46 @@
 {% extends "fieldsight/fieldsight_base1.html" %}
 {% load i18n staticfiles %}
 {% load filters %}
+{%block kocript %}
+ <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
+    <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/sites.js"></script>
+
+    <script>
+
+$(document).ready(function() {
+var site_id = "{{ pk }}";
+ assignsite_id(site_id);
+ vm = new SitesViewModel();
+ ko.applyBindings(vm);
+});
+
+    </script>
+
+{% endblock %}
 {% block content %}
 {% load filters %}
 <div id="main-content" class="padding">
 				<section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3><i class="la la-building"></i>Sites</h3>
+                        <h3><i class="la la-map-marker"></i>Sites</h3>
 						<div class="panel-heading-right">
-							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i> Search</a>
-							<a href="{% url 'fieldsight:site-add' %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Add' %}{% trans 'New' %} </a>
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i> Search</a>
+							<a href="new-site.php" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add New</a>
 						</div>
                     </header>
 					<div class="panel-body">
 						<!--Search Organization-->
-						<div class="collapse margin-top" id="searchOrganization">
+						<div class="collapse margin-top" id="searchSite">
 							<form class="padding">
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+										<input type="text" class="form-control no-btn-search" placeholder="Search . . . . . "  data-bind="value:search_key, valueUpdate:'afterkeydown'">
 										  <span class="input-group-btn">
 											<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
 										  </span>
@@ -29,26 +50,48 @@
 								</div>
 							</form>
 						</div>
-						<!--Organization Listing-->
-						<div class="row">
-                            {% for obj in object_list %}
-							<div class="col-md-3 col-sm-6">
-								<div class="organization-item-wrap  margin-top clearfix">
+						<!--Site Listing-->
+						<div class="row" data-bind="foreach: sites">
+							<div class="col-md-4 col-sm-6">
+								<a data-bind="attr: { href: url }" title="" class="site-item-wrap  margin-top clearfix">
 									<div class="logo">
-										<img src="{{ obj.logo.url }}" alt="" width="80" height="80">
+										<img data-bind="attr:{src: logo}" alt="" width="100" height="100">
 									</div>
-									<div class="basic-info">
-										<h4>{{ obj.name }}</h4>
-										<p>{{ obj.address }}, {{ obj.get_country_display }}</p>
-                                        <p>{{ obj.phone }}</p>
+									<div class="basic-info clearfix">
+										<h4 class="detail-text1" data-bind="text: name"></h4>
+                                 		<p class="address"><i class="fa fa-map-marker" aria-hidden="true"></i> <span  class="detail-text1" data-bind="text: address"></span></p>
+                                 		<p class="phone"><i class="fa fa-phone" aria-hidden="true"></i> <span  class="detail-text1" data-bind="text: phone"></span></p>
 									</div>
-									<div class="action-button margin-top">
-										<a href="{% url 'fieldsight:site-dashboard' obj.pk %}" title="" class="btn btn-sm btn-primary">{% trans 'View' %}</a>
-										<a href="{% url 'fieldsight:site-edit' obj.pk %}" title="" class="btn btn-sm btn-primary">{% trans 'Edit' %}</a>
+									<ul class="icon-listing clearfix margin-top">
+										<li>
+											<i class="la la-exclamation"></i>
+											0
+										</li>
+										<li>
+											<i class="la la-flag"></i>
+											{{flagged|length}}
+										</li>
+										<li>
+											<i class="la la-hourglass-half"></i>
+											0
+										</li>
+										<li>
+											<i class="la la-thumbs-up"></i>
+											0
+										</li>
+									</ul>
+									{% with progress=obj.progress %}
+									<div class="progress">
+									<div class="progress progress-striped active progress-sm">
+									  <div class="progress-bar progress-bar-success" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuenow="{{progress}}" aria-valuemax="100">
+										   <span class="sr-only">{{ progress }}% Complete</span>
+										  <span class="progress-bar-value">{{ progress }}%</span>
+									 </div>
 									</div>
-								</div>
+									</div>
+									{% endwith %}
+								</a>
 							</div>
-                            {% endfor %}
 
 
 						</div>
@@ -70,4 +113,6 @@
                 </section>
 
 			</div>
+{% endblock %}
+{%block extrascript %}
 {% endblock %}
