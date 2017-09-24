@@ -44,7 +44,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 </script>
 {% endblock %}
 {% block content %}
-
+{% csrf_token %}
 <input type="hidden" id="invite_organization_id" value="{{ organization }}">
 <input type="hidden" id="invite_project_id" value="{{ project }}">
 <input type="hidden" id="invite_site_id" value="{{ site }}">
@@ -638,6 +638,32 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
                 </ul>
                 <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more">
+
+
+
+                <!-- <ul class="row max-260-scroll" data-bind="foreach:projects">
+                  <li class="col-md-12">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                          <div class="project-logo">
+                            <img data-bind="attr:{src: project().logo}" alt="" width="50" height="50">
+                          </div>
+                          <div class="project-basic-info">
+                            <h4 data-bind="text:project().name"></h4>
+                            <p data-bind="text:project().email"></p>
+                          </div>
+                        </div>
+                       
+                      </span>
+                    </label>
+                  </li>
+                  
+                  <li class="clearfix"></li>
+                </ul> -->
+                
               </div>
             </div>
           </div>
