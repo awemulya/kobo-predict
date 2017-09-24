@@ -104,10 +104,12 @@ def current_user(request):
             project = role.project
             site_info = {'site': {'id': site.id, 'phone': site.phone, 'name': site.name, 'description': site.public_desc,
                                   'address':site.address, 'lat': repr(site.latitude), 'lon': repr(site.longitude),
-                                  'identifier':site.identifier, 'progress': site.progress(),
+                                  'identifier':site.identifier, 'progress': site.progress(), 'type_id':site.type.id,
+                                  'type_label':site.type.name,
                                   'add_desc': site.additional_desc, 'blueprints':bp},
                          'project': {'name': project.name, 'id': project.id, 'description': project.public_desc,
-                                     'address':project.address,
+                                     'address':project.address, 'type_id':project.type.id,
+                                     'type_label':project.type.name,'phone':project.phone,
                                      'lat': repr(project.latitude), 'lon': repr(project.longitude)},
                          }
             field_sight_info.append(site_info)

@@ -31,7 +31,7 @@ from onadata.apps.fieldsight.bar_data_project import BarGenerator
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
     LineChartGeneratorSite
-from onadata.apps.fsforms.models import FieldSightXF
+from onadata.apps.fsforms.models import FieldSightXF, Stage
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin, SiteView,
@@ -47,14 +47,14 @@ from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
+from django.utils.encoding import force_bytes, smart_str
 from django.utils.crypto import get_random_string
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 
 from django.core.files.storage import FileSystemStorage
-
+import pyexcel as p
 @login_required
 def dashboard(request):
     current_role = request.roles
@@ -387,6 +387,45 @@ def alter_proj_status(request, pk):
     except:
         messages.info(request, 'Project {0} not found.'.format(obj.name))
     return HttpResponseRedirect(reverse('fieldsight:projects-list'))
+
+
+@group_required('Project')
+def stages_status_download(request, pk):
+    try:
+        data = []
+        ss_index = {}
+        stages_rows = []
+        head_row = ["Site ID", "Name", "Address", "Latitude", "longitude", "Status"]
+        project = Project.objects.get(pk=pk)
+        stages = project.stages.filter(stage__isnull=True)
+        for stage in stages:
+            sub_stages = stage.parent.all()
+            if len(sub_stages):
+                head_row.append("Stage :"+stage.name)
+                stages_rows.append("Stage :"+stage.name)
+
+                for ss in sub_stages:
+                    head_row.append("Sub Stage :"+ss.name)
+                    ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
+        data.append(head_row)
+        total_cols = len(head_row) - 6 # for non stages
+        for site in project.sites.filter(is_active=True, is_survey=False):
+            site_row = [site.identifier, site.name, site.address, site.latitude, site.longitude, site.status]
+            site_row.extend([None]*total_cols)
+            for k, v in ss_index.items():
+                if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
+                    site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
+                    site_row[k] = site_sub_stage.form_status
+            data.append(site_row)
+
+        p.save_as(array=data, dest_file_name="media/stage-report/{}_stage_data.xls".format(project.id))
+        xl_data = open("media/stage-report/{}_stage_data.xls".format(project.id), "rb")
+        response = HttpResponse(xl_data, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="report.xls"'
+        return response
+    except Exception as e:
+        messages.info(request, 'Data Creattion Failed {}'.format(str(e)))
+    return HttpResponse("failed Data Creattion Failed {}".format(str(e)))
 
 
 @login_required
@@ -1172,25 +1211,30 @@ def checkemailforinvite(request):
         return HttpResponse("No existing User found.<a href='#' onclick='sendnewuserinvite()'>send</a>")
 
 
-class SummaryReport(TemplateView):
+class ProjectSummaryReport(TemplateView):
     def get(self, request, pk):
-        site = Site.objects.select_related('project').get(pk=pk)
-        organization = site.project.organization
-        project_managers = site.project.project_roles.filter(group__name="Project_manager").order_by('user__first_name')
-        site_reviewers = site.site_roles.filter(group__name="Reviewer").order_by('user__first_name')
-        site_supervisors = site.site_roles.filter(group__name="Site Supervisor").order_by('user__first_name')
-        data = serialize('custom_geojson', [site], geometry_field='location',
-                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+        obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        organization = Organization.objects.get(pk=obj.organization_id)
+        peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
+        project_managers = obj.project_roles.select_related('user').filter(group__name__in=["Project Manager"]).distinct('user')
 
-        line_chart = LineChartGeneratorSite(site)
+        sites = obj.sites.filter(is_active=True, is_survey=False)
+        data = serialize('custom_geojson', sites, geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
+
+        total_sites = len(sites)
+        total_survey_sites = obj.sites.filter(is_survey=True).count()
+        outstanding, flagged, approved, rejected = obj.get_submissions_count()
+        bar_graph = BarGenerator(sites)
+
+        line_chart = LineChartGenerator(obj)
         line_chart_data = line_chart.data()
-
-        outstanding, flagged, approved, rejected = site.get_site_submission()
         dashboard_data = {
-            'site': site,
-            'obj':site,
-            'project': site.project,
-            'organization':organization,
+            'sites': sites,
+            'obj': obj,
+            'peoples_involved': peoples_involved,
+            'total_sites': total_sites,
+            'total_survey_sites': total_survey_sites,
             'outstanding': outstanding,
             'flagged': flagged,
             'approved': approved,
@@ -1198,6 +1242,12 @@ class SummaryReport(TemplateView):
             'data': data,
             'cumulative_data': line_chart_data.values(),
             'cumulative_labels': line_chart_data.keys(),
+            'progress_data': bar_graph.data.values(),
+            'progress_labels': bar_graph.data.keys(),
+            'project_managers':project_managers,
+            'organization': organization,
+            'total_submissions': line_chart_data.values()[-1],
+    
         }
         return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)
 

@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
+ <!-- SLider css external pravin -slick  -->
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
 
 {% endblock %}
 {%block kocript %}
@@ -32,13 +35,24 @@ var project = "{{obj.pk}}";
 
 					</div>
 					<div class="action-right">
+						<a href="#" title="" class="btn btn-sm btn-xs btn-primary"><i class=""></i> Response</a>
+
+						<span class="dropdown">
+							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="la la-cogs"></i>Reports
+							</a>
+							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
+								<a class="dropdown-item" href="#"><i class="la la-user"></i>{% trans 'Project Summary Report' %}</a>
+								<a class="dropdown-item" href="#"><i class="la la-clipboard"></i>{% trans 'Project Detail Report' %}</a>
+								<a class="dropdown-item" href="#"><i class="la la-clipboard"></i>{% trans 'Excel Report' %}</a>
+							</div>
+						</span>
 						<span class="dropdown">
 							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="la la-cogs"></i> Manage
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-project' obj.pk %}"><i class="la la-user"></i>{% trans 'People' %}</a>
-								<a class="dropdown-item" href="{% url 'fieldsight:site-add'%}"><i class="la la-clipboard"></i>{% trans 'Sites' %}</a>
 								<a class="dropdown-item" href="{% url 'forms:setup-forms' 1 obj.pk %}"><i class="la la-clipboard"></i>{% trans 'Setup Forms' %}</a>
 							</div>
 						</span>
@@ -193,7 +207,7 @@ var project = "{{obj.pk}}";
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i></a>
 										</div>
 										<div class="widget-body">
-											<!--Search Projects-->
+											<!--Search Sites-->
 											<div class="collapse margin-bottom" id="searchSite">
 												<form>
 													<div class="input-group input-group-sm">
@@ -204,29 +218,30 @@ var project = "{{obj.pk}}";
 													</div>
 												</form>
 											</div>
-                                            <div class='adv-table row' data-bind="foreach: sites">
-												<a data-bind="attr:{ href: url }">
+											<div class='adv-table row' data-bind="foreach: sites">
+											<a data-bind="attr:{ href: url }" class="project-item-wrap clearfix">
+												<div class="project-logo">
+													<img data-bind="attr:{src: logo}" width="50" height="50"/>
+												</div>
+												<div class="project-basic-info">
+													<h4 data-bind="text: name"></h4>
+													<p data-bind="text: address"></p>
+													<!--<span class="space site-label"></span>-->
+																	 <!--<span data-bind="text: name" class="detail-text">-->
+																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
 
-																<div class="col-md-4 col-sm-4 "  >
-																	<div class="image-org ">
-																		 <img data-bind="attr:{src: logo}" />
-																	</div>
-																</div>
-																 <div  class="col-md-8 col-sm-8">
-																	 <span class="space site-label"></span>
-																	 <span data-bind="text: name" class="detail-text">
-																	 <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
+																	 <!--<span class="space site-label"></span>-->
+																	 <!--<span data-bind="text: identifier">-->
+																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
+																	 <!--<br>-->
+																	 <!--<span class="space site-label"></span>-->
+																	 <!--<span data-bind="text: address" class="detail-text1">-->
+																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
 
-																	 <span class="space site-label"></span>
-																	 <span data-bind="text: identifier">
-																	 <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
-																	 <br>
-																	 <span class="space site-label"></span>
-																	 <span data-bind="text: address" class="detail-text1">
-																	 <i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>
-																</div>
-											   </a>
+												</div>
+											</a>
 											</div>
+
 										</div>
 									</div>
 								</div>
@@ -302,31 +317,41 @@ var project = "{{obj.pk}}";
 											<h4>Recent Pictures</h4>
 										</div>
 										<div class="scrollingSlider">
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
-												<!--</div>-->
-											<!--</div>-->
+											<div>
+												<div class="photo-item">
+													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
+												</div>
+											</div>
+											<div>
+												<div class="photo-item">
+													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
+												</div>
+											</div>
+											<div>
+												<div class="photo-item">
+													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
+												</div>
+											</div>
+											<div>
+												<div class="photo-item">
+													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
+												</div>
+											</div>
+											<div>
+												<div class="photo-item">
+													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
+												</div>
+											</div>
+											<div>
+												<div class="photo-item">
+													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
+												</div>
+											</div>
+											<div>
+												<div class="photo-item">
+													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -391,11 +416,14 @@ var project = "{{obj.pk}}";
 			</div>
 {% endblock %}
 {%block extrascript %}
+
 	<script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.ajax.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/textLabel.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.markercluster-src.js"></script>
+<!--script for slider pravin-slick-->
+    <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
     <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
   	<script type="text/javascript">
     var static_url ="{{ STATIC_URL }}";
