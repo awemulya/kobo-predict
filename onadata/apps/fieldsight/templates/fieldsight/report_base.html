@@ -17,6 +17,22 @@
 		</title>
 		<!--Core CSS -->
 
+	</head>
+<style type="text/css">
+  body {
+    background-color:black;
+
+  }
+
+  #maincontent {
+  	display: block;
+  margin-left: auto;
+  margin-right: auto;
+  }
+  </style>
+    <body style="background-color: black;">
+    	<input type="button" name="" style="margin-left: auto; margin-right: auto;" value="print" onclick="PrintElem('report')">
+    	<div id="report">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		{%block extracss %}
@@ -33,12 +49,13 @@
 		<script type="text/javascript" src="{{ STATIC_URL }}js/ko_lib.js" ></script>
 		{%block kocript %}
     	{% endblock %}
-	</head>
-    <body>
+
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-		<div id="report" style="width:650px; background-color: white; overflow: hidden;">
+
+
+		<div id = "maincontent" style="width:660px; background-color: white; overflow: hidden;">
 		{% block content %}
 		{% endblock %}
 		</div>
@@ -109,7 +126,7 @@
 
 
         <!--<script src="{% static 'dummy/assets/js/main.js' %}"></script>-->
-
+<div>
     </body>
 	{%block extrascript %}
     {% endblock %}

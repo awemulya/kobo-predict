@@ -31,6 +31,28 @@ tr:nth-child(even) {
     background-color: #dddddd;
 }
 </style>
+
+
+<script type="text/javascript">
+  function PrintElem(elem)
+{
+    var mywindow = window.open('', 'PRINT', 'height=400,width=700');
+
+    
+    mywindow.document.write(document.getElementById(elem).innerHTML);
+
+
+    mywindow.document.close(); // necessary for IE >= 10
+   // necessary for IE >= 10*/
+
+    mywindow.print();
+     mywindow.close();
+
+    return true;
+}
+
+      </script>
+ 
         <section class="org-profile-body margin-top" >
         <!--   <div class="org-profile-head padding clearfix bg-white">
             <div class="row">
