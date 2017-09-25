@@ -136,21 +136,114 @@
 							<div class="tabbing margin-top">
 								<ul class="nav nav-tabs" role="tablist">
 								  <li class="nav-item">
-									<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Pending</a>
+									<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Pending ({{outstanding|length}})</a>
 								  </li>
 								  <li class="nav-item">
-									<a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Flagged</a>
+									<a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Rejected ({{rejected|length}})</a>
 								  </li>
 								  <li class="nav-item">
-									<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Rejected</a>
+									<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Flagged ({{flagged|length}})</a>
 								  </li>
 								</ul>
 
 								<!-- Tab panes -->
 								<div class="tab-content">
-								  <div class="tab-pane active" id="tab001" role="tabpanel">...</div>
-								  <div class="tab-pane" id="tab002" role="tabpanel">...</div>
-								  <div class="tab-pane" id="tab003" role="tabpanel">...</div>
+								  <div class="tab-pane active" id="tab001" role="tabpanel">
+									  <div class="org-site-list">
+										<div class="form-list">
+											<div class="panel panel-default">
+											  <table class="table table-striped table-hover">
+												  {% for instance in outstanding %}
+												  <tr>
+													  <td>
+														  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+															<h4 class="address">{{ instance.site_fxf.xf.title}}</h4>
+														  </a>
+													  </td>
+													  <td>
+														  <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
+														<div class="detail-person-time">
+															<span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user fa-fw"></i></span>{{ instance.submitted_by }}</span>
+														</div>
+														  </a>
+													  </td>
+													  <td>
+														<div class="detail-person-time">
+															<span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i></span>{{ instance.date|timesince }}{% trans ' ago' %}</span>
+														</div>
+													  </td>
+												  </tr>
+												  {% endfor %}
+											  </table>
+											 </div>
+
+										</div>
+									</div>
+								  </div>
+								  <div class="tab-pane" id="tab002" role="tabpanel">
+									  <div class="org-site-list">
+										<div class="form-list">
+											<div class="panel panel-default">
+											  <table class="table table-striped table-hover">
+												  {% for instance in rejected %}
+												  <tr>
+													  <td>
+														  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+															<h4 class="address">{{ instance.site_fxf.xf.title}}</h4>
+														  </a>
+													  </td>
+													  <td>
+														  <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
+														<div class="detail-person-time">
+															<span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user fa-fw"></i></span>{{ instance.submitted_by }}</span>
+														</div>
+														  </a>
+													  </td>
+													  <td>
+														<div class="detail-person-time">
+															<span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i></span>{{ instance.date|timesince }}{% trans ' ago' %}</span>
+														</div>
+													  </td>
+												  </tr>
+												  {% endfor %}
+											  </table>
+											 </div>
+
+										</div>
+									</div>
+								  </div>
+								  <div class="tab-pane" id="tab003" role="tabpanel">
+									  <div class="org-site-list">
+										<div class="form-list">
+											<div class="panel panel-default">
+											  <table class="table table-striped table-hover">
+												  {% for instance in flagged %}
+												  <tr>
+													  <td>
+														  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+															<h4 class="address">{{ instance.site_fxf.xf.title}}</h4>
+														  </a>
+													  </td>
+													  <td>
+														  <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
+														<div class="detail-person-time">
+															<span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-user fa-fw"></i></span>{{ instance.submitted_by }}</span>
+														</div>
+														  </a>
+													  </td>
+													  <td>
+														<div class="detail-person-time">
+															<span class="site_icon_float"><span class="site_list_icon"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i></span>{{ instance.date|timesince }}{% trans ' ago' %}</span>
+														</div>
+													  </td>
+												  </tr>
+												  {% endfor %}
+											  </table>
+											 </div>
+
+										</div>
+									</div>
+								  </div>
 								</div>
 							</div>
 						</div>
@@ -205,35 +298,35 @@
 						</div>
 
 					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<!-- Nav tabs -->
-							<div class="tabbing margin-top">
-								<ul class="nav nav-tabs" role="tablist">
-								  <li class="nav-item">
-									<a class="nav-link active" data-toggle="tab" href="#tab1" role="tab">Project Manager</a>
-								  </li>
-								  <li class="nav-item">
-									<a class="nav-link" data-toggle="tab" href="#tab2" role="tab">Reviewers</a>
-								  </li>
-								  <li class="nav-item">
-									<a class="nav-link" data-toggle="tab" href="#tab3" role="tab">Site Supervisors</a>
-								  </li>
-								  <li class="nav-item">
-									<a class="nav-link" data-toggle="tab" href="#tab4" role="tab">Contractors</a>
-								  </li>
-								</ul>
+					<!--<div class="row">-->
+						<!--<div class="col-md-12">-->
+							<!--&lt;!&ndash; Nav tabs &ndash;&gt;-->
+							<!--<div class="tabbing margin-top">-->
+								<!--<ul class="nav nav-tabs" role="tablist">-->
+								  <!--<li class="nav-item">-->
+									<!--<a class="nav-link active" data-toggle="tab" href="#tab1" role="tab">Project Manager</a>-->
+								  <!--</li>-->
+								  <!--<li class="nav-item">-->
+									<!--<a class="nav-link" data-toggle="tab" href="#tab2" role="tab">Reviewers</a>-->
+								  <!--</li>-->
+								  <!--<li class="nav-item">-->
+									<!--<a class="nav-link" data-toggle="tab" href="#tab3" role="tab">Site Supervisors</a>-->
+								  <!--</li>-->
+								  <!--<li class="nav-item">-->
+									<!--<a class="nav-link" data-toggle="tab" href="#tab4" role="tab">Contractors</a>-->
+								  <!--</li>-->
+								<!--</ul>-->
 
-								<!-- Tab panes -->
-								<div class="tab-content">
-								  <div class="tab-pane active" id="tab1" role="tabpanel">...</div>
-								  <div class="tab-pane" id="tab2" role="tabpanel">...</div>
-								  <div class="tab-pane" id="tab3" role="tabpanel">...</div>
-								  <div class="tab-pane" id="tab4" role="tabpanel">...</div>
-								</div>
-							</div>
-						</div>
-					</div>
+								<!--&lt;!&ndash; Tab panes &ndash;&gt;-->
+								<!--<div class="tab-content">-->
+								  <!--<div class="tab-pane active" id="tab1" role="tabpanel">...</div>-->
+								  <!--<div class="tab-pane" id="tab2" role="tabpanel">...</div>-->
+								  <!--<div class="tab-pane" id="tab3" role="tabpanel">...</div>-->
+								  <!--<div class="tab-pane" id="tab4" role="tabpanel">...</div>-->
+								<!--</div>-->
+							<!--</div>-->
+						<!--</div>-->
+					<!--</div>-->
 					<div class="row">
 						<div class="col-md-6">
 							<div class="widget-info margin-top bg-white padding">
