@@ -16,13 +16,14 @@
 
 					</div>
 					<div class="action-right">
+						<a href="#" title="" class="btn btn-sm btn-xs btn-primary"><i class=""></i>Response</a>
 						<span class="dropdown">
 							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="la la-cogs"></i> Manage
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-site' obj.pk %}"><i class="la la-user"></i> People</a>
-								<!--<a class="dropdown-item" href="#"><i class="la la-tasks"></i> Projects</a>-->
+								<a class="dropdown-item" href="#"><i class="la la-forms"></i>Forms</a>
 							</div>
 						</span>
 						<a href="{% url 'fieldsight:site-edit' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-edit"></i> Edit</a>
@@ -163,27 +164,37 @@
 										<div class="scrollingSlider">
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="assets/img/img-gallery.jpg" img-title="Image Title" alt="">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
+												<!--</div>-->
+											<!--</div>-->
+											<!--<div>-->
+												<!--<div class="photo-item">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
+												<!--</div>-->
+											<!--</div>-->
+											<!--<div>-->
+												<!--<div class="photo-item">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
 												<!--</div>-->
 											<!--</div>-->
 										</div>
@@ -253,7 +264,9 @@
 
 {% endblock %}
 {%block extrascript %}
- <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js" type="text/javascript"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+ 	<script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
 
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.ajax.min.js"></script>

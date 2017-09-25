@@ -39,7 +39,7 @@
         <![endif]-->
 			<header id="header" class="main-header clearfix">
 			<div class="brand clearfix">
-				<a href="#" title="" class="logo">
+				<a href="{% url 'dashboard' %}" title="" class="logo">
 					<img src="{% static 'dummy/assets/img/logo.png' %}" alt="Field Sight" width="168" height="32">
 				</a>
 				<div class="sidebar-toggle-box">
@@ -125,7 +125,7 @@
 						<li class="sub-menu">
 							<a href="{% url 'fieldsight:organizations-list' %}">
 								<i class="la la-building"></i>
-								<span>{% trans 'Organization' %}</span>
+								<span>{% trans 'Organizations' %}</span>
 							</a>
 							<!--<ul class="sub">-->
 								<!--<li><a href="organization.php">All Organizations</a></li>-->
@@ -196,29 +196,71 @@
 			</div>
 		  </div>
 		</div>
-		<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="assets/js/vendor/jquery-3.2.1.min.js"><\/script>')</script>-->
+		<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
+        <!--<script>window.jQuery || document.write('<script src="assets/js/vendor/jquery-3.2.1.min.js"><\/script>')</script>-->
         <script>window.jQuery || document.write('<script src="{% static 'dummy/assets/js/vendor/jquery-1.11.2.min.js' %}"><\/script>')</script>
 		<script src="{% static 'dummy/assets/js/vendor/popper.min.js' %}"></script>
         <script src="{% static 'dummy/assets/js/vendor/bootstrap.min.js' %}"></script>
-
+		<script src="{% static 'dummy/assets/js/plugins.js' %}"></script>
 		<script src="{% static 'dummy/assets/js/vendor/jquery.cookie.js' %}"></script>
 		<script src="{% static 'dummy/assets/js/vendor/jquery.dcjqaccordion.2.7.min.js' %}"></script>
 		<script src="{% static 'dummy/assets/js/vendor/jquery.slimscroll.min.js' %}"></script>
 		<script src="{% static 'dummy/assets/js/vendor/jquery.nicescroll.min.js' %}"></script>
 
-		<script src="{% static 'dummy/assets/js/vendor/leaflet.js' %}"></script>
+		<!--<script src="{% static 'dummy/assets/js/vendor/leaflet.js' %}"></script>-->
 		<script>
-			var map = L.map('map', {
-				center: [51.505, -0.09],
-				zoom: 13
+
+			$(document).ready(function(){
+
+				$(".widget-scolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+
+				$('.scrollingSlider').slick({
+				  slidesToShow: 4,
+				  arrows: false,
+				  autoplay : true,
+				  infinite: false,
+				  responsive: [
+					{
+					  breakpoint: 768,
+					  settings: {
+						arrows: false,
+						slidesToShow: 3
+					  }
+					},
+					{
+					  breakpoint: 480,
+					  settings: {
+						arrows: false,
+						centerMode: true,
+						slidesToShow: 1
+					  }
+					}
+				  ]
+				});
+				$('.photo-item img').on('click',function(){
+					var title = $(this).attr('img-title');
+					var src = $(this).attr('src');
+					var img = '<img src="' + src + '" class="img-responsive"/>';
+					var html = '';
+					html += img;
+					$('#myModalLabel').modal();
+					$('#myModalLabel').on('shown.bs.modal', function(){
+						$('#myModalLabel .modal-header .modal-title').html(title);
+						$('#myModalLabel .modal-body').html(html);
+					})
+					$('#myModalLabel').on('hidden.bs.modal', function(){
+						$('#myModalLabel .modal-header .modal-title').html('');
+						$('#myModalLabel .modal-body').html('');
+					});
+				});
 			});
+
 
 
 		</script>
 
-        <script src="{% static 'dummy/assets/js/plugins.js' %}"></script>
-        <script src="{% static 'dummy/assets/js/main.js' %}"></script>
+
+        <!--<script src="{% static 'dummy/assets/js/main.js' %}"></script>-->
 
     </body>
 	{%block extrascript %}
