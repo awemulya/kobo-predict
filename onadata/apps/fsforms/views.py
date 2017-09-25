@@ -1332,7 +1332,7 @@ def instance_status(request, instance):
                                                   extra_message='{0} {1}'.format(fi.site_fxf.form_type, fi.site_fxf.xf.title),
                                                   description='{0} reviewed a response for {1} {2} in {3}'.format(
                                                       request.user.get_full_name(),
-                                                      fi.site_fxf.form_type,
+                                                      fi.site_fxf.form_type(),
                                                       fi.site_fxf.xf.title,
                                                       fi.site.name
                                                   ))
