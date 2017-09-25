@@ -9,7 +9,7 @@
 						<div class="col-md-12 col-lg-8">
 							<div class="margin-top user-profile-basic-info padding bg-white clearfix ">
 								<div class="media">
-									<img class="d-flex align-self-start mr-3"  src="{{ obj.profile_picture.url}}" alt="">
+									<img class="d-flex align-self-start mr-3"  src="{{ obj.profile_picture.url}}" alt="image"/>
 									<div class="media-body">
 										<h2 class="margin-top">{{obj.user.get_full_name}}</h2>
 										<div class="row">
@@ -34,91 +34,84 @@
 														<i class="la la-phone"></i>{{obj.phone}}
 													</li>
 													{% endif %}
-													<!--<li>-->
-														<!--<i class="la la-envelope-o"></i> info@domainname.com-->
-													<!--</li>-->
+													{% if obj.email %}
+													<li>
+														<i class="la la-envelope-o"></i>{{obj.email}}
+													</li>
+													{% endif %}
 												</ul>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-							{% for role in roles %}
-							<div class="widget-info margin-top bg-white padding">
-								<div class="widget-head">
-									<h4>Organization Admin At :</h4>
-								</div>
-								<div class="widget-body">
-									<div class="max-260-scroll">
-										<div class="row">
-											<div class="col-lg-6 col-md-12">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Organization Name</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</div>
 
-
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="widget-info margin-top bg-white padding">
-								<div class="widget-head">
-									<h4>Project Manager At :</h4>
-								</div>
-								<div class="widget-body">
-									<div class="max-260-scroll">
-										<div class="row">
-											<div class="col-lg-6 col-md-12">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Organization Name</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</div>
-
-
-										</div>
-									</div>
-								</div>
-							</div>
-							{% empty %}
-							<p class="emptylist">Sorry, no roles for this user.</p>
-							{% endfor %}
+													<div class="row1">
+							<h3>{% trans 'Roles Of' %} {{obj.user}}</h3>
 						</div>
-						<!--<div class="col-md-12 col-lg-4">-->
-							<!--<div class="widget-info margin-top bg-white padding">-->
-								<!--<div class="widget-head">-->
-									<!--<h4>Latest Submission</h4>-->
-								<!--</div>-->
-								<!--<div class="widget-body">-->
-									<!--<div class="max-513-scolling">-->
-										<!--<div class="project-item-wrap clearfix">-->
-											<!--<div class="project-logo">-->
-												<!--<img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">-->
-											<!--</div>-->
-											<!--<div class="project-basic-info">-->
-												<!--<h4>Organization Name</h4>-->
-												<!--<p>Old Baneshwor, Kathmandu, Nepal</p>-->
-											<!--</div>-->
-										<!--</div>-->
 
-									<!--</div>-->
-								<!--</div>-->
+						<hr class="colour">
+						<!--<div class="row">-->
+							<!--<div class="col-sm-3">-->
+								<!--{% trans 'Role' %}-->
+							<!--</div>-->
+							<!--<div class="col-sm-3">-->
+								<!--{% trans 'Site' %}-->
+							<!--</div>-->
+							<!--<div class="col-sm-3">-->
+								<!--{% trans 'Project' %}-->
+							<!--</div>-->
+							<!--<div class="col-sm-3">-->
+								<!--{% trans 'Organization' %}-->
 							<!--</div>-->
 						<!--</div>-->
+						{% for role in roles %}
+							<div class="col-md-6 col-sm-12 card notice padding-high font-medium">
+								<span><b>{{role.group }}</b>
+
+
+								{% if role.site%}
+								{% trans 'of Site ' %}
+								 <a href="{% url 'fieldsight:site-dashboard' role.site.pk %}">
+								{{role.site}}
+									 </a>
+								{% endif %}
+
+								{% if role.project %}
+
+								{% trans 'of Project  ' %}
+								 <a href="{% url 'fieldsight:project-dashboard' role.project.pk %}">
+									<b>{{role.project}}</b>
+								 </a>
+								{% endif %}
+
+								{% if role.organization%}
+								{% trans 'of ' %}
+								 <a href="{% url 'fieldsight:organizations-dashboard' role.organization.pk %}">
+								<b>{{role.organization}}</b></a>
+								{% endif %}
+								</span>
+							</div>
+
+						<br/>
+						<!--<div class="row">-->
+							<!--<div class="col-sm-3">-->
+								<!--{{role.group }}-->
+							<!--</div>-->
+							<!--<div class="col-sm-3">-->
+								<!--{{role.site|default:"" }}-->
+							<!--</div>-->
+							<!--<div class="col-sm-3">-->
+								<!--{{role.project|default:"" }}-->
+							<!--</div>-->
+							<!--<div class="col-sm-3">-->
+								<!--{{role.organization|default:"" }}-->
+							<!--</div>-->
+						<!--</div>-->
+						{% empty %}
+						<p class="emptylist">Sorry, no roles for this user.</p>
+						{% endfor %}
+
 					</div>
                 </section>
 
