@@ -65,7 +65,7 @@ var site_id = "{{ pk }}";
 									<ul class="icon-listing clearfix margin-top">
 										<li>
 											<i class="la la-exclamation"></i>
-											0
+											{{rejected|length}}
 										</li>
 										<li>
 											<i class="la la-flag"></i>
@@ -73,11 +73,11 @@ var site_id = "{{ pk }}";
 										</li>
 										<li>
 											<i class="la la-hourglass-half"></i>
-											0
+											{{outstanding|length}}
 										</li>
 										<li>
 											<i class="la la-thumbs-up"></i>
-											0
+											{{approved|length}}
 										</li>
 									</ul>
 									{% with progress=obj.progress %}
