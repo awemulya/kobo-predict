@@ -16,6 +16,8 @@
 var proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
 </script>
 
+
+
 <table id="users">
   <tbody id="usersli">
     
@@ -64,6 +66,7 @@ var proj_site_url = '{% url 'role:multi_ops_list' 1 pk %}';
 
 
 <script type="text/javascript">
+
 // alert(proj_site_url);
 var userurl = '{% url 'role:multi_user_list' 1 1 %}';
 var selected_proj_site = [];
@@ -104,10 +107,6 @@ function populateuserlist(data, index){
 $(user_list).appendTo("#usersli");
 $("#"+data.id+"usersli").fadeIn(speed);
 }
-
-
-
-
 
 
 

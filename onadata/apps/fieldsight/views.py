@@ -883,12 +883,12 @@ class ManagePeopleProjectView(LoginRequiredMixin, ProjectMixin, TemplateView):
     def get(self, request, pk):
         organization = Project.objects.get(pk=pk).organization.id
         return render(request, "fieldsight/manage_people_site.html",
-                      {'pk': pk, 'level': "1", 'category':"Project Manager", 'organization': organization, 'project': pk})
+                      {'pk': pk, 'level': "1", 'category':"Project Manager", 'organization': organization, 'project': pk, 'type':'project'})
 
 
 class ManagePeopleOrganizationView(LoginRequiredMixin, OrganizationMixin, TemplateView):
     def get(self, request, pk):
-        return render(request, 'fieldsight/manage_people_site.html', {'pk': pk, 'level': "2", 'category':"Organization Admin", 'organization': pk})
+        return render(request, 'fieldsight/manage_people_site.html', {'pk': pk, 'level': "2", 'category':"Organization Admin", 'organization': pk, 'type':'org'})
 
 
 def all_notification(user,  message):
@@ -923,6 +923,7 @@ class OrgSiteList(OrganizationRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(OrgSiteList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        
         return context
     def get_queryset(self):
         queryset = Site.objects.filter(project__organization_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
@@ -955,6 +956,7 @@ class ProjUserList(ProjectRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ProjUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['type'] = "project"
         return context
     def get_queryset(self):
         queryset = UserRole.objects.select_related('user').filter(project_id=self.kwargs.get('pk')).distinct('user_id')
@@ -965,6 +967,7 @@ class SiteUserList(ProjectRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(SiteUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['type'] = "site"
         return context
     def get_queryset(self):
         queryset = UserRole.objects.select_related('user').filter(site_id=self.kwargs.get('pk')).distinct('user_id')
@@ -1049,6 +1052,77 @@ def senduserinvite(request):
         continue
     return HttpResponse(response)
 
+
+
+@login_required()
+def sendmultiroleuserinvite(request):
+    emails =request.POST.getlist('emails[]')
+    levels =request.POST.getlist('levels[]')
+    group = Group.objects.get(name=request.POST.get('group'))
+
+
+    for level in levels:
+        organization_id = None
+        project_id =None
+        site_id =None
+
+        if leveltype == "project":
+            project_id = request.POST.get('project_id')
+            organization_id = Project.objects.get(pk=project_id).id
+        elif leveltype == "site":
+            site_id == request.POST.get('site_id')
+            project = Projects.objects.get(pk=site_id)
+            project_id = project.id
+            organization_id = project.organization_id
+
+        response=""
+
+        for email in emails:
+            user = User.objects.filter(email=email)
+            userinvite = UserInvite.objects.filter(email=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+
+            if userinvite:
+                response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
+                continue
+            if user:
+                userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
+                
+                if userrole:
+                    if userrole[0].ended_at==None:
+                        response += email + ' already has the role for '+group.name+'.<br>' 
+                        continue
+                invite = UserInvite(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
+
+                invite.save()
+                organization = Organization.objects.get(pk=1)
+                # noti = invite.logs.create(source=user[0], type=9, title="new Role",
+                #                                organization_id=request.POST.get('organization_id'),
+                #                                description="{0} sent you an invite to join {1} as the {2}.".
+                #                                format(request.user.username, organization.name, invite.group.name,))
+                # result = {}
+                # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+                # result['url'] = noti.get_absolute_url()
+                # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+                # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+            else:
+                invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+                invite.save()
+            current_site = get_current_site(request)
+            subject = 'Invitation for Role'
+            message = render_to_string('fieldsight/email_sample.html',
+            {
+                'email': invite.email,
+                'domain': current_site.domain,
+                'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
+                'token': invite.token,
+                'invite': invite,
+                })
+            email_to = (invite.email,)
+            send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
+            response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
+            continue
+    return HttpResponse(response)
 
 
 # def activate_role(request, invite_idb64, token):
@@ -1137,25 +1211,30 @@ def checkemailforinvite(request):
         return HttpResponse("No existing User found.<a href='#' onclick='sendnewuserinvite()'>send</a>")
 
 
-class SummaryReport(TemplateView):
+class ProjectSummaryReport(TemplateView):
     def get(self, request, pk):
-        site = Site.objects.select_related('project').get(pk=pk)
-        organization = site.project.organization
-        project_managers = site.project.project_roles.filter(group__name="Project_manager").order_by('user__first_name')
-        site_reviewers = site.site_roles.filter(group__name="Reviewer").order_by('user__first_name')
-        site_supervisors = site.site_roles.filter(group__name="Site Supervisor").order_by('user__first_name')
-        data = serialize('custom_geojson', [site], geometry_field='location',
-                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+        obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        organization = Organization.objects.get(pk=obj.organization_id)
+        peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
+        project_managers = obj.project_roles.select_related('user').filter(group__name__in=["Project Manager"]).distinct('user')
 
-        line_chart = LineChartGeneratorSite(site)
+        sites = obj.sites.filter(is_active=True, is_survey=False)
+        data = serialize('custom_geojson', sites, geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
+
+        total_sites = len(sites)
+        total_survey_sites = obj.sites.filter(is_survey=True).count()
+        outstanding, flagged, approved, rejected = obj.get_submissions_count()
+        bar_graph = BarGenerator(sites)
+
+        line_chart = LineChartGenerator(obj)
         line_chart_data = line_chart.data()
-
-        outstanding, flagged, approved, rejected = site.get_site_submission()
         dashboard_data = {
-            'site': site,
-            'obj':site,
-            'project': site.project,
-            'organization':organization,
+            'sites': sites,
+            'obj': obj,
+            'peoples_involved': peoples_involved,
+            'total_sites': total_sites,
+            'total_survey_sites': total_survey_sites,
             'outstanding': outstanding,
             'flagged': flagged,
             'approved': approved,
@@ -1163,6 +1242,12 @@ class SummaryReport(TemplateView):
             'data': data,
             'cumulative_data': line_chart_data.values(),
             'cumulative_labels': line_chart_data.keys(),
+            'progress_data': bar_graph.data.values(),
+            'progress_labels': bar_graph.data.keys(),
+            'project_managers':project_managers,
+            'organization': organization,
+            'total_submissions': line_chart_data.values()[-1],
+    
         }
         return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)
 

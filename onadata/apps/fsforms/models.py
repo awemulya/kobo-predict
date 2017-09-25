@@ -225,6 +225,7 @@ class FieldSightXF(models.Model):
     def form_type(self):
         if self.is_scheduled: return "Scheduled"
         if self.is_staged: return "Staged"
+        if self.is_survey: return "Surveyed"
         if not self.is_scheduled and not self.is_staged: return "General"
 
     def form_type_id(self):

@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 
 from channels import Group as ChannelGroup
 from onadata.apps.fieldsight.mixins import USURPERS
-from onadata.apps.fieldsight.models import Site, Project
+from onadata.apps.fieldsight.models import Site, Project, Organization
 from onadata.apps.userrole.serializers.UserRoleSerializer import UserRoleSerializer
 from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectTypeSerializer
 from onadata.apps.fieldsight.serializers.SiteSerializer import SiteSerializer
@@ -44,92 +44,96 @@ class UserRoleViewSet(viewsets.ModelViewSet):
             level = self.kwargs.get('level', None)
             pk = self.kwargs.get('pk', None)
             if level == "0":
-                queryset = queryset.filter(site__id=pk, group__name__in=['Site Supervisor', 'Reviewer'])
+                queryset = queryset.filter(site__id=pk, group__name__in=['Site Supervisor', 'Reviewer']).distinct('user_id')
             elif level == "1":
-                queryset = queryset.filter(project__id=pk, group__name='Project Manager')
+                queryset = queryset.filter(project__id=pk, group__name='Project Manager').distinct('user_id')
             elif level == "2":
-                queryset = queryset.filter(organization__id=pk, group__name='Organization Admin')
+                queryset = queryset.filter(organization__id=pk, group__name='Organization Admin').distinct('user_id')
         except:
             queryset = []
         return queryset
 
     def custom_create(self, * args, **kwargs):
         data = self.request.data
+        # print "======================================================="
+        # print data
+        # print data.get('users')
+       
         level = self.kwargs.get('level')
-        try:
-            with transaction.atomic():
-                group = Group.objects.get(name=data.get('group'))
-                for user in data.get('users'):
-                    if level == "0":
-                        site = Site.objects.get(pk=self.kwargs.get('pk'))
-                        role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
-                                                                       project__id=site.project.id, group=group)
+        # try:
+        with transaction.atomic():
+            group = Group.objects.get(name=data.get('group'))
+            for user in data.get('users'):
+                if level == "0":
+                    site = Site.objects.get(pk=self.kwargs.get('pk'))
+                    role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
+                                                                   project__id=site.project.id, group=group)
 
-                        if created:
-                            description = "{0} was assigned  as {1} in {2}".format(
-                                role.user.get_full_name(), role.lgroup.name, role.project)
-                            noti_type = 8
+                    if created:
+                        description = "{0} was assigned  as {1} in {2}".format(
+                            role.user.get_full_name(), role.lgroup.name, role.project)
+                        noti_type = 8
 
-                            if data.get('group') == "Reviewer":
-                                noti_type =7
-                            
-                            noti = role.logs.create(source=role.user, type=noti_type, title=description,
-                                                    description=description, content_type=site, extra_object=self.request.user,
-                                                    site=role.site)
-                            result = {}
-                            result['description'] = description
-                            result['url'] = noti.get_absolute_url()
-                            ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
-                            ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
-                            ChannelGroup("site-{}".format(role.site.id)).send({"text": json.dumps(result)})
-                            ChannelGroup("notify-0").send({"text": json.dumps(result)})
+                        if data.get('group') == "Reviewer":
+                            noti_type =7
+                        
+                        noti = role.logs.create(source=role.user, type=noti_type, title=description,
+                                                description=description, content_type=site, extra_object=self.request.user,
+                                                site=role.site)
+                        result = {}
+                        result['description'] = description
+                        result['url'] = noti.get_absolute_url()
+                        ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                        ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
+                        ChannelGroup("site-{}".format(role.site.id)).send({"text": json.dumps(result)})
+                        ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
-                        Device = get_device_model()
-                        if Device.objects.filter(name=role.user.email).exists():
-                            message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
-                            Device.objects.filter(name=role.user.email).send_message(message)
+                    Device = get_device_model()
+                    if Device.objects.filter(name=role.user.email).exists():
+                        message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
+                        Device.objects.filter(name=role.user.email).send_message(message)
 
-                    elif level == "1":
-                        project = Project.objects.get(pk=self.kwargs.get('pk'))
-                        role, created = UserRole.objects.get_or_create(user_id=user, project_id=self.kwargs.get('pk'),
-                                                                       organization__id=project.organization.id,
-                                                                       project__id=project.id,
-                                                                       group=group)
-                        if created:
-                            description = "{0} was assigned  as Project Manager in {1}".format(
-                                role.user.get_full_name(), role.project)
-                            noti = role.logs.create(source=role.user, type=6, title=description, description=description,
-                             content_type=project, extra_object=self.request.user)
-                            result = {}
-                            result['description'] = description
-                            result['url'] = noti.get_absolute_url()
-                            ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
-                            ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
-                            ChannelGroup("notify-0").send({"text": json.dumps(result)})
-                    elif level =="2":
-                        organization = Organization.objects.get(pk=self.kwargs.get('pk'))
-                        role, created = UserRole.objects.get_or_create(user_id=user,
-                                                                       organization_id=self.kwargs.get('pk'), group=group)
-                        if created:
-                            description = "{0} was assigned  as Organization Admin in {1}".format(
-                                role.user.get_full_name(), role.organization)
-                            noti = role.logs.create(source=role.user, type=4, title=description, description=description,
-                             content_type=organization, extra_object=self.request.user)
-                            result = {}
-                            result['description'] = description
-                            result['url'] = noti.get_absolute_url()
-                            ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
-                            ChannelGroup("notify-0").send({"text": json.dumps(result)})
-                        else:
-                            role.ended_at = None
-                            role.save()
+                elif level == "1":
+                    project = Project.objects.get(pk=self.kwargs.get('pk'))
+                    role, created = UserRole.objects.get_or_create(user_id=user, project_id=self.kwargs.get('pk'),
+                                                                   organization__id=project.organization.id,
+                                                                   project__id=project.id,
+                                                                   group=group)
+                    if created:
+                        description = "{0} was assigned  as Project Manager in {1}".format(
+                            role.user.get_full_name(), role.project)
+                        noti = role.logs.create(source=role.user, type=6, title=description, description=description,
+                         content_type=project, extra_object=self.request.user)
+                        result = {}
+                        result['description'] = description
+                        result['url'] = noti.get_absolute_url()
+                        ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                        ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
+                        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+                elif level =="2":
+                    organization = Organization.objects.get(pk=self.kwargs.get('pk'))
+                    role, created = UserRole.objects.get_or_create(user_id=user,
+                                                                   organization_id=self.kwargs.get('pk'), group=group)
+                    if created:
+                        description = "{0} was assigned  as Organization Admin in {1}".format(
+                            role.user.get_full_name(), role.organization)
+                        noti = role.logs.create(source=role.user, type=4, title=description, description=description,
+                         content_type=organization, extra_object=self.request.user)
+                        result = {}
+                        result['description'] = description
+                        result['url'] = noti.get_absolute_url()
+                        ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+                    else:
+                        role.ended_at = None
+                        role.save()
 
 
-        except Exception as e:
-            raise ValidationError({
-                "User Creation Failed ".format(str(e)),
-            })
-        return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+        # except Exception as e:
+        #     raise ValidationError({
+        #         "User Creation Failed ".format(str(e)),
+        #     })
+        return Response({'msg': data}, status=status.HTTP_200_OK)
 
     def all_notification(user, message):
         ChannelGroup("%s" % user).send({
@@ -154,7 +158,7 @@ class MultiUserAssignRoleViewSet(View):
                         site = Site.objects.get(pk=site_id)
                         for user in data.get('users'):
                             role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
-                                                                           project__id=site.project.id, group=group)
+                                                                           project__id=site.project.id, organization_id=site.project.organization.id, group=group)
                             if created:
                                 description = "{0} was assigned  as {1} in {2}".format(
                                     role.user.get_full_name(), role.lgroup.name, role.project)
@@ -185,13 +189,30 @@ class MultiUserAssignRoleViewSet(View):
                         for user in data.get('users'):
                             role, created = UserRole.objects.get_or_create(user_id=user, project_id=project_id,
                                                                            organization__id=project.organization.id,
-                                                                           project__id=project_id,
                                                                            group=group)
                             if created:
                                 description = "{0} was assigned  as Project Manager in {1}".format(
                                     role.user.get_full_name(), role.project)
                                 noti = role.logs.create(source=role.user, type=6, title=description, description=description,
                                  content_type=project, extra_object=self.request.user)
+                                result = {}
+                                result['description'] = description
+                                result['url'] = noti.get_absolute_url()
+                                ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                                ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
+                                ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+                elif level == "2":
+                    for organization_id in data.get('organizations'):
+                        organization = Organization.objects.get(pk=organization_id)
+                        for user in data.get('users'):
+                            role, created = UserRole.objects.get_or_create(user_id=user, organization_id=project_id,
+                                                                           group=group)
+                            if created:
+                                description = "{0} was assigned  as Organization Admin in {1}".format(
+                                    role.user.get_full_name(), role.project)
+                                noti = role.logs.create(source=role.user, type=7, title=description, description=description,
+                                 content_type=organization, extra_object=self.request.user)
                                 result = {}
                                 result['description'] = description
                                 result['url'] = noti.get_absolute_url()
@@ -211,7 +232,7 @@ class LargeResultsSetPagination(PageNumberPagination):
 class MultiUserlistViewSet(viewsets.ModelViewSet):
     serializer_class = UserRoleSerializer
     permission_classes = (IsAuthenticated, ManagePeoplePermission)
-    pagination_class = LargeResultsSetPagination
+    # pagination_class = LargeResultsSetPagination
     def get_queryset(self):
         queryset = UserRole.objects.filter(organization__isnull=False, ended_at__isnull=True)
         level = self.kwargs.get('level', None)
@@ -231,12 +252,20 @@ class MultiUserlistViewSet(viewsets.ModelViewSet):
                 raise ValidationError({
                     "No such project exists ".format(str(e)),
                 })
-            queryset = queryset.filter(project__id=project.organization_id).distinct('user_id')
+            queryset = queryset.filter(organization__id=project.organization_id).distinct('user_id')
+        elif level == "2":
+            try:
+                organization = Organization.objects.get(pk=pk)
+            except Exception as e:
+                raise ValidationError({
+                    "No such organizations exists ".format(str(e)),
+                })
+            queryset = queryset.filter(organization__id=organization.id).distinct('user_id')
         return queryset
 
 class MultiOPSlistViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, ManagePeoplePermission)
-    pagination_class = LargeResultsSetPagination
+    # pagination_class = LargeResultsSetPagination
     def get_serializer_class(self):
         if self.kwargs.get('level') == "0":
             return SiteSerializer
