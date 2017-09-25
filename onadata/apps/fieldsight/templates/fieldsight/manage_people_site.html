@@ -19,12 +19,12 @@ var all_proj_site=[];
 var CSRF_TOKEN = '{{ csrf_token }}';
 
 {% if type == "project" %}
-  proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
+  var proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
   userurl = '{% url 'role:multi_user_list' 1 pk %}';
   assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
 
 {% elif type == "org" %}
-  proj_site_url = '{% url 'role:multi_ops_list' 1 pk %}';
+  var proj_site_url = '{% url 'role:multi_ops_list' 1 pk %}';
   userurl = '{% url 'role:multi_user_list' 1 pk %}';
   assignurl = '{% url 'fieldsight:multi_user_project_assign' pk %}'
 
@@ -488,7 +488,23 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
 
 
-          <div class="col-md-8">
+      <div class="tabbing margin-top">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Users</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Organizations</a>
+            </li>
+          </ul>
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab001" role="tabpanel">
+              <ul class="row">
+                 
+
+
+                  <div class="col-md-8">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
                 <h4>Organization Users</h4>
@@ -518,7 +534,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </form>
                  <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
-                <ul class="row max-260-scroll" data-bind="foreach:$root.users">
+                <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
                       <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
@@ -548,6 +564,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               </div>
             </div>
           </div>
+
           <div class="col-md-4">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
@@ -567,16 +584,14 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
 
 
-          <span class="closebtn-cu"><i class="fa fa-times" aria-hidden="true"></i></span>
-        </div>
-                </div>
-                
+                  <li class="clearfix"></li>
+                </ul>
             </div>
-          </div>
+            <div class="tab-pane" id="tab002" role="tabpanel">
+              <ul class="row">
+                  
 
-
-
-             <div class="row">
+                      <div class="row">
           <div class="col-md-6">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
@@ -590,13 +605,21 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
 
                   
-
+                
                  
                 </ul> -->
+                 <div class="input-group">
+                    <input type="text" id="multi_invite_email_ps" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" id="retry" data-bind="click:inviteforemails" type="button"><i class="la la-user-plus"></i> Invite</button>
+                    </span>
+                  </div>
+                  <br>
+                  <h4>OR</h4>
                   <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
-                <ul class="row max-260-scroll" data-bind="foreach:$root.users">
+                <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-12">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
                       <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
@@ -632,28 +655,31 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <h4>Projects</h4>
               </div>
               <div class="widget-body">
-                <ul class="row max-260-scroll" id="multi-ass-proj_site">
+                <!-- <ul class="row max-260-scroll" id="multi-ass-proj_site">
                   <input type="button" value="Select All" onclick="selectall('proj_site')">
                  <input type="button" value="Unselect All" onclick="unselectall('proj_site')">
 
                 </ul>
-                <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more">
+                <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more"> -->
+                <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                  <input type="button" value="Select All" data-bind=" click:setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" data-bind="click:setAllUnSelected">
 
 
-
-                <!-- <ul class="row max-260-scroll" data-bind="foreach:projects">
+                <ul class="row max-260-scroll" data-bind="foreach:projects">
+                
                   <li class="col-md-12">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
-                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:self.setSelected">
                       <span class="custom-control-indicator"></span>
                       <span class="custom-control-description">
                         <div class="project-item-wrap clearfix">
                           <div class="project-logo">
-                            <img data-bind="attr:{src: project().logo}" alt="" width="50" height="50">
+                            <img data-bind="attr:{src: logo()}" alt="" width="50" height="50">
                           </div>
                           <div class="project-basic-info">
-                            <h4 data-bind="text:project().name"></h4>
-                            <p data-bind="text:project().email"></p>
+                            <h4 data-bind="text:name()"></h4>
+                            <p data-bind="text:email()"></p>
                           </div>
                         </div>
                        
@@ -662,13 +688,40 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   </li>
                   
                   <li class="clearfix"></li>
-                </ul> -->
+                </ul>
                 
               </div>
             </div>
           </div>
-          <input type="button" name="assign" class="btn btn-primary margin-top" onclick="assignusers(assignurl)" value="Assign All selected Users">
+
+
+          <input type="button" name="assign" class="btn btn-primary margin-top" data-bind="click:doAssign" value="Assign All selected Users">
         </div>
+
+
+                  <li class="clearfix"></li>
+                </ul>
+            </div>
+          </div>
+         <!--  <button type="submit" class="btn btn-primary btn-block"><i class="la la-user-plus"></i> Assign Users</button> -->
+        </div>
+
+
+
+          
+
+
+
+          <span class="closebtn-cu"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+                </div>
+                
+            </div>
+          </div>
+
+
+
+    
         <!-- <div class="margin-top">
           <div class="padding bg-white">
             <button type="submit" class="btn btn-primary btn-block"><i class="la la-user-plus"></i> Assign Users</button>
@@ -882,46 +935,46 @@ console.log(userurl);
 
 
 // document.onload = getuserlist(userurl);
-document.onload = getproj_site_url_list(proj_site_url);
+// document.onload = getproj_site_url_list(proj_site_url);
 
 
-function getuserlist(url){
+// function getuserlist(url){
    
-      $.ajax({
-        url: url,
-        type: 'GET',
-        success: function (data) {
-           data.forEach(populateuserlist);
-           speed=0;
-           if (data.next == null){
-            document.getElementById('getnextlist').style.display = 'none';
-           }else{
-            document.getElementById('getnextlist').style.display = 'block';
-            document.getElementById("getnextlist").setAttribute( "onClick", "javascript: getuserlist('"+ data.next+"');" );
-        }
-        // console.log(data);
-        }
-      });
-}
+//       $.ajax({
+//         url: url,
+//         type: 'GET',
+//         success: function (data) {
+//            data.forEach(populateuserlist);
+//            speed=0;
+//            if (data.next == null){
+//             document.getElementById('getnextlist').style.display = 'none';
+//            }else{
+//             document.getElementById('getnextlist').style.display = 'block';
+//             document.getElementById("getnextlist").setAttribute( "onClick", "javascript: getuserlist('"+ data.next+"');" );
+//         }
+//         // console.log(data);
+//         }
+//       });
+// }
 
-function getproj_site_url_list(url){
-      $.ajax({
-        url: url,
+// function getproj_site_url_list(url){
+//       $.ajax({
+//         url: url,
 
-        type: 'GET',
-        success: function (data) {
-           speed_proj_site=0;
-           data.forEach(populate_proj_site_list);
+//         type: 'GET',
+//         success: function (data) {
+//            speed_proj_site=0;
+//            data.forEach(populate_proj_site_list);
            
-           if (data.next == null){
-            document.getElementById('getnextproj_site_list').style.display = 'none';
-           }else{
-            document.getElementById('getnextproj_site_list').style.display = 'block';
-            document.getElementById("getnextproj_site_list").setAttribute( "onClick", "javascript: getproj_site_url_list('"+ data.next+"');" );
-        }
-        }
-      });
-}
+//            if (data.next == null){
+//             document.getElementById('getnextproj_site_list').style.display = 'none';
+//            }else{
+//             document.getElementById('getnextproj_site_list').style.display = 'block';
+//             document.getElementById("getnextproj_site_list").setAttribute( "onClick", "javascript: getproj_site_url_list('"+ data.next+"');" );
+//         }
+//         }
+//       });
+// }
 
 ////////////////////////////////--- Populate Lists
 

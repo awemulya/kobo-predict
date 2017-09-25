@@ -1056,10 +1056,13 @@ def senduserinvite(request):
 
 @login_required()
 def sendmultiroleuserinvite(request):
-    emails =request.POST.getlist('emails[]')
-    levels =request.POST.getlist('levels[]')
-    group = Group.objects.get(name=request.POST.get('group'))
+    data = json.loads(request.body)
+    emails =data.get('emails')
+    levels =data.get('levels')
+    leveltype =data.get('leveltype')
+    group = Group.objects.get(name=data.get('group'))
 
+    response=""
 
     for level in levels:
         organization_id = None
@@ -1067,20 +1070,21 @@ def sendmultiroleuserinvite(request):
         site_id =None
 
         if leveltype == "project":
-            project_id = request.POST.get('project_id')
-            organization_id = Project.objects.get(pk=project_id).id
+            project_id = level
+            organization_id = Project.objects.get(pk=level).organization_id
+            print organization_id
         elif leveltype == "site":
-            site_id == request.POST.get('site_id')
-            project = Projects.objects.get(pk=site_id)
-            project_id = project.id
-            organization_id = project.organization_id
+            
+            site = Site.objects.get(pk=level)
+            project_id = site.project_id
+            organization_id = site.project.organization_id
 
-        response=""
+        
 
         for email in emails:
             user = User.objects.filter(email=email)
             userinvite = UserInvite.objects.filter(email=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
-
+            
             if userinvite:
                 response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
                 continue
@@ -1301,8 +1305,11 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
         return render(request, 'fieldsight/multi_user_assign.html',{'type': "project", 'pk':pk})
 
     def post(self, request, *args, **kwargs):
-        projects = request.POST.getlist('proj_site[]')
-        users = request.POST.getlist('users[]')
+        data = json.loads(self.request.body)
+        projects = data.get('projects')
+        users = data.get('users')
+     
+
         group = Group.objects.get(name="Project Manager")
         for project_id in projects:
             project = Project.objects.get(pk=project_id)
