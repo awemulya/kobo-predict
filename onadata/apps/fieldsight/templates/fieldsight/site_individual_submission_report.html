@@ -16,7 +16,6 @@
 {% load filters %}
     <style>
 table {
-    font-family: arial, sans-serif;
     border-collapse: collapse;
     width: 100%;
 }
@@ -24,12 +23,11 @@ table {
 td, th {
     border: 1px solid #dddddd;
     text-align: left;
-    padding: 8px;
+    padding: 2px;
+    font-size: 15px;
 }
 
-tr:nth-child(even) {
-    background-color: #dddddd;
-}
+
 </style>
 
 
@@ -39,12 +37,7 @@ tr:nth-child(even) {
     var mywindow = window.open('', 'PRINT', 'height=400,width=700');
 
     
-    mywindow.document.write(document.getElementById(elem).innerHTML);
-
-
-    mywindow.document.close(); // necessary for IE >= 10
-   // necessary for IE >= 10*/
-
+    
     mywindow.print();
      mywindow.close();
 
@@ -73,11 +66,12 @@ tr:nth-child(even) {
               </div>
             </div> -->
 
- <div class="row">
+          <div class="row">
 
                   <div class="col-lg-12 col-md-12 col-sm-12">
                   <div class="widget-info margin-top bg-white padding">
-                   <div class="widget-head" style="float: right;">
+                   <div class="row" style="margin-left: 20px;">
+                   <div class="widget-head" >
                  
                     <div class="org-profile-logo">
                       <img src="{{ organization.logo.url }}" width="123" height="123" alt="">
@@ -86,8 +80,24 @@ tr:nth-child(even) {
                     </div>
                      
 
+                </div></div>
+                <div class="row" style="margin-left: 20px;">
+                    <h4>{{ organization.name }}</h4>
+                    
+                      </div> 
+                  </div>
+                  </div>
+                  
+         
+               </div>
+
+   <div class="row" style="margin-top: -30px;">
+                  <div class="col-lg-6 col-md-6 col-sm-12">
+                  <div class="widget-info margin-top bg-white padding">
+                   <div class="widget-head">
+                  <h4><u>Project : {{ obj.name }}</u></h4>
                 </div>
-                    <h3 style="float: right;">{{ organization.name }}</h3>
+                    
                     
                       </div> 
                   </div>
@@ -95,25 +105,11 @@ tr:nth-child(even) {
          
                </div>
 
-   <div class="row">
+          <div class="row" style="margin-top: -30px;">
                   <div class="col-lg-6 col-md-6 col-sm-12">
                   <div class="widget-info margin-top bg-white padding">
                    <div class="widget-head">
-                  <h3>{{ obj.name }}</h3>
-                </div>
-                    
-                    
-                      </div> 
-                  </div>
-                  
-         
-               </div>
-
-          <div class="row">
-                  <div class="col-lg-6 col-md-6 col-sm-12">
-                  <div class="widget-info margin-top bg-white padding">
-                   <div class="widget-head">
-                  <h4>Project Overview</h4>
+                  <h4><u>Project Overview</u></h4>
                 </div>
                     <p><b>Address</b>: {{ obj.address }}, {{ obj.get_country_display }}</p>
                     <p><b>Phone</b>: {{ obj.phone }}</p>
@@ -143,7 +139,7 @@ tr:nth-child(even) {
                <div class="col-lg-12 col-md-12 col-sm-12">
                   <div class="widget-info margin-top bg-white padding">
                   <div class="widget-head">
-                   <h4>Submission Status</h4>
+                   <h4><u>Submission Status</u></h4>
                    </div> 
                     <ul>
                     <li><b><p>Rejected Submissions</b>: {{ rejected }}</p></li>
@@ -160,7 +156,7 @@ tr:nth-child(even) {
             <div class="col-lg-12 col-sm-12">
               <div class="widget-info margin-top bg-white padding">
                 <div class="widget-head">
-                  <h4>Site Map</h4>
+                  <h4><u>Site Map</u></h4>
                 </div>
                 <div class="widget-body">
                   <div id="map" class="full-map"></div>
@@ -175,7 +171,7 @@ tr:nth-child(even) {
             <div class="col-lg-12 col-sm-12">
               <div class="widget-info margin-top bg-white padding">
                 <div class="widget-head">
-                  <h4>Project Managers</h4>
+                  <h4><u>Project Managers</u></h4>
                 </div>
                
                 <table>
@@ -184,15 +180,15 @@ tr:nth-child(even) {
                   <th><b>Email</b></th>
                   <th><b>Phone</b></th>
                 </tr>
-                <tr>
+                
                 {% for manager in project_managers %}
-
+                  <tr>
                   <td>{{ manager.user.first_name }} {{ manager.user.last_name }}</td>
                   <td>{{ manager.user.email }}</td>
                   <td>{{ manager.user.profile.phone }}</td>
-                
+                  </tr>
                 {% endfor %}
-                </tr>
+                
                 </table>
 
                
@@ -207,7 +203,7 @@ tr:nth-child(even) {
 
               <div class="widget-info margin-top bg-white padding">
                 <div class="widget-head">
-                  <h4>{% trans 'Form Submissions' %}</h4>
+                  <h4><u>{% trans 'Form Submissions' %}</u></h4>
 
                 </div>
                 <div class="widget-body">
@@ -224,7 +220,7 @@ tr:nth-child(even) {
             <div class="col-md-12">
               <div class="widget-info margin-top bg-white padding">
                 <div class="widget-head">
-                  <h4>{% trans 'Site Progress' %}</h4>
+                  <h4><u>{% trans 'Site Progress' %}</u></h4>
                 </div>
                 <div class="widget-body">
                   <div id="siteprogress-chart">

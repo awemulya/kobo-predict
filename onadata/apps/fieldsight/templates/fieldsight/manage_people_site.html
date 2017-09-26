@@ -401,10 +401,26 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
 
 
-          <div class="col-md-8">
+      <div class="tabbing margin-top">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Project User Assign</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Site User Assign</a>
+            </li>
+          </ul>
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab001" role="tabpanel">
+              <ul class="row">
+                 
+
+
+                  <div class="col-md-8">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Project Managers</h4>
+                <h4>Project Users</h4>
               </div>
               <div class="widget-body">
                 <form>
@@ -426,22 +442,24 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </p>
                 <form class="margin-top">
                   <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search..." aria-label="Search...">
+                    <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   </div>
                 </form>
-                <ul class="row max-260-scroll">
+                 <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+                <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
-                    <label class="custom-control margin-top user-checkbox custom-checkbox">
-                      <input type="checkbox" class="custom-control-input" checked>
+                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
                       <span class="custom-control-indicator"></span>
                       <span class="custom-control-description">
                         <div class="project-item-wrap clearfix">
                           <div class="project-logo">
-                            <img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
+                            <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
                           </div>
                           <div class="project-basic-info">
-                            <h4>Bikrant Giri</h4>
-                            <p>Old Baneshwor, Kathmandu, Nepal</p>
+                            <h4 data-bind="text:user().full_name"></h4>
+                            <p data-bind="text:user().email"></p>
                           </div>
                         </div>
                         <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
@@ -453,32 +471,161 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </ul>
                 <div class="margin-top">
                 3 Users Selected.<br/>
-                <button type="submit" class="btn btn-primary margin-top"><i class="la la-user-plus"></i> Assign Managers</button>
+                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.doAssign"><i class="la la-user-plus"></i> Assign Project Manager</button>
                 </div>
 
               </div>
             </div>
           </div>
+
           <div class="col-md-4">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Current Project Users</h4>
+                <h4>Current Project Managers</h4>
               </div>
-              <div class="widget-body max-513-scolling" data-bind="foreach:admins">
+
+              <div class="widget-body max-513-scolling" data-bind="foreach:projectManagers">
                 <div class="project-item-wrap clearfix">
                   <div class="project-logo">
-                    <img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
+                    <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
                   </div>
                   <div class="project-basic-info">
-                    <h4>Bikrant Giri</h4>
-                    <p>Old Baneshwor, Kathmandu, Nepal</p>
+                    <h4 data-bind="text:user().full_name"></h4>
+                    <p data-bind="text:user().email"></p>
                   </div>
-                  <a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
-                </div>
+                  <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this Project Manager?', click:rmrole }"><i class="la la-close"></i></a>
+
+
+
+                  <li class="clearfix"></li>
+                </ul>
+            </div>
+            <div class="tab-pane" id="tab002" role="tabpanel">
+              <ul class="row">
+                  
+
+                      <div class="row">
+          <div class="col-md-6">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Users</h4>
+              </div>
+              <div class="widget-body">
+
+                <!-- <ul class="row max-260-scroll" id="multi-ass-users">
+                <input type="button" value="Select All" onclick="selectall('users')">
+                 <input type="button" value="Unselect All" onclick="unselectall('users')">
+
+
+                  
                 
+                 
+                </ul> -->
+                 <div class="input-group">
+                    <input type="text" id="multi_invite_email_ps" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" id="retry" data-bind="click:inviteforemails" type="button"><i class="la la-user-plus"></i> Invite</button>
+                    </span>
+                  </div>
+                  <br>
+                  <h4>OR</h4>
+                  <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                  <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+                <ul class="row" data-bind="foreach:$root.users">
+                  <li class="col-md-12">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                          <div class="project-logo">
+                            <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                          </div>
+                          <div class="project-basic-info">
+                            <h4 data-bind="text:user().full_name"></h4>
+                            <p data-bind="text:user().email"></p>
+                          </div>
+                        </div>
+                       
+                      </span>
+                    </label>
+                  </li>
+                  
+                  <li class="clearfix"></li>
+                </ul>
+                <input style="display:none;" type="button" id="getnextlist" onclick="" value="load more">
+                <input type="radio" style="display:none;" name="group" id="group" value="Project Manager" checked>
+              </div>
             </div>
           </div>
+
+
+
+          <div class="col-md-6">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Projects</h4>
+              </div>
+              <div class="widget-body">
+                <!-- <ul class="row max-260-scroll" id="multi-ass-proj_site">
+                  <input type="button" value="Select All" onclick="selectall('proj_site')">
+                 <input type="button" value="Unselect All" onclick="unselectall('proj_site')">
+
+                </ul>
+                <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more"> -->
+                <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                  <input type="button" value="Select All" data-bind=" click:setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" data-bind="click:setAllUnSelected">
+
+
+               <!--  <ul class="row max-260-scroll" data-bind="foreach:projects">
+                
+                  <li class="col-md-12">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:self.setSelected">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                          <div class="project-logo">
+                            <img data-bind="attr:{src: logo()}" alt="" width="50" height="50">
+                          </div>
+                          <div class="project-basic-info">
+                            <h4 data-bind="text:name()"></h4>
+                            <p data-bind="text:email()"></p>
+                          </div>
+                        </div>
+                       
+                      </span>
+                    </label>
+                  </li>
+                  
+                  <li class="clearfix"></li>
+                </ul> -->
+                
+              </div>
+            </div>
+          </div>
+
+
+          <input type="button" name="assign" class="btn btn-primary margin-top" data-bind="click:doAssign" value="Assign All selected Users">
         </div>
+
+
+                  <li class="clearfix"></li>
+                </ul>
+            </div>
+          </div>
+         <!--  <button type="submit" class="btn btn-primary btn-block"><i class="la la-user-plus"></i> Assign Users</button> -->
+        </div>
+
+
+
+          
+
+
+
+          <span class="closebtn-cu"><i class="fa fa-times" aria-hidden="true"></i></span>
         </div>
 
 

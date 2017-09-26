@@ -30,8 +30,20 @@
   margin-right: auto;
   }
   </style>
-    <body style="background-color: black;">
-    	<input type="button" name="" style="margin-left: auto; margin-right: auto;" value="print" onclick="PrintElem('report')">
+  <style type="text/css">
+@media print
+{
+body * { visibility: hidden; }
+#maincontent * { visibility: visible; }
+}
+</style>
+    <body>
+
+
+<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary " style="float: right;"  onclick="window.print();">
+								<i class="la la-print"></i>Print
+							</a>
+
     	<div id="report">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -55,7 +67,7 @@
         <![endif]-->
 
 
-		<div id = "maincontent" style="width:660px; background-color: white; overflow: hidden;">
+		<div id="maincontent" style="margin-top:20px ;width:660px; border: 8px solid #00628E; background-color: white; overflow: hidden;">
 		{% block content %}
 		{% endblock %}
 		</div>
