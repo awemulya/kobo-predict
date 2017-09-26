@@ -1,0 +1,607 @@
+{% extends "fieldsight/fieldsight_base1.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Manage Forms' %}{% endblock %}
+
+   {%block extracss %}
+<link rel="stylesheet" href="{% static 'css/knockout-file-bindings.css' %}">
+    {% endblock %}
+
+{% block head %}
+{% endblock %}
+{% block breadcrumbs %}
+{% if is_project == "0" %}
+<li><a href="{% url 'fieldsight:site-dashboard' pk %}">
+     {% trans 'Site Dashboard' %}</a></li>
+{% else %}
+<li><a href="{% url 'fieldsight:project-dashboard' pk %}">
+     {% trans 'Project Dashboard' %}</a></li>
+{% endif %}
+<li>{% trans 'Manage Forms' %}</li>
+{% endblock %}
+
+{%block kocript %}
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<link rel="stylesheet" href="{% static 'css/datepicker.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/knockout-file-bindings.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/knockout-sortable.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js?v=1.1"></script>
+
+<script>
+
+$(document).ready(function() {
+var base_url = "{{request.get_host}}";
+var is_project = "{{is_project}}";
+var pk = "{{pk}}";
+
+ vm = new SetUpViewModel(is_project, pk, base_url);
+ ko.applyBindings(vm);
+});
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="main-content" class="padding">
+				<!-- Nav tabs -->
+				<div class="tabbing">
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">General Forms</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Scheduled Forms</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Staged Form</a>
+						</li>
+					</ul>
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div class="tab-pane active" id="tab001" role="tabpanel">
+							<a href="#" title="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#assignModal"><i class="la la-upload"></i> Assign New Form</a>
+							<!--Assign Form-->
+							<div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-labelledby="assignModalLabel" aria-hidden="true">
+								<div class="modal-dialog model-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="assignModalLabel">Assign New Form</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<div class="row">
+												<div class="col-md-6 col-sm-12">
+													<div class="widget-info margin-top">
+														<div class="widget-head">
+															<h4>My Forms</h4>
+														</div>
+														<div class="widget-body">
+															<div class="input-group input-group-sm margin-top">
+																<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+															</div>
+															<div class="form-group margin-top">
+																<label class="custom-control custom-radio">
+																  <input id="radio1" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+															<div class="form-group">
+																<label class="custom-control custom-radio">
+																  <input id="radio2" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+															<div class="form-group">
+																<label class="custom-control custom-radio">
+																  <input id="radio3" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+															<div class="form-group">
+																<label class="custom-control custom-radio">
+																  <input id="radio4" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col-md-6 col-sm-12">
+													<div class="widget-info margin-top">
+														<div class="widget-head">
+															<h4>Library Forms</h4>
+														</div>
+														<div class="widget-body margin-top">
+															<div class="input-group input-group-sm margin-top">
+																<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+															</div>
+															<div class="form-group margin-top">
+																<label class="custom-control custom-radio">
+																  <input id="radio11" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+															<div class="form-group">
+																<label class="custom-control custom-radio">
+																  <input id="radio12" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+															<div class="form-group">
+																<label class="custom-control custom-radio">
+																  <input id="radio13" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+															<div class="form-group">
+																<label class="custom-control custom-radio">
+																  <input id="radio14" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-primary"><i class="la la-upload"></i> Assign Form</button>
+											<a href="#" class="btn btn-secondary"><i class="la la-file-text"></i> New Form</a>
+										</div>
+									</div>
+								</div>
+							</div>
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForm" aria-expanded="false" aria-controls="searchForm"><i class="la la-search"></i> Search</a>
+							<!--Search Form-->
+							<div class="collapse margin-top" id="searchForm">
+								<form class="padding">
+									<div class="row">
+										<div class="col-md-6 ml-md-auto">
+											<div class="input-group">
+											  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+											  <span class="input-group-btn">
+												<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+											  </span>
+											</div>
+										</div>
+										<div class="col-md-3"></div>
+									</div>
+								</form>
+							</div>
+							<!--Form List-->
+							<table class="table table-responsive table-hover margin-top">
+								<thead class="thead-default">
+									<tr>
+										<th>S.N.</th>
+										<th>Form Title</th>
+										<th>Assigned Date</th>
+										<th>Responses</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">1</th>
+										<td>Daily Activity Report</td>
+										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
+										<td>10</td>
+										<td>
+											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
+											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
+										</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Weekly Activity Report</td>
+										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
+										<td>20</td>
+										<td>
+											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
+											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
+										</td>
+									</tr>
+									<tr>
+										<th scope="row">3</th>
+										<td>Daily Activity Report</td>
+										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
+										<td>15</td>
+										<td>
+											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
+											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
+										</td>
+									</tr>
+									<tr>
+										<th scope="row">4</th>
+										<td>Weekly Activity Report</td>
+										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
+										<td>40</td>
+										<td>
+											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
+											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="tab-pane" id="tab002" role="tabpanel">
+							<a href="#" title="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#assignScheduleFormModal"><i class="la la-upload"></i> Assign New Form</a>
+							<!--Assign Form-->
+							<div class="modal fade" id="assignScheduleFormModal" tabindex="-1" role="dialog" aria-labelledby="assignScheduleFormModalLabel" aria-hidden="true">
+								<div class="modal-dialog model-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="assignModalLabel">Assign New Form</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<div class="row">
+												<div class="col-md-6 col-sm-12">
+													<div class="widget-info margin-top">
+														<div class="widget-head">
+															<h4>My Forms</h4>
+														</div>
+														<div class="widget-body">
+															<div class="input-group input-group-sm margin-top">
+																<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+															</div>
+															<div class="form-group margin-top">
+																<label class="custom-control custom-radio">
+																  <input id="radio1" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+															<div class="form-group">
+																<label class="custom-control custom-radio">
+																  <input id="radio2" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+															<div class="form-group">
+																<label class="custom-control custom-radio">
+																  <input id="radio3" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+															<div class="form-group">
+																<label class="custom-control custom-radio">
+																  <input id="radio4" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col-md-6 col-sm-12">
+													<div class="widget-info margin-top">
+														<div class="widget-head">
+															<h4>Library Forms</h4>
+														</div>
+														<div class="widget-body margin-top">
+															<div class="input-group input-group-sm margin-top">
+																<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+															</div>
+															<div class="form-group margin-top">
+																<label class="custom-control custom-radio">
+																  <input id="radio11" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+															<div class="form-group">
+																<label class="custom-control custom-radio">
+																  <input id="radio12" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+															<div class="form-group">
+																<label class="custom-control custom-radio">
+																  <input id="radio13" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+															<div class="form-group">
+																<label class="custom-control custom-radio">
+																  <input id="radio14" name="radio" type="radio" class="custom-control-input">
+																  <span class="custom-control-indicator"></span>
+																  <span class="custom-control-description">Form Name</span>
+																</label>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-primary"><i class="la la-upload"></i> Assign Form</button>
+											<a href="#" class="btn btn-secondary"><i class="la la-file-text"></i> New Form</a>
+										</div>
+									</div>
+								</div>
+							</div>
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchScheduledForm" aria-expanded="false" aria-controls="searchScheduledForm"><i class="la la-search"></i> Search</a>
+							<!--Search Form-->
+							<div class="collapse margin-top" id="searchScheduledForm">
+								<form class="padding">
+									<div class="row">
+										<div class="col-md-6 ml-md-auto">
+											<div class="input-group">
+											  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+											  <span class="input-group-btn">
+												<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+											  </span>
+											</div>
+										</div>
+										<div class="col-md-3"></div>
+									</div>
+								</form>
+							</div>
+							<!--Form List-->
+							<table class="table table-responsive table-hover margin-top">
+								<thead class="thead-default">
+									<tr>
+										<th>S.N.</th>
+										<th>Form Title</th>
+										<th>Assigned Date</th>
+										<th>End Date</th>
+										<th>Responses</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">1</th>
+										<td>Daily Activity Report</td>
+										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
+										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
+										<td>10</td>
+										<td>
+											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
+											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
+										</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Weekly Activity Report</td>
+										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
+										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
+										<td>20</td>
+										<td>
+											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
+											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
+										</td>
+									</tr>
+									<tr>
+										<th scope="row">3</th>
+										<td>Daily Activity Report</td>
+										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
+										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
+										<td>15</td>
+										<td>
+											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
+											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
+										</td>
+									</tr>
+									<tr>
+										<th scope="row">4</th>
+										<td>Weekly Activity Report</td>
+										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
+										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
+										<td>40</td>
+										<td>
+											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
+											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="tab-pane" id="tab003" role="tabpanel">
+							<div id="accordion" role="tablist">
+							  <div class="card margin-bottom">
+								<div class="card-header clearfix" role="tab" id="headingOne" >
+									<div class="stage-name" data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+										Stage Name #1
+									</div>
+									<div class="stage-action">
+										<a href="#" title="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#stageOneEditModal"><i class="la la-edit"></i> Edit</a>
+										<div class="modal fade" id="stageOneEditModal" tabindex="-1" role="dialog" aria-labelledby="stageOneEditModalLabel" aria-hidden="true">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+												  <div class="modal-header">
+													<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+													  <span aria-hidden="true">&times;</span>
+													</button>
+												  </div>
+												  <div class="modal-body">
+													...
+												  </div>
+												  <div class="modal-footer">
+													<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+													<button type="button" class="btn btn-primary">Save changes</button>
+												  </div>
+												</div>
+											</div>
+										</div>
+										<a href="#" title="" class="btn btn-sm btn-danger"><i class="la la-close"></i> Delete</a>
+									</div>
+								</div>
+
+								<div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+								  <div class="card-body">
+									Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+									<div class="sub-stages margin-top">
+										<h3><i class="la la-sitemap"></i> Sub Stages :</h3>
+										<ul id="stage-one-substages">
+											<li class="clearfix">
+												<div class="substage-name">
+													<strong>1. </strong> Site Preparation
+												</div>
+												<div class="substage-form-name">
+													<strong>Form Name: </strong> Site Preparation
+												</div>
+												<div class="substage-form-action">
+													<a href="#" title="" class="badge badge-primary" data-toggle="modal" data-target="#editSubStageOneModal"><i class="la la-edit"></i> Edit</a>
+													<div class="modal fade" id="editSubStageOneModal" tabindex="-1" role="dialog" aria-labelledby="editSubStageOneModalLabel" aria-hidden="true">
+													  <div class="modal-dialog" role="document">
+														<div class="modal-content">
+														  <div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															  <span aria-hidden="true">&times;</span>
+															</button>
+														  </div>
+														  <div class="modal-body">
+															...
+														  </div>
+														  <div class="modal-footer">
+															<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+															<button type="button" class="btn btn-primary">Save changes</button>
+														  </div>
+														</div>
+													  </div>
+													</div>
+													<a href="#" title="" class="badge badge-success" data-toggle="modal" data-target="#materialsSubStageOneModal"><i class="la la-book"></i> Materials</a>
+													<div class="modal fade" id="materialsSubStageOneModal" tabindex="-1" role="dialog" aria-labelledby="materialsSubStageOneModalLabel" aria-hidden="true">
+													  <div class="modal-dialog" role="document">
+														<div class="modal-content">
+														  <div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															  <span aria-hidden="true">&times;</span>
+															</button>
+														  </div>
+														  <div class="modal-body">
+															...
+														  </div>
+														  <div class="modal-footer">
+															<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+															<button type="button" class="btn btn-primary">Save changes</button>
+														  </div>
+														</div>
+													  </div>
+													</div>
+												</div>
+											</li>
+											<li class="clearfix">
+												<div class="substage-name">
+													<strong>2. </strong> Foundation
+												</div>
+												<div class="substage-form-name">
+													<strong>Form Name: </strong> Daily Report
+												</div>
+												<div class="substage-form-action">
+													<a href="#" title="" class="badge badge-primary" data-toggle="modal" data-target="#editSubStageTwoModal"><i class="la la-edit"></i> Edit</a>
+													<div class="modal fade" id="editSubStageTwoModal" tabindex="-1" role="dialog" aria-labelledby="editSubStageTwoModalLabel" aria-hidden="true">
+													  <div class="modal-dialog" role="document">
+														<div class="modal-content">
+														  <div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															  <span aria-hidden="true">&times;</span>
+															</button>
+														  </div>
+														  <div class="modal-body">
+															...
+														  </div>
+														  <div class="modal-footer">
+															<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+															<button type="button" class="btn btn-primary">Save changes</button>
+														  </div>
+														</div>
+													  </div>
+													</div>
+													<a href="#" title="" class="badge badge-success" data-toggle="modal" data-target="#materialsSubStageTwoModal"><i class="la la-book"></i> Materials</a>
+													<div class="modal fade" id="materialsSubStageTwoModal" tabindex="-1" role="dialog" aria-labelledby="materialsSubStageTwoModalLabel" aria-hidden="true">
+													  <div class="modal-dialog" role="document">
+														<div class="modal-content">
+														  <div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															  <span aria-hidden="true">&times;</span>
+															</button>
+														  </div>
+														  <div class="modal-body">
+															...
+														  </div>
+														  <div class="modal-footer">
+															<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+															<button type="button" class="btn btn-primary">Save changes</button>
+														  </div>
+														</div>
+													  </div>
+													</div>
+												</div>
+											</li>
+										</ul>
+									</div>
+									<button type="button" class="btn btn-sm btn-primary margin-top"><i class="la la-save"></i> Save Changes</button>
+								  </div>
+								</div>
+							  </div>
+							  <div class="card margin-bottom">
+								<div class="card-header" role="tab" id="headingTwo">
+								  <div class="stage-name" data-toggle="collapse" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+										Stage Name #2
+									</div>
+									<div class="stage-action">
+										<a href="#" title="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#stageTwoEditModal"><i class="la la-edit"></i> Edit</a>
+										<div class="modal fade" id="stageTwoEditModal" tabindex="-1" role="dialog" aria-labelledby="stageTwoEditModalLabel" aria-hidden="true">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+												  <div class="modal-header">
+													<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+													  <span aria-hidden="true">&times;</span>
+													</button>
+												  </div>
+												  <div class="modal-body">
+													...
+												  </div>
+												  <div class="modal-footer">
+													<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+													<button type="button" class="btn btn-primary">Save changes</button>
+												  </div>
+												</div>
+											</div>
+										</div>
+										<a href="#" title="" class="btn btn-sm btn-danger"><i class="la la-close"></i> Delete</a>
+									</div>
+								</div>
+								<div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
+								  <div class="card-body">
+									Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+								  </div>
+								</div>
+							  </div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+{% endblock %}
