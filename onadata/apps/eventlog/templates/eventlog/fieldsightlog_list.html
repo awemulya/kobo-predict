@@ -1,57 +1,45 @@
-{% extends "fieldsight/fieldsight_base.html" %}
+{% extends "fieldsight/fieldsight_base1.html" %}
 {% load i18n staticfiles %}
 {% load filters %}
+{% block content %}
+{% load filters %}
+            <div id="main-content" class="padding">
+                <section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-building"></i>{% trans 'New' %}{% trans 'Site' %} </h3>
+                    </header>
+                    <div class="panel-body">
+                      
 
-{% block page-title %}{% trans 'Logs' %}{% endblock %}
-{% block extracss %}
-
-<style >
+                    <style >
     .panel-body{
         position: relative;
         bottom: 46px;
     }
 </style>
-{% endblock %}
-
-
-{% block content %}
-
-    
-    {% load sorting_tags %}
-    {% load filters %}
     <span class="title2_note">Your Notifications</span>
     <div class="gap"></div>
     <div class='well'>
 
         
 
-        <table class="table table-striped">
-            <!--<thead>-->
-            <!--<th>{% anchor title _('Title') %}</th>-->
-            <!--<th>{% anchor description _('Description') %}</th>-->
-            <!--<th>{% anchor date _('Date') %}</th>-->
-            <!--<th>{% anchor source _('Actor') %}</th>-->
-            <!--</thead>-->
-            <tbody>
-
-
-
-
-            <tr>
-                <td id="notifications" class="note-table">
-                    
-                </td>
-            </tr>         
-            </tbody>
-            
-        </table>
+       <ul class="menu" id="notificationul">
+       </ul>
 
         <center>
                 <input style="display:none;" type="button" id="getnextlist" onclick="" value="load more">
             </center>
     </div>
 
-<script type="text/javascript">
+
+
+                    </div>
+                </section>
+
+            </div>
+{% endblock %}
+ {% block extrascript %}
+ <script type="text/javascript">
 
 
 document.onload = getnotifdatalist('{% url 'eventlog:api-not' %}');
@@ -87,19 +75,66 @@ function populatedatalist(data, index){
     var content = types[typeid](data);
 //append the data in main notificatin div
     
-    var new_li = '<li class="note-div-sm '+ readstatus +'" id="'+data.id+'list" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ dateparser(data.date) +' </div></div>  </li>';
+
+
+
+
+
+    var new_li = '<li class=" note-div-sm '+ readstatus +'" id="'+data.id+'list" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);">'+
+                            
+                                '<div class="notification-item">' +
+                                    '<div class="notification-avatar pull-left">' +
+                                        '<i class="avatar-icon la la-bolt"></i>' +
+                                    '</div>' +
+                                   content +
+                      '<p class="notification-highlight-time">' + dateparser(data.date) + '</p>' +
+                                    '</div>' +
+                                '</div>' +
+                            
+'</li>';
+
+console.log(new_li);
+
+
+
 
     // var div = document.getElementById('notifications');
 
     // div.innerHTML += new_li;
     speed = speed+200;
 
-$(new_li).appendTo("#notifications");
+$(new_li).appendTo("#notificationul");
 $("#"+data.id+"list").fadeIn(speed);
 }
 
 
 
 </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
+    <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
+  <script type="text/javascript">
+     var static_url ="{{ STATIC_URL }}";
+     var elat = "{{form.instance.latitude}}";
+     var elong = "{{form.instance.longitude}}";
+    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/addmarker.js"></script>
+{% endblock %}
 
-{% endblock %}workon kpi
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+

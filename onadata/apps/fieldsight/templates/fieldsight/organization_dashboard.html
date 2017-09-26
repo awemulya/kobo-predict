@@ -225,9 +225,8 @@ var org = "{{obj.pk}}";
 													</div>
 												</form>
 											</div>
-
-											<div class="org-site-list current-person row top3 site-nav" data-bind="foreach: sites" >
-											<a data-bind="attr: { href: url }" class="project-item-wrap clearfix">
+											<div data-bind="foreach: sites" class="" style="overflow-y: scroll;">
+											<a data-bind="attr: { href: url }" class="project-item-wrap clearfix" style="width: 100%;">
 												<div class="project-logo">
 													 <img data-bind="attr:{src: logo}">
 												</div>
@@ -237,7 +236,7 @@ var org = "{{obj.pk}}";
 												<p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span><span data-bind="text:phone"></span></p>
 												</div>
 											</a>
-											</div>
+										</div>
 										</div>
 									</div>
 								</div>

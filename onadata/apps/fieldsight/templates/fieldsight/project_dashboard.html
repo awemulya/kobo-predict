@@ -218,8 +218,9 @@ var project = "{{obj.pk}}";
 													</div>
 												</form>
 											</div>
-											<div class='adv-table row' data-bind="foreach: sites">
-											<a data-bind="attr:{ href: url }" class="project-item-wrap clearfix">
+											<div  data-bind="foreach: sites">
+											<div class='adv-table row col-md-12'>
+											<a data-bind="attr:{ href: url }" class="project-item-wrap " style="width: 100%;">
 												<div class="project-logo">
 													<img data-bind="attr:{src: logo}" width="50" height="50"/>
 												</div>
@@ -240,6 +241,7 @@ var project = "{{obj.pk}}";
 
 												</div>
 											</a>
+											</div>
 											</div>
 
 										</div>

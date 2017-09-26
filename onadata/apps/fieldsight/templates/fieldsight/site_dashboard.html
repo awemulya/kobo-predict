@@ -10,7 +10,7 @@
 
 {% block content %}
 {% load filters %}
-<div id="main-content" class="padding">
+<div id="main-content" class="padding" onload="change()">
 				<div class="org-profile-top-action">
 					<div class="action-left">
 
@@ -63,10 +63,18 @@
 							</div>
 							{% with progress=obj.progress %}
 							<div class="progress">
-							<div class="progress progress-striped active progress-sm">
-							  <div class="progress-bar progress-bar-success" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuenow="{{progress}}" aria-valuemax="100">
+							<div class="progress progress-striped active progress-sm" style="width:100%;"> 
+				
+							  <div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ progress  }}%;" aria-valuenow="65" aria-valuenow="{{progress}}" aria-valuemax="100">
 								   <span class="sr-only">{{ progress }}% Complete</span>
-								  <span class="progress-bar-value">{{ progress }}%</span>
+							{% if progress < 20 %}
+								  <span class="progress-bar-value" style="color:red;">{{ progress }}% Complete</span>
+
+							{% else %}
+
+							<span class="progress-bar-value" style="color:white;">{{ progress }}% Complete</span>
+
+							{% endif %} 
 							 </div>
 							</div>
 							</div>
