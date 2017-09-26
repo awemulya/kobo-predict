@@ -1177,6 +1177,8 @@ class ActivateRole(TemplateView):
             user = User(username=request.POST.get('username'), email=invite.email, first_name=request.POST.get('firstname'), last_name=request.POST.get('lastname'))
             user.set_password(request.POST.get('password1'))
             user.save()
+            profile = UserProfile(user=user, organization=invite.organization)
+            profile.save()
             userrole = UserRole(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
             userrole.save()
             invite.is_used = True

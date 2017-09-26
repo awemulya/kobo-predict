@@ -27,7 +27,7 @@
        </ul>
 
         <center>
-                <input style="display:none;" type="button" id="getnextlist" onclick="" value="load more">
+                <input style="display:none;" type="button" id="getnextlist" value="load more">
             </center>
     </div>
 
@@ -44,8 +44,7 @@
 
 document.onload = getnotifdatalist('{% url 'eventlog:api-not' %}');
 
-  function getnotifdatalist(url){ 
-    
+  function getnotifdatalist(url){ s
       $.ajax({
         url: url,
         type: 'GET',
@@ -56,7 +55,7 @@ document.onload = getnotifdatalist('{% url 'eventlog:api-not' %}');
             document.getElementById('getnextlist').style.display = 'none';
            }else{
             document.getElementById('getnextlist').style.display = 'block';
-            document.getElementById("getnextlist").setAttribute( "onClick", "javascript: getnotifdata('"+ data.next+"');" );
+            document.getElementById("getnextlist").setAttribute( "onClick", "javascript: getnotifdatalist('"+ data.next+"');" );
         }
         }
       });
