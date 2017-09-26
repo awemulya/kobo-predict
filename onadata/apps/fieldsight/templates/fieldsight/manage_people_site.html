@@ -48,12 +48,12 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 <input type="hidden" id="invite_organization_id" value="{{ organization }}">
 <input type="hidden" id="invite_project_id" value="{{ project }}">
 <input type="hidden" id="invite_site_id" value="{{ site }}">
-{% if category == "site" %}
+<!-- {% if category == "site" %}
 <input type="radio" name="group" id="invite_group" value="Reviewer" checked> Reviewer<br>
 <input type="radio" name="group" id="invite_group" value="Site Supervisor"> Site Supervisor<br>
 {% else %}
 <input type="hidden" id="invite_group" value="{{ category }}">
-{% endif %}
+{% endif %} -->
 
 
 			<div id="main-content" class="padding">
@@ -61,353 +61,14 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
 
 
-					<div class="col-md-8">
-						<div class="widget-info margin-top bg-white padding">
-							<div class="widget-head">
-								<h4>Site Users</h4>
-							</div>
-							<div class="widget-body">
-								<form>
-									<div class="input-group">
-										<input type="text" id="invite_email" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
-										<span class="input-group-btn">
-											<button class="btn btn-primary" id="retry" onclick="refresh()" type="button"><i class="la la-user-plus"></i> Invite</button>
-										</span>
-									</div>
-								</form>
 
-
-               
-								<h4 class="text-center margin-top">
-								<strong>OR</strong>
-								</h4>
-								<p class="text-center">
-								Select from available Users
-								</p>
-								<form class="margin-top">
-									<div class="input-group">
-										<input type="text" class="form-control" placeholder="Search..." aria-label="Search...">
-									</div>
-								</form>
-								<ul class="row max-260-scroll">
-									<li class="col-md-4">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input" checked>
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									
-									<li class="clearfix"></li>
-								</ul>
-								<div class="margin-top">
-								3 Users Selected.<br/>
-								<button type="submit" class="btn btn-primary margin-top"><i class="la la-user-plus"></i> Assign Managers</button>
-								</div>
-
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="widget-info margin-top bg-white padding">
-							<div class="widget-head">
-								<h4>Current Project Managers</h4>
-							</div>
-							<div class="widget-body max-513-scolling" data-bind="foreach:admins">
-								<div class="project-item-wrap clearfix">
-                	<div class="project-logo">
-										<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-									</div>
-									<div class="project-basic-info">
-										<h4>Bikrant Giri</h4>
-										<p>Old Baneshwor, Kathmandu, Nepal</p>
-									</div>
-									<a href="#" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
-								</div>
-								
-						</div>
-					</div>
-				</div>
-        
-
-
-			<!-- 	<div class="row">
-					<div class="col-md-6">
-						<div class="widget-info margin-top bg-white padding">
-							<div class="widget-head">
-								<h4>Users</h4>
-							</div>
-							<div class="widget-body">
-								<ul class="row max-260-scroll">
-									<li class="col-md-6">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input" checked>
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="col-md-6">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input" checked>
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="clearfix"></li>
-									<li class="col-md-6">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input" checked>
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="col-md-6">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input" checked>
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="clearfix"></li>
-									<li class="col-md-6">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input" checked>
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="col-md-6">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input" checked>
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Bikrant Giri</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-6">
-						<div class="widget-info margin-top bg-white padding">
-							<div class="widget-head">
-								<h4>Organization</h4>
-							</div>
-							<div class="widget-body">
-								<ul class="row max-260-scroll">
-									<li class="col-md-6">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input" checked>
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Organization Name</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="col-md-6">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input" checked>
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Organization Name</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="clearfix"></li>
-									<li class="col-md-6">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input" checked>
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Organization Name</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="col-md-6">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input" checked>
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Organization Name</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="clearfix"></li>
-									<li class="col-md-6">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input" checked>
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Organization Name</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-									<li class="col-md-6">
-										<label class="custom-control margin-top user-checkbox custom-checkbox">
-											<input type="checkbox" class="custom-control-input" checked>
-											<span class="custom-control-indicator"></span>
-											<span class="custom-control-description">
-												<div class="project-item-wrap clearfix">
-													<div class="project-logo">
-														<img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">
-													</div>
-													<div class="project-basic-info">
-														<h4>Organization Name</h4>
-														<p>Old Baneshwor, Kathmandu, Nepal</p>
-													</div>
-												</div>
-												<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
-											</span>
-										</label>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div> -->
-				<!-- <div class="margin-top">
-					<div class="padding bg-white">
-						<button type="submit" class="btn btn-primary btn-block"><i class="la la-user-plus"></i> Assign Users</button>
-					</div>
-				</div> -->
-			</div>
-
-
-
-      <!-- for project -->
-
-      <div class="row" data-bind="with:projectVm ,visible: currentVm() == 'project'" style="display:none;">
-
-
-
-      <div class="tabbing margin-top">
+          <div class="tabbing margin-top">
           <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Project User Assign</a>
+              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Site Supervisors</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Site User Assign</a>
+              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Site Reviewers</a>
             </li>
           </ul>
           <!-- Tab panes -->
@@ -420,14 +81,14 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <div class="col-md-8">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Project Users</h4>
+                <h4>Supervisors</h4>
               </div>
               <div class="widget-body">
                 <form>
                   <div class="input-group">
                     <input type="text" id="invite_email" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
                     <span class="input-group-btn">
-                      <button class="btn btn-primary" id="retry" onclick="refresh()" type="button"><i class="la la-user-plus"></i> Invite</button>
+                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Site Supervisor')" type="button"><i class="la la-user-plus"></i> Invite</button>
                     </span>
                   </div>
                 </form>
@@ -471,7 +132,222 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </ul>
                 <div class="margin-top">
                 3 Users Selected.<br/>
-                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.doAssign"><i class="la la-user-plus"></i> Assign Project Manager</button>
+                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignsupervisors"><i class="la la-user-plus"></i> Assign Supervisors</button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Current Supervisors</h4>
+              </div>
+
+              <div class="widget-body max-513-scolling" data-bind="foreach:allSupervisors">
+                <div class="project-item-wrap clearfix">
+                  <div class="project-logo">
+                    <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                  </div>
+                  <div class="project-basic-info">
+                    <h4 data-bind="text:user().full_name"></h4>
+                    <p data-bind="text:user().email"></p>
+                  </div>
+                  <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this supervisor?', click:rmrole }"><i class="la la-close"></i></a>
+
+
+
+                  <li class="clearfix"></li>
+                </ul>
+            </div>
+            
+            <div class="tab-pane" id="tab002" role="tabpanel">
+
+
+
+            <ul class="row">
+                 
+
+
+                  <div class="col-md-8">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Reviewers</h4>
+              </div>
+              <div class="widget-body">
+                <form>
+                  <div class="input-group">
+                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Reviewer')" type="button"><i class="la la-user-plus"></i> Invite</button>
+                    </span>
+                  </div>
+                </form>
+
+
+               
+                <h4 class="text-center margin-top">
+                <strong>OR</strong>
+                </h4>
+                <p class="text-center">
+                Select from available Users
+                </p>
+                <form class="margin-top">
+                  <div class="input-group">
+                    <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                  </div>
+                </form>
+                 <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+                <ul class="row" data-bind="foreach:$root.users">
+                  <li class="col-md-4">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                          <div class="project-logo">
+                            <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                          </div>
+                          <div class="project-basic-info">
+                            <h4 data-bind="text:user().full_name"></h4>
+                            <p data-bind="text:user().email"></p>
+                          </div>
+                        </div>
+                        <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+                      </span>
+                    </label>
+                  </li>
+                  
+                  <li class="clearfix"></li>
+                </ul>
+                <div class="margin-top">
+                3 Users Selected.<br/>
+                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignreviewers"><i class="la la-user-plus"></i> Assign Reviewers</button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Current Supervisors</h4>
+              </div>
+
+              <div class="widget-body max-513-scolling" data-bind="foreach:allReviewers">
+                <div class="project-item-wrap clearfix">
+                  <div class="project-logo">
+                    <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                  </div>
+                  <div class="project-basic-info">
+                    <h4 data-bind="text:user().full_name"></h4>
+                    <p data-bind="text:user().email"></p>
+                  </div>
+                  <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this reviewer?', click:rmrole }"><i class="la la-close"></i></a>
+
+
+
+                  <li class="clearfix"></li>
+                </ul>
+
+
+
+
+
+            </div>
+          </div>
+         <!--  <button type="submit" class="btn btn-primary btn-block"><i class="la la-user-plus"></i> Assign Users</button> -->
+        </div>
+
+
+
+
+
+
+			</div>
+
+
+
+      <!-- for project -->
+
+      <div class="row" data-bind="with:projectVm ,visible: currentVm() == 'project'" style="display:none;">
+
+
+
+      <div class="tabbing margin-top">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Project User Assign</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Site User Assign</a>
+            </li>
+          </ul>
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab001" role="tabpanel">
+              <ul class="row">
+                 
+
+
+                  <div class="col-md-8">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Project Users</h4>
+              </div>
+              <div class="widget-body">
+                <form>
+                  <div class="input-group">
+                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Project Manager')" type="button"><i class="la la-user-plus"></i> Invite</button>
+                    </span>
+                  </div>
+                </form>
+
+
+               
+                <h4 class="text-center margin-top">
+                <strong>OR</strong>
+                </h4>
+                <p class="text-center">
+                Select from available Users
+                </p>
+                <form class="margin-top">
+                  <div class="input-group">
+                    <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                  </div>
+                </form>
+                 <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+                <ul class="row" data-bind="foreach:$root.users">
+                  <li class="col-md-4">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                          <div class="project-logo">
+                            <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                          </div>
+                          <div class="project-basic-info">
+                            <h4 data-bind="text:user().full_name"></h4>
+                            <p data-bind="text:user().email"></p>
+                          </div>
+                        </div>
+                        <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+                      </span>
+                    </label>
+                  </li>
+                  
+                  <li class="clearfix"></li>
+                </ul>
+                <div class="margin-top">
+                3 Users Selected.<br/>
+                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> Assign Project Manager</button>
                 </div>
 
               </div>
@@ -524,7 +400,24 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                  <div class="input-group">
                     <input type="text" id="multi_invite_email_ps" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
                     <span class="input-group-btn">
-                      <button class="btn btn-primary" id="retry" data-bind="click:inviteforemails" type="button"><i class="la la-user-plus"></i> Invite</button>
+                      
+                      <span class="dropdown">
+                    <a href="#" id="dropdownMenuButtonManage" class="btn btn-primary margin-top" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="la la-cogs"></i>Invite
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage" x-placement="bottom-end" style="background-color: #00628E; position: absolute; transform: translate3d(74px, 24px, 0px); top: 0px; left: 0px; will-change: transform;">
+                      <a class="dropdown-item" href="#" style="color:white;" data-bind="click:invitesupervisors"><i class="la la-user"></i>As Site Supervisor</a>
+                      <a class="dropdown-item" href="#" style="color:white;" data-bind="click:invitereviewers"><i class="la la-clipboard"></i>As Reviewer</a>
+                      
+
+
+                     
+                    </div>
+                  </span>
+
+
+
+                     
                     </span>
                   </div>
                   <br>
@@ -579,7 +472,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                  <input type="button" value="Unselect All" data-bind="click:setAllUnSelected">
 
 
-               <!--  <ul class="row max-260-scroll" data-bind="foreach:projects">
+                <ul class="row max-260-scroll" data-bind="foreach:sites">
                 
                   <li class="col-md-12">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
@@ -601,14 +494,23 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   </li>
                   
                   <li class="clearfix"></li>
-                </ul> -->
+                </ul>
                 
               </div>
             </div>
           </div>
 
-
-          <input type="button" name="assign" class="btn btn-primary margin-top" data-bind="click:doAssign" value="Assign All selected Users">
+<span class="dropdown">
+              <a href="#" id="dropdownMenuButtonManage" class="btn btn-primary margin-top" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="la la-cogs"></i>Invite Selected Users
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage" x-placement="bottom-end" style="background-color: #00628E; position: absolute; transform: translate3d(74px, 24px, 0px); top: 0px; left: 0px; will-change: transform;">
+                <a class="dropdown-item" href="#" style="color:white;" data-bind="click:assignselectedsupervisor"><i class="la la-user"></i>As Site Supervisor</a>
+                <a class="dropdown-item" href="#" style="color:white;" data-bind="click:assignselectedreviewer"><i class="la la-clipboard"></i>As Reviewer</a>
+                
+              </div>
+            </span>
+          
         </div>
 
 
@@ -661,7 +563,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <div class="input-group">
                     <input type="text" id="invite_email" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
                     <span class="input-group-btn">
-                      <button class="btn btn-primary" id="retry" onclick="refresh()" type="button"><i class="la la-user-plus"></i> Invite</button>
+                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Organization Admin')" type="button"><i class="la la-user-plus"></i> Invite</button>
                     </span>
                   </div>
                 </form>
@@ -705,7 +607,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </ul>
                 <div class="margin-top">
                 3 Users Selected.<br/>
-                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.doAssign"><i class="la la-user-plus"></i> Assign Organization Admin</button>
+                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignOadmin"><i class="la la-user-plus"></i> Assign Organization Admin</button>
                 </div>
 
               </div>
@@ -841,9 +743,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
             </div>
           </div>
 
-
-          <input type="button" name="assign" class="btn btn-primary margin-top" data-bind="click:doAssign" value="Assign All selected Users">
-        </div>
+<button type="submit" class="btn btn-primary margin-top" data-bind="click:doAssign"><i class="la la-user-plus"></i> Assign Project Managers</button>
+  
 
 
                   <li class="clearfix"></li>
@@ -903,28 +804,28 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 <script>
 var ajax_call=false;
 var status = true;
-function refresh(){
-  var email = $("#invite_email").val();
+// function refresh(group){
+//   var email = $("#invite_email").val();
   
 
-  // if(email.indexOf(',') > -1){
+//   // if(email.indexOf(',') > -1){
 
-  //       // alert('ola');
-        sendmultiplerequest(email);
+//   //       // alert('ola');
+//         sendmultiplerequest(email);
 
-  //       return false;  
-  // }
-  // else{
-  // data = validateemail(email);
+//   //       return false;  
+//   // }
+//   // else{
+//   // data = validateemail(email);
   
-  // if(data.status == false){
-  //   return false;
-  // }
+//   // if(data.status == false){
+//   //   return false;
+//   // }
 
-  // ajax_call = true;
-  // checkemail(email);
-  // }   
-}
+//   // ajax_call = true;
+//   // checkemail(email);
+//   // }   
+// }
 function validateemail(email){
   var atherate = email.indexOf("@");
   var dot = email.indexOf(".", atherate);
@@ -953,11 +854,12 @@ function validateemail(email){
 }
 
 
-function sendmultiplerequest(email){
+function sendmultiplerequest(group){
+    var email = $("#invite_email").val();
     status=true;
     emails = email.split(",");
     emails.forEach(multiemailvalidate);
-    if(status == "true" ){ sendinvite(emails); }
+    if(status == "true" ){ sendinvite(emails, group); }
     else{ alert('failed'); }
 }
 
@@ -1026,12 +928,11 @@ function sendnewuserinvite(){
 {% if category == "site" %}
 
 <script>
-  function sendinvite(emails){
+  function sendinvite(emails, group){
       $('#myinvitemodal').modal(); 
       var organization_id = $("#invite_organization_id").val();
       var project_id = $("#invite_project_id").val();
       var site_id = $("#invite_site_id").val();
-      var group =  $( 'input[id=invite_group]:checked' ).val();
       // console.log(emails);
       // console.log(group);
       // console.log(project_id);
@@ -1049,12 +950,11 @@ function sendnewuserinvite(){
 </script>
 {% else %}
 <script>
-  function sendinvite(emails){ 
+  function sendinvite(emails, group){ 
       $('#myinvitemodal').modal(); 
       var organization_id = $("#invite_organization_id").val();
       var project_id = $("#invite_project_id").val();
       var site_id = $("#invite_site_id").val();
-      var group =  $("#invite_group").val();
       
       $.ajax({
         url: "{% url 'fieldsight:senduserinvite' %}",

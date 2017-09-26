@@ -46,9 +46,9 @@ class UserRoleViewSet(viewsets.ModelViewSet):
             if level == "0":
                 queryset = queryset.filter(site__id=pk, group__name__in=['Site Supervisor', 'Reviewer']).distinct('user_id')
             elif level == "1":
-                queryset = queryset.filter(project__id=pk, group__name='Project Manager').distinct('user_id')
+                queryset = queryset.filter(project__id=pk, site__id=None, group__name='Project Manager').distinct('user_id')
             elif level == "2":
-                queryset = queryset.filter(organization__id=pk, group__name='Organization Admin').distinct('user_id')
+                queryset = queryset.filter(organization__id=pk, project__id=None, site__id=None, group__name='Organization Admin').distinct('user_id')
         except:
             queryset = []
         return queryset
@@ -71,7 +71,7 @@ class UserRoleViewSet(viewsets.ModelViewSet):
 
                     if created:
                         description = "{0} was assigned  as {1} in {2}".format(
-                            role.user.get_full_name(), role.lgroup.name, role.project)
+                            role.user.get_full_name(), role.group.name, role.project)
                         noti_type = 8
 
                         if data.get('group') == "Reviewer":

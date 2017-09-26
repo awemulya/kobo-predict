@@ -1073,9 +1073,11 @@ def sendmultiroleuserinvite(request):
             project_id = level
             organization_id = Project.objects.get(pk=level).organization_id
             print organization_id
+        
         elif leveltype == "site":
-            
-            site = Site.objects.get(pk=level)
+            site_id = level
+            site = Site.objects.get(pk=site_id)
+
             project_id = site.project_id
             organization_id = site.project.organization_id
 
@@ -1263,17 +1265,19 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         return render(request, 'fieldsight/multi_user_assign.html',{'type': "site", 'pk':pk})
 
     def post(self, request, *args, **kwargs):
-        sites = request.POST.getlist('proj_site[]')
-        users = request.POST.getlist('users[]')
-        group = Group.objects.get(name=request.POST.get('group'))
+        data = json.loads(self.request.body)
+        sites = data.get('sites')
+        users = data.get('users')
+        group = Group.objects.get(name=data.get('group'))
         response = ""
         for site_id in sites:
             site = Site.objects.get(pk=site_id)
 
             for user in users:
                 role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
-                                                               project__id=site.project.id, group=group)
+                                                               project__id=site.project.id, organization__id=site.project.organization_id, group=group)
                 if created:
+                    print "yesssssssssssssssssssssssssss"
                     # description = "{0} was assigned  as {1} in {2}".format(
                     #     role.user.get_full_name(), role.lgroup.name, role.project)
                     noti_type = 8
