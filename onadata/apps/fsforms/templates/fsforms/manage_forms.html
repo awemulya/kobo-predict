@@ -62,7 +62,8 @@ var pk = "{{pk}}";
                             data-bind="click: function () {setSelectedVm('schedules')}">Scheduled Forms</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Staged Form</a>
+							<a class="nav-link" data-toggle="tab" href="#tab003" role="tab"
+                            data-bind="click: function () {setSelectedVm('stages')}">Staged Form</a>
 						</li>
                         <li class="nav-item" data-bind="visible:is_project=='1'">
 							<a class="nav-link" data-toggle="tab" href="#tab004" role="tab"
@@ -638,188 +639,157 @@ var pk = "{{pk}}";
                             </div>
 						</div>
 						<div class="tab-pane" id="tab003" role="tabpanel">
-							<div id="accordion" role="tablist">
-							  <div class="card margin-bottom">
-								<div class="card-header clearfix" role="tab" id="headingOne" >
-									<div class="stage-name" data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-										Stage Name #1
-									</div>
-									<div class="stage-action">
-										<a href="#" title="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#stageOneEditModal"><i class="la la-edit"></i> Edit</a>
-										<div class="modal fade" id="stageOneEditModal" tabindex="-1" role="dialog" aria-labelledby="stageOneEditModalLabel" aria-hidden="true">
-											<div class="modal-dialog" role="document">
-												<div class="modal-content">
-												  <div class="modal-header">
-													<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-													  <span aria-hidden="true">&times;</span>
-													</button>
-												  </div>
-												  <div class="modal-body">
-													...
-												  </div>
-												  <div class="modal-footer">
-													<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-													<button type="button" class="btn btn-primary">Save changes</button>
-												  </div>
-												</div>
-											</div>
-										</div>
-										<a href="#" title="" class="btn btn-sm btn-danger"><i class="la la-close"></i> Delete</a>
-									</div>
-								</div>
+                            <div data-bind="with:stagesVm">
+                                <div id="accordion" role="tablist">
+                                  <div class="card margin-bottom" data-bind="foreach:stages">
+                                    <div class="card-header clearfix" role="tab" data-bind="attr: { id: 'heading_' + $index() }" >
+                                        <div class="stage-name" data-toggle="collapse"
+                                             aria-expanded="true"
+                                             data-bind="attr: { 'aria-controls': 'prefix_' + $index(), href: '#prefix_' + $index() }">
+                                            <span data-bind="text:name"></span> #<span data-bind="text:$index() +1"></span>
+                                        </div>
+                                        <div class="stage-action">
+                                            <a href="#" title="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#stageOneEditModal"><i class="la la-edit"></i> Edit</a>
+                                            <div class="modal fade" id="stageOneEditModal" tabindex="-1" role="dialog" aria-labelledby="stageOneEditModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                      <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                          <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                      </div>
+                                                      <div class="modal-body">
+                                                        ...
+                                                      </div>
+                                                      <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="#" title="" class="btn btn-sm btn-danger"><i class="la la-close"></i> Delete</a>
+                                        </div>
+                                    </div>
 
-								<div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
-								  <div class="card-body">
-									Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-									<div class="sub-stages margin-top">
-										<h3><i class="la la-sitemap"></i> Sub Stages :</h3>
-										<ul id="stage-one-substages">
-											<li class="clearfix">
-												<div class="substage-name">
-													<strong>1. </strong> Site Preparation
-												</div>
-												<div class="substage-form-name">
-													<strong>Form Name: </strong> Site Preparation
-												</div>
-												<div class="substage-form-action">
-													<a href="#" title="" class="badge badge-primary" data-toggle="modal" data-target="#editSubStageOneModal"><i class="la la-edit"></i> Edit</a>
-													<div class="modal fade" id="editSubStageOneModal" tabindex="-1" role="dialog" aria-labelledby="editSubStageOneModalLabel" aria-hidden="true">
-													  <div class="modal-dialog" role="document">
-														<div class="modal-content">
-														  <div class="modal-header">
-															<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-															  <span aria-hidden="true">&times;</span>
-															</button>
-														  </div>
-														  <div class="modal-body">
-															...
-														  </div>
-														  <div class="modal-footer">
-															<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-															<button type="button" class="btn btn-primary">Save changes</button>
-														  </div>
-														</div>
-													  </div>
-													</div>
-													<a href="#" title="" class="badge badge-success" data-toggle="modal" data-target="#materialsSubStageOneModal"><i class="la la-book"></i> Materials</a>
-													<div class="modal fade" id="materialsSubStageOneModal" tabindex="-1" role="dialog" aria-labelledby="materialsSubStageOneModalLabel" aria-hidden="true">
-													  <div class="modal-dialog" role="document">
-														<div class="modal-content">
-														  <div class="modal-header">
-															<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-															  <span aria-hidden="true">&times;</span>
-															</button>
-														  </div>
-														  <div class="modal-body">
-															...
-														  </div>
-														  <div class="modal-footer">
-															<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-															<button type="button" class="btn btn-primary">Save changes</button>
-														  </div>
-														</div>
-													  </div>
-													</div>
-												</div>
-											</li>
-											<li class="clearfix">
-												<div class="substage-name">
-													<strong>2. </strong> Foundation
-												</div>
-												<div class="substage-form-name">
-													<strong>Form Name: </strong> Daily Report
-												</div>
-												<div class="substage-form-action">
-													<a href="#" title="" class="badge badge-primary" data-toggle="modal" data-target="#editSubStageTwoModal"><i class="la la-edit"></i> Edit</a>
-													<div class="modal fade" id="editSubStageTwoModal" tabindex="-1" role="dialog" aria-labelledby="editSubStageTwoModalLabel" aria-hidden="true">
-													  <div class="modal-dialog" role="document">
-														<div class="modal-content">
-														  <div class="modal-header">
-															<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-															  <span aria-hidden="true">&times;</span>
-															</button>
-														  </div>
-														  <div class="modal-body">
-															...
-														  </div>
-														  <div class="modal-footer">
-															<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-															<button type="button" class="btn btn-primary">Save changes</button>
-														  </div>
-														</div>
-													  </div>
-													</div>
-													<a href="#" title="" class="badge badge-success" data-toggle="modal" data-target="#materialsSubStageTwoModal"><i class="la la-book"></i> Materials</a>
-													<div class="modal fade" id="materialsSubStageTwoModal" tabindex="-1" role="dialog" aria-labelledby="materialsSubStageTwoModalLabel" aria-hidden="true">
-													  <div class="modal-dialog" role="document">
-														<div class="modal-content">
-														  <div class="modal-header">
-															<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-															  <span aria-hidden="true">&times;</span>
-															</button>
-														  </div>
-														  <div class="modal-body">
-															...
-														  </div>
-														  <div class="modal-footer">
-															<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-															<button type="button" class="btn btn-primary">Save changes</button>
-														  </div>
-														</div>
-													  </div>
-													</div>
-												</div>
-											</li>
-										</ul>
-									</div>
-									<button type="button" class="btn btn-sm btn-primary margin-top"><i class="la la-save"></i> Save Changes</button>
-								  </div>
-								</div>
-							  </div>
-							  <div class="card margin-bottom">
-								<div class="card-header" role="tab" id="headingTwo">
-								  <div class="stage-name" data-toggle="collapse" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-										Stage Name #2
-									</div>
-									<div class="stage-action">
-										<a href="#" title="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#stageTwoEditModal"><i class="la la-edit"></i> Edit</a>
-										<div class="modal fade" id="stageTwoEditModal" tabindex="-1" role="dialog" aria-labelledby="stageTwoEditModalLabel" aria-hidden="true">
-											<div class="modal-dialog" role="document">
-												<div class="modal-content">
-												  <div class="modal-header">
-													<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-													  <span aria-hidden="true">&times;</span>
-													</button>
-												  </div>
-												  <div class="modal-body">
-													...
-												  </div>
-												  <div class="modal-footer">
-													<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-													<button type="button" class="btn btn-primary">Save changes</button>
-												  </div>
-												</div>
-											</div>
-										</div>
-										<a href="#" title="" class="btn btn-sm btn-danger"><i class="la la-close"></i> Delete</a>
-									</div>
-								</div>
-								<div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
-								  <div class="card-body">
-									Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-								  </div>
-								</div>
-							  </div>
-							</div>
+                                    <div data-bind="attr: { id: 'prefix_' + $index() }" class="collapse" role="tabpanel" data-bind="attr: { aria-labelledby: 'heading_' + $index() }" data-parent="#accordion">
+                                      <div class="card-body">
+                                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                        <div class="sub-stages margin-top">
+                                            <h3><i class="la la-sitemap"></i> Sub Stages :</h3>
+                                            <ul id="stage-one-substages">
+                                                <li class="clearfix">
+                                                    <div class="substage-name">
+                                                        <strong>1. </strong> Site Preparation
+                                                    </div>
+                                                    <div class="substage-form-name">
+                                                        <strong>Form Name: </strong> Site Preparation
+                                                    </div>
+                                                    <div class="substage-form-action">
+                                                        <a href="#" title="" class="badge badge-primary" data-toggle="modal" data-target="#editSubStageOneModal"><i class="la la-edit"></i> Edit</a>
+                                                        <div class="modal fade" id="editSubStageOneModal" tabindex="-1" role="dialog" aria-labelledby="editSubStageOneModalLabel" aria-hidden="true">
+                                                          <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                              <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                  <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                              </div>
+                                                              <div class="modal-body">
+                                                                ...
+                                                              </div>
+                                                              <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-primary">Save changes</button>
+                                                              </div>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                        <a href="#" title="" class="badge badge-success" data-toggle="modal" data-target="#materialsSubStageOneModal"><i class="la la-book"></i> Materials</a>
+                                                        <div class="modal fade" id="materialsSubStageOneModal" tabindex="-1" role="dialog" aria-labelledby="materialsSubStageOneModalLabel" aria-hidden="true">
+                                                          <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                              <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                  <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                              </div>
+                                                              <div class="modal-body">
+                                                                ...
+                                                              </div>
+                                                              <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-primary">Save changes</button>
+                                                              </div>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="clearfix">
+                                                    <div class="substage-name">
+                                                        <strong>2. </strong> Foundation
+                                                    </div>
+                                                    <div class="substage-form-name">
+                                                        <strong>Form Name: </strong> Daily Report
+                                                    </div>
+                                                    <div class="substage-form-action">
+                                                        <a href="#" title="" class="badge badge-primary" data-toggle="modal" data-target="#editSubStageTwoModal"><i class="la la-edit"></i> Edit</a>
+                                                        <div class="modal fade" id="editSubStageTwoModal" tabindex="-1" role="dialog" aria-labelledby="editSubStageTwoModalLabel" aria-hidden="true">
+                                                          <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                              <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                  <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                              </div>
+                                                              <div class="modal-body">
+                                                                ...
+                                                              </div>
+                                                              <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-primary">Save changes</button>
+                                                              </div>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                        <a href="#" title="" class="badge badge-success" data-toggle="modal" data-target="#materialsSubStageTwoModal"><i class="la la-book"></i> Materials</a>
+                                                        <div class="modal fade" id="materialsSubStageTwoModal" tabindex="-1" role="dialog" aria-labelledby="materialsSubStageTwoModalLabel" aria-hidden="true">
+                                                          <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                              <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                  <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                              </div>
+                                                              <div class="modal-body">
+                                                                ...
+                                                              </div>
+                                                              <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-primary">Save changes</button>
+                                                              </div>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-primary margin-top"><i class="la la-save"></i> Save Changes</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
 
 						</div>
-                        <div class="tab-pane active" id="tab004" role="tabpanel">
+                        <div class="tab-pane" id="tab004" role="tabpanel">
                             <div data-bind="with:surveyVm">
                             {% csrf_token %}
                                 <!--Assign Form- OLD-->
