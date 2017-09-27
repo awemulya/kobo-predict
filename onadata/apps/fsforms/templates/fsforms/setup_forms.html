@@ -657,7 +657,11 @@ var pk = "{{pk}}";
                         </div>
                       </div>
                          <div class="row">
-                     <a class="btn btn-small btn-primary square" style="margin-left:58px;" data-bind="visible:stageChanged ,confirmClick: { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }"><i class="fa fa-save" aria-hidden="true"></i>  {% trans 'Save' %}</a>
+                     <a class="btn btn-small btn-primary square" style="margin-left:58px;"
+                        data-bind="visible:stageChanged ,confirmClick: {
+                         message: 'Any Changes on substage assigned form causes loss of
+                         previous Submissions data of that substage.\n Are you sure ?', click: save }">
+                         <i class="fa fa-save" aria-hidden="true"></i>  {% trans 'Save' %}</a>
                       </div>
                     </div>
 

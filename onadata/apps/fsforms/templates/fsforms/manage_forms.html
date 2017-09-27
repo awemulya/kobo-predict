@@ -821,61 +821,131 @@ var pk = "{{pk}}";
                                             <h3><i class="la la-sitemap"></i> Sub Stages :</h3>
                                             <ul data-bind="attr: { id: 'substages_' + $index() }">
                                                 <li class="clearfix" data-bind="foreach:parent">
-                                                    <div class="substage-name">
+                                                    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
+    <div data-bind="with: em">
+      <div class="modal-dialog form-modal" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">{% trans 'Education Material' %}</h4>
+          </div>
+          <div class="modal-body">
+              <div class="col-sm-8">
+                  <h3>Create A Education Material</h3>
+
+                <div class="form-group">
+                  <label for="title" id="sizing-addon2"><h4>Title</h4></label>
+                  <textarea data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></textarea>
+                </div>
+
+
+
+
+
+                <div class="form-group">
+                  <label for="comment" id="sizing-addon2"><h4>Text</h4></label>
+                  <textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="3" id="comment"></textarea>
+                </div>
+
+
+
+              <div>
+                      <div data-bind="visible:em_images().length">
+                          <p>Saved Images</p>
+                          <div data-bind="foreach:em_images">
+                              <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
+                          </div>
+                      </div>
+                    <h4>Multiple Images Uploads</h4>
+                        <div class="well" data-bind="fileDrag: multiFileData">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                          <!-- ko foreach: {data: multiFileData().dataURLArray, as: 'dataURL'} -->
+                                          <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">
+                                          <!-- /ko -->
+                                    <div data-bind="ifnot: multiFileData().fileArray">
+                                        <label class="drag-label">Drag files here</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="file" multiple data-bind="fileInput: multiFileData, customFileInput: {
+                                      buttonClass: 'btn btn-success',
+                                      fileNameClass: 'disabled form-control',
+                                      onClear: onClear,
+                                    }" accept="image/*">
+                                    }" accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+                 </div>
+                  </div>
+
+              <div class="col-sm-4">
+                  <h4> Upload PDF OF Education Material</h4>
+                  <div>
+                    <div class="well">
+                        <div class="form-group row">
+                            <div class="col-sm-12">
+                                <div data-bind="visible:pdf">
+                                    Current pdf
+                                    <a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank"> View </a>
+
+                          <!--<button data-bind="click: addPdf">Load PDF</button>-->
+                        <!--<div class="documentviewerpdf"></div>-->
+                      </div>
+                                </div>
+                            <div class="col-sm-12">
+                                <span>Change PDf File</span>
+                                <input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+
+              </div>
+              <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">Save </button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+                                                    <div class="substage-name" data-bind="visible:!editable()">
 
                                                         <span data-bind="text:$index() +1">.</span>
                                                         <span data-bind="text:name">.</span>
                                                     </div>
-                                                    <div class="substage-form-name">
-                                                        <strong>Form Name: </strong> <span data-bind="text:stage_forms().xf().title"></span>
+                                                    <div class="substage-form-name" data-bind="visible:!editable()">
+                                                        <strong>Form Name: </strong> <span data-bind="text:stage_forms().xf().label"></span>
                                                     </div>
-                                                    <div class="substage-form-action">
-                                                        <a href="#" title="" class="badge badge-primary" data-toggle="modal" data-target="#editSubStageOneModal"><i class="la la-edit"></i> Edit</a>
-                                                        <div class="modal fade" id="editSubStageOneModal" tabindex="-1" role="dialog" aria-labelledby="editSubStageOneModalLabel" aria-hidden="true">
-                                                          <div class="modal-dialog" role="document">
-                                                            <div class="modal-content">
-                                                              <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                  <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                              </div>
-                                                              <div class="modal-body">
-                                                                ...
-                                                              </div>
-                                                              <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary">Save changes</button>
-                                                              </div>
-                                                            </div>
-                                                          </div>
-                                                        </div>
-                                                        <a href="#" title="" class="badge badge-success" data-toggle="modal" data-target="#materialsSubStageOneModal"><i class="la la-book"></i> Materials</a>
-                                                        <div class="modal fade" id="materialsSubStageOneModal" tabindex="-1" role="dialog" aria-labelledby="materialsSubStageOneModalLabel" aria-hidden="true">
-                                                          <div class="modal-dialog" role="document">
-                                                            <div class="modal-content">
-                                                              <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                  <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                              </div>
-                                                              <div class="modal-body">
-                                                                ...
-                                                              </div>
-                                                              <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary">Save changes</button>
-                                                              </div>
-                                                            </div>
-                                                          </div>
-                                                        </div>
+                                                    <div class="substage-form-action" data-bind="visible:!editable()">
+                                                        <a title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i> Edit</a>
+
+                                                        <a href="#" class="badge badge-success" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> Materials</a>
+
                                                     </div>
+                                                    <div class="col-sm-8 substage" data-bind="visible:editable">
+                                                        <div class="sub-stage-name-c">{% trans 'Sub Stage' %}
+                                                            <span data-bind='text: $index()+1'></span><br>
+                                                            {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name"><br>
+                                                            {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description"><br>
+                                                            {% trans 'Form Assigned: ' %}
+                                                            <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
+                                                                value: stage_forms().xf().id">
+                                                            </select>
+
+                                                            <br>
+
+                                                            <button   data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
+                                                            <button  data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
+                                                        </div>
+
+                                                      </div>
                                                 </li>
                                             </ul>
                                         </div>
-                                        <button type="button" class="btn btn-sm btn-primary margin-top"><i class="la la-save"></i> Save Changes</button>
-                                      </div>
+                                     </div>
+                                      <button type="button" class="btn btn-sm btn-primary margin-top" data-bind="confirmClick: { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }"><i class="la la-save"></i> Save Changes</button>
+
                                     </div>
                                   </div>
                                 </div>
