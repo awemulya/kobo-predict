@@ -711,7 +711,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </ul>
                 <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more"> -->
                 <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
-                  <input type="button" value="Select All" data-bind=" click:setAllAssignAsSelected">
+                  <input type="button" value="Select All" data-bind="click:setAllAssignAsSelected">
                  <input type="button" value="Unselect All" data-bind="click:setAllUnSelected">
 
 
@@ -719,7 +719,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 
                   <li class="col-md-12">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
-                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:self.setSelected">
+                     
+                       <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:self.setAllAssignAsSelected">
+
                       <span class="custom-control-indicator"></span>
                       <span class="custom-control-description">
                         <div class="project-item-wrap clearfix">
