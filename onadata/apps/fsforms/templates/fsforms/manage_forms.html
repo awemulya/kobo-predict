@@ -788,7 +788,7 @@ var pk = "{{pk}}";
                                             <span data-bind="text:name"></span> #<span data-bind="text:$index() +1"></span>
                                         </div>
                                         <div class="stage-action">
-                                            <a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:edit"><i class="la la-edit"></i> Editt</a>
+                                            <a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:edit"><i class="la la-edit"></i> Edit</a>
                                             <div class="modal fade" id="stageOneEditModal" tabindex="-1" role="dialog" aria-labelledby="stageOneEditModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -808,7 +808,8 @@ var pk = "{{pk}}";
                                                     </div>
                                                 </div>
                                             </div>
-                                            <a href="#" title="" class="btn btn-sm btn-danger"><i class="la la-close"></i> Delete</a>
+                                            <a title="Delete" data-bind="confirmClick: { message: ' Submissions data of this stage will be lost.\n Are you sure ?',
+                              click: delete_stage }" class="btn btn-sm btn-danger"><i class="la la-close"></i> Delete</a>
                                         </div>
                                     </div>
 
