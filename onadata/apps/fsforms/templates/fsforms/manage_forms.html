@@ -58,7 +58,8 @@ var pk = "{{pk}}";
 							<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">General Forms</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Scheduled Forms</a>
+							<a class="nav-link" data-toggle="tab" href="#tab002" role="tab"
+                            data-bind="click: function () {setSelectedVm('schedules')}">Scheduled Forms</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Staged Form</a>
@@ -336,7 +337,60 @@ var pk = "{{pk}}";
                             </div>
 						</div>
 						<div class="tab-pane" id="tab002" role="tabpanel">
-							<a href="#" title="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#assignScheduleFormModal"><i class="la la-upload"></i> Assign New Form</a>
+                            <div data-bind="with:scheduleVm">
+                                {% csrf_token %}
+                                <div data-bind="with:current_form">
+    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.schedule_form_modal_visibility">
+  <div class="modal-dialog form-modal" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Create Schedule</h4>
+      </div>
+      <div class="modal-body">
+
+          <form method="post">
+            <div class="col-sm-12 registration_field">
+               {{ general_form.non_field_errors }}
+               </div>
+
+            {% csrf_token %}
+              {{schedule_form.as_p}}
+              <div class="form-group date1">
+                  <label for="start">Start :</label>
+                  <input data-bind="datePicker : date_range_start" type="date" id="start">
+              </div>
+              <div class="form-group date2">
+                  <label for="End"> End:</label>
+                  <input data-bind="datePicker : date_range_end" type="date" id="End">
+              </div>
+           <div class="form-group">
+              <span style="font-weight: bold;">Days:</span>
+                <div data-bind="foreach: $parent.days">
+                    <div class="col-sm-1" style="width: 14.28% !important">
+                        <span data-bind="text:day"></span>
+                    <input type="checkbox" class="day-schedule"
+                           data-bind="checkedValue: id, checked: $parent.selected_days">
+                        </div>
+            </div>
+            </div>
+
+            <div class="gap-high"></div>
+            <button class="btn g btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Create' %}</button>
+
+            <div class="gap-medium"></div>
+
+
+    </form>
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+							<a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:add_form"><i class="la la-upload"></i> Assign New Form</a>
 							<!--Assign Form-->
 							<div class="modal fade" id="assignScheduleFormModal" tabindex="-1" role="dialog" aria-labelledby="assignScheduleFormModalLabel" aria-hidden="true">
 								<div class="modal-dialog model-lg" role="document">
@@ -445,7 +499,8 @@ var pk = "{{pk}}";
 									<div class="row">
 										<div class="col-md-6 ml-md-auto">
 											<div class="input-group">
-											  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+											  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for..."
+                                              data-bind="value:search_key, valueUpdate:'afterkeydown'">
 											  <span class="input-group-btn">
 												<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
 											  </span>
@@ -460,60 +515,39 @@ var pk = "{{pk}}";
 								<thead class="thead-default">
 									<tr>
 										<th>S.N.</th>
+										<th>Schedule Name</th>
 										<th>Form Title</th>
 										<th>Assigned Date</th>
 										<th>End Date</th>
+										<th>Days</th>
 										<th>Responses</th>
+										<th>Edu.. M</th>
 										<th>Actions</th>
 									</tr>
 								</thead>
-								<tbody>
+								<tbody data-bind="foreach: forms">
+                                <tr>
+                                    <td colspan="9"></td>
+                                </tr>
 									<tr>
-										<th scope="row">1</th>
-										<td>Daily Activity Report</td>
-										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
-										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
-										<td>10</td>
-										<td>
-											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
-											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
-										</td>
-									</tr>
-									<tr>
-										<th scope="row">2</th>
-										<td>Weekly Activity Report</td>
-										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
-										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
-										<td>20</td>
-										<td>
-											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
-											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
-										</td>
-									</tr>
-									<tr>
-										<th scope="row">3</th>
-										<td>Daily Activity Report</td>
-										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
-										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
-										<td>15</td>
-										<td>
-											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
-											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
-										</td>
-									</tr>
-									<tr>
-										<th scope="row">4</th>
-										<td>Weekly Activity Report</td>
-										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
-										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
-										<td>40</td>
-										<td>
-											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
-											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
+										<th scope="row" data-bind='text: $index()+1'></th>
+										<td data-bind="text: name"></td>
+										<td data-bind="text: form_name"></td>
+										<td data-bind="text: date_range_start"></td>
+										<td data-bind="text: date_range_end"></td>
+										<td data-bind="text: days"></td>
+										<td>-</td>
+                                        <td><a  title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> </a></td>
+                                        <td>
+                                            <a role="button" class="badge" data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}">
+                                                <i class="la la-close" data-bind="visible:is_deployed()"></i>
+                                                <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
+											<!--<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>-->
 										</td>
 									</tr>
 								</tbody>
 							</table>
+                            </div>
 						</div>
 						<div class="tab-pane" id="tab003" role="tabpanel">
 							<div id="accordion" role="tablist">
