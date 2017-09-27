@@ -1274,8 +1274,9 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
             site = Site.objects.get(pk=site_id)
 
             for user in users:
+                print "yesssssssssssssssssssssssssss"
                 role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
-                                                               project__id=site.project.id, organization__id=site.project.organization_id, group=group)
+                                                               project__id=site.project.id, organization__id=site.project.organization_id, group=group, ended_at=None)
                 if created:
                     print "yesssssssssssssssssssssssssss"
                     # description = "{0} was assigned  as {1} in {2}".format(
@@ -1323,7 +1324,7 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
                 role, created = UserRole.objects.get_or_create(user_id=user, project_id=project_id,
                                                                organization__id=project.organization.id,
                                                                project__id=project_id,
-                                                               group=group)
+                                                               group=group, ended_at=None)
                 if created:
                     description = "{0} was assigned  as Project Manager in {1}".format(
                         role.user.get_full_name(), role.project)
@@ -1335,3 +1336,4 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
                     ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
                     ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
                     ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        return HttpResponse("Sucess")
