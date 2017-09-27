@@ -34,8 +34,8 @@ class UserRole(models.Model):
     def getname(self):
         return str("role")
 
-    class Meta:
-        unique_together = ('user', 'group', 'organization', 'project', 'site')
+    # class Meta:
+    #     unique_together = ('user', 'group', 'organization', 'project', 'site', 'ended_at',)
 
     def get_absolute_url(self):
         return reverse('users:profile', kwargs={'pk': self.user.pk})

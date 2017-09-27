@@ -476,7 +476,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 
                   <li class="col-md-12">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
-                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:self.setSelected">
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$parent.setSelected">
                       <span class="custom-control-indicator"></span>
                       <span class="custom-control-description">
                         <div class="project-item-wrap clearfix">
@@ -720,7 +720,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <li class="col-md-12">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
                      
-                       <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:self.setAllAssignAsSelected">
+                       <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$parent.setSelected">
 
                       <span class="custom-control-indicator"></span>
                       <span class="custom-control-description">

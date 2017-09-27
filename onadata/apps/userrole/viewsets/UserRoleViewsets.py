@@ -67,7 +67,7 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                 if level == "0":
                     site = Site.objects.get(pk=self.kwargs.get('pk'))
                     role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
-                                                                   project__id=site.project.id, organization__id=site.project.organization_id, group=group)
+                                                                   project__id=site.project.id, organization__id=site.project.organization_id, group=group, ended_at=None)
 
                     if created:
                         description = "{0} was assigned  as {1} in {2}".format(
@@ -98,7 +98,7 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                     role, created = UserRole.objects.get_or_create(user_id=user, project_id=self.kwargs.get('pk'),
                                                                    organization__id=project.organization.id,
                                                                    project__id=project.id, site__id=None,
-                                                                   group=group)
+                                                                   group=group, ended_at=None)
                     if created:
                         description = "{0} was assigned  as Project Manager in {1}".format(
                             role.user.get_full_name(), role.project)
