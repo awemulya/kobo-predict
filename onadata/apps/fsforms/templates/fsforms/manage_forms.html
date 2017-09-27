@@ -6,6 +6,8 @@
 
    {%block extracss %}
 <link rel="stylesheet" href="{% static 'css/knockout-file-bindings.css' %}">
+<link rel="stylesheet" href="{% static 'dummy/assets/css/jquery-ui.css' %}">
+
     {% endblock %}
 
 {% block head %}
@@ -24,6 +26,7 @@
 {%block kocript %}
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
 <link rel="stylesheet" href="{% static 'css/datepicker.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}dummy/assets/js/vendor/jquery-ui.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/knockout-file-bindings.js"></script>
@@ -60,183 +63,165 @@ var pk = "{{pk}}";
 						<li class="nav-item">
 							<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Staged Form</a>
 						</li>
+                        <li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#tab004" role="tab">Survey Form</a>
+						</li>
 					</ul>
 					<!-- Tab panes -->
 					<div class="tab-content">
 						<div class="tab-pane active" id="tab001" role="tabpanel">
+                            <div data-bind="with:generalVm">
+                            {% csrf_token %}
 							<a href="#" title="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#assignModal"><i class="la la-upload"></i> Assign New Form</a>
 							<!--Assign Form-->
-							<div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-labelledby="assignModalLabel" aria-hidden="true">
-								<div class="modal-dialog model-lg" role="document">
-									<div class="modal-content">
-										<div class="modal-header">
-											<h5 class="modal-title" id="assignModalLabel">Assign New Form</h5>
-											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-											<span aria-hidden="true">&times;</span>
-											</button>
-										</div>
-										<div class="modal-body">
-											<div class="row">
-												<div class="col-md-6 col-sm-12">
-													<div class="widget-info margin-top">
-														<div class="widget-head">
-															<h4>My Forms</h4>
-														</div>
-														<div class="widget-body">
-															<div class="input-group input-group-sm margin-top">
-																<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
-															</div>
-															<div class="form-group margin-top">
-																<label class="custom-control custom-radio">
-																  <input id="radio1" name="radio" type="radio" class="custom-control-input">
-																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">Form Name</span>
-																</label>
-															</div>
-															<div class="form-group">
-																<label class="custom-control custom-radio">
-																  <input id="radio2" name="radio" type="radio" class="custom-control-input">
-																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">Form Name</span>
-																</label>
-															</div>
-															<div class="form-group">
-																<label class="custom-control custom-radio">
-																  <input id="radio3" name="radio" type="radio" class="custom-control-input">
-																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">Form Name</span>
-																</label>
-															</div>
-															<div class="form-group">
-																<label class="custom-control custom-radio">
-																  <input id="radio4" name="radio" type="radio" class="custom-control-input">
-																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">Form Name</span>
-																</label>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div class="col-md-6 col-sm-12">
-													<div class="widget-info margin-top">
-														<div class="widget-head">
-															<h4>Library Forms</h4>
-														</div>
-														<div class="widget-body margin-top">
-															<div class="input-group input-group-sm margin-top">
-																<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
-															</div>
-															<div class="form-group margin-top">
-																<label class="custom-control custom-radio">
-																  <input id="radio11" name="radio" type="radio" class="custom-control-input">
-																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">Form Name</span>
-																</label>
-															</div>
-															<div class="form-group">
-																<label class="custom-control custom-radio">
-																  <input id="radio12" name="radio" type="radio" class="custom-control-input">
-																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">Form Name</span>
-																</label>
-															</div>
-															<div class="form-group">
-																<label class="custom-control custom-radio">
-																  <input id="radio13" name="radio" type="radio" class="custom-control-input">
-																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">Form Name</span>
-																</label>
-															</div>
-															<div class="form-group">
-																<label class="custom-control custom-radio">
-																  <input id="radio14" name="radio" type="radio" class="custom-control-input">
-																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">Form Name</span>
-																</label>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-primary"><i class="la la-upload"></i> Assign Form</button>
-											<a href="#" class="btn btn-secondary"><i class="la la-file-text"></i> New Form</a>
-										</div>
-									</div>
-								</div>
-							</div>
-							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForm" aria-expanded="false" aria-controls="searchForm"><i class="la la-search"></i> Search</a>
-							<!--Search Form-->
-							<div class="collapse margin-top" id="searchForm">
-								<form class="padding">
-									<div class="row">
-										<div class="col-md-6 ml-md-auto">
-											<div class="input-group">
-											  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
-											  <span class="input-group-btn">
-												<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
-											  </span>
-											</div>
-										</div>
-										<div class="col-md-3"></div>
-									</div>
-								</form>
-							</div>
-							<!--Form List-->
-							<table class="table table-responsive table-hover margin-top">
-								<thead class="thead-default">
-									<tr>
-										<th>S.N.</th>
-										<th>Form Title</th>
-										<th>Assigned Date</th>
-										<th>Responses</th>
-										<th>Actions</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<th scope="row">1</th>
-										<td>Daily Activity Report</td>
-										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
-										<td>10</td>
-										<td>
-											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
-											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
-										</td>
-									</tr>
-									<tr>
-										<th scope="row">2</th>
-										<td>Weekly Activity Report</td>
-										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
-										<td>20</td>
-										<td>
-											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
-											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
-										</td>
-									</tr>
-									<tr>
-										<th scope="row">3</th>
-										<td>Daily Activity Report</td>
-										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
-										<td>15</td>
-										<td>
-											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
-											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
-										</td>
-									</tr>
-									<tr>
-										<th scope="row">4</th>
-										<td>Weekly Activity Report</td>
-										<td>Sunday, May 07, 2017, 10:07:39 PM</td>
-										<td>40</td>
-										<td>
-											<a class="badge badge-danger" href="#" role="button"><i class="la la-close"></i> Undeploy</a>
-											<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>
-										</td>
-									</tr>
-								</tbody>
-							</table>
+                                <div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-labelledby="assignModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog model-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="assignModalLabel">Assign New Form</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-12">
+                                                        <div class="widget-info margin-top">
+                                                            <div class="widget-head">
+                                                                <h4>My Forms</h4>
+                                                            </div>
+                                                            <div class="widget-body">
+                                                                <div class="input-group input-group-sm margin-top">
+                                                                    <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+                                                                </div>
+                                                                <div class="form-group margin-top">
+                                                                    <label class="custom-control custom-radio">
+                                                                      <input id="radio1" name="radio" type="radio" class="custom-control-input">
+                                                                      <span class="custom-control-indicator"></span>
+                                                                      <span class="custom-control-description">Form Name</span>
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="custom-control custom-radio">
+                                                                      <input id="radio2" name="radio" type="radio" class="custom-control-input">
+                                                                      <span class="custom-control-indicator"></span>
+                                                                      <span class="custom-control-description">Form Name</span>
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="custom-control custom-radio">
+                                                                      <input id="radio3" name="radio" type="radio" class="custom-control-input">
+                                                                      <span class="custom-control-indicator"></span>
+                                                                      <span class="custom-control-description">Form Name</span>
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="custom-control custom-radio">
+                                                                      <input id="radio4" name="radio" type="radio" class="custom-control-input">
+                                                                      <span class="custom-control-indicator"></span>
+                                                                      <span class="custom-control-description">Form Name</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-12">
+                                                        <div class="widget-info margin-top">
+                                                            <div class="widget-head">
+                                                                <h4>Library Forms</h4>
+                                                            </div>
+                                                            <div class="widget-body margin-top">
+                                                                <div class="input-group input-group-sm margin-top">
+                                                                    <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+                                                                </div>
+                                                                <div class="form-group margin-top">
+                                                                    <label class="custom-control custom-radio">
+                                                                      <input id="radio11" name="radio" type="radio" class="custom-control-input">
+                                                                      <span class="custom-control-indicator"></span>
+                                                                      <span class="custom-control-description">Form Name</span>
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="custom-control custom-radio">
+                                                                      <input id="radio12" name="radio" type="radio" class="custom-control-input">
+                                                                      <span class="custom-control-indicator"></span>
+                                                                      <span class="custom-control-description">Form Name</span>
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="custom-control custom-radio">
+                                                                      <input id="radio13" name="radio" type="radio" class="custom-control-input">
+                                                                      <span class="custom-control-indicator"></span>
+                                                                      <span class="custom-control-description">Form Name</span>
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="custom-control custom-radio">
+                                                                      <input id="radio14" name="radio" type="radio" class="custom-control-input">
+                                                                      <span class="custom-control-indicator"></span>
+                                                                      <span class="custom-control-description">Form Name</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary"><i class="la la-upload"></i> Assign Form</button>
+                                                <a href="#" class="btn btn-secondary"><i class="la la-file-text"></i> New Form</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForm" aria-expanded="false" aria-controls="searchForm"><i class="la la-search"></i> Search</a>
+                                <!--Search Form-->
+                                <div class="collapse margin-top" id="searchForm">
+                                    <form class="padding">
+                                        <div class="row">
+                                            <div class="col-md-6 ml-md-auto">
+                                                <div class="input-group">
+                                                  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+                                                  <span class="input-group-btn">
+                                                    <button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+                                                  </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3"></div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!--Form List-->
+                                <table class="table table-responsive table-hover margin-top">
+                                    <thead class="thead-default">
+                                        <tr>
+                                            <th>S.N.</th>
+                                            <th>Form Title</th>
+                                            <th>Assigned Date</th>
+                                            <th>Responses</th>
+                                            <th>Education Material</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind="foreach: forms">
+                                        <tr>
+                                            <th scope="row" data-bind='text: $index()+1'</th>
+                                            <td data-bind="text: name"></td>
+                                            <td data-bind="text: date_created"></td>
+                                            <td>-</td>
+                                            <td><a class="badge badge-success" href="#" role="button">
+                                                    <i class="la la-book"></i> Education Material</a></td>
+                                            <td>
+                                                <a class="badge badge-success" data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}">
+                                               <i class="la la-close" data-bind="visible:is_deployed()==true"></i>
+                                                <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
+
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
 						</div>
 						<div class="tab-pane" id="tab002" role="tabpanel">
 							<a href="#" title="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#assignScheduleFormModal"><i class="la la-upload"></i> Assign New Form</a>
