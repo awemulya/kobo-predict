@@ -72,8 +72,35 @@ var pk = "{{pk}}";
 						<div class="tab-pane active" id="tab001" role="tabpanel">
                             <div data-bind="with:generalVm">
                             {% csrf_token %}
-							<a href="#" title="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#assignModal"><i class="la la-upload"></i> Assign New Form</a>
-							<!--Assign Form-->
+                                <!--Assign Form- OLD-->
+                                     <div data-bind="with:current_form">
+                                        <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.general_form_modal_visibility">
+                                            <div class="modal-dialog small-modal" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                    <h4 class="modal-title">Select Form</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+
+                                                    <form method="post">
+                                                    <div class="col-sm-12 registration_field">
+                                                    {{ form.non_field_errors }}
+                                                    </div>
+
+                                                    {{form.as_p}}
+                                                    <div class="gap"></div>
+                                                    <button class="btn  btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Save' %}</button>
+                                                    <div class="gap"></div>
+                                                    </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+							<a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:add_form">
+                                <i class="la la-upload"></i> Assign New Form</a>
+														<!--Assign New-->
                                 <div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-labelledby="assignModalLabel" aria-hidden="true">
                                     <div class="modal-dialog model-lg" role="document">
                                         <div class="modal-content">
@@ -181,7 +208,8 @@ var pk = "{{pk}}";
                                         <div class="row">
                                             <div class="col-md-6 ml-md-auto">
                                                 <div class="input-group">
-                                                  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+                                                  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for..."
+                                                  data-bind="value:search_key, valueUpdate:'afterkeydown'">
                                                   <span class="input-group-btn">
                                                     <button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
                                                   </span>
