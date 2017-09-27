@@ -640,6 +640,145 @@ var pk = "{{pk}}";
 						</div>
 						<div class="tab-pane" id="tab003" role="tabpanel">
                             <div data-bind="with:stagesVm">
+                                <div class="modal" tabindex="-1" role="dialog" data-bind="modal:stage_form_modal_visibility">
+                        <div data-bind="with: current_stage">
+                          <div class="modal-dialog form-modal" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">{% trans 'Stage Data' %}</h4>
+                              </div>
+                              <div class="modal-body">
+                                            <form method="post" class="">
+                                                {% csrf_token %}
+                                            <div class="each-stage-grp">
+                                             <div class="row">
+                                                <div class="col-sm-12">
+                                                  <div class="form-group">
+                                                      <label for="stagename"><span class="stage-label">Stage Name:</span></label>
+                                                      <input class="form-control"  id="stagename" data-bind="value: name" placeholder="Name Of Stage" required="required">
+                                                      </div>
+
+                                                      <div class="gap"></div>
+                                                </div>
+
+                                                <div class="col-sm-12">
+                                                <div class="form-group">
+                                                      <label for="description"><span class="stage-label"fstage data>Description:</span></label>
+                                                      <input class="form-control my-input" id="description" data-bind="value: description" placeholder="Description Of Stage">
+                                                </div>
+                                                 </div>
+                                               </div>
+                                                <div class="row">
+                                                <div class="all-sub-grp">
+                                                  <div class="container" data-bind="sortable: parent">
+                                                    <div class="item">
+                                                      <div class="col-sm-0"></div>
+                                                      <div class="col-sm-12" data-bind="visible:!editable()">
+                                                        <a class="sub-stage-name-c">{% trans 'Sub Stage' %}
+                                                            <span data-bind='text: $index()+1'></span>:
+                                                            <span class="name-stage-grp"  data-bind="text: name"></span></a>
+                                                            <a class="sub-stage-name-c"><i class="fa fa-file" aria-hidden="true"></i>
+                                                            <span class="name-stage-grp"  data-bind="text: stage_forms().xf().label"></span>
+                                                                <a title="Edit Substage" data-bind="click:edit"><i class="fa fa-edit edit2"></i></a>
+                                                        </a>
+                                                      </div>
+                                                        <div class="col-sm-10" data-bind="visible:editable">
+                                                        <div class="sub-stage-name-c">{% trans 'Sub Stage' %}
+                                                            <span data-bind='text: $index()+1'></span><br>
+                                                            {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Sub Stage Name"><br>
+                                                            {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br>
+                                                            {% trans 'Form Assigned: ' %}
+                                                            <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
+                                                                value: stage_forms().xf().id">
+                                                            </select>
+
+                                                            <br>
+
+                                                            <button   data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
+                                                            <button  data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
+                                                        </div>
+
+                                                      </div>
+                                                      <div class="col-md-3"></div>
+                                                      <div class="clearfixx"></div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="all-sub-grp">
+                                                  <div class="row" data-bind="with:newSubstage, visible:addSubStageMode()">
+                                                    <div class="each-sub-grp">
+                                                      <div class="col-sm-1"></div>
+                                                      <div class="col-sm-8">
+                                                          <form method="post">
+                                                                  <h5 class="sub-stage-name-c">{% trans 'New Sub Stage' %} <span data-bind='text: $parent.parent().length+1'></span></h5>
+                                                                    {% csrf_token %}
+                                                              <div>
+                                                                {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name of SUb Stage "><br>
+                                                                {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br>
+                                                                {% trans 'Form Assigned: ' %}
+                                                                <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
+                                                                    value: stage_forms().xf().id">
+                                                                </select>
+
+                                                                <br>
+
+
+                                                              </div>
+
+                                                        </form>
+                                                      </div>
+                                                      <div class="col-md-3"></div>
+                                                      <div class="clearfixx"></div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div class="row">
+                                              <div class="col-md-1"></div>
+                                              <div class="col-sm-2">
+                                                  <a class="manage-button modal-manage square"
+                                                     data-bind="click:save_sub_stage, visible:addSubStageMode()">
+                                                      <i class="fa fa-plus" aria-hidden="true"></i> {% trans 'Add' %}</a>
+
+                                              </div>
+                                                 <div class="col-sm-8">
+                                                 </div>
+                                              </div>
+                                            </div>
+
+                                            <br>
+
+                                        </form>
+                                         </div>
+
+
+                      <div class="modal-footer stage-footer">
+                           <div class="col-sm-3">
+                            <a class="btn btn-primary " style="margin-right:-4px !important;"  data-bind="confirmClick:
+                            { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }">
+                                 <i class="fa fa-floppy-o" aria-hidden="true"></i>  {% trans 'Save' %}</a>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+             </div>
+                                <div class="panel-heading">
+                                      <div class="button-row" style="padding: 0px 30px !important;">
+                                          <button class="btn btn-primary square" data-bind="click:add_stage">
+                                                <i class="fa fa-plus" aria-hidden="true"></i>
+                                                {% trans 'Add Stage' %}
+                                            </button>
+                                            {% csrf_token %}
+
+                                            <a class="btn btn-danger square" style="float:right;" data-bind="visible:stages().length > 0,
+                                            confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">
+                                                <i class="fa fa-upload" aria-hidden="true"></i>
+                                                {% trans 'Deploy to Mobile' %}
+                                            </a>
+                                      </div>
+                                  </div>
                                 <div id="accordion" role="tablist">
                                   <div class="card margin-bottom" data-bind="foreach:stages">
                                     <div class="card-header clearfix" role="tab" data-bind="attr: { id: 'heading_' + $index() }" >
@@ -649,7 +788,7 @@ var pk = "{{pk}}";
                                             <span data-bind="text:name"></span> #<span data-bind="text:$index() +1"></span>
                                         </div>
                                         <div class="stage-action">
-                                            <a href="#" title="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#stageOneEditModal"><i class="la la-edit"></i> Edit</a>
+                                            <a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:edit"><i class="la la-edit"></i> Editt</a>
                                             <div class="modal fade" id="stageOneEditModal" tabindex="-1" role="dialog" aria-labelledby="stageOneEditModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -673,18 +812,21 @@ var pk = "{{pk}}";
                                         </div>
                                     </div>
 
-                                    <div data-bind="attr: { id: 'prefix_' + $index() }" class="collapse" role="tabpanel" data-bind="attr: { aria-labelledby: 'heading_' + $index() }" data-parent="#accordion">
+                                    <div data-bind="attr: { id: 'prefix_' + $index() }" class="collapse"
+                                         role="tabpanel" data-bind="attr: { aria-labelledby: 'heading_' + $index() }" data-parent="#accordion">
                                       <div class="card-body">
-                                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                        <span data-bind="text:description"></span>
                                         <div class="sub-stages margin-top">
                                             <h3><i class="la la-sitemap"></i> Sub Stages :</h3>
-                                            <ul id="stage-one-substages">
-                                                <li class="clearfix">
+                                            <ul data-bind="attr: { id: 'substages_' + $index() }">
+                                                <li class="clearfix" data-bind="foreach:parent">
                                                     <div class="substage-name">
-                                                        <strong>1. </strong> Site Preparation
+
+                                                        <span data-bind="text:$index() +1">.</span>
+                                                        <span data-bind="text:name">.</span>
                                                     </div>
                                                     <div class="substage-form-name">
-                                                        <strong>Form Name: </strong> Site Preparation
+                                                        <strong>Form Name: </strong> <span data-bind="text:stage_forms().xf().title"></span>
                                                     </div>
                                                     <div class="substage-form-action">
                                                         <a href="#" title="" class="badge badge-primary" data-toggle="modal" data-target="#editSubStageOneModal"><i class="la la-edit"></i> Edit</a>
@@ -709,56 +851,6 @@ var pk = "{{pk}}";
                                                         </div>
                                                         <a href="#" title="" class="badge badge-success" data-toggle="modal" data-target="#materialsSubStageOneModal"><i class="la la-book"></i> Materials</a>
                                                         <div class="modal fade" id="materialsSubStageOneModal" tabindex="-1" role="dialog" aria-labelledby="materialsSubStageOneModalLabel" aria-hidden="true">
-                                                          <div class="modal-dialog" role="document">
-                                                            <div class="modal-content">
-                                                              <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                  <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                              </div>
-                                                              <div class="modal-body">
-                                                                ...
-                                                              </div>
-                                                              <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary">Save changes</button>
-                                                              </div>
-                                                            </div>
-                                                          </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li class="clearfix">
-                                                    <div class="substage-name">
-                                                        <strong>2. </strong> Foundation
-                                                    </div>
-                                                    <div class="substage-form-name">
-                                                        <strong>Form Name: </strong> Daily Report
-                                                    </div>
-                                                    <div class="substage-form-action">
-                                                        <a href="#" title="" class="badge badge-primary" data-toggle="modal" data-target="#editSubStageTwoModal"><i class="la la-edit"></i> Edit</a>
-                                                        <div class="modal fade" id="editSubStageTwoModal" tabindex="-1" role="dialog" aria-labelledby="editSubStageTwoModalLabel" aria-hidden="true">
-                                                          <div class="modal-dialog" role="document">
-                                                            <div class="modal-content">
-                                                              <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                  <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                              </div>
-                                                              <div class="modal-body">
-                                                                ...
-                                                              </div>
-                                                              <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary">Save changes</button>
-                                                              </div>
-                                                            </div>
-                                                          </div>
-                                                        </div>
-                                                        <a href="#" title="" class="badge badge-success" data-toggle="modal" data-target="#materialsSubStageTwoModal"><i class="la la-book"></i> Materials</a>
-                                                        <div class="modal fade" id="materialsSubStageTwoModal" tabindex="-1" role="dialog" aria-labelledby="materialsSubStageTwoModalLabel" aria-hidden="true">
                                                           <div class="modal-dialog" role="document">
                                                             <div class="modal-content">
                                                               <div class="modal-header">
