@@ -464,7 +464,7 @@ var pk = "{{pk}}";
                         </div>
                      <div class="row">
                      <div class="col-sm-1" data-bind='text: $index()+1'></div>
-                     <div  class="col-sm-2"data-bind="text: name"></div>
+                     <div  class="col-sm-2" data-bind="text: name"></div>
                      <div class="col-sm-2" data-bind="text: form_name"></div>
                      <div class="col-sm-1"  data-bind="text: date_range_start"></div>
                      <div class="col-sm-1" data-bind="text: date_range_start"></div>
@@ -474,7 +474,7 @@ var pk = "{{pk}}";
                  </div>
                      </div>
                  </div></div>
-        </div>
+</div>
 
 <div class="row" data-bind="visible: currentVm() == 'stages'" style="display:none;">
     <div data-bind="with:stagesVm">
@@ -577,6 +577,7 @@ var pk = "{{pk}}";
                                       fileNameClass: 'disabled form-control',
                                       onClear: onClear,
                                     }" accept="image/*">
+                                    }" accept="image/*">
                                 </div>
                             </div>
                         </div>
@@ -656,7 +657,11 @@ var pk = "{{pk}}";
                         </div>
                       </div>
                          <div class="row">
-                     <a class="btn btn-small btn-primary square" style="margin-left:58px;" data-bind="visible:stageChanged ,confirmClick: { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }"><i class="fa fa-save" aria-hidden="true"></i>  {% trans 'Save' %}</a>
+                     <a class="btn btn-small btn-primary square" style="margin-left:58px;"
+                        data-bind="visible:stageChanged ,confirmClick: {
+                         message: 'Any Changes on substage assigned form causes loss of
+                         previous Submissions data of that substage.\n Are you sure ?', click: save }">
+                         <i class="fa fa-save" aria-hidden="true"></i>  {% trans 'Save' %}</a>
                       </div>
                     </div>
 
