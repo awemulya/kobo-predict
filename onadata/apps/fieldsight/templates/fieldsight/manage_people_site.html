@@ -19,11 +19,13 @@ var all_proj_site=[];
 var CSRF_TOKEN = '{{ csrf_token }}';
 
 {% if type == "project" %}
+
   var proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
   userurl = '{% url 'role:multi_user_list' 1 pk %}';
   assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
 
 {% elif type == "org" %}
+  
   var proj_site_url = '{% url 'role:multi_ops_list' 1 pk %}';
   userurl = '{% url 'role:multi_user_list' 1 pk %}';
   assignurl = '{% url 'fieldsight:multi_user_project_assign' pk %}'
@@ -234,7 +236,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-4">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Current Supervisors</h4>
+                <h4>Current Reviewers</h4>
               </div>
 
               <div class="widget-body max-513-scolling" data-bind="foreach:allReviewers">

@@ -239,7 +239,7 @@ $("#"+data.id).fadeIn(speed);
 
 document.onload = getnotifdatalist('{% url 'eventlog:api-not' %}');
 
-  function getnotifdatalist(url){ s
+  function getnotifdatalist(url){
       $.ajax({
         url: url,
         type: 'GET',
