@@ -1,4 +1,6 @@
 from django import forms
+from PIL import Image
+from django.core.files import File
 from django.contrib.auth.models import User, Group
 from django.contrib.gis.geos import Point
 from django.core.urlresolvers import reverse_lazy
@@ -58,6 +60,11 @@ class RegistrationForm(registration_forms.RegistrationFormUniqueEmail):
 
 
 class OrganizationForm(forms.ModelForm):
+    x = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    y = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    width = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    height = forms.FloatField(widget=forms.HiddenInput(), required=False)
+
     def __init__(self, *args, **kwargs):
         super(OrganizationForm, self).__init__(*args, **kwargs)
         if not self.fields['location'].initial:
@@ -74,6 +81,20 @@ class OrganizationForm(forms.ModelForm):
         'address': forms.TextInput(),
         'logo': AdminImageWidget()
         }
+
+    def save(self):
+        photo = super(OrganizationForm, self).save()
+        x = self.cleaned_data.get('x')
+        y = self.cleaned_data.get('y')
+        w = self.cleaned_data.get('width')
+        h = self.cleaned_data.get('height')
+
+        if x is not None and y is not None:
+            image = Image.open(photo.logo)
+            cropped_image = image.crop((x, y, w+x, h+y))
+            resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+            resized_image.save(photo.logo.path)
+        return photo
 
 
     def clean(self):

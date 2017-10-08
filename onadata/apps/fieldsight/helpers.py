@@ -14,7 +14,7 @@ class AdminImageWidget(forms.FileInput):
     def render(self, name, value, attrs=None):
         output = []
         if value and hasattr(value, "url"):
-            output.append(('<img src="%s" style="height: 250px;" />'
+            output.append(('<img src="%s" id="logo-prev" style="height: 250px;" />'
                            % (value.url)))
         output.append(super(AdminImageWidget, self).render(name, value, attrs))
         return mark_safe(u''.join(output))
