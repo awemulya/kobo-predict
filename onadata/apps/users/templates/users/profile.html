@@ -70,10 +70,10 @@
 								<span><b>{{role.group }}</b>
 
 
-								{% if role.site%}
+								{% if role.site %}
 								{% trans 'of Site ' %}
 								 <a href="{% url 'fieldsight:site-dashboard' role.site.pk %}">
-								{{role.site}}
+								{{ role.site }}
 									 </a>
 								{% endif %}
 
