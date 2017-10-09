@@ -38,6 +38,11 @@
     	{% endblock %}
 	</head>
     <body>
+    <style type="text/css">
+    	.unread {
+    		background-color: #e6ecff;
+    	}
+    </style>
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -58,7 +63,7 @@
 							<span class="badge badge-warning"><span class="not_count"></span></span>
 						</a>
 						{% if notifications.count %}
-						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification" style="width:400px;">
+						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification" style="width:480px;">
 							<div class="dropdown-header">New Notifications (<span class="not_count"></span>)</div>
 							<ul class="menu" id="notification-ul" style="height:500px; overflow:hidden; overflow-y: scroll;">
 							<!-- {% for noti in notifications %}
@@ -283,7 +288,20 @@
 			    var content = types[typeid](data);
 			//append the data in main notificatin div
 			    
-			    var new_li = '<li class="note-div-sm '+ readstatus +'" id="'+data.id+'" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ dateparser(data.date)+' </div></div>  </li>';
+			    var new_li = '<li class=" note-div-sm '+ readstatus +'" id="'+data.id+'" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);">'+
+                            
+                                '<div class="notification-item">' +
+                                    '<div class="notification-avatar pull-left">' +
+                                        '<i class="avatar-icon la la-bolt"></i>' +
+                                    '</div>' +
+                                   content +
+                      '<p class="notification-highlight-time">' + dateparser(data.date) + '</p>' +
+                                    '</div>' +
+                                '</div>' +
+                            
+'</li>';
+
+
 
 			    // var div = document.getElementById('notifications');
 
