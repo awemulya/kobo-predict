@@ -17,7 +17,8 @@
 		</title>
 		<!--Core CSS -->
 <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery-2.1.4.min.js"></script>
-		
+<script type="text/javascript" src="{{ STATIC_URL }}js/notificationhandler.js"></script>
+
 	
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -54,13 +55,13 @@
 					<li class="dropdown">
 						<a href="#" id="dropdownMenuButtonNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<i class="la la-bell"></i>
-							<span class="badge badge-warning">{% if notifications.count %} {{notifications.count }} {% endif %}</span>
+							<span class="badge badge-warning"><span class="not_count"></span></span>
 						</a>
 						{% if notifications.count %}
-						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification">
-							<div class="dropdown-header">New Notifications ({% if notifications.count %} {{notifications.count }} {% endif %})</div>
-							<ul class="menu" id="notification-ul">
-							{% for noti in notifications %}
+						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification" style="width:400px;">
+							<div class="dropdown-header">New Notifications (<span class="not_count"></span>)</div>
+							<ul class="menu" id="notification-ul" style="height:500px; overflow:hidden; overflow-y: scroll;">
+							<!-- {% for noti in notifications %}
                     		{% if noti.type == 6 %}
 							<li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
 							<a class="dropdown-item" href="{{noti.get_absolute_url}}">
@@ -91,7 +92,7 @@
 							</a>
 							</li>
 							{% endif %}
-                			{% endfor %}
+                			{% endfor %} -->
 							</ul>
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="{% url 'eventlog:notification-list' %}">{% if notifications.count %} {% trans 'View all' %} {% endif %}</a>
@@ -267,7 +268,59 @@
 
         <!--<script src="{% static 'dummy/assets/js/main.js' %}"></script>-->
 
+		<script>
+			document.onload = getnotifdata('{% url 'eventlog:api-not' %}', '{% url 'eventlog:api-not-count' %}');
+
+			function populatelist(data, index){
+
+			   
+			    typeid = data.type;
+			    var readstatus='unread';
+			    if(data.seen_by.includes({{ request.user.id }})){
+			       readstatus='read';
+			    }
+			// get description for notificationaccotding to its type id
+			    var content = types[typeid](data);
+			//append the data in main notificatin div
+			    
+			    var new_li = '<li class="note-div-sm '+ readstatus +'" id="'+data.id+'" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ dateparser(data.date)+' </div></div>  </li>';
+
+			    // var div = document.getElementById('notifications');
+
+			    // div.innerHTML += new_li;
+			    speed = speed+200;
+
+			$(new_li).appendTo("#notification-ul");
+			$("#"+data.id).fadeIn(speed);
+			}
+
+	function getnotifdata(url, url_count){ 
+      $.ajax({
+        url: url_count,
+        type: 'GET',
+        success: function (data) {
+          $( ".not_count" ).append( data.count );
+
+        }
+      });
+
+          $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (data) {
+               data.results.forEach(populatelist);
+               // for (i = 0; i < 6; i++) {
+               //      populatelist(data.results[i], i);
+               //  } 
+               speed=0;
+
+            }
+          });
+}
+
+		</script>
     </body>
+
 	{%block extrascript %}
     {% endblock %}
 </html>

@@ -12,6 +12,7 @@ from onadata.apps.eventlog.models import FieldSightLog
 from rest_framework.pagination import PageNumberPagination
 from onadata.apps.fieldsight.rolemixins import LoginRequiredMixin
 from django.db.models import Q
+from django.http import JsonResponse
 
 class LogSerializer(serializers.ModelSerializer):
     source_name = serializers.ReadOnlyField(source='source.username', read_only=True)
@@ -71,10 +72,19 @@ class NotificationViewSet(viewsets.ModelViewSet):
         return queryset.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids))
 
 def getnotificationcount(request):
-    org_ids = self.request.roles.filter(group__name='Organization Admin').values('organization_id')
-    project_ids = self.request.roles.filter(group__name='Project Manager').values('project_id')
-    site_ids = self.request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')) .values('site_id')
-    return FieldSightLog.objects.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids)).exclude(seen_by__id=self.request.user.id).count()
+    if request.role.group.name == "Super Admin":
+        count = FieldSightLog.objects.filter().exclude(seen_by__id=request.user.id).count()       
+    else:
+        org_ids = request.roles.filter(group__name='Organization Admin').values('organization_id')
+        project_ids = request.roles.filter(group__name='Project Manager').values('project_id')
+        site_ids = request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')) .values('site_id')
+        count = FieldSightLog.objects.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids)).exclude(seen_by__id=request.user.id).count()
+    print count
+    data = {
+        'id': request.user.id,
+        'count': count,
+    }
+    return JsonResponse(data)
 
 class MessageListView(ListView):
     model = FieldSightMessage
