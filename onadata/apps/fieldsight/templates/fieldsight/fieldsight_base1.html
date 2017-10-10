@@ -18,7 +18,12 @@
 		<!--Core CSS -->
 <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/notificationhandler.js"></script>
-
+<style type="text/css">
+    	.unread {
+    		background-color: #e6ecff;
+    	}
+    </style>
+	
 	
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -38,11 +43,6 @@
     	{% endblock %}
 	</head>
     <body>
-    <style type="text/css">
-    	.unread {
-    		background-color: #e6ecff;
-    	}
-    </style>
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -66,38 +66,7 @@
 						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification" style="width:480px;">
 							<div class="dropdown-header">New Notifications (<span class="not_count"></span>)</div>
 							<ul class="menu" id="notification-ul" style="height:500px; overflow:hidden; overflow-y: scroll;">
-							<!-- {% for noti in notifications %}
-                    		{% if noti.type == 6 %}
-							<li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
-							<a class="dropdown-item" href="{{noti.get_absolute_url}}">
-								<div class="notification-item">
-									<div class="notification-avatar pull-left" href="">
-										<i class="avatar-icon la la-bolt"></i>
-									</div>
-									<div class="notification-highlight">
-										<p class="notification-highlight-excerpt"><b>{{noti.content_object.user.get_full_name}}
-                      {% trans 'joined ' %} {{noti.content_object.organization.name}} {% trans 'as ' %} {{noti.content_object.group.name}}</b></p>
-										<p class="notification-highlight-time">{{noti.date}}</p>
-									</div>
-								</div>
-							</a>
-							</li>
-							{% else %}
-							<li class=" note-div-sm {% if not noti.is_seen %} unread{% endif %}" >
-							<a class="dropdown-item" href="{{noti.get_absolute_url}}">
-								<div class="notification-item">
-									<div class="notification-avatar pull-left" href="">
-										<i class="avatar-icon la la-bolt"></i>
-									</div>
-									<div class="notification-highlight">
-										<p class="notification-highlight-excerpt"><b>{{noti.description}}</b></p>
-										<p class="notification-highlight-time">{{noti.date}}</p>
-									</div>
-								</div>
-							</a>
-							</li>
-							{% endif %}
-                			{% endfor %} -->
+						
 							</ul>
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="{% url 'eventlog:notification-list' %}">{% if notifications.count %} {% trans 'View all' %} {% endif %}</a>
@@ -219,61 +188,58 @@
 		<script src="{% static 'dummy/assets/js/vendor/jquery.nicescroll.min.js' %}"></script>
 
 		<!--<script src="{% static 'dummy/assets/js/vendor/leaflet.js' %}"></script>-->
-		<!--<script>-->
-
-			<!--$(document).ready(function(){-->
-
-				<!--$(".widget-scolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e"});-->
-
-				<!--$('.scrollingSlider').slick({-->
-				  <!--slidesToShow: 4,-->
-				  <!--arrows: false,-->
-				  <!--autoplay : true,-->
-				  <!--infinite: false,-->
-				  <!--responsive: [-->
-					<!--{-->
-					  <!--breakpoint: 768,-->
-					  <!--settings: {-->
-						<!--arrows: false,-->
-						<!--slidesToShow: 3-->
-					  <!--}-->
-					<!--},-->
-					<!--{-->
-					  <!--breakpoint: 480,-->
-					  <!--settings: {-->
-						<!--arrows: false,-->
-						<!--centerMode: true,-->
-						<!--slidesToShow: 1-->
-					  <!--}-->
-					<!--}-->
-				  <!--]-->
-				<!--});-->
-				<!--$('.photo-item img').on('click',function(){-->
-					<!--var title = $(this).attr('img-title');-->
-					<!--var src = $(this).attr('src');-->
-					<!--var img = '<img src="' + src + '" class="img-responsive"/>';-->
-					<!--var html = '';-->
-					<!--html += img;-->
-					<!--$('#myModalLabel').modal();-->
-					<!--$('#myModalLabel').on('shown.bs.modal', function(){-->
-						<!--$('#myModalLabel .modal-header .modal-title').html(title);-->
-						<!--$('#myModalLabel .modal-body').html(html);-->
-					<!--})-->
-					<!--$('#myModalLabel').on('hidden.bs.modal', function(){-->
-						<!--$('#myModalLabel .modal-header .modal-title').html('');-->
-						<!--$('#myModalLabel .modal-body').html('');-->
-					<!--});-->
-				<!--});-->
-			<!--});-->
-
-
-
-		<!--</script>-->
-
-
-        <!--<script src="{% static 'dummy/assets/js/main.js' %}"></script>-->
-
 		<script>
+
+			$(document).ready(function(){
+
+				$(".widget-scolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+
+				$('.scrollingSlider').slick({
+				  slidesToShow: 4,
+				  arrows: false,
+				  autoplay : true,
+				  infinite: false,
+				  responsive: [
+					{
+					  breakpoint: 768,
+					  settings: {
+						arrows: false,
+						slidesToShow: 3
+					  }
+					},
+					{
+					  breakpoint: 480,
+					  settings: {
+						arrows: false,
+						centerMode: true,
+						slidesToShow: 1
+					  }
+					}
+				  ]
+				});
+				$('.photo-item img').on('click',function(){
+					var title = $(this).attr('img-title');
+					var src = $(this).attr('src');
+					var img = '<img src="' + src + '" class="img-responsive"/>';
+					var html = '';
+					html += img;
+					$('#myModalLabel').modal();
+					$('#myModalLabel').on('shown.bs.modal', function(){
+						$('#myModalLabel .modal-header .modal-title').html(title);
+						$('#myModalLabel .modal-body').html(html);
+					})
+					$('#myModalLabel').on('hidden.bs.modal', function(){
+						$('#myModalLabel .modal-header .modal-title').html('');
+						$('#myModalLabel .modal-body').html('');
+					});
+				});
+			});
+
+
+
+		</script>
+
+<script>
 			document.onload = getnotifdata('{% url 'eventlog:api-not' %}', '{% url 'eventlog:api-not-count' %}');
 
 			function populatelist(data, index){
@@ -337,8 +303,9 @@
 }
 
 		</script>
-    </body>
+        <!--<script src="{% static 'dummy/assets/js/main.js' %}"></script>-->
 
+    </body>
 	{%block extrascript %}
     {% endblock %}
 </html>
