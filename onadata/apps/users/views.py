@@ -27,6 +27,7 @@ from onadata.apps.users.models import UserProfile
 from onadata.apps.users.serializers import AuthCustomTokenSerializer
 from .forms import LoginForm, ProfileForm, UserEditForm
 from rest_framework import viewsets
+from onadata.apps.fsforms.models import FInstance
 
 
 from rest_framework import serializers
@@ -291,14 +292,16 @@ def my_profile(request, pk=None):
     if not pk or pk =='0':
         profile, created = UserProfile.objects.get_or_create(user=request.user)
         roles = request.user.user_roles.all()
-        return render(request, 'users/profile.html', {'obj': profile, 'roles': roles })
+        responses = FInstance.objects.filter(submitted_by = request.user)[:10]
+        return render(request, 'users/profile.html', {'obj': profile, 'roles': roles, 'responses': responses })
     else:
         profile, created = UserProfile.objects.get_or_create(user__id=pk)
         roles_org = profile.user.user_roles.filter(organization__isnull = False, project__isnull = True, site__isnull = True)
         roles_project = profile.user.user_roles.filter(organization__isnull = False, project__isnull = False, site__isnull = True)
         roles_reviewer = profile.user.user_roles.filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Reviewer")
         roles_SA = profile.user.user_roles.filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Site Supervisor")
-        return render(request, 'users/profile.html', {'obj': profile, 'roles_org': roles_org, 'roles_project': roles_project, 'roles_site': roles_site })
+        responses = FInstance.objects.filter(submitted_by = request.user)[:10]
+        return render(request, 'users/profile.html', {'obj': profile, 'roles_org': roles_org, 'roles_project': roles_project, 'roles_site': roles_site, 'responses': responses })
 
 
 class UsersListView(TemplateView, SuperAdminMixin):
