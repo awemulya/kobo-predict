@@ -347,6 +347,9 @@ class FInstance(models.Model):
         else:
             return self.site_fxf.id
 
+    def getname(self):
+        return ""
+
 
 class InstanceStatusChanged(models.Model):
     finstance = models.ForeignKey(FInstance, related_name="comments")
