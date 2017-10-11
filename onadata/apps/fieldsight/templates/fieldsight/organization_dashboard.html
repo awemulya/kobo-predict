@@ -260,7 +260,7 @@ var org = "{{obj.pk}}";
 												</form>
 											</div>
 											{% for role in peoples_involved %}
-											<a href="#" class="project-item-wrap clearfix">
+											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap clearfix">
 												<div class="project-logo">
 													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
 												</div>

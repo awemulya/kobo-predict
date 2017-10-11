@@ -923,7 +923,7 @@ class OrgSiteList(OrganizationRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(OrgSiteList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
-        
+        context['type'] = "org"
         return context
     def get_queryset(self):
         queryset = Site.objects.filter(project__organization_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
@@ -933,6 +933,7 @@ class ProjSiteList(ProjectRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ProjSiteList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['type'] = "project"
         return context
     def get_queryset(self):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)

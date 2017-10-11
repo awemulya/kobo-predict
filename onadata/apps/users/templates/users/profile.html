@@ -10,29 +10,42 @@
 						<div class="col-md-12 col-lg-8">
 							<div class="margin-top user-profile-basic-info padding bg-white clearfix ">
 								<div class="media">
-									<img class="d-flex align-self-start mr-3"  src="assets/img/img-avatar.jpg" alt="Generic placeholder image">
+								<div class="org-profile-logo">
+										<img src="{{ obj.profile_picture.url }}" alt="" width="123" height="123">
+									</div>
+									
 									<div class="media-body">
-										<h2 class="margin-top">{{obj.user.get_full_name}}</h2>
+										<h2 class="margin-top">{{ obj.user.get_full_name }}</h2>
 										<div class="row">
 											<div class="col-lg-6">
 												<ul class="contact-info-list">
+													{% if obj.address %}
 													<li>
 														<i class="la la-building"></i> 
-														{{ obj.address }}
+														  {{ obj.address }}
 													</li>
+													{% endif %}
+													{% if obj.user %}
 													<li>
-														<i class="la la-user"></i> {{ obj.user }}
+														<i class="la la-user"></i>   {{ obj.user }}
 													</li>
+													{% endif %}
+
 												</ul>
 											</div>
 											<div class="col-lg-6">
 												<ul class="contact-info-list">
+													{% if obj.phone %}
 													<li>
-														<i class="la la-phone"></i> {{ obj.phone }}
+														<i class="la la-phone"></i>   {{ obj.phone }}
 													</li>
+													{% endif %}
+													{% if obj.user.email %}
 													<li>
-														<i class="la la-envelope-o"></i> {{ obj.user.email }}
+														<i class="la la-envelope-o"></i>   {{ obj.user.email }}
 													</li>
+													{% endif %}
+												
 												</ul>
 											</div>
 										</div>
@@ -100,7 +113,7 @@
 							{% if roles_reviewer %}
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>Site User At :</h4>
+									<h4>Site Reviewer At :</h4>
 								</div>
 								<div class="widget-body">
 									<div class="max-260-scroll" style="overflow-y: scroll;">
@@ -128,7 +141,7 @@
 							{% if roles_SA %}
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>Site User At :</h4>
+									<h4>Site Supervisor At :</h4>
 								</div>
 								<div class="widget-body">
 									<div class="max-260-scroll">
@@ -153,10 +166,17 @@
 							</div>
 							{% endif %}
 
-							{% if not roles_org and not roles_project and not roles_site %}
+							{% if not roles_org and not roles_project and not roles_site and roles == "Super Admin" %}
+							<div class="widget-info margin-top bg-white padding">
+								<div class="widget-head">
+									<h4>Super Admin</h4>
+								</div>
+							</div>				
+							{% else%}
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
 									<h4>No Roles yet.</h4>
+									{{ role.group.name }}
 								</div>
 							</div>				
 							{% endif %}

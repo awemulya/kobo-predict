@@ -13,8 +13,16 @@
     <script>
 
 $(document).ready(function() {
-var site_id = "{{ pk }}";
- assignsite_id(site_id);
+var type="{{ type }}"
+var id="{{ pk }}"
+if (type == "org"){
+var url = '/fieldsight/api/org-sites/'+id+'/';
+ }
+ else{
+var url = '/fieldsight/api/project-sites/'+id+'/';
+ }
+
+ assignsite_id(url);
  vm = new SitesViewModel();
  ko.applyBindings(vm);
 });
@@ -31,6 +39,7 @@ var site_id = "{{ pk }}";
 						<div class="panel-heading-right">
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i> Search</a>
 							<a href="{% url 'fieldsight:site-add' %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add New</a>
+							<a href="{% url 'fieldsight:site-upload' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Bulk Upload Sites</a>
 						</div>
                     </header>
 					<div class="panel-body">
