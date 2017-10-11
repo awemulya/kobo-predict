@@ -108,8 +108,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                     <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   </div>
                 </form>
-                 <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
-                 <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+                 <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
+                  <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignsupervisors"><i class="la la-user-plus"></i> Assign Supervisors</button>
+               
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
@@ -125,7 +127,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <p data-bind="text:user().email"></p>
                           </div>
                         </div>
-                        <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+                       <!--  <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a> -->
                       </span>
                     </label>
                   </li>
@@ -133,8 +135,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <li class="clearfix"></li>
                 </ul>
                 <div class="margin-top">
-                3 Users Selected.<br/>
-                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignsupervisors"><i class="la la-user-plus"></i> Assign Supervisors</button>
+               
                 </div>
 
               </div>
@@ -200,8 +201,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                     <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   </div>
                 </form>
-                 <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
-                 <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+                 <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
+                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignreviewers"><i class="la la-user-plus"></i> Assign Reviewers</button>
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
@@ -217,7 +219,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <p data-bind="text:user().email"></p>
                           </div>
                         </div>
-                        <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+                        <!-- <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a> -->
                       </span>
                     </label>
                   </li>
@@ -225,8 +227,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <li class="clearfix"></li>
                 </ul>
                 <div class="margin-top">
-                3 Users Selected.<br/>
-                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignreviewers"><i class="la la-user-plus"></i> Assign Reviewers</button>
+                
+             
                 </div>
 
               </div>
@@ -323,8 +325,11 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                     <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   </div>
                 </form>
-                 <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
-                 <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+                 <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
+                 <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+
+                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> Assign Project Manager</button>
+               
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
@@ -340,7 +345,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <p data-bind="text:user().email"></p>
                           </div>
                         </div>
-                        <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+                        <!-- <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a> -->
                       </span>
                     </label>
                   </li>
@@ -348,8 +353,6 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <li class="clearfix"></li>
                 </ul>
                 <div class="margin-top">
-                3 Users Selected.<br/>
-                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> Assign Project Manager</button>
                 </div>
 
               </div>
@@ -425,8 +428,18 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <br>
                   <h4>OR</h4>
                   <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
-                  <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
-                 <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
+                 <span class="dropdown">
+                            <a href="#" id="dropdownMenuButtonManage" class="btn btn-primary margin-top" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <i class="la la-cogs"></i>Invite Selected Users
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage" x-placement="bottom-end" style="background-color: #00628E; position: absolute; transform: translate3d(74px, 24px, 0px); top: 0px; left: 0px; will-change: transform;">
+                              <a class="dropdown-item" href="#" style="color:white;" data-bind="click:assignselectedsupervisor"><i class="la la-user"></i>As Site Supervisor</a>
+                              <a class="dropdown-item" href="#" style="color:white;" data-bind="click:assignselectedreviewer"><i class="la la-clipboard"></i>As Reviewer</a>
+                              
+                            </div>
+                          </span>
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-12">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
@@ -470,9 +483,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </ul>
                 <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more"> -->
                 <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
-                  <input type="button" value="Select All" data-bind=" click:setAllAssignAsSelected">
-                 <input type="button" value="Unselect All" data-bind="click:setAllUnSelected">
-
+                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllUnSelected">
+              
 
                 <ul class="row max-260-scroll" data-bind="foreach:sites">
                 
@@ -502,16 +515,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
             </div>
           </div>
 
-<span class="dropdown">
-              <a href="#" id="dropdownMenuButtonManage" class="btn btn-primary margin-top" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="la la-cogs"></i>Invite Selected Users
-              </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage" x-placement="bottom-end" style="background-color: #00628E; position: absolute; transform: translate3d(74px, 24px, 0px); top: 0px; left: 0px; will-change: transform;">
-                <a class="dropdown-item" href="#" style="color:white;" data-bind="click:assignselectedsupervisor"><i class="la la-user"></i>As Site Supervisor</a>
-                <a class="dropdown-item" href="#" style="color:white;" data-bind="click:assignselectedreviewer"><i class="la la-clipboard"></i>As Reviewer</a>
-                
-              </div>
-            </span>
+
           
         </div>
 
@@ -583,8 +587,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                     <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   </div>
                 </form>
-                 <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
-                 <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+                 <input type="button" class="btn btn-primary margin-top" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
+                 <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+
+                  <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignOadmin"><i class="la la-user-plus"></i> Assign Organization Admin</button>
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
@@ -600,7 +606,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <p data-bind="text:user().email"></p>
                           </div>
                         </div>
-                        <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+                       <!--  <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a> -->
                       </span>
                     </label>
                   </li>
@@ -608,8 +614,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <li class="clearfix"></li>
                 </ul>
                 <div class="margin-top">
-                3 Users Selected.<br/>
-                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignOadmin"><i class="la la-user-plus"></i> Assign Organization Admin</button>
+                
+               
                 </div>
 
               </div>
@@ -668,8 +674,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <br>
                   <h4>OR</h4>
                   <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
-                  <input type="button" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
-                 <input type="button" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+                  <input type="button" value="Select All" class="btn btn-primary margin-top"  data-bind=" click:$root.setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-12">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
@@ -713,9 +719,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </ul>
                 <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more"> -->
                 <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
-                  <input type="button" value="Select All" data-bind="click:setAllAssignAsSelected">
-                 <input type="button" value="Unselect All" data-bind="click:setAllUnSelected">
-
+                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind="click:setAllAssignAsSelected">
+                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllUnSelected">
+                 <button type="submit" class="btn btn-primary margin-top" data-bind="click:doAssign"><i class="la la-user-plus"></i> Assign as Project Managers</button>
+  
 
                 <ul class="row max-260-scroll" data-bind="foreach:projects">
                 
@@ -747,8 +754,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
             </div>
           </div>
 
-<button type="submit" class="btn btn-primary margin-top" data-bind="click:doAssign"><i class="la la-user-plus"></i> Assign Project Managers</button>
-  
+
 
 
                   <li class="clearfix"></li>
