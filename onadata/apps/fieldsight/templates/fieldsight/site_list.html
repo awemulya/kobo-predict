@@ -13,8 +13,16 @@
     <script>
 
 $(document).ready(function() {
-var site_id = "{{ pk }}";
- assignsite_id(site_id);
+var type="{{ type }}"
+var id="{{ pk }}"
+if (type == "org"){
+var url = '/fieldsight/api/org-sites/'+id+'/';
+ }
+ else{
+var url = '/fieldsight/api/project-sites/'+id+'/';
+ }
+
+ assignsite_id(url);
  vm = new SitesViewModel();
  ko.applyBindings(vm);
 });

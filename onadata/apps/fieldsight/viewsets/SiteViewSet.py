@@ -190,6 +190,19 @@ class SiteUnderProjectViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return {'request': self.request}
 
+class SiteUnderOrgViewSet(viewsets.ModelViewSet):
+    queryset = Site.objects.filter(is_survey=False)
+    serializer_class = SiteSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    permission_classes = (SiteUnderProjectPermission,)
+    parser_classes = (MultiPartParser, FormParser,)
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(project__organization_id=self.kwargs.get('pk', None))
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
 
 class SiteReviewViewSet(viewsets.ModelViewSet):
     queryset = Site.objects.filter(is_survey=True)

@@ -295,7 +295,7 @@ def my_profile(request, pk=None):
         responses = FInstance.objects.filter(submitted_by = request.user)[:10]
         return render(request, 'users/profile.html', {'obj': profile, 'roles': "Super Admin", 'responses': responses })
     else:
-        profile, created = UserProfile.objects.get_or_create(user__id=pk)
+        profile = UserProfile.objects.get(pk=pk)
         roles_org = profile.user.user_roles.filter(organization__isnull = False, project__isnull = True, site__isnull = True)
         roles_project = profile.user.user_roles.filter(organization__isnull = False, project__isnull = False, site__isnull = True)
         roles_reviewer = profile.user.user_roles.filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Reviewer")

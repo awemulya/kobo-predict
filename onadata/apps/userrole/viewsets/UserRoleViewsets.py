@@ -78,8 +78,7 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                             noti_type =7
                         
                         noti = role.logs.create(source=role.user, type=noti_type, title=description,
-                                                description=description, content_type=site, extra_object=self.request.user,
-                                                site=role.site)
+                                                description=description, content_object=site, site=site, project=site.project, organization=site.project.organization, extra_object=self.request.user)
                         result = {}
                         result['description'] = description
                         result['url'] = noti.get_absolute_url()
@@ -102,8 +101,7 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                     if created:
                         description = "{0} was assigned  as Project Manager in {1}".format(
                             role.user.get_full_name(), role.project)
-                        noti = role.logs.create(source=role.user, type=6, title=description, description=description,
-                         content_type=project, extra_object=self.request.user)
+                        noti = role.logs.create(source=role.user, type=6, title=description, organization=project.organization, project=project, description=description, content_object=role.project, extra_object=self.request.user)
                         result = {}
                         result['description'] = description
                         result['url'] = noti.get_absolute_url()
@@ -117,8 +115,8 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                     if created:
                         description = "{0} was assigned  as Organization Admin in {1}".format(
                             role.user.get_full_name(), role.organization)
-                        noti = role.logs.create(source=role.user, type=4, title=description, description=description,
-                         content_type=organization, extra_object=self.request.user)
+                        noti = role.logs.create(source=role.user, type=4, title=description, organization=organization, description=description,
+                         content_object=organization, extra_object=self.request.user)
                         result = {}
                         result['description'] = description
                         result['url'] = noti.get_absolute_url()
