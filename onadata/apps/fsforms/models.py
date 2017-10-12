@@ -366,6 +366,8 @@ class InstanceStatusChanged(models.Model):
     def get_absolute_url(self):
         return reverse('forms:alter-status-detail', kwargs={'pk': self.pk})
 
+    def getname(self):
+        return ""
 
 class InstanceImages(models.Model):
     instance_status = models.ForeignKey(InstanceStatusChanged, related_name="images")
