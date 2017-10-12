@@ -1,4 +1,4 @@
-{% extends "fieldsight/fieldsight_base.html" %}
+{% extends "fieldsight/fieldsight_base1.html" %}
 {% load i18n staticfiles %}
 {% load fs_filters %}
 {% block page-title %}{% trans 'Form Data' %}{% endblock %}
@@ -167,7 +167,7 @@ h1 {
 <div class="col-sm-12"> Form Details</div>
 
 <div class="form-details-all">
-        <div class="col-md-9">
+        <div class="col-sm-12">
         <div class="formmdetails">
             <h2><span class="form-name">Name:</span>{{ obj.xf.title }}</h2>
             {% if obj.project %}
@@ -188,12 +188,12 @@ h1 {
             </p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="editform">
-             <a class="btn btn-success btn-raised" href="{% url 'forms:show' obj.pk %}">
-                     {% trans 'More Actions' %}</a>
-            </div>
-        </div>
+        <!--<div class="col-md-3">-->
+            <!--<div class="editform">-->
+             <!--<a class="btn btn-success btn-raised" href="{% url 'forms:show' obj.pk %}">-->
+                     <!--{% trans 'More Actions' %}</a>-->
+            <!--</div>-->
+        <!--</div>-->
         <div class="clearfixx"></div>
 </div>
 <table>
