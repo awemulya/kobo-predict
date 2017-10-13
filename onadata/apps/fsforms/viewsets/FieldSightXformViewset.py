@@ -75,6 +75,7 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
                                                       fxf.xf.title,
                                                       fxf.project.name
                                                   ))
+
                 result = {}
                 result['description'] = noti.description
                 result['url'] = noti.get_absolute_url()
