@@ -1,211 +1,174 @@
-{% extends "fieldsight/fieldsight_base.html" %}
+{% extends "fieldsight/fieldsight_base1.html" %}
 {% load i18n staticfiles %}
 {% load filters %}
-
-{% block page-title %}{% trans 'Organizations' %}{% endblock %}
-{% block breadcrumbs %}
-
-{% endblock %}
-
-
-
+{% block page-title %} {% trans 'Profile '  %}{{obj.user }}{% endblock %}
 {% block content %}
 
-    {% load filters %}
-{% if org_admin %}
-<section style="margin-top: -55px;">
-<h3>Organization Admin View</h3>
-    <div class="organization-lsit-all row">
+    <div id="main-content" class="padding">
+                <section>
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                           
+                            {% if org_admin %}
+                            <div class="widget-info margin-top bg-white padding">
+                                <div class="widget-head">
+                                    <h4>Organizations</h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="max-260-scroll" style="overflow-y: scroll;">
+                                        <div class="row">
 
-        {% for obj in org_admin %}
-        <div class="organization-list  {{obj.is_active|activeness}}">
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <a href="{% url 'fieldsight:organizations-dashboard' obj.organization.pk %}" >
-
-
-                    <div class="card ">
-
-                        <!--Card image-->
-
-                        <div class="card-image list-img">
-                            <img src="{{ obj.organization.logo.url }}" title="{{ obj.organization.logo}}" class="sixty" />
-                        </div>
-                        <!--/.Card image-->
-
-                        <!--Card content-->
-                        <div class="card-block">
-                            <!--Title-->
-                            <h4 class="card-title">{{ obj.organization.name }}</h4>
-                            <hr class="colour">
-                            <!--Text-->
-                            <p class="card-text"><span><i class="fa fa-map-marker space" aria-hidden="true"></i></span>
-
-                            {{ obj.organization.address }}, {{ obj.organization.get_country_display }}</p>
- 
-                            <a href="{% url 'fieldsight:organizations-dashboard' obj.organization.pk %}" class="btn btn-primary">GO <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                        <!--/.Card content-->
-
+                                        {% for role in org_admin %}
+                                            <div class="col-lg-3 col-md-12"  style="padding:10px;">
+                                                <a href="{% url 'fieldsight:organizations-dashboard' role.organization.pk %}" title="">
+                                                <div class="project-item-wrap clearfix">
+                                                    <div class="project-logo">
+                                                        <img src="{{ role.organization.logo.url }}" alt="" width="50" height="50">
+                                                    </div>
+                                                    <div class="project-basic-info">
+                                                        <h4>{{ role.organization.name }}</h4>
+                                                        <p>{{ role.organization.address }}</p>
+                                                    </div>
+                                                </div>
+                                                </a>
+                                            </div>
+                                        {% endfor %}
+                                            
+                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                           
+                    </div>
                     </div>
 
-                </a>
-
-            </div>
-        </div>
-        {% endfor %}
-
-    </div>
-{% endif %}
 
 
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                           
+                            {% if proj_manager %}
+                            <div class="widget-info margin-top bg-white padding">
+                                <div class="widget-head">
+                                    <h4>Projects</h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="max-260-scroll" style="overflow-y: scroll;">
+                                        <div class="row">
 
-
-
-{% if proj_manager %}
-<br>
-<h3>Project Management</h3>
-    <div class="organization-lsit-all row">
-
-        {% for obj in proj_manager %}
-        <div class="organization-list  {{obj.is_active|activeness}}">
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}" >
-
-
-                    <div class="card ">
-
-                        <!--Card image-->
-
-                        <div class="card-image list-img">
-                            <img src="{{ obj.project.logo.url }}" title="{{ obj.project.logo}}" class="sixty" />
-                        </div>
-                        <!--/.Card image-->
-
-                        <!--Card content-->
-                        <div class="card-block">
-                            <!--Title-->
-                            <h4 class="card-title">{{ obj.project.name }}</h4>
-                            <hr class="colour">
-                            <!--Text-->
-                            <p class="card-text"><span><i class="fa fa-map-marker space" aria-hidden="true"></i></span>
-
-                            {{ obj.project.address }}, {{ obj.project.email }}</p>
- 
-                            <a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}" class="btn btn-primary">GO <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                        <!--/.Card content-->
-
+                                        {% for role in proj_manager %}
+                                            <div class="col-lg-3 col-md-12" style="padding:10px;">
+                                                <a href="{% url 'fieldsight:project-dashboard' role.project.pk %}" title="">
+                                                <div class="project-item-wrap clearfix">
+                                                    <div class="project-logo">
+                                                        <img src="{{ role.project.logo.url }}" alt="" width="50" height="50">
+                                                    </div>
+                                                    <div class="project-basic-info">
+                                                        <h4>{{ role.project.name }}</h4>
+                                                        <p>{{ role.project.address }}</p>
+                                                    </div>
+                                                </div>
+                                                </a>
+                                            </div>
+                                        {% endfor %}
+                                            
+                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                           
+                    </div>
                     </div>
 
-                </a>
 
-            </div>
-        </div>
-       
-        {% endfor %}
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                           
+                            {% if site_reviewer %}
+                            <div class="widget-info margin-top bg-white padding">
+                                <div class="widget-head">
+                                    <h4>Review Sites</h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="max-260-scroll" style="overflow-y: scroll;">
+                                        <div class="row">
 
-    </div>
-{% endif %}
-
-
-{% if site_reviewer %}
-<br>
-<h3>Sites to review </h3>
-    <div class="organization-lsit-all row">
-
-        {% for obj in site_reviewer %}
-        <div class="organization-list  {{obj.is_active|activeness}}">
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <a href="{% url 'fieldsight:site-dashboard' obj.site.pk %}" >
-
-
-                    <div class="card ">
-
-                        <!--Card image-->
-
-                        <div class="card-image list-img">
-                            <img src="{{ obj.site.logo.url }}" title="{{ obj.site.logo}}" class="sixty" />
-                        </div>
-                        <!--/.Card image-->
-
-                        <!--Card content-->
-                        <div class="card-block">
-                            <!--Title-->
-                            <h4 class="card-title">{{ obj.site.name }}</h4>
-                            <hr class="colour">
-                            <!--Text-->
-                            <p class="card-text"><span><i class="fa fa-map-marker space" aria-hidden="true"></i></span>
-
-                            {{ obj.site.address }}, {{ obj.site.get_country_display }}</p>
- 
-                            <a href="{% url 'fieldsight:site-dashboard' obj.site.pk %}" class="btn btn-primary">GO <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                        <!--/.Card content-->
-
+                                        {% for role in site_reviewer %}
+                                            <div class="col-lg-3 col-md-12"  style="padding:10px;">
+                                                 <a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
+                                                <div class="project-item-wrap clearfix">
+                                                    <div class="project-logo">
+                                                        <img src="{{ role.site.logo.url }}" alt="" width="50" height="50">
+                                                    </div>
+                                                    <div class="project-basic-info">
+                                                        <h4>{{ role.site.name }}</h4>
+                                                        <p>{{ role.site.address }}</p>
+                                                    </div>
+                                                </div>
+                                               </a>
+                                            </div>
+                                        {% endfor %}
+                                            
+                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                           
+                    </div>
                     </div>
 
-                </a>
 
-            </div>
-        </div>
-       
-        {% endfor %}
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                           
+                            {% if site_supervisor %}
+                            <div class="widget-info margin-top bg-white padding">
+                                <div class="widget-head">
+                                    <h4>Supervise Sites</h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="max-260-scroll" style="overflow-y: scroll;">
+                                        <div class="row">
 
-    </div>
-{% endif %}
-
-
-
-{% if site_supervisor %}
-<br>
-<h3>Sites to Supervise </h3>
-    <div class="organization-lsit-all row">
-
-        {% for obj in site_supervisor %}
-        <div class="organization-list  {{obj.is_active|activeness}}">
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <a href="{% url 'fieldsight:site-dashboard' obj.site.pk %}" >
-
-
-                    <div class="card ">
-
-                        <!--Card image-->
-
-                        <div class="card-image list-img">
-                            <img src="{{ obj.site.logo.url }}" title="{{ obj.site.logo}}" class="sixty" />
-                        </div>
-                        <!--/.Card image-->
-
-                        <!--Card content-->
-                        <div class="card-block">
-                            <!--Title-->
-                            <h4 class="card-title">{{ obj.site.name }}</h4>
-                            <hr class="colour">
-                            <!--Text-->
-                            <p class="card-text"><span><i class="fa fa-map-marker space" aria-hidden="true"></i></span>
-
-                            {{ obj.site.address }}, {{ obj.site.get_country_display }}</p>
- 
-                            <a href="{% url 'fieldsight:site-dashboard' obj.site.pk %}" class="btn btn-primary">GO <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                        <!--/.Card content-->
-
+                                        {% for role in site_supervisor %}
+                                            <div class="col-lg-3 col-md-12"  style="padding:10px;">
+                                                <a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title=""> 
+                                                <div class="project-item-wrap clearfix">
+                                                    <div class="project-logo">
+                                                        <img src="{{ role.site.logo.url }}" alt="" width="50" height="50">
+                                                    </div>
+                                                    <div class="project-basic-info">
+                                                        <h4>{{ role.site.name }}</h4>
+                                                        <p>{{ role.site.address }}</p>
+                                                    </div>
+                                                </div>
+                                                </a>
+                                            </div>
+                                        {% endfor %}
+                                            
+                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                           
                     </div>
-
-                </a>
+                    </div>
+                </section>
+                
+            </div>
+                </section>
 
             </div>
-        </div>
-       
-        {% endfor %}
-
-    </div>
-{% endif %}
-</section>
 {% endblock %}
-
-
