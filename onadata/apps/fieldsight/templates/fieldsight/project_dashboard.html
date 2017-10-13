@@ -35,7 +35,7 @@ var project = "{{obj.pk}}";
 
 					</div>
 					<div class="action-right">
-						<a href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class=""></i> Response</a>
+						<a href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class=""></i> Responses</a>
 
 						<span class="dropdown">
 							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -54,7 +54,7 @@ var project = "{{obj.pk}}";
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-project' obj.pk %}"><i class="la la-user"></i>{% trans 'People' %}</a>
 								<a class="dropdown-item" href="{% url 'forms:setup-forms' 1 obj.pk %}"><i class="la la-clipboard"></i>{% trans 'Setup Forms' %}</a>
-								<a class="dropdown-item" href="{% url 'fieldsight:site-upload'  obj.pk %}"><i class="la la-clipboard"></i>{% trans 'Bulk Upload Sites' %}</a>
+								<a class="dropdown-item" href="{% url 'fieldsight:proj-site-list' obj.id%}"><i class="la la-clipboard"></i>{% trans 'Sites' %}</a>
 							</div>
 						</span>
 						<a href="{% url 'fieldsight:project-edit' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-edit"></i> Edit</a>

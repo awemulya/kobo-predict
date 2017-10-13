@@ -1,33 +1,41 @@
-{% extends "fieldsight/fieldsight_base.html" %}
-{% load i18n %}
+{% extends "fieldsight/fieldsight_base1.html" %}
+{% load i18n staticfiles %}
 
 {% block page-title %}{{ scenario }} {% trans 'Site' %}{% endblock %}
 {%block extracss %}
 {% endblock %}
 {% block head %}
+    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:sites-list' project %}">{% trans 'Sites' %}</a>
 {% endblock %}
 
-{% block breadcrumbs %}
-<li><a href="{% url 'fieldsight:site-dashboard' id %}">
-     {% trans 'Site Dashboard' %}</a></li>
-<li>{% trans 'Upload Blueprints image files' %}</li>
-{% endblock %}
 
 {% block content %}
 
-    <form id="post_form" method="post" action="{% url 'fieldsight:site-blue-prints' id%}"
-      enctype="multipart/form-data">
+    <div id="main-content" class="padding">
+				<section class="panel">
 
-    {% csrf_token %}
+					<div class="panel-body">
+						<!-- Add New Organization-->
+						<div id="newOrganization" class="margin-top">
+							<form id="post_form" method="post" action="{% url 'fieldsight:site-blue-prints' id%}"
+                                enctype="multipart/form-data">
 
-    {{ formset.management_form }}
-    {% for form in formset %}
-        {{ form }}
-    {% endfor %}
+								<div class="form-row">
+                                     {% csrf_token %}
+                                     {{ formset.management_form }}
+									<div class="form-group col-sm-12">
+                                        {% for form in formset %}
+                                            {{ form }}<br>
+                                        {% endfor %}
+									</div>
 
 
-    <input type="submit" class="btn btn-primary" name="submit" value="Submit" />
-</form>
+								</div>
+                                <button type="submit" class="btn btn-primary"><i class="" aria-hidden="true"></i>{% trans ' submit' %}</button>
+							</form>
+						</div>
+					</div>
+                </section>
 
+    </div>
 {% endblock %}
-

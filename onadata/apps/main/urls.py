@@ -9,7 +9,7 @@ from onadata.apps.api.urls import BriefcaseApi
 
 from django.contrib import admin
 # admin.autodiscover()
-
+from .views import (Error_404)
 
 urlpatterns = patterns(
     '',
@@ -26,6 +26,8 @@ urlpatterns = patterns(
     url(r'^api/', RedirectView.as_view(url='/api/v1/')),
     url(r'^api/v1', RedirectView.as_view(url='/api/v1/')),
 
+    #404 error page
+    url(r'^error/', Error_404.as_view(), name='error'),
     # django default stuff
     url(r'^accounts/login/', RedirectView.as_view(url='/accounts/logout/'), name='login'),
     url(r'^accounts/', include('onadata.apps.main.registration_urls')),

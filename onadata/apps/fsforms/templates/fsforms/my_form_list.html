@@ -4,74 +4,58 @@
 
 {% block page-title %}{% trans 'Forms Library' %}{% endblock %}
 
-{% block head %}
-    <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
-{% endblock %}
 
 {% block content %}
+{% load pagination_tags %}
+{% load sorting_tags %}
+{% load fs_filters %}
+<div id="main-content" class="padding">
+				<section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="fa fa-wpforms "></i>My Forms</h3>
+						<!--<div class="panel-heading-right">-->
 
-    {% load pagination_tags %}
-    {% load sorting_tags %}
-    {% load fs_filters %}
+							<!--<a href="#" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> New Form</a>-->
+						<!--</div>-->
+                    </header>
+					<div class="container">
 
-
-
-
-    <div class="adv-table">
-
-
-        {% autosort object_list as sorted_objects %}
-        {% autopaginate object_list 25 as paginated_objects %}
-
-        <table class="table table-striped" id="dynamic-table1">
-            <thead>
-            <th>{% anchor title _('Name') %}</th>
-            <th>Edit</th>
-            <th>Created Date</th>
-            <!--<th colspan="2">Share Level</th>-->
-            </thead>
-            <tbody>
-            {% for obj in paginated_objects %}
-                <tr>
-                    <td>
-                        {{ obj.title }}
-                    </td>
-                    <td>
-                        <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.id_string }}/edit">
-                             {% trans 'Edit' %}</a>
-                    </td>
-                    <td>
-                        {{ obj.date_created }}
-                    </td>
+                      <div class="table-responsive">
+                      {% autosort object_list as sorted_objects %}
+                      {% autopaginate object_list 25 as paginated_objects %}
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th class="text-center">{% trans 'S.N' %}</th>
+                            <th class="text-center">{% anchor title _('Form Name') %}</th>
+                            <th class="text-center"> {% trans 'Created Date' %}</th>
+                            <th class="text-center">{% trans 'Actions' %}</th>
 
 
-                <!--<form method="post" action="{% url 'forms:share' obj.id_string forloop.counter %}">-->
-            <!--{% csrf_token %}-->
-                 <!--<td>-->
-                 <!--<select name="sl">-->
-                     <!--{% with obj.id_string|library as shared %}-->
-                     <!--<option value="">{% trans 'None' %}</option>-->
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for obj in paginated_objects %}
+                          <tr>
+                            <td class="text-center">{{ obj.id }}</td>
+                            <td class="text-center">{{ obj.title }}</td>
+                            <td class="text-center">{{ obj.date_created }}</td>
+                            <td class="text-center"><a class="btn btn-primary btn-sm" href="{{ koboform_url }}#/forms/{{ obj.id_string }}/edit" style="height:27px"><i class="fa fa-pencil-square-o"></i>{% trans 'Edit' %}</a>
 
-                     <!--<option value="1" {% ifequal shared 1 %} selected {% endifequal %}>{% trans 'Organization' %}</option>-->
-                     <!--<option value="2" {% ifequal shared 2 %} selected {% endifequal %}>{% trans 'Project' %}</option>-->
-                     <!--<option value="0" {% ifequal shared 0 %} selected {% endifequal %}>{% trans 'Global' %}</option>-->
-                     <!--{% endwith %}-->
-                <!--</select>-->
-                 <!--</td>-->
-                    <!--<td>-->
-                        <!--<button class="btn btn-success btn-raised" type="submit">Share</button>-->
-                    <!--</td>-->
-                    <!--</form>-->
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                            <button type="button" class="btn btn-danger btn-sm" style="height:27px"><i class="fa fa-trash"></i>{% trans 'Delete' %}</button></td>
 
-
-        {% paginate %}
-
-    </div>
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+                      {% paginate %}
+                      </div>
+                    </div>
+					<!--Pagination-->
 
 
 
+                </section>
+
+			</div>
 {% endblock %}

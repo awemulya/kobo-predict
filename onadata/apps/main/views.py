@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 import os
 import json
 from bson import json_util
-
+from django.views.generic import ListView, TemplateView
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.files.storage import default_storage
@@ -160,6 +160,10 @@ def clone_xlsform(request, username):
     else:
         return HttpResponse(message['text'])
 
+
+class Error_404(TemplateView):
+    def get(self, request):
+        return render(request, 'main/404_error.html')
 
 def profile(request, username):
     content_user = get_object_or_404(User, username__iexact=username)
