@@ -12,11 +12,11 @@
 				<div id="main-content" class="padding">
 				<section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3>Members</h3></i>
+                        <h3>Users</h3></i>
                         <div class="panel-heading-right">
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i> Search</a>
 
-							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#addfriend" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-plus"></i> Add/Invite Member</a>
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#addfriend" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-plus"></i> Add/Invite Users</a>
 
 
 						</div>
@@ -45,7 +45,7 @@
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										  <input type="text" class="form-control" placeholder="Invite Member" aria-label="Invite">
+										  <input type="text" class="form-control" placeholder="Invite Users" aria-label="Invite">
 										  <span class="input-group-btn">
 											<button class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Invite</button>
 										  </span>
@@ -66,13 +66,13 @@
 
                                     <img  style="float:left" src="{{user.user.user_profile.profile_picture.url}}" alt="" width="60" height="60">
 
-									<div class="basic-info">
-                                        <a href="{% url 'users:edit' pk=user.user.id %}">{{ user.user.username }}</a>
+									<a href="{% url 'users:profile' user.user.user_profile.pk %}"  class="basic-info">
 										<h4> {{ user.user.get_full_name }}</h4>
+                                       	<p>{{ user.user.username }}</p>
                                         <p>{{ user.user.email }}</p>
 										<p>{{ user.user.phone }}</p>
+									</a>
 
-									</div>
 
 								</div>
 							</div>
