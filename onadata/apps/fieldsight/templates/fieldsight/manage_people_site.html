@@ -67,10 +67,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="tabbing margin-top">
           <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Site Supervisors</a>
+              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Assign Site Supervisors</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Site Reviewers</a>
+              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Assign Site Reviewers</a>
             </li>
           </ul>
           <!-- Tab panes -->
@@ -79,16 +79,35 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               <ul class="row">
                  
 
-
-                  <div class="col-md-8">
+                      <div class="col-md-4">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Supervisors</h4>
+                <h4>Current Supervisors</h4>
+              </div>
+
+              <div class="widget-body max-513-scolling" data-bind="foreach:allSupervisors">
+                <div class="project-item-wrap clearfix">
+                  <div class="project-logo">
+                    <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                  </div>
+                  <div class="project-basic-info">
+                    <h4 data-bind="text:user().full_name"></h4>
+                    <p data-bind="text:user().email"></p>
+                  </div>
+                  <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this supervisor?', click:rmrole }"><i class="la la-close"></i></a>
+                  </div>
+                  </div>
+                  </div>
+                  </div>
+            <div class="col-md-8">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Invite new Supervisors</h4>
               </div>
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
                     <span class="input-group-btn">
                       <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Site Supervisor')" type="button"><i class="la la-user-plus"></i> Invite</button>
                     </span>
@@ -100,9 +119,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <h4 class="text-center margin-top">
                 <strong>OR</strong>
                 </h4>
-                <p class="text-center">
-                Select from available Users
-                </p>
+                <div class="widget-head">
+                <h4>Select users to assign as supervisor</h4>
+                </div>
                 <form class="margin-top">
                   <div class="input-group">
                     <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
@@ -110,7 +129,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </form>
                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
-                  <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignsupervisors"><i class="la la-user-plus"></i> Assign Supervisors</button>
+                  <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignsupervisors"><i class="la la-user-plus"></i> Assign selected as Supervisors</button>
                
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
@@ -142,22 +161,6 @@ vm = new ManagePeopleViewModel(pk, level, organization);
             </div>
           </div>
 
-          <div class="col-md-4">
-            <div class="widget-info margin-top bg-white padding">
-              <div class="widget-head">
-                <h4>Current Supervisors</h4>
-              </div>
-
-              <div class="widget-body max-513-scolling" data-bind="foreach:allSupervisors">
-                <div class="project-item-wrap clearfix">
-                  <div class="project-logo">
-                    <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
-                  </div>
-                  <div class="project-basic-info">
-                    <h4 data-bind="text:user().full_name"></h4>
-                    <p data-bind="text:user().email"></p>
-                  </div>
-                  <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this supervisor?', click:rmrole }"><i class="la la-close"></i></a>
 
 
 
@@ -172,16 +175,37 @@ vm = new ManagePeopleViewModel(pk, level, organization);
             <ul class="row">
                  
 
-
-                  <div class="col-md-8">
+                      <div class="col-md-4">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Reviewers</h4>
+                <h4>Current Reviewers</h4>
+              </div>
+
+              <div class="widget-body max-513-scolling" data-bind="foreach:allReviewers">
+                <div class="project-item-wrap clearfix">
+                  <div class="project-logo">
+                    <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                  </div>
+                  <div class="project-basic-info">
+                    <h4 data-bind="text:user().full_name"></h4>
+                    <p data-bind="text:user().email"></p>
+                  </div>
+                  <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this reviewer?', click:rmrole }"><i class="la la-close"></i></a>
+                  </div>
+                  </div>
+                  </div>
+                  </div>
+
+
+          <div class="col-md-8">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>Invite New Reviewers</h4>
               </div>
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
                     <span class="input-group-btn">
                       <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Reviewer')" type="button"><i class="la la-user-plus"></i> Invite</button>
                     </span>
@@ -193,9 +217,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <h4 class="text-center margin-top">
                 <strong>OR</strong>
                 </h4>
-                <p class="text-center">
-                Select from available Users
-                </p>
+                <div class="widget-head">
+                <h4>Select users to assign as reviewer</h4>
+                </div>
                 <form class="margin-top">
                   <div class="input-group">
                     <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
@@ -203,7 +227,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </form>
                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
-                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignreviewers"><i class="la la-user-plus"></i> Assign Reviewers</button>
+                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignreviewers"><i class="la la-user-plus"></i> Assign seleeted as Reviewers</button>
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
@@ -235,22 +259,6 @@ vm = new ManagePeopleViewModel(pk, level, organization);
             </div>
           </div>
 
-          <div class="col-md-4">
-            <div class="widget-info margin-top bg-white padding">
-              <div class="widget-head">
-                <h4>Current Reviewers</h4>
-              </div>
-
-              <div class="widget-body max-513-scolling" data-bind="foreach:allReviewers">
-                <div class="project-item-wrap clearfix">
-                  <div class="project-logo">
-                    <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
-                  </div>
-                  <div class="project-basic-info">
-                    <h4 data-bind="text:user().full_name"></h4>
-                    <p data-bind="text:user().email"></p>
-                  </div>
-                  <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this reviewer?', click:rmrole }"><i class="la la-close"></i></a>
 
 
 
@@ -284,10 +292,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
       <div class="tabbing margin-top">
           <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Project User Assign</a>
+              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Assign Project Managers</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Site User Assign</a>
+              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Assign Site Users</a>
             </li>
           </ul>
           <!-- Tab panes -->
@@ -300,12 +308,12 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <div class="col-md-8">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Project Users</h4>
+                <h4>Invite new project managers</h4>
               </div>
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
                     <span class="input-group-btn">
                       <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Project Manager')" type="button"><i class="la la-user-plus"></i> Invite</button>
                     </span>
@@ -317,9 +325,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <h4 class="text-center margin-top">
                 <strong>OR</strong>
                 </h4>
-                <p class="text-center">
-                Select from available Users
-                </p>
+                <div class="widget-head">
+                <h4>Select Users to assign as Project Managers</h4>
+                </div>
+               
                 <form class="margin-top">
                   <div class="input-group">
                     <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
@@ -328,7 +337,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
 
-                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> Assign Project Manager</button>
+                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> Assign selected as Project Manager</button>
                
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
@@ -389,8 +398,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-6">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Users</h4>
+                <h4>Invite new site users</h4>
               </div>
+
               <div class="widget-body">
 
                 <!-- <ul class="row max-260-scroll" id="multi-ass-users">
@@ -403,7 +413,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                  
                 </ul> -->
                  <div class="input-group">
-                    <input type="text" id="multi_invite_email_ps" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <input type="text" id="multi_invite_email_ps" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
                     <span class="input-group-btn">
                       
                       <span class="dropdown">
@@ -426,7 +436,12 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                     </span>
                   </div>
                   <br>
-                  <h4>OR</h4>
+                  <h4 class="text-center margin-top">
+                <strong>OR</strong>
+                </h4>
+                <div class="widget-head">
+                <h4>Select Users to assign to sites</h4>
+                </div>
                   <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
@@ -473,7 +488,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-6">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Projects</h4>
+                <h4>Select Sites</h4>
               </div>
               <div class="widget-body">
                 <!-- <ul class="row max-260-scroll" id="multi-ass-proj_site">
@@ -546,10 +561,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
       <div class="tabbing margin-top">
           <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Users</a>
+              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Assign Organization Admins</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Organizations</a>
+              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Assign Project Managers</a>
             </li>
           </ul>
           <!-- Tab panes -->
@@ -562,12 +577,12 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <div class="col-md-8">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Organization Users</h4>
+                <h4>Invite new organization admins</h4>
               </div>
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
                     <span class="input-group-btn">
                       <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Organization Admin')" type="button"><i class="la la-user-plus"></i> Invite</button>
                     </span>
@@ -579,9 +594,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <h4 class="text-center margin-top">
                 <strong>OR</strong>
                 </h4>
-                <p class="text-center">
-                Select from available Users
-                </p>
+                 <div class="widget-head">
+                <h4>Select users to assign as organization admin</h4>
+              </div>
                 <form class="margin-top">
                   <div class="input-group">
                     <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
@@ -652,7 +667,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-6">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Users</h4>
+                <h4>Invite new project managers</h4>
               </div>
               <div class="widget-body">
 
@@ -666,13 +681,18 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                  
                 </ul> -->
                  <div class="input-group">
-                    <input type="text" id="multi_invite_email_ps" name="email" class="form-control" placeholder="Invite to..." aria-label="Invite to...">
+                    <input type="text" id="multi_invite_email_ps" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
                     <span class="input-group-btn">
                       <button class="btn btn-primary" id="retry" data-bind="click:inviteforemails" type="button"><i class="la la-user-plus"></i> Invite</button>
                     </span>
                   </div>
                   <br>
-                  <h4>OR</h4>
+                 <h4 class="text-center margin-top">
+                <strong>OR</strong>
+                </h4>
+                  <div class="widget-head">
+                <h4>Select users to assign to projects</h4>
+              </div>
                   <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   <input type="button" value="Select All" class="btn btn-primary margin-top"  data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
@@ -709,7 +729,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-6">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Projects</h4>
+                <h4>Select Projects</h4>
               </div>
               <div class="widget-body">
                 <!-- <ul class="row max-260-scroll" id="multi-ass-proj_site">

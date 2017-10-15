@@ -62,7 +62,8 @@
 										<div class="row">
 
 										{% for role in roles_org %}
-											<div class="col-lg-6 col-md-12">
+										<a href="{% url 'fieldsight:organizations-dashboard' role.organization.pk %}" title="">
+											<div class="col-lg-6 col-md-12" style="margin-top:10px;">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{{ roles_org.organization.logo.url }}" alt="" width="50" height="50">
@@ -72,7 +73,7 @@
 														<p>{{ role.organization.address }}</p>
 													</div>
 												</div>
-												<a href="{% url 'fieldsight:organizations-dashboard' role.organization.pk %}" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+												</a>
 											</div>
 										{% endfor %}
 											
@@ -92,7 +93,8 @@
 									<div class="max-260-scroll" style="overflow-y: scroll;">
 										<div class="row">
 										{% for role in roles_project %}
-											<div class="col-lg-6 col-md-12">
+										<a href="{% url 'fieldsight:project-dashboard' role.project.pk %}" title="">
+											<div class="col-lg-6 col-md-12" style="margin-top:10px;">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{{ roles_project.project.logo.url }}" alt="" width="50" height="50">
@@ -102,7 +104,7 @@
 														<p>{{ role.project.address }}</p>
 													</div>
 												</div>
-												<a href="{% url 'fieldsight:project-dashboard' role.project.pk %}" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+												</a>
 											</div>
 										{% endfor %}
 										</div>
@@ -119,7 +121,8 @@
 									<div class="max-260-scroll" style="overflow-y: scroll;">
 										<div class="row">
 											{% for role in roles_reviewer %}
-											<div class="col-lg-6 col-md-12">
+											<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
+											<div class="col-lg-6 col-md-12" style="margin-top:10px;">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{{ role.site.logo.url }}" alt="" width="50" height="50">
@@ -129,7 +132,7 @@
 														<p>{{ role.site.address }}</p>
 													</div>
 												</div>
-												<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+												</a>
 											</div>
 											{% endfor %}
 										</div>
@@ -147,7 +150,8 @@
 									<div class="max-260-scroll">
 										<div class="row">
 											{% for role in roles_SA %}
-											<div class="col-lg-6 col-md-12">
+											<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
+											<div class="col-lg-6 col-md-12" style="margin-top:10px;">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{{ role.site.logo.url }}" alt="" width="50" height="50">
@@ -157,7 +161,7 @@
 														<p>{{ role.site.address }}</p>
 													</div>
 												</div>
-												<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+												</a>
 											</div>
 											{% endfor %}
 										</div>

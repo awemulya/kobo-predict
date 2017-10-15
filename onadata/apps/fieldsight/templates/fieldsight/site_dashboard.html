@@ -66,13 +66,21 @@
 							<div class="progress">
 							<div class="progress progress-striped active progress-sm" style="width:100%;"> 
 				
-							  <div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ progress  }}%;" aria-valuenow="65" aria-valuenow="{{progress}}" aria-valuemax="100">
-								   <span class="sr-only">{{ progress }}% Complete</span>
-							{% if progress < 20 %}
-								  <span class="progress-bar-value" style="color:red;">{{ progress }}% Complete</span>
+							  
+							{% if progress = 0 %}
+							<div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ progress  }}%;" aria-valuenow="{{progress}}" aria-valuemax="100">
+								  <span class="progress-bar-value" style="color:red;">{{ progress }}% </span>
 
+							{% elif progress <= 10 %}
+							<div class="progress-bar progress-bar" role="progressbar" style="width: {{ progress  }}%;" aria-valuenow="{{progress}}" aria-valuemax="100">
+								  <span class="progress-bar-value" style="color:white;">{{ progress }}% </span>
+	
+							{% elif progress >= 90 %}
+							<div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ progress  }}%; background-color: green" aria-valuenow="{{progress}}" aria-valuemax="100">
+							<span class="progress-bar-value" style="color:white;">{{ progress }}% Complete</span>
+							
 							{% else %}
-
+							<div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ progress  }}%; aria-valuenow="{{progress}}" aria-valuemax="100">
 							<span class="progress-bar-value" style="color:white;">{{ progress }}% Complete</span>
 
 							{% endif %} 

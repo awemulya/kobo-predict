@@ -6,10 +6,13 @@ from onadata.apps.api.urls import router
 from onadata.apps.api.urls import XFormListApi
 from onadata.apps.api.urls import XFormSubmissionApi
 from onadata.apps.api.urls import BriefcaseApi
-
+from .views import (Error_404)
 from django.contrib import admin
 # admin.autodiscover()
-from .views import (Error_404)
+
+handler404 = Error_404.as_view()
+handler500 = Error_404.as_view()
+
 
 urlpatterns = patterns(
     '',
