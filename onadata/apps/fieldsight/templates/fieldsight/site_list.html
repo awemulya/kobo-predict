@@ -97,17 +97,23 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 											</p>
 										</li>
 									</ul>
-									{% with progress=obj.progress %}
-									<div class="progress">
-									<div class="progress progress-striped active progress-sm">
-									  <div class="progress-bar progress-bar-success" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuenow="{{progress}}" aria-valuemax="100">
-										   <span class="sr-only">{{ progress }}% Complete</span>
-										  <span class="progress-bar-value">{{ progress }}%</span>
-									 </div>
-									</div>
-									</div>
-									{% endwith %}
-								</a>
+								
+							
+							<div class="progress">
+							<div class="progress progress-striped active progress-sm" style="width:100%;">  
+						
+							<div class="progress-bar progress-bar-success" role="progressbar" style="" data-bind="style: { width: prog() + '%'}">
+							<span class="progress-bar-value" style="color:grey;" data-bind="text: prog() + '% Complete'"> </span>
+
+							
+							</div>
+							</div>
+							</div>
+						
+							</a>
+							</div>
+							
+								
 							</div>
 
 
