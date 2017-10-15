@@ -51,7 +51,7 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
 
         noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Submission",
                                        organization=instance.fieldsight_instance.site.project.organization,
-                                       project=instance.fieldsight_instance.site.project, site=instance.fieldsight_instance.site, extra_object=instance.fieldsight_instance.site, content_object=instance,
+                                       project=instance.fieldsight_instance.site.project, site=instance.fieldsight_instance.site, extra_object=instance.fieldsight_instance.site, content_object=instance.fieldsight_instance,
                                        description='{0} submitted a response for {1} {2} in {3}'.format(
                                            self.request.user.get_full_name(),
                                            instance.fieldsight_instance.site_fxf.form_type(),
