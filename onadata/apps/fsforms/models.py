@@ -348,7 +348,7 @@ class FInstance(models.Model):
             return self.site_fxf.id
 
     def get_absolute_url(self):
-        return reverse('forms:instance', kwargs={'pk': self.instance.site_fxf.pk})
+        return reverse('forms:instance', kwargs={'pk': self.site_fxf.pk})
 
     def getname(self):
         return '{0} form {1}'.format(self.site_fxf.form_type(),
