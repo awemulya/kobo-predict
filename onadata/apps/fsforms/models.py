@@ -351,8 +351,8 @@ class FInstance(models.Model):
         return reverse('forms:instance', kwargs={'pk': instance.site_fxf.pk})
 
     def getname(self):
-        return '{0} form {1}'.format(self.fieldsight_instance.site_fxf.form_type(),
-                                           self.fieldsight_instance.site_fxf.xf.title,)
+        return '{0} form {1}'.format(self.site_fxf.form_type(),
+                                           self.site_fxf.xf.title,)
 
 class InstanceStatusChanged(models.Model):
     finstance = models.ForeignKey(FInstance, related_name="comments")
