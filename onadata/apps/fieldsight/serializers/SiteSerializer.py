@@ -8,7 +8,7 @@ class SiteSerializer(serializers.ModelSerializer):
     prog = serializers.SerializerMethodField('get_progress', read_only=True)
     blueprints = serializers.SerializerMethodField('get_blue_prints', read_only=True)
     organization_label = serializers.ReadOnlyField(source='project.organization.name', read_only=True)
-    get_site_submission = serializers.ReadOnlyField()
+    get_site_submission_count = serializers.ReadOnlyField()
 
     class Meta:
         model = Site
