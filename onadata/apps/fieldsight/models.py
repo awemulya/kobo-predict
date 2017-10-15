@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import json
 from django.contrib.gis.db.models import PointField
 from django.contrib.gis.db.models import GeoManager
 from django.contrib.contenttypes.fields import GenericRelation
@@ -294,6 +294,27 @@ class Site(models.Model):
                 approved.append(submission)
 
         return outstanding, flagged, approved, rejected
+
+
+    def get_site_submission_count(self):
+        instances = self.site_instances.all().order_by('-date')
+        outstanding, flagged, approved, rejected = 0, 0, 0, 0
+        for submission in instances:
+            if submission.form_status == 0:
+                outstanding += 1
+            elif submission.form_status == 1:
+                rejected += 1
+            elif submission.form_status == 2:
+                flagged += 1
+            elif submission.form_status == 3:
+                approved += 1
+        response = {}
+        response['outstanding'] = outstanding
+        response['rejected'] = rejected
+        response['flagged'] = flagged
+        response['approved'] = approved
+
+        return json.dumps(response)
 
     def get_absolute_url(self):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.pk})

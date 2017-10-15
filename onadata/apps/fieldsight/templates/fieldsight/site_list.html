@@ -74,19 +74,27 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 									<ul class="icon-listing clearfix margin-top">
 										<li>
 											<i class="la la-exclamation"></i>
-											{{rejected|length}}
+											<p data-bind="text: get_site_submission_count().rejected">
+												
+											</p>
 										</li>
 										<li>
 											<i class="la la-flag"></i>
-											{{flagged|length}}
+											<p data-bind="text: get_site_submission_count().flagged">
+												
+											</p>
 										</li>
 										<li>
 											<i class="la la-hourglass-half"></i>
-											{{outstanding|length}}
+											<p data-bind="text: get_site_submission_count().outstanding">
+												
+											</p>
 										</li>
 										<li>
 											<i class="la la-thumbs-up"></i>
-											{{approved|length}}
+											<p data-bind="text: get_site_submission_count().approved">
+												
+											</p>
 										</li>
 									</ul>
 									{% with progress=obj.progress %}
