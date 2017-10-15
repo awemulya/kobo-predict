@@ -55,7 +55,7 @@ class ScheduleViewset(viewsets.ModelViewSet):
                                   organization=fxf.project.organization,
                                   project = fxf.project,
                                   site = fxf.site, content_object=fxf.site,
-                                              extra_message='{0} {1}'.format(fxf.form_type(), fxf.xf.title),
+                                              extra_message='{0} form {1}'.format(fxf.form_type(), fxf.xf.title),
                                   description='{0} assigned new Schedule form  {1} to {2} '.format(
                                       self.request.user.get_full_name(),
                                       fxf.xf.title,
@@ -69,7 +69,7 @@ class ScheduleViewset(viewsets.ModelViewSet):
         else:
             noti = fxf.logs.create(source=self.request.user, type=18, title="Schedule",
                       organization=fxf.project.organization,
-                      project = fxf.project, content_object=fxf.project, extra_message='{0} {1}'.format(fxf.form_type(), fxf.xf.title),
+                      project = fxf.project, content_object=fxf.project, extra_message='{0} form {1}'.format(fxf.form_type(), fxf.xf.title),
                       description='{0} assigned new Schedule form  {1} to {2} '.format(
                           self.request.user.get_full_name(),
                           fxf.xf.title,

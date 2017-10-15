@@ -347,9 +347,12 @@ class FInstance(models.Model):
         else:
             return self.site_fxf.id
 
-    def getname(self):
-        return ""
+    def get_absolute_url(self):
+        return reverse('forms:instance', kwargs={'pk': instance.site_fxf.pk})
 
+    def getname(self):
+        return '{0} form {1}'.format(self.fieldsight_instance.site_fxf.form_type(),
+                                           self.fieldsight_instance.site_fxf.xf.title,)
 
 class InstanceStatusChanged(models.Model):
     finstance = models.ForeignKey(FInstance, related_name="comments")
@@ -367,7 +370,7 @@ class InstanceStatusChanged(models.Model):
         return reverse('forms:alter-status-detail', kwargs={'pk': self.pk})
 
     def getname(self):
-        return ""
+        return '{0} form {1}'.format(self.finstance.site_fxf.form_type(), self.finstance.site_fxf.xf.title)
 
 class InstanceImages(models.Model):
     instance_status = models.ForeignKey(InstanceStatusChanged, related_name="images")
