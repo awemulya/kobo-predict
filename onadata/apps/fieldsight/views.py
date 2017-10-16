@@ -1276,11 +1276,11 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
             site = Site.objects.get(pk=site_id)
 #226
             for user in users:
-                print "yesssssssssssssssssssssssssss"
+              
                 role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
                                                                project__id=site.project.id, organization__id=site.project.organization_id, group=group, ended_at=None)
                 if created:
-                    print "yesssssssssssssssssssssssssss"
+               
                     # description = "{0} was assigned  as {1} in {2}".format(
                     #     role.user.get_full_name(), role.lgroup.name, role.project)
                     noti_type = 8

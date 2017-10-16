@@ -36,8 +36,6 @@ class FieldSightLog(models.Model):
         (19, 'User assigned a new Form Type Form Name to Site Name.'),
         (20, 'User edited Form Name form.'),
     )
-
-   
     
     type = models.IntegerField(default=0, choices=ACTION_TYPES)
     title = models.CharField(max_length=255)
