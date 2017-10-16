@@ -1,4 +1,4 @@
-{% extends "fieldsight/fieldsight_base1.html" %}
+{% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n staticfiles %}
 {% load filters %}
 {% block content %}
@@ -17,11 +17,16 @@
 									{% csrf_token %}
 									 {{ form.media }}
 									{% for field in form %}
-
+ 									{% if not field.label == 'Location' %}
+                                    {% if not field.label == 'Is active' %}
+									{% if not field.label == 'Project' %}
 									<div class="form-group col-md-6">
 									  <label class="col-form-label">{{ field.label }}</label>
 									 {{ field|add_class:"form-control" }}
 									</div>
+									{% endif %}
+									{% endif %}
+                                    {% endif %}
 									{% endfor %}
 
 									<div class="form-group col-md-6">
