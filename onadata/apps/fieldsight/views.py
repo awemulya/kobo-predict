@@ -125,7 +125,7 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
     def get_context_data(self, **kwargs):
         dashboard_data = super(Organization_dashboard, self).get_context_data(**kwargs)
         obj = Organization.objects.get(pk=self.kwargs.get('pk'))
-        peoples_involved = obj.organization_roles.filter(group__name = "Organization Admin").order_by('user__first_name')
+        peoples_involved = obj.organization_roles.filter(ended_at__isnull=True).distinct('user_id')
         sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
@@ -133,7 +133,7 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
         total_projects = len(projects)
         total_sites = len(sites)
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
-        total_users = UserProfile.objects.filter(organization=obj).count()
+        
 
         bar_graph = BarGenerator(sites)
 
@@ -145,7 +145,6 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
             'projects': projects,
             'sites': sites,
             'peoples_involved': peoples_involved,
-            'total_users': total_users,
             'total_projects': total_projects,
             'total_sites': total_sites,
             'outstanding': outstanding,
@@ -167,7 +166,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
 
-        peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
+        peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
 
         sites = obj.sites.filter(is_active=True, is_survey=False)
         data = serialize('custom_geojson', sites, geometry_field='location',
@@ -210,7 +209,7 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
     def get_context_data(self, **kwargs):
         dashboard_data = super(SiteDashboardView, self).get_context_data(**kwargs)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
-        peoples_involved = obj.site_roles.all().order_by('user__first_name')
+        peoples_involved = obj.site_roles.filter(ended_at__isnull=True).distinct('user')
         data = serialize('custom_geojson', [obj], geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
 
@@ -949,7 +948,7 @@ class OrgUserList(OrganizationRoleMixin, ListView):
         #queryset = UserRole.objects.select_related('User').filter(organization_id=self.kwargs.get('pk')).distinct('user_id')
         #queryset = User.objects.select_related('user_profile').filter(user_profile__organization_id=self.kwargs.get('pk'))
         
-        queryset = UserRole.objects.select_related('user').filter(organization_id=self.kwargs.get('pk')).distinct('user_id')
+        queryset = UserRole.objects.select_related('user').filter(organization_id=self.kwargs.get('pk'), ended_at__isnull=True).distinct('user_id')
         return queryset
 
 class ProjUserList(ProjectRoleMixin, ListView):
@@ -960,7 +959,7 @@ class ProjUserList(ProjectRoleMixin, ListView):
         context['type'] = "project"
         return context
     def get_queryset(self):
-        queryset = UserRole.objects.select_related('user').filter(project_id=self.kwargs.get('pk')).distinct('user_id')
+        queryset = UserRole.objects.select_related('user').filter(project_id=self.kwargs.get('pk'), ended_at__isnull=True).distinct('user_id')
         return queryset
 
 class SiteUserList(ProjectRoleMixin, ListView):
@@ -971,7 +970,7 @@ class SiteUserList(ProjectRoleMixin, ListView):
         context['type'] = "site"
         return context
     def get_queryset(self):
-        queryset = UserRole.objects.select_related('user').filter(site_id=self.kwargs.get('pk')).distinct('user_id')
+        queryset = UserRole.objects.select_related('user').filter(site_id=self.kwargs.get('pk'), ended_at__isnull=True).distinct('user_id')
     
         return queryset
 
