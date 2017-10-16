@@ -20,7 +20,7 @@
                     </header>
 					<div class="container">
 
-                      <div class="table-responsive">
+                      <div class="table-striped">
                       {% autosort object_list as sorted_objects %}
                       {% autopaginate object_list 25 as paginated_objects %}
                       <table class="table">
@@ -40,9 +40,9 @@
                             <td class="text-center">{{ obj.id }}</td>
                             <td class="text-center">{{ obj.title }}</td>
                             <td class="text-center">{{ obj.date_created }}</td>
-                            <td class="text-center"><a class="btn btn-primary btn-sm" href="{{ koboform_url }}#/forms/{{ obj.id_string }}/edit" style="height:27px"><i class="fa fa-pencil-square-o"></i>{% trans 'Edit' %}</a>
+                            <td class="text-center"><a class="btn btn-primary btn-sm" href="{{ koboform_url }}#/forms/{{ obj.id_string }}/edit" style="height:27px"><i class="la la-pencil-square-o"></i>{% trans ' Edit' %}</a>
 
-                            <button type="button" class="btn btn-danger btn-sm" style="height:27px"><i class="fa fa-trash"></i>{% trans 'Delete' %}</button></td>
+                            <button type="button" class="btn btn-danger btn-sm" style="height:27px"><i class="la la-trash"></i>{% trans ' Delete' %}</button></td>
 
                           </tr>
                         {% endfor %}

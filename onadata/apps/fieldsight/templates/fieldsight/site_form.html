@@ -38,7 +38,10 @@
 									</div>
 								</div>
 								<button class="btn btn-primary registration__action" type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans ' Save' %}</button>
-								<button type="btn btn-primary registration__action" type="submit" class="btn btn-danger"><i class="la la-trash"></i> {% trans ' Delete' %}</button>
+								{% if form.instance.id %}
+								<a href="{% url 'fieldsight:site-delete' form.instance.id %}" class="btn btn-danger btn-raised"><i class="la la-trash"></i>
+									{% trans 'Delete' %}</a>
+								{% endif %}
 							</form>
 						</div>
 					</div>
