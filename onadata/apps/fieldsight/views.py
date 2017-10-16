@@ -1167,10 +1167,11 @@ class ActivateRole(TemplateView):
         
 
     def post(self, request, invite, *args, **kwargs):
-        user = User.objects.filter(email=invite.email)
-        if user:
+        user_exists = User.objects.filter(email=invite.email)
+        if user_exists:
+            user = user_exists[0] 
             if request.POST.get('response') == "accept":
-                userrole = UserRole(user=user[0], group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
+                userrole = UserRole(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
                 userrole.save()
             else:
                 invite.is_declined = True
@@ -1273,7 +1274,7 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         response = ""
         for site_id in sites:
             site = Site.objects.get(pk=site_id)
-
+#226
             for user in users:
                 print "yesssssssssssssssssssssssssss"
                 role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,

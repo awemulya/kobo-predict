@@ -60,17 +60,18 @@
 						<div class="row">
 							{% autosort object_list as sorted_objects %}
                             {% autopaginate object_list 100 as paginated_objects %}
-                            {% for user in paginated_objects %}
+                            {% for role in paginated_objects %}
+
 							<div class="col-md-4 col-sm-6">
 								<div class="organization-item-wrap margin-top clearfix">
 
-                                    <img  style="float:left" src="{{user.user.user_profile.profile_picture.url}}" alt="" width="60" height="60">
+                                    <img  style="float:left" src="{% if role.user.user_profile  %}{{role.user.user_profile.profile_picture.url}}{% endif %}" alt="" width="60" height="60">
 
-									<a href="{% url 'users:profile' user.user.user_profile.pk %}"  class="basic-info">
-										<h4> {{ user.user.get_full_name }}</h4>
-                                       	<p>{{ user.user.username }}</p>
-                                        <p>{{ user.user.email }}</p>
-										<p>{{ user.user.phone }}</p>
+									<a href="{% if role.user.user_profile  %}{% url 'users:profile' role.user.user_profile.pk %}{% else %}#{% endif %}"  class="basic-info">
+										<h4> {{ role.user.get_full_name }}</h4>
+                                       	<p>{{ role.user.username }}</p>
+                                        <p>{{ role.user.email }}</p>
+										<p>{{ role.user.phone }}</p>
 									</a>
 
 

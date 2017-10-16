@@ -276,7 +276,7 @@ class FieldSightXF(models.Model):
             self.fsform.pk
         return None
 
-    def __unicode__(self):
+    def __unicode__(self): 
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
 
 @receiver(post_save, sender=FieldSightXF)
@@ -353,6 +353,8 @@ class FInstance(models.Model):
     def getname(self):
         return '{0} form {1}'.format(self.site_fxf.form_type(),
                                            self.site_fxf.xf.title,)
+    def __unicode__(self):
+        return u"%s" % str(self.submitted_by) + "---" + self.site_fxf.xf.title
 
 class InstanceStatusChanged(models.Model):
     finstance = models.ForeignKey(FInstance, related_name="comments")

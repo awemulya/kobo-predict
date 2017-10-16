@@ -1,8 +1,12 @@
 from django.db.models import Q
+from django.utils.timezone import now
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, View
 
 from onadata.apps.eventlog.models import FieldSightLog, FieldSightMessage
+
+from onadata.apps.users.models import UserProfile
+
 from onadata.apps.fieldsight.mixins import OrganizationMixin
 
 from rest_framework import routers, serializers, viewsets
@@ -71,20 +75,34 @@ class NotificationViewSet(viewsets.ModelViewSet):
         site_ids = self.request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')) .values('site_id')
         return queryset.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids))
 
-def getnotificationcount(request):
-    if request.role.group.name == "Super Admin":
-        count = FieldSightLog.objects.filter().exclude(seen_by__id=request.user.id).count()       
-    else:
-        org_ids = request.roles.filter(group__name='Organization Admin').values('organization_id')
-        project_ids = request.roles.filter(group__name='Project Manager').values('project_id')
-        site_ids = request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')) .values('site_id')
-        count = FieldSightLog.objects.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids)).exclude(seen_by__id=request.user.id).count()
-    print count
-    data = {
-        'id': request.user.id,
-        'count': count,
-    }
-    return JsonResponse(data)
+class NotificationCountnSeen(View):
+    def get(self, request):
+        queryset = FieldSightLog.objects.filter(date__gt=request.user.user_profile.notification_seen_date)
+        if request.role.group.name == "Super Admin":
+            count = queryset.filter().exclude(seen_by__id=request.user.id).count()       
+        else:
+            org_ids = request.roles.filter(group__name='Organization Admin').values('organization_id')
+            project_ids = request.roles.filter(group__name='Project Manager').values('project_id')
+            site_ids = request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')) .values('site_id')
+            count = queryset.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids)).exclude(seen_by__id=request.user.id).count()
+        print count
+        data = {
+            'id': request.user.id,
+            'count': count,
+        }
+        return JsonResponse(data)
+
+    def post(self, request):
+        # print request.user.user_profile.notification_seen_date
+        profile = UserProfile.objects.get(pk=request.user.id)
+        profile.notification_seen_date = now()
+        profile.save()
+        data = {
+            'status': 'Sucess',
+            'seen_time_stamp': str(now()),
+        }
+        return JsonResponse(data)
+
 
 class MessageListView(ListView):
     model = FieldSightMessage

@@ -1,3 +1,4 @@
+from django.utils.timezone import now
 from PIL import Image
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
@@ -36,6 +37,7 @@ class UserProfile(models.Model):
     twitter = models.CharField(max_length=140, blank=True, null=True)
     profile_picture = models.ImageField(upload_to=user_directory_path, default="logo/default_user.png")
     organization = models.ForeignKey(Organization, null=True, blank=True)
+    notification_seen_date = models.DateTimeField(default=now, blank=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     def __unicode__(self):

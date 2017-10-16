@@ -58,7 +58,7 @@
 									<h4>Organization Admin At :</h4>
 								</div>
 								<div class="widget-body">
-									<div class="max-260-scroll" style="overflow-y: scroll;">
+									<div class="" style="overflow-y: scroll;">
 										<div class="row">
 
 										{% for role in roles_org %}
@@ -90,7 +90,7 @@
 									<h4>Project Manager At :</h4>
 								</div>
 								<div class="widget-body">
-									<div class="max-260-scroll" style="overflow-y: scroll;">
+									<div class="" style="overflow-y: scroll;">
 										<div class="row">
 										{% for role in roles_project %}
 										<a href="{% url 'fieldsight:project-dashboard' role.project.pk %}" title="">
@@ -118,7 +118,7 @@
 									<h4>Site Reviewer At :</h4>
 								</div>
 								<div class="widget-body">
-									<div class="max-260-scroll" style="overflow-y: scroll;">
+									<div class="" style="overflow-y: scroll;">
 										<div class="row">
 											{% for role in roles_reviewer %}
 											<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
@@ -147,7 +147,7 @@
 									<h4>Site Supervisor At :</h4>
 								</div>
 								<div class="widget-body">
-									<div class="max-260-scroll">
+									<div class="">
 										<div class="row">
 											{% for role in roles_SA %}
 											<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
@@ -193,8 +193,9 @@
 									<h4>Latest Submission</h4>
 								</div>
 								<div class="widget-body">
-									<div class="max-513-scolling">
+									<div class="">
 										{% for sub in responses %}
+										<a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}" title="" class="btn btn-xs btn-block btn-primary">
 										<div class="project-item-wrap margin-top clearfix">
 											<div class="project-logo">
 												<img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">
@@ -204,7 +205,7 @@
 												<p>{{ sub.date }}</p>
 											</div>
 										</div>
-										<a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a>
+										</a>
 										{% endfor %}
 											
 									</div>
