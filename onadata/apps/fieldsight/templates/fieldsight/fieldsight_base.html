@@ -317,7 +317,7 @@
 
         success: function (data) {
           console.log(data);
-          document.getElementById("noticount").innerHTML = "0";
+          $( ".not_count" ).replaceWith( '0' );
         }
       });
 }
