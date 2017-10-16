@@ -67,7 +67,7 @@
 						</a>
 					
 						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification" style="width:480px;">
-							<div class="dropdown-header">New Notifications (<span class="not_count"></span>) <span><a href="#" onclick="updateseen()">Mark All as read<a></span></div>
+							<div class="dropdown-header">New Notifications (<span id="noticount" class="not_count"></span>) <span><a href="#" onclick="updateseen()">Mark All as read<a></span></div>
 							<ul class="menu" id="notification-ul" style="height:500px; overflow:hidden; overflow-y: scroll;">
 						
 							</ul>
@@ -317,6 +317,7 @@
 
         success: function (data) {
           console.log(data);
+          document.getElementById("noticount").innerHTML = "0";
         }
       });
 }
