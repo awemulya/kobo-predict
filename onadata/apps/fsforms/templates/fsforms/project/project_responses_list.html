@@ -33,12 +33,10 @@
               <a class="nav-link active" data-toggle="tab" href="#general1" role="tab">General Forms</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#schedule2" role="tab"
-                            >Scheduled Forms</a>
+              <a class="nav-link" data-toggle="tab" href="#schedule2" role="tab">Scheduled Forms</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#stage3" role="tab"
-                            >Staged Form</a>
+              <a class="nav-link" data-toggle="tab" href="#stage3" role="tab">Staged Form</a>
             </li>
           </ul>
 
@@ -70,7 +68,7 @@
                       </td>
                       <td>
                       <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.xf.id_string 'xls' %}">
-                          <i class="fa fa-download" aria-hidden="true"></i></a>
+                          <i class="la la-download" aria-hidden="true"></i></a>
                       </td>
                   </tr>
               {% endfor %}
@@ -115,7 +113,7 @@
                       </td>
                       <td>
                       <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.schedule_forms.xf.id_string 'xls' %}">
-                          <i class="fa fa-download" aria-hidden="true"></i></a>
+                          <i class="la la-download" aria-hidden="true"></i></a>
                       </td>
                   </tr>
               {% endfor %}
@@ -169,7 +167,7 @@
                               </td>
                               <td>
                       <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.stage_forms.xf.id_string 'xls' %}">
-                          <i class="fa fa-download" aria-hidden="true"></i></a>
+                          <i class="la la-download" aria-hidden="true"></i></a>
                       </td>
                           </tr>
                       {% endfor %}
