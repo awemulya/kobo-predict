@@ -195,7 +195,7 @@
 								<div class="widget-body">
 									<div class="">
 										{% for sub in responses %}
-										<a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}" title="" class="btn btn-xs btn-block btn-primary">
+										<a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}" title="">
 										<div class="project-item-wrap margin-top clearfix">
 											<div class="project-logo">
 												<img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">
@@ -209,7 +209,7 @@
 										{% endfor %}
 											
 									</div>
-										}
+										
 								</div>
 							</div>
 						</div>

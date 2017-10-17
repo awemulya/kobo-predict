@@ -12,9 +12,10 @@
 						<!-- Add New Organization-->
 						<div id="newOrganization" class="margin-top">
 							<form form enctype="multipart/form-data" method="post">
-								{{ form.non_field_errors }}
+								
 								<div class="form-row">
 									{% csrf_token %}
+									
 									 {{ form.media }}
 									{% for field in form %}
  									{% if not field.label == 'Location' %}

@@ -38,7 +38,7 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
                         <h3><i class="la la-map-marker"></i>Sites</h3>
 						<div class="panel-heading-right">
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i> Search</a>
-							<a href="{% url 'fieldsight:site-add' %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add New</a>
+							<a href="{% url 'fieldsight:site-add' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add New</a>
 							<a href="{% url 'fieldsight:site-upload' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Bulk Upload Sites</a>
 						</div>
                     </header>

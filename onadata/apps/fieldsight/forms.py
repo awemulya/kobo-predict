@@ -249,13 +249,12 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
         if not self.fields['location'].initial:
             self.fields['location'].initial = Point(85.3240, 27.7172,srid=4326)
         self.fields['type'].empty_label = None
-        self.fields['project'].empty_label = None
         self.fields['logo'].required = False
 
     class Meta:
         model = Site
-        exclude = ['project']
-        exclude = ['is_survey']
+        exclude = ('project', 'is_survey', 'is_active',)
+       
         # project_filters = ['project']
         widgets = {
         'address': forms.TextInput(),
@@ -266,8 +265,8 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
         }
 
     def clean(self):
-        lat = self.data.get("Longitude","85.3240")
-        long = self.data.get("Latitude","27.7172")
+        lat = self.data.get("Longitude")
+        long = self.data.get("Latitude")
         p = Point(float(lat), float(long),srid=4326)
         self.cleaned_data["location"] = p
         super(SiteForm, self).clean()

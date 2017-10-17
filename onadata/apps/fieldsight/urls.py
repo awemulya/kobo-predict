@@ -104,7 +104,7 @@ urlpatterns = [
     url(r'^api/survey-sites/$', SiteCreationSurveyViewSet.as_view({'post': 'create', 'put':'update'}), name='sites-list'),
     url(r'^site/$', SiteListView.as_view(), name='sites-list'),
     url(r'^site/$', SiteListView.as_view(), name='site-list'),
-    url(r'^site/add/$', SiteCreateView.as_view(), name='site-add'),
+    url(r'^site/add/(?P<pk>[0-9]+)/$', SiteCreateView.as_view(), name='site-add'),
     url(r'^site/(?P<pk>[0-9]+)/$', SiteUpdateView.as_view(), name='site-edit'),
 
     url(r'^site/blue-prints/(?P<id>[0-9]+)/$', BluePrintsView.as_view(), name='site-blue-prints'),
