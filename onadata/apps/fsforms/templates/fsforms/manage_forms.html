@@ -837,7 +837,8 @@ var pk = "{{pk}}";
                                         <div class="stage-name" data-toggle="collapse"
                                              aria-expanded="true"
                                              data-bind="attr: { 'aria-controls': 'prefix_' + $index(), href: '#prefix_' + $index() }">
-                                            <span data-bind="text:name"></span> #<span data-bind="text:$index() +1"></span>
+                                            #<span data-bind="text:$index() +1"></span>
+                                            <span data-bind="text:name"></span>
                                         </div>
                                         <div class="stage-action">
                                             <a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:edit"><i class="la la-edit"></i> Edit</a>
@@ -868,7 +869,6 @@ var pk = "{{pk}}";
                                     <div data-bind="attr: { id: 'prefix_' + $index() }" class="collapse"
                                          role="tabpanel" data-bind="attr: { aria-labelledby: 'heading_' + $index() }" data-parent="#accordion">
                                       <div class="card-body">
-                                        <span data-bind="text:description"></span>
                                         <div class="sub-stages margin-top">
                                             <h3><i class="la la-sitemap"></i> Sub Stages :</h3>
                                             <ul data-bind="attr: { id: 'substages_' + $index() }">
@@ -963,8 +963,8 @@ var pk = "{{pk}}";
                                                     </div>
                                                     <div class="substage-name" data-bind="visible:!editable()">
 
-                                                        <span data-bind="text:$index() +1">.</span>
-                                                        <span data-bind="text:name">.</span>
+                                                        # <span data-bind="text:$parent.order()"></span> .<span data-bind="text:$index() +1"></span>
+                                                        <span data-bind="text:name"></span>
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
                                                         <strong>Form Name: </strong> <span data-bind="text:stage_forms().xf().label"></span>
