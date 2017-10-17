@@ -1,6 +1,6 @@
 import datetime
 import json
-
+from django.shortcuts import get_object_or_404
 from django.core import serializers
 from django.contrib import messages
 from django.contrib.auth.models import User, Group
@@ -295,14 +295,14 @@ def my_profile(request, pk=None):
         responses = FInstance.objects.filter(submitted_by = request.user)[:10]
         return render(request, 'users/profile.html', {'obj': profile, 'roles': "Super Admin", 'responses': responses })
     else:
-        profile = UserProfile.objects.get(pk=pk)
+        get_object_or_404(User.objects.filter(pk=pk))
+        profile, created = UserProfile.objects.get_or_create(user_id=pk)
         roles_org = profile.user.user_roles.filter(organization__isnull = False, project__isnull = True, site__isnull = True)
         roles_project = profile.user.user_roles.filter(organization__isnull = False, project__isnull = False, site__isnull = True)
         roles_reviewer = profile.user.user_roles.filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Reviewer")
         roles_SA = profile.user.user_roles.filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Site Supervisor")
         responses = FInstance.objects.filter(submitted_by = request.user)[:10]
         return render(request, 'users/profile.html', {'obj': profile, 'roles_org': roles_org, 'roles_project': roles_project, 'roles_site': roles_reviewer, 'roles_SA': roles_SA, 'responses': responses })
-
 
 class UsersListView(TemplateView, SuperAdminMixin):
     template_name = "users/list.html"

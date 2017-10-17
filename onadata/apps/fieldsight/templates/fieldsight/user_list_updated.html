@@ -67,7 +67,7 @@
 
                                     <img  style="float:left" src="{% if role.user.user_profile  %}{{role.user.user_profile.profile_picture.url}}{% endif %}" alt="" width="60" height="60">
 
-									<a href="{% if role.user.user_profile  %}{% url 'users:profile' role.user.user_profile.pk %}{% else %}#{% endif %}"  class="basic-info">
+									<a href="{% url 'users:profile' role.user.pk %}"  class="basic-info">
 										<h4> {{ role.user.get_full_name }}</h4>
                                        	<p>{{ role.user.username }}</p>
                                         <p>{{ role.user.email }}</p>

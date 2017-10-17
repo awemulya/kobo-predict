@@ -1097,7 +1097,7 @@ def sendmultiroleuserinvite(request):
                     if userrole[0].ended_at==None:
                         response += email + ' already has the role for '+group.name+'.<br>' 
                         continue
-                invite = UserInvite(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
+                invite, created = UserInvite.objects.get_or_create(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
 
                 invite.save()
                 organization = Organization.objects.get(pk=1)
@@ -1112,7 +1112,7 @@ def sendmultiroleuserinvite(request):
                 # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
             else:
-                invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+                invite, created = UserInvite.objects.get_or_create(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
                 invite.save()
             current_site = get_current_site(request)
             subject = 'Invitation for Role'
@@ -1170,7 +1170,7 @@ class ActivateRole(TemplateView):
         if user_exists:
             user = user_exists[0] 
             if request.POST.get('response') == "accept":
-                userrole = UserRole(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
+                userrole = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
                 userrole.save()
             else:
                 invite.is_declined = True
@@ -1180,10 +1180,8 @@ class ActivateRole(TemplateView):
             user = User(username=request.POST.get('username'), email=invite.email, first_name=request.POST.get('firstname'), last_name=request.POST.get('lastname'))
             user.set_password(request.POST.get('password1'))
             user.save()
-            profile = UserProfile(user=user, organization=invite.organization)
-            profile.save()
-            userrole = UserRole(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
-            userrole.save()
+            profile, created = UserProfile.objects.get_or_create(user=user, organization=invite.organization)
+            userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
             invite.is_used = True
             invite.save()
 
@@ -1330,7 +1328,7 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
                     description = "{0} was assigned  as Project Manager in {1}".format(
                         role.user.get_full_name(), role.project)
                     noti = role.logs.create(source=role.user, type=6, title=description, description=description,
-                     content_type=project, extra_object=self.request.user)
+                     content_object=role.project, extra_object=self.request.user)
                     result = {}
                     result['description'] = description
                     result['url'] = noti.get_absolute_url()
