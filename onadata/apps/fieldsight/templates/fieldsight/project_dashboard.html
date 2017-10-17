@@ -301,7 +301,7 @@ var project = "{{obj.pk}}";
 												</form>
 											</div>
                                             {% for role in peoples_involved %}
-											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap clearfix">
+											<a href="{% if role.user.user_profile  %}{% url 'users:profile' role.user.id %}}{% else %}#{% endif %}" class="project-item-wrap clearfix">
 												<div class="project-logo">
 													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
 												</div>

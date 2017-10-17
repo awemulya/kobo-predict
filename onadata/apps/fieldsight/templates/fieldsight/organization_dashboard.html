@@ -76,7 +76,7 @@ var org = "{{obj.pk}}";
 										<a href="{% url 'fieldsight:org-user-list' obj.pk %}" class="org-profile-stat-item" title="">
 											<i class="la la-users"></i>
 											<div class="org-mini-stat-info">
-												<span>{{total_users}}</span>
+												<span>{{ peoples_involved.count }}</span>
 												 {% trans 'Users ' %}
 											</div>
 										</a>
@@ -268,7 +268,7 @@ var org = "{{obj.pk}}";
 												</form>
 											</div>
 											{% for role in peoples_involved %}
-											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap clearfix">
+											<a href="{% if role.user.user_profile  %}{% url 'users:profile' role.user.user_profile.id %}{% else %}#{% endif %}" class="project-item-wrap clearfix">
 												<div class="project-logo">
 													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
 												</div>
