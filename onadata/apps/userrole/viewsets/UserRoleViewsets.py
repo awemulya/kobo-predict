@@ -44,7 +44,7 @@ class UserRoleViewSet(viewsets.ModelViewSet):
             level = self.kwargs.get('level', None)
             pk = self.kwargs.get('pk', None)
             if level == "0":
-                queryset = queryset.filter(site__id=pk, group__name__in=['Site Supervisor', 'Reviewer']).distinct('user_id')
+                queryset = queryset.filter(site__id=pk, group__name__in=['Site Supervisor', 'Reviewer'])
             elif level == "1":
                 queryset = queryset.filter(project__id=pk, site__id=None, group__name='Project Manager').distinct('user_id')
             elif level == "2":
