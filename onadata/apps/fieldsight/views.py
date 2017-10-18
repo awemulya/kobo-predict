@@ -937,6 +937,7 @@ class ProjSiteList(ProjectRoleMixin, ListView):
         context = super(ProjSiteList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
         context['type'] = "project"
+        context['is_form_proj'] = True
         return context
     def get_queryset(self):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
