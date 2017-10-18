@@ -83,7 +83,7 @@
 							<span class="hidden-sm hidden-xs">{% trans request.user.username %}</span>
 						</a>
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonUser">
-							<a class="dropdown-item" href="{% url 'users:profile' 0 %}"><i class="la la-user"></i> My Profile</a>
+							<a class="dropdown-item" href="{% url 'users:profile' request.user.id %}"><i class="la la-user"></i> My Profile</a>
 							<a class="dropdown-item" href="{% url 'auth_password_change' %}"><i class="la la-key"></i> Change Password</a>
 							<a class="dropdown-item" href="{% url 'auth_logout' %}"><i class="la la-sign-out"></i> Logout</a>
 						</div>

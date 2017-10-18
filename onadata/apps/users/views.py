@@ -302,7 +302,7 @@ def my_profile(request, pk=None):
         roles_reviewer = user.user_roles.filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Reviewer", ended_at__isnull=True)
         roles_SA = user.user_roles.filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Site Supervisor", ended_at__isnull=True)
         responses = FInstance.objects.filter(submitted_by = user).order_by('-date')[:10]
-        return render(request, 'users/profile.html', {'obj': profile, 'roles_org': roles_org, 'roles_project': roles_project, 'roles_site': roles_reviewer, 'roles_SA': roles_SA, 'responses': responses })
+        return render(request, 'users/profile.html', {'obj': profile, 'roles_org': roles_org, 'roles_project': roles_project, 'roles_site': roles_reviewer, 'roles_SA': roles_SA, 'roles_reviewer': roles_reviewer, 'responses': responses })
 
 class UsersListView(TemplateView, SuperAdminMixin):
     template_name = "users/list.html"

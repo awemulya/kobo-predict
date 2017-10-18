@@ -642,7 +642,7 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
 
 
-class SiteUpdateView(SiteView, ReviewerMixin, UpdateView):
+class SiteUpdateView(SiteView, ProjectRoleMixin, UpdateView):
     def get_success_url(self):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.kwargs['pk']})
 
@@ -754,7 +754,7 @@ def ajax_save_project(request):
         return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
     return Response({'error': 'Invalid Project Data'}, status=status.HTTP_400_BAD_REQUEST)
 
-class UploadSitesView(ProjectMixin, TemplateView):
+class UploadSitesView(ProjectRoleMixin, TemplateView):
 
     def get(self, request, pk):
         form = UploadFileForm()
@@ -876,20 +876,20 @@ class BluePrintsView(LoginRequiredMixin, TemplateView):
         return render(request, 'fieldsight/blueprints_form.html', {'formset': formset, 'id': self.kwargs.get('id')}, )
 
 
-class ManagePeopleSiteView(LoginRequiredMixin, ReviewerMixin, TemplateView):
+class ManagePeopleSiteView(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
         project = Site.objects.get(pk=pk).project
         return render(request, 'fieldsight/manage_people_site.html', {'pk':pk, 'level': "0", 'category':"site", 'organization': project.organization.id, 'project':project.id, 'site':pk})
 
 
-class ManagePeopleProjectView(LoginRequiredMixin, ProjectMixin, TemplateView):
+class ManagePeopleProjectView(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
     def get(self, request, pk):
         organization = Project.objects.get(pk=pk).organization.id
         return render(request, "fieldsight/manage_people_site.html",
                       {'pk': pk, 'level': "1", 'category':"Project Manager", 'organization': organization, 'project': pk, 'type':'project'})
 
 
-class ManagePeopleOrganizationView(LoginRequiredMixin, OrganizationMixin, TemplateView):
+class ManagePeopleOrganizationView(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
     def get(self, request, pk):
         return render(request, 'fieldsight/manage_people_site.html', {'pk': pk, 'level': "2", 'category':"Organization Admin", 'organization': pk, 'type':'org'})
 
@@ -967,7 +967,7 @@ class ProjUserList(ProjectRoleMixin, ListView):
         queryset = UserRole.objects.select_related('user').filter(project_id=self.kwargs.get('pk'), ended_at__isnull=True).distinct('user_id')
         return queryset
 
-class SiteUserList(ProjectRoleMixin, ListView):
+class SiteUserList(ReviewerRoleMixin, ListView):
     template_name = "fieldsight/user_list_updated.html"
     def get_context_data(self, **kwargs):
         context = super(SiteUserList, self).get_context_data(**kwargs)
