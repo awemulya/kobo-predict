@@ -608,7 +608,7 @@ class ProjectDeleteView(ProjectView, ProjectRoleMixinDeleteView, DeleteView):
 
 class SiteView(PView):
     model = Site
-    success_url = reverse_lazy('fieldsight:sites-list')
+    # success_url = reverse_lazy('fieldsight:org-site-list')
     form_class = SiteForm
 
 
@@ -668,19 +668,23 @@ class SiteUpdateView(SiteView, ProjectRoleMixin, UpdateView):
 
 
 class SiteDeleteView(SiteView, ProjectRoleMixin, DeleteView):
-    def delete(self,*args, **kwargs):
-        self.object = self.get_object()
-        # noti = self.object.logs.create(source=self.request.user, type=3, title="new Site",
-        #                                organization=self.object.project.organization,
-        #                                description="new site {0} deleted by {1}".
-        #                                format(self.object.name, self.request.user.username))
-        # result = {}
-        # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
-        # result['url'] = noti.get_absolute_url()
-        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+    def get_success_url(self):
+        return reverse('fieldsight:proj-site-list', kwargs={'pk': self.object.project_id})
 
-        return HttpResponseRedirect(self.get_success_url())
+    # def delete(self,*args, **kwargs):
+    #     self.kwargs['pk'] = self.get_object().pk
+    #     self.object = self.get_object().delete()
+    #     # noti = self.object.logs.create(source=self.request.user, type=4, title="new Site",
+    #     #                                organization=self.object.organization,
+    #     #                                description="new project {0} deleted by {1}".
+    #     #                                format(self.object.name, self.request.user.username))
+    #     # result = {}
+    #     # result['description'] = 'new project {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+    #     # result['url'] = noti.get_absolute_url()
+    #     # ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
+    #     # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+    #     return HttpResponseRedirect(self.get_success_url())
+    #
 
 
 @group_required("Project")
