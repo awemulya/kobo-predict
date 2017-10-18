@@ -22,7 +22,7 @@ class DeleteView(BaseDeleteView):
 
     def post(self, request, *args, **kwargs):
         response = super(DeleteView, self).post(request, *args, **kwargs)
-        messages.success(request, ('%s %s' % (self.object.__class__._meta.verbose_name.title(), _('successfully deleted!'))))
+        # messages.success(request, ('%s %s' % (self.object.__class__._meta.verbose_name.title(), _('successfully deleted!'))))
         return response
 
 

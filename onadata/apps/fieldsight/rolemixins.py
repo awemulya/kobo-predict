@@ -113,7 +113,7 @@ class ProjectRoleMixinDeleteView(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
 
         if request.group.name == "Super Admin":
-            return super(ProjectRoleMixin, self).dispatch(request, *args, **kwargs)
+            return super(ProjectRoleMixinDeleteView, self).dispatch(request, *args, **kwargs)
         
         project_id = self.kwargs.get('pk')
         user_id = request.user.id
@@ -122,7 +122,7 @@ class ProjectRoleMixinDeleteView(LoginRequiredMixin):
         user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
         
         if user_role_asorgadmin:
-            return super(ProjectRoleMixin, self).dispatch(request, *args, **kwargs)
+            return super(ProjectRoleMixinDeleteView, self).dispatch(request, *args, **kwargs)
 
         raise PermissionDenied()
 

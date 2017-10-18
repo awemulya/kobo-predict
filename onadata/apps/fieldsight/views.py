@@ -533,7 +533,7 @@ def add_project_role(request, pk):
 
 class ProjectView(object):
     model = Project
-    success_url = reverse_lazy('fieldsight:project-list')
+    # success_url = reverse_lazy('fieldsight:project-list')
     form_class = ProjectForm
 
 class ProjectRoleView(object):
@@ -587,8 +587,12 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
 
 
 class ProjectDeleteView(ProjectView, ProjectRoleMixinDeleteView, DeleteView):
+    def get_success_url(self):
+        return reverse('fieldsight:org-project-list', kwargs={'pk': self.kwargs['org_id'] })
+
     def delete(self,*args, **kwargs):
-        self.object = self.get_object()
+        self.kwargs['org_id'] = self.get_object().organization_id
+        self.object = self.get_object().delete()
         # noti = self.object.logs.create(source=self.request.user, type=4, title="new Site",
         #                                organization=self.object.organization,
         #                                description="new project {0} deleted by {1}".
