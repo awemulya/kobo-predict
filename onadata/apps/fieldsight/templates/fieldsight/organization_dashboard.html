@@ -47,7 +47,7 @@ var org = "{{obj.pk}}";
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-organization' obj.pk %}"><i class="la la-user"></i>{% trans 'People' %}</a>
-								<a class="dropdown-item" href="{% url 'fieldsight:project-add' obj.pk%}"><i class="la la-tasks"></i>{% trans 'Add Project' %}</a>
+								<a class="dropdown-item" href="{% url 'fieldsight:org-project-list' obj.id%}"><i class="la la-tasks"></i>{% trans 'Projects' %}</a>
 							</div>
 						</span>
 						<a href="{% url 'fieldsight:organization-edit' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
