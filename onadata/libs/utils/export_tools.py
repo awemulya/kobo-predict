@@ -790,16 +790,26 @@ def generate_export(export_type, extension, username, id_string,
 
 
 def query_mongo(username, id_string, query=None, hide_deleted=True):
-    query = json.loads(query, object_hook=json_util.object_hook)\
-        if query else {}
-    query = dict_for_mongo(query)
-    query[USERFORM_ID] = u'{0}_{1}'.format(username, id_string)
+    # query = json.loads(query, object_hook=json_util.object_hook)\
+    #     if query else {}
+    # query = dict_for_mongo(query)
+    # query[USERFORM_ID] = u'{0}_{1}'.format(username, id_string)
     # hack the query
-    if hide_deleted:
+    # if hide_deleted:
         # display only active elements
         # join existing query with deleted_at_query on an $and
-        query = {"$and": [query, {"_deleted_at": None}]}
-    return xform_instances.find(query)
+        # query = {"$and": [query, {"_deleted_at": None}]}
+    if query:
+        if query.get('fs_uuid', False):
+            qry = {"$or": [{"_uuid": query.get('fs_uuid')}, {"fs_uuid": query.get('fs_uuid')}, {"_uuid": str(query.get('fs_uuid'))},
+                         {"fs_uuid": str(query.get('fs_uuid'))}]}
+        elif query.get('fs_project_uuid', False):
+            qry = {'fs_project_uuid': {'$in': [query.get('fs_project_uuid'), str(query.get('fs_project_uuid'))]}}
+    else:
+        qry = query
+    print(qry)
+    return xform_instances.find(qry)
+
 
 
 def should_create_new_export(xform, export_type):

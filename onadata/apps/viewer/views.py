@@ -293,7 +293,7 @@ def data_export(request, username, id_string, export_type):
 
 @login_required
 @require_POST
-def create_export(request, username, id_string, export_type):
+def create_export(request, username, id_string, export_type, is_project=None, id=None):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
     if not has_permission(xform, owner, request):
@@ -351,7 +351,9 @@ def create_export(request, username, id_string, export_type):
             kwargs={
                 "username": username,
                 "id_string": id_string,
-                "export_type": export_type
+                "export_type": export_type,
+                "is_project": is_project,
+                "id": id
             })
         )
 
@@ -373,7 +375,7 @@ def _get_google_token(request, redirect_to_url):
     return token
 
 
-def export_list(request, username, id_string, export_type, is_project=False, id=None):
+def export_list(request, username, id_string, export_type, is_project=None, id=None):
     if export_type == Export.GDOC_EXPORT:
         return HttpResponseForbidden(_(u'Not shared.'))
         redirect_url = reverse(
@@ -404,8 +406,12 @@ def export_list(request, username, id_string, export_type, is_project=False, id=
     }
     if should_create_new_export(xform, export_type):
         try:
+            if is_project == 1:
+                query = {'fs_project_uuid':id}
+            else:
+                query = {'fs_uuid':id}
             create_async_export(
-                xform, export_type, query=None, force_xlsx=True,
+                xform, export_type, query=query, force_xlsx=True,
                 options=options)
         except Export.ExportTypeError:
             return HttpResponseBadRequest(
@@ -425,7 +431,9 @@ def export_list(request, username, id_string, export_type, is_project=False, id=
         'export_type_name': Export.EXPORT_TYPE_DICT[export_type],
         'exports': Export.objects.filter(
             xform=xform, export_type=export_type).order_by('-created_on'),
-        'metas': metadata
+        'metas': metadata,
+        'is_project': is_project,
+        'id': id
     }
     return render(request, 'export_list.html', data)
 
