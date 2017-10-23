@@ -373,7 +373,7 @@ def _get_google_token(request, redirect_to_url):
     return token
 
 
-def export_list(request, username, id_string, export_type):
+def export_list(request, username, id_string, export_type, is_project=False, id=None):
     if export_type == Export.GDOC_EXPORT:
         return HttpResponseForbidden(_(u'Not shared.'))
         redirect_url = reverse(
@@ -384,10 +384,11 @@ def export_list(request, username, id_string, export_type):
         token = _get_google_token(request, redirect_url)
         if isinstance(token, HttpResponse):
             return token
-    owner = get_object_or_404(User, username__iexact=username)
-    xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
-    if not has_permission(xform, owner, request):
-        return HttpResponseForbidden(_(u'Not shared.'))
+    xform = get_object_or_404(XForm, id_string__exact=id_string)
+    # owner = xform.user
+    # owner = get_object_or_404(User, username__iexact=username)
+    # if not has_permission(xform, owner, request):
+    #     return HttpResponseForbidden(_(u'Not shared.'))
 
     if export_type == Export.EXTERNAL_EXPORT:
         return HttpResponseForbidden(_(u'Not shared.'))
@@ -418,7 +419,7 @@ def export_list(request, username, id_string, export_type):
         m['data_value'] = m.get('data_value').split('|')[0]
 
     data = {
-        'username': owner.username,
+        'username': xform.user.username,
         'xform': xform,
         'export_type': export_type,
         'export_type_name': Export.EXPORT_TYPE_DICT[export_type],

@@ -35,7 +35,7 @@ from onadata.libs.utils.common_tags import (
     ID, XFORM_ID_STRING, STATUS, ATTACHMENTS, GEOLOCATION, BAMBOO_DATASET_ID,
     DELETEDAT, USERFORM_ID, INDEX, PARENT_INDEX, PARENT_TABLE_NAME,
     SUBMISSION_TIME, UUID, TAGS, NOTES, SITE, FS_STATUS, FS_UUID, FS_PROJECT_UUID, FS_SITE_IDENTIFIER, FS_SITE_NAME,
-    FS_SITE_ADDRESS, FS_SITE_PHONE)
+    FS_SITE_ADDRESS, FS_SITE_PHONE, FS_SITE_SUPERVISOR)
 from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
 
@@ -179,7 +179,7 @@ class ExportBuilder(object):
     # fields we export but are not within the form's structure
     EXTRA_FIELDS = [ID, UUID, SUBMISSION_TIME, INDEX, PARENT_TABLE_NAME,
                     PARENT_INDEX, TAGS, NOTES, SITE, FS_PROJECT_UUID, FS_UUID,
-                    FS_STATUS, FS_SITE_IDENTIFIER, FS_SITE_NAME, FS_SITE_ADDRESS, FS_SITE_PHONE]
+                    FS_STATUS, FS_SITE_IDENTIFIER, FS_SITE_NAME, FS_SITE_ADDRESS, FS_SITE_PHONE, FS_SITE_SUPERVISOR]
     SPLIT_SELECT_MULTIPLES = True
     BINARY_SELECT_MULTIPLES = False
 
@@ -418,7 +418,7 @@ class ExportBuilder(object):
         row['site_name'] = site.name
         row['address'] = site.address
         row['phone'] = site.phone
-        row['id'] = site.identifier
+        row['identifier'] = site.identifier
         return row
 
     def to_zipped_csv(self, path, data, *args):
