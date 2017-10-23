@@ -6,6 +6,7 @@ LOCALE_PATHS= [os.path.join(PROJECT_ROOT,'locale'),]
 
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 TEMPLATE_DEBUG = os.environ.get('TEMPLATE_DEBUG', 'True') == 'True'
+
 TEMPLATE_STRING_IF_INVALID = ''
 
 import dj_database_url
@@ -33,6 +34,7 @@ except KeyError:
     raise Exception('DJANGO_SECRET_KEY must be set in the environment.')
 
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(' ')
+INTERNAL_IPS = ['127.0.0.1',]
 
 TESTING_MODE = False
 # This trick works only when we run tests from the command line.

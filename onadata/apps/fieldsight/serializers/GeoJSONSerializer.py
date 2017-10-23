@@ -7,6 +7,6 @@ class Serializer(GeoJSONSerializer):
         data = super(Serializer, self).get_dump_object(obj)
         # Extend to your taste
         data.update(id=obj.pk)
-        data.update(status=obj.status)
-        data.update(progress=obj.site_progress)
+        # data.update(status=4)
+        # data.update(progress=obj.site_progress)
         return data
