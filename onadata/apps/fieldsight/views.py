@@ -1175,9 +1175,9 @@ class ActivateRole(TemplateView):
         if invite.is_used==True:
             return HttpResponseRedirect(reverse('login'))
         if user:
-            return render(request, 'fieldsight/invite_action.html',{'invite':invite, 'is_used': False,})
+            return render(request, 'fieldsight/invite_action.html',{'invite':invite, 'is_used': False, 'status':'',})
         else:
-            return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False,})
+            return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'',})
         
 
     def post(self, request, invite, *args, **kwargs):
@@ -1191,6 +1191,10 @@ class ActivateRole(TemplateView):
             invite.is_used = True
             invite.save()
         else:
+            usernameexists = User.objects.filter(username=request.POST.get('username'))
+            if usernameexists:
+                return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'username exists', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
+
             user = User(username=request.POST.get('username'), email=invite.email, first_name=request.POST.get('firstname'), last_name=request.POST.get('lastname'))
             user.set_password(request.POST.get('password1'))
             user.save()
@@ -1226,6 +1230,13 @@ class ActivateRole(TemplateView):
 @login_required()
 def checkemailforinvite(request):
     user = User.objects.select_related('user_profile').filter(email__icontains=request.POST.get('email'))
+    if user:
+        return render(request, 'fieldsight/invite_response.html', {'users': user,})
+    else:
+        return HttpResponse("No existing User found.<a href='#' onclick='sendnewuserinvite()'>send</a>")
+
+def checkusernameexists(request):
+    user = User.objects.get(username=request.POST.get('email'))
     if user:
         return render(request, 'fieldsight/invite_response.html', {'users': user,})
     else:
