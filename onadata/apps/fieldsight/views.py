@@ -59,16 +59,17 @@ import pyexcel as p
 def dashboard(request):
     current_role_count = request.roles.count()
     if current_role_count == 1:
+        current_role = request.roles[0]
         role_type = request.roles[0].group.name
         if role_type == "Site Supervisor":
-            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role[0].site.pk}))
+            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
         if role_type == "Reviewer":
-            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role[0].site.pk}))
+            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
         if role_type == "Project Manager":
-            return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role[0].project.pk}))
+            return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role.project.pk}))
         if role_type == "Organization Admin":
             return HttpResponseRedirect(reverse("fieldsight:organizations-dashboard",
-                                                kwargs={'pk': current_role[0].organization.pk}))
+                                                kwargs={'pk': current_role.organization.pk}))
     if current_role_count > 1:
         return HttpResponseRedirect(reverse("fieldsight:roles-dashboard"))
 
