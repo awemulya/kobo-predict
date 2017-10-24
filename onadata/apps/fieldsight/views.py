@@ -1190,7 +1190,7 @@ class ActivateRole(TemplateView):
             invite.is_used = True
             invite.save()
         else:
-            user = User.objects.get_or_create(email=invite.email)
+            user = User(username=request.POST.get('username'), email=invite.email, first_name=request.POST.get('firstname'), last_name=request.POST.get('lastname'))
             user.set_password(request.POST.get('password1'))
             user.save()
             profile, created = UserProfile.objects.get_or_create(user=user, organization=invite.organization)
