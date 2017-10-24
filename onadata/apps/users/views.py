@@ -282,7 +282,7 @@ class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
         result = {}
         result['description'] = 'user {0} updated by {1}'.format(user.username, self.request.user.username)
         result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(profile.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notify-{}".format(profile.id)).send({"text": json.dumps(result)})
         ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.success_url)

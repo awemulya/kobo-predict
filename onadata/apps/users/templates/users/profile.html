@@ -5,7 +5,16 @@
 {% block content %}
 
 	<div id="main-content" class="padding">
-				<section>
+				<section class="panel">
+					<header class="panel-heading clearfix">
+					<h3><i class="la la-user"></i>{% trans 'view' %}{% trans 'your' %}{% trans 'profile' %}</h3>
+						<div class="panel-heading-right">
+							{% ifequal request.user obj.user %}
+							<a href="{% url 'users:profile_update' obj.user.id|profile%}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Update' %} {% trans 'Profile'%} </a>
+							{% endifequal %}
+						</div>
+                    </header>
+
 					<div class="row">
 						<div class="col-md-12 col-lg-8">
 							<div class="margin-top user-profile-basic-info padding bg-white clearfix ">
@@ -214,10 +223,12 @@
 							</div>
 						</div>
 						{% endif %}
+
 					</div>
                 </section>
 				
 			</div>
+
                 </section>
 
 			</div>

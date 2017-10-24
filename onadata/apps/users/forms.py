@@ -30,15 +30,15 @@ class ProfileForm(forms.ModelForm):
             ,'office_number', 'viber', 'whatsapp', 'wechat', 'line', 'tango', 'hike', 'qq', 'google_talk', 'twitter',
                   'profile_picture',]
 
-    def clean_profile_picture(self):
-        image = self.cleaned_data.get('profile_picture')
-        if image:
-            from django.core.files.images import get_image_dimensions
-            w, h = get_image_dimensions(image)
-            if (235 <= h <= 245) and  (235 <= w <= 245):
-                return image
-            raise forms.ValidationError(_(u'The image Size needs to be 250 * 250 PX '))
-
+    # def clean_profile_picture(self):
+    #     image = self.cleaned_data.get('profile_picture')
+    #     if image:
+    #         from django.core.files.images import get_image_dimensions
+    #         w, h = get_image_dimensions(image)
+    #         if (235 <= h <= 245) and  (235 <= w <= 245):
+    #             return image
+    #         raise forms.ValidationError(_(u'The image Size needs to be 250 * 250 PX '))
+    #
 
 
 class UserEditForm(forms.Form):

@@ -1,40 +1,149 @@
 {% extends "fieldsight/fieldsight_base.html" %}
-{% load i18n %}
+{% load i18n staticfiles %}
 {% load filters %}
-{% block page-title %} {% trans 'Profile '  %}{{request.user }}{% endblock %}
+
 {% block head %}
-   {% trans 'Update Profile '  %} {{request.user }}
-{% endblock %}
 
+{% endblock %}
 {% block content %}
+{% load filters %}
+<link href="{% static 'css/cropper.min.css' %}" rel="stylesheet">
+ <script>
+    $(function () {
 
-   {% if form.is_multipart %}
-    <form enctype="multipart/form-data" method="post" id='form'>
-    {% else %}
-        <form method="post">
-    {% endif %}
-        <div class="">
-            <div class="col-sm-12 registration_field">
-               {{ form.non_field_errors }}
-               </div>
+      /* SCRIPT TO OPEN THE MODAL WITH THE PREVIEW */
+      $("#id_profile_picture").change(function () {
+        if (this.files && this.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            $("#image").attr("src", e.target.result);
+            $("#modalCrop").modal("show");
+          }
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
 
-            {% csrf_token %}
-            {% for field in form %}
-               <div class="col-sm-12 registration_field">
-               {{ form.non_field_errors }}
-               </div>
-               <div class="col-sm-12 registration_field">
-                 <div class="col-sm-3"> {{ field.label }}</div>
-                <div class="col-sm-3">{{ field }}</div>
-                 <div class="col-sm-6"> {{ field.errors }}</div>
-               </div>
-            {% endfor %}
-        </div>
-            <button class="btn btn-lg btn-primary registration__action" type="submit" >{% trans 'Save' %}</button>
+      /* SCRIPTS TO HANDLE THE CROPPER BOX */
+      var $image = $("#image");
+      console.log($image);
+      var cropBoxData;
+      var canvasData;
+      $("#modalCrop").on("shown.bs.modal", function () {
+        $image.cropper({
+          viewMode: 1,
+          aspectRatio: 1/1,
+          minCropBoxWidth: 200,
+          minCropBoxHeight: 200,
+          ready: function () {
+            $image.cropper("setCanvasData", canvasData);
+            $image.cropper("setCropBoxData", cropBoxData);
+          }
+        });
+      }).on("hidden.bs.modal", function () {
+        cropBoxData = $image.cropper("getCropBoxData");
+        canvasData = $image.cropper("getCanvasData");
+        $image.cropper("destroy");
+      });
+
+      $(".js-zoom-in").click(function () {
+        $image.cropper("zoom", 0.1);
+      });
+
+      $(".js-zoom-out").click(function () {
+          $image.cropper("zoom", -0.1);
+      });
+
+      $(".js-cancel").click(function () {
+	      $('#id_logo').val(null);
+      });
 
 
-    </form>
+      /* SCRIPT TO COLLECT THE DATA AND POST TO THE SERVER */
+      $(".js-crop-and-upload").click(function () {
+      	var cropData = $image.cropper("getData");
+        var canvas = $image.cropper('getCroppedCanvas');
+	    var image = canvas.toDataURL('image/png');
+
+	    $('#logo-prev').attr("src",image);
+        $("#id_x").val(cropData["x"]);
+        $("#id_y").val(cropData["y"]);
+        $("#id_height").val(cropData["height"]);
+        $("#id_width").val(cropData["width"]);
+
+      });
+
+    });
+  </script>
+
+			<div id="main-content" class="padding">
+				<section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-user"></i>{% trans 'Update Profile '  %} {{request.user }}</h3>
+                    </header>
+					<div class="panel-body">
+						<!-- Add New Organization-->
+						<div id="newOrganization" class="margin-top">
+                            {% if form.is_multipart %}
+							<form enctype="multipart/form-data" method="post">
+                            {% endif %}
+								{% csrf_token %}
+								<div class="form-row">
+									  {{ form.media }}
+                                    {% for field in form.visible_fields %}
 
 
+									<div class="form-group col-md-6">
 
+									  <label class="col-form-label">{{ field.label }}</label>
+                                      <label class="col-form-label">{{ field.errors }}</label>
+
+                                        {{ field|add_class:"form-control" }}
+									</div>
+
+                                    {% endfor %}
+
+                                    {% for field in form.hidden_fields %}
+									     <div style="display:none;">{{ field }}</div>
+									 {% endfor %}
+                                </div>
+								<button type="btn btn-primary registration__action" type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i> {% trans ' Save' %}</button>
+
+							</form>
+						</div>
+					</div>
+
+                    <div class="modal fade" id="modalCrop">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                              <h4 class="modal-title">Crop the photo</h4>
+                            </div>
+                            <div class="modal-body">
+                              <img src="" id="image" style="max-width: 100%;">
+                            </div>
+                            <div class="modal-footer">
+                              <div class="btn-group pull-left" role="group">
+                                <button type="button" class="btn btn-default js-zoom-in">
+                                  <span class="icon-zoom-in"></span>
+                                </button>
+                                <button type="button" class="btn btn-default js-zoom-out">
+                                  <span class="glyphicon glyphicon-zoom-out"></span>
+                                </button>
+                              </div>
+                              <button type="button" class="btn btn-default js-cancel" data-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-primary js-crop-and-upload">Crop</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                </section>
+			</div>
 {% endblock %}
+{%block extrascript %}
+<script src="{{ STATIC_URL }}js/cropper.min.js"></script>
+{% endblock %}
+
