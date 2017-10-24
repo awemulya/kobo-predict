@@ -1039,7 +1039,7 @@ def senduserinvite(request):
             invite = UserInvite(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
 
             invite.save()
-            organization = Organization.objects.get(pk=1)
+            # organization = Organization.objects.get(pk=1)
             # noti = invite.logs.create(source=user[0], type=9, title="new Role",
             #                                organization_id=request.POST.get('organization_id'),
             #                                description="{0} sent you an invite to join {1} as the {2}.".
