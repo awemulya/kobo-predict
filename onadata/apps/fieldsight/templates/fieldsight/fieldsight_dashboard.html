@@ -4,6 +4,14 @@
 {% block page-title %}{% trans 'Dashboard' %}{% endblock %}
 <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
 {% block content %}
+<style type="text/css">
+	.leaflet-bottom.leaflet-right{
+		display:none;
+	}
+	.radio-div.card{
+		display: none;
+	}
+</style>
 <div id="main-content" class="padding">
 				<section class="panel">
                     <header class="panel-heading clearfix">

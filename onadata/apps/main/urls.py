@@ -188,11 +188,15 @@ urlpatterns = patterns(
         'onadata.apps.viewer.views.data_view'),
     url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)"
         "/new$", 'onadata.apps.viewer.views.create_export'),
+    url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)/(?P<is_project>[\d+^/]+)/(?P<id>[\d+^/]+)"
+        "/new$", 'onadata.apps.viewer.views.create_export'),
     url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)"
         "/delete$", 'onadata.apps.viewer.views.delete_export'),
     url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)"
         "/progress$", 'onadata.apps.viewer.views.export_progress'),
     url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)"
+        "/$", 'onadata.apps.viewer.views.export_list'),
+    url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)/(?P<is_project>[\d+^/]+)/(?P<id>[\d+^/]+)"
         "/$", 'onadata.apps.viewer.views.export_list'),
     url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)"
         "/(?P<filename>[^/]+)$",
