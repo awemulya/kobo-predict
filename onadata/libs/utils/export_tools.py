@@ -35,7 +35,7 @@ from onadata.libs.utils.common_tags import (
     ID, XFORM_ID_STRING, STATUS, ATTACHMENTS, GEOLOCATION, BAMBOO_DATASET_ID,
     DELETEDAT, USERFORM_ID, INDEX, PARENT_INDEX, PARENT_TABLE_NAME,
     SUBMISSION_TIME, UUID, TAGS, NOTES, SITE, FS_STATUS, FS_UUID, FS_PROJECT_UUID, FS_SITE_IDENTIFIER, FS_SITE_NAME,
-    FS_SITE_ADDRESS, FS_SITE_PHONE)
+    FS_SITE_ADDRESS, FS_SITE_PHONE, FS_SITE_SUPERVISOR)
 from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
 
@@ -179,7 +179,7 @@ class ExportBuilder(object):
     # fields we export but are not within the form's structure
     EXTRA_FIELDS = [ID, UUID, SUBMISSION_TIME, INDEX, PARENT_TABLE_NAME,
                     PARENT_INDEX, TAGS, NOTES, SITE, FS_PROJECT_UUID, FS_UUID,
-                    FS_STATUS, FS_SITE_IDENTIFIER, FS_SITE_NAME, FS_SITE_ADDRESS, FS_SITE_PHONE]
+                    FS_STATUS, FS_SITE_IDENTIFIER, FS_SITE_NAME, FS_SITE_ADDRESS, FS_SITE_PHONE, FS_SITE_SUPERVISOR]
     SPLIT_SELECT_MULTIPLES = True
     BINARY_SELECT_MULTIPLES = False
 
@@ -418,7 +418,7 @@ class ExportBuilder(object):
         row['site_name'] = site.name
         row['address'] = site.address
         row['phone'] = site.phone
-        row['id'] = site.identifier
+        row['identifier'] = site.identifier
         return row
 
     def to_zipped_csv(self, path, data, *args):
@@ -790,16 +790,26 @@ def generate_export(export_type, extension, username, id_string,
 
 
 def query_mongo(username, id_string, query=None, hide_deleted=True):
-    query = json.loads(query, object_hook=json_util.object_hook)\
-        if query else {}
-    query = dict_for_mongo(query)
-    query[USERFORM_ID] = u'{0}_{1}'.format(username, id_string)
+    # query = json.loads(query, object_hook=json_util.object_hook)\
+    #     if query else {}
+    # query = dict_for_mongo(query)
+    # query[USERFORM_ID] = u'{0}_{1}'.format(username, id_string)
     # hack the query
-    if hide_deleted:
+    # if hide_deleted:
         # display only active elements
         # join existing query with deleted_at_query on an $and
-        query = {"$and": [query, {"_deleted_at": None}]}
-    return xform_instances.find(query)
+        # query = {"$and": [query, {"_deleted_at": None}]}
+    if query:
+        if query.get('fs_uuid', False):
+            qry = {"$or": [{"_uuid": query.get('fs_uuid')}, {"fs_uuid": query.get('fs_uuid')}, {"_uuid": str(query.get('fs_uuid'))},
+                         {"fs_uuid": str(query.get('fs_uuid'))}]}
+        elif query.get('fs_project_uuid', False):
+            qry = {'fs_project_uuid': {'$in': [query.get('fs_project_uuid'), str(query.get('fs_project_uuid'))]}}
+    else:
+        qry = query
+    print(qry)
+    return xform_instances.find(qry)
+
 
 
 def should_create_new_export(xform, export_type):

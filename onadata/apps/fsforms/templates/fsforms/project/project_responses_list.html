@@ -67,7 +67,7 @@
                                {% trans ' View ' %}</a>
                       </td>
                       <td>
-                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.xf.id_string 'xls' %}">
+                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.xf.id_string 'xls' 1 obj.id %}">
                           <i class="la la-download" aria-hidden="true"></i></a>
                       </td>
                   </tr>
@@ -112,7 +112,7 @@
                           {% endwith %}
                       </td>
                       <td>
-                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.schedule_forms.xf.id_string 'xls' %}">
+                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.schedule_forms.xf.id_string 'xls' 1 obj.id %}">
                           <i class="la la-download" aria-hidden="true"></i></a>
                       </td>
                   </tr>
@@ -166,7 +166,7 @@
                           {% endwith %}
                               </td>
                               <td>
-                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.stage_forms.xf.id_string 'xls' %}">
+                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.stage_forms.xf.id_string 'xls' 1 obj.stage_forms.id %}">
                           <i class="la la-download" aria-hidden="true"></i></a>
                       </td>
                           </tr>
@@ -186,7 +186,7 @@
                  <div class="well well-sm notice-danger"><h4>Deleted Form Responses</h4></div>
             {% for obj in deleted_forms %}
             <div class="row card_inside">{{obj.xf.title}} {% trans 'with' %}
-             <a href="{% url 'forms:project_html_export' obj.id %}">
+             <a href="{% url 'forms:project_html_export' obj.id%}">
                                {{ obj.id|project_submissions }}
                                {% trans ' Submissions ' %}</a>
             </div>
