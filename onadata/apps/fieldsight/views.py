@@ -1116,8 +1116,6 @@ def sendmultiroleuserinvite(request):
                         continue
                 invite, created = UserInvite.objects.get_or_create(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
 
-                invite.save()
-                organization = Organization.objects.get(pk=1)
                 # noti = invite.logs.create(source=user[0], type=9, title="new Role",
                 #                                organization_id=request.POST.get('organization_id'),
                 #                                description="{0} sent you an invite to join {1} as the {2}.".
@@ -1130,7 +1128,6 @@ def sendmultiroleuserinvite(request):
 
             else:
                 invite, created = UserInvite.objects.get_or_create(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
-                invite.save()
             current_site = get_current_site(request)
             subject = 'Invitation for Role'
             message = render_to_string('fieldsight/email_sample.html',
@@ -1175,7 +1172,7 @@ class ActivateRole(TemplateView):
     def get(self, request, invite, invite_idb64, token):
         user = User.objects.filter(email=invite.email)
         if invite.is_used==True:
-            return render(request, 'fieldsight/invite_action.html',{'invite':invite, 'is_used': True, })
+            return HttpResponseRedirect(reverse('login'))
         if user:
             return render(request, 'fieldsight/invite_action.html',{'invite':invite, 'is_used': False,})
         else:
@@ -1188,13 +1185,12 @@ class ActivateRole(TemplateView):
             user = user_exists[0] 
             if request.POST.get('response') == "accept":
                 userrole = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
-                userrole.save()
             else:
                 invite.is_declined = True
             invite.is_used = True
             invite.save()
         else:
-            user = User(username=request.POST.get('username'), email=invite.email, first_name=request.POST.get('firstname'), last_name=request.POST.get('lastname'))
+            user = User.objects.get_or_create(email=invite.email)
             user.set_password(request.POST.get('password1'))
             user.save()
             profile, created = UserProfile.objects.get_or_create(user=user, organization=invite.organization)
