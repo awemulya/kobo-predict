@@ -1,0 +1,49 @@
+{% extends "fieldsight/base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block page-title %}{% trans 'Dashboard' %}{% endblock %}
+<link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
+{% block content %}
+
+<div id="main-content" class="padding">
+				<section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3>{% trans 'Site Map' %}</h3>
+                    </header>
+                    <div class="panel-body">
+						<div class="radio-div card">
+							<div class="radio">
+						  <label><input class = "switch" id = "form_status" type="radio" name="status" value="male" checked="checked"> Form Status</label><br>
+					  </div>
+					   <div class="radio">
+						  <label><input class = "switch" id = "project_progress" type="radio" name="progress" value="male"> Site Progress</label><br>
+					   </div>
+					   </div>
+						<div id="map" class="full-map margin-top"></div>
+                    </div>
+                </section>
+                <a href="{% url 'dashboard' %}" class="btn btn-success"><i class="la la-reply"></i>{% trans 'Back to dashboard' %}</a>
+
+			</div>
+
+{% endblock %}
+{%block extrascript %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
+
+    <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.ajax.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/map/textLabel.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.markercluster-src.js"></script>
+
+    <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
+  <script type="text/javascript">
+    var static_url ="{{ STATIC_URL }}";
+    var data = {{ data|safe}};
+
+    </script>
+	<script type = "text/javascript">
+		$('.legend').css('display','block');
+	</script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
+{% endblock %}
+
+

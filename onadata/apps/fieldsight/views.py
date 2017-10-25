@@ -1,4 +1,5 @@
 import json
+from django.http import HttpResponse
 
 from django.conf import settings
 from django.contrib import messages
@@ -15,6 +16,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
 from django.forms.forms import NON_FIELD_ERRORS
+from django.http import HttpResponse
 
 from fcm.utils import get_device_model
 
@@ -1357,3 +1359,16 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
                     ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
                     ChannelGroup("notify-0").send({"text": json.dumps(result)})
         return HttpResponse("Sucess")
+
+def viewfullmap(request):
+    data = serialize('custom_geojson',
+                     Site.objects.prefetch_related('site_instances').filter(is_survey=False, is_active=True),
+                     geometry_field='location',
+                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+
+    dashboard_data = {
+
+        'data': data,
+    }
+    return render(request, 'fieldsight/map.html', dashboard_data)
+
