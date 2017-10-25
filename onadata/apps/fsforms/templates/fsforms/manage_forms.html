@@ -24,7 +24,9 @@
     padding: 5px 5px 5px 30px;
     border: #9cbef1 1px solid;
 }
-
+.modal-backdrop.show{
+    z-index: 0;
+}
 </style>
 
     {% endblock %}
@@ -884,7 +886,7 @@ var pk = "{{pk}}";
                                                               </div>
                                                               <div class="modal-body">
                                                                   <div class="col-sm-8">
-                                                                      <h3>Create A Education Material</h3>
+                                                                      <h3>Education Materials</h3>
 
                                                                     <div class="form-group">
                                                                       <label for="title" id="sizing-addon2"><h4>Title</h4></label>
@@ -926,7 +928,7 @@ var pk = "{{pk}}";
                                                                                           fileNameClass: 'disabled form-control',
                                                                                           onClear: onClear,
                                                                                         }" accept="image/*">
-                                                                                        }" accept="image/*">
+                                                                                        
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
