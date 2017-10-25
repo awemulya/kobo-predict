@@ -1361,7 +1361,7 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
         return HttpResponse("Sucess")
 
 def viewfullmap(request):
-    data = serialize('custom_geojson',
+    data = serialize('full_detail_geojson',
                      Site.objects.prefetch_related('site_instances').filter(is_survey=False, is_active=True),
                      geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
