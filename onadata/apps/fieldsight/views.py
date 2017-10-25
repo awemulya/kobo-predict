@@ -550,14 +550,14 @@ class ProjectRoleView(object):
 
 class ProjectListView(ProjectRoleView, OrganizationMixin, ListView):
     pass
+    
 
 
 class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
 
     def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.organization_id = self.kwargs.get('pk')
-        self.object.save()
+        self.object = form.save(organization_id=self.kwargs.get('pk'), new=True)
+        
         noti = self.object.logs.create(source=self.request.user, type=10, title="new Project",
                                        organization=self.object.organization, content_object=self.object,
                                        description='{0} created new project named {1}'.format(
@@ -577,7 +577,7 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
-        self.object = form.save()
+        self.object = form.save(new=False)
         noti = self.object.logs.create(source=self.request.user, type=14, title="Edit Project",
                                        organization=self.object.organization,
                                        project=self.object, content_object=self.object,

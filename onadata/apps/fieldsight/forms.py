@@ -239,8 +239,19 @@ class ProjectForm(forms.ModelForm):
         'logo': AdminImageWidget()
         }
 
-    def save(self):
+    def save(self, commit=True, *args, **kwargs):
+        
+        is_new = kwargs.pop('new')
+        
+        if is_new:
+            photo = super(ProjectForm, self).save(commit=False)
+            photo.organization_id=kwargs.pop('organization_id')
+            photo.save()
+        
         photo = super(ProjectForm, self).save()
+
+        #if else for new  and update
+
         x = self.cleaned_data.get('x')
         y = self.cleaned_data.get('y')
         w = self.cleaned_data.get('width')
