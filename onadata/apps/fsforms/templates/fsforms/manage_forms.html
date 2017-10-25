@@ -763,15 +763,40 @@ var pk = "{{pk}}";
                                                                               <form method="post">
                                                                                       <h5 class="sub-stage-name-c">{% trans 'New Sub Stage' %} <span data-bind='text: $parent.parent().length+1'></span></h5>
                                                                                         {% csrf_token %}
-                                                                                  <div>
-                                                                                    {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name of SUb Stage "><br>
-                                                                                    {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br>
-                                                                                    {% trans 'Form Assigned: ' %}
+                                                                    <div>
+
+
+
+                                                                    <div class="form-group">
+                                                                      <label for="title" id="sizing-addon2"><h4>{% trans 'Name: ' %}</h4></label>
+                                                                     <input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name of SUb Stage ">
+                                                                    </div>
+
+                                                                     <div class="form-group">
+                                                                      <label for="title" id="sizing-addon2"><h4>{% trans 'Description: ' %}</h4></label>
+                                                                    <input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description">
+                                                                    </div>
+
+
+                                                                    <div class="form-group">
+                                                                      <label for="title" id="sizing-addon2"><h4>{% trans 'Form Assigned: ' %}</h4></label>
+                                                                      <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
+                                                                                        value: stage_forms().xf().id">
+                                                                                    </select>
+                                                                    </div>
+
+
+
+
+
+                                                                                   <!--  {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name of SUb Stage "><br> -->
+                                                                                   <!--  {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br> -->
+                                                                         <!--            {% trans 'Form Assigned: ' %}
                                                                                     <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
                                                                                         value: stage_forms().xf().id">
                                                                                     </select>
 
-                                                                                    <br>
+                                                                                    <br> -->
 
 
                                                                                   </div>
@@ -834,7 +859,7 @@ var pk = "{{pk}}";
                                       </div>
                                   </div>
                                 <div id="accordion" role="tablist">
-                                  <div class="card margin-bottom" data-bind="foreach:stages">
+                                  <div class="card margin-bottom" style="width: 95%;" data-bind="foreach:stages">
                                     <div class="card-header clearfix" role="tab" data-bind="attr: { id: 'heading_' + $index() }" >
                                         <div class="stage-name" data-toggle="collapse"
                                              aria-expanded="true"
@@ -876,17 +901,17 @@ var pk = "{{pk}}";
                                             <ul data-bind="attr: { id: 'substages_' + $index() }">
                                                 <li class="clearfix" data-bind="foreach:parent">
                                                 <br>
-                                                    <div class="modal" tabindex="-1" style="z-index:9999999;" role="dialog" data-bind="modal:em_form_modal_visibility">
+                                                    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                                                         <div data-bind="with: em">
                                                           <div class="modal-dialog form-modal" role="document">
                                                             <div class="modal-content">
                                                               <div class="modal-header">
                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                                <h4 class="modal-title">{% trans 'Education Material' %}</h4>
+                                                                <h4 class="modal-title">{% trans 'Education Materials' %}</h4>
                                                               </div>
                                                               <div class="modal-body">
                                                                   <div class="col-sm-8">
-                                                                      <h3>Education Materials</h3>
+                                                                
 
                                                                     <div class="form-group">
                                                                       <label for="title" id="sizing-addon2"><h4>Title</h4></label>
