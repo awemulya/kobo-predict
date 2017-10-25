@@ -769,7 +769,7 @@ var pk = "{{pk}}";
                                                                     <div class="col-sm-12">
                                                                       <div class="form-group">
                                                                           <label for="stagename"><span class="stage-label">{% trans 'Name: ' %}</span></label>
-                                                                         <input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name of SUb Stage ">
+                                                                         <input class="form-control"  data-bind="value: name" placeholder="Name of SUb Stage ">
 
                                                                           <div class="gap"></div>
                                                                     </div>
@@ -778,7 +778,7 @@ var pk = "{{pk}}";
                                                                     <div class="col-sm-12">
                                                                       <div class="form-group">
                                                                           <label for="stagename"><span class="stage-label">{% trans 'Description: ' %}</span></label>
-                                                                         <input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description">
+                                                                         <input class="form-control"  data-bind="value: description" placeholder="Sub Stage Description">
                                                                           <div class="gap"></div>
                                                                     </div>
                                                                     </div>
@@ -788,7 +788,7 @@ var pk = "{{pk}}";
                                                                      <div class="col-sm-12">
                                                                       <div class="form-group">
                                                                           <label for="stagename"><span class="stage-label">{% trans 'Form Assigned: ' %}</span></label>
-                                                                          <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
+                                                                          <select class="form-control" data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
                                                                                         value: stage_forms().xf().id">
                                                                                     </select>
                                                                           <div class="gap"></div>
