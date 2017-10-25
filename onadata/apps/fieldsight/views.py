@@ -555,9 +555,8 @@ class ProjectListView(ProjectRoleView, OrganizationMixin, ListView):
 class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
 
     def form_valid(self, form):
-        self.object = form.save(a=self.kwargs.get('pk'))
-
-        # self.object.organization_id = self.kwargs.get('pk')
+        self.object = form.save(organization_id=self.kwargs.get('pk'), new=True)
+        
         noti = self.object.logs.create(source=self.request.user, type=10, title="new Project",
                                        organization=self.object.organization, content_object=self.object,
                                        description='{0} created new project named {1}'.format(
@@ -577,7 +576,7 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
-        self.object = form.save()
+        self.object = form.save(new=False)
         noti = self.object.logs.create(source=self.request.user, type=14, title="Edit Project",
                                        organization=self.object.organization,
                                        project=self.object, content_object=self.object,
@@ -1361,7 +1360,7 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
         return HttpResponse("Sucess")
 
 def viewfullmap(request):
-    data = serialize('custom_geojson',
+    data = serialize('full_detail_geojson',
                      Site.objects.prefetch_related('site_instances').filter(is_survey=False, is_active=True),
                      geometry_field='location',
                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
