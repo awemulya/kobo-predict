@@ -216,6 +216,10 @@ class SetProjectRoleForm(HTML5BootstrapModelForm, KOModelForm):
 
 
 class ProjectForm(forms.ModelForm):
+    x = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    y = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    width = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    height = forms.FloatField(widget=forms.HiddenInput(), required=False)
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
         if not self.fields['location'].initial:
@@ -235,6 +239,20 @@ class ProjectForm(forms.ModelForm):
         'logo': AdminImageWidget()
         }
 
+    def save(self):
+        photo = super(ProjectForm, self).save()
+        x = self.cleaned_data.get('x')
+        y = self.cleaned_data.get('y')
+        w = self.cleaned_data.get('width')
+        h = self.cleaned_data.get('height')
+
+        if x is not None and y is not None:
+            image = Image.open(photo.logo)
+            cropped_image = image.crop((x, y, w+x, h+y))
+            resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+            resized_image.save(photo.logo.path)
+        return photo
+
     def clean(self):
         lat = self.data.get("Longitude", "85.3240")
         long = self.data.get("Latitude", "27.7172")
@@ -244,6 +262,10 @@ class ProjectForm(forms.ModelForm):
 
 
 class SiteForm(HTML5BootstrapModelForm, KOModelForm):
+    x = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    y = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    width = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    height = forms.FloatField(widget=forms.HiddenInput(), required=False)
     def __init__(self, *args, **kwargs):
         super(SiteForm, self).__init__(*args, **kwargs)
         if not self.fields['location'].initial:
@@ -263,6 +285,20 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
         'location': forms.HiddenInput(),
         'logo': AdminImageWidget()
         }
+
+    def save(self):
+        photo = super(SiteForm, self).save()
+        x = self.cleaned_data.get('x')
+        y = self.cleaned_data.get('y')
+        w = self.cleaned_data.get('width')
+        h = self.cleaned_data.get('height')
+
+        if x is not None and y is not None:
+            image = Image.open(photo.logo)
+            cropped_image = image.crop((x, y, w+x, h+y))
+            resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+            resized_image.save(photo.logo.path)
+        return photo
 
     def clean(self):
         lat = self.data.get("Longitude")

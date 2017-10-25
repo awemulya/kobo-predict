@@ -1,4 +1,5 @@
 from django import forms
+from PIL import Image
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
@@ -12,6 +13,10 @@ class LoginForm(forms.Form):
 
 
 class ProfileForm(forms.ModelForm):
+    x = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    y = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    width = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    height = forms.FloatField(widget=forms.HiddenInput(), required=False)
     first_name = forms.CharField(label="First Name", required=True)
     last_name = forms.CharField(label="Last Name", required=True)
     gender = forms.ChoiceField(
@@ -29,6 +34,19 @@ class ProfileForm(forms.ModelForm):
         fields = ['first_name','last_name','address','gender','phone','skype','primary_number','secondary_number'
             ,'office_number', 'viber', 'whatsapp', 'wechat', 'line', 'tango', 'hike', 'qq', 'google_talk', 'twitter',
                   'profile_picture',]
+
+    def save(self):
+        photo = super(ProfileForm, self).save()
+        x = self.cleaned_data.get('x')
+        y = self.cleaned_data.get('y')
+        w = self.cleaned_data.get('width')
+        h = self.cleaned_data.get('height')
+        if x is not None and y is not None:
+             image = Image.open(photo.profile_picture)
+             cropped_image = image.crop((x, y, w + x, h + y))
+             resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+             resized_image.save(photo.profile_picture.path)
+        return photo
 
     # def clean_profile_picture(self):
     #     image = self.cleaned_data.get('profile_picture')

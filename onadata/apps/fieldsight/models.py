@@ -200,7 +200,7 @@ class Site(models.Model):
     public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
     project = models.ForeignKey(Project, related_name='sites')
-    logo = models.ImageField(upload_to="logo", default="logo/default_site.png")
+    logo = models.ImageField(upload_to="logo")
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     is_survey = models.BooleanField(default=False)

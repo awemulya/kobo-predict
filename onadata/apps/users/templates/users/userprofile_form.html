@@ -54,7 +54,7 @@
       });
 
       $(".js-cancel").click(function () {
-	      $('#id_logo').val(null);
+	      $('#id_profile_picture').val(null);
       });
 
 
@@ -62,13 +62,15 @@
       $(".js-crop-and-upload").click(function () {
       	var cropData = $image.cropper("getData");
         var canvas = $image.cropper('getCroppedCanvas');
-	    var image = canvas.toDataURL('image/png');
+	       var image = canvas.toDataURL('image/png');
 
-	    $('#logo-prev').attr("src",image);
+	      $('#profile_picture-prev').attr("src",image);
         $("#id_x").val(cropData["x"]);
         $("#id_y").val(cropData["y"]);
-        $("#id_height").val(cropData["height"]);
-        $("#id_width").val(cropData["width"]);
+        $("#id_height").val(Math.round(cropData["height"]));
+        $("#id_width").val(Math.round(cropData["width"]));
+        $("#modalCrop").modal("hide");
+
 
       });
 

@@ -58,13 +58,15 @@
       $(".js-crop-and-upload").click(function () {
       	var cropData = $image.cropper("getData");
         var canvas = $image.cropper('getCroppedCanvas');
-	    var image = canvas.toDataURL('image/png');
+	       var image = canvas.toDataURL('image/png');
 
-	    $('#logo-prev').attr("src",image);
+	      $('#logo-prev').attr("src",image);
         $("#id_x").val(cropData["x"]);
         $("#id_y").val(cropData["y"]);
-        $("#id_height").val(cropData["height"]);
-        $("#id_width").val(cropData["width"]);
+        $("#id_height").val(Math.round(cropData["height"]));
+        $("#id_width").val(Math.round(cropData["width"]));
+        $("#modalCrop").modal("hide");
+
 
       });
 
@@ -85,7 +87,7 @@
 									{% csrf_token %}
 									
 									 {{ form.media }}
-									{% for field in form %}
+									{% for field in form.visible_fields  %}
  									{% if not field.label == 'Location' %}
                                     {% if not field.label == 'Is active' %}
 									{% if not field.label == 'Project' %}
@@ -97,7 +99,9 @@
 									{% endif %}
                                     {% endif %}
 									{% endfor %}
-
+									{% for field in form.hidden_fields %}
+									     <div style="display:none;">{{ field }}</div>
+									 {% endfor %}
 									<div class="form-group col-md-6">
 									  <label class="col-form-label">Latitude :</label>
 									  <input type="text" class="form-control" id="Latitude" name="Latitude" class="LatLon"/>
@@ -113,9 +117,9 @@
 								</div>
 								<button class="btn btn-primary registration__action" type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans ' Save' %}</button>
 								{% if form.instance.id %}
-								<a href="{% url 'fieldsight:site-delete' form.instance.id %}" class="btn btn-danger btn-raised"><i class="la la-trash"></i>
-									{% trans 'Delete' %}</a>
-								{% endif %}
+                                   <a href="{% url 'fieldsight:site-delete' form.instance.id %}" class="delete" data-confirm="Are you sure you want to delete this Site?">
+                                   <button class="btn btn-danger"><i class="la la-trash"></i>{% trans 'Delete' %}</button></a>
+                                {% endif %}
 							</form>
 						</div>
 					</div>
@@ -151,14 +155,31 @@
 
 			</div>
 {% endblock %}
- {%block extrascript %}
-<script src="{{ STATIC_URL }}js/cropper.min.js"></script>
+{%block extrascript %}
+	<script src="{{ STATIC_URL }}js/cropper.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
     <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
-  <script type="text/javascript">
+  	<script type="text/javascript">
      var static_url ="{{ STATIC_URL }}";
      var elat = "{{form.instance.latitude}}";
      var elong = "{{form.instance.longitude}}";
     </script>
+	<script type="text/javascript">
+     var deleteLinks = document.querySelectorAll('.delete');
+
+     for (var i = 0; i < deleteLinks.length; i++) {
+      deleteLinks[i].addEventListener('click', function(event) {
+          event.preventDefault();
+
+          var choice = confirm(this.getAttribute('data-confirm'));
+
+          if (choice) {
+            window.location.href = this.getAttribute('href');
+          }
+      });
+    }
+    </script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/addmarker.js"></script>
 {% endblock %}
+
+

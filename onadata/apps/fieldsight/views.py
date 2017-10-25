@@ -629,10 +629,6 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.object.id})
 
     def form_valid(self, form):
-        print "aaaa"
-        self.object = form.save(commit=False)
-        self.object.project_id = self.kwargs.get('pk')
-        self.object.is_active = True
         self.object.save()
         noti = self.object.logs.create(source=self.request.user, type=11, title="new Site",
                                        organization=self.object.project.organization,

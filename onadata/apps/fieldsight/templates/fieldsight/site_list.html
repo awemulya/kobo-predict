@@ -38,11 +38,10 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
                         <h3><i class="la la-map-marker"></i>Sites</h3>
 						<div class="panel-heading-right">
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i> Search</a>
-							
-{% if is_form_proj %}
+							{% if is_form_proj %}
 							<a href="{% url 'fieldsight:site-add' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add New</a>
 							<a href="{% url 'fieldsight:site-upload' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Bulk Upload Sites</a>
-{% endif %}
+							{% endif %}
 						</div>
                     </header>
 					<div class="panel-body">
@@ -70,6 +69,7 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 										<img data-bind="attr:{src: logo}" alt="" width="100" height="100">
 									</div>
 									<div class="basic-info clearfix">
+										<h4 class="detail-text0" data-bind="text: identifier"></h4>
 										<h4 class="detail-text1" data-bind="text: name"></h4>
                                  		<p class="address"><i class="fa fa-map-marker" aria-hidden="true"></i> <span  class="detail-text1" data-bind="text: address"></span></p>
                                  		<p class="phone"><i class="fa fa-phone" aria-hidden="true"></i> <span  class="detail-text1" data-bind="text: phone"></span></p>
