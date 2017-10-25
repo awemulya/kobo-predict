@@ -54,9 +54,9 @@
 				<a href="{% url 'dashboard' %}" title="" class="logo">
 					<img src="{% static 'dummy/assets/img/logo.png' %}" alt="Field Sight" width="168" height="32">
 				</a>
-				<div class="sidebar-toggle-box">
-					<span class="la la-bars"></span>
-				</div>
+				<!--<div class="sidebar-toggle-box">-->
+					<!--<span class="la la-bars"></span>-->
+				<!--</div>-->
 			</div>
 			<div class="top-nav clearfix">
 				<ul class="right-nav clearfix">
@@ -93,73 +93,70 @@
 		</header>
 		<div id="main-container" class="minified">
 			<div id="sidebar" data-toggle="affix">
-				<div class="leftside-navigation">
-					<ul class="sidebar-menu" id="nav-accordion">
-						<li>
-							<a class="" href="{% url 'dashboard' %}">
-								<i class="la la-dashboard"></i>
-								<span>{% trans 'Dashboard' %}</span>
-							</a>
-						</li>
-						{% ifrole "admin" %}
-						<li class="sub-menu">
-							<a href="{% url 'fieldsight:organizations-list' %}">
-								<i class="la la-building"></i>
-								<span>{% trans 'Organizations' %}</span>
-							</a>
-							<!--<ul class="sub">-->
-								<!--<li><a href="organization.php">All Organizations</a></li>-->
-								<!--<li><a href="new-organization.php">New Organization</a></li>-->
-							<!--</ul>-->
-						</li>
-						{% endrole %}
+				<!--<div class="leftside-navigation">-->
+					<!--<ul class="sidebar-menu" id="nav-accordion">-->
+						<!--<li>-->
+							<!--<a class="" href="{% url 'dashboard' %}">-->
+								<!--<i class="la la-dashboard"></i>-->
+								<!--<span>{% trans 'Dashboard' %}</span>-->
+							<!--</a>-->
+						<!--</li>-->
+						<!--{% ifrole "admin" %}-->
+						<!--<li class="sub-menu">-->
+							<!--<a href="{% url 'fieldsight:organizations-list' %}">-->
+								<!--<i class="la la-building"></i>-->
+								<!--<span>{% trans 'Organizations' %}</span>-->
+							<!--</a>-->
+							<!--&lt;!&ndash;<ul class="sub">&ndash;&gt;-->
+								<!--&lt;!&ndash;<li><a href="organization.php">All Organizations</a></li>&ndash;&gt;-->
+								<!--&lt;!&ndash;<li><a href="new-organization.php">New Organization</a></li>&ndash;&gt;-->
+							<!--&lt;!&ndash;</ul>&ndash;&gt;-->
+						<!--</li>-->
+						<!--{% endrole %}-->
+						<!--&lt;!&ndash;<li class="sub-menu">&ndash;&gt;-->
+							<!--&lt;!&ndash;<a href="javascript:;">&ndash;&gt;-->
+								<!--&lt;!&ndash;<i class="la la-tasks"></i>&ndash;&gt;-->
+								<!--&lt;!&ndash;<span>Projects</span>&ndash;&gt;-->
+							<!--&lt;!&ndash;</a>&ndash;&gt;-->
+							<!--&lt;!&ndash;<ul class="sub">&ndash;&gt;-->
+								<!--&lt;!&ndash;<li><a href="#">All Projects</a></li>&ndash;&gt;-->
+								<!--&lt;!&ndash;<li><a href="#">New Project</a></li>&ndash;&gt;-->
+							<!--&lt;!&ndash;</ul>&ndash;&gt;-->
+						<!--&lt;!&ndash;</li>&ndash;&gt;-->
+						<!--{% ifrole "Site" %}-->
 						<!--<li class="sub-menu">-->
 							<!--<a href="javascript:;">-->
-								<!--<i class="la la-tasks"></i>-->
-								<!--<span>Projects</span>-->
+								<!--<i class="la la-clipboard"></i>-->
+								<!--<span>{% trans 'Forms' %}</span>-->
 							<!--</a>-->
 							<!--<ul class="sub">-->
-								<!--<li><a href="#">All Projects</a></li>-->
-								<!--<li><a href="#">New Project</a></li>-->
+								<!--<li><a href="{{ koboform_url }}#/forms/new">{% trans 'Create New' %}</a></li>-->
+								<!--<li><a href="{% url 'forms:forms-list' %}">{% trans 'My Forms' %}</a></li>-->
 							<!--</ul>-->
 						<!--</li>-->
-						{% ifrole "Site" %}
-						<li class="sub-menu">
-							<a href="javascript:;">
-								<i class="la la-clipboard"></i>
-								<span>{% trans 'Forms' %}</span>
-							</a>
-							<ul class="sub">
-								<li><a href="{{ koboform_url }}#/forms/new">{% trans 'Create New' %}</a></li>
-								<li><a href="{% url 'forms:forms-list' %}">{% trans 'My Forms' %}</a></li>
-							</ul>
-						</li>
-						<!--<li class="sub-menu">-->
-							<!--<a href="javascript:;">-->
-								<!--<i class="la la-users"></i>-->
-								<!--<span>Users</span>-->
-							<!--</a>-->
-							<!--<ul class="sub">-->
-								<!--<li><a href="#">All Users</a></li>-->
-								<!--<li><a href="#">New User</a></li>-->
-							<!--</ul>-->
-						<!--</li>-->
-						<!--<li class="sub-menu">-->
-							<!--<a href="javascript:;">-->
-								<!--<i class="la la-book"></i>-->
-								<!--<span>{% trans 'Library' %}</span>-->
-							<!--</a>-->
-							<!--<ul class="sub">-->
-								<!--<li><a href="{% url 'forms:library-forms-list' %}">{% trans 'Library Forms' %}</a></li>-->
-								<!--<li><a href="{% url 'forms:group-list' %}">{% trans 'Stages Library' %}</a></li>-->
-							<!--</ul>-->
-						<!--</li>-->
-						 {% endrole %}
-						<li class="sub-menu">
-							<li><a href="{% url 'fieldsight:full-map' %}"><i class="la la-map"></i> {% trans 'View Map' %}</a></li>
-						</li>
-					</ul>
-				</div>
+						<!--&lt;!&ndash;<li class="sub-menu">&ndash;&gt;-->
+							<!--&lt;!&ndash;<a href="javascript:;">&ndash;&gt;-->
+								<!--&lt;!&ndash;<i class="la la-users"></i>&ndash;&gt;-->
+								<!--&lt;!&ndash;<span>Users</span>&ndash;&gt;-->
+							<!--&lt;!&ndash;</a>&ndash;&gt;-->
+							<!--&lt;!&ndash;<ul class="sub">&ndash;&gt;-->
+								<!--&lt;!&ndash;<li><a href="#">All Users</a></li>&ndash;&gt;-->
+								<!--&lt;!&ndash;<li><a href="#">New User</a></li>&ndash;&gt;-->
+							<!--&lt;!&ndash;</ul>&ndash;&gt;-->
+						<!--&lt;!&ndash;</li>&ndash;&gt;-->
+						<!--&lt;!&ndash;<li class="sub-menu">&ndash;&gt;-->
+							<!--&lt;!&ndash;<a href="javascript:;">&ndash;&gt;-->
+								<!--&lt;!&ndash;<i class="la la-book"></i>&ndash;&gt;-->
+								<!--&lt;!&ndash;<span>{% trans 'Library' %}</span>&ndash;&gt;-->
+							<!--&lt;!&ndash;</a>&ndash;&gt;-->
+							<!--&lt;!&ndash;<ul class="sub">&ndash;&gt;-->
+								<!--&lt;!&ndash;<li><a href="{% url 'forms:library-forms-list' %}">{% trans 'Library Forms' %}</a></li>&ndash;&gt;-->
+								<!--&lt;!&ndash;<li><a href="{% url 'forms:group-list' %}">{% trans 'Stages Library' %}</a></li>&ndash;&gt;-->
+							<!--&lt;!&ndash;</ul>&ndash;&gt;-->
+						<!--&lt;!&ndash;</li>&ndash;&gt;-->
+						 <!--{% endrole %}-->
+					<!--</ul>-->
+				<!--</div>-->
 			</div>
 			{% block content %}
 			{% endblock %}

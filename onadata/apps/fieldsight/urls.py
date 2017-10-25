@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from . import views
 from django.views.decorators.csrf import csrf_exempt
 from fcm.views import DeviceViewSet
 from onadata.apps.fieldsight.viewsets.FieldsightFcmViewset import FcmDeviceViewSet
@@ -37,6 +38,7 @@ from .views import (
     alter_site_status,
     add_supervisor,
     CreateUserView,
+    viewfullmap,
 
 
     UserListView, site_images, FilterUserView, UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
@@ -137,7 +139,7 @@ urlpatterns = [
     url(r'^activaterole/(?P<invite_idb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z_\-]+)/$',
         ActivateRole.as_view(), name='activate-role'),
     url(r'^project/report/summary/(?P<pk>\d+)/$', ProjectSummaryReport.as_view(), name='project-summary-report'),
-
+    url(r'map-view/$',views.viewfullmap, name='full-map'),
 ]
    
 
