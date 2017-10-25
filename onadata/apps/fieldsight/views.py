@@ -80,8 +80,8 @@ def dashboard(request):
     data = serialize('custom_geojson', Site.objects.prefetch_related('site_instances').filter(is_survey=False, is_active=True), geometry_field='location', fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id'))
    
    
-    outstanding_query = FInstance.objects.filter(form_status=0)
-    data = serialize('custom_geojson', Site.objects.filter(is_survey=False, is_active=True).prefetch_related(Prefetch('site_instances', queryset=outstanding_query, to_attr='outstanding')), geometry_field='location', fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id'))
+    # outstanding_query = FInstance.objects.filter(form_status=0)
+    # data = serialize('custom_geojson', Site.objects.filter(is_survey=False, is_active=True).prefetch_related(Prefetch('site_instances', queryset=outstanding_query, to_attr='outstanding')), geometry_field='location', fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id'))
     # fs_forms = FieldSightXF.objects.all()
     # fs_forms = list(fs_forms)
     # # outstanding = flagged = approved = rejected = 0
@@ -553,9 +553,9 @@ class ProjectListView(ProjectRoleView, OrganizationMixin, ListView):
 class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
 
     def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.organization_id = self.kwargs.get('pk')
-        self.object.save()
+        self.object = form.save(a=self.kwargs.get('pk'))
+
+        # self.object.organization_id = self.kwargs.get('pk')
         noti = self.object.logs.create(source=self.request.user, type=10, title="new Project",
                                        organization=self.object.organization, content_object=self.object,
                                        description='{0} created new project named {1}'.format(
