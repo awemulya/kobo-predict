@@ -39,6 +39,7 @@
 
     <div class="container">
 
+
       <form class="form-signin" id="user_reg_form" method="POST" class="form-horizontal">
 {% csrf_token %}
         <div class="login-heading-with-image">
@@ -51,16 +52,16 @@
               
                 
                 <p></p>
-                <input type="text" class="form-control" placeholder="Username*" id="username" name="username" value="" autofocus required>
+                <input type="text" class="form-control" placeholder="Username*" id="username" name="username" value="{{ username }}" autofocus required>
                 
                 <p></p>
 
-                <input type="text" class="form-control" placeholder="First Name*" id="firstname" name="firstname" value="" required>
+                <input type="text" class="form-control" placeholder="First Name*" id="firstname" name="firstname" value="{{ firstname }}" required>
                 
                        
                 <p></p>
 
-                <input type="text" class="form-control" placeholder="Last Name*" id="lastname" name="lastname" value="" required>
+                <input type="text" class="form-control" placeholder="Last Name*" id="lastname" name="lastname" value="{{ lastname }}" required>
                                
                 <p></p>
 
@@ -69,7 +70,11 @@
                 <p></p>
 
                 <input type="password" class="form-control" placeholder="Re-type Password*" id="password2" name="password2" value="">
-                <center><div id="alert" style="color: red;"></div><center>
+                <center><div id="alert" style="color: red;">
+                  {% if status %}
+                  Username already taken
+                  {% endif %}
+                </div><center>
                 
             </div>
            
@@ -114,14 +119,20 @@
       else
       {
         if(pass1 == pass2){
+        
           document.getElementById("user_reg_form").submit(); 
+        
         }
         else{
            document.getElementById("alert").innerHTML = "Passwords did not match.";
         }
+
       }
     }
 
+    function validateUsername(){
+
+    }
 
    
   </script>

@@ -24,7 +24,9 @@
     padding: 5px 5px 5px 30px;
     border: #9cbef1 1px solid;
 }
-
+.modal-backdrop.show{
+    z-index: 0;
+}
 </style>
 
     {% endblock %}
@@ -761,15 +763,52 @@ var pk = "{{pk}}";
                                                                               <form method="post">
                                                                                       <h5 class="sub-stage-name-c">{% trans 'New Sub Stage' %} <span data-bind='text: $parent.parent().length+1'></span></h5>
                                                                                         {% csrf_token %}
-                                                                                  <div>
-                                                                                    {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name of SUb Stage "><br>
-                                                                                    {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br>
-                                                                                    {% trans 'Form Assigned: ' %}
+                                                                    <div>
+
+
+                                                                    <div class="col-sm-12">
+                                                                      <div class="form-group">
+                                                                          <label for="stagename"><span class="stage-label">{% trans 'Name: ' %}</span></label>
+                                                                         <input class="form-control"  data-bind="value: name" placeholder="Name of SUb Stage ">
+
+                                                                          <div class="gap"></div>
+                                                                    </div>
+                                                                    </div>
+
+                                                                    <div class="col-sm-12">
+                                                                      <div class="form-group">
+                                                                          <label for="stagename"><span class="stage-label">{% trans 'Description: ' %}</span></label>
+                                                                         <input class="form-control"  data-bind="value: description" placeholder="Sub Stage Description">
+                                                                          <div class="gap"></div>
+                                                                    </div>
+                                                                    </div>
+
+
+
+                                                                     <div class="col-sm-12">
+                                                                      <div class="form-group">
+                                                                          <label for="stagename"><span class="stage-label">{% trans 'Form Assigned: ' %}</span></label>
+                                                                          <select class="form-control" data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
+                                                                                        value: stage_forms().xf().id">
+                                                                                    </select>
+                                                                          <div class="gap"></div>
+                                                                    </div>
+                                                                    </div>
+
+
+
+
+
+
+
+                                                                                   <!--  {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name of SUb Stage "><br> -->
+                                                                                   <!--  {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br> -->
+                                                                         <!--            {% trans 'Form Assigned: ' %}
                                                                                     <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
                                                                                         value: stage_forms().xf().id">
                                                                                     </select>
 
-                                                                                    <br>
+                                                                                    <br> -->
 
 
                                                                                   </div>
@@ -824,7 +863,7 @@ var pk = "{{pk}}";
                                             </button>
                                             {% csrf_token %}
 
-                                            <a class="btn btn-danger square" style="float:right;" data-bind="visible:stages().length > 0,
+                                            <a class="btn btn-success square" style="font-color:white; float:right;" data-bind="visible:stages().length > 0,
                                             confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">
                                                 <i class="fa fa-upload" aria-hidden="true"></i>
                                                 {% trans 'Deploy to Mobile' %}
@@ -832,7 +871,7 @@ var pk = "{{pk}}";
                                       </div>
                                   </div>
                                 <div id="accordion" role="tablist">
-                                  <div class="card margin-bottom" data-bind="foreach:stages">
+                                  <div class="card margin-bottom" style="width: 95%;" data-bind="foreach:stages">
                                     <div class="card-header clearfix" role="tab" data-bind="attr: { id: 'heading_' + $index() }" >
                                         <div class="stage-name" data-toggle="collapse"
                                              aria-expanded="true"
@@ -862,7 +901,7 @@ var pk = "{{pk}}";
                                                 </div>
                                             </div>
                                             <a title="Delete" data-bind="confirmClick: { message: ' Submissions data of this stage will be lost.\n Are you sure ?',
-                              click: delete_stage }" class="btn btn-sm btn-danger"><i class="la la-close"></i> Delete</a>
+                              click: delete_stage }" class="btn btn-sm btn-warning"><i class="la la-close"></i> Delete</a>
                                         </div>
                                     </div>
 
@@ -873,17 +912,18 @@ var pk = "{{pk}}";
                                             <h3><i class="la la-sitemap"></i> Sub Stages :</h3>
                                             <ul data-bind="attr: { id: 'substages_' + $index() }">
                                                 <li class="clearfix" data-bind="foreach:parent">
+                                                <br>
                                                     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                                                         <div data-bind="with: em">
                                                           <div class="modal-dialog form-modal" role="document">
                                                             <div class="modal-content">
                                                               <div class="modal-header">
                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                                <h4 class="modal-title">{% trans 'Education Material' %}</h4>
+                                                                <h4 class="modal-title">{% trans 'Education Materials' %}</h4>
                                                               </div>
                                                               <div class="modal-body">
                                                                   <div class="col-sm-8">
-                                                                      <h3>Create A Education Material</h3>
+                                                                
 
                                                                     <div class="form-group">
                                                                       <label for="title" id="sizing-addon2"><h4>Title</h4></label>
@@ -925,7 +965,7 @@ var pk = "{{pk}}";
                                                                                           fileNameClass: 'disabled form-control',
                                                                                           onClear: onClear,
                                                                                         }" accept="image/*">
-                                                                                        }" accept="image/*">
+                                                                                        
                                                                                     </div>
                                                                                 </div>
                                                                             </div>

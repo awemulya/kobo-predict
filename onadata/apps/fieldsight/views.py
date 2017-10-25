@@ -59,16 +59,17 @@ import pyexcel as p
 def dashboard(request):
     current_role_count = request.roles.count()
     if current_role_count == 1:
+        current_role = request.roles[0]
         role_type = request.roles[0].group.name
         if role_type == "Site Supervisor":
-            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role[0].site.pk}))
+            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
         if role_type == "Reviewer":
-            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role[0].site.pk}))
+            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
         if role_type == "Project Manager":
-            return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role[0].project.pk}))
+            return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role.project.pk}))
         if role_type == "Organization Admin":
             return HttpResponseRedirect(reverse("fieldsight:organizations-dashboard",
-                                                kwargs={'pk': current_role[0].organization.pk}))
+                                                kwargs={'pk': current_role.organization.pk}))
     if current_role_count > 1:
         return HttpResponseRedirect(reverse("fieldsight:roles-dashboard"))
 
@@ -1035,7 +1036,7 @@ def senduserinvite(request):
             invite = UserInvite(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
 
             invite.save()
-            organization = Organization.objects.get(pk=1)
+            # organization = Organization.objects.get(pk=1)
             # noti = invite.logs.create(source=user[0], type=9, title="new Role",
             #                                organization_id=request.POST.get('organization_id'),
             #                                description="{0} sent you an invite to join {1} as the {2}.".
@@ -1112,8 +1113,6 @@ def sendmultiroleuserinvite(request):
                         continue
                 invite, created = UserInvite.objects.get_or_create(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
 
-                invite.save()
-                organization = Organization.objects.get(pk=1)
                 # noti = invite.logs.create(source=user[0], type=9, title="new Role",
                 #                                organization_id=request.POST.get('organization_id'),
                 #                                description="{0} sent you an invite to join {1} as the {2}.".
@@ -1126,7 +1125,6 @@ def sendmultiroleuserinvite(request):
 
             else:
                 invite, created = UserInvite.objects.get_or_create(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
-                invite.save()
             current_site = get_current_site(request)
             subject = 'Invitation for Role'
             message = render_to_string('fieldsight/email_sample.html',
@@ -1171,11 +1169,11 @@ class ActivateRole(TemplateView):
     def get(self, request, invite, invite_idb64, token):
         user = User.objects.filter(email=invite.email)
         if invite.is_used==True:
-            return render(request, 'fieldsight/invite_action.html',{'invite':invite, 'is_used': True, })
+            return HttpResponseRedirect(reverse('login'))
         if user:
-            return render(request, 'fieldsight/invite_action.html',{'invite':invite, 'is_used': False,})
+            return render(request, 'fieldsight/invite_action.html',{'invite':invite, 'is_used': False, 'status':'',})
         else:
-            return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False,})
+            return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'',})
         
 
     def post(self, request, invite, *args, **kwargs):
@@ -1184,12 +1182,15 @@ class ActivateRole(TemplateView):
             user = user_exists[0] 
             if request.POST.get('response') == "accept":
                 userrole = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
-                userrole.save()
             else:
                 invite.is_declined = True
             invite.is_used = True
             invite.save()
         else:
+            usernameexists = User.objects.filter(username=request.POST.get('username'))
+            if usernameexists:
+                return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'username exists', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
+
             user = User(username=request.POST.get('username'), email=invite.email, first_name=request.POST.get('firstname'), last_name=request.POST.get('lastname'))
             user.set_password(request.POST.get('password1'))
             user.save()
@@ -1225,6 +1226,13 @@ class ActivateRole(TemplateView):
 @login_required()
 def checkemailforinvite(request):
     user = User.objects.select_related('user_profile').filter(email__icontains=request.POST.get('email'))
+    if user:
+        return render(request, 'fieldsight/invite_response.html', {'users': user,})
+    else:
+        return HttpResponse("No existing User found.<a href='#' onclick='sendnewuserinvite()'>send</a>")
+
+def checkusernameexists(request):
+    user = User.objects.get(username=request.POST.get('email'))
     if user:
         return render(request, 'fieldsight/invite_response.html', {'users': user,})
     else:
