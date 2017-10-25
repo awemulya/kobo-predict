@@ -863,7 +863,7 @@ var pk = "{{pk}}";
                                             </button>
                                             {% csrf_token %}
 
-                                            <a class="btn btn-success square" style="float:right;" data-bind="visible:stages().length > 0,
+                                            <a class="btn btn-success square" style="font-color:white; float:right;" data-bind="visible:stages().length > 0,
                                             confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">
                                                 <i class="fa fa-upload" aria-hidden="true"></i>
                                                 {% trans 'Deploy to Mobile' %}
