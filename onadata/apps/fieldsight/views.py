@@ -550,6 +550,7 @@ class ProjectRoleView(object):
 
 class ProjectListView(ProjectRoleView, OrganizationMixin, ListView):
     pass
+    
 
 
 class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
