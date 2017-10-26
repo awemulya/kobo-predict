@@ -1169,7 +1169,8 @@ def html_export(request, fsxf_id):
                         yield row[id_index], row
 
     context['labels'] = labels
-    context['data'] = make_table(data)
+    # context['data'] = make_table(data)
+    context['data'] = data
     context['fsxfid'] = fsxf_id
     context['obj'] = fsxf
     context['si_site'] = True
