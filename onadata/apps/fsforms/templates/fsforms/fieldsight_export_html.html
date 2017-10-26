@@ -61,7 +61,7 @@
       <tr>
         <th>S.N</th>
         <th>Form Name</th>
-        {% if is_site%}
+        {% if is_site %}
             <th>Site Name</th>
             <th>Site Id</th>
         {% else %}
@@ -75,8 +75,9 @@
     <tbody>
     
     {% for sub in data  %}
-        <tr>
+       
               {% if sub.site_fxf %}
+               <tr>
                   <a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">
                   <td>{{ sub.site_fxf }}</td>
                   <td>{{ sub.xf.title }}</td>
@@ -85,9 +86,11 @@
                   <td>{{ sub.submitted_by.username }}</td>
                   <td>{{ sub.date }}</td>
                   </a>
+                  </tr>
               {% endif %}
 
               {% if sub.project_fxf %}
+               <tr>
                   <a href="{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">
                   <td>{{ sub.project_fxf }}</td>
                   <td>{{ sub.xf.title }}</td>
@@ -96,9 +99,10 @@
                   <td>{{ sub.submitted_by.username }}</td>
                   <td>{{ sub.date }}</td>
                   </a>
+                  </tr>
               {% endif %}
         
-        </tr>
+
     {% endfor %}
      
      
