@@ -632,7 +632,7 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.object.id})
 
     def form_valid(self, form):
-        self.object.save()
+        self.object = form.save(project_id=self.kwargs.get('pk'), new=True)
         noti = self.object.logs.create(source=self.request.user, type=11, title="new Site",
                                        organization=self.object.project.organization,
                                        project=self.object.project, content_object=self.object, extra_object=self.object.project,
@@ -654,7 +654,7 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
-        self.object = form.save()
+        self.object = form.save(project_id=self.kwargs.get('pk'), new=False)
         noti = self.object.logs.create(source=self.request.user, type=15, title="edit Site",
                                        organization=self.object.project.organization, project=self.object.project, content_object=self.object,
                                        description='{0} changed the details of site named {1}'.format(

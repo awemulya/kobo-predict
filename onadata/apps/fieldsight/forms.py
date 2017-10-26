@@ -297,8 +297,19 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
         'logo': AdminImageWidget()
         }
 
-    def save(self):
+    def save(self, commit=True, *args, **kwargs):
+
+        is_new = kwargs.pop('new')
+
+        if is_new:
+            photo = super(SiteForm, self).save(commit=False)
+            photo.project_id = kwargs.pop('project_id')
+            photo.save()
+
         photo = super(SiteForm, self).save()
+
+        # if else for new  and update
+
         x = self.cleaned_data.get('x')
         y = self.cleaned_data.get('y')
         w = self.cleaned_data.get('width')
@@ -306,7 +317,7 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
 
         if x is not None and y is not None:
             image = Image.open(photo.logo)
-            cropped_image = image.crop((x, y, w+x, h+y))
+            cropped_image = image.crop((x, y, w + x, h + y))
             resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
             resized_image.save(photo.logo.path)
         return photo
