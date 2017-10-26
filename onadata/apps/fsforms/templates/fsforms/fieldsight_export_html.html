@@ -76,7 +76,7 @@
 
     {% for sub in data  %}
        
-              {% if sub.site_fxf %}
+           <!--    {% if sub.site_fxf %}
                <tr>
                  
                   <td> <a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.site.identifier }}</a></td>
@@ -86,7 +86,7 @@
                   <td>{{ sub.submitted_by.username }}</td>
                   <td>{{ sub.date }}</td>
                   </tr>
-              {% endif %}
+              {% endif %} -->
 
               {% if sub.project_fxf %}
                <tr>
