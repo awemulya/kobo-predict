@@ -41,8 +41,8 @@
 												<img src="{{ obj.logo.url }}" width="123" height="123" alt="">
 											</div>
 											<div class="org-profile-basic-info">
-												<h2>{{ obj.identifier }}</h2>
-												<h2>{{ obj.name }}</h2>
+												<h4>{{ obj.name }}</h4>
+												<h6>{{ obj.identifier }}</h6>
 												<p>{{ obj.address }}, {{ obj.get_country_display }}</p>
                                                 <p>{{ obj.email }}</p>
 											</div>
@@ -102,6 +102,7 @@
 						<div class="col-lg-4 col-sm-12">
 							<div class="widget-info widget-site-map margin-top bg-white padding">
 								<div class="widget-head">
+									<a href="{% url 'fieldsight:full-map' %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-map"></i>{% trans ' View' %}{% trans ' Full Map' %}</a>
 									<h4>Site Map</h4>
 								</div>
 								<div class="widget-body">

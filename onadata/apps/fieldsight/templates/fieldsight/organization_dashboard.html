@@ -204,8 +204,10 @@ var org = "{{obj.pk}}";
 					<div class="row">
 						<div class="col-lg-6 col-sm-12">
 							<div class="widget-info margin-top bg-white padding">
+
 								<div class="widget-head">
 									<h4>Project Map</h4>
+									<a href="{% url 'fieldsight:full-map' %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-map"></i>{% trans ' View' %}{% trans ' Full Map' %}</a>
 								</div>
 								<div class="widget-body">
 									<div class="radio-div card">
@@ -260,7 +262,8 @@ var org = "{{obj.pk}}";
 									<div class="widget-info widget-scolling-list margin-top bg-white padding">
 										<div class="widget-head">
 											<h4>Admins</h4>
-											<a class="btn btn-xs btn-primary" data-toggle="modal" href="#addAdmin" data-target="#adminModal"><i class="la la-plus"></i></a>
+											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:manage-people-organization' obj.pk %}"><i class="la la-plus"></i></a>
+
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchAdmin" aria-expanded="false" aria-controls="searchAdmin"><i class="la la-search"></i></a>
 										</div>
 										<div class="widget-body">
