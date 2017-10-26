@@ -1185,7 +1185,7 @@ def project_html_export(request, fsxf_id):
     xform = fsxf.xf
     id_string = xform.id_string
     # cursor = get_instances_for_project_field_sight_form(fsxf_id)
-    cursor = FInstance.objects.filter(project_fxf=fsxfs) 
+    cursor = FInstance.objects.filter(project_fxf=fsxf) 
     cursor = list(cursor)
     paginator = Paginator(cursor, limit, request=request)
 
