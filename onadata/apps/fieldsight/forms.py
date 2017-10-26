@@ -250,8 +250,6 @@ class ProjectForm(forms.ModelForm):
         
         photo = super(ProjectForm, self).save()
 
-        #if else for new  and update
-
         x = self.cleaned_data.get('x')
         y = self.cleaned_data.get('y')
         w = self.cleaned_data.get('width')
