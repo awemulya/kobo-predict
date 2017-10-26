@@ -384,6 +384,7 @@ class ExportBuilder(object):
             return value
 
     def pre_process_row(self, row, section):
+        print(type(row),"Row##################################")
         """
         Split select multiples, gps and decode . and $
         """
@@ -413,12 +414,22 @@ class ExportBuilder(object):
                     and value is not None and value != '':
                 row[elm['xpath']] = ExportBuilder.convert_type(
                     value, elm['type'])
-        site_id = row['fs_site']
-        site = Site.objects.get(pk=site_id)
-        row['site_name'] = site.name
-        row['address'] = site.address
-        row['phone'] = site.phone
-        row['identifier'] = site.identifier
+        try:
+            site_id = row['fs_site']
+            site = Site.objects.get(pk=site_id)
+        except Exception as e:
+            print(str(e)," **************** NO Site")
+            # print(str(row))
+            row['site_name'] = ""
+            row['address'] = ""
+            row['phone'] = ""
+            row['identifier'] = ""
+
+        else:
+            row['site_name'] = site.name
+            row['address'] = site.address
+            row['phone'] = site.phone
+            row['identifier'] = site.identifier
         return row
 
     def to_zipped_csv(self, path, data, *args):
@@ -790,25 +801,29 @@ def generate_export(export_type, extension, username, id_string,
 
 
 def query_mongo(username, id_string, query=None, hide_deleted=True):
-    # query = json.loads(query, object_hook=json_util.object_hook)\
-    #     if query else {}
-    # query = dict_for_mongo(query)
-    # query[USERFORM_ID] = u'{0}_{1}'.format(username, id_string)
+    # print("incoming query", query)
+    query = json.loads(query, object_hook=json_util.object_hook)\
+        if query else {}
+    query = dict_for_mongo(query)
+    query[USERFORM_ID] = u'{0}_{1}'.format(username, id_string)
     # hack the query
-    # if hide_deleted:
+    if hide_deleted:
         # display only active elements
         # join existing query with deleted_at_query on an $and
-        # query = {"$and": [query, {"_deleted_at": None}]}
+        query = {"$and": [query, {"_deleted_at": None}]}
     if query:
         if query.get('fs_uuid', False):
-            qry = {"$or": [{"_uuid": query.get('fs_uuid')}, {"fs_uuid": query.get('fs_uuid')}, {"_uuid": str(query.get('fs_uuid'))},
+            query = {"$and": [query, {"_uuid": query.get('fs_uuid')}, {"fs_uuid": query.get('fs_uuid')}, {"_uuid": str(query.get('fs_uuid'))},
                          {"fs_uuid": str(query.get('fs_uuid'))}]}
+            # qry = {"$and": [{"_uuid": query.get('fs_uuid')}, {"fs_uuid": query.get('fs_uuid')}, {"_uuid": str(query.get('fs_uuid'))},
+            #              {"fs_uuid": str(query.get('fs_uuid'))}]}
         elif query.get('fs_project_uuid', False):
-            qry = {'fs_project_uuid': {'$in': [query.get('fs_project_uuid'), str(query.get('fs_project_uuid'))]}}
-    else:
-        qry = query
-    print(qry)
-    return xform_instances.find(qry)
+            query = {"$and": [query, {'fs_project_uuid': {'$in': [query.get('fs_project_uuid'), str(query.get('fs_project_uuid'))]}}]}
+            # qry = {'fs_project_uuid': {'$in': [query.get('fs_project_uuid'), str(query.get('fs_project_uuid'))]}}
+    # else:
+    #     qry = query
+    # print(qry)
+    return xform_instances.find(query)
 
 
 
