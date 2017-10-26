@@ -94,8 +94,8 @@
                   <a href="{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">
                   <td>{{ sub.project_fxf }}</td>
                   <td>{{ sub.xf.title }}</td>
-                  <td>{{ sub.project.title }}</td>
-                  <td>{{ sub.project.id }}</td>
+                  <td>{{ sub.xf.project.title }}</td>
+                  <td>{{ sub.xf.project.id }}</td>
                   <td>{{ sub.submitted_by.username }}</td>
                   <td>{{ sub.date }}</td>
                   </a>
