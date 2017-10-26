@@ -1223,7 +1223,7 @@ def project_html_export(request, fsxf_id):
 
     context['labels'] = labels
     #context['data'] = make_table(data)
-    context['data'] = data
+    context['data'] = cursor
     context['fsxfid'] = fsxf_id
     context['obj'] = fsxf
     # return JsonResponse({'data': cursor})
