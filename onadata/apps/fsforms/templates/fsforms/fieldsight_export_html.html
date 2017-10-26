@@ -73,8 +73,8 @@
       </tr>
     </thead>
     <tbody>
-    {{ data }}
-    {% for sub in data  %}
+    {{ row }}
+    {% for sub in row  %}
         <tr>
               {% if sub.site_fxf %}
                   <a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">
