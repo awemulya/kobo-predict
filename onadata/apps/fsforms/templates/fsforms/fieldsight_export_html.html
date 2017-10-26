@@ -2,200 +2,133 @@
 {% load i18n staticfiles %}
 {% load fs_filters %}
 {% block page-title %}{% trans 'Form Data' %}{% endblock %}
-{% block breadcrumbs %}
 
-{% if obj.project %}
-
-<li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">Project Dashboard</a></li>
-<li><a href="{% url 'fieldsight:project-list' %}">{% trans 'Projects' %}</a></li>
-<li><a href="{% url 'forms:project-responses' obj.project.pk %}">{% trans 'Responses' %}</a>
-</li>
-{% else %}
-<li><a href="{% url 'fieldsight:site-dashboard' obj.site.pk %}">Site Dashboard</a></li>
-<li><a href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a></li>
-<li><a href="{% url 'forms:site-responses' obj.site.pk %}">{% trans 'Responses' %}</a>
-</li>
-
-{% endif %}
-    <li>Submissions</li>
-{% endblock %}
 {%block extracss %}
-    <style type="text/css" media="screen">
+  
 
-html, body {
-  height:100%;
-  overflow: hidden;
-  padding-top: 1px!important;
-}
-.formmdetails span {
-    margin-right: 10px;
-}
-.main {
-  height: calc(100% - 30px);
-  max-width: 100%;
-  padding: 30px 20px 0px;
+    <style>
+      .pre-scrollable{
+        height:500px;
+  
 }
 
-
-table {
-  border-collapse: collapse;
-  overflow: auto;
-  display: block;
-  font-size: 10px;
-  margin-bottom: 0px;
-  max-height: calc(100% - 130px);
+.sortable tr {
+    cursor: pointer;
 }
-
-
-tr:nth-child(even) {
-    background-color: #f5f5f5;
-}
-
-
-td, th {
-  border: 1px solid #999;
-  min-width: 0px;
-  text-align: left;
-  padding-left: 3px;
-  min-width: 60px;
-  padding-right: 3px;
-}
-
-th {
-  padding-top: 5px;
-  font-weight: bold;
-  vertical-align: top;
-  padding-bottom: 5px;
-}
-
-.cell-content-wrap {
-  display: inline-block;
-  overflow: hidden;
-  max-width: 99px;
-  padding: 0px 3px;
-  margin: 0px;
-  vertical-align:top;
-  word-wrap: break-word;
-}
-
-td .cell-content-wrap {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  height: 17px;
-}
-
-th .cell-content-wrap {
-  max-height: 66px;
-  line-height: 13px;
-}
-
-#pagination {
-  bottom: 0px;
-  margin: 0px;
-  padding: 2px 0 0;
-  border-top: 1px solid #ddd;
-}
-
-.pagination {
-  margin: 0;
-  text-align: center;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.pagination .disabled {
-  color:#ccc;
-}
-
-
-.formpack_html_export__options label, .formpack_html_export__options button, .formpack_html_export__options select, .formpack_html_export__options input {
-  font-size: 11px;
-  display: inline;
-  margin: 0px;
-}
-
-.formpack_html_export__options button {
-  font-size:12px;
-  margin:0 50px;
-}
-
-
-.formpack_html_export__options select {
-    height: 23px;
-}
-
-.formpack_html_export__options label {
-    margin: 0 0px 0 25px;
-}
-
-span.select.select--group {
-    margin-left: 50px;
-}
-
-.select--group input[type="input"] {
-    width: 20px;
-}
-
-.select--group button {
-    height: 30px;
-}
-
-button {}
-
-.formpack_html_export__options .select--lang label {
-    margin-left: 0px;
-}
-
-h1 {
-    font-size: 1em;
-}
-
-.formpack_html_export__options {
-    margin-top: 68px;
-}
-
-</style>
-    <link href="{{STATIC_URL}}lightbox2/dist/css/lightbox.css" rel="stylesheet">
+  
+  </style>
+    
 {% endblock %}
 {% block content %}
 
-
-<div class="sub-header-bar">
-  <div>
-  </div>
-</div>
-<div class="col-sm-12"> Form Details</div>
-
-<div class="form-details-all">
-        <div class="col-sm-12">
-        <div class="formmdetails">
-            <h2><span class="form-name">Name:</span>{{ obj.xf.title }}</h2>
-            {% if obj.project %}
-            <p><span class="site-name">Project:</span>{{ obj.project }}</p>
-            {% else %}
-            <p><span class="site-name">Site:</span>{{ obj.site }}</p>
-            {% endif %}
-            <p><span class="creeated-date">Created date:</span>{{ obj.date_created }}</p>
-            <p><span class="form-type">Form type:</span>{{obj.form_type}}</p>
-            <p><span class="stage-schedule">Stage/Schedule:</span>
-                {% if obj.is_staged %}
-                     {{obj.stage_name }}
-                     {% endif %}
-
-                     {% if obj.is_scheduled %}
-                     {{ obj.schedule_name }}
-                     {% endif %}
-            </p>
+<div id="main-content" class="padding">
+        <section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-pencil-square-o"></i>Form Submissions</h3>
+            <div class="panel-heading-right">
+              <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForms" aria-expanded="false" aria-controls="searchForms"><i class="la la-search"></i> Search</a>
+            
             </div>
-        </div>
-        <!--<div class="col-md-3">-->
-            <!--<div class="editform">-->
-             <!--<a class="btn btn-success btn-raised" href="{% url 'forms:show' obj.pk %}">-->
-                     <!--{% trans 'More Actions' %}</a>-->
-            <!--</div>-->
-        <!--</div>-->
-        <div class="clearfixx"></div>
+                    </header>
+          <div class="panel-body">
+            <!--Search Organization-->
+            <div class="collapse margin-top" id="searchForms">
+              <form class="padding">
+                <div class="row">
+                  <div class="col-md-6 ml-md-auto">
+                    <div class="input-group">
+                      <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+                      <span class="input-group-btn">
+                      <button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-3"></div>
+                </div>
+              </form>
+            </div>
+          <div class="title-module">
+            <h3>Form Submission</h3>
+
+            <h5>Form Name</h5>
+          </div>
+            <div class="pre-scrollable">
+              
+<div class="container">
+            
+  <table class="table table-hover ceter-block sortable">
+    <thead>
+      <tr>
+        <th>S.N</th>
+        <th>Form Name</th>
+        {% if is_site %}
+            <th>Site Name</th>
+            <th>Site Id</th>
+        {% else %}
+            <th>Project Name</th>
+            <th>Project Id</th>
+        {% endif %}
+        <th>Submitted By</th>
+        <th>Submission Date</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    {% for sub in data  %}
+       
+           <!--    {% if sub.site_fxf %}
+               <tr>
+                 
+                  <td> <a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.site.identifier }}</a></td>
+                  <td>{{ sub.site_fxf.xf.title }}</td>
+                  <td>{{ sub.site.name }}</td>
+                  <td>{{ sub.site.id }}</td>
+                  <td>{{ sub.submitted_by.username }}</td>
+                  <td>{{ sub.date }}</td>
+                  </tr>
+              {% endif %} -->
+
+              {% if sub.project_fxf %}
+               <tr>
+                 
+                  <td> <a href="{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.instance }}</a></td>
+                  <td>{{ sub.project_fxf.xf.title }}</td>
+                  <td>{{ sub.project.name }}</td>
+                  <td>{{ sub.project.id }}</td>
+                  <td>{{ sub.submitted_by.username }}</td>
+                  <td>{{ sub.date }}</td>
+                  </tr>
+              {% endif %}
+        
+
+    {% endfor %}
+     
+     
+    </tbody>
+  </table>
 </div>
+
+
+
+            </div>
+          </div>
+
+          
+                </section>
+        
+      </div>
+<div id="pagination">
+    {{ page.render }}
+</div>
+
+{% endblock %}
+
+
+{% block extrascript %}
+    <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
+{% endblock %}
+
+<!-- 
 <table>
 
     <thead>
@@ -220,15 +153,4 @@ h1 {
 
     </tbody>
 
-</table>
-
-<div id="pagination">
-    {{ page.render }}
-</div>
-
-{% endblock %}
-
-
-{% block extrascript %}
-    <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
-{% endblock %}
+</table> -->

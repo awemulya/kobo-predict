@@ -44,6 +44,7 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
     EducationalmaterialForm
 from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
     EducationMaterial, EducationalImages, InstanceImages
+from django.db.models import Q
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -556,24 +557,24 @@ def set_deploy_stages(request, is_project, pk):
                                 fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
                                 FieldSightXF.objects.get_or_create(is_staged=True, xf=fsxf.xf, site=site,
                                                                    fsform=fsxf, stage=site_sub_stage, is_deployed=True)
-            noti = project.logs.create(source=request.user, type=4, title="Project Stages Deployed",
-            organization=project.organization, description="Project Stages Deployed to sites.")
-            result = {}
-            result['description'] = "Project Form Deployed to sites."
-            result['url'] = noti.get_absolute_url()
-            ChannelGroup("notify-{}".format(project.organization.id)).send({"text": json.dumps(result)})
-            ChannelGroup("notify-0").send({"text": json.dumps(result)})
+            # noti = project.logs.create(source=request.user, type=4, title="Project Stages Deployed",
+            # organization=project.organization, description="Project Stages Deployed to sites.")
+            # result = {}
+            # result['description'] = "Project Form Deployed to sites."
+            # result['url'] = noti.get_absolute_url()
+            # ChannelGroup("notify-{}".format(project.organization.id)).send({"text": json.dumps(result)})
+            # ChannelGroup("notify-0").send({"text": json.dumps(result)})
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
         else:
             site = Site.objects.get(pk=pk)
             site.site_forms.filter(is_staged=True, xf__isnull=False, is_deleted=False).update(is_deployed=True)
             send_message_stages(site)
-            noti = site.logs.create(source=request.user, type=4, title="Site Stages Deployed",
-            organization=site.project.organization, description="Project Form Deployed to sites.")
-            result = {}
-            result['description'] = "Project Form Deployed to sites."
-            result['url'] = noti.get_absolute_url()
-            ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
+            # noti = site.logs.create(source=request.user, type=4, title="Site Stages Deployed",
+            # organization=site.project.organization, description="Project Form Deployed to sites.")
+            # result = {}
+            # result['description'] = "Project Form Deployed to sites."
+            # result['url'] = noti.get_absolute_url()
+            # ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
             ChannelGroup("notify-0").send({"text": json.dumps(result)})
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
     except Exception as e:
@@ -1125,7 +1126,8 @@ def html_export(request, fsxf_id):
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
     id_string = xform.id_string
-    cursor = get_instances_for_field_sight_form(fsxf_id)
+    #cursor = get_instances_for_field_sight_form(fsxf_id)
+    cursor = FInstance.objects.filter(Q(project_fxf=fsxf) | Q(site_fxf=fsxf))
     cursor = list(cursor)
     # for index, doc in enumerate(cursor):
     #     medias = []
@@ -1167,9 +1169,11 @@ def html_export(request, fsxf_id):
                         yield row[id_index], row
 
     context['labels'] = labels
-    context['data'] = make_table(data)
+    # context['data'] = make_table(data)
+    context['data'] = cursor
     context['fsxfid'] = fsxf_id
     context['obj'] = fsxf
+    context['si_site'] = True
     # return JsonResponse({'data': cursor})
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
@@ -1181,7 +1185,8 @@ def project_html_export(request, fsxf_id):
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
     id_string = xform.id_string
-    cursor = get_instances_for_project_field_sight_form(fsxf_id)
+    # cursor = get_instances_for_project_field_sight_form(fsxf_id)
+    cursor = FInstance.objects.filter(project_fxf=fsxf) 
     cursor = list(cursor)
     paginator = Paginator(cursor, limit, request=request)
 
@@ -1217,7 +1222,8 @@ def project_html_export(request, fsxf_id):
                         yield row[id_index], row
 
     context['labels'] = labels
-    context['data'] = make_table(data)
+    #context['data'] = make_table(data)
+    context['data'] = cursor
     context['fsxfid'] = fsxf_id
     context['obj'] = fsxf
     # return JsonResponse({'data': cursor})
