@@ -2,6 +2,14 @@
 {% load i18n staticfiles %}
 {% load filters %}
 {%block extracss %}
+<style type="text/css">
+	.leaflet-bottom.leaflet-right{
+		display:none;
+	}
+	.radio-div.card{
+		display: none;
+	}
+</style>
 
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
