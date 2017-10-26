@@ -73,22 +73,21 @@
       </tr>
     </thead>
     <tbody>
-    {{ data }}
+
     {% for sub in data  %}
-       <!-- 
+       
               {% if sub.site_fxf %}
                <tr>
-                  <a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">
-                  <td>{{ sub.site_fxf }}</td>
-                  <td>{{ sub.xf.title }}</td>
-                  <td>{{ sub.site.title }}</td>
+                 
+                  <td> <a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.site.identifier }}</a></td>
+                  <td>{{ sub.site_fxf.xf.title }}</td>
+                  <td>{{ sub.site.name }}</td>
                   <td>{{ sub.site.id }}</td>
                   <td>{{ sub.submitted_by.username }}</td>
                   <td>{{ sub.date }}</td>
-                  </a>
                   </tr>
               {% endif %}
- -->
+
               {% if sub.project_fxf %}
                <tr>
                  
