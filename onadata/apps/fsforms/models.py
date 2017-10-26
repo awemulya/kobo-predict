@@ -214,7 +214,8 @@ class FieldSightXF(models.Model):
         )
 
     def getname(self):
-        return self.xf.title
+        return '{0} form {1}'.format(self.form_type(),
+                                           self.xf.title,)
 
     def get_absolute_url(self):
         if self.project:
