@@ -20,207 +20,140 @@
     <li>Submissions</li>
 {% endblock %}
 {%block extracss %}
-    <style type="text/css" media="screen">
+  
 
-html, body {
-  height:100%;
-  overflow: hidden;
-  padding-top: 1px!important;
-}
-.formmdetails span {
-    margin-right: 10px;
-}
-.main {
-  height: calc(100% - 30px);
-  max-width: 100%;
-  padding: 30px 20px 0px;
+    <style>
+      .pre-scrollable{
+        height:500px;
+  
 }
 
-
-table {
-  border-collapse: collapse;
-  overflow: auto;
-  display: block;
-  font-size: 10px;
-  margin-bottom: 0px;
-  max-height: calc(100% - 130px);
+.sortable tr {
+    cursor: pointer;
 }
-
-
-tr:nth-child(even) {
-    background-color: #f5f5f5;
-}
-
-
-td, th {
-  border: 1px solid #999;
-  min-width: 0px;
-  text-align: left;
-  padding-left: 3px;
-  min-width: 60px;
-  padding-right: 3px;
-}
-
-th {
-  padding-top: 5px;
-  font-weight: bold;
-  vertical-align: top;
-  padding-bottom: 5px;
-}
-
-.cell-content-wrap {
-  display: inline-block;
-  overflow: hidden;
-  max-width: 99px;
-  padding: 0px 3px;
-  margin: 0px;
-  vertical-align:top;
-  word-wrap: break-word;
-}
-
-td .cell-content-wrap {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  height: 17px;
-}
-
-th .cell-content-wrap {
-  max-height: 66px;
-  line-height: 13px;
-}
-
-#pagination {
-  bottom: 0px;
-  margin: 0px;
-  padding: 2px 0 0;
-  border-top: 1px solid #ddd;
-}
-
-.pagination {
-  margin: 0;
-  text-align: center;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.pagination .disabled {
-  color:#ccc;
-}
-
-
-.formpack_html_export__options label, .formpack_html_export__options button, .formpack_html_export__options select, .formpack_html_export__options input {
-  font-size: 11px;
-  display: inline;
-  margin: 0px;
-}
-
-.formpack_html_export__options button {
-  font-size:12px;
-  margin:0 50px;
-}
-
-
-.formpack_html_export__options select {
-    height: 23px;
-}
-
-.formpack_html_export__options label {
-    margin: 0 0px 0 25px;
-}
-
-span.select.select--group {
-    margin-left: 50px;
-}
-
-.select--group input[type="input"] {
-    width: 20px;
-}
-
-.select--group button {
-    height: 30px;
-}
-
-button {}
-
-.formpack_html_export__options .select--lang label {
-    margin-left: 0px;
-}
-
-h1 {
-    font-size: 1em;
-}
-
-.formpack_html_export__options {
-    margin-top: 68px;
-}
-
-</style>
-    <link href="{{STATIC_URL}}lightbox2/dist/css/lightbox.css" rel="stylesheet">
+  
+  </style>
+    
 {% endblock %}
 {% block content %}
 
 
-<div class="sub-header-bar">
-  <div>
-  </div>
-</div>
-<div class="col-sm-12"> Form Details</div>
-
-<div class="form-details-all">
-        <div class="col-sm-12">
-        <div class="formmdetails">
-            <h2><span class="form-name">Name:</span>{{ obj.xf.title }}</h2>
-            {% if obj.project %}
-            <p><span class="site-name">Project:</span>{{ obj.project }}</p>
-            {% else %}
-            <p><span class="site-name">Site:</span>{{ obj.site }}</p>
-            {% endif %}
-            <p><span class="creeated-date">Created date:</span>{{ obj.date_created }}</p>
-            <p><span class="form-type">Form type:</span>{{obj.form_type}}</p>
-            <p><span class="stage-schedule">Stage/Schedule:</span>
-                {% if obj.is_staged %}
-                     {{obj.stage_name }}
-                     {% endif %}
-
-                     {% if obj.is_scheduled %}
-                     {{ obj.schedule_name }}
-                     {% endif %}
-            </p>
+        <section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-pencil-square-o"></i>Form Submissions</h3>
+            <div class="panel-heading-right">
+              <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForms" aria-expanded="false" aria-controls="searchForms"><i class="la la-search"></i> Search</a>
+            
             </div>
-        </div>
-        <!--<div class="col-md-3">-->
-            <!--<div class="editform">-->
-             <!--<a class="btn btn-success btn-raised" href="{% url 'forms:show' obj.pk %}">-->
-                     <!--{% trans 'More Actions' %}</a>-->
-            <!--</div>-->
-        <!--</div>-->
-        <div class="clearfixx"></div>
-</div>
-<table>
+                    </header>
+          <div class="panel-body">
+            <!--Search Organization-->
+            <div class="collapse margin-top" id="searchForms">
+              <form class="padding">
+                <div class="row">
+                  <div class="col-md-6 ml-md-auto">
+                    <div class="input-group">
+                      <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+                      <span class="input-group-btn">
+                      <button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-3"></div>
+                </div>
+              </form>
+            </div>
+          <div class="title-module">
+            <h3>Form Submission</h3>
 
+            <h5>Form Name</h5>
+          </div>
+            <div class="pre-scrollable">
+              
+<div class="container">
+            
+  <table class="table table-hover ceter-block sortable">
     <thead>
-        <tr>
-            <th>{% trans "View or Edit" %}</th>
-            {% for label in labels %}
-            <th><span class="cell-content-wrap">{{ label }}</span></th>
-            {% endfor %}
-        </tr>
-
+      <tr>
+        <th>S.N</th>
+        <th>Form Name</th>
+        <th>Site Name</th>
+        <th>Site Id</th>
+        <th>Submitted By</th>
+        <th>Submission Date</th>
+      </tr>
     </thead>
-
     <tbody>
-    {% for submission_id, row in data  %}
-        <tr>
-            <th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
-            {% for value in row %}
-            <td><span class="cell-content-wrap">{{ value }}</span></td>
-            {% endfor %}
-        </tr>
-    {% endfor %}
-
+      <tr> <td>1</td>
+         <td>Fieldsight</td>
+          <td>Pokhara</td>
+        <td>57</td>
+        <td>Doe</td>
+        <td>2017/2/5</td>
+      </tr>
+      <tr>
+        <td>1</td>
+         <td>Fieldsight</td>
+          <td>Pokhara</td>
+        <td>57</td>
+        <td>Doe</td>
+        <td>2017/2/5</td>
+      </tr>
+      <tr>
+        <td>1</td>
+         <td>Fieldsight</td>
+          <td>Pokhara</td>
+        <td>57</td>
+        <td>Doe</td>
+        <td>2017/2/5</td>
+      </tr>
+       <tr>
+      <td>1</td>
+         <td>Fieldsight</td>
+          <td>Pokhara</td>
+        <td>57</td>
+        <td>Doe</td>
+        <td>2017/2/5</td>
+      </tr>
+       <tr>
+      <td>1</td>
+         <td>Fieldsight</td>
+          <td>Pokhara</td>
+        <td>57</td>
+        <td>Doe</td>
+        <td>2017/2/5</td>
+      </tr>
+       <tr>
+        <td>1</td>
+         <td>Fieldsight</td>
+          <td>Pokhara</td>
+        <td>57</td>
+        <td>Doe</td>
+        <td>2017/2/5</td>
+      
+      </tr>
+       <tr>
+        <td>1</td>
+         <td>Fieldsight</td>
+          <td>Pokhara</td>
+        <td>57</td>
+        <td>Doe</td>
+        <td>2017/2/5</td>
+      
+       
+      </tr>
     </tbody>
+  </table>
+</div>
 
-</table>
+
+
+            </div>
+          </div>
+
+          
+                </section>
+        
 
 <div id="pagination">
     {{ page.render }}

@@ -556,24 +556,24 @@ def set_deploy_stages(request, is_project, pk):
                                 fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
                                 FieldSightXF.objects.get_or_create(is_staged=True, xf=fsxf.xf, site=site,
                                                                    fsform=fsxf, stage=site_sub_stage, is_deployed=True)
-            noti = project.logs.create(source=request.user, type=4, title="Project Stages Deployed",
-            organization=project.organization, description="Project Stages Deployed to sites.")
-            result = {}
-            result['description'] = "Project Form Deployed to sites."
-            result['url'] = noti.get_absolute_url()
-            ChannelGroup("notify-{}".format(project.organization.id)).send({"text": json.dumps(result)})
-            ChannelGroup("notify-0").send({"text": json.dumps(result)})
+            # noti = project.logs.create(source=request.user, type=4, title="Project Stages Deployed",
+            # organization=project.organization, description="Project Stages Deployed to sites.")
+            # result = {}
+            # result['description'] = "Project Form Deployed to sites."
+            # result['url'] = noti.get_absolute_url()
+            # ChannelGroup("notify-{}".format(project.organization.id)).send({"text": json.dumps(result)})
+            # ChannelGroup("notify-0").send({"text": json.dumps(result)})
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
         else:
             site = Site.objects.get(pk=pk)
             site.site_forms.filter(is_staged=True, xf__isnull=False, is_deleted=False).update(is_deployed=True)
             send_message_stages(site)
-            noti = site.logs.create(source=request.user, type=4, title="Site Stages Deployed",
-            organization=site.project.organization, description="Project Form Deployed to sites.")
-            result = {}
-            result['description'] = "Project Form Deployed to sites."
-            result['url'] = noti.get_absolute_url()
-            ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
+            # noti = site.logs.create(source=request.user, type=4, title="Site Stages Deployed",
+            # organization=site.project.organization, description="Project Form Deployed to sites.")
+            # result = {}
+            # result['description'] = "Project Form Deployed to sites."
+            # result['url'] = noti.get_absolute_url()
+            # ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
             ChannelGroup("notify-0").send({"text": json.dumps(result)})
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
     except Exception as e:
