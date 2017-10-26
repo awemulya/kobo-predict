@@ -813,8 +813,9 @@ def query_mongo(username, id_string, query=None, hide_deleted=True):
         query = {"$and": [query, {"_deleted_at": None}]}
     if query:
         if query.get('fs_uuid', False):
-            query = {"$and": [query, {"_uuid": query.get('fs_uuid')}, {"fs_uuid": query.get('fs_uuid')}, {"_uuid": str(query.get('fs_uuid'))},
-                         {"fs_uuid": str(query.get('fs_uuid'))}]}
+            query = {"$and": [query, {'fs_uuid': {'$in': [query.get('fs_uuid'), str(query.get('fs_uuid'))]}}]}
+            # query = {"$and": [query, {"_uuid": query.get('fs_uuid')}, {"fs_uuid": query.get('fs_uuid')}, {"_uuid": str(query.get('fs_uuid'))},
+            #              {"fs_uuid": str(query.get('fs_uuid'))}]}
             # qry = {"$and": [{"_uuid": query.get('fs_uuid')}, {"fs_uuid": query.get('fs_uuid')}, {"_uuid": str(query.get('fs_uuid'))},
             #              {"fs_uuid": str(query.get('fs_uuid'))}]}
         elif query.get('fs_project_uuid', False):

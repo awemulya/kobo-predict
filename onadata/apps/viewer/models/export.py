@@ -6,6 +6,7 @@ from django.db import models
 from django.db.models.signals import post_delete
 from django.utils.translation import ugettext as _
 
+from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.logger.models import XForm
 
 
@@ -84,6 +85,8 @@ class Export(models.Model):
     # status
     internal_status = models.SmallIntegerField(default=PENDING)
     export_url = models.URLField(null=True, default=None)
+
+    fsxf = models.ForeignKey(FieldSightXF, null=True, blank=True, related_name="exports")
 
     class Meta:
         app_label = "viewer"
