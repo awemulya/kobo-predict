@@ -2,23 +2,7 @@
 {% load i18n staticfiles %}
 {% load fs_filters %}
 {% block page-title %}{% trans 'Form Data' %}{% endblock %}
-{% block breadcrumbs %}
 
-{% if obj.project %}
-
-<li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">Project Dashboard</a></li>
-<li><a href="{% url 'fieldsight:project-list' %}">{% trans 'Projects' %}</a></li>
-<li><a href="{% url 'forms:project-responses' obj.project.pk %}">{% trans 'Responses' %}</a>
-</li>
-{% else %}
-<li><a href="{% url 'fieldsight:site-dashboard' obj.site.pk %}">Site Dashboard</a></li>
-<li><a href="{% url 'fieldsight:sites-list' %}">{% trans 'Sites' %}</a></li>
-<li><a href="{% url 'forms:site-responses' obj.site.pk %}">{% trans 'Responses' %}</a>
-</li>
-
-{% endif %}
-    <li>Submissions</li>
-{% endblock %}
 {%block extracss %}
   
 
@@ -37,7 +21,7 @@
 {% endblock %}
 {% block content %}
 
-
+<div id="main-content" class="padding">
         <section class="panel">
                     <header class="panel-heading clearfix">
                         <h3><i class="la la-pencil-square-o"></i>Form Submissions</h3>
@@ -77,71 +61,54 @@
       <tr>
         <th>S.N</th>
         <th>Form Name</th>
-        <th>Site Name</th>
-        <th>Site Id</th>
+        {% if is_site%}
+            <th>Site Name</th>
+            <th>Site Id</th>
+        {% else %}
+            <th>Project Name</th>
+            <th>Project Id</th>
+        {% endif %}
         <th>Submitted By</th>
         <th>Submission Date</th>
       </tr>
     </thead>
     <tbody>
-      <tr> <td>1</td>
-         <td>Fieldsight</td>
-          <td>Pokhara</td>
-        <td>57</td>
-        <td>Doe</td>
-        <td>2017/2/5</td>
-      </tr>
-      <tr>
+    
+    {% for sub in data  %}
+        <tr>
+              {% if sub.site_fxf %}
+                  <a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">
+                  <td>{{ sub.site_fxf }}</td>
+                  <td>{{ sub.xf.title }}</td>
+                  <td>{{ sub.site.title }}</td>
+                  <td>{{ sub.site.id }}</td>
+                  <td>{{ sub.submitted_by.username }}</td>
+                  <td>{{ sub.date }}</td>
+                  </a>
+              {% endif %}
+
+              {% if sub.project_fxf %}
+                  <a href="{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">
+                  <td>{{ sub.project_fxf }}</td>
+                  <td>{{ sub.xf.title }}</td>
+                  <td>{{ sub.project.title }}</td>
+                  <td>{{ sub.project.id }}</td>
+                  <td>{{ sub.submitted_by.username }}</td>
+                  <td>{{ sub.date }}</td>
+                  </a>
+              {% endif %}
+        
+        </tr>
+    {% endfor %}
+      <tr> 
         <td>1</td>
-         <td>Fieldsight</td>
-          <td>Pokhara</td>
+        <td>Fieldsight</td>
+        <td>Pokhara</td>
         <td>57</td>
         <td>Doe</td>
         <td>2017/2/5</td>
       </tr>
-      <tr>
-        <td>1</td>
-         <td>Fieldsight</td>
-          <td>Pokhara</td>
-        <td>57</td>
-        <td>Doe</td>
-        <td>2017/2/5</td>
-      </tr>
-       <tr>
-      <td>1</td>
-         <td>Fieldsight</td>
-          <td>Pokhara</td>
-        <td>57</td>
-        <td>Doe</td>
-        <td>2017/2/5</td>
-      </tr>
-       <tr>
-      <td>1</td>
-         <td>Fieldsight</td>
-          <td>Pokhara</td>
-        <td>57</td>
-        <td>Doe</td>
-        <td>2017/2/5</td>
-      </tr>
-       <tr>
-        <td>1</td>
-         <td>Fieldsight</td>
-          <td>Pokhara</td>
-        <td>57</td>
-        <td>Doe</td>
-        <td>2017/2/5</td>
-      
-      </tr>
-       <tr>
-        <td>1</td>
-         <td>Fieldsight</td>
-          <td>Pokhara</td>
-        <td>57</td>
-        <td>Doe</td>
-        <td>2017/2/5</td>
-      
-       
-      </tr>
+     
     </tbody>
   </table>
 </div>
@@ -154,7 +121,7 @@
           
                 </section>
         
-
+      </div>
 <div id="pagination">
     {{ page.render }}
 </div>
@@ -165,3 +132,30 @@
 {% block extrascript %}
     <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
 {% endblock %}
+
+<!-- 
+<table>
+
+    <thead>
+        <tr>
+            <th>{% trans "View or Edit" %}</th>
+            {% for label in labels %}
+            <th><span class="cell-content-wrap">{{ label }}</span></th>
+            {% endfor %}
+        </tr>
+
+    </thead>
+
+    <tbody>
+    {% for submission_id, row in data  %}
+        <tr>
+            <th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
+            {% for value in row %}
+            <td><span class="cell-content-wrap">{{ value }}</span></td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+
+    </tbody>
+
+</table> -->
