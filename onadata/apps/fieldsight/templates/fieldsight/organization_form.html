@@ -189,26 +189,6 @@
  var elat = "{{form.instance.latitude}}";
  var elong = "{{form.instance.longitude}}";
 </script>
-<script type="text/javascript">
- $(document).ready(function () {
-	$('#deleteProductModal').on('show.bs.modal', function (event) { // id of the modal with event
-	  var button = $(event.relatedTarget) // Button that triggered the modal
-	  var productid = button.data('productid') // Extract info from data-* attributes
-	  var productname = button.data('productname')
-
-	  var title = 'Confirm Delete #' + productid
-	  var content = 'Are you sure want to delete ' + productname + '?'
-
-	  // Update the modal's content.
-	  var modal = $(this)
-	  modal.find('.modal-title').text(title)
-	  modal.find('.modal-body').text(content)
-
-	  // And if you wish to pass the productid to modal's 'Yes' button for further processing
-	  modal.find('button.btn-danger').val(productid)
-	})
-})
-</script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/addmarker.js"></script>
 {% endblock %}
 
