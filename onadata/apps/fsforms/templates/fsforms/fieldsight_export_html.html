@@ -71,7 +71,7 @@
 
     {% for sub in data  %}
        
-              {% if sub.site_fxf %}
+            <!--   {% if sub.site_fxf %}
                <tr>
                  
                   <td> <a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.site.identifier }}</a></td>
@@ -83,17 +83,17 @@
                   </tr>
               {% endif %}
 
-              {% if sub.project_fxf %}
+              {% if sub.project_fxf %} -->
                <tr>
                  
                   <td> <a href="{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.instance }}</a></td>
-                  <td>{{ sub.project_fxf.xf.title }}</td>
-                  <td>{{ sub.site.name }}</td>
+                  <td>{{ sub.project_fxf.xf.title }} || {{ sub.site_fxf.xf.title }}</td>
+                  <td>{{ sub.project.name }} ===  {{ sub.site.name }}</td>
                   <td>{{ sub.site.identifier }}</td>
                   <td>{{ sub.submitted_by.username }}</td>
                   <td>{{ sub.date }}</td>
                   </tr>
-              {% endif %}
+              <!-- {% endif %} -->
         
 
     {% endfor %}
@@ -101,37 +101,6 @@
      
     </tbody>
   </table>
-
-
-
-  ======================
-
-
-  <table>
-
-    <thead>
-        <tr>
-            <th>{% trans "View or Edit" %}</th>
-            {% for label in data %}
-            <th><span class="cell-content-wrap">{{ label }}</span></th>
-            {% endfor %}
-        </tr>
-
-    </thead>
-
-    <tbody>
-    {% for row in data  %}
-        <tr>
-            <th></th>
-            {% for value in row %}
-            <td><span class="cell-content-wrap">{{ value }}</span></td>
-            {% endfor %}
-        </tr>
-    {% endfor %}
-
-    </tbody>
-
-</table> 
 </div>
 
 
