@@ -61,13 +61,8 @@
       <tr>
         <th>S.N</th>
         <th>Form Name</th>
-        {% if is_site %}
-            <th>Site Name</th>
-            <th>Site Id</th>
-        {% else %}
-            <th>Project Name</th>
-            <th>Project Id</th>
-        {% endif %}
+        <th>Site Name</th>
+        <th>Site Id</th>
         <th>Submitted By</th>
         <th>Submission Date</th>
       </tr>
@@ -76,7 +71,7 @@
 
     {% for sub in data  %}
        
-           <!--    {% if sub.site_fxf %}
+              {% if sub.site_fxf %}
                <tr>
                  
                   <td> <a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.site.identifier }}</a></td>
@@ -86,15 +81,15 @@
                   <td>{{ sub.submitted_by.username }}</td>
                   <td>{{ sub.date }}</td>
                   </tr>
-              {% endif %} -->
+              {% endif %}
 
               {% if sub.project_fxf %}
                <tr>
                  
                   <td> <a href="{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.instance }}</a></td>
                   <td>{{ sub.project_fxf.xf.title }}</td>
-                  <td>{{ sub.project.name }}</td>
-                  <td>{{ sub.project.id }}</td>
+                  <td>{{ sub.site.name }}</td>
+                  <td>{{ sub.site.identifier }}</td>
                   <td>{{ sub.submitted_by.username }}</td>
                   <td>{{ sub.date }}</td>
                   </tr>
