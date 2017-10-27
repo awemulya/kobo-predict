@@ -526,3 +526,7 @@ SOUTH_MIGRATION_MODULES = {
     'onadata.apps.logger': 'onadata.apps.logger.south_migrations',
     'onadata.apps.viewer': 'onadata.apps.viewer.south_migrations',
 }
+SERIALIZATION_MODULES = {
+        "custom_geojson": "onadata.apps.fieldsight.serializers.GeoJSONSerializer",
+        "full_detail_geojson": "onadata.apps.fieldsight.serializers.FullDetailGeoJSONSerializer",
+}
