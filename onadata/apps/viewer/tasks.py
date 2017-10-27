@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.mail import mail_admins
 from requests import ConnectionError
 
+from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.viewer.models.export import Export
 from onadata.libs.exceptions import NoRecordsFoundError
 from onadata.libs.utils.export_tools import generate_export,\
@@ -13,12 +14,12 @@ from onadata.libs.utils.export_tools import generate_export,\
 from onadata.libs.utils.logger_tools import mongo_sync_status, report_exception
 
 
-def create_async_export(xform, export_type, query, force_xlsx, options=None):
+def create_async_export(xform, export_type, query, force_xlsx, options=None, is_project=None, id=None):
     username = xform.user.username
     id_string = xform.id_string
 
     def _create_export(xform, export_type):
-        return Export.objects.create(xform=xform, export_type=export_type)
+        return Export.objects.create(xform=xform, export_type=export_type, fsxf=FieldSightXF.objects.get(pk=id))
 
     # Generate a placeholder `Export` object to be populated with the export file.
     export = _create_export(xform, export_type)

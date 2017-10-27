@@ -186,7 +186,7 @@
                  <div class="well well-sm notice-danger"><h4>Deleted Form Responses</h4></div>
             {% for obj in deleted_forms %}
             <div class="row card_inside">{{obj.xf.title}} {% trans 'with' %}
-             <a href="{% url 'forms:project_html_export' obj.id%}">
+             <a href="{% url 'forms:project_html_export' obj.id %}">
                                {{ obj.id|project_submissions }}
                                {% trans ' Submissions ' %}</a>
             </div>

@@ -330,7 +330,7 @@ def create_export(request, username, id_string, export_type, is_project=None, id
     }
 
     try:
-        create_async_export(xform, export_type, query, force_xlsx, options)
+        create_async_export(xform, export_type, query, force_xlsx, options, is_project, id)
     except Export.ExportTypeError:
         return HttpResponseBadRequest(
             _("%s is not a valid export type" % export_type))
@@ -430,7 +430,7 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
         'export_type': export_type,
         'export_type_name': Export.EXPORT_TYPE_DICT[export_type],
         'exports': Export.objects.filter(
-            xform=xform, export_type=export_type).order_by('-created_on'),
+            xform=xform, export_type=export_type, fsxf=id).order_by('-created_on'),
         'metas': metadata,
         'is_project': is_project,
         'id': id
