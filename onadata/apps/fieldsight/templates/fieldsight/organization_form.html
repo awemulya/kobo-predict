@@ -114,35 +114,40 @@
 									<div class="form-group col-md-12">
 										<div id="map" class="full-map margin-top"></div>
 									</div>
-                                    <button type="btn btn-primary registration__action" type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans 'save' %}</button>
                                 </div>
+                                <button type="btn btn-primary registration__action" type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i> {% trans ' Save' %}</button>
+                                <button type="button" class="btn btn-danger " data-toggle="modal" data-target="#myModal"><i class="la la-trash"></i> {% trans 'Delete' %}</button>
                             </form>
-                             <button class="btn btn-danger" id="btn-confirm"><i class="la la-trash"></i> Delete</button>
 						</div>
 					</div>
 
+                      <!-- Modal -->
+                      <div class="modal fade" id="myModal" role="dialog">
+                        <div class="modal-dialog">
 
-                    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="mi-modal">
-                      <div class="modal-dialog modal-sm">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h6 class="modal-title" id="myModalLabel">Conform</h6>
-
-                          </div>
-                          <div class="modal-footer">
-                              {% if form.instance.id %}
-                                   <a href="{% url 'fieldsight:organization-delete' form.instance.id %}" >
-                                   <button class="btn btn-danger"><i class="la la-trash"></i>{% trans 'Yes' %}</button></a>
+                          <!-- Modal content-->
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title">Are you sure you want to delete {{ obj.name }}?</h5>
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                              <h4 style="color:red; text-align: center;">Warning</h4>
+                                <p>"All the projects, sites, form submissions and user roles within this organization will be completely removed. Do you still want to continue?"</p>
+                            </div>
+                            <div class="modal-footer">
+                                {% if form.instance.id %}
+                                <a href="{% url 'fieldsight:organization-delete' form.instance.id %}" >
+                                    <button type="button" class="btn btn-danger " data-toggle="modal" data-target="#myModal"><i class="la la-trash"></i>{% trans 'Delete' %}</button></a>
                                 {% endif %}
+                              <button type="button" class="btn btn-default" data-dismiss="modal"><i class="la la-times"></i>{% trans 'Cancel' %}</button>
 
-                            <button type="button" class="btn btn-primary" id="modal-btn-no">No</button>
+                            </div>
                           </div>
+
                         </div>
                       </div>
-                    </div>
 
-                    <div class="alert" role="alert" id="result"></div>
                     <div class="modal fade" id="modalCrop">
                         <div class="modal-dialog">
                           <div class="modal-content">
@@ -185,32 +190,24 @@
  var elong = "{{form.instance.longitude}}";
 </script>
 <script type="text/javascript">
- var modalConfirm = function(callback){
+ $(document).ready(function () {
+	$('#deleteProductModal').on('show.bs.modal', function (event) { // id of the modal with event
+	  var button = $(event.relatedTarget) // Button that triggered the modal
+	  var productid = button.data('productid') // Extract info from data-* attributes
+	  var productname = button.data('productname')
 
-  $("#btn-confirm").on("click", function(){
-    $("#mi-modal").modal('show');
-  });
+	  var title = 'Confirm Delete #' + productid
+	  var content = 'Are you sure want to delete ' + productname + '?'
 
-  $("#modal-btn-si").on("click", function(){
-    callback(true);
-    $("#mi-modal").modal('hide');
-  });
+	  // Update the modal's content.
+	  var modal = $(this)
+	  modal.find('.modal-title').text(title)
+	  modal.find('.modal-body').text(content)
 
-  $("#modal-btn-no").on("click", function(){
-    callback(false);
-    $("#mi-modal").modal('hide');
-  });
-};
-
-modalConfirm(function(confirm){
-  if(confirm){
-    //Acciones si el usuario confirma
-    $("#result").html();
-  }else{
-    //Acciones si el usuario no confirma
-    $("#result").html();
-  }
-});
+	  // And if you wish to pass the productid to modal's 'Yes' button for further processing
+	  modal.find('button.btn-danger').val(productid)
+	})
+})
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/addmarker.js"></script>
 {% endblock %}
