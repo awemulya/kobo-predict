@@ -542,7 +542,7 @@ def export_download(request, username, id_string, export_type, filename):
 
 @login_required
 @require_POST
-def delete_export(request, username, id_string, export_type):
+def delete_export(request, username, id_string, export_type, is_project=None, id=None):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
     if not has_permission(xform, owner, request):
@@ -572,7 +572,9 @@ def delete_export(request, username, id_string, export_type):
         kwargs={
             "username": username,
             "id_string": id_string,
-            "export_type": export_type
+            "export_type": export_type,
+            "is_project": is_project,
+            "id": id
         }))
 
 

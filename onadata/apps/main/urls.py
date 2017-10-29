@@ -192,6 +192,8 @@ urlpatterns = patterns(
         "/new$", 'onadata.apps.viewer.views.create_export'),
     url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)"
         "/delete$", 'onadata.apps.viewer.views.delete_export'),
+    url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)/(?P<is_project>[\d+^/]+)/(?P<id>[\d+^/]+)"
+        "/delete", 'onadata.apps.viewer.views.delete_export'),
     url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)"
         "/progress$", 'onadata.apps.viewer.views.export_progress'),
     url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)"
