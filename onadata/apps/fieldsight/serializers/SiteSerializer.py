@@ -60,7 +60,7 @@ class SiteCreationSurveySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')),srid=4326)
-        validated_data.update({'is_survey': True,'location':p})
+        validated_data.update({'is_survey': False,'is_active':True,'location':p,})
         site = Site.objects.create(**validated_data)
         image = self.context['request'].FILES.values()
         for img in image:

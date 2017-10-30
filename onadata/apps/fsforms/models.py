@@ -219,10 +219,12 @@ class FieldSightXF(models.Model):
 
     def get_absolute_url(self):
         if self.project:
-            return reverse('forms:project_html_export', kwargs={'fsxf_id': self.pk})
+            # return reverse('forms:project_html_export', kwargs={'fsxf_id': self.pk})
+            return reverse('forms:setup-forms', kwargs={'is_project':1, 'pk':self.project_id})
         else:
-            return reverse('forms:formpack_html_export', kwargs={'fsxf_id': self.pk})
-
+            # return reverse('forms:formpack_html_export', kwargs={'fsxf_id': self.pk})
+            return reverse('forms:setup-forms', kwargs={'is_project':0, 'pk':self.site_id})
+            
     def form_type(self):
         if self.is_scheduled: return "Scheduled"
         if self.is_staged: return "Staged"
