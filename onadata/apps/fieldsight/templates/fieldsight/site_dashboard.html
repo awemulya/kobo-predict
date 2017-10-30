@@ -38,8 +38,7 @@
 									<div class="col-lg-6 col-sm-12">
 										<div class="org-profile-basic-info-left clearfix ">
 											<div class="org-profile-logo">
-
-												<img src="{% if obj.logo %}{{ obj.logo.url }}{% endif %}" width="123" height="123" alt="">
+												<img src="{% if obj.logo %}{{ obj.logo.url }}{% else %}{% static 'dummy/assets/img/default-org.jpg' %}{% endif %}" width="123" height="123" alt="">
 											</div>
 											<div class="org-profile-basic-info">
 												<h4>{{ obj.name }}</h4>
