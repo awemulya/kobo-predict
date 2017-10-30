@@ -50,8 +50,8 @@ class ScheduleViewset(viewsets.ModelViewSet):
         fxf = FieldSightXF(xf_id=data["xf"], is_scheduled=True, schedule=schedule, site=schedule.site,
                                     project=schedule.project)
         if data.has_key("site"):
-            fxf.save()
             fxf.is_deployed=True
+            fxf.save()
             noti = fxf.logs.create(source=self.request.user, type=19, title="Schedule",
                                   organization=fxf.site.project.organization,
                                   project = fxf.site.project,
