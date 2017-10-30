@@ -120,6 +120,30 @@
 							</form>
 						</div>
 					</div>
+
+
+					<!-- the div that represents the modal dialog -->
+					<div class="modal fade" id="personInfo" role="dialog">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<div class="org-profile-basic-info-left clearfix ">
+										<div class="org-profile-logo">
+											<img src="{% if obj.logo %}{{ obj.logo.url }}{% endif %}" width="123" height="123" alt="">
+										</div>
+									</div>
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h4 class="modal-title"></h4>
+								</div>
+								<div class="modal-body">
+
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								</div>
+							</div>
+						</div>
+					</div>
 					<div class="modal fade" id="myModal" role="dialog">
                         <div class="modal-dialog">
 
@@ -186,6 +210,24 @@
      var elat = "{{form.instance.latitude}}";
      var elong = "{{form.instance.longitude}}";
     </script>
+<script type="text/javascript">
+    /* must apply only after HTML has loaded */
+    $(document).ready(function () {
+        $('#personInfo').on('show.bs.modal', function(e) {
+            /* get data written in data-person-name field */
+            var personName = $(e.relatedTarget).data('person-name');
+            /* append that to form our service url */
+            var jqxhr = $.getJSON("http://localhost/onlinejson/index.php?name=" + personName, function(json) {
+                /* this function is called when request finishes. The response is stored in this json object*/
+                /* we get the div that holds the header and put there the value of the "title" element */
+                $('#personInfo .modal-header .modal-title').html(json["title"]);
+                /* we get the modal-body div and put the content of the "data" key in our php */
+                $('#personInfo .modal-body').html(json["data"]);
+            });
+        });
+    });
+</script>
+
 
     <script type="text/javascript" src="{{ STATIC_URL }}js/addmarker.js"></script>
 {% endblock %}
