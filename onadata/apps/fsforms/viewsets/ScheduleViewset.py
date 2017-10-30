@@ -50,10 +50,11 @@ class ScheduleViewset(viewsets.ModelViewSet):
         fxf = FieldSightXF(xf_id=data["xf"], is_scheduled=True, schedule=schedule, site=schedule.site,
                                     project=schedule.project)
         if data.has_key("site"):
+            fxf.save()
             fxf.is_deployed=True
             noti = fxf.logs.create(source=self.request.user, type=19, title="Schedule",
-                                  organization=fxf.project.organization,
-                                  project = fxf.project,
+                                  organization=fxf.site.project.organization,
+                                  project = fxf.site.project,
                                   site = fxf.site, content_object=fxf, extra_object = fxf.site,
                                               extra_message='{0} form {1}'.format(fxf.form_type(), fxf.xf.title),
                                   description='{0} assigned new Schedule form  {1} to {2} '.format(
@@ -67,6 +68,7 @@ class ScheduleViewset(viewsets.ModelViewSet):
             ChannelGroup("site-{}".format(fxf.site.id)).send({"text": json.dumps(result)})
             ChannelGroup("project-{}".format(fxf.site.project.id)).send({"text": json.dumps(result)})
         else:
+            fxf.save()
             noti = fxf.logs.create(source=self.request.user, type=18, title="Schedule",
                       organization=fxf.project.organization,
                       project = fxf.project, content_object=fxf, extra_object=fxf.project, extra_message='{0} form {1}'.format(fxf.form_type(), fxf.xf.title),
@@ -80,7 +82,7 @@ class ScheduleViewset(viewsets.ModelViewSet):
             result['url'] = noti.get_absolute_url()
             # ChannelGroup("site-{}".format(fxf.site.id)).send({"text": json.dumps(result)})
             ChannelGroup("project-{}".format(fxf.project.id)).send({"text": json.dumps(result)})
-        fxf.save()
+        
 
 
 class DayViewset(viewsets.ReadOnlyModelViewSet):
