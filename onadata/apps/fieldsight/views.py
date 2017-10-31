@@ -1363,6 +1363,10 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
                     ChannelGroup("notify-0").send({"text": json.dumps(result)})
         return HttpResponse("Sucess")
 
+
+
+
+
 def viewfullmap(request):
     data = serialize('full_detail_geojson',
                      Site.objects.prefetch_related('site_instances').filter(is_survey=False, is_active=True),
@@ -1374,4 +1378,17 @@ def viewfullmap(request):
         'data': data,
     }
     return render(request, 'fieldsight/map.html', dashboard_data)
+
+def orgfullmap(request):
+    obj = Organization.objects.get(pk=self.kwargs.get('pk'))
+    sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)
+    data = serialize('custom_geojson', sites, geometry_field='location',
+                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+    dashboard_data = {
+
+        'data': data,
+    }
+    return render(request, 'fieldsight/map.html', dashboard_data)
+
+    #<a href="" target="_blank"></>
 
