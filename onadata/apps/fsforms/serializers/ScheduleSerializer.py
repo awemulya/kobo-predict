@@ -22,7 +22,9 @@ class ScheduleSerializer(serializers.ModelSerializer):
     project_form = serializers.SerializerMethodField('get_assigned_project_form', read_only=True)
     xf = serializers.CharField()
     form_name = serializers.SerializerMethodField('get_assigned_form_name', read_only=True)
+    id_string = serializers.SerializerMethodField()
     is_deployed = serializers.SerializerMethodField('get_is_deployed_status', read_only=True)
+    responses_count = serializers.SerializerMethodField()
 
     def validate(self, data):
         """
@@ -63,6 +65,15 @@ class ScheduleSerializer(serializers.ModelSerializer):
                 return fsxf.xf.title
         return None
 
+    def get_id_string(self, obj):
+        if not FieldSightXF.objects.filter(schedule=obj).exists():
+            return None
+        else:
+            fsxf = FieldSightXF.objects.get(schedule=obj)
+            if fsxf.xf:
+                return fsxf.xf.id_string
+        return None
+
     def get_assigned_project_form(self, obj):
         if not FieldSightXF.objects.filter(schedule=obj, fsform__isnull=False).exists():
             return None
@@ -84,4 +95,17 @@ class ScheduleSerializer(serializers.ModelSerializer):
         em =  EducationMaterial.objects.get(fsxf=obj.schedule_forms)
         # em =  EducationMaterial.objects.first()
         return EMSerializer(em).data
+
+    def get_responses_count(self, obj):
+        is_project = self.context.get('is_project', False)
+        if not is_project:
+            return 0
+        if not FieldSightXF.objects.filter(schedule=obj).exists():
+            return 0
+        else:
+            fsxf = FieldSightXF.objects.get(schedule=obj)
+            if is_project == "1":
+                return fsxf.project_form_instances.count()
+            else:
+                return fsxf.site_form_instances.count()
 

@@ -134,6 +134,7 @@ class EMSerializer(serializers.ModelSerializer):
 class FSXFormSerializer(serializers.ModelSerializer):
     em = EMSerializer(read_only=True)
     name = serializers.SerializerMethodField('get_title', read_only=True)
+    responses_count = serializers.SerializerMethodField()
 
     def validate(self, data):
         """
@@ -156,6 +157,17 @@ class FSXFormSerializer(serializers.ModelSerializer):
     @check_obj
     def get_title(self, obj):
         return u"%s" % obj.xf.title
+
+    def get_responses_count(self, obj):
+        is_project = self.context.get('is_project', False)
+        if not is_project:
+            return 0
+        # pk = self.context['pk']
+        if obj.is_survey or is_project == "1":
+            return obj.project_form_instances.count()
+        else:
+            return obj.site_form_instances.count()
+
 
 class XformSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import viewsets
 
 from onadata.apps.fsforms.serializers.XformSerializer import XFormListSerializer
@@ -9,5 +10,8 @@ class XFormViewSet(viewsets.ReadOnlyModelViewSet):
     A simple ViewSet for viewing xforms.
     """
     queryset = XForm.objects.all()
-    # set custom querset with forms only belonging to library of his organization or self created.
     serializer_class = XFormListSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(Q(user=self.request.user) |
+                Q(user__userprofile__organization=self.request.organization))

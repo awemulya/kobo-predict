@@ -23,6 +23,9 @@ class SurveyFormsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_survey=True)
     serializer_class = FSXFormSerializer
 
+    def get_serializer_context(self):
+        return self.kwargs
+
     def filter_queryset(self, queryset):
         if self.request.user.is_anonymous():
             self.permission_denied(self.request)
@@ -52,6 +55,9 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
         else:
             queryset = queryset.filter(site__id=pk)
         return queryset
+
+    def get_serializer_context(self):
+        return self.kwargs
 
     def perform_create(self, serializer):
         fxf = serializer.save()

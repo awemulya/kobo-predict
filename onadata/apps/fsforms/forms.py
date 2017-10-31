@@ -103,17 +103,16 @@ class GeneralForm(HTML5BootstrapModelForm, KOModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(GeneralForm, self).__init__(*args, **kwargs)
-        if hasattr(self.request, "project") and self.request.project is not None:
-            xform = XForm.objects.filter(
-                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
-                Q(fieldsightformlibrary__project=self.request.project) |
-                Q(fieldsightformlibrary__organization=self.request.organization))
+        # if hasattr(self.request, "project") and self.request.project is not None:
+        #     xform = XForm.objects.filter(
+        #         Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
+        #         Q(fieldsightformlibrary__project=self.request.project) |
+        #         Q(fieldsightformlibrary__organization=self.request.organization))
 
-        elif hasattr(self.request, "organization") and self.request.organization is not None:
+        if hasattr(self.request, "organization") and self.request.organization is not None:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) |
-                Q(fieldsightformlibrary__is_global=True) |
-                Q(fieldsightformlibrary__organization=self.request.organization))
+                Q(user__userprofile__organization=self.request.organization))
         else:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
@@ -283,17 +282,16 @@ class KoScheduleForm(HTML5BootstrapModelForm, KOModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(KoScheduleForm, self).__init__(*args, **kwargs)
-        if hasattr(self.request, "project") and self.request.project is not None:
-            xform = XForm.objects.filter(
-                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
-                Q(fieldsightformlibrary__project=self.request.project) |
-                Q(fieldsightformlibrary__organization=self.request.organization))
+        # if hasattr(self.request, "project") and self.request.project is not None:
+        #     xform = XForm.objects.filter(
+        #         Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
+        #         Q(fieldsightformlibrary__project=self.request.project) |
+        #         Q(fieldsightformlibrary__organization=self.request.organization))
 
-        elif hasattr(self.request, "organization") and self.request.organization is not None:
+        if hasattr(self.request, "organization") and self.request.organization is not None:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) |
-                Q(fieldsightformlibrary__is_global=True) |
-                Q(fieldsightformlibrary__organization=self.request.organization))
+                Q(user__userprofile__organization=self.request.organization))
         else:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))

@@ -344,7 +344,7 @@ var pk = "{{pk}}";
                                             <th scope="row" data-bind='text: $index()+1'</th>
                                             <td data-bind="text: name"></td>
                                             <td data-bind="text: date_created"></td>
-                                            <td>-</td>
+                                            <td data-bind="text:responses_count"></td>
                                             <td><a  title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> </a></td>
                                             <td>
                                                 <a class="badge badge-success" data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}">
@@ -646,7 +646,7 @@ var pk = "{{pk}}";
 										<td data-bind="text: date_range_start"></td>
 										<td data-bind="text: date_range_end"></td>
 										<td data-bind="text: days"></td>
-										<td>-</td>
+										<td data-bind="text: responses_count"></td>
                                         <td><a  title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> </a></td>
                                         <td>
                                             <a role="button" class="badge" data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}">
@@ -1291,10 +1291,10 @@ var pk = "{{pk}}";
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th scope="row" data-bind='text: $index()+1'</th>
+                                            <th scope="row" data-bind='text: $index()+1'></th>
                                             <td data-bind="text: name"></td>
                                             <td data-bind="text: date_created"></td>
-                                            <td>-</td>
+                                            <td data-bind="text: responses_count"></td>
                                             <td><a  title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> </a></td>
 
                                         </tr>
