@@ -20,7 +20,7 @@
 							<div class="margin-top user-profile-basic-info padding bg-white clearfix ">
 								<div class="media">
 								<div class="org-profile-logo">
-										<img src="{{ obj.profile_picture.url }}" alt="" width="123" height="123">
+										<img src="{% if obj.profile_picture %}{{ obj.profile_picture.url }}{% else %}{% static 'dummy/assets/img/default_user.png' %}{% endif %}" alt="" width="123" height="123">
 									</div>
 									
 									<div class="media-body">
@@ -75,7 +75,7 @@
 											<div class="col-lg-6 col-md-12" style="margin-top:10px;">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
-														<img src="{{ roles_org.organization.logo.url }}" alt="" width="50" height="50">
+														<img src="{% if role.organization.logo %}{{ role.organization.logo.url }}{% else %}{% static 'dummy/assets/img/default-org.jpg' %}{% endif %}" alt="" width="50" height="50">
 													</div>
 													<div class="project-basic-info">
 														<h4>{{ role.organization.name }}</h4>
@@ -106,7 +106,7 @@
 											<div class="col-lg-6 col-md-12" style="margin-top:10px;">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
-														<img src="{{ roles_project.project.logo.url }}" alt="" width="50" height="50">
+														<img src="{% if role.project.logo %}{{ role.project.logo.url }}{% else %}{% static 'dummy/assets/img/default-org.jpg' %}{% endif %}" alt="" width="50" height="50">
 													</div>
 													<div class="project-basic-info">
 														<h4>{{ role.project.name }}</h4>
@@ -134,7 +134,7 @@
 											<div class="col-lg-6 col-md-12" style="margin-top:10px;">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
-														<img src="{{ role.site.logo.url }}" alt="" width="50" height="50">
+														<img src="{% if role.site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default-org.jpg' %}{% endif %}" alt="" width="50" height="50">
 													</div>
 													<div class="project-basic-info">
 														<h4>{{ role.site.name }}</h4>
@@ -163,7 +163,7 @@
 											<div class="col-lg-6 col-md-12" style="margin-top:10px;">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
-														<img src="{{ role.site.logo.url }}" alt="" width="50" height="50">
+														<img src="{% if role.site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default-org.jpg' %}{% endif %}" alt="" width="50" height="50">
 													</div>
 													<div class="project-basic-info">
 														<h4>{{ role.site.name }}</h4>

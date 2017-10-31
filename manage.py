@@ -15,6 +15,9 @@ if __name__ == "__main__":
                               "onadata.settings.common")
         print('Your environment is:"{}"'.format(
             os.environ['DJANGO_SETTINGS_MODULE']))
+    # if sys.argv and sys.argv[1] == 'test':
+    #     print (sys.argv)
+    #     os.environ.setdefault("KOBO_TEST_MODE", 'true')
 
     from django.core.management import execute_from_command_line
 

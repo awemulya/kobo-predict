@@ -166,7 +166,7 @@ class SiteCreationSurveyViewSet(viewsets.ModelViewSet):
                                            project__id=site.project.id, group=group)
             noti = site.logs.create(source=self.request.user, type=11, title="new Site",
                                        organization=site.project.organization,
-                                       project=site.project, site=site, content_object=site,
+                                       project=site.project, site=site, content_object=site, extra_object=site.project,
                                        description='{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
                                                                                  site, site.project.name))
             result = {}
