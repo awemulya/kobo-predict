@@ -1232,32 +1232,113 @@ def download_xform(request, pk):
 @group_required('KoboForms')
 def html_export(request, fsxf_id):
 
+    limit = int(request.REQUEST.get('limit', 20))
     fsxf_id = int(fsxf_id)
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
+    id_string = xform.id_string
+    #cursor = get_instances_for_field_sight_form(fsxf_id)
     cursor = FInstance.objects.filter(site_fxf=fsxf)
-    context = []
+    cursor = list(cursor)
+    # for index, doc in enumerate(cursor):
+    #     medias = []
+    #     for media in cursor[index].get('_attachments', []):
+    #         if media:
+    #             medias.append(media.get('download_url', ''))
+    #     cursor[index].update({'medias': medias})
+    paginator = Paginator(cursor, limit, request=request)
+
+    try:
+        page = paginator.page(request.REQUEST.get('page', 1))
+    except (EmptyPage, PageNotAnInteger):
+        try:
+            page = paginator.page(1)
+        except (EmptyPage, PageNotAnInteger):
+            raise Http404('This report has no submissions')
+
+    data = [("v1", page.object_list)]
+    context = build_export_context(request, xform, id_string)
+
+    context.update({
+        'page': page,
+        'table': [],
+        'title': id,
+    })
+
+    export = context['export']
+    sections = list(export.labels.items())
+    section, labels = sections[0]
+    id_index = labels.index('_id')
+
+    # generator dublicating the "_id" to allow to make a link to each
+    # submission
+    def make_table(submissions):
+        for chunk in export.parse_submissions(submissions):
+            for section_name, rows in chunk.items():
+                if section == section_name:
+                    for row in rows:
+                        yield row[id_index], row
+
+    context['labels'] = labels
+    # context['data'] = make_table(data)
     context['site_data'] = cursor
     context['form_name'] = fsxf.xf.title
     context['fsxfid'] = fsxf_id
     context['obj'] = fsxf
-  
+    # return JsonResponse({'data': cursor})
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
 
 @group_required('KoboForms')
 def project_html_export(request, fsxf_id):
-
+    limit = int(request.REQUEST.get('limit', 20))
     fsxf_id = int(fsxf_id)
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
+    id_string = xform.id_string
+    # cursor = get_instances_for_project_field_sight_form(fsxf_id)
     cursor = FInstance.objects.filter(project_fxf=fsxf) 
-    context = []
+    cursor = list(cursor)
+    paginator = Paginator(cursor, limit, request=request)
+
+    try:
+        page = paginator.page(request.REQUEST.get('page', 1))
+    except (EmptyPage, PageNotAnInteger):
+        try:
+            page = paginator.page(1)
+        except (EmptyPage, PageNotAnInteger):
+            raise Http404('This report has no submissions')
+
+    data = [("v1", page.object_list)]
+    context = build_export_context(request, xform, id_string)
+
+    context.update({
+        'page': page,
+        'table': [],
+        'title': id,
+    })
+
+    export = context['export']
+    sections = list(export.labels.items())
+    section, labels = sections[0]
+    id_index = labels.index('_id')
+
+    # generator dublicating the "_id" to allow to make a link to each
+    # submission
+    def make_table(submissions):
+        for chunk in export.parse_submissions(submissions):
+            for section_name, rows in chunk.items():
+                if section == section_name:
+                    for row in rows:
+                        yield row[id_index], row
+
+    context['labels'] = labels
+    #context['data'] = make_table(data)
     context['project_data'] = cursor
     context['form_name'] = fsxf.xf.title
     context['fsxfid'] = fsxf_id
     context['obj'] = fsxf
-    
+    # return JsonResponse({'data': cursor})
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
 
