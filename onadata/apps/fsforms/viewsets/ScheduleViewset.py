@@ -25,6 +25,9 @@ class ScheduleViewset(viewsets.ModelViewSet):
             queryset = queryset.filter(site__id=pk)
         return queryset
 
+    def get_serializer_context(self):
+        return self.kwargs
+
     def perform_create(self, serializer):
         # from rest_framework.exceptions import ValidationError
 
