@@ -252,40 +252,41 @@ class MyProfileView(ProfileView):
 
 
 class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
-
-    def form_valid(self, form):
-        user = self.request.user
-        user.first_name = form.cleaned_data['first_name']
-        user.last_name = form.cleaned_data['last_name']
-        user.save()
-        profile = UserProfile.objects.get(user=user)
-        profile.address = form.cleaned_data['address']
-        profile.gender = form.cleaned_data['gender']
-        profile.phone = form.cleaned_data['phone']
-        profile.skype = form.cleaned_data['skype']
-        profile.primary_number = form.cleaned_data['primary_number']
-        profile.secondary_number = form.cleaned_data['secondary_number']
-        profile.office_number = form.cleaned_data['office_number']
-        profile.viber = form.cleaned_data['viber']
-        profile.whatsapp = form.cleaned_data['whatsapp']
-        profile.wechat = form.cleaned_data['wechat']
-        profile.line = form.cleaned_data['line']
-        profile.tango = form.cleaned_data['tango']
-        profile.hike = form.cleaned_data['hike']
-        profile.qq = form.cleaned_data['qq']
-        profile.google_talk = form.cleaned_data['google_talk']
-        profile.profile_picture = form.cleaned_data['profile_picture']
-        profile.save()
-        noti = profile.logs.create(source=self.request.user, type=0, title="User",
-                                   organization=profile.organization, description="user {0} updated by {1}".
-                                   format(user.username, self.request.user.username))
-        result = {}
-        result['description'] = 'user {0} updated by {1}'.format(user.username, self.request.user.username)
-        result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(profile.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
-
-        return HttpResponseRedirect(self.success_url)
+    pass
+    #
+    # def form_valid(self, form):
+    #     user = self.request.user
+    #     user.first_name = form.cleaned_data['first_name']
+    #     user.last_name = form.cleaned_data['last_name']
+    #     user.save()
+    #     profile = UserProfile.objects.get(user=user)
+    #     profile.address = form.cleaned_data['address']
+    #     profile.gender = form.cleaned_data['gender']
+    #     profile.phone = form.cleaned_data['phone']
+    #     profile.skype = form.cleaned_data['skype']
+    #     profile.primary_number = form.cleaned_data['primary_number']
+    #     profile.secondary_number = form.cleaned_data['secondary_number']
+    #     profile.office_number = form.cleaned_data['office_number']
+    #     profile.viber = form.cleaned_data['viber']
+    #     profile.whatsapp = form.cleaned_data['whatsapp']
+    #     profile.wechat = form.cleaned_data['wechat']
+    #     profile.line = form.cleaned_data['line']
+    #     profile.tango = form.cleaned_data['tango']
+    #     profile.hike = form.cleaned_data['hike']
+    #     profile.qq = form.cleaned_data['qq']
+    #     profile.google_talk = form.cleaned_data['google_talk']
+    #     profile.profile_picture = form.cleaned_data['profile_picture']
+    #     profile.save()
+    #     # noti = profile.logs.create(source=self.request.user, type=0, title="User",
+    #     #                            organization=profile.organization, description="user {0} updated by {1}".
+    #     #                            format(user.username, self.request.user.username))
+    #     # result = {}
+    #     # result['description'] = 'user {0} updated by {1}'.format(user.username, self.request.user.username)
+    #     # result['url'] = noti.get_absolute_url()
+    #     # ChannelGroup("notify-{}".format(profile.id)).send({"text": json.dumps(result)})
+    #     # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+    #
+    #     return HttpResponseRedirect(self.success_url)
 
 
 def my_profile(request, pk=None):
