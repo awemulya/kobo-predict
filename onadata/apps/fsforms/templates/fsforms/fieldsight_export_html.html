@@ -48,19 +48,19 @@
               </form>
             </div>
           <div class="title-module">
-            <h3>Form Submission</h3>
+            <h5>{{ form_name  }}</h5>
 
-            <h5>Form Name</h5>
           </div>
             <div class="pre-scrollable">
               
 <div class="container">
-            
+    
+   {% if project_data %}         
   <table class="table table-hover ceter-block sortable">
     <thead>
       <tr>
         <th>S.N</th>
-        <th>Form Name</th>
+
         <th>Site Name</th>
         <th>Site Id</th>
         <th>Submitted By</th>
@@ -69,8 +69,7 @@
     </thead>
     <tbody>
 
-    {% for sub in data  %}
-       
+    {% for sub in project_data  %}
             <!--   {% if sub.site_fxf %}
                <tr>
                  
@@ -84,11 +83,10 @@
               {% endif %}
 
               {% if sub.project_fxf %} -->
-               <tr>
+               <tr onclick="redirectto(`{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
                  
-                  <td> <a href="{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.instance }}</a></td>
-                  <td>{{ sub.project_fxf.xf.title }} || {{ sub.site_fxf.xf.title }}</td>
-                  <td>{{ sub.project.name }} ===  {{ sub.site.name }}</td>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ sub.site.name }}</td>
                   <td>{{ sub.site.identifier }}</td>
                   <td>{{ sub.submitted_by.username }}</td>
                   <td>{{ sub.date }}</td>
@@ -101,6 +99,43 @@
      
     </tbody>
   </table>
+  {% endif %}
+
+
+
+  {% if site_data %}         
+  <table class="table table-hover ceter-block sortable">
+    <thead>
+      <tr>
+        <th>S.N</th>
+
+        <th>Site Name</th>
+        <th>Site Id</th>
+        <th>Submitted By</th>
+        <th>Submission Date</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    {% for sub in site_data  %}
+           
+               <tr onclick="redirectto(`{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
+                 
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ sub.site.name }}</td>
+                  <td>{{ sub.site.identifier }}</td>
+                  <td>{{ sub.submitted_by.username }}</td>
+                  <td>{{ sub.date }}</td>
+                  </tr>
+            
+        
+
+    {% endfor %}
+     
+     
+    </tbody>
+  </table>
+  {% endif %}
 </div>
 
 
@@ -121,6 +156,11 @@
 
 {% block extrascript %}
     <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
+    <script type="text/javascript">
+      function redirectto(url){
+        window.location.href = url
+      }
+    </script>
 {% endblock %}
 
 <!-- 

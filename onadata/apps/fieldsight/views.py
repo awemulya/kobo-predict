@@ -57,6 +57,8 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
+from .tasks import printrand
+
 @login_required
 def dashboard(request):
     current_role_count = request.roles.count()
@@ -1243,43 +1245,44 @@ def checkusernameexists(request):
 
 class ProjectSummaryReport(TemplateView):
     def get(self, request, pk):
-        obj = Project.objects.get(pk=self.kwargs.get('pk'))
-        organization = Organization.objects.get(pk=obj.organization_id)
-        peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
-        project_managers = obj.project_roles.select_related('user').filter(group__name__in=["Project Manager"]).distinct('user')
+        # obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        # organization = Organization.objects.get(pk=obj.organization_id)
+        # peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
+        # project_managers = obj.project_roles.select_related('user').filter(group__name__in=["Project Manager"]).distinct('user')
 
-        sites = obj.sites.filter(is_active=True, is_survey=False)
-        data = serialize('custom_geojson', sites, geometry_field='location',
-                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
+        # sites = obj.sites.filter(is_active=True, is_survey=False)
+        # data = serialize('custom_geojson', sites, geometry_field='location',
+        #                  fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
-        total_sites = len(sites)
-        total_survey_sites = obj.sites.filter(is_survey=True).count()
-        outstanding, flagged, approved, rejected = obj.get_submissions_count()
-        bar_graph = BarGenerator(sites)
+        # total_sites = len(sites)
+        # total_survey_sites = obj.sites.filter(is_survey=True).count()
+        # outstanding, flagged, approved, rejected = obj.get_submissions_count()
+        # bar_graph = BarGenerator(sites)
 
-        line_chart = LineChartGenerator(obj)
-        line_chart_data = line_chart.data()
-        dashboard_data = {
-            'sites': sites,
-            'obj': obj,
-            'peoples_involved': peoples_involved,
-            'total_sites': total_sites,
-            'total_survey_sites': total_survey_sites,
-            'outstanding': outstanding,
-            'flagged': flagged,
-            'approved': approved,
-            'rejected': rejected,
-            'data': data,
-            'cumulative_data': line_chart_data.values(),
-            'cumulative_labels': line_chart_data.keys(),
-            'progress_data': bar_graph.data.values(),
-            'progress_labels': bar_graph.data.keys(),
-            'project_managers':project_managers,
-            'organization': organization,
-            'total_submissions': line_chart_data.values()[-1],
+        # line_chart = LineChartGenerator(obj)
+        # line_chart_data = line_chart.data()
+        # dashboard_data = {
+        #     'sites': sites,
+        #     'obj': obj,
+        #     'peoples_involved': peoples_involved,
+        #     'total_sites': total_sites,
+        #     'total_survey_sites': total_survey_sites,
+        #     'outstanding': outstanding,
+        #     'flagged': flagged,
+        #     'approved': approved,
+        #     'rejected': rejected,
+        #     'data': data,
+        #     'cumulative_data': line_chart_data.values(),
+        #     'cumulative_labels': line_chart_data.keys(),
+        #     'progress_data': bar_graph.data.values(),
+        #     'progress_labels': bar_graph.data.keys(),
+        #     'project_managers':project_managers,
+        #     'organization': organization,
+        #     'total_submissions': line_chart_data.values()[-1],
     
-        }
-        return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)
+        # }
+        printrand.delay()
+        # return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)
 
 class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
@@ -1328,6 +1331,7 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         return HttpResponse(response)
 
 
+
 class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
     def get(self, request, pk):
         org_obj = Organization.objects.get(pk=pk)
@@ -1339,36 +1343,79 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
         users = data.get('users')
      
 
-        group = Group.objects.get(name="Project Manager")
-        for project_id in projects:
-            project = Project.objects.get(pk=project_id)
-            for user in users:
-                role, created = UserRole.objects.get_or_create(user_id=user, project_id=project_id,
-                                                               organization__id=project.organization.id,
-                                                               project__id=project_id,
-                                                               group=group, ended_at=None)
-                if created:
-                    description = "{0} was assigned  as Project Manager in {1}".format(
-                        role.user.get_full_name(), role.project)
-                    noti = role.logs.create(source=role.user, type=6, title=description, description=description,
-                     content_object=role.project, extra_object=self.request.user)
-                    result = {}
-                    result['description'] = description
-                    result['url'] = noti.get_absolute_url()
-                    ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
-                    ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
-                    ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        group_id = Group.objects.get(name="Project Manager").id
+        multiuserassignproject.delay(projects, users, group_id)
         return HttpResponse("Sucess")
 
-def viewfullmap(request):
-    data = serialize('full_detail_geojson',
-                     Site.objects.prefetch_related('site_instances').filter(is_survey=False, is_active=True),
-                     geometry_field='location',
-                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+#May need it
+# class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
+#     def get(self, request, pk):
+#         org_obj = Organization.objects.get(pk=pk)
+#         return render(request, 'fieldsight/multi_user_assign.html',{'type': "project", 'pk':pk})
 
-    dashboard_data = {
+#     def post(self, request, *args, **kwargs):
+#         data = json.loads(self.request.body)
+#         projects = data.get('projects')
+#         users = data.get('users')
+     
 
-        'data': data,
-    }
-    return render(request, 'fieldsight/map.html', dashboard_data)
+#         group = Group.objects.get(name="Project Manager")
+#         for project_id in projects:
+#             project = Project.objects.get(pk=project_id)
+#             for user in users:
+#                 role, created = UserRole.objects.get_or_create(user_id=user, project_id=project_id,
+#                                                                organization__id=project.organization.id,
+#                                                                project__id=project_id,
+#                                                                group=group, ended_at=None)
+#                 if created:
+#                     description = "{0} was assigned  as Project Manager in {1}".format(
+#                         role.user.get_full_name(), role.project)
+#                     noti = role.logs.create(source=role.user, type=6, title=description, description=description,
+#                      content_object=role.project, extra_object=self.request.user)
+#                     result = {}
+#                     result['description'] = description
+#                     result['url'] = noti.get_absolute_url()
+#                     ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+#                     ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
+#                     ChannelGroup("notify-0").send({"text": json.dumps(result)})
+#         return HttpResponse("Sucess")
 
+
+# def viewfullmap(request):
+#     data = serialize('full_detail_geojson',
+#                      Site.objects.prefetch_related('site_instances').filter(is_survey=False, is_active=True),
+#                      geometry_field='location',
+#                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+#
+#     dashboard_data = {
+#
+#         'data': data,
+#     }
+#     return render(request, 'fieldsight/map.html', dashboard_data)
+
+
+class OrgFullmap(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
+    template_name = "fieldsight/map.html"
+    def get_context_data(self, **kwargs):
+        obj = Organization.objects.get(pk=self.kwargs.get('pk'))
+        sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)
+
+        data = serialize('custom_geojson', sites, geometry_field='location',
+               fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+        dashboard_data = {
+           'data': data,
+        }
+        return dashboard_data
+
+
+class ProjFullmap(ProjectRoleMixin, TemplateView):
+    template_name = "fieldsight/map.html"
+    def get_context_data(self, **kwargs):
+        obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        sites = obj.sites.filter(is_active=True, is_survey=False)
+        data = serialize('custom_geojson', sites, geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id',))
+        dashboard_data = {
+            'data': data,
+        }
+        return dashboard_data
