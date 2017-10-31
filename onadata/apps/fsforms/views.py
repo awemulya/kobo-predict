@@ -1236,7 +1236,7 @@ def html_export(request, fsxf_id):
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
     cursor = FInstance.objects.filter(site_fxf=fsxf)
-  
+    context = []
     context['site_data'] = cursor
     context['form_name'] = fsxf.xf.title
     context['fsxfid'] = fsxf_id
@@ -1252,7 +1252,7 @@ def project_html_export(request, fsxf_id):
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
     cursor = FInstance.objects.filter(project_fxf=fsxf) 
-    
+    context = []
     context['project_data'] = cursor
     context['form_name'] = fsxf.xf.title
     context['fsxfid'] = fsxf_id
