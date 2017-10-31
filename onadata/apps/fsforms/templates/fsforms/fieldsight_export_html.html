@@ -48,13 +48,14 @@
               </form>
             </div>
           <div class="title-module">
-            <h3>{{ form_name  }}</h3>
+            <h5>{{ form_name  }}</h5>
 
           </div>
             <div class="pre-scrollable">
               
 <div class="container">
-            
+    
+   {% if project_data %}         
   <table class="table table-hover ceter-block sortable">
     <thead>
       <tr>
@@ -69,7 +70,6 @@
     <tbody>
 
     {% for sub in data  %}
-       
             <!--   {% if sub.site_fxf %}
                <tr>
                  
@@ -99,6 +99,43 @@
      
     </tbody>
   </table>
+  {% endif %}
+
+
+
+  {% if site_data %}         
+  <table class="table table-hover ceter-block sortable">
+    <thead>
+      <tr>
+        <th>S.N</th>
+
+        <th>Site Name</th>
+        <th>Site Id</th>
+        <th>Submitted By</th>
+        <th>Submission Date</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    {% for sub in data  %}
+           
+               <tr onclick="redirectto(`{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
+                 
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ sub.site.name }}</td>
+                  <td>{{ sub.site.identifier }}</td>
+                  <td>{{ sub.submitted_by.username }}</td>
+                  <td>{{ sub.date }}</td>
+                  </tr>
+            
+        
+
+    {% endfor %}
+     
+     
+    </tbody>
+  </table>
+  {% endif %}
 </div>
 
 
@@ -120,7 +157,7 @@
 {% block extrascript %}
     <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
     <script type="text/javascript">
-      function redirect(url){
+      function redirectto(url){
         window.location.href = url
       }
     </script>
