@@ -57,7 +57,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from .tasks import printrand
+from .tasks import printrand, multiuserassignproject
 
 @login_required
 def dashboard(request):
