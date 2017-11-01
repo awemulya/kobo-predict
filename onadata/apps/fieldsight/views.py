@@ -268,6 +268,9 @@ class SiteSupervisorDashboardView(SiteSupervisorRoleMixin, TemplateView):
 
 class OrganizationView(object):
     model = Organization
+    paginate_by = 9
+    context_object_name = 'object_list'
+    queryset = Organization.objects.all()
     success_url = reverse_lazy('fieldsight:organizations-list')
     form_class = OrganizationForm
 
@@ -542,7 +545,7 @@ def add_project_role(request, pk):
 
 class ProjectView(object):
     model = Project
-    # success_url = reverse_lazy('fieldsight:project-list')
+    success_url = reverse_lazy('fieldsight:project-list')
     form_class = ProjectForm
 
 class ProjectRoleView(object):
@@ -1381,17 +1384,17 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
 #         return HttpResponse("Sucess")
 
 
-# def viewfullmap(request):
-#     data = serialize('full_detail_geojson',
-#                      Site.objects.prefetch_related('site_instances').filter(is_survey=False, is_active=True),
-#                      geometry_field='location',
-#                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
-#
-#     dashboard_data = {
-#
-#         'data': data,
-#     }
-#     return render(request, 'fieldsight/map.html', dashboard_data)
+def viewfullmap(request):
+    data = serialize('full_detail_geojson',
+                     Site.objects.prefetch_related('site_instances').filter(is_survey=False, is_active=True),
+                     geometry_field='location',
+                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+
+    dashboard_data = {
+
+        'data': data,
+    }
+    return render(request, 'fieldsight/map.html', dashboard_data)
 
 
 class OrgFullmap(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
