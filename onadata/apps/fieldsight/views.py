@@ -268,6 +268,9 @@ class SiteSupervisorDashboardView(SiteSupervisorRoleMixin, TemplateView):
 
 class OrganizationView(object):
     model = Organization
+    paginate_by = 9
+    context_object_name = 'object_list'
+    queryset = Organization.objects.all()
     success_url = reverse_lazy('fieldsight:organizations-list')
     form_class = OrganizationForm
 
@@ -542,7 +545,7 @@ def add_project_role(request, pk):
 
 class ProjectView(object):
     model = Project
-    # success_url = reverse_lazy('fieldsight:project-list')
+    success_url = reverse_lazy('fieldsight:project-list')
     form_class = ProjectForm
 
 class ProjectRoleView(object):
