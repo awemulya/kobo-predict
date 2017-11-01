@@ -4,7 +4,8 @@
 {% block page-title %}{% trans 'Form Data' %}{% endblock %}
 
 {%block extracss %}
-  
+{% load pagination_tags %}
+
 
     <style>
       .pre-scrollable{
@@ -55,7 +56,8 @@
               
 <div class="container">
     
-   {% if project_data %}         
+   {% if is_project_data %}
+   {% autopaginate project_data 25 as data %}         
   <table class="table table-hover ceter-block sortable">
     <thead>
       <tr>
@@ -69,7 +71,7 @@
     </thead>
     <tbody>
 
-    {% for sub in project_data  %}
+    {% for sub in data  %}
             <!--   {% if sub.site_fxf %}
                <tr>
                  
@@ -103,7 +105,8 @@
 
 
 
-  {% if site_data %}         
+  {% if is_site_data %}
+  {% autopaginate site_data 25 as data %}         
   <table class="table table-hover ceter-block sortable">
     <thead>
       <tr>
@@ -117,7 +120,7 @@
     </thead>
     <tbody>
 
-    {% for sub in site_data  %}
+    {% for sub in data  %}
            
                <tr onclick="redirectto(`{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
                  

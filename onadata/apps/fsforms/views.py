@@ -1281,6 +1281,7 @@ def html_export(request, fsxf_id):
 
     context['labels'] = labels
     # context['data'] = make_table(data)
+    context['is_site_data'] = True
     context['site_data'] = cursor
     context['form_name'] = fsxf.xf.title
     context['fsxfid'] = fsxf_id
@@ -1335,6 +1336,7 @@ def project_html_export(request, fsxf_id):
     context['labels'] = labels
     #context['data'] = make_table(data)
     context['project_data'] = cursor
+    context['is_project_data'] = True
     context['form_name'] = fsxf.xf.title
     context['fsxfid'] = fsxf_id
     context['obj'] = fsxf
