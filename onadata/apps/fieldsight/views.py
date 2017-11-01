@@ -268,7 +268,7 @@ class SiteSupervisorDashboardView(SiteSupervisorRoleMixin, TemplateView):
 
 class OrganizationView(object):
     model = Organization
-    paginate_by = 9
+    paginate_by = 25
     context_object_name = 'object_list'
     queryset = Organization.objects.all()
     success_url = reverse_lazy('fieldsight:organizations-list')
