@@ -1381,31 +1381,41 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
 #         return HttpResponse("Sucess")
 
 
+# def viewfullmap(request):
+#     data = serialize('full_detail_geojson',
+#                      Site.objects.prefetch_related('site_instances').filter(is_survey=False, is_active=True),
+#                      geometry_field='location',
+#                      fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+#
+#     dashboard_data = {
+#
+#         'data': data,
+#     }
+#     return render(request, 'fieldsight/map.html', dashboard_data)
 
 
+class OrgFullmap(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
+    template_name = "fieldsight/map.html"
+    def get_context_data(self, **kwargs):
+        obj = Organization.objects.get(pk=self.kwargs.get('pk'))
+        sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)
 
-def viewfullmap(request):
-    data = serialize('full_detail_geojson',
-                     Site.objects.prefetch_related('site_instances').filter(is_survey=False, is_active=True),
-                     geometry_field='location',
-                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+        data = serialize('custom_geojson', sites, geometry_field='location',
+               fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+        dashboard_data = {
+           'data': data,
+        }
+        return dashboard_data
 
-    dashboard_data = {
 
-        'data': data,
-    }
-    return render(request, 'fieldsight/map.html', dashboard_data)
-
-def orgfullmap(request):
-    obj = Organization.objects.get(pk=self.kwargs.get('pk'))
-    sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)
-    data = serialize('custom_geojson', sites, geometry_field='location',
-                     fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
-    dashboard_data = {
-
-        'data': data,
-    }
-    return render(request, 'fieldsight/map.html', dashboard_data)
-
-    #<a href="" target="_blank">
-
+class ProjFullmap(ProjectRoleMixin, TemplateView):
+    template_name = "fieldsight/map.html"
+    def get_context_data(self, **kwargs):
+        obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        sites = obj.sites.filter(is_active=True, is_survey=False)
+        data = serialize('custom_geojson', sites, geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id',))
+        dashboard_data = {
+            'data': data,
+        }
+        return dashboard_data

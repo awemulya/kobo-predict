@@ -38,7 +38,9 @@ from .views import (
     alter_site_status,
     add_supervisor,
     CreateUserView,
-    viewfullmap,
+    # viewfullmap,
+    OrgFullmap,
+    ProjFullmap,
 
 
     UserListView, site_images, FilterUserView, UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
@@ -139,7 +141,10 @@ urlpatterns = [
     url(r'^activaterole/(?P<invite_idb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z_\-]+)/$',
         ActivateRole.as_view(), name='activate-role'),
     url(r'^project/report/summary/(?P<pk>\d+)/$', ProjectSummaryReport.as_view(), name='project-summary-report'),
-    url(r'map-view/$',views.viewfullmap, name='full-map'),
+    # url(r'map-view/$',views.viewfullmap, name='full-map'),
+    url(r'org-map/(?P<pk>[0-9]+)/$', OrgFullmap.as_view(), name='org-loc-map'),
+    url(r'proj-map/(?P<pk>[0-9]+)/$', ProjFullmap.as_view(), name='proj-loc-map'),
+
 ]
    
 

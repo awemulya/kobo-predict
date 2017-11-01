@@ -1007,7 +1007,7 @@ var pk = "{{pk}}";
                                                         <span data-bind="text:name"></span>
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
-                                                        <strong>Form Name: </strong> <span data-bind="text:stage_forms().xf().label"></span>
+                                                        <strong>Form Name: </strong> <span data-bind="text:stage_forms().xf().label()"></span>
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
                                                         <a title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i> Edit</a>
@@ -1021,8 +1021,7 @@ var pk = "{{pk}}";
                                                             {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name"><br>
                                                             {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description"><br>
                                                             {% trans 'Form Assigned: ' %}
-                                                            <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
-                                                                value: stage_forms().xf().id">
+                                                            <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id', value:stage_forms().xf().id">
                                                             </select>
 
                                                             <br>
