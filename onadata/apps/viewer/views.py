@@ -412,7 +412,7 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
                 query = {'fs_uuid':id}
             create_async_export(
                 xform, export_type, query=query, force_xlsx=True,
-                options=options)
+                options=options,is_project=is_project, id=id)
         except Export.ExportTypeError:
             return HttpResponseBadRequest(
                 _("%s is not a valid export type" % export_type))

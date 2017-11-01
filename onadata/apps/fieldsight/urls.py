@@ -38,7 +38,7 @@ from .views import (
     alter_site_status,
     add_supervisor,
     CreateUserView,
-    # viewfullmap,
+    viewfullmap,
     OrgFullmap,
     ProjFullmap,
 
