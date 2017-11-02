@@ -9,8 +9,9 @@
 {% endblock %}
 
 {% block content %}
-{% load filters %}
-<div id="main-content" class="padding" onload="change()">
+{% load pagination_tags %}
+    {% load filters %}
+			<div id="main-content" class="padding" onload="change()">
 				<div class="org-profile-top-action">
 					<div class="action-left">
 
@@ -171,8 +172,9 @@
 									  <div class="org-site-list">
 										<div class="form-list">
 											<div class="panel panel-default">
+												{% autopaginate outstanding 10 as outstanding_data %}
 											  <table class="table table-striped table-hover" style="width:100%;">
-												  {% for instance in outstanding %}
+												  {% for instance in outstanding_data %}
 												  <tr>
 													  <td style="width:60%;">
 														  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
@@ -194,6 +196,7 @@
 												  </tr>
 												  {% endfor %}
 											  </table>
+												{% paginate %}
 											 </div>
 
 										</div>
@@ -203,8 +206,9 @@
 									  <div class="org-site-list">
 										<div class="form-list">
 											<div class="panel panel-default">
+												{% autopaginate rejected 10 as rejected_data %}
 											  <table class="table table-striped table-hover" style="width:100%;">
-												  {% for instance in rejected %}
+												  {% for instance in rejected_data %}
 												  <tr>
 													  <td style="width:60%;">
 														  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
@@ -226,6 +230,7 @@
 												  </tr>
 												  {% endfor %}
 											  </table>
+												{% paginate %}
 											 </div>
 
 										</div>
@@ -235,8 +240,9 @@
 									  <div class="org-site-list">
 										<div class="form-list">
 											<div class="panel panel-default">
+												{% autopaginate flagged 10 as flagged_data %}
 											  <table class="table table-striped table-hover" style="width:100%;">
-												  {% for instance in flagged %}
+												  {% for instance in flagged_data %}
 												  <tr>
 													  <td style="width:60%;">
 														  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
@@ -258,6 +264,7 @@
 												  </tr>
 												  {% endfor %}
 											  </table>
+												{% paginate %}
 											 </div>
 
 										</div>
