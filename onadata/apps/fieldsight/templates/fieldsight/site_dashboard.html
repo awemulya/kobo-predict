@@ -194,6 +194,8 @@
 														</div>
 													  </td>
 												  </tr>
+												  {% empty %}
+												  No any pending data to show.
 												  {% endfor %}
 											  </table>
 												{% paginate %}
@@ -228,6 +230,8 @@
 														</div>
 													  </td>
 												  </tr>
+												  {% empty %}
+												  No any rejected data to show.
 												  {% endfor %}
 											  </table>
 												{% paginate %}
@@ -262,6 +266,8 @@
 														</div>
 													  </td>
 												  </tr>
+												  {% empty %}
+												  No any flagged data to show.
 												  {% endfor %}
 											  </table>
 												{% paginate %}
