@@ -172,7 +172,7 @@
 									  <div class="org-site-list">
 										<div class="form-list">
 											<div class="panel panel-default">
-												{% autopaginate outstanding 10 as outstanding_data %}
+												{% autopaginate outstanding 6 as outstanding_data %}
 											  <table class="table table-striped table-hover" style="width:100%;">
 												  {% for instance in outstanding_data %}
 												  <tr>
@@ -208,7 +208,7 @@
 									  <div class="org-site-list">
 										<div class="form-list">
 											<div class="panel panel-default">
-												{% autopaginate rejected 10 as rejected_data %}
+												{% autopaginate rejected 6 as rejected_data %}
 											  <table class="table table-striped table-hover" style="width:100%;">
 												  {% for instance in rejected_data %}
 												  <tr>
@@ -244,7 +244,7 @@
 									  <div class="org-site-list">
 										<div class="form-list">
 											<div class="panel panel-default">
-												{% autopaginate flagged 10 as flagged_data %}
+												{% autopaginate flagged 6 as flagged_data %}
 											  <table class="table table-striped table-hover" style="width:100%;">
 												  {% for instance in flagged_data %}
 												  <tr>
