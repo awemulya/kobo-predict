@@ -114,7 +114,7 @@
 					</div>
 					<div class="row">
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="#" class="mini-stat padding-large margin-top clearfix">
+							<a href="{% url 'fieldsight:submission-data' obj.pk%}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
 								<div class="mini-stat-info">
 									<span>{{rejected|length}}</span>

@@ -1419,3 +1419,7 @@ class ProjFullmap(ProjectRoleMixin, TemplateView):
             'data': data,
         }
         return dashboard_data
+
+
+class SubmissionDataView(TemplateView):
+    template_name = "fieldsight/submission_data.html"
