@@ -41,6 +41,7 @@ from .views import (
     viewfullmap,
     OrgFullmap,
     ProjFullmap,
+    SubmissionDataView,
 
 
     UserListView, site_images, FilterUserView, UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
@@ -127,8 +128,7 @@ urlpatterns = [
     url(r'^multi-user-assign-site/(?P<pk>\d+)/$', MultiUserAssignSiteView.as_view(), name='multi_user_site_assign'),
     url(r'^multi-user-assign-project/(?P<pk>\d+)/$', MultiUserAssignProjectView.as_view(), name='multi_user_project_assign'),
 
-    url(r'^accounts/create/$', CreateUserView.as_view(
-        form_class=RegistrationForm), name='user-create'),
+    url(r'^accounts/create/$', CreateUserView.as_view(form_class=RegistrationForm), name='user-create'),
     url(r'^userlist/$', UserListView.as_view(), name='user-list'),
     url(r'^filter-users/$', FilterUserView.as_view(), name='filter-users'),
     url(r'fcm/v1/devices/$', DeviceViewSet.as_view({'get': 'list'})),
@@ -144,6 +144,7 @@ urlpatterns = [
     url(r'map-view/$',views.viewfullmap, name='full-map'),
     url(r'org-map/(?P<pk>[0-9]+)/$', OrgFullmap.as_view(), name='org-loc-map'),
     url(r'proj-map/(?P<pk>[0-9]+)/$', ProjFullmap.as_view(), name='proj-loc-map'),
+    url(r'^submission/(?P<pk>[0-9]+)/$', SubmissionDataView.as_view(), name='submission-data'),
 
 ]
    
