@@ -147,6 +147,6 @@ urlpatterns = [
     url(r'^submission/(?P<pk>[0-9]+)/$', SubmissionDataView.as_view(), name='submission-data'),
 
 ]
-   
+
 
 

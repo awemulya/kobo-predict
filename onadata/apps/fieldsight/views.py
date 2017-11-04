@@ -1423,3 +1423,18 @@ class ProjFullmap(ProjectRoleMixin, TemplateView):
 
 class SubmissionDataView(TemplateView):
     template_name = "fieldsight/submission_data.html"
+    def get_context_data(self, **kwargs):
+        dashboard_data = super(SubmissionDataView, self).get_context_data(**kwargs)
+        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+
+
+        outstanding, flagged, approved, rejected = obj.get_site_submission()
+        dashboard_data = {
+            'obj': obj,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+        }
+        return dashboard_data
+
