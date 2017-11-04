@@ -792,7 +792,7 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
                         type_id = int(site.get("type", "1"))
                         _site, created = Site.objects.get_or_create(identifier=str(site.get("id")),
                                                                     name=site.get("name"),
-                                                                    project=project, type__id=type_id)
+                                                                    project=project, type_id=type_id)
                         _site.phone = site.get("phone")
                         _site.address = site.get("address")
                         _site.public_desc = site.get("public_desc"),
