@@ -430,7 +430,6 @@ BROKER_BACKEND = "librabbitmq"
 BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 CELERY_RESULT_BACKEND = "amqp"  # telling Celery to report results to RabbitMQ
 CELERY_ALWAYS_EAGER = False
-CELERY_IMPORTS = ("tasks",)
 
 # Celery defaults to having as many workers as there are cores. To avoid
 # excessive resource consumption, don't spawn more than 6 workers by default
