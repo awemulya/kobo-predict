@@ -57,7 +57,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from .tasks import printrand, multiuserassignproject
+from onadata.apps.fieldsight.tasks import multiuserassignproject
 
 @login_required
 def dashboard(request):
@@ -1255,44 +1255,43 @@ def checkusernameexists(request):
 
 class ProjectSummaryReport(TemplateView):
     def get(self, request, pk):
-        # obj = Project.objects.get(pk=self.kwargs.get('pk'))
-        # organization = Organization.objects.get(pk=obj.organization_id)
-        # peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
-        # project_managers = obj.project_roles.select_related('user').filter(group__name__in=["Project Manager"]).distinct('user')
+        obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        organization = Organization.objects.get(pk=obj.organization_id)
+        peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
+        project_managers = obj.project_roles.select_related('user').filter(group__name__in=["Project Manager"]).distinct('user')
 
-        # sites = obj.sites.filter(is_active=True, is_survey=False)
-        # data = serialize('custom_geojson', sites, geometry_field='location',
-        #                  fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
+        sites = obj.sites.filter(is_active=True, is_survey=False)
+        data = serialize('custom_geojson', sites, geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
-        # total_sites = len(sites)
-        # total_survey_sites = obj.sites.filter(is_survey=True).count()
-        # outstanding, flagged, approved, rejected = obj.get_submissions_count()
-        # bar_graph = BarGenerator(sites)
+        total_sites = len(sites)
+        total_survey_sites = obj.sites.filter(is_survey=True).count()
+        outstanding, flagged, approved, rejected = obj.get_submissions_count()
+        bar_graph = BarGenerator(sites)
 
-        # line_chart = LineChartGenerator(obj)
-        # line_chart_data = line_chart.data()
-        # dashboard_data = {
-        #     'sites': sites,
-        #     'obj': obj,
-        #     'peoples_involved': peoples_involved,
-        #     'total_sites': total_sites,
-        #     'total_survey_sites': total_survey_sites,
-        #     'outstanding': outstanding,
-        #     'flagged': flagged,
-        #     'approved': approved,
-        #     'rejected': rejected,
-        #     'data': data,
-        #     'cumulative_data': line_chart_data.values(),
-        #     'cumulative_labels': line_chart_data.keys(),
-        #     'progress_data': bar_graph.data.values(),
-        #     'progress_labels': bar_graph.data.keys(),
-        #     'project_managers':project_managers,
-        #     'organization': organization,
-        #     'total_submissions': line_chart_data.values()[-1],
+        line_chart = LineChartGenerator(obj)
+        line_chart_data = line_chart.data()
+        dashboard_data = {
+            'sites': sites,
+            'obj': obj,
+            'peoples_involved': peoples_involved,
+            'total_sites': total_sites,
+            'total_survey_sites': total_survey_sites,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+            'data': data,
+            'cumulative_data': line_chart_data.values(),
+            'cumulative_labels': line_chart_data.keys(),
+            'progress_data': bar_graph.data.values(),
+            'progress_labels': bar_graph.data.keys(),
+            'project_managers':project_managers,
+            'organization': organization,
+            'total_submissions': line_chart_data.values()[-1],
     
-        # }
-        printrand.delay()
-        # return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)
+        }
+        return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)
 
 class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
