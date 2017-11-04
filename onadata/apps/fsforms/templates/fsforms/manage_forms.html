@@ -712,7 +712,7 @@ var pk = "{{pk}}";
                                 <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:add_stage"><i class="la la-plus" aria-hidden="true"></i> {% trans 'Add Stage' %}</a>
                                 <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:reorder_stage"><i class="la la-reorder" aria-hidden="true"></i> {% trans 'Reorder Stages' %}</a>
                                 <a href="javascript:void(0);" title="" class="btn btn-sm btn-success" data-bind="visible:stages().length > 0,
-                                            confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }"><i class="la la-rocket" aria-hidden="true"></i> {% trans 'Deploy to Mobile' %}</a>
+                                            click: deployStages"><i class="la la-rocket" aria-hidden="true"></i> {% trans 'Deploy to Mobile' %}</a>
                                 {% csrf_token %}
 
 
