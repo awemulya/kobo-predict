@@ -96,7 +96,6 @@ def create_xls_export(username, id_string, export_id, query=None,
     # we re-query the db instead of passing model objects according to
     # http://docs.celeryproject.org/en/latest/userguide/tasks.html#state
     ext = 'xls' if not force_xlsx else 'xlsx'
-
     try:
         export = Export.objects.get(id=export_id)
     except Export.DoesNotExist:

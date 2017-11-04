@@ -305,6 +305,10 @@ def create_export(request, username, id_string, export_type, is_project=None, id
             return HttpResponseForbidden(_(u'No XLS Template set.'))
 
     query = request.POST.get("query")
+    if is_project == 1 or is_project == '1':
+        query = {"fs_project_uuid" : str(id)}
+    else:
+        query = {"fs_uuid": str(id)}
     force_xlsx = request.POST.get('xls') != 'true'
 
     # export options
