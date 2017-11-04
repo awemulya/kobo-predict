@@ -699,6 +699,7 @@ class SiteDeleteView(SiteView, ProjectRoleMixin, DeleteView):
 @api_view(['POST'])
 def ajax_upload_sites(request, pk):
     form = UploadFileForm(request.POST, request.FILES)
+    print "huaar------"
     if form.is_valid():
         count = 0
         project = Project(pk=pk)
@@ -799,10 +800,11 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
                         _site.location = location
                         _site.save()
                 messages.info(request, 'Site Upload Succesfull')
-                return HttpResponseRedirect(reverse('fieldsight:site-list'))
+                return HttpResponseRedirect(reverse('fieldsight:proj-site-list', kwargs={'pk': pk}))
             except Exception as e:
+                print e
                 form.full_clean()
-                form._errors[NON_FIELD_ERRORS] = form.error_class(['Sites Upload Failed, UnSupported Data'])
+                form._errors[NON_FIELD_ERRORS] = form.error_class(['Sites Upload Failed, UnSupported Data', e])
                 messages.warning(request, 'Site Upload Failed, UnSupported Data ')
         return render(request, 'fieldsight/upload_sites.html', {'form': form, 'project': pk})
 

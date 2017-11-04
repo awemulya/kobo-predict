@@ -9,7 +9,7 @@ from onadata.apps.userrole.models import UserRole
 def printr():
     for i in range(10):
         a=str(i) + 'rand'
-        # time.sleep(5)
+        time.sleep(5)
         print a
     return ' random users created with success!'
 
