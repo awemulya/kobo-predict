@@ -105,15 +105,15 @@ class StageSerializer1(serializers.ModelSerializer):
                         ChannelGroup("project-{}".format(fxf.project.id)).send({"text": json.dumps(result)})
                     else:
                         noti = fxf.logs.create(source=api_request.user, type=19, title="Stage",
-                                               organization=fxf.project.organization,
-                                               project = fxf.site.project,
-                                               site = fxf.site,
-                                               content_object = fxf,
-                                               extra_object = fxf.site,
+                                               organization=fxf.site.project.organization,
+                                               project=fxf.site.project,
+                                               site=fxf.site,
+                                               content_object=fxf,
+                                               extra_object=fxf.site,
                                                description='{0} assigned new Stage form  {1} to {2} '.format(
                                                    api_request.user.get_full_name(),
                                                    fxf.xf.title,
-                                                   fxf.project.name
+                                                   fxf.site.name
                                                ))
                         result = {}
                         result['description'] = noti.description

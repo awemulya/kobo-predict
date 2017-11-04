@@ -54,7 +54,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/knockout-sortable.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js?v=1.3.1"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js?v=1.3.1.1"></script>
 
 <script>
 
@@ -710,7 +710,7 @@ var pk = "{{pk}}";
 						<div class="tab-pane" id="tab003" role="tabpanel">
                             <div data-bind="with:stagesVm">
                                 <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:add_stage"><i class="la la-plus" aria-hidden="true"></i> {% trans 'Add Stage' %}</a>
-                                <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:reorder_stage"><i class="la la-reorder" aria-hidden="true"></i> {% trans 'Reorder Stage' %}</a>
+                                <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:reorder_stage"><i class="la la-reorder" aria-hidden="true"></i> {% trans 'Reorder Stages' %}</a>
                                 <a href="javascript:void(0);" title="" class="btn btn-sm btn-success" data-bind="visible:stages().length > 0,
                                             confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }"><i class="la la-rocket" aria-hidden="true"></i> {% trans 'Deploy to Mobile' %}</a>
                                 {% csrf_token %}
@@ -879,7 +879,7 @@ var pk = "{{pk}}";
                                                                   <div class="row">
                                                                   <div class="col-md-1"></div>
                                                                   <div class="col-sm-2">
-                                                                      <a class="manage-button modal-manage square"
+                                                                      <a href="javascript:void(0);" class="badge badge-info"
                                                                          data-bind="click:save_sub_stage, visible:addSubStageMode()">
                                                                           <i class="fa fa-plus" aria-hidden="true"></i> {% trans 'Add' %}</a>
 
@@ -897,9 +897,8 @@ var pk = "{{pk}}";
 
                                           <div class="modal-footer stage-footer">
                                                <div class="col-sm-3">
-                                                <a class="btn btn-primary " style="margin-right:-4px !important;"  data-bind="confirmClick:
-                                                { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }">
-                                                     <i class="fa fa-floppy-o" aria-hidden="true"></i>  {% trans 'Save' %}</a>
+                                                <a href="javascript:void(0);" class="btn btn-primary"  data-bind="click: save">
+                                                     <i class="la la-floppy-o" aria-hidden="true"></i>  {% trans 'Save' %}</a>
                                               </div>
                                           </div>
                                         </div>
@@ -1063,8 +1062,8 @@ var pk = "{{pk}}";
 
                                                             <br>
 
-                                                            <button   data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
-                                                            <button  data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
+                                                            <button data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
+                                                            <button data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
                                                         </div>
 
                                                       </div>
@@ -1072,7 +1071,9 @@ var pk = "{{pk}}";
                                             </ul>
                                         </div>
                                      </div>
-                                      <button type="button" class="btn btn-sm btn-primary margin-top" data-bind="confirmClick: { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }"><i class="la la-save"></i> Save Changes</button>
+                                      <button type="button" class="btn btn-sm btn-primary margin-top"
+                                              data-bind="confirmClick: { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }">
+                                          <i class="la la-save"></i> Save Changes</button>
 
                                     </div>
                                   </div>
