@@ -158,7 +158,7 @@ var project = "{{obj.pk}}";
 					</div>
 					<div class="row">
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="#" class="mini-stat padding-large margin-top clearfix">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk %}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
 								<div class="mini-stat-info">
 									<span>{{rejected}}</span>
@@ -167,7 +167,7 @@ var project = "{{obj.pk}}";
 							</a>
 						</div>
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="#" class="mini-stat padding-large margin-top clearfix">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk %}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
 								<div class="mini-stat-info">
 									<span>{{flagged}}</span>
@@ -176,22 +176,22 @@ var project = "{{obj.pk}}";
 							</a>
 						</div>
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<div class="mini-stat padding-large margin-top clearfix">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk %}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
 								<div class="mini-stat-info">
 									<span>{{outstanding }}</span>
 									{% trans 'Pending Submissions' %}
 								</div>
-							</div>
+							</a>
 						</div>
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<div class="mini-stat padding-large margin-top clearfix">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk %}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-thumbs-up"></i></span>
 								<div class="mini-stat-info">
 									<span>{{approved}}</span>
 									{% trans 'Approved Submissions' %}
 								</div>
-							</div>
+							</a>
 						</div>
 					</div>
 					<div class="row">

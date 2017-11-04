@@ -114,7 +114,7 @@
 					</div>
 					<div class="row">
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:submission-data' obj.pk%}" class="mini-stat padding-large margin-top clearfix">
+							<a href="{% url 'fieldsight:site-submission-data' obj.pk%}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
 								<div class="mini-stat-info">
 									<span>{{rejected|length}}</span>
@@ -123,7 +123,7 @@
 							</a>
 						</div>
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:submission-data' obj.pk%}" class="mini-stat padding-large margin-top clearfix">
+							<a href="{% url 'fieldsight:site-submission-data' obj.pk%}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
 								<div class="mini-stat-info">
 									<span>{{flagged|length}}</span>
@@ -132,7 +132,7 @@
 							</a>
 						</div>
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:submission-data' obj.pk%}" class="mini-stat padding-large margin-top clearfix">
+							<a href="{% url 'fieldsight:site-submission-data' obj.pk%}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
 								<div class="mini-stat-info">
 									<span>{{outstanding|length}}</span>
@@ -141,7 +141,7 @@
 							</a>
 						</div>
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:submission-data' obj.pk%}" class="mini-stat padding-large margin-top clearfix">
+							<a href="{% url 'fieldsight:site-submission-data' obj.pk%}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-thumbs-up"></i></span>
 								<div class="mini-stat-info">
 									<span>{{approved|length}}</span>

@@ -41,6 +41,8 @@ from .views import (
     viewfullmap,
     OrgFullmap,
     ProjFullmap,
+    OrganizationdataSubmissionView,
+    ProjectdataSubmissionView,
     SubmissionDataView,
 
 
@@ -144,7 +146,9 @@ urlpatterns = [
     url(r'map-view/$',views.viewfullmap, name='full-map'),
     url(r'org-map/(?P<pk>[0-9]+)/$', OrgFullmap.as_view(), name='org-loc-map'),
     url(r'proj-map/(?P<pk>[0-9]+)/$', ProjFullmap.as_view(), name='proj-loc-map'),
-    url(r'^submission/(?P<pk>[0-9]+)/$', SubmissionDataView.as_view(), name='submission-data'),
+    url(r'^org-submission/(?P<pk>[0-9]+)/$', OrganizationdataSubmissionView.as_view(), name='org-submission-data'),
+    url(r'^proj-submission/(?P<pk>[0-9]+)/$', ProjectdataSubmissionView.as_view(), name='proj-submission-data'),
+    url(r'^submission/(?P<pk>[0-9]+)/$', SubmissionDataView.as_view(), name='site-submission-data'),
 
 ]
 
