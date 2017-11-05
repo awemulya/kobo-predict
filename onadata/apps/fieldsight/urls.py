@@ -43,7 +43,7 @@ from .views import (
     ProjFullmap,
     OrganizationdataSubmissionView,
     ProjectdataSubmissionView,
-    SubmissionDataView,
+    SitedataSubmissionView,
 
 
     UserListView, site_images, FilterUserView, UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
@@ -148,7 +148,7 @@ urlpatterns = [
     url(r'proj-map/(?P<pk>[0-9]+)/$', ProjFullmap.as_view(), name='proj-loc-map'),
     url(r'^org-submission/(?P<pk>[0-9]+)/$', OrganizationdataSubmissionView.as_view(), name='org-submission-data'),
     url(r'^proj-submission/(?P<pk>[0-9]+)/$', ProjectdataSubmissionView.as_view(), name='proj-submission-data'),
-    url(r'^submission/(?P<pk>[0-9]+)/$', SubmissionDataView.as_view(), name='site-submission-data'),
+    url(r'^site-submission/(?P<pk>[0-9]+)/$', SitedataSubmissionView.as_view(), name='site-submission-data'),
 
 ]
 

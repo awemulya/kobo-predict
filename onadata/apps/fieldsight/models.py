@@ -179,6 +179,34 @@ class Project(models.Model):
     def get_project_type(self):
         return self.type.name
 
+    @property
+    def status(self):
+        if self.project_instances.filter(form_status=1).count():
+            return 1
+        elif self.project_instances.filter(form_status=2).count():
+            return 2
+        elif self.project_instances.filter(form_status=0).count():
+            return 0
+        elif self.project_instances.filter(form_status=3).count():
+            return 3
+        return 4
+
+    def get_project_submission(self):
+        instances = self.project_instances.all().order_by('-date')
+        outstanding, flagged, approved, rejected = [], [], [], []
+        for submission in instances:
+            if submission.form_status == 0:
+                outstanding.append(submission)
+            elif submission.form_status == 1:
+                rejected.append(submission)
+            elif submission.form_status == 2:
+                flagged.append(submission)
+            elif submission.form_status == 3:
+                approved.append(submission)
+
+        return outstanding, flagged, approved, rejected
+
+
     def get_submissions_count(self):
         outstanding = self.project_instances.filter(form_status=0).count()
         rejected = self.project_instances.filter(form_status=1).count()

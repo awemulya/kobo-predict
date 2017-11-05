@@ -1421,55 +1421,41 @@ class ProjFullmap(ProjectRoleMixin, TemplateView):
         return dashboard_data
 
 
-class OrganizationdataSubmissionView(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
+class OrganizationdataSubmissionView(TemplateView):
     template_name = "fieldsight/organizationdata_submission.html"
 
     def get_context_data(self, **kwargs):
-        dashboard_data = super(OrganizationdataSubmissionView, self).get_context_data(**kwargs)
+        data = super(OrganizationdataSubmissionView, self).get_context_data(**kwargs)
         obj = Organization.objects.get(pk=self.kwargs.get('pk'))
-        outstanding, flagged, approved, rejected = obj.get_submissions_count()
-
-        dashboard_data = {
-            'obj': obj,
-            'outstanding': outstanding,
-            'flagged': flagged,
-            'approved': approved,
-            'rejected': rejected,
-
-        }
-        return dashboard_data
+        data['pending'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='0')
+        data['rejected'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='1')
+        data['flagged'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='2')
+        data['approved'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='3')
+        return data
 
 
 class ProjectdataSubmissionView(ProjectRoleMixin, TemplateView):
     template_name = "fieldsight/projectdata_submission.html"
 
     def get_context_data(self, **kwargs):
-        dashboard_data = super(ProjectdataSubmissionView, self).get_context_data(**kwargs)
+        data = super(ProjectdataSubmissionView, self).get_context_data(**kwargs)
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
-        outstanding, flagged, approved, rejected = obj.get_submissions_count()
-        dashboard_data = {
-            'outstanding': outstanding,
-            'flagged': flagged,
-            'approved': approved,
-            'rejected': rejected,
-        }
-        return dashboard_data
+        data['pending'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='0')
+        data['rejected'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='1')
+        data['flagged'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='2')
+        data['approved'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='3')
+        return data
 
 
-class SubmissionDataView(TemplateView):
+class SitedataSubmissionView(TemplateView):
     template_name = "fieldsight/sitedata_submission.html"
+
     def get_context_data(self, **kwargs):
-        dashboard_data = super(SubmissionDataView, self).get_context_data(**kwargs)
+        data = super(SitedataSubmissionView, self).get_context_data(**kwargs)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
-
-
-        outstanding, flagged, approved, rejected = obj.get_site_submission()
-        dashboard_data = {
-            'obj': obj,
-            'outstanding': outstanding,
-            'flagged': flagged,
-            'approved': approved,
-            'rejected': rejected,
-        }
-        return dashboard_data
+        data['pending'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '0')
+        data['rejected'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '1')
+        data['flagged'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '2')
+        data['approved'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '3')
+        return data
 

@@ -243,7 +243,8 @@ var org = "{{obj.pk}}";
 												</form>
 											</div>
 											<!-- ko foreach: sites  -->
-											<a data-bind="attr: { href: url }" class="project-item-wrap clearfix" style="width: 100%;">
+											{% if count.sites == 1 %}
+											<a data-bind="attr: { href: url }" class="project-item-wrap clearfix">
 												<div class="project-logo">
 													 <img data-bind="attr:{src: logo}">
 												</div>
@@ -253,6 +254,18 @@ var org = "{{obj.pk}}";
 												<p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span><span data-bind="text:phone"></span></p>
 												</div>
 											</a>
+											{% else %}
+											<a data-bind="attr: { href: url }" class="project-item-wrap clearfix margin-top">
+												<div class="project-logo">
+													 <img data-bind="attr:{src: logo}">
+												</div>
+												<div class="project-basic-info">
+													<h6 class="site-title-org" data-bind="text:name"></h6>
+													<p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span><span data-bind="text:address"></span></p>
+												<p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span><span data-bind="text:phone"></span></p>
+												</div>
+											</a>
+											{% endif %}
 										<!-- /ko-->
 										</div>
 									</div>
@@ -278,7 +291,7 @@ var org = "{{obj.pk}}";
 												</form>
 											</div>
 											{% for role in peoples_involved %}
-											<a href="{% url 'users:profile' role.user.id %"} class="project-item-wrap clearfix">
+											<a href="{% url 'users:profile' role.user.id %"} class="project-item-wrap clearfix margin-top">
 												<div class="project-logo">
 													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
 												</div>
@@ -302,32 +315,32 @@ var org = "{{obj.pk}}";
 										<!--<div class="scrollingSlider">-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}" img-title="test Title1">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}" img-title="test Title2">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}" img-title="test Title3">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}" img-title="test Title4">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}" img-title="test Title5">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}" img-title="test Title6">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
