@@ -66,7 +66,7 @@
 			<div class="top-nav clearfix">
 				<ul class="right-nav clearfix">
 					<li class="dropdown">
-						<a href="#" id="dropdownMenuButtonNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<a href="#" id="dropdownMenuButtonNotification" onclick="getnotifdata()"data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<i class="la la-bell"></i>
 							<span class="badge badge-warning"><span class="not_count"></span></span>
 						</a>
@@ -74,6 +74,7 @@
 						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification" style="width:480px;">
 							<div class="dropdown-header">New Notifications (<span id="noticount" class="not_count"></span>) <span><a href="#" onclick="updateseen()">Mark All as read<a></span></div>
 							<ul class="menu" id="notification-ul" style="height:500px; overflow:hidden; overflow-y: scroll;">
+							Loading...
 						
 							</ul>
 							<div class="dropdown-divider"></div>
@@ -251,7 +252,20 @@
 			var url = '{% url 'eventlog:api-not' %}'
 			var url_count = '{% url 'eventlog:api-not-count' %}'
 			var user_id = {{ request.user.id }};
-			document.onload = getnotifdata();
+			document.onload = getnotifcount();
+
+			function getnotifcount(){
+				 $.ajax({
+			        url: url_count,
+			        type: 'GET',
+			        success: function (data) {
+			          $( ".not_count" ).append( data.count );
+			          noticount = parseInt(data.count);
+
+			        }
+			      });
+
+			}
 
 
 			function populatelist(data, index){
@@ -285,6 +299,7 @@
 
 			    // div.innerHTML += new_li;
 			    speed = speed+200;
+			$("#notification-ul").html( "" );
 			if(noti_action == "append"){
 				$(new_li).prependTo("#notification-ul");
 				$("#"+data.id).fadeIn(speed);
@@ -296,15 +311,7 @@
 		}
 
 	function getnotifdata(){ 
-      $.ajax({
-        url: url_count,
-        type: 'GET',
-        success: function (data) {
-          $( ".not_count" ).append( data.count );
-          noticount = parseInt(data.count);
 
-        }
-      });
 
           $.ajax({
             url: url,
@@ -349,6 +356,17 @@ const webSocketBridgeNotifyUser = new channels.WebSocketBridge();
 
 
 webSocketBridgeNotifyUser.connect(channel_url+'user-notify/'+id+'/');
+	// ------------for desktop notification------------//
+    
+      document.addEventListener('DOMContentLoaded', function () {
+	  if (Notification.permission !== "granted")
+	    Notification.requestPermission();
+	});
+
+    // ------------end for desktop notification------------//
+
+
+
 
 webSocketBridgeNotifyUser.listen(function(text, byte) {
     console.log(text);
@@ -356,6 +374,25 @@ webSocketBridgeNotifyUser.listen(function(text, byte) {
     $( ".not_count" ).html( noticount );
     noti_action = "append";
    	populatelist(text, 0);
+
+   	//-------------for desktop notification--------------------
+
+		     if (Notification.permission !== "granted")
+			    Notification.requestPermission();
+			  else {
+			  	var typeofnoti = text.type;
+			  	var body_content = types[typeofnoti](text);
+			    var notification = new Notification('Notification', {
+			      icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
+			      body: body_content,
+			    });
+
+			    notification.onclick = function () {
+			      window.open(text.get_absolute_url);      
+			    };
+			    
+			  }
+	//-------------end for desktop notification--------------------
 
 //     $('#noti-count').text(notificationCount);
 //     description = text.description;
