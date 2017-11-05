@@ -1,5 +1,4 @@
 from django.contrib.gis.serializers.geojson import Serializer as GeoJSONSerializer
-from random import randint
 
 
 class Serializer(GeoJSONSerializer):

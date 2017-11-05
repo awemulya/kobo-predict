@@ -93,6 +93,56 @@ class OneToOneConsumer(WebsocketConsumer):
         Group("chat-"+pk).discard(message.reply_channel)
 
 
+class OneToOneNotifConsumer(WebsocketConsumer):
+
+    # Set to True to automatically port users from HTTP cookies
+    # (you don't need channel_session_user, this implies it)
+
+    # Set to True if you want it, else leave it out
+    strict_ordering = False
+
+    def connection_groups(self, **kwargs):
+        """
+        Called to return the list of groups to automatically add/remove
+        this connection to/from.
+        """
+        pk = kwargs.get('pk')
+        return ["notif-user-"+pk]
+
+    def connect(self, message, **kwargs):
+        """
+        Perform things on connection start
+        """
+        # Accept the connection; this is done by default if you don't override
+        # the connect function.
+        # make this user online
+        pk = kwargs.get('pk')
+        Group("notif-user-"+pk).add(message.reply_channel)
+        self.message.reply_channel.send({"accept": True})
+
+    def receive(self, text=None, bytes=None, **kwargs):
+        """
+        Called when a message is received with either text or bytes
+        filled out.
+        """
+        # Simple echo
+        pk = kwargs.get('pk')
+        print text
+        receiver_pk = pk
+        # get receiver-id send it to group chat-receiverid
+        Group("notif-user-"+receiver_pk).send({
+        "text": text})
+        self.send(text=text, bytes=bytes)
+
+    def disconnect(self, message, **kwargs):
+        """
+        Perform things on connection close
+        """
+        # make this user offline
+        pk = kwargs.get('pk')
+        Group("notif-user-"+pk).discard(message.reply_channel)
+
+
 class NotificationConsumer(WebsocketConsumer):
 
     # Set to True to automatically port users from HTTP cookies
