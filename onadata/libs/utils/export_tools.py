@@ -753,7 +753,7 @@ def generate_export(export_type, extension, username, id_string,
     func = getattr(export_builder, export_type_func_map[export_type])
 
     func.__call__(
-        temp_file.name, records, username, id_string, filter_query)
+        temp_file.name, records, username, id_string, None)
 
     # generate filename
     basename = "%s_%s" % (
@@ -789,13 +789,16 @@ def generate_export(export_type, extension, username, id_string,
     if export_id:
         export = Export.objects.get(id=export_id)
     else:
-        export = Export(xform=xform, export_type=export_type)
+        fsxf = filter_query.values()[0]
+        print("fsxf", fsxf)
+        export = Export(xform=xform, export_type=export_type, fsxf_id=fsxf)
     export.filedir = dir_name
     export.filename = basename
     export.internal_status = Export.SUCCESSFUL
     # dont persist exports that have a filter
     if filter_query is None:
         export.save()
+    export.save()
     return export
 
 
@@ -811,6 +814,7 @@ def query_mongo(username, id_string, query=None, hide_deleted=True):
         # query = {"$and": [query, {"_deleted_at": None}]}
     # query = {"$and": [query, qry]}
     print(qry)
+    print("cpount", xform_instances.find(qry).count())
     return xform_instances.find(qry)
 
 
