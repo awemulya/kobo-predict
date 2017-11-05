@@ -130,7 +130,7 @@ class StageSerializer1(serializers.ModelSerializer):
                     setattr(stage, attr, value)
                 stage.save()
                 for order, sub_stage_data in enumerate(sub_stages_data):
-                    old_substage = sub_stage_data.get('id', "")
+                    old_substage = sub_stage_data.get('id', False)
                     if old_substage:
                         sub_id = sub_stage_data.pop('id')
                         fxf = sub_stage_data.pop('stage_forms')
@@ -154,7 +154,7 @@ class StageSerializer1(serializers.ModelSerializer):
                             #create new fieldsight form
                             FieldSightXF.objects.create(xf_id=xf_id,site=stage.site, project=stage.project, is_staged=True,
                                                 stage=sub_stage)
-                            org = stage.project.organization if stage.project else stage.site.project.organization
+                            # org = stage.project.organization if stage.project else stage.site.project.organization
                             # desc = "deleted form of stage {} substage {} by {}".format(stage.name, sub_stage.name,
                             #                                                            self.context['request'].user.username)
                             # noti = old_fsxf.logs.create(source=self.context['request'].user, type=1, title="form Deleted",
