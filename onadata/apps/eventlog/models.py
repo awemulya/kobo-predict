@@ -49,6 +49,8 @@ class FieldSightLog(models.Model):
     site = models.ForeignKey(Site, related_name="logs", null=True)
     extra_message = models.CharField(max_length=255, blank=True, null=True)
     
+    recipient = models.ForeignKey(User, related_name='recipent_log', null=True)
+
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()

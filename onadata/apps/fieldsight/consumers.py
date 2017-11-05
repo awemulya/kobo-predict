@@ -117,6 +117,7 @@ class OneToOneNotifConsumer(WebsocketConsumer):
         # the connect function.
         # make this user online
         pk = kwargs.get('pk')
+        print pk + "---------"
         Group("notif-user-"+pk).add(message.reply_channel)
         self.message.reply_channel.send({"accept": True})
 
@@ -127,7 +128,7 @@ class OneToOneNotifConsumer(WebsocketConsumer):
         """
         # Simple echo
         pk = kwargs.get('pk')
-        print text
+        print pk + "---------"
         receiver_pk = pk
         # get receiver-id send it to group chat-receiverid
         Group("notif-user-"+receiver_pk).send({

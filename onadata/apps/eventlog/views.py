@@ -19,6 +19,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 
 class LogSerializer(serializers.ModelSerializer):
+    source_uid = serializers.ReadOnlyField(source='source_id', read_only=True)
     source_name = serializers.ReadOnlyField(source='source.username', read_only=True)
     source_img = serializers.ReadOnlyField(source='source.user_profile.profile_picture.url', read_only=True)
     get_source_url = serializers.ReadOnlyField()
@@ -63,7 +64,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     A simple ViewSet for viewing and editing sites.
     """
 
-    queryset = FieldSightLog.objects.all()
+    queryset = FieldSightLog.objects.select_related('source__user_profile').all().prefetch_related('seen_by')
     serializer_class = LogSerializer
     pagination_class = LargeResultsSetPagination
 
@@ -72,12 +73,12 @@ class NotificationViewSet(viewsets.ModelViewSet):
             return queryset 
         org_ids = self.request.roles.filter(group__name='Organization Admin').values('organization_id')
         project_ids = self.request.roles.filter(group__name='Project Manager').values('project_id')
-        site_ids = self.request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')) .values('site_id')
-        return queryset.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids))
+        site_ids = self.request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')).values('site_id')
+        return queryset.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids) | Q(recipient_id=self.request.user_id))
 
 class NotificationCountnSeen(View):
     def get(self, request):
-        queryset = FieldSightLog.objects.filter(date__gt=request.user.user_profile.notification_seen_date)
+        queryset = FieldSightLog.objects.filter(date__gt=request.user.user_profile.notification_seen_date).prefetch_related('seen_by')
         if request.role.group.name == "Super Admin":
             count = queryset.filter().exclude(seen_by__id=request.user.id).count()       
         else:

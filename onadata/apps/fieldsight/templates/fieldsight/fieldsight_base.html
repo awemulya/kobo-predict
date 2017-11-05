@@ -44,6 +44,10 @@
 		<script type="text/javascript" src="{{ STATIC_URL }}js/ko_lib.js?v=1.3.1" ></script>
 		{%block kocript %}
     	{% endblock %}
+    	<script type="text/javascript">
+    		var noticount = 0;
+    		var noti_action = "";
+    	</script>
 	</head>
     <body>
         <!--[if lt IE 8]>
@@ -246,7 +250,7 @@
 <script>
 			var url = '{% url 'eventlog:api-not' %}'
 			var url_count = '{% url 'eventlog:api-not-count' %}'
-
+			var user_id = {{ request.user.id }};
 			document.onload = getnotifdata();
 
 
@@ -255,7 +259,7 @@
 			   
 			    typeid = data.type;
 			    var readstatus='unread';
-			    if(data.seen_by.includes({{ request.user.id }})){
+			    if(data.seen_by.includes(user_id)){
 			       readstatus='read';
 			    }
 			// get description for notificationaccotding to its type id
@@ -281,10 +285,15 @@
 
 			    // div.innerHTML += new_li;
 			    speed = speed+200;
-
-			$(new_li).appendTo("#notification-ul");
-			$("#"+data.id).fadeIn(speed);
+			if(noti_action == "append"){
+				$(new_li).prependTo("#notification-ul");
+				$("#"+data.id).fadeIn(speed);
 			}
+			else{
+				$(new_li).appendTo("#notification-ul");
+				$("#"+data.id).fadeIn(speed);
+			}
+		}
 
 	function getnotifdata(){ 
       $.ajax({
@@ -292,6 +301,7 @@
         type: 'GET',
         success: function (data) {
           $( ".not_count" ).append( data.count );
+          noticount = parseInt(data.count);
 
         }
       });
@@ -319,13 +329,15 @@
 
         success: function (data) {
           console.log(data);
-          $( ".not_count" ).replaceWith( '0' );
+          noticount = 0;
+          $( ".not_count" ).html( noticount );
+          
         }
       });
 }
 		</script>
         <!--<script src="{% static 'dummy/assets/js/main.js' %}"></script>-->
-
+<script type="text/javascript" src="{{ STATIC_URL }}channels/js/websocketbridge.js" ></script>
 <script type="text/javascript">
 var notificationCount = $('#noti-count').text() || "0";
 notificationCount = parseInt(notificationCount);
@@ -338,16 +350,12 @@ const webSocketBridgeNotifyUser = new channels.WebSocketBridge();
 
 webSocketBridgeNotifyUser.connect(channel_url+'user-notify/'+id+'/');
 
-webSocketBridgeNotify.listen(function(text, byte) {
-    console.log("chat received");
-    if(notificationCount == 0){
-        notificationCount = $('#noti-count').text() || "0";
-        notificationCount = parseInt(notificationCount);
-    }
-
-    notificationCount += 1;
-
-
+webSocketBridgeNotifyUser.listen(function(text, byte) {
+    console.log(text);
+    noticount += 1;
+    $( ".not_count" ).html( noticount );
+    noti_action = "append";
+   	populatelist(text, 0);
 
 //     $('#noti-count').text(notificationCount);
 //     description = text.description;
