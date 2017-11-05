@@ -57,7 +57,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from onadata.apps.fieldsight.tasks import multiuserassignproject
+from onadata.apps.fieldsight.tasks import multiuserassignproject, bulkuploadsites, multiuserassignsite
 
 @login_required
 def dashboard(request):
@@ -699,7 +699,6 @@ class SiteDeleteView(SiteView, ProjectRoleMixin, DeleteView):
 @api_view(['POST'])
 def ajax_upload_sites(request, pk):
     form = UploadFileForm(request.POST, request.FILES)
-    print "huaar------"
     if form.is_valid():
         count = 0
         project = Project(pk=pk)
@@ -780,26 +779,30 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
     def post(self, request, pk=id):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            project = Project(pk=pk)
             try:
-                sites = request.FILES['file'].get_records()
-                with transaction.atomic():
-                    for site in sites:
-                        site = dict((k, v) for k, v in site.iteritems() if v is not '')
-                        lat = site.get("longitude", 85.3240)
-                        long = site.get("latitude", 27.7172)
-                        location = Point(lat, long, srid=4326)
-                        type_id = int(site.get("type", "1"))
-                        _site, created = Site.objects.get_or_create(identifier=str(site.get("id")),
-                                                                    name=site.get("name"),
-                                                                    project=project, type_id=type_id)
-                        _site.phone = site.get("phone")
-                        _site.address = site.get("address")
-                        _site.public_desc = site.get("public_desc"),
-                        _site.additional_desc = site.get("additional_desc")
-                        _site.location = location
-                        _site.save()
-                messages.info(request, 'Site Upload Succesfull')
+                sitefile=request.FILES['file']
+                # sites = request.FILES['file'].get_records()
+                user = request.user
+                bulkuploadsites.delay(user, sitefile, pk)
+                # sites = request.FILES['file'].get_records()
+                # with transaction.atomic():
+                #     for site in sites:
+                #         site = dict((k, v) for k, v in site.iteritems() if v is not '')
+                #         lat = site.get("longitude", 85.3240)
+                #         long = site.get("latitude", 27.7172)
+                #         location = Point(lat, long, srid=4326)
+                #         type_id = int(site.get("type", "1"))
+                #         _site, created = Site.objects.get_or_create(identifier=str(site.get("id")),
+                #                                                     name=site.get("name"),
+                #                                                     project=project, type_id=type_id)
+                #         _site.phone = site.get("phone")
+                #         _site.address = site.get("address")
+                #         _site.public_desc = site.get("public_desc"),
+                #         _site.additional_desc = site.get("additional_desc")
+                #         _site.location = location
+                #         _site.save()
+                # messages.info(request, 'Site Upload Succesfull')
+                messages.success(request, 'Sites are being uploaded. You will be notified in notifications list as well.')
                 return HttpResponseRedirect(reverse('fieldsight:proj-site-list', kwargs={'pk': pk}))
             except Exception as e:
                 print e
@@ -1305,41 +1308,53 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         sites = data.get('sites')
         users = data.get('users')
         group = Group.objects.get(name=data.get('group'))
-        response = ""
-        for site_id in sites:
-            site = Site.objects.get(pk=site_id)
-#226
-            for user in users:
+        multiuserassignsite.delay(sites, users, group.id)
+        return HttpResponse('sucess')
+
+# class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
+#     def get(self, request, pk):
+#         project_obj = Project.objects.get(pk=pk)
+#         return render(request, 'fieldsight/multi_user_assign.html',{'type': "site", 'pk':pk})
+
+#     def post(self, request, *args, **kwargs):
+#         data = json.loads(self.request.body)
+#         sites = data.get('sites')
+#         users = data.get('users')
+#         group = Group.objects.get(name=data.get('group'))
+#         response = ""
+#         for site_id in sites:
+#             site = Site.objects.get(pk=site_id)
+#             for user in users:
               
-                role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
-                                                               project__id=site.project.id, organization__id=site.project.organization_id, group=group, ended_at=None)
-                if created:
+#                 role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
+#                                                                project__id=site.project.id, organization__id=site.project.organization_id, group=group, ended_at=None)
+#                 if created:
                
-                    # description = "{0} was assigned  as {1} in {2}".format(
-                    #     role.user.get_full_name(), role.lgroup.name, role.project)
-                    noti_type = 8
+#                     # description = "{0} was assigned  as {1} in {2}".format(
+#                     #     role.user.get_full_name(), role.lgroup.name, role.project)
+#                     noti_type = 8
 
-                    # if data.get('group') == "Reviewer":
-                    #     noti_type =7
+#                     # if data.get('group') == "Reviewer":
+#                     #     noti_type =7
                     
-                    # noti = role.logs.create(source=role.user, type=noti_type, title=description,
-                    #                         description=description, content_type=site, extra_object=self.request.user,
-                    #                         site=role.site)
-                    # result = {}
-                    # result['description'] = description
-                    # result['url'] = noti.get_absolute_url()
-                    # ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
-                    # ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
-                    # ChannelGroup("site-{}".format(role.site.id)).send({"text": json.dumps(result)})
-                    # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+#                     # noti = role.logs.create(source=role.user, type=noti_type, title=description,
+#                     #                         description=description, content_type=site, extra_object=self.request.user,
+#                     #                         site=role.site)
+#                     # result = {}
+#                     # result['description'] = description
+#                     # result['url'] = noti.get_absolute_url()
+#                     # ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+#                     # ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
+#                     # ChannelGroup("site-{}".format(role.site.id)).send({"text": json.dumps(result)})
+#                     # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
-                    # Device = get_device_model()
-                    # if Device.objects.filter(name=role.user.email).exists():
-                    #     message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
-                    #     Device.objects.filter(name=role.user.email).send_message(message)
-                else:
-                    response += "Already exists."
-        return HttpResponse(response)
+#                     # Device = get_device_model()
+#                     # if Device.objects.filter(name=role.user.email).exists():
+#                     #     message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
+#                     #     Device.objects.filter(name=role.user.email).send_message(message)
+#                 else:
+#                     response += "Already exists."
+#         return HttpResponse(response)
 
 
 
