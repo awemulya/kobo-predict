@@ -1476,9 +1476,12 @@ class SitedataSubmissionView(TemplateView):
     def get_context_data(self, **kwargs):
         data = super(SitedataSubmissionView, self).get_context_data(**kwargs)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        type = [(0, 'type0'), (1, 'type1'), (2, 'type2'), (3, 'type3'), ]
         data['pending'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '0')
         data['rejected'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '1')
         data['flagged'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '2')
         data['approved'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '3')
+        data['type'] = self.kwargs.get('type')
+
         return data
 

@@ -23,22 +23,27 @@
 <div class="row">
 <div class="col-md-12">
     <div class="tabbing">
+<script>
+	$( "#{{ type }}" ).addClass( "active" );
 
+</script>
 
     	<ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#rejected" role="tab">Rejected Submission</a>
+              <a class="nav-link " id ="0" data-toggle="tab" href="#rejected" role="tab">Rejected Submission</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#flagged" role="tab">Flagged Submission</a>
+              <a class="nav-link" id ="1"data-toggle="tab" href="#flagged" role="tab">Flagged Submission</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#pending" role="tab">Pending Submission</a>
+              <a class="nav-link" id ="2" data-toggle="tab" href="#pending" role="tab">Pending Submission</a>
             </li>
 			<li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#approved" role="tab">Approved Submission</a>
+              <a class="nav-link" id ="3" data-toggle="tab" href="#approved" role="tab">Approved Submission</a>
             </li>
 		</ul>
+
+
 
 		<div class="tab-content">
 		  	<div id="rejected" class="tab-pane active">
