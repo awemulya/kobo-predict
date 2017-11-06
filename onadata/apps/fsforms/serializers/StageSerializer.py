@@ -74,10 +74,10 @@ class StageSerializer1(serializers.ModelSerializer):
         id = self.context['request'].data.get('id', False)
         api_request = self.context['request']
         with transaction.atomic():
-            sub_stages_data = self.context['request'].data.get('parent')
+            sub_stages_datas = self.context['request'].data.get('parent')
             if not id:
                 stage = Stage.objects.create(**validated_data)
-                for order, ss in enumerate(sub_stages_data):
+                for order, ss in enumerate(sub_stages_datas):
                     ss.pop('id')
                     stage_forms_dict = ss.pop('stage_forms')
                     xf_id = stage_forms_dict['xf']['id']
@@ -105,15 +105,15 @@ class StageSerializer1(serializers.ModelSerializer):
                         ChannelGroup("project-{}".format(fxf.project.id)).send({"text": json.dumps(result)})
                     else:
                         noti = fxf.logs.create(source=api_request.user, type=19, title="Stage",
-                                               organization=fxf.project.organization,
-                                               project = fxf.site.project,
-                                               site = fxf.site,
-                                               content_object = fxf,
-                                               extra_object = fxf.site,
+                                               organization=fxf.site.project.organization,
+                                               project=fxf.site.project,
+                                               site=fxf.site,
+                                               content_object=fxf,
+                                               extra_object=fxf.site,
                                                description='{0} assigned new Stage form  {1} to {2} '.format(
                                                    api_request.user.get_full_name(),
                                                    fxf.xf.title,
-                                                   fxf.project.name
+                                                   fxf.site.name
                                                ))
                         result = {}
                         result['description'] = noti.description
@@ -129,8 +129,8 @@ class StageSerializer1(serializers.ModelSerializer):
                 for attr, value in validated_data.items():
                     setattr(stage, attr, value)
                 stage.save()
-                for order, sub_stage_data in enumerate(sub_stages_data):
-                    old_substage = sub_stage_data.get('id', "")
+                for order, sub_stage_data in enumerate(sub_stages_datas):
+                    old_substage = sub_stage_data.get('id', False)
                     if old_substage:
                         sub_id = sub_stage_data.pop('id')
                         fxf = sub_stage_data.pop('stage_forms')
@@ -154,7 +154,7 @@ class StageSerializer1(serializers.ModelSerializer):
                             #create new fieldsight form
                             FieldSightXF.objects.create(xf_id=xf_id,site=stage.site, project=stage.project, is_staged=True,
                                                 stage=sub_stage)
-                            org = stage.project.organization if stage.project else stage.site.project.organization
+                            # org = stage.project.organization if stage.project else stage.site.project.organization
                             # desc = "deleted form of stage {} substage {} by {}".format(stage.name, sub_stage.name,
                             #                                                            self.context['request'].user.username)
                             # noti = old_fsxf.logs.create(source=self.context['request'].user, type=1, title="form Deleted",

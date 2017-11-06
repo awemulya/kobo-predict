@@ -726,7 +726,6 @@ def generate_export(export_type, extension, username, id_string,
     """
     Create appropriate export object given the export type
     """
-
     export_type_func_map = {
         Export.XLS_EXPORT: 'to_xls_export',
         Export.CSV_EXPORT: 'to_flat_csv_export',
@@ -754,7 +753,7 @@ def generate_export(export_type, extension, username, id_string,
     func = getattr(export_builder, export_type_func_map[export_type])
 
     func.__call__(
-        temp_file.name, records, username, id_string, filter_query)
+        temp_file.name, records, username, id_string, None)
 
     # generate filename
     basename = "%s_%s" % (
@@ -790,41 +789,33 @@ def generate_export(export_type, extension, username, id_string,
     if export_id:
         export = Export.objects.get(id=export_id)
     else:
-        export = Export(xform=xform, export_type=export_type)
+        fsxf = filter_query.values()[0]
+        print("fsxf", fsxf)
+        export = Export(xform=xform, export_type=export_type, fsxf_id=fsxf)
     export.filedir = dir_name
     export.filename = basename
     export.internal_status = Export.SUCCESSFUL
     # dont persist exports that have a filter
     if filter_query is None:
         export.save()
+    export.save()
     return export
 
 
 def query_mongo(username, id_string, query=None, hide_deleted=True):
-    # print("incoming query", query)
-    query = json.loads(query, object_hook=json_util.object_hook)\
-        if query else {}
-    query = dict_for_mongo(query)
-    query[USERFORM_ID] = u'{0}_{1}'.format(username, id_string)
-    # hack the query
-    if hide_deleted:
-        # display only active elements
-        # join existing query with deleted_at_query on an $and
-        query = {"$and": [query, {"_deleted_at": None}]}
-    if query:
-        if query.get('fs_uuid', False):
-            query = {"$and": [query, {'fs_uuid': {'$in': [query.get('fs_uuid'), str(query.get('fs_uuid'))]}}]}
-            # query = {"$and": [query, {"_uuid": query.get('fs_uuid')}, {"fs_uuid": query.get('fs_uuid')}, {"_uuid": str(query.get('fs_uuid'))},
-            #              {"fs_uuid": str(query.get('fs_uuid'))}]}
-            # qry = {"$and": [{"_uuid": query.get('fs_uuid')}, {"fs_uuid": query.get('fs_uuid')}, {"_uuid": str(query.get('fs_uuid'))},
-            #              {"fs_uuid": str(query.get('fs_uuid'))}]}
-        elif query.get('fs_project_uuid', False):
-            query = {"$and": [query, {'fs_project_uuid': {'$in': [query.get('fs_project_uuid'), str(query.get('fs_project_uuid'))]}}]}
-            # qry = {'fs_project_uuid': {'$in': [query.get('fs_project_uuid'), str(query.get('fs_project_uuid'))]}}
-    # else:
-    #     qry = query
-    # print(qry)
-    return xform_instances.find(query)
+    print("incoming query", query)
+    qry = query
+    # query = None
+    # query = json.loads(query, object_hook=json_util.object_hook)\
+        # if query else {}
+    # query = dict_for_mongo(query)
+    # query[USERFORM_ID] = u'{0}_{1}'.format(username, id_string)
+    # if hide_deleted:
+        # query = {"$and": [query, {"_deleted_at": None}]}
+    # query = {"$and": [query, qry]}
+    print(qry)
+    print("cpount", xform_instances.find(qry).count())
+    return xform_instances.find(qry)
 
 
 

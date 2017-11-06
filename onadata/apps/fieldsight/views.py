@@ -57,7 +57,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from .tasks import printrand, multiuserassignproject
+from onadata.apps.fieldsight.tasks import multiuserassignproject
 
 @login_required
 def dashboard(request):
@@ -696,6 +696,7 @@ class SiteDeleteView(SiteView, ProjectRoleMixin, DeleteView):
 @api_view(['POST'])
 def ajax_upload_sites(request, pk):
     form = UploadFileForm(request.POST, request.FILES)
+    print "huaar------"
     if form.is_valid():
         count = 0
         project = Project(pk=pk)
@@ -788,7 +789,7 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
                         type_id = int(site.get("type", "1"))
                         _site, created = Site.objects.get_or_create(identifier=str(site.get("id")),
                                                                     name=site.get("name"),
-                                                                    project=project, type__id=type_id)
+                                                                    project=project, type_id=type_id)
                         _site.phone = site.get("phone")
                         _site.address = site.get("address")
                         _site.public_desc = site.get("public_desc"),
@@ -796,10 +797,11 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
                         _site.location = location
                         _site.save()
                 messages.info(request, 'Site Upload Succesfull')
-                return HttpResponseRedirect(reverse('fieldsight:site-list'))
+                return HttpResponseRedirect(reverse('fieldsight:proj-site-list', kwargs={'pk': pk}))
             except Exception as e:
+                print e
                 form.full_clean()
-                form._errors[NON_FIELD_ERRORS] = form.error_class(['Sites Upload Failed, UnSupported Data'])
+                form._errors[NON_FIELD_ERRORS] = form.error_class(['Sites Upload Failed, UnSupported Data', e])
                 messages.warning(request, 'Site Upload Failed, UnSupported Data ')
         return render(request, 'fieldsight/upload_sites.html', {'form': form, 'project': pk})
 
@@ -1191,9 +1193,16 @@ class ActivateRole(TemplateView):
             invite.is_used = True
             invite.save()
         else:
-            usernameexists = User.objects.filter(username=request.POST.get('username'))
-            if usernameexists:
-                return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'username exists', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
+            username = request.POST.get('username')
+            for i in username:
+                if i.isupper():
+                    return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-3', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
+                    break
+                if not i.isalnum():
+                    return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-1', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
+                    break
+            if User.objects.filter(username=request.POST.get('username')).exists():
+                return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-2', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
 
             user = User(username=request.POST.get('username'), email=invite.email, first_name=request.POST.get('firstname'), last_name=request.POST.get('lastname'))
             user.set_password(request.POST.get('password1'))
@@ -1245,44 +1254,43 @@ def checkusernameexists(request):
 
 class ProjectSummaryReport(TemplateView):
     def get(self, request, pk):
-        # obj = Project.objects.get(pk=self.kwargs.get('pk'))
-        # organization = Organization.objects.get(pk=obj.organization_id)
-        # peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
-        # project_managers = obj.project_roles.select_related('user').filter(group__name__in=["Project Manager"]).distinct('user')
+        obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        organization = Organization.objects.get(pk=obj.organization_id)
+        peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
+        project_managers = obj.project_roles.select_related('user').filter(group__name__in=["Project Manager"]).distinct('user')
 
-        # sites = obj.sites.filter(is_active=True, is_survey=False)
-        # data = serialize('custom_geojson', sites, geometry_field='location',
-        #                  fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
+        sites = obj.sites.filter(is_active=True, is_survey=False)
+        data = serialize('custom_geojson', sites, geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
-        # total_sites = len(sites)
-        # total_survey_sites = obj.sites.filter(is_survey=True).count()
-        # outstanding, flagged, approved, rejected = obj.get_submissions_count()
-        # bar_graph = BarGenerator(sites)
+        total_sites = len(sites)
+        total_survey_sites = obj.sites.filter(is_survey=True).count()
+        outstanding, flagged, approved, rejected = obj.get_submissions_count()
+        bar_graph = BarGenerator(sites)
 
-        # line_chart = LineChartGenerator(obj)
-        # line_chart_data = line_chart.data()
-        # dashboard_data = {
-        #     'sites': sites,
-        #     'obj': obj,
-        #     'peoples_involved': peoples_involved,
-        #     'total_sites': total_sites,
-        #     'total_survey_sites': total_survey_sites,
-        #     'outstanding': outstanding,
-        #     'flagged': flagged,
-        #     'approved': approved,
-        #     'rejected': rejected,
-        #     'data': data,
-        #     'cumulative_data': line_chart_data.values(),
-        #     'cumulative_labels': line_chart_data.keys(),
-        #     'progress_data': bar_graph.data.values(),
-        #     'progress_labels': bar_graph.data.keys(),
-        #     'project_managers':project_managers,
-        #     'organization': organization,
-        #     'total_submissions': line_chart_data.values()[-1],
+        line_chart = LineChartGenerator(obj)
+        line_chart_data = line_chart.data()
+        dashboard_data = {
+            'sites': sites,
+            'obj': obj,
+            'peoples_involved': peoples_involved,
+            'total_sites': total_sites,
+            'total_survey_sites': total_survey_sites,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+            'data': data,
+            'cumulative_data': line_chart_data.values(),
+            'cumulative_labels': line_chart_data.keys(),
+            'progress_data': bar_graph.data.values(),
+            'progress_labels': bar_graph.data.keys(),
+            'project_managers':project_managers,
+            'organization': organization,
+            'total_submissions': line_chart_data.values()[-1],
     
-        # }
-        printrand.delay()
-        # return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)
+        }
+        return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)
 
 class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):

@@ -54,7 +54,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/knockout-sortable.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js?v=1.3"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js?v=2.0"></script>
 
 <script>
 
@@ -257,8 +257,12 @@ var pk = "{{pk}}";
                                     </thead>
                                     <tbody data-bind="foreach: forms">
                                         <tr>
-                                            <td colspan="6">
-                                                <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
+                                            <th scope="row" data-bind="text: $index()+1"></th>
+                                            <td data-bind="text: name"></td>
+                                            <td data-bind="text: date_created"></td>
+                                            <td data-bind="text:responses_count"></td>
+                                            <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> Materials</a>
+                                            <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                                                     <div data-bind="with: em">
                                                       <div class="modal-dialog form-modal" role="document">
                                                         <div class="modal-content">
@@ -337,17 +341,9 @@ var pk = "{{pk}}";
                                                       </div>
                                                     </div>
                                                   </div>
-
                                             </td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row" data-bind='text: $index()+1'</th>
-                                            <td data-bind="text: name"></td>
-                                            <td data-bind="text: date_created"></td>
-                                            <td data-bind="text:responses_count"></td>
-                                            <td><a  title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> </a></td>
                                             <td>
-                                                <a class="badge badge-success" data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}">
+                                                <a href="javascript:void(0);" class="badge badge-success" data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}">
                                                <i class="la la-close" data-bind="visible:is_deployed()==true"></i>
                                                 <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
 
@@ -362,29 +358,82 @@ var pk = "{{pk}}";
                             <div data-bind="with:scheduleVm">
                                 {% csrf_token %}
                                 <div data-bind="with:current_form">
-    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.schedule_form_modal_visibility">
+                                <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.schedule_form_modal_visibility">
+                                  <div class="modal-dialog form-modal" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title">Create Schedule</h4>
+                                      </div>
+                                      <div class="modal-body">
+
+                                          <form method="post">
+                                            <div class="col-sm-12 registration_field">
+                                               {{ general_form.non_field_errors }}
+                                               </div>
+
+                                            {% csrf_token %}
+
+                                              {{schedule_form.as_p}}
+                                              <div class="form-group date1">
+                                                  <label for="start">Start :</label>
+                                                  <input data-bind="datePicker : date_range_start" type="date" id="start">
+                                              </div>
+                                              <div class="form-group date2">
+                                                  <label for="End"> End:</label>
+                                                  <input data-bind="datePicker : date_range_end" type="date" id="End">
+                                              </div>
+                                           <div class="form-group">
+                                              <span style="font-weight: bold;">Days:</span>
+                                                <div data-bind="foreach: $parent.days">
+                                                    <div class="col-sm-1" style="width: 14.28% !important">
+                                                        <span data-bind="text:day"></span>
+                                                    <input type="checkbox" class="day-schedule"
+                                                           data-bind="checkedValue: id, checked: $parent.selected_days">
+                                                        </div>
+                                            </div>
+                                            </div>
+
+                                            <div class="gap-high"></div>
+                                            <button class="btn g btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Create' %}</button>
+
+                                            <div class="gap-medium"></div>
+
+
+                                    </form>
+
+
+
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                </div>
+
+                                  <div data-bind="with:current_schedule">
+
+    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:$parent.schedule_form_edit_modal_visibility">
   <div class="modal-dialog form-modal" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Create Schedule</h4>
+        <h4 class="modal-title">Modify Schedule</h4>
       </div>
       <div class="modal-body">
 
           <form method="post">
-            <div class="col-sm-12 registration_field">
-               {{ general_form.non_field_errors }}
-               </div>
-
             {% csrf_token %}
-              {{schedule_form.as_p}}
+
               <div class="form-group date1">
+                  <label for="name">Schedule Name :</label>
+                  <input data-bind="text : name">
+              </div><div class="form-group date1">
                   <label for="start">Start :</label>
-                  <input data-bind="datePicker : date_range_start" type="date" id="start">
+                  <input data-bind="text : date_range_start" type="date">
               </div>
               <div class="form-group date2">
                   <label for="End"> End:</label>
-                  <input data-bind="datePicker : date_range_end" type="date" id="End">
+                  <input data-bind="text : date_range_end" type="date">
               </div>
            <div class="form-group">
               <span style="font-weight: bold;">Days:</span>
@@ -398,7 +447,7 @@ var pk = "{{pk}}";
             </div>
 
             <div class="gap-high"></div>
-            <button class="btn g btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Create' %}</button>
+            <button class="btn g btn-primary registration__action" type="submit" data-bind="click:save_edit">{% trans 'Modify' %}</button>
 
             <div class="gap-medium"></div>
 
@@ -411,6 +460,7 @@ var pk = "{{pk}}";
     </div>
   </div>
 </div>
+
 </div>
 							<a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:add_form"><i class="la la-upload"></i> Assign New Form</a>
 							<!--Assign Form-->
@@ -548,9 +598,16 @@ var pk = "{{pk}}";
 									</tr>
 								</thead>
 								<tbody data-bind="foreach: forms">
-                                <tr>
-                                    <td colspan="9">
-                                        <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
+									<tr>
+										<th scope="row" data-bind='text: $index()+1'></th>
+										<td data-bind="text: name"></td>
+										<td data-bind="text: form_name"></td>
+										<td data-bind="text: date_range_start"></td>
+										<td data-bind="text: date_range_end"></td>
+										<td data-bind="text: days"></td>
+										<td data-bind="text: responses_count"></td>
+                                        <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> Materials</a>
+                                            <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                         <div data-bind="with: em">
                           <div class="modal-dialog form-modal" role="document">
                             <div class="modal-content">
@@ -637,22 +694,13 @@ var pk = "{{pk}}";
                           </div>
                         </div>
                     </div>
-                                    </td>
-                                </tr>
-									<tr>
-										<th scope="row" data-bind='text: $index()+1'></th>
-										<td data-bind="text: name"></td>
-										<td data-bind="text: form_name"></td>
-										<td data-bind="text: date_range_start"></td>
-										<td data-bind="text: date_range_end"></td>
-										<td data-bind="text: days"></td>
-										<td data-bind="text: responses_count"></td>
-                                        <td><a  title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> </a></td>
+                                        </td>
                                         <td>
-                                            <a role="button" class="badge" data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}">
-                                                <i class="la la-close" data-bind="visible:is_deployed()"></i>
-                                                <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
-											<!--<a class="badge badge-success" href="#" role="button"><i class="la la-edit"></i> Edit</a>-->
+                                            <a href="javascript:void(0);" role="button" class="badge badge-danger" data-bind="click:deploy, visible:is_deployed()== true">
+                                                <i class="la la-close"></i> Undeploy </a>
+                                            <a href="javascript:void(0);" role="button" class="badge badge-success" data-bind="click:deploy, visible:is_deployed()!= true">
+                                                <i class="la la-rocket"></i> Deploy </a>
+
 										</td>
 									</tr>
 								</tbody>
@@ -661,6 +709,13 @@ var pk = "{{pk}}";
 						</div>
 						<div class="tab-pane" id="tab003" role="tabpanel">
                             <div data-bind="with:stagesVm">
+                                <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:add_stage"><i class="la la-plus" aria-hidden="true"></i> {% trans 'Add Stage' %}</a>
+                                <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:reorder_stage"><i class="la la-reorder" aria-hidden="true"></i> {% trans 'Reorder Stages' %}</a>
+                                <a href="javascript:void(0);" title="" class="btn btn-sm btn-success" data-bind="visible:stages().length > 0,
+                                            click: deployStages"><i class="la la-rocket" aria-hidden="true"></i> {% trans 'Deploy to Mobile' %}</a>
+                                {% csrf_token %}
+
+
 
                                 <div class="modal" tabindex="-1" role="dialog" data-bind="modal:stage_order_modal_visibility">
                                         <div class="modal-dialog small-modal" role="document">
@@ -824,7 +879,7 @@ var pk = "{{pk}}";
                                                                   <div class="row">
                                                                   <div class="col-md-1"></div>
                                                                   <div class="col-sm-2">
-                                                                      <a class="manage-button modal-manage square"
+                                                                      <a href="javascript:void(0);" class="badge badge-info"
                                                                          data-bind="click:save_sub_stage, visible:addSubStageMode()">
                                                                           <i class="fa fa-plus" aria-hidden="true"></i> {% trans 'Add' %}</a>
 
@@ -842,36 +897,16 @@ var pk = "{{pk}}";
 
                                           <div class="modal-footer stage-footer">
                                                <div class="col-sm-3">
-                                                <a class="btn btn-primary " style="margin-right:-4px !important;"  data-bind="confirmClick:
-                                                { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }">
-                                                     <i class="fa fa-floppy-o" aria-hidden="true"></i>  {% trans 'Save' %}</a>
+                                                <a href="javascript:void(0);" class="btn btn-primary"  data-bind="click: save">
+                                                     <i class="la la-floppy-o" aria-hidden="true"></i>  {% trans 'Save' %}</a>
                                               </div>
                                           </div>
                                         </div>
                                       </div>
                                     </div>
                                  </div>
-                                <div class="panel-heading">
-                                      <div class="button-row" style="padding: 0px 30px !important;">
-                                          <button class="btn btn-primary square" data-bind="click:add_stage">
-                                                <i class="fa fa-plus" aria-hidden="true"></i>
-                                                {% trans 'Add Stage' %}
-                                            </button>
-                                          <button class="btn btn-primary square" data-bind="click:reorder_stage">
-                                                <i class="fa fa-plus" aria-hidden="true"></i>
-                                                {% trans 'Reorder Stage' %}
-                                            </button>
-                                            {% csrf_token %}
-
-                                            <a class="btn btn-success square" style="font-color:white; float:right;" data-bind="visible:stages().length > 0,
-                                            confirmClick: { message: 'Deploy To Mobile Causes Loss Of All Submission Data OF Previous Stages!  Are you sure?', click: deployStages }">
-                                                <i class="fa fa-upload" aria-hidden="true"></i>
-                                                {% trans 'Deploy to Mobile' %}
-                                            </a>
-                                      </div>
-                                  </div>
-                                <div id="accordion" role="tablist">
-                                  <div class="card margin-bottom" style="width: 95%;" data-bind="foreach:stages">
+                                <div id="accordion" role="tablist" data-bind="foreach:stages">
+                                  <div class="card margin-bottom">
                                     <div class="card-header clearfix" role="tab" data-bind="attr: { id: 'heading_' + $index() }" >
                                         <div class="stage-name" data-toggle="collapse"
                                              aria-expanded="true"
@@ -880,7 +915,7 @@ var pk = "{{pk}}";
                                             <span data-bind="text:name"></span>
                                         </div>
                                         <div class="stage-action">
-                                            <a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:edit"><i class="la la-edit"></i> Edit</a>
+                                            <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:edit"><i class="la la-edit"></i> Edit</a>
                                             <div class="modal fade" id="stageOneEditModal" tabindex="-1" role="dialog" aria-labelledby="stageOneEditModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -900,7 +935,7 @@ var pk = "{{pk}}";
                                                     </div>
                                                 </div>
                                             </div>
-                                            <a title="Delete" data-bind="confirmClick: { message: ' Submissions data of this stage will be lost.\n Are you sure ?',
+                                            <a href="javascript:void(0);" title="Delete" data-bind="confirmClick: { message: ' Submissions data of this stage will be lost.\n Are you sure ?',
                               click: delete_stage }" class="btn btn-sm btn-warning"><i class="la la-close"></i> Delete</a>
                                         </div>
                                     </div>
@@ -910,8 +945,9 @@ var pk = "{{pk}}";
                                       <div class="card-body">
                                         <div class="sub-stages margin-top">
                                             <h3><i class="la la-sitemap"></i> Sub Stages :</h3>
-                                            <ul data-bind="attr: { id: 'substages_' + $index() }">
-                                                <li class="clearfix" data-bind="foreach:parent">
+                                            <ul data-bind="attr: { id: 'substages_' + $index() }, foreach:parent">
+
+                                                <li class="clearfix">
                                                 <br>
                                                     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                                                         <div data-bind="with: em">
@@ -1007,12 +1043,12 @@ var pk = "{{pk}}";
                                                         <span data-bind="text:name"></span>
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
-                                                        <strong>Form Name: </strong> <span data-bind="text:stage_forms().xf().label()"></span>
+                                                        <strong>Form Name: </strong> <span data-bind="text:stage_forms().xf().title()"></span>
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
-                                                        <a title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i> Edit</a>
+                                                        <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i> Edit</a>
 
-                                                        <a href="#" class="badge badge-success" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> Materials</a>
+                                                        <a href="javascript:void(0);"  class="badge badge-success" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> Materials</a>
 
                                                     </div>
                                                     <div class="col-sm-8 substage" data-bind="visible:editable">
@@ -1026,8 +1062,8 @@ var pk = "{{pk}}";
 
                                                             <br>
 
-                                                            <button   data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
-                                                            <button  data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
+                                                            <button data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
+                                                            <button data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
                                                         </div>
 
                                                       </div>
@@ -1035,7 +1071,9 @@ var pk = "{{pk}}";
                                             </ul>
                                         </div>
                                      </div>
-                                      <button type="button" class="btn btn-sm btn-primary margin-top" data-bind="confirmClick: { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }"><i class="la la-save"></i> Save Changes</button>
+                                      <button type="button" class="btn btn-sm btn-primary margin-top"
+                                              data-bind="confirmClick: { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }">
+                                          <i class="la la-save"></i> Save Changes</button>
 
                                     </div>
                                   </div>
@@ -1206,8 +1244,14 @@ var pk = "{{pk}}";
                                     </thead>
                                     <tbody data-bind="foreach: surveyForms">
                                         <tr>
-                                            <td colspan="5">
-                                                <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
+                                            <th scope="row" data-bind='text: $index()+1'></th>
+                                            <td data-bind="text: name"></td>
+                                            <td data-bind="text: date_created"></td>
+                                            <td data-bind="text: responses_count"></td>
+                                            <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> Materials</a>
+
+
+                                            <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                                                     <div data-bind="with: em">
                                                       <div class="modal-dialog form-modal" role="document">
                                                         <div class="modal-content">
@@ -1286,16 +1330,7 @@ var pk = "{{pk}}";
                                                       </div>
                                                     </div>
                                                   </div>
-
                                             </td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row" data-bind='text: $index()+1'></th>
-                                            <td data-bind="text: name"></td>
-                                            <td data-bind="text: date_created"></td>
-                                            <td data-bind="text: responses_count"></td>
-                                            <td><a  title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> </a></td>
-
                                         </tr>
 
                                     </tbody>

@@ -1,5 +1,7 @@
 ### ISSUE 242 TEMPORARY FIX ###
 # See https://github.com/kobotoolbox/kobocat/issues/242
+from __future__ import absolute_import
+import time
 
 from celery import shared_task
 from django.core.management import call_command
@@ -12,3 +14,4 @@ def fix_root_node_names(minimum_instance_id):
     )
 
 ###### END ISSUE 242 FIX ######
+

@@ -1,20 +1,22 @@
-from __future__ import absolute_import
-import time
+from __future__ import absolute_import, unicode_literals
 from celery import shared_task
-from onadata.apps.fieldsight.models import Organization, Project, Site
+
+import time
+from celery import Celery
+from .models import Organization, Project, Site
 from onadata.apps.userrole.models import UserRole
+app = Celery('tasks', backend='redis://localhost:6379/', broker='amqp://guest:guest@localhost:5672/')
 
-
-@shared_task()
-def printr():
+@app.task(name='onadata.apps.fieldsight.tasks.printrand')
+#@shared_task
+def printrand():
     for i in range(10):
         a=str(i) + 'rand'
         time.sleep(5)
         print a
     return ' random users created with success!'
 
-
-@shared_task()
+@app.task(name='onadata.apps.fieldsight.tasks.multiuserassignproject')
 def multiuserassignproject(projects, users, group_id):
     for project_id in projects:
             project = Project.objects.get(pk=project_id)
