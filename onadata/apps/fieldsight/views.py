@@ -139,8 +139,8 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
         projects = Project.objects.filter(organization=obj)
-        total_projects = len(projects)
-        total_sites = len(sites)
+        total_projects = projects.count()
+        total_sites = sites.count()
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
         
 
@@ -181,7 +181,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
-        total_sites = len(sites)
+        total_sites = sites.count()
         total_survey_sites = obj.sites.filter(is_survey=True).count()
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
         bar_graph = BarGenerator(sites)

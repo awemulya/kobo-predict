@@ -243,6 +243,18 @@ var org = "{{obj.pk}}";
 												</form>
 											</div>
 											<!-- ko foreach: sites  -->
+											{% if projects.count == 1%}
+											<a data-bind="attr: { href: url }" class="project-item-wrap clearfix ">
+												<div class="project-logo">
+													 <img data-bind="attr:{src: logo}">
+												</div>
+												<div class="project-basic-info">
+													<h6 class="site-title-org" data-bind="text:name"></h6>
+													<p class="address"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span><span data-bind="text:address"></span></p>
+												<p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span><span data-bind="text:phone"></span></p>
+												</div>
+											</a>
+											{% else %}
 											<a data-bind="attr: { href: url }" class="project-item-wrap clearfix margin-top">
 												<div class="project-logo">
 													 <img data-bind="attr:{src: logo}">
@@ -253,6 +265,7 @@ var org = "{{obj.pk}}";
 												<p class="contact"><span><i class="fa fa-phone" aria-hidden="true"></i></span><span data-bind="text:phone"></span></p>
 												</div>
 											</a>
+											{% endif %}
 										<!-- /ko-->
 										</div>
 									</div>
@@ -278,6 +291,17 @@ var org = "{{obj.pk}}";
 												</form>
 											</div>
 											{% for role in peoples_involved %}
+											{% if peoples.count == 1%}
+											<a href="{% url 'users:profile' role.user.id %"} class="project-item-wrap clearfix ">
+												<div class="project-logo">
+													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
+												</div>
+												<div class="project-basic-info">
+													<h4>{{role.user.get_full_name}}</h4>
+													<p>{{ role.user.email }}</p>
+												</div>
+											</a>
+											{% else %}
 											<a href="{% url 'users:profile' role.user.id %"} class="project-item-wrap clearfix margin-top">
 												<div class="project-logo">
 													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
@@ -287,9 +311,10 @@ var org = "{{obj.pk}}";
 													<p>{{ role.user.email }}</p>
 												</div>
 											</a>
+											{% endif %}
 											{% empty %}
-											 <li>No user assigned to this organization.</li>
-												{% endfor %}
+											No Users in this organization
+											{% endfor %}
 
 										</div>
 									</div>

@@ -236,7 +236,8 @@ var project = "{{obj.pk}}";
 												</form>
 											</div>
 											<!-- ko foreach: sites  -->
-											<a data-bind="attr:{ href: url }" class="project-item-wrap margin-top" style="width: 100%;">
+											{% if sites.count == 1%}
+											<a data-bind="attr:{ href: url }" class="project-item-wrap clearfix " style="width: 100%;">
 												<div class="project-logo">
 													<img data-bind="attr:{src: logo}" width="50" height="50"/>
 												</div>
@@ -257,6 +258,29 @@ var project = "{{obj.pk}}";
 
 												</div>
 											</a>
+											{% else %}
+											<a data-bind="attr:{ href: url }" class="project-item-wrap margin-top clearfix " style="width: 100%;">
+												<div class="project-logo">
+													<img data-bind="attr:{src: logo}" width="50" height="50"/>
+												</div>
+												<div class="project-basic-info">
+													<h4 data-bind="text: name"></h4>
+													<p data-bind="text: address"></p>
+													<!--<span class="space site-label"></span>-->
+																	 <!--<span data-bind="text: name" class="detail-text">-->
+																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
+
+																	 <!--<span class="space site-label"></span>-->
+																	 <!--<span data-bind="text: identifier">-->
+																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
+																	 <!--<br>-->
+																	 <!--<span class="space site-label"></span>-->
+																	 <!--<span data-bind="text: address" class="detail-text1">-->
+																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
+
+												</div>
+											</a>
+											{% endif %}
 											<!-- /ko-->
 										</div>
 									</div>
@@ -306,6 +330,18 @@ var project = "{{obj.pk}}";
 												</form>
 											</div>
                                             {% for role in peoples_involved %}
+											{% if peoples.count == 1 %}
+											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap clearfix">
+												<div class="project-logo">
+													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
+												</div>
+												<div class="project-basic-info">
+													<h4>{{role.user.get_full_name}}</h4>
+													<p>{{ role.user.email }}</p>
+                                                    <p>{{ role.user.phone }}</p>
+												</div>
+											</a>
+											{% else %}
 											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap margin-top clearfix">
 												<div class="project-logo">
 													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
@@ -316,6 +352,9 @@ var project = "{{obj.pk}}";
                                                     <p>{{ role.user.phone }}</p>
 												</div>
 											</a>
+											{% endif %}
+											{% empty %}
+											No Users in this project
                                             {% endfor %}
 											{% if role.has_multiple_project_roles %}
                                             {% for r in role.both_project_roles %}
