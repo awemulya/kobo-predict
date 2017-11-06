@@ -236,29 +236,6 @@ var project = "{{obj.pk}}";
 												</form>
 											</div>
 											<!-- ko foreach: sites  -->
-											{% if count.sites == 1%}
-											<a data-bind="attr:{ href: url }" class="project-item-wrap " style="width: 100%;">
-												<div class="project-logo">
-													<img data-bind="attr:{src: logo}" width="50" height="50"/>
-												</div>
-												<div class="project-basic-info">
-													<h4 data-bind="text: name"></h4>
-													<p data-bind="text: address"></p>
-													<!--<span class="space site-label"></span>-->
-																	 <!--<span data-bind="text: name" class="detail-text">-->
-																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
-
-																	 <!--<span class="space site-label"></span>-->
-																	 <!--<span data-bind="text: identifier">-->
-																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
-																	 <!--<br>-->
-																	 <!--<span class="space site-label"></span>-->
-																	 <!--<span data-bind="text: address" class="detail-text1">-->
-																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
-
-												</div>
-											</a>
-											{% else %}
 											<a data-bind="attr:{ href: url }" class="project-item-wrap margin-top" style="width: 100%;">
 												<div class="project-logo">
 													<img data-bind="attr:{src: logo}" width="50" height="50"/>
@@ -280,7 +257,6 @@ var project = "{{obj.pk}}";
 
 												</div>
 											</a>
-											{% endif %}
 											<!-- /ko-->
 										</div>
 									</div>
