@@ -86,32 +86,32 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 									<ul class="icon-listing clearfix margin-top">
 										<li>
 											<i class="la la-exclamation"></i>
-											<p data-bind="text: get_site_submission_count().rejected">
+											<spam data-bind="text: get_site_submission_count().rejected">
 												
-											</p>
+											</spam>
 										</li>
 										<li>
 											<i class="la la-flag"></i>
-											<p data-bind="text: get_site_submission_count().flagged">
+											<spam data-bind="text: get_site_submission_count().flagged">
 												
-											</p>
+											</spam>
 										</li>
 										<li>
 											<i class="la la-hourglass-half"></i>
-											<p data-bind="text: get_site_submission_count().outstanding">
+											<spam data-bind="text: get_site_submission_count().outstanding">
 												
-											</p>
+											</spam>
 										</li>
 										<li>
 											<i class="la la-thumbs-up"></i>
-											<p data-bind="text: get_site_submission_count().approved">
+											<spam data-bind="text: get_site_submission_count().approved">
 												
-											</p>
+											</spam>
 										</li>
 									</ul>
 								
 							
-							<div class="progress">
+							<div class="progress margin-top">
 							<div class="progress progress-striped active progress-sm" style="width:100%;">  
 						
 							<div class="progress-bar progress-bar-success" role="progressbar" style="" data-bind="style: { width: prog() + '%'}">
@@ -127,26 +127,8 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 							
 								
 							</div>
-
-
 						</div>
-					</div>
-					<!--Pagination-->
-						<!-- <nav class="margin-top" aria-label="page-navigation">
-						  <ul class="pagination justify-content-center">
-							<li class="page-item disabled">
-							  <a class="page-link" href="#" tabindex="-1">Previous</a>
-							</li>
-							<li class="page-item active"><a class="page-link" href="#">1</a></li>
-							<li class="page-item"><a class="page-link" href="#">2</a></li>
-							<li class="page-item"><a class="page-link" href="#">3</a></li>
-							<li class="page-item">
-							  <a class="page-link" href="#">Next</a>
-							</li>
-						  </ul>
-						</nav> -->
-                </section>
-
+					</section>
 			</div>
 {% endblock %}
 {%block extrascript %}

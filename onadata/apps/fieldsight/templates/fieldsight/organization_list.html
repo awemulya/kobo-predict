@@ -2,8 +2,12 @@
 {% load i18n staticfiles %}
 {% load filters %}
 {% block content %}
+{% load pagination_tags %}
+{% load sorting_tags %}
 {% load filters %}
-<div id="main-content" class="padding">
+        {% autosort object_list as sorted_objects %}
+        {% autopaginate object_list 25 as paginated_objects %}
+		<div id="main-content" class="padding">
 				<section class="panel">
                     <header class="panel-heading clearfix">
                         <h3><i class="la la-building"></i>{% block page-title %}{% trans 'Organizations' %}{% endblock %}</h3>
@@ -31,7 +35,7 @@
 						</div>
 						<!--Organization Listing-->
 						<div class="row">
-							 {% for obj in object_list %}
+							 {% for obj in paginated_objects %}
 							<div class="col-md-4 col-sm-6">
 								<div class="organization-item-wrap  margin-top clearfix">
 									<div class="logo">
@@ -50,34 +54,8 @@
 							</div>
 							{% endfor %}
 						</div>
+						{% paginate %}
 					</div>
-					<!--Pagination-->
-					<nav class="margin-top" aria-label="page-navigation">
-					{% if is_paginated %}
-					  <ul class="pagination justify-content-center">
-						{% if page_obj.has_previous %}
-						  <li class="page-item disabled">
-							  <a class="page-link" href="?page={{ page_obj.previous_page_number }}"tabindex="-1">Previous</a>
-						  </li>
-						{% else %}
-						  <li class="page-item disabled"><span>Previous</span></li>
-						{% endif %}
-						{% for i in paginator.page_range %}
-						  {% if page_obj.number == i %}
-							<li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-						  {% else %}
-							<li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-						  {% endif %}
-						{% endfor %}
-						{% if page_obj.has_next %}
-						  <li><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
-						{% else %}
-						  <li class="disabled"><span>Next</span></li>
-						{% endif %}
-					  </ul>
-					{% endif %}
-					</nav>
-
 				</section>
 
 			</div>

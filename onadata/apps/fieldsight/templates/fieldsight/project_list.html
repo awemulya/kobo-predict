@@ -2,12 +2,9 @@
 {% load i18n staticfiles %}
 {% load filters %}
 {% block content %}
- {% load pagination_tags %}
-    {% load sorting_tags %}
-    {% load filters %}
-
-
-
+{% load pagination_tags %}
+{% load sorting_tags %}
+{% load filters %}
         {% autosort object_list as sorted_objects %}
         {% autopaginate object_list 25 as paginated_objects %}
 		<div id="main-content" class="padding">

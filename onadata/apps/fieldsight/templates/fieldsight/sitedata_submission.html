@@ -1,0 +1,156 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{%block extracss %}
+    <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
+    <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
+    <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
+
+{% endblock %}
+
+{% block content %}
+{% load pagination_tags %}
+
+    {% load filters %}
+			<div id="main-content" class="padding" onload="change()">
+
+				<section class="org-profile-body margin-top">
+					<div class="row">
+						<div class="col-md-12">
+							<!-- Nav tabs -->
+							<div class="tabbing margin-top">
+								<!-- Tab panes -->
+								<div class="tab-content">
+								  	<div class="tab-pane active" role="tabpanel">
+									  	<div class="org-site-list">
+											<div class="form-list">
+												<div class="panel panel-default">
+													{% if is_pending %}
+												  	{% autopaginate pending 25 as data %}
+												  	<table class="table table-striped table-hover" style="width:100%;">
+													  	{% for instance in data %}
+													  	<tr>
+														  	<td style="width:60%;">
+															  	<a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+																	<h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
+															 	 </a>
+														  	</td>
+														  	<td>
+															  	<a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
+																<div class="detail-person-time">
+																	<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-user fa-fw"></i>{{ instance.submitted_by }}</span>
+																</div>
+															  	</a>
+														  	</td>
+														  	<td>
+																<div class="detail-person-time">
+																	<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i>{{ instance.date|timesince }}{% trans ' ago' %}</span>
+																</div>
+														  	</td>
+													  	</tr>
+													  	{% empty %}
+														No any pending data to show.
+													  	{% endfor %}
+												  	</table>
+                                                  	{% paginate %}
+													{% endif %}
+													{% if is_rejected %}
+												  	{% autopaginate rejected 25 as data %}
+												  	<table class="table table-striped table-hover" style="width:100%;">
+													  	{% for instance in data %}
+													  	<tr>
+														  	<td style="width:60%;">
+															  	<a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+																	<h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
+															 	 </a>
+														  	</td>
+														  	<td>
+															  	<a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
+																<div class="detail-person-time">
+																	<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-user fa-fw"></i>{{ instance.submitted_by }}</span>
+																</div>
+															  	</a>
+														  	</td>
+														  	<td>
+																<div class="detail-person-time">
+																	<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i>{{ instance.date|timesince }}{% trans ' ago' %}</span>
+																</div>
+														  	</td>
+													  	</tr>
+													  	{% empty %}
+														No any rejected data to show.
+													  	{% endfor %}
+												  	</table>
+                                                  	{% paginate %}
+													{% endif %}
+													{% if is_flagged %}
+												  	{% autopaginate flagged 25 as data %}
+												  	<table class="table table-striped table-hover" style="width:100%;">
+													  	{% for instance in data %}
+													  	<tr>
+														  	<td style="width:60%;">
+															  	<a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+																	<h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
+															 	 </a>
+														  	</td>
+														  	<td>
+															  	<a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
+																<div class="detail-person-time">
+																	<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-user fa-fw"></i>{{ instance.submitted_by }}</span>
+																</div>
+															  	</a>
+														  	</td>
+														  	<td>
+																<div class="detail-person-time">
+																	<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i>{{ instance.date|timesince }}{% trans ' ago' %}</span>
+																</div>
+														  	</td>
+													  	</tr>
+													  	{% empty %}
+														No any flagged data to show.
+													  	{% endfor %}
+												  	</table>
+                                                  	{% paginate %}
+													{% endif %}
+													{% if is_approved %}
+												  	{% autopaginate approved 25 as data %}
+												  	<table class="table table-striped table-hover" style="width:100%;">
+													  	{% for instance in data %}
+													  	<tr>
+														  	<td style="width:60%;">
+															  	<a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+																	<h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
+															 	 </a>
+														  	</td>
+														  	<td>
+															  	<a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
+																<div class="detail-person-time">
+																	<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-user fa-fw"></i>{{ instance.submitted_by }}</span>
+																</div>
+															  	</a>
+														  	</td>
+														  	<td>
+																<div class="detail-person-time">
+																	<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i>{{ instance.date|timesince }}{% trans ' ago' %}</span>
+																</div>
+														  	</td>
+													  	</tr>
+													  	{% empty %}
+														No any approved data to show.
+													  	{% endfor %}
+												  	</table>
+                                                  	{% paginate %}
+													{% endif %}
+											 	</div>
+											</div>
+										</div>
+								  	</div>
+								</div>
+							</div>
+						</div>
+					</div>
+                </section>
+			</div>
+
+{% endblock %}
+

@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
  <!-- SLider css external pravin -slick  -->
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>-->
+    <!--<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>-->
 
 {% endblock %}
 {%block kocript %}
@@ -158,7 +158,7 @@ var project = "{{obj.pk}}";
 					</div>
 					<div class="row">
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="#" class="mini-stat padding-large margin-top clearfix">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk %}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
 								<div class="mini-stat-info">
 									<span>{{rejected}}</span>
@@ -167,7 +167,7 @@ var project = "{{obj.pk}}";
 							</a>
 						</div>
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="#" class="mini-stat padding-large margin-top clearfix">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk %}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
 								<div class="mini-stat-info">
 									<span>{{flagged}}</span>
@@ -176,22 +176,22 @@ var project = "{{obj.pk}}";
 							</a>
 						</div>
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<div class="mini-stat padding-large margin-top clearfix">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk %}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
 								<div class="mini-stat-info">
 									<span>{{outstanding }}</span>
 									{% trans 'Pending Submissions' %}
 								</div>
-							</div>
+							</a>
 						</div>
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<div class="mini-stat padding-large margin-top clearfix">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk %}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-thumbs-up"></i></span>
 								<div class="mini-stat-info">
 									<span>{{approved}}</span>
 									{% trans 'Approved Submissions' %}
 								</div>
-							</div>
+							</a>
 						</div>
 					</div>
 					<div class="row">
@@ -235,9 +235,8 @@ var project = "{{obj.pk}}";
 													</div>
 												</form>
 											</div>
-											<div  data-bind="foreach: sites">
-											<div class='adv-table row col-md-12'>
-											<a data-bind="attr:{ href: url }" class="project-item-wrap " style="width: 100%;">
+											<!-- ko foreach: sites  -->
+											<a data-bind="attr:{ href: url }" class="project-item-wrap margin-top" style="width: 100%;">
 												<div class="project-logo">
 													<img data-bind="attr:{src: logo}" width="50" height="50"/>
 												</div>
@@ -258,9 +257,7 @@ var project = "{{obj.pk}}";
 
 												</div>
 											</a>
-											</div>
-											</div>
-
+											<!-- /ko-->
 										</div>
 									</div>
 								</div>
@@ -309,7 +306,7 @@ var project = "{{obj.pk}}";
 												</form>
 											</div>
                                             {% for role in peoples_involved %}
-											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap clearfix">
+											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap margin-top clearfix">
 												<div class="project-logo">
 													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
 												</div>
@@ -338,7 +335,7 @@ var project = "{{obj.pk}}";
 										<!--<div class="scrollingSlider">-->
 											<!--<div>-->
 												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
+													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}" img-title="test Title1">-->
 												<!--</div>-->
 											<!--</div>-->
 											<!--<div>-->
@@ -442,7 +439,7 @@ var project = "{{obj.pk}}";
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/textLabel.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.markercluster-src.js"></script>
 <!--script for slider pravin-slick-->
-    <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+    <!--<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>-->
     <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
   	<script type="text/javascript">
     var static_url ="{{ STATIC_URL }}";

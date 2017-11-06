@@ -74,10 +74,10 @@ class StageSerializer1(serializers.ModelSerializer):
         id = self.context['request'].data.get('id', False)
         api_request = self.context['request']
         with transaction.atomic():
-            sub_stages_data = self.context['request'].data.get('parent')
+            sub_stages_datas = self.context['request'].data.get('parent')
             if not id:
                 stage = Stage.objects.create(**validated_data)
-                for order, ss in enumerate(sub_stages_data):
+                for order, ss in enumerate(sub_stages_datas):
                     ss.pop('id')
                     stage_forms_dict = ss.pop('stage_forms')
                     xf_id = stage_forms_dict['xf']['id']
@@ -129,7 +129,7 @@ class StageSerializer1(serializers.ModelSerializer):
                 for attr, value in validated_data.items():
                     setattr(stage, attr, value)
                 stage.save()
-                for order, sub_stage_data in enumerate(sub_stages_data):
+                for order, sub_stage_data in enumerate(sub_stages_datas):
                     old_substage = sub_stage_data.get('id', False)
                     if old_substage:
                         sub_id = sub_stage_data.pop('id')
