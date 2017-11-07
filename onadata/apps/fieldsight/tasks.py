@@ -18,7 +18,7 @@ def printr():
     return ' random users created with success!'
 
 @shared_task()
-def bulkuploadsites(user, file, pk):
+def bulkuploadsites(source_user, file, pk):
     time.sleep(5)
     try:
         sites = file.get_records()
@@ -42,14 +42,14 @@ def bulkuploadsites(user, file, pk):
                 _site.logo = "logo/default-org.jpg"
                 _site.save()
                 # print _site
-            noti = project.logs.create(source=user, type=12, title="Bulk Sites",
+            noti = project.logs.create(source=source_user, type=12, title="Bulk Sites",
                                        organization=project.organization,
                                        project=project, content_object=project,
                                        extra_message=str(count) + " Sites")
             result={}
             result['id']= noti.id,
-            result['source_name']= user.username,
-            result['source_img']= user.user_profile.profile_picture.url,
+            result['source_name']= source_user.username,
+            result['source_img']= source_user.user_profile.profile_picture.url,
             result['get_source_url']= noti.get_source_url(),
             result['get_event_name']= project.name,
             result['get_event_url']= noti.get_event_url(),
@@ -60,18 +60,18 @@ def bulkuploadsites(user, file, pk):
             result['date']= str(noti.date),
             result['extra_message']= str(count)+" Sites",
             result['seen_by']= [],
-            ChannelGroup("notif-user-{}".format(user.id)).send({"text": json.dumps(result)})
+            ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
             # ChannelGroup("project-{}".format(project.id)).send({"text": json.dumps(result)})
             print 'sucess--------' + str(count)
     except Exception as e:
         print 'Site Upload Unsuccesfull. %s' % e
-        noti = project.logs.create(source=user, type=412, title="Bulk Sites",
-                                       content_object=project, recipient=user,
+        noti = project.logs.create(source=source_user, type=412, title="Bulk Sites",
+                                       content_object=project, recipient=source_user,
                                        extra_message=str(count) + " Sites")
         result={}
         result['id']= noti.id,
-        result['source_name']= user.username,
-        result['source_img']= user.user_profile.profile_picture.url,
+        result['source_name']= source_user.username,
+        result['source_img']= source_user.user_profile.profile_picture.url,
         result['get_source_url']= noti.get_source_url(),
         result['get_event_name']= project.name,
         result['get_event_url']= noti.get_event_url(),
@@ -82,13 +82,18 @@ def bulkuploadsites(user, file, pk):
         result['date']= str(noti.date),
         result['extra_message']= str(count)+" Sites",
         result['seen_by']= [],
-        ChannelGroup("notif-user-{}".format(user.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
         return None
 
 @shared_task()
-def multiuserassignproject(projects, users, group_id):
+def multiuserassignproject(source_user, projects, users, group_id):
     try:
         with transaction.atomic():
+            roles_created = 0
+            
+            projects_count = len(projects)
+            users_count = len(users)
+
             for project_id in projects:
                     project = Project.objects.get(pk=project_id)
                     for user in users:
@@ -96,8 +101,9 @@ def multiuserassignproject(projects, users, group_id):
                                                                        organization_id=project.organization.id,
                                                                        group_id=group_id, ended_at=None)
                         if created:
-                            description = "{0} was assigned  as Project Manager in {1}".format(
-                                role.user.get_full_name(), role.project)
+                            roles_created += 1
+                            # description = "{0} was assigned  as Project Manager in {1}".format(
+                                # role.user.get_full_name(), role.project)
                             # noti = role.logs.create(source=role.user, type=6, title=description, description=description,
                             #  content_object=role.project, extra_object=self.request.user)
                             # result = {}
@@ -106,43 +112,64 @@ def multiuserassignproject(projects, users, group_id):
                             # ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
                             # ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
                             # ChannelGroup("notify-0").send({"text": json.dumps(result)})
-    except Exception as e:
-        noti = role.logs.create(source=user, type=412, title="Bulk Sites",
-                                       content_object=project, recipient=user,
-                                       extra_message=str(count) + " Sites")
+        noti = role.logs.create(source=source_user, type=21, title="Bulk Project User Assign",
+                                       content_object=project, recipient=source_user,
+                                       extra_message=str(roles_created) + " new Project Manager Roles in " + str(projects_count) + " projects ")
         result={}
         result['id']= noti.id,
-        result['source_name']= user.username,
-        result['source_img']= user.user_profile.profile_picture.url,
+        result['source_name']= source_user.username,
+        result['source_img']= source_user.user_profile.profile_picture.url,
         result['get_source_url']= noti.get_source_url(),
-        result['get_event_name']= project.name,
+        result['get_event_name']= noti.get_event_name(),
         result['get_event_url']= noti.get_event_url(),
         result['get_extraobj_name']= None,
         result['get_extraobj_url']= None,
         result['get_absolute_url']= noti.get_absolute_url(),
-        result['type']= 412,
+        result['type']= 21,
         result['date']= str(noti.date),
-        result['extra_message']= str(count)+" Sites",
+        result['extra_message']= str(roles_created) + " new Project Manager Roles in " + str(projects_count) + " projects ",
         result['seen_by']= [],
-        ChannelGroup("notif-user-{}".format(user.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
+
+    except Exception as e:
+        noti = role.logs.create(source=source_user, type=421, title="Bulk Project User Assign",
+                                       content_object=project, recipient=source_user,
+                                       extra_message=str(users_count)+" people in "+str(projects_count)+" projects ")
+        result={}
+        result['id']= noti.id,
+        result['source_name']= source_user.username,
+        result['source_img']= source_user.user_profile.profile_picture.url,
+        result['get_source_url']= noti.get_source_url(),
+        result['get_event_name']= noti.get_event_name(),
+        result['get_event_url']= noti.get_event_url(),
+        result['get_extraobj_name']= None,
+        result['get_extraobj_url']= None,
+        result['get_absolute_url']= noti.get_absolute_url(),
+        result['type']= 421,
+        result['date']= str(noti.date),
+        result['extra_message']= str(users_count)+" people in "+str(projects_count)+" projects ",
+        result['seen_by']= [],
+        ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
         return None
 
 @shared_task()
-def multiuserassignsite(sites, users, group_id):
+def multiuserassignsite(source_user, sites, users, group_id):
     try:
         with transaction.atomic():
-            response = ""
+            sites_count = len(sites)
+            users_count = len(users)
+            group_name = Group.objects.get(pk=group_id).name
             for site_id in sites:
                 site = Site.objects.get(pk=site_id)
                 for user in users:
                   
                     role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
                                                                    project__id=site.project.id, organization__id=site.project.organization_id, group_id=group_id, ended_at=None)
-                    if created:
+                    # if created:
                    
                         # description = "{0} was assigned  as {1} in {2}".format(
                         #     role.user.get_full_name(), role.lgroup.name, role.project)
-                        noti_type = 8
+                        # noti_type = 8
 
                         # if data.get('group') == "Reviewer":
                         #     noti_type =7
@@ -162,25 +189,42 @@ def multiuserassignsite(sites, users, group_id):
                         # if Device.objects.filter(name=role.user.email).exists():
                         #     message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
                         #     Device.objects.filter(name=role.user.email).send_message(message)
-                    else:
-                        response += "Already exists."
-    except Exception as e:
-        noti = role.logs.create(source=user, type=412, title="Bulk Sites",
-                                       content_object=project, recipient=user,
-                                       extra_message=str(count) + " Sites")
+
+        noti = role.logs.create(source=source_user, type=22, title="Bulk site User Assign",
+                                       content_object=site, recipient=source_user,
+                                       extra_message=str(roles_created) + " new "+ group_name +" Roles in " + str(sites_count) + " sites ")
         result={}
         result['id']= noti.id,
-        result['source_name']= user.username,
-        result['source_img']= user.user_profile.profile_picture.url,
+        result['source_name']= source_user.username,
+        result['source_img']= source_user.user_profile.profile_picture.url,
         result['get_source_url']= noti.get_source_url(),
-        result['get_event_name']= project.name,
+        result['get_event_name']= noti.get_event_name(),
         result['get_event_url']= noti.get_event_url(),
         result['get_extraobj_name']= None,
         result['get_extraobj_url']= None,
         result['get_absolute_url']= noti.get_absolute_url(),
-        result['type']= 412,
+        result['type']= 22,
         result['date']= str(noti.date),
-        result['extra_message']= str(count)+" Sites",
+        result['extra_message']= str(roles_created) + " new "+ group_name +" Roles in " + str(sites_count) + " sites ",
         result['seen_by']= [],
-        ChannelGroup("notif-user-{}".format(user.id)).send({"text": json.dumps(result)})
+        ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
+    except Exception as e:
+        noti = role.logs.create(source=source_user, type=422, title="Bulk Sites",
+                                       content_object=project, recipient=source_user,
+                                       extra_message=group_name +" for "+str(users_count)+" people in "+str(projects_count)+" sites ")
+        result={}
+        result['id']= noti.id,
+        result['source_name']= source_user.username,
+        result['source_img']= source_user.user_profile.profile_picture.url,
+        result['get_source_url']= noti.get_source_url(),
+        result['get_event_name']= noti.get_event_name(),
+        result['get_event_url']= noti.get_event_url(),
+        result['get_extraobj_name']= None,
+        result['get_extraobj_url']= None,
+        result['get_absolute_url']= noti.get_absolute_url(),
+        result['type']= 422,
+        result['date']= str(noti.date),
+        result['extra_message']= group_name +" for "+str(users_count)+" people in "+str(projects_count)+" sites ",
+        result['seen_by']= [],
+        ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
         return None

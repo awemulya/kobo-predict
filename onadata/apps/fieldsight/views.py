@@ -1305,7 +1305,8 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         sites = data.get('sites')
         users = data.get('users')
         group = Group.objects.get(name=data.get('group'))
-        multiuserassignsite.delay(sites, users, group.id)
+        user = request.user
+        multiuserassignsite.delay(user, sites, users, group.id)
         return HttpResponse('sucess')
 
 # class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
@@ -1367,7 +1368,9 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
      
 
         group_id = Group.objects.get(name="Project Manager").id
-        multiuserassignproject.delay(projects, users, group_id)
+        user = request.user
+        print user
+        multiuserassignproject.delay(user, projects, users, group_id)
         return HttpResponse("Sucess")
 
 #May need it

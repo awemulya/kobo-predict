@@ -10,12 +10,12 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>
         {% block whole_title %}
-
+		{% endblock %}
             {% block title %}{% trans 'Fieldsight' %}
 
-        {% endblock %}{% endblock %}
+        {% endblock %}
 		</title>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	
 
 		<!--Core CSS -->
 	<link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
@@ -28,7 +28,7 @@
     	}
     </style>
 	
-	
+		
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		{%block extracss %}
@@ -45,10 +45,8 @@
 		<script type="text/javascript" src="{{ STATIC_URL }}js/ko_lib.js?v=1.3.1" ></script>
 		{%block kocript %}
     	{% endblock %}
-    	<script type="text/javascript">
-    		var noticount = 0;
-    		var noti_action = "";
-    	</script>
+    	
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	</head>
     <body>
         <!--[if lt IE 8]>
@@ -203,46 +201,6 @@
 			$(document).ready(function(){
 
 				$(".widget-scolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
-
-				$('.scrollingSlider').slick({
-				  slidesToShow: 4,
-				  arrows: false,
-				  autoplay : true,
-				  infinite: false,
-				  responsive: [
-					{
-					  breakpoint: 768,
-					  settings: {
-						arrows: false,
-						slidesToShow: 3
-					  }
-					},
-					{
-					  breakpoint: 480,
-					  settings: {
-						arrows: false,
-						centerMode: true,
-						slidesToShow: 1
-					  }
-					}
-				  ]
-				});
-				$('.photo-item img').on('click',function(){
-					var title = $(this).attr('img-title');
-					var src = $(this).attr('src');
-					var img = '<img src="' + src + '" class="img-responsive"/>';
-					var html = '';
-					html += img;
-					$('#myModalLabel').modal();
-					$('#myModalLabel').on('shown.bs.modal', function(){
-						$('#myModalLabel .modal-header .modal-title').html(title);
-						$('#myModalLabel .modal-body').html(html);
-					})
-					$('#myModalLabel').on('hidden.bs.modal', function(){
-						$('#myModalLabel .modal-header .modal-title').html('');
-						$('#myModalLabel .modal-body').html('');
-					});
-				});
 			});
 
 
@@ -253,6 +211,9 @@
 			var url = '{% url 'eventlog:api-not' %}'
 			var url_count = '{% url 'eventlog:api-not-count' %}'
 			var user_id = {{ request.user.id }};
+			var noticount = 0;
+    		var noti_action = "";
+    		var request_isfirst = "true";
 			document.onload = getnotifcount();
 
 			function getnotifcount(){
@@ -260,6 +221,7 @@
 			        url: url_count,
 			        type: 'GET',
 			        success: function (data) {
+
 			          $( ".not_count" ).append( data.count );
 			          noticount = parseInt(data.count);
 
@@ -300,7 +262,7 @@
 
 			    // div.innerHTML += new_li;
 			    speed = speed+200;
-			$("#notification-ul").html( "" );
+			
 			if(noti_action == "append"){
 				$(new_li).prependTo("#notification-ul");
 				$("#"+data.id).fadeIn(speed);
@@ -312,17 +274,23 @@
 		}
 
 	function getnotifdata(){ 
-
-
+		if(request_isfirst == "false"){
+			return false;
+			
+		}
           $.ajax({
             url: url,
             type: 'GET',
             success: function (data) {
+               $("#notification-ul").html( "" );
                data.results.forEach(populatelist);
+               request_isfirst = "false";
+               noti_action == "append"
                // for (i = 0; i < 6; i++) {
                //      populatelist(data.results[i], i);
                //  } 
                speed=0;
+
 
             }
           });
@@ -373,9 +341,8 @@ webSocketBridgeNotifyUser.listen(function(text, byte) {
     console.log(text);
     noticount += 1;
     $( ".not_count" ).html( noticount );
-    noti_action = "append";
    	populatelist(text, 0);
-
+   	noti_action == "";
    	//-------------for desktop notification--------------------
 
 		     if (Notification.permission !== "granted")
@@ -383,9 +350,10 @@ webSocketBridgeNotifyUser.listen(function(text, byte) {
 			  else {
 			  	var typeofnoti = text.type;
 			  	var body_content = types[typeofnoti](text);
+			  	var text = jQuery(body_content).text();
 			    var notification = new Notification('Notification', {
 			      icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
-			      body: body_content,
+			      body: text,
 			    });
 
 			    notification.onclick = function () {
