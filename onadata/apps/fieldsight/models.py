@@ -89,6 +89,33 @@ class Organization(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def status(self):
+        if self.organization_instances.filter(form_status=1).count():
+            return 1
+        elif self.organization_instances.filter(form_status=2).count():
+            return 2
+        elif self.organization_instances.filter(form_status=0).count():
+            return 0
+        elif self.organization_instances.filter(form_status=3).count():
+            return 3
+        return 4
+
+    def get_organization_submission(self):
+        instances = self.organization_instances.all().order_by('-date')
+        outstanding, flagged, approved, rejected = [], [], [], []
+        for submission in instances:
+            if submission.form_status == 0:
+                outstanding.append(submission)
+            elif submission.form_status == 1:
+                rejected.append(submission)
+            elif submission.form_status == 2:
+                flagged.append(submission)
+            elif submission.form_status == 3:
+                approved.append(submission)
+
+        return outstanding, flagged, approved, rejected
+
     def get_submissions_count(self):
         from onadata.apps.fsforms.models import FInstance
         outstanding = FInstance.objects.filter(project__organization=self, form_status=0).count()
