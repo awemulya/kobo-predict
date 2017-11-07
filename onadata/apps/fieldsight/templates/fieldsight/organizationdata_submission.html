@@ -19,7 +19,15 @@
 {% load pagination_tags %}
 
     {% load filters %}
-<div id="main-content" class="padding">
+    <script>
+    $(document).ready(function(){
+	$( "#{{ type }}" ).addClass( "active" );
+	$( "#tab{{ type }}" ).addClass( "active" );
+	$( "#main-content" ).show();
+	$("#pg").addClass("blue");
+});
+</script>
+<div id="main-content" class="padding" style="display:none;">
 <div class="row">
 <div class="col-md-12">
     <div class="tabbing">
@@ -27,21 +35,23 @@
 
     	<ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#rejected" role="tab">Rejected Submission</a>
+              <a class="nav-link " id ="0" data-toggle="tab" href="#tab0" role="tab">Rejected Submission</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#flagged" role="tab">Flagged Submission</a>
+              <a class="nav-link" id ="1" data-toggle="tab" href="#tab1" role="tab">Flagged Submission</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#pending" role="tab">Pending Submission</a>
+              <a class="nav-link" id ="2" data-toggle="tab" href="#tab2" role="tab">Pending Submission</a>
             </li>
 			<li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#approved" role="tab">Approved Submission</a>
+              <a class="nav-link" id ="3" data-toggle="tab" href="#tab3" role="tab">Approved Submission</a>
             </li>
 		</ul>
 
+
+
 		<div class="tab-content">
-		  	<div id="rejected" class="tab-pane active">
+		  	<div id="tab0" class="tab-pane">
 			{% autopaginate rejected 25 as data %}
 			<table class="table table-striped table-hover" style="width:100%;">
 				{% for instance in data %}
@@ -72,7 +82,7 @@
 		  </div>
 
 
-		  <div id="flagged" class="tab-pane fade">
+		  <div id="tab1" class="tab-pane">
 			  {% autopaginate flagged 25 as data %}
 			  <table class="table table-striped table-hover" style="width:100%;">
 				  {% for instance in data %}
@@ -105,7 +115,7 @@
 		  </div>
 
 
-		  <div id="pending" class="tab-pane fade">
+		  <div id="tab2" class="tab-pane">
 			  {% autopaginate pending 25 as data %}
 			  <table class="table table-striped table-hover" style="width:100%;">
 				  {% for instance in data %}
@@ -136,7 +146,7 @@
 
 		  </div>
 
-		  <div id="approved" class="tab-pane fade">
+		  <div id="tab3" class="tab-pane">
 			  {% autopaginate approved 25 as data %}
 			  <table class="table table-striped table-hover" style="width:100%;">
 				  {% for instance in data %}

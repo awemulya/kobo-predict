@@ -1466,10 +1466,12 @@ class OrganizationdataSubmissionView(TemplateView):
     def get_context_data(self, **kwargs):
         data = super(OrganizationdataSubmissionView, self).get_context_data(**kwargs)
         obj = Organization.objects.get(pk=self.kwargs.get('pk'))
-        data['pending'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='0')
-        data['rejected'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='1')
-        data['flagged'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='2')
-        data['approved'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='3')
+        data['pending'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='0')
+        data['rejected'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='1')
+        data['flagged'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='2')
+        data['approved'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='3')
+        data['type'] = self.kwargs.get('type')
+
         return data
 
 
@@ -1479,10 +1481,12 @@ class ProjectdataSubmissionView(ProjectRoleMixin, TemplateView):
     def get_context_data(self, **kwargs):
         data = super(ProjectdataSubmissionView, self).get_context_data(**kwargs)
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
-        data['pending'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='0')
-        data['rejected'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='1')
-        data['flagged'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='2')
-        data['approved'] = FInstance.objects.filter(site_id=self.kwargs.get('pk'), form_status='3')
+        data['pending'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='0')
+        data['rejected'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='1')
+        data['flagged'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='2')
+        data['approved'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='3')
+        data['type'] = self.kwargs.get('type')
+
         return data
 
 
