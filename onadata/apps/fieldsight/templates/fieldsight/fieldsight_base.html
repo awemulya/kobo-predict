@@ -5,6 +5,7 @@
 <!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"  lang="en"> <!--<![endif]-->
     <head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         {% load staticfiles %}
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -46,7 +47,7 @@
 		{%block kocript %}
     	{% endblock %}
     	
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    
 	</head>
     <body>
         <!--[if lt IE 8]>
@@ -201,13 +202,14 @@
 			$(document).ready(function(){
 
 				$(".widget-scolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+
 			});
 
 
 
 		</script>
 
-<script>
+		<script>
 			var url = '{% url 'eventlog:api-not' %}'
 			var url_count = '{% url 'eventlog:api-not-count' %}'
 			var user_id = {{ request.user.id }};

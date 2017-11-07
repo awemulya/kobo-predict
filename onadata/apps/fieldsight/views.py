@@ -139,8 +139,8 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
         projects = Project.objects.filter(organization=obj)
-        total_projects = len(projects)
-        total_sites = len(sites)
+        total_projects = projects.count()
+        total_sites = sites.count()
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
         
 
@@ -181,7 +181,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
-        total_sites = len(sites)
+        total_sites = sites.count()
         total_survey_sites = obj.sites.filter(is_survey=True).count()
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
         bar_graph = BarGenerator(sites)
@@ -1446,6 +1446,19 @@ class ProjFullmap(ProjectRoleMixin, TemplateView):
         }
         return dashboard_data
 
+class SiteFullmap(ReviewerRoleMixin, TemplateView):
+    template_name = "fieldsight/map.html"
+
+    def get_context_data(self, **kwargs):
+        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        data = serialize('full_detail_geojson', [obj], geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+        dashboard_data = {
+
+            'data': data,
+        }
+        return dashboard_data
+
 
 class OrganizationdataSubmissionView(TemplateView):
     template_name = "fieldsight/organizationdata_submission.html"
@@ -1483,5 +1496,7 @@ class SitedataSubmissionView(TemplateView):
         data['rejected'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '1')
         data['flagged'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '2')
         data['approved'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '3')
+        data['type'] = self.kwargs.get('type')
+
         return data
 
