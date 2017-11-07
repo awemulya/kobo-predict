@@ -1443,6 +1443,19 @@ class ProjFullmap(ProjectRoleMixin, TemplateView):
         }
         return dashboard_data
 
+class SiteFullmap(ReviewerRoleMixin, TemplateView):
+    template_name = "fieldsight/map.html"
+
+    def get_context_data(self, **kwargs):
+        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        data = serialize('full_detail_geojson', [obj], geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+        dashboard_data = {
+
+            'data': data,
+        }
+        return dashboard_data
+
 
 class OrganizationdataSubmissionView(TemplateView):
     template_name = "fieldsight/organizationdata_submission.html"
