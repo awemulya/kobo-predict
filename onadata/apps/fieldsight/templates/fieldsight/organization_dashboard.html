@@ -290,8 +290,9 @@ var org = "{{obj.pk}}";
 													</div>
 												</form>
 											</div>
-											{% for role in peoples_involved %}
-											{% if peoples.count == 1%}
+											{% if roles_org %}
+											{% for role in roles_org %}
+											{% if roles_org.count == 1%}
 											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap clearfix">
 												<div class="project-logo">
 													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
@@ -314,9 +315,8 @@ var org = "{{obj.pk}}";
 												</div>
 											</a>
 											{% endif %}
-											{% empty %}
-											No Users in this organization
 											{% endfor %}
+											{% endif %}
 
 										</div>
 									</div>

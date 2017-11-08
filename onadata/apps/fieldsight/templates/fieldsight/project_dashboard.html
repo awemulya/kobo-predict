@@ -329,7 +329,7 @@ var project = "{{obj.pk}}";
 													</div>
 												</form>
 											</div>
-                                            {% for role in peoples_involved %}
+											{% for role in peoples_involved %}
 											{% if peoples.count == 1 %}
 											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap clearfix">
 												<div class="project-logo">
