@@ -82,10 +82,10 @@
 														<p>{{ role.organization.address }}</p>
 													</div>
 												</div>
-												</a>
 											</div>
+										</a>
 										{% endfor %}
-											
+
 							
 										</div>
 										
@@ -103,18 +103,21 @@
 										<div class="row">
 										{% for role in roles_project %}
 										<a href="{% url 'fieldsight:project-dashboard' role.project.pk %}" title="">
-											<div class="col-lg-6 col-md-12" style="margin-top:10px;">
+											<div class="col-lg-12 col-md-12" style="margin-top:10px;">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{% if role.project.logo %}{{ role.project.logo.url }}{% else %}{% static 'dummy/assets/img/default-org.jpg' %}{% endif %}" alt="" width="50" height="50">
 													</div>
 													<div class="project-basic-info">
 														<h4>{{ role.project.name }}</h4>
-														<p>{{ role.project.address }}</p>
+														<p>{{ role.project.address }}</p><br><br>
+														<p><strong>Organization Name:</strong>{{ role.project.organization.name }}</p>
+														<p><strong>Organization Address:</strong>{{ role.project.organization.address }}</p>
+														<p><strong>Organization Phone:</strong>{{ role.project.organization.phone }}</p>
 													</div>
 												</div>
-												</a>
 											</div>
+											</a>
 										{% endfor %}
 										</div>
 									</div>
@@ -131,18 +134,21 @@
 										<div class="row">
 											{% for role in roles_reviewer %}
 											<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
-											<div class="col-lg-6 col-md-12" style="margin-top:10px;">
+											<div class="col-lg-12 col-md-12" style="margin-top:10px;">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{% if role.site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default-org.jpg' %}{% endif %}" alt="" width="50" height="50">
 													</div>
 													<div class="project-basic-info">
 														<h4>{{ role.site.name }}</h4>
-														<p>{{ role.site.address }}</p>
+														<p>{{ role.site.address }}</p><br><br>
+														<p><strong>Project Name:</strong>{{ role.site.project.name }}</p>
+														<p><strong>Project Address:</strong>{{ role.site.project.address }}</p>
+														<p><strong>Project Phone:</strong>{{ role.site.project.phone }}</p>
 													</div>
 												</div>
-												</a>
 											</div>
+											</a>
 											{% endfor %}
 										</div>
 									</div>
@@ -160,18 +166,21 @@
 										<div class="row">
 											{% for role in roles_SA %}
 											<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
-											<div class="col-lg-6 col-md-12" style="margin-top:10px;">
+											<div class="col-lg-12 col-md-12" style="margin-top:10px;">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{% if role.site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default-org.jpg' %}{% endif %}" alt="" width="50" height="50">
 													</div>
 													<div class="project-basic-info">
 														<h4>{{ role.site.name }}</h4>
-														<p>{{ role.site.address }}</p>
+														<p>{{ role.site.address }}</p><br><br>
+														<p><strong>Project Name:</strong>{{ role.site.project.name }}</p>
+														<p><strong>Project Address:</strong>{{ role.site.project.address }}</p>
+														<p><strong>Project Phone:</strong>{{ role.site.project.phone }}</p>
 													</div>
 												</div>
-												</a>
 											</div>
+											</a>
 											{% endfor %}
 										</div>
 									</div>
@@ -229,7 +238,5 @@
 				
 			</div>
 
-                </section>
 
-			</div>
 {% endblock %}
