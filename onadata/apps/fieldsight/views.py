@@ -1300,13 +1300,13 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         project_obj = Project.objects.get(pk=pk)
         return render(request, 'fieldsight/multi_user_assign.html',{'type': "site", 'pk':pk})
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, pk, *args, **kwargs):
         data = json.loads(self.request.body)
         sites = data.get('sites')
         users = data.get('users')
         group = Group.objects.get(name=data.get('group'))
         user = request.user
-        multiuserassignsite.delay(user, sites, users, group.id)
+        multiuserassignsite.delay(user, pk, sites, users, group.id)
         return HttpResponse('sucess')
 
 # class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
@@ -1361,7 +1361,7 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
         org_obj = Organization.objects.get(pk=pk)
         return render(request, 'fieldsight/multi_user_assign.html',{'type': "project", 'pk':pk})
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, pk, *args, **kwargs):
         data = json.loads(self.request.body)
         projects = data.get('projects')
         users = data.get('users')
@@ -1370,7 +1370,7 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
         group_id = Group.objects.get(name="Project Manager").id
         user = request.user
         print user
-        multiuserassignproject.delay(user, projects, users, group_id)
+        multiuserassignproject.delay(user, pk, projects, users, group_id)
         return HttpResponse("Sucess")
 
 #May need it
