@@ -35,8 +35,31 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 <div id="main-content" class="padding">
 				<section class="panel">
                     <header class="panel-heading clearfix">
+                    <div class="panel-heading">
                         <h3><i class="la la-map-marker"></i>Sites</h3>
-						<div class="panel-heading-right">
+					</div>	
+						<div class="col-md-6">
+						
+							<select name ="sortby" class="form-control no-btn-search" data-bind="value:sortby, valueUpdate:'afterkeydown'">
+							<option value="sitename" disabled selected>Select your option</option>
+								<option value="rejected">Rejected</option>
+								<option value="flagged">Flagged</option>
+								<option value="pending">Pending</option>
+								<option value="approved">Approved</option>
+								<option value="progress">Progress</option>
+								<option value="identifier">Identifier</option>
+								<option value="sitename">Name</option>
+								
+
+
+							</select>
+
+							<select name ="orderbyasce" class="form-control no-btn-search" data-bind="value:orderbyasce, valueUpdate:'afterkeydown'">
+								<option value="asce">Ascending</option>
+								<option value="desc">Descending</option>
+							</select>
+						</div>
+						<div class="col-md-6 pull-right">
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i> Search</a>
 							{% if is_form_proj %}
 							<a href="{% url 'fieldsight:site-add' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add New</a>
@@ -45,7 +68,7 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 						</div>
                     </header>
 
-{% if messages %}
+					{% if messages %}
 						<ul class="messages">
 						    {% for message in messages %}
 						    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
