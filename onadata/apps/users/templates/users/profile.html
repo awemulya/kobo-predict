@@ -72,7 +72,7 @@
 
 										{% for role in roles_org %}
 										<a href="{% url 'fieldsight:organizations-dashboard' role.organization.pk %}" title="">
-											<div class="col-lg-6 col-md-12" style="margin-top:10px;">
+											<div class="col-lg-12 col-md-12" style="margin-top:10px;">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{% if role.organization.logo %}{{ role.organization.logo.url }}{% else %}{% static 'dummy/assets/img/default-org.jpg' %}{% endif %}" alt="" width="50" height="50">
@@ -110,10 +110,8 @@
 													</div>
 													<div class="project-basic-info">
 														<h4>{{ role.project.name }}</h4>
-														<p>{{ role.project.address }}</p><br><br>
-														<p><strong>Organization Name:</strong>{{ role.project.organization.name }}</p>
-														<p><strong>Organization Address:</strong>{{ role.project.organization.address }}</p>
-														<p><strong>Organization Phone:</strong>{{ role.project.organization.phone }}</p>
+														<p>{{ role.project.address }}</p>
+														<p><strong>{{ role.project.organization.name }}</strong></p>
 													</div>
 												</div>
 											</div>
@@ -141,10 +139,9 @@
 													</div>
 													<div class="project-basic-info">
 														<h4>{{ role.site.name }}</h4>
-														<p>{{ role.site.address }}</p><br><br>
-														<p><strong>Project Name:</strong>{{ role.site.project.name }}</p>
-														<p><strong>Project Address:</strong>{{ role.site.project.address }}</p>
-														<p><strong>Project Phone:</strong>{{ role.site.project.phone }}</p>
+														<p>{{ role.site.identifier }}</p>
+														<p>{{ role.site.address }}</p>
+														<p><strong>{{ role.site.project.name }}</strong></p>
 													</div>
 												</div>
 											</div>
@@ -173,11 +170,9 @@
 													</div>
 													<div class="project-basic-info">
 														<h4>{{ role.site.name }}</h4>
-														<p>{{ role.site.address }}</p><br><br>
-														<p><strong>Project Name:</strong>{{ role.site.project.name }}</p>
-														<p><strong>Project Address:</strong>{{ role.site.project.address }}</p>
-														<p><strong>Project Phone:</strong>{{ role.site.project.phone }}</p>
-													</div>
+														<p>{{ role.site.identifier }}</p>
+														<p>{{ role.site.address }}</p>
+														<p><strong>{{ role.site.project.name }}</strong></p></div>
 												</div>
 											</div>
 											</a>

@@ -206,7 +206,7 @@ var org = "{{obj.pk}}";
 
 								<div class="widget-head">
 									<h4>Project Map</h4>
-									<a href="{% url 'fieldsight:org-loc-map' obj.pk%}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-map"></i>{% trans ' View' %}{% trans ' Full Map' %}</a>
+									<a href="{% url 'fieldsight:org-loc-map' obj.pk%}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map"></i>{% trans ' View' %}{% trans ' Full Map' %}</a>
 								</div>
 								<div class="widget-body">
 									<div class="radio-div card">
@@ -290,8 +290,9 @@ var org = "{{obj.pk}}";
 													</div>
 												</form>
 											</div>
-											{% for role in peoples_involved %}
-											{% if peoples.count == 1%}
+											{% if roles_org %}
+											{% for role in roles_org %}
+											{% if roles_org.count == 1%}
 											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap clearfix">
 												<div class="project-logo">
 													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
@@ -314,9 +315,10 @@ var org = "{{obj.pk}}";
 												</div>
 											</a>
 											{% endif %}
-											{% empty %}
-											No Users in this organization
 											{% endfor %}
+											{% endif %}
+
+
 
 										</div>
 									</div>

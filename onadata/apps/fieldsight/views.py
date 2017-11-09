@@ -142,12 +142,11 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
         total_projects = projects.count()
         total_sites = sites.count()
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
-        
-
         bar_graph = BarGenerator(sites)
-
         line_chart = LineChartGeneratorOrganization(obj)
         line_chart_data = line_chart.data()
+        user = User.objects.filter(pk=self.kwargs.get('pk'))
+        roles_org = UserRole.objects.filter(organization_id = self.kwargs.get('pk'), project__isnull = True, site__isnull = True, ended_at__isnull=True)
 
         dashboard_data = {
             'obj': obj,
@@ -165,6 +164,8 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
             'cumulative_labels': line_chart_data.keys(),
             'progress_data': bar_graph.data.values(),
             'progress_labels': bar_graph.data.keys(),
+            'roles_org': roles_org,
+
         }
         return dashboard_data
 
@@ -185,9 +186,11 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         total_survey_sites = obj.sites.filter(is_survey=True).count()
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
         bar_graph = BarGenerator(sites)
-
         line_chart = LineChartGenerator(obj)
         line_chart_data = line_chart.data()
+        roles_project = UserRole.objects.filter(organization__isnull = False, project_id = self.kwargs.get('pk'), site__isnull = True, ended_at__isnull=True)
+
+
         dashboard_data = {
             'sites': sites,
             'obj': obj,
@@ -203,6 +206,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'cumulative_labels': line_chart_data.keys(),
             'progress_data': bar_graph.data.values(),
             'progress_labels': bar_graph.data.keys(),
+            'roles_project': roles_project,
     }
         return dashboard_data
 
