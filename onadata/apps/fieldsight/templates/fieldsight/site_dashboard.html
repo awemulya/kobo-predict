@@ -12,6 +12,12 @@
 {% block content %}
 {% load pagination_tags %}
     {% load filters %}
+	{% block breadcrumbs %}
+	 {% ifrole "Project" %}
+		<li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">{{obj.project.name}}</a></li>
+	 {% endrole %}
+		<li>{{obj.name}}</li>
+	{% endblock %}
 			<div id="main-content" class="padding" onload="change()">
 				<div class="org-profile-top-action">
 					<div class="action-left">

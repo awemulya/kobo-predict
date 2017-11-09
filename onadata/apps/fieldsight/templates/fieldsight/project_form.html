@@ -72,6 +72,10 @@
 
     });
   </script>
+{% block breadcrumbs %}
+    <li><a href="{% url 'fieldsight:project-list' %}">{% trans 'Projects' %}</a></li>
+    <li>{{ scenario }} {{ form.instance }}</li>
+{% endblock %}
 			<div id="main-content" class="padding">
 				<section class="panel">
                     <header class="panel-heading clearfix">

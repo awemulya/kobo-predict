@@ -36,6 +36,12 @@ var project = "{{obj.pk}}";
 {% endblock %}
 {% block content %}
 {% load filters %}
+{% block breadcrumbs %}
+ {% ifrole "Organization" %}
+    <li><a href="{% url 'fieldsight:organizations-dashboard' obj.organization.pk %}">{{obj.organization.name}}</a></li>
+ {% endrole %}
+    <li>{{obj.name}}</li>
+{% endblock %}
 			<div id="main-content" class="padding">
 				<div class="org-profile-top-action">
 					<div class="action-left">
