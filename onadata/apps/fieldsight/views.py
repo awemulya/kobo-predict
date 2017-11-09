@@ -188,6 +188,8 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         bar_graph = BarGenerator(sites)
         line_chart = LineChartGenerator(obj)
         line_chart_data = line_chart.data()
+        roles_project = UserRole.objects.filter(organization__isnull = False, project_id = self.kwargs.get('pk'), site__isnull = True, ended_at__isnull=True)
+
 
         dashboard_data = {
             'sites': sites,
@@ -204,6 +206,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'cumulative_labels': line_chart_data.keys(),
             'progress_data': bar_graph.data.values(),
             'progress_labels': bar_graph.data.keys(),
+            'roles_project': roles_project,
     }
         return dashboard_data
 

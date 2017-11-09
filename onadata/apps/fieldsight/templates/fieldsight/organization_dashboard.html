@@ -206,7 +206,7 @@ var org = "{{obj.pk}}";
 
 								<div class="widget-head">
 									<h4>Project Map</h4>
-									<a href="{% url 'fieldsight:org-loc-map' obj.pk%}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-map"></i>{% trans ' View' %}{% trans ' Full Map' %}</a>
+									<a href="{% url 'fieldsight:org-loc-map' obj.pk%}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map"></i>{% trans ' View' %}{% trans ' Full Map' %}</a>
 								</div>
 								<div class="widget-body">
 									<div class="radio-div card">
@@ -317,6 +317,8 @@ var org = "{{obj.pk}}";
 											{% endif %}
 											{% endfor %}
 											{% endif %}
+
+
 
 										</div>
 									</div>
