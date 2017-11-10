@@ -359,6 +359,11 @@ var channel_url = "{{channels_url}}";
 
 const webSocketBridgeNotifyUser = new channels.WebSocketBridge();
 
+var socket = new WebSocket('ws://' + window.location.host + '/');
+    socket.onopen = function open() {
+    console.log('WebSockets connection created.');
+    };
+
 
 webSocketBridgeNotifyUser.connect(channel_url+'user-notify/'+id+'/');
 	// ------------for desktop notification------------//
@@ -386,7 +391,7 @@ webSocketBridgeNotifyUser.listen(function(text, byte) {
 			  else {
 			  	var typeofnoti = text.type;
 			  	var body_content = types[typeofnoti](text);
-			  	var text = jQuery(body_content).text();
+			  	var text = jQuery("<div>"+ body_content +"</div>").text();
 			    var notification = new Notification('Notification', {
 			      icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
 			      body: text,
