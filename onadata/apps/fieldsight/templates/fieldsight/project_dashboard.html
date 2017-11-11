@@ -38,9 +38,9 @@ var project = "{{obj.pk}}";
 {% load filters %}
 {% block breadcrumbs %}
  {% ifrole "Organization" %}
-    <li><a href="{% url 'fieldsight:organizations-dashboard' obj.organization.pk %}">{{obj.organization.name}}</a></li>
- {% endrole %}
-    <li>{{obj.name}}</li>
+    <a href="{% url 'fieldsight:organizations-dashboard' obj.organization.pk %}">{{obj.organization.name}}</a>
+ {% endrole %}/
+	{{obj.name}}
 {% endblock %}
 			<div id="main-content" class="padding">
 				<div class="org-profile-top-action">
