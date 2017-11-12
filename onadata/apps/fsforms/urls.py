@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from onadata.apps.fsforms.viewsets.FieldSightXformViewset import GeneralFormsViewSet, SurveyFormsViewSet
-from onadata.apps.fsforms.viewsets.InstanceHistoryViewSet import InstanceHistoryViewSet, InstanceHistoryDetailViewSet
+from onadata.apps.fsforms.viewsets.InstanceHistoryViewSet import InstanceHistoryViewSet, InstanceResponseViewSet, InstanceHistoryDetailViewSet
 from onadata.apps.fsforms.viewsets.ScheduleViewset import ScheduleViewset, DayViewset
 from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXFormListApi
 from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSubmissionApi
@@ -187,6 +187,7 @@ urlpatterns = urlpatterns + [
     url(r'^api/delete-substage/(?P<id>\d+)/$', delete_substage, name='delete_substage_api'),
     url(r'^api/delete-mainstage/(?P<id>\d+)/$', delete_mainstage, name='delete_mainstage_api'),
     url(r'^api/save_educational_material/$', save_educational_material),
+    url(r'^api/insta/$', InstanceResponseViewSet),
 
 ]
 

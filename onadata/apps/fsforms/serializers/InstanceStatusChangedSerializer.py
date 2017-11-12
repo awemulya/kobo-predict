@@ -16,6 +16,13 @@ class FInstanceSerializer(serializers.ModelSerializer):
         model = FInstance
         exclude = ()
 
+class FInstanceResponcesSerializer(serializers.ModelSerializer):
+    site_fxf = FSXFSerializer()
+    project_fxf = FSXFSerializer()
+    class Meta:
+        model = FInstance
+        exclude = ()
+
 
 class InstanceStatusChangedSerializer(serializers.ModelSerializer):
     finstance = FInstanceSerializer(read_only=True)
