@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from onadata.apps.fsforms.models import InstanceStatusChanged, InstanceImages, FInstance
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFSerializer
-
+from onadata.apps.logger.models.instance import Instance
 
 class ImagesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,9 +16,15 @@ class FInstanceSerializer(serializers.ModelSerializer):
         model = FInstance
         exclude = ()
 
+class InstanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Instance
+        exclude = ()
+
 class FInstanceResponcesSerializer(serializers.ModelSerializer):
     site_fxf = FSXFSerializer()
     project_fxf = FSXFSerializer()
+    instance = InstanceSerializer()
     class Meta:
         model = FInstance
         exclude = ()
