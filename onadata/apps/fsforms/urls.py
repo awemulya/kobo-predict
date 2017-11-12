@@ -187,7 +187,7 @@ urlpatterns = urlpatterns + [
     url(r'^api/delete-substage/(?P<id>\d+)/$', delete_substage, name='delete_substage_api'),
     url(r'^api/delete-mainstage/(?P<id>\d+)/$', delete_mainstage, name='delete_mainstage_api'),
     url(r'^api/save_educational_material/$', save_educational_material),
-    url(r'^api/insta/$', InstanceResponseViewSet),
+    url(r'^api/insta/(?P<pk>\d+)$', InstanceResponseViewSet),
 
 ]
 
