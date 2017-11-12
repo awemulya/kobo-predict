@@ -21,7 +21,7 @@ class EMSerializer(serializers.ModelSerializer):
         model = EducationMaterial
         exclude = ('stage','fsxf')
 
-class SubStageSerializer1(serializers.ModelSerializer):
+class SubStageSerializer1(serializers.HyperlinkedModelSerializer):
     stage_forms = FSXFSerializer()
     em = EMSerializer(read_only=True)
 
