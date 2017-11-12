@@ -359,6 +359,9 @@ class FInstance(models.Model):
     def __unicode__(self):
         return u"%s" % str(self.submitted_by) + "---" + self.site_fxf.xf.title
 
+    def getjson(self):
+        return json.dumps(self.json)
+
 class InstanceStatusChanged(models.Model):
     finstance = models.ForeignKey(FInstance, related_name="comments")
     message = models.TextField(null=True, blank=True)
