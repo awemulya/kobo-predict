@@ -361,7 +361,7 @@ class FInstance(models.Model):
         return u"%s" % str(self.submitted_by) + "---" + self.site_fxf.xf.title
 
     def getjson(self):
-        return json.dumps(self.json)
+        return json.dumps(self.instance.json)
 
 class InstanceStatusChanged(models.Model):
     finstance = models.ForeignKey(FInstance, related_name="comments")
