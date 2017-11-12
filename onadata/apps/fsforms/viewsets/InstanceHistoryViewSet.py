@@ -1,7 +1,8 @@
 from rest_framework import viewsets
 
-from onadata.apps.fsforms.models import InstanceStatusChanged
+from onadata.apps.fsforms.models import InstanceStatusChanged, FInstance
 from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import InstanceStatusChangedSerializer, FInstanceResponcesSerializer
+from rest_framework.pagination import PageNumberPagination
 
 
 class InstanceHistoryViewSet(viewsets.ModelViewSet):
@@ -22,7 +23,7 @@ class LargeResultsSetPagination(PageNumberPagination):
     page_size = 20
 
 class InstanceResponseViewSet(viewsets.ModelViewSet):
-    queryset = Finstance.objects.all()
+    queryset = FInstance.objects.all()
     serializer_class = FInstanceResponcesSerializer
     pagination_class = LargeResultsSetPagination
 
