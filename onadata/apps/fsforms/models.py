@@ -360,7 +360,7 @@ class FInstance(models.Model):
     def __unicode__(self):
         return u"%s" % str(self.submitted_by) + "---" + self.site_fxf.xf.title
 
-    def getjson(self):
+    def instance(self):
         return json.dumps(self.instance.json)
 
 class InstanceStatusChanged(models.Model):
