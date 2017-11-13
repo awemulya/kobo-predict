@@ -39,12 +39,11 @@ var org = "{{obj.pk}}";
 
 {% endblock %}
 {% block content %}
-
-{% load filters %}
-				<div id="main-content" class="padding">
 {% block breadcrumbs %}
     <a href="{% url 'fieldsight:organizations-dashboard' obj.pk %}">{{obj.name}}</a>
 {% endblock %}
+{% load filters %}
+				<div id="main-content" class="padding">
 				<div class="org-profile-top-action">
 					<div class="action-left">
 					</div>
