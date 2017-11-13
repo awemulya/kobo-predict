@@ -1365,7 +1365,7 @@ def instance_detail(request, fsxf_id, instance_id):
                 status = obj[key]
             else:
                 data.update({str(key): str(obj[key])})
-    return render(request, 'fsforms/fieldsight_instance_export_html.html',
+    return render(request, 'fsforms/add_sub_stage.html',
                   {'obj': fsxf, 'answer': instance_id, 'status': status, 'data': data, 'medias': medias})
 
 
