@@ -1297,7 +1297,42 @@ class ProjectSummaryReport(TemplateView):
             'total_submissions': line_chart_data.values()[-1],
     
         }
+        return render(request, 'fieldsight/project_individual_submission_report.html', dashboard_data)
+
+
+class SiteSummaryReport(TemplateView):
+
+    def get(self, request, **kwargs):
+        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        project = Project.objects.get(pk=obj.project_id)
+        peoples_involved = obj.site_roles.filter(ended_at__isnull=True).distinct('user')
+        data = serialize('custom_geojson', [obj], geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+        site_supervisor = obj.site_roles.select_related('user').filter(group__name__in=["Site Supervisor "]).distinct('user')
+        reviewer = obj.site_roles.select_related('user').filter(group__name__in=["Reviewer"]).distinct('user')
+        line_chart = LineChartGeneratorSite(obj)
+        line_chart_data = line_chart.data()
+
+        outstanding, flagged, approved, rejected = obj.get_site_submission()
+
+        dashboard_data = {
+            'obj': obj,
+            'peoples_involved': peoples_involved,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+            'data': data,
+            'cumulative_data': line_chart_data.values(),
+            'cumulative_labels': line_chart_data.keys(),
+            'project': project,
+            'site_supervisor' : site_supervisor,
+            'reviewer' : reviewer,
+            'total_submissions': line_chart_data.values()[-1],
+
+        }
         return render(request, 'fieldsight/site_individual_submission_report.html', dashboard_data)
+
 
 class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):

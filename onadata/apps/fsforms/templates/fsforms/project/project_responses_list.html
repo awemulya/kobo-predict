@@ -14,14 +14,10 @@
 {% block head %}
 {% endblock %}
 {% block breadcrumbs %}
-
-<li><a href="{% url 'fieldsight:project-dashboard' pk %}">
-  {% trans 'Project Dashboard' %}</a></li>
-<li>{% trans 'Responses' %}</li>
+    <li><a href="{% url 'fieldsight:project-dashboard' project %}">Project Dashboard</a></li>
+    <li><a href="{% url 'fieldsight:project-list' %}">{% trans 'Projects' %}</a></li>
+    <li>Responses</li>
 {% endblock %}
-
-
-
 {% block content %}
 <div id="main-content" class="padding">
 

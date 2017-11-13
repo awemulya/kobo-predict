@@ -4,7 +4,10 @@
 {% load pagination_tags %}
 
 {% block content %}
-        {% autopaginate object_list 5 as paginated_objects %}
+{% load filters %}
+{% block breadcrumbs %}
+{% endblock %}
+        {% autopaginate object_list 25 as paginated_objects %}
 		<div id="main-content" class="padding">
 				<section class="panel">
                     <header class="panel-heading clearfix">

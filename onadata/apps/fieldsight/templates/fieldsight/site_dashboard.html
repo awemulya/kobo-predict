@@ -12,6 +12,15 @@
 {% block content %}
 {% load pagination_tags %}
     {% load filters %}
+	{% block breadcrumbs %}
+	    {% ifrole "Organization" %}
+    <a href="{% url 'fieldsight:organizations-dashboard' obj.project.organization.pk %}">{{obj.project.organization.name}}</a>/
+ 	{% endrole %}
+	{% ifrole "Project" %}
+		<a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">{{obj.project.name}}</a>
+	 {% endrole %}/
+		{{obj.name}}
+	{% endblock %}
 			<div id="main-content" class="padding" onload="change()">
 				<div class="org-profile-top-action">
 					<div class="action-left">
@@ -27,6 +36,14 @@
 								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-site' obj.pk %}"><i class="la la-user"></i> People</a>
 								<a class="dropdown-item" href="{% url 'forms:setup-forms' 0 obj.pk %}"><i class="la la-clipboard"></i> Forms</a>
 								<a class="dropdown-item" href="{% url 'fieldsight:site-blue-prints' obj.pk %}"><i class="la la-pencil-square-o"></i> Site Documents</a>
+							</div>
+						</span>
+						<span class="dropdown">
+							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="la la-clipboard"></i> Reports
+							</a>
+							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
+								<a class="dropdown-item" href="{% url 'fieldsight:site-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i>{% trans 'Site Summary Report' %}</a>
 							</div>
 						</span>
 						<a href="{% url 'fieldsight:site-edit' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-edit"></i> Edit</a>
@@ -67,9 +84,9 @@
 							</div>
 							{% with progress=obj.progress %}
 							<div class="progress">
-							<div class="progress progress-striped active progress-sm" style="width:100%;"> 
-				
-							  
+							<div class="progress progress-striped active progress-sm" style="width:100%;">
+
+
 							{% if progress = 0 %}
 							<div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ progress  }}%;" aria-valuenow="{{progress}}" aria-valuemax="100">
 								  <span class="progress-bar-value" style="color:red;">{{ progress }}% </span>
@@ -77,16 +94,16 @@
 							{% elif progress <= 10 %}
 							<div class="progress-bar progress-bar" role="progressbar" style="width: {{ progress  }}%;" aria-valuenow="{{progress}}" aria-valuemax="100">
 								  <span class="progress-bar-value" style="color:white;">{{ progress }}% </span>
-	
+
 							{% elif progress >= 90 %}
 							<div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ progress  }}%; background-color: green" aria-valuenow="{{progress}}" aria-valuemax="100">
 							<span class="progress-bar-value" style="color:white;">{{ progress }}% Complete</span>
-							
+
 							{% else %}
 							<div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ progress  }}%; aria-valuenow="{{progress}}" aria-valuemax="100">
 							<span class="progress-bar-value" style="color:white;">{{ progress }}% Complete</span>
 
-							{% endif %} 
+							{% endif %}
 							 </div>
 							</div>
 							</div>
@@ -382,6 +399,8 @@
 									<div id="siteprogress-chart"></div>
 								</div>
 							</div>
+						</div>
+					</div>
 						</div>
 					</div>
                 </section>

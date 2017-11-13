@@ -39,13 +39,13 @@ var org = "{{obj.pk}}";
 
 {% endblock %}
 {% block content %}
-
+{% block breadcrumbs %}
+    <a href="{% url 'fieldsight:organizations-dashboard' obj.pk %}">{{obj.name}}</a>
+{% endblock %}
 {% load filters %}
-
 				<div id="main-content" class="padding">
 				<div class="org-profile-top-action">
 					<div class="action-left">
-
 					</div>
 					<div class="action-right">
 						<span class="dropdown">
@@ -227,7 +227,7 @@ var org = "{{obj.pk}}";
 									<div class="widget-info widget-scolling-list margin-top bg-white padding">
 										<div class="widget-head">
 											<h4>Projects</h4>
-											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:project-add' obj.pk%}"><i class="la la-plus"></i></a>
+											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:project-add'%}"><i class="la la-plus"></i></a>
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchProject" aria-expanded="false" aria-controls="searchProject"><i class="la la-search"></i></a>
 										</div>
 										<div class="widget-body">
