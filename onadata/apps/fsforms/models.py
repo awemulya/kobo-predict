@@ -283,6 +283,9 @@ class FieldSightXF(models.Model):
     def __unicode__(self): 
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
 
+    def responses(self):
+        return get_instances_for_field_sight_form(self.pk)
+
 @receiver(post_save, sender=FieldSightXF)
 def create_messages(sender, instance, created,  **kwargs):
     if instance.project is not None:
