@@ -1541,3 +1541,21 @@ class SitedataSubmissionView(TemplateView):
         data['type'] = self.kwargs.get('type')
 
         return data
+
+
+# def project_html_export(request, site_id):
+#     forms = FieldSightXF.objects.filter(site_id=site_id)
+#     # data = {}
+#     # for fsxf in forms:
+#     #     data['form_detail'] = fsxf
+#     #     xform = fsxf.xf
+#     #     id_string = xform.id_string
+#     #     data['form_responces'] = get_instances_for_project_field_sight_form(fsxf_id)
+
+    
+
+#     context['labels'] = labels
+#     context['data'] = make_table(data)
+#     context['obj'] = fsxf
+#     # return JsonResponse({'data': cursor})
+#     return render(request, 'fsforms/fieldsight_export_html.html', context)

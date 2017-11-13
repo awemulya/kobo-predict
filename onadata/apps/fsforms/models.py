@@ -15,6 +15,7 @@ from onadata.apps.fsforms.fieldsight_models import IntegerRangeField
 from onadata.apps.fsforms.utils import send_message
 from onadata.apps.logger.models import XForm, Instance
 from onadata.apps.viewer.models import ParsedInstance
+from onadata.apps.fsforms.fsxform_responses import get_instances_for_field_sight_form
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
 FORM_STATUS = [(0, 'Pending'), (1, 'Rejected'), (2, 'Flagged'), (3, 'Approved'), ]
@@ -217,6 +218,8 @@ class FieldSightXF(models.Model):
     def getname(self):
         return '{0} form {1}'.format(self.form_type(),
                                            self.xf.title,)
+    def getresponces(self):
+        return get_instances_for_field_sight_form(self.pk)
 
     def get_absolute_url(self):
         if self.project:
