@@ -1366,7 +1366,7 @@ def instance_detail(request, fsxf_id, instance_id):
             else:
                 data.update({str(key): str(obj[key])})
     return render(request, 'fsforms/fieldsight_instance_export_html.html',
-                  {'obj': fsxf, 'answer': instance_id, 'status': status, 'medias': medias,})
+                  {'obj': fsxf, 'answer': instance_id, 'status': status, 'data': data, 'medias': medias})
 
 
 @api_view(['GET'])
