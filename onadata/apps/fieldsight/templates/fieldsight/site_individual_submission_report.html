@@ -149,8 +149,8 @@ td, th {
 
                    <div class="col-lg-12 col-md-12 col-sm-12">
                    <div class="widget-info bg-white padding">
-                  <p><b>Total Sites </b>: {{ total_sites }}</p>
-                      <p><b>Total Users </b>: {{ peoples_involved.count }}</p>
+                  <p><b>Total Supervisors</b>: {{site_supervisor.count}}</p>
+                   <p><b>Total Reviewers </b>: {{reviewer.count}}</p>
                </div>
                </div>
                </div>
@@ -187,36 +187,36 @@ td, th {
 
           </div>
 
-           <div class="row">
-            <div class="col-lg-12 col-sm-12">
-              <div class="widget-info margin-top bg-white padding">
-                <div class="widget-head">
-                  <h4><u>Site Supervisor</u></h4>
-                </div>
+           <!--<div class="row">-->
+            <!--<div class="col-lg-12 col-sm-12">-->
+              <!--<div class="widget-info margin-top bg-white padding">-->
+                <!--<div class="widget-head">-->
+                  <!--<h4><u>Site Supervisor</u></h4>-->
+                <!--</div>-->
 
-                <table>
-                <tr>
-                  <th><b>Full Name</b></th>
-                  <th><b>Email</b></th>
-                  <th><b>Phone</b></th>
-                </tr>
+                <!--<table>-->
+                <!--<tr>-->
+                  <!--<th><b>Full Name</b></th>-->
+                  <!--<th><b>Email</b></th>-->
+                  <!--<th><b>Phone</b></th>-->
+                <!--</tr>-->
 
-                {% for roles in peoples_involved %}
-                  <tr>
-                  <td>{{ roles.user.first_name }} {{ roles.user.last_name }}</td>
-                  <td>{{ roles.user.email }}</td>
-                  <td>{{ roles.user.profile.phone }}</td>
-                  </tr>
-                {% endfor %}
+                <!--{% for roles in peoples_involved %}-->
+                  <!--<tr>-->
+                  <!--<td>{{ roles.user.first_name }} {{ roles.user.last_name }}</td>-->
+                  <!--<td>{{ roles.user.email }}</td>-->
+                  <!--<td>{{ roles.user.profile.phone }}</td>-->
+                  <!--</tr>-->
+                <!--{% endfor %}-->
 
-                </table>
-
-
-              </div>
-            </div>
+                <!--</table>-->
 
 
-          </div>
+              <!--</div>-->
+            <!--</div>-->
+
+
+          <!--</div>-->
           </div>
           <div class="page">
           <div class="row">
