@@ -190,7 +190,6 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         line_chart_data = line_chart.data()
         roles_project = UserRole.objects.filter(organization__isnull = False, project_id = self.kwargs.get('pk'), site__isnull = True, ended_at__isnull=True)
 
-
         dashboard_data = {
             'sites': sites,
             'obj': obj,
@@ -1503,7 +1502,7 @@ class OrganizationdataSubmissionView(TemplateView):
     template_name = "fieldsight/organizationdata_submission.html"
 
     def get_context_data(self, **kwargs):
-        data = super(OrganizationdataSubmissionView, self).get_context_data(**kwargs)
+        data = super(OrganizationdataSubmissionView, self).get_context_data(**kwargs).order_by('-date')
         obj = Organization.objects.get(pk=self.kwargs.get('pk'))
         data['pending'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='0')
         data['rejected'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='1')
@@ -1518,7 +1517,7 @@ class ProjectdataSubmissionView(ProjectRoleMixin, TemplateView):
     template_name = "fieldsight/projectdata_submission.html"
 
     def get_context_data(self, **kwargs):
-        data = super(ProjectdataSubmissionView, self).get_context_data(**kwargs)
+        data = super(ProjectdataSubmissionView, self).get_context_data(**kwargs).order_by('-date')
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
         data['pending'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='0')
         data['rejected'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='1')
@@ -1533,7 +1532,7 @@ class SitedataSubmissionView(TemplateView):
     template_name = "fieldsight/sitedata_submission.html"
 
     def get_context_data(self, **kwargs):
-        data = super(SitedataSubmissionView, self).get_context_data(**kwargs)
+        data = super(SitedataSubmissionView, self).get_context_data(**kwargs).order_by('-date')
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
         data['pending'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '0')
         data['rejected'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '1')
