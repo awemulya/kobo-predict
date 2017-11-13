@@ -54,7 +54,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/knockout-sortable.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js?v=7.0"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js?v=8.0"></script>
 
 <script>
 
@@ -1051,9 +1051,16 @@ var pk = "{{pk}}";
                                                         <a href="javascript:void(0);"  class="badge badge-success" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> Materials</a>
 
                                                     </div>
-                                                    <div class="col-sm-8 substage" data-bind="visible:editable">
-                                                        <div class="sub-stage-name-c">{% trans 'Sub Stage' %}
-                                                            <span data-bind='text: $index()+1'></span><br>
+                                    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:edit_modal_visibility">
+                                                        <div>
+                                                          <div class="modal-dialog form-modal" role="document">
+                                                            <div class="modal-content">
+                                                              <div class="modal-header">
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                                <h4 class="modal-title">{% trans 'Edit Substage' %}</h4>
+                                                              </div>
+                                                              <div class="modal-body">
+                                                                  <div class="sub-stage-name-c">{% trans 'Sub Stage' %}
                                                             {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name"><br>
                                                             {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description"><br>
                                                             {% trans 'Form Assigned: ' %}
@@ -1062,11 +1069,15 @@ var pk = "{{pk}}";
 
                                                             <br>
 
-                                                            <button data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Done' %} </button>
+                                                            <button data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Close' %} </button>
                                                             <button data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
                                                         </div>
+                                                              </div>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                    </div>
 
-                                                      </div>
                                                 </li>
                                             </ul>
                                         </div>
