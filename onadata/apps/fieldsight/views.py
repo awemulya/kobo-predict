@@ -1542,4 +1542,3 @@ class SitedataSubmissionView(TemplateView):
         data['type'] = self.kwargs.get('type')
 
         return data
-

@@ -45,8 +45,6 @@ from .views import (
     OrganizationdataSubmissionView,
     ProjectdataSubmissionView,
     SitedataSubmissionView,
-
-
     UserListView, site_images, FilterUserView, UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
     ManagePeopleProjectView, ManagePeopleOrganizationView, SiteSurveyListView, ajax_upload_sites, ajax_save_site,
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList,
@@ -154,6 +152,3 @@ urlpatterns = [
     url(r'^site-submission/(?P<pk>[0-9]+)/(?P<type>[0-9]+)/$', SitedataSubmissionView.as_view(), name='site-submission-data'),
 
 ]
-
-
-

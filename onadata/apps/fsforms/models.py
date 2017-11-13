@@ -1,4 +1,5 @@
 import datetime
+import json
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
@@ -358,6 +359,9 @@ class FInstance(models.Model):
                                            self.site_fxf.xf.title,)
     def __unicode__(self):
         return u"%s" % str(self.submitted_by) + "---" + self.site_fxf.xf.title
+
+    def instance_json(self):
+        return json.dumps(self.instance.json)
 
 class InstanceStatusChanged(models.Model):
     finstance = models.ForeignKey(FInstance, related_name="comments")
