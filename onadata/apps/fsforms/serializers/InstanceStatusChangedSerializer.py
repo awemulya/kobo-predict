@@ -24,7 +24,7 @@ class InstanceSerializer(serializers.ModelSerializer):
 class FInstanceResponcesSerializer(serializers.ModelSerializer):
     site_fxf = FSXFSerializer()
     project_fxf = FSXFSerializer()
-    instance = serializers.ReadOnlyField()
+    instance_json = serializers.ReadOnlyField()
     # instance = InstanceSerializer()
     class Meta:
         model = FInstance
