@@ -15,7 +15,7 @@ from onadata.apps.fsforms.fieldsight_models import IntegerRangeField
 from onadata.apps.fsforms.utils import send_message
 from onadata.apps.logger.models import XForm, Instance
 from onadata.apps.viewer.models import ParsedInstance
-
+from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
 FORM_STATUS = [(0, 'Pending'), (1, 'Rejected'), (2, 'Flagged'), (3, 'Approved'), ]
 
@@ -282,6 +282,9 @@ class FieldSightXF(models.Model):
 
     def __unicode__(self): 
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
+
+    def responses(self):
+        return get_instances_for_field_sight_form(self.pk)
 
 @receiver(post_save, sender=FieldSightXF)
 def create_messages(sender, instance, created,  **kwargs):
