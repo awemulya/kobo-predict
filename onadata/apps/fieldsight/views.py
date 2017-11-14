@@ -1406,29 +1406,17 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
     def post(self, request, pk, *args, **kwargs):
         data = json.loads(self.request.body)
         projects = data.get('projects')
-        group = Group.objects.get(name=data.get('group'))
 
-        if group == "Site Supervisor" or "Reviewer" and request.user not in "Project":
-            return redirect(request, 'login.html')
-
-        elif group == "Project Manager" and request.user not in "Project":
-            return redirect(request, 'login.html')
-        else:
-            return redirect(request, 'login.html')
-
-        # users = data.get('users')
-        # group_id = Group.objects.get(name="Project Manager").id
-        # user = request.user
-        # print user
-        # multiuserassignproject.delay(user, pk, projects, users, group_id)
+        users = data.get('users')
+        group_id = Group.objects.get(name="Project Manager").id
+        user = request.user
+        print user
+        multiuserassignproject.delay(user, pk, projects, users, group_id)
 
         return HttpResponse("Sucess")
 
 
-        # if (group = "ss or sa"and not user at "test"
-        # return reverse redirect(login)
-        # elseif(group = "Pm" and nit in user at "test"
-        # return reverse redirect(login)
+
 #May need it
 # class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
 #     def get(self, request, pk):
