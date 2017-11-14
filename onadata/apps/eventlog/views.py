@@ -95,7 +95,7 @@ class NotificationCountnSeen(View):
 
     def post(self, request):
         # print request.user.user_profile.notification_seen_date
-        profile = UserProfile.objects.get(pk=request.user.id)
+        profile = UserProfile.objects.get(user_id=request.user.id)
         profile.notification_seen_date = now()
         profile.save()
         data = {
