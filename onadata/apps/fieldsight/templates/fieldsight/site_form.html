@@ -107,11 +107,11 @@
 									 {% endfor %}
 									<div class="form-group col-md-6">
 									  <label class="col-form-label">Latitude :</label>
-									  <input type="text" class="form-control" id="Latitude" name="Latitude" class="LatLon"/>
+									  <input type="text" class="form-control LatLon" id="Latitude" name="Latitude" />
 									</div>
 									<div class="form-group col-md-6">
 									  <label class="col-form-label">Longitude :</label>
-									  <input type="text" class="form-control" id="Longitude" name="Longitude" class="LatLon"/>
+									  <input type="text" class="form-control LatLon" id="Longitude" name="Longitude" />
 									</div>
 
 									<div class="form-group col-md-12">
@@ -213,12 +213,13 @@
      var elat = "{{form.instance.latitude}}";
      var elong = "{{form.instance.longitude}}";
     </script>
-<script type="text/javascript">
-
-</script>
 
 
     <script type="text/javascript" src="{{ STATIC_URL }}js/addmarker.js"></script>
+<script type="text/javascript">
+	map.setView([27,85],2);
+</script>
+
 {% endblock %}
 
 

@@ -1407,14 +1407,16 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
     def post(self, request, pk, *args, **kwargs):
         data = json.loads(self.request.body)
         projects = data.get('projects')
-        users = data.get('users')
-     
 
+        users = data.get('users')
         group_id = Group.objects.get(name="Project Manager").id
         user = request.user
         print user
         multiuserassignproject.delay(user, pk, projects, users, group_id)
+
         return HttpResponse("Sucess")
+
+
 
 #May need it
 # class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):

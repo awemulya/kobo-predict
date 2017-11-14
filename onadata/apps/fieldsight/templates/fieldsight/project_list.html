@@ -13,7 +13,7 @@
                         <h3><i class="la la-tasks"></i>{% block page-title %}{% trans 'Projects' %}{% endblock %}</h3>
 						<div class="panel-heading-right">
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i> Search</a>
-							<a href="{% url 'fieldsight:project-add' %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Add' %} {% trans 'New'%}</a>
+							<a href="{% url 'fieldsight:project-add' pk%}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Add' %} {% trans 'New'%}</a>
 						</div>
                     </header>
 					<div class="panel-body">
