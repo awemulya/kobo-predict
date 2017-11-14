@@ -119,12 +119,9 @@ td, th {
 							</div>
 							</div>
 							{% endwith %}
-                </div>
+                        </div>
                   </div>
-
-
                </div>
-
           <div class="row" style="margin-top: -30px;">
                   <div class="col-lg-6 col-md-6 col-sm-12">
                   <div class="widget-info margin-top bg-white padding">
@@ -149,8 +146,8 @@ td, th {
 
                    <div class="col-lg-12 col-md-12 col-sm-12">
                    <div class="widget-info bg-white padding">
-                  <p><b>Total Supervisors</b>: {{site_supervisor.count}}</p>
-                   <p><b>Total Reviewers </b>: {{reviewer.count}}</p>
+                  <p><b>Total Supervisors</b>: {{ supervisor.count }}</p>
+                   <p><b>Total Reviewers </b>: {{ reviewer.count }}</p>
                </div>
                </div>
                </div>
@@ -162,7 +159,7 @@ td, th {
                    <h4><u>Submission Status</u></h4>
                    </div>
                     <ul>
-                    <li><b><p>Rejected Submissions</b>: {{rejected|length}}</p></li>
+                    <li><b><p>Rejected Submissions</b>: {{ rejected|length }}</p></li>
                     <li><b><p>Flagged Submissions</b>: {{ flagged|length }}</p></li>
                      <li><b><p>Pending Submissions</b>: {{ outstanding|length }}</p></li>
                       <li><b><p>Approved Submissions</b>: {{ approved|length }}</p></li>
