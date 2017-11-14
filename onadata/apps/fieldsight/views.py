@@ -58,7 +58,7 @@ from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
 from onadata.apps.fieldsight.tasks import multiuserassignproject, bulkuploadsites, multiuserassignsite
-
+from .generatereport import site_responses_report
 @login_required
 def dashboard(request):
     current_role_count = request.roles.count()
@@ -1547,19 +1547,16 @@ class SitedataSubmissionView(TemplateView):
         return data
 
 
-# def project_html_export(request, site_id):
-#     forms = FieldSightXF.objects.filter(site_id=site_id)
-#     # data = {}
-#     # for fsxf in forms:
-#     #     data['form_detail'] = fsxf
-#     #     xform = fsxf.xf
-#     #     id_string = xform.id_string
-#     #     data['form_responces'] = get_instances_for_project_field_sight_form(fsxf_id)
+def project_html_export(request, pk):
+    forms = FieldSightXF.objects.filter(site_id=pk)
+    site_responses_report(forms)
+    # data = {}
+    # for fsxf in forms:
+    #     data['form_detail'] = fsxf
+    #     xform = fsxf.xf
+    #     id_string = xform.id_string
+    #     data['form_responces'] = get_instances_for_project_field_sight_form(fsxf_id)
 
     
 
-#     context['labels'] = labels
-#     context['data'] = make_table(data)
-#     context['obj'] = fsxf
-#     # return JsonResponse({'data': cursor})
-#     return render(request, 'fsforms/fieldsight_export_html.html', context)
+    return None
