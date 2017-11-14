@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from django.db.models import Q
 from django.utils.timezone import now
 from django.shortcuts import render, redirect
