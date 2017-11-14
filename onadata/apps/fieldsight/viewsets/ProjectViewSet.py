@@ -16,9 +16,9 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import BasePermission
 
 
-from onadata.apps.fieldsight.models import Project
+from onadata.apps.fieldsight.models import Project, Region
 from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectTypeSerializer, ProjectSerializer, ProjectCreationSerializer
-
+from onadata.apps.fieldsight.serializers.RegionSerializer import RegionSerializer
 
 class ProjectPermission(BasePermission):
     # def has_permission(self, request, view):
@@ -105,6 +105,22 @@ class OrganizationsProjectViewSet(viewsets.ModelViewSet):
     def filter_queryset(self, queryset):
         id = self.kwargs.get('pk', None)
         return queryset.filter(organization__id=id, is_active=True)
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
+class ProjectRegionslistViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing Regions.
+    """
+
+    queryset = Region.objects.all()
+    serializer_class = RegionSerializer
+
+    def filter_queryset(self, queryset):
+        id = self.kwargs.get('pk', None)
+        return queryset.filter(project_id=id)
 
     def get_serializer_context(self):
         return {'request': self.request}

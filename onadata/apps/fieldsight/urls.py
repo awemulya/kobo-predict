@@ -153,5 +153,5 @@ urlpatterns = [
 
     #for Regions
 
-    url(r'^api/project/(?P<pk>\d+)/regions/$', ProjectRegionslistViewSet.as_view(), name='project-regions-list')
+    url(r'^api/project/(?P<pk>\d+)/regions/$', ProjectRegionslistViewSet.as_view({'get': 'list'}), name='project-regions-list')
 ]
