@@ -1258,7 +1258,7 @@ def checkusernameexists(request):
         return HttpResponse("No existing User found.<a href='#' onclick='sendnewuserinvite()'>send</a>")
 
 
-class ProjectSummaryReport(TemplateView):
+class ProjectSummaryReport(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
         organization = Organization.objects.get(pk=obj.organization_id)
@@ -1299,7 +1299,7 @@ class ProjectSummaryReport(TemplateView):
         return render(request, 'fieldsight/project_individual_submission_report.html', dashboard_data)
 
 
-class SiteSummaryReport(TemplateView):
+class SiteSummaryReport(LoginRequiredMixin, TemplateView):
 
     def get(self, request, **kwargs):
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
