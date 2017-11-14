@@ -449,7 +449,7 @@ class UserInvite(models.Model):
 
 class Region(models.Model):
     name = models.CharField(max_length=255)
-    project = models.ForeignKey(Project, nul=True, blank=True, related_name=project_region)
+    project = models.ForeignKey(Project, null=True, blank=True, related_name="project_region")
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     date_updated = models.DateTimeField(null=True, blank=True)
     logs = GenericRelation('eventlog.FieldSightLog')

@@ -6,8 +6,7 @@ from onadata.apps.fieldsight.viewsets.FieldsightFcmViewset import FcmDeviceViewS
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProjectViewSet
 
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
-from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet
-
+from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet, ProjectRegionslistViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProjectViewSet
 
 from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
@@ -151,4 +150,8 @@ urlpatterns = [
     url(r'^proj-submission/(?P<pk>[0-9]+)/(?P<type>[0-9]+)/$', ProjectdataSubmissionView.as_view(), name='proj-submission-data'),
     url(r'^site-submission/(?P<pk>[0-9]+)/(?P<type>[0-9]+)/$', SitedataSubmissionView.as_view(), name='site-submission-data'),
     url(r'^site/report/(?P<pk>\d+)/$', project_html_export, name='site-responses-report'),
+
+    #for Regions
+
+    url(r'^api/project/(?P<pk>\d+)/regions/$', ProjectRegionslistViewSet.as_view(), name='project-regions-list')
 ]
