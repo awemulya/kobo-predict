@@ -27,7 +27,10 @@ class AssignedXFormListApi(XFormListApi):
 
     @detail_route(methods=['GET'])
     def manifest(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        if kwargs.get('site_id') == '0':
+            self.object = FieldSightXF.objects.get(pk=kwargs.get('pk'))
+        else:
+            self.object = self.get_object()
         object_list = []
         context = self.get_serializer_context()
         serializer = FSXFormManifestSerializer(object_list, many=True,
