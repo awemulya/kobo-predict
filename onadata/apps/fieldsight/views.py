@@ -1346,6 +1346,10 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         user = request.user
         multiuserassignsite.delay(user, pk, sites, users, group.id)
         return HttpResponse('sucess')
+# if(Group="Reviewer or Site Supervisor") and request.user not in test
+# return reverse redirect login
+# if(Gropp="Project Manager")and not in request.user not in test
+# return reverse redirect login
 
 # class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
 #     def get(self, request, pk):
@@ -1502,12 +1506,12 @@ class OrganizationdataSubmissionView(TemplateView):
     template_name = "fieldsight/organizationdata_submission.html"
 
     def get_context_data(self, **kwargs):
-        data = super(OrganizationdataSubmissionView, self).get_context_data(**kwargs).order_by('-date')
+        data = super(OrganizationdataSubmissionView, self).get_context_data(**kwargs)
         obj = Organization.objects.get(pk=self.kwargs.get('pk'))
-        data['pending'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='0')
-        data['rejected'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='1')
-        data['flagged'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='2')
-        data['approved'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='3')
+        data['pending'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='0').order_by('-date')
+        data['rejected'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='1').order_by('-date')
+        data['flagged'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='2').order_by('-date')
+        data['approved'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='3').order_by('-date')
         data['type'] = self.kwargs.get('type')
 
         return data
@@ -1517,12 +1521,12 @@ class ProjectdataSubmissionView(ProjectRoleMixin, TemplateView):
     template_name = "fieldsight/projectdata_submission.html"
 
     def get_context_data(self, **kwargs):
-        data = super(ProjectdataSubmissionView, self).get_context_data(**kwargs).order_by('-date')
+        data = super(ProjectdataSubmissionView, self).get_context_data(**kwargs)
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
-        data['pending'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='0')
-        data['rejected'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='1')
-        data['flagged'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='2')
-        data['approved'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='3')
+        data['pending'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='0').order_by('-date')
+        data['rejected'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='1').order_by('-date')
+        data['flagged'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='2').order_by('-date')
+        data['approved'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='3').order_by('-date')
         data['type'] = self.kwargs.get('type')
 
         return data
@@ -1532,12 +1536,12 @@ class SitedataSubmissionView(TemplateView):
     template_name = "fieldsight/sitedata_submission.html"
 
     def get_context_data(self, **kwargs):
-        data = super(SitedataSubmissionView, self).get_context_data(**kwargs).order_by('-date')
+        data = super(SitedataSubmissionView, self).get_context_data(**kwargs)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
-        data['pending'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '0')
-        data['rejected'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '1')
-        data['flagged'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '2')
-        data['approved'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '3')
+        data['pending'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '0').order_by('-date')
+        data['rejected'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '1').order_by('-date')
+        data['flagged'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '2').order_by('-date')
+        data['approved'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '3').order_by('-date')
         data['type'] = self.kwargs.get('type')
 
         return data
