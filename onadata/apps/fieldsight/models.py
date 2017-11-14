@@ -446,3 +446,10 @@ class UserInvite(models.Model):
 
     def get_absolute_url(self):
         return reverse('fieldsight:activate-role', kwargs={'invite_idb64': urlsafe_base64_encode(force_bytes(self.pk)), 'token':self.token,})
+
+class Region(models.Model):
+    name = models.CharField(max_length=255)
+    project = models.ForeignKey(Project, nul=True, blank=True, related_name=project_region)
+    date_created = models.DateTimeField(auto_now_add=True, blank=True)
+    date_updated = models.DateTimeField(null=True, blank=True)
+    logs = GenericRelation('eventlog.FieldSightLog')
