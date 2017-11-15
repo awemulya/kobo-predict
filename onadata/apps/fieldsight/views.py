@@ -1561,10 +1561,11 @@ def project_html_export(request, pk):
     # #     xform = fsxf.xf
     # #     id_string = xform.id_string
     # #     data['form_responces'] = get_instances_for_project_field_sight_form(fsxf_id)
+    buffer = BytesIO()
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="My Users.pdf"'
  
-    buffer = BytesIO()
+   
  
     report = MyPrint(buffer, 'Letter')
     pdf = report.print_users(forms)
