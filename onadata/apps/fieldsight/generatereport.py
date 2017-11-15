@@ -59,15 +59,26 @@ class MyPrint:
  
         # Draw things on the PDF. Here's where the PDF generation happens.
         # See the ReportLab documentation for the full list of functionality.
-        users = [
-            {'name':'Teste'},
-            {'name':'Teste1'},
-            {'name':'Teste2'}
-        ]
-        elements.append(Paragraph('My User Names', styles['Heading1']))
-        print data
-        for i, user in enumerate(users):
-                elements.append(Paragraph(user['name'], styles['Normal']))
+        # users = [
+        #     {'name':'Teste'},
+        #     {'name':'Teste1'},
+        #     {'name':'Teste2'}
+        # ]
+        # elements.append(Paragraph('My User Names', styles['Heading1']))
+        # print data
+        # for i, user in enumerate(users):
+        #         elements.append(Paragraph(user['name'], styles['Normal']))
+
+        for forms in data:
+            elements.append(Paragraph(forms.site, styles['Normal']))
+
+
+
+
+
+
+
+
      
         doc.build(elements, onFirstPage=self._header_footer, onLaterPages=self._header_footer,
                   canvasmaker=NumberedCanvas)
@@ -136,12 +147,12 @@ class NumberedCanvas(canvas.Canvas):
 #     with open('arquivo.pdf', 'wb') as f:
 #         f.write(buffer.read())
 
-def site_responses_report(data):
-    buffer = BytesIO()
+# def site_responses_report(data):
+#     buffer = BytesIO()
      
-    report = MyPrint(buffer, 'Letter')
-    pdf = report.print_users(data)
-    buffer.seek(0)
+#     report = MyPrint(buffer, 'Letter')
+#     pdf = report.print_users(data)
+#     buffer.seek(0)
  
-    with open('arquivo.pdf', 'wb') as f:
-        f.write(buffer.read())    
+#     with open('arquivo.pdf', 'wb') as f:
+#         f.write(buffer.read())    

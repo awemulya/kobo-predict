@@ -28,5 +28,11 @@ class InstanceResponseViewSet(viewsets.ModelViewSet):
     pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
+        try:
+            fsfom=FieldSightXF.objects.get(pk=self.kwargs.get('pk'))
+        except FieldSightXF.DoesNotExist:
+            raise Http404("No MyModel matches the given query.")
+        if fsform.poject is not None:
+            return queryset.filter(project_fxf_id = self.kwargs.get('pk'))     
         return queryset.filter(site_fxf_id = self.kwargs.get('pk')) 
 
