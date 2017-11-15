@@ -67,18 +67,18 @@ class MyPrint:
         # # print data
         # # for i, user in enumerate(users):
         # #         elements.append(Paragraph(user['name'], styles['Normal']))
+        styNormal = styleSheet['Normal']
+        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
+        ts1 = TableStyle([
+            ('ALIGN', (0,0), (-1,0), 'RIGHT'),
+            ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+            ('VALIGN', (0,0), (-1,-1), 'TOP'),
+            ('GRID', (0,0), (-1,-1), 0.25, colors.black),
+                ])
+
         for form in forms:
             elements.append(Paragraph(form.xf.title, styles['Normal']))
 
-
-            styNormal = styleSheet['Normal']
-            styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
-            ts1 = TableStyle([
-                ('ALIGN', (0,0), (-1,0), 'RIGHT'),
-                ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
-                ('VALIGN', (0,0), (-1,-1), 'TOP'),
-                ('GRID', (0,0), (-1,-1), 0.25, colors.black),
-                    ])
             t1 = Table([
                 ('plain text','plain text','shortpara','plain text', 'long para'),
                 ('Text','more text', Paragraph('Is this para level?', styBackground), 'Back to text', Paragraph('Short para again', styBackground)),
