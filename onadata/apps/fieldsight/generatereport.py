@@ -69,8 +69,8 @@ class MyPrint:
         # for i, user in enumerate(users):
         #         elements.append(Paragraph(user['name'], styles['Normal']))
 
-        for forms in data:
-            elements.append(Paragraph(forms.site, styles['Normal']))
+        for form in data:
+            elements.append(Paragraph(form.id, styles['Normal']))
 
 
 
