@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from onadata.apps.fsforms.models import InstanceStatusChanged, FInstance
 from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import InstanceStatusChangedSerializer, FInstanceResponcesSerializer
 from rest_framework.pagination import PageNumberPagination
+from onadata.apps.fsforms.models import FieldSightXF
 
 
 class InstanceHistoryViewSet(viewsets.ModelViewSet):
