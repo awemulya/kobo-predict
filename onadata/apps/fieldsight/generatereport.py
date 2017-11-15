@@ -8,7 +8,8 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
 from reportlab.platypus import Spacer, SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
-    
+
+styleSheet = getSampleStyleSheet()
  
 class MyPrint:
 
@@ -68,6 +69,9 @@ class MyPrint:
         # #         elements.append(Paragraph(user['name'], styles['Normal']))
         for form in forms:
             elements.append(Paragraph(form.xf.title, styles['Normal']))
+
+
+        styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
         ts1 = TableStyle([
             ('ALIGN', (0,0), (-1,0), 'RIGHT'),
