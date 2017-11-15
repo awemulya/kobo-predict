@@ -34,7 +34,7 @@ class InstanceResponseViewSet(viewsets.ModelViewSet):
             fsform=FieldSightXF.objects.get(pk=self.kwargs.get('pk'))
         except FieldSightXF.DoesNotExist:
             raise Http404("No MyModel matches the given query.")
-        if fsform.poject is not None:
+        if fsform.project is not None:
             return queryset.filter(project_fxf_id = self.kwargs.get('pk'))     
         return queryset.filter(site_fxf_id = self.kwargs.get('pk')) 
 
