@@ -4,6 +4,7 @@ from onadata.apps.fsforms.models import InstanceStatusChanged, FInstance
 from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import InstanceStatusChangedSerializer, FInstanceResponcesSerializer
 from rest_framework.pagination import PageNumberPagination
 from onadata.apps.fsforms.models import FieldSightXF
+from django.http import Http404
 
 
 class InstanceHistoryViewSet(viewsets.ModelViewSet):
