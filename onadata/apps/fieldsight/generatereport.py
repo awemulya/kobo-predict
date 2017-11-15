@@ -52,25 +52,22 @@ class MyPrint:
  
         # Our container for 'Flowable' objects
         elements = []
- 
+        
         # A large collection of style sheets pre-made for us
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
- 
+        elements.append(Paragraph('Site Resopnces', styles['Heading1']))
         # Draw things on the PDF. Here's where the PDF generation happens.
         # See the ReportLab documentation for the full list of functionality.
         # users = [
-        #     {'name':'Teste'},
-        #     {'name':'Teste1'},
-        #     {'name':'Teste2'}
+           
         # ]
-        # elements.append(Paragraph('My User Names', styles['Heading1']))
-        # print data
-        # for i, user in enumerate(users):
-        #         elements.append(Paragraph(user['name'], styles['Normal']))
-
+        # # elements.append(Paragraph('My User Names', styles['Heading1']))
+        # # print data
+        # # for i, user in enumerate(users):
+        # #         elements.append(Paragraph(user['name'], styles['Normal']))
         for form in forms:
-            elements.append(Paragraph(form.xform.title, styles['Normal']))
+            elements.append(Paragraph(form.xf.title, styles['Normal']))
 
 
 
