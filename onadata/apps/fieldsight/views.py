@@ -1570,8 +1570,8 @@ def project_html_export(request, pk):
     report = MyPrint(buffer, 'Letter')
     pdf = report.print_users(forms)
  
+    # Get the value of the BytesIO buffer and write it to the response.
+    pdf = buffer.getvalue()
+    buffer.close()
     response.write(pdf)
     return response
-    
-
-    return None
