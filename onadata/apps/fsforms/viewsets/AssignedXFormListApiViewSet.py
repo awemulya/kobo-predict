@@ -20,9 +20,7 @@ class AssignedXFormListApi(XFormListApi):
         if self.request.user.is_anonymous():
             self.permission_denied(self.request)
         site_id = self.kwargs.get('site_id', None)
-        project_id = Site.objects.get(pk=site_id).project.id if Site.objects.filter(pk=site_id).exists() else 0
-        queryset = queryset.filter(Q(site__id=site_id, site__isnull=False, is_deployed=True) |
-                                   Q(project__id=project_id, project__isnull=False, is_survey=True))
+        queryset = queryset.filter(site__id=site_id, site__isnull=False, is_deployed=True)
         return queryset
 
     @detail_route(methods=['GET'])
@@ -40,6 +38,16 @@ class AssignedXFormListApi(XFormListApi):
 
     def list(self, request, *args, **kwargs):
         self.object_list = self.filter_queryset(self.get_queryset())
+
+        serializer = self.get_serializer(self.object_list, many=True)
+
+        return Response(serializer.data, headers=self.get_openrosa_headers())
+
+    def project_forms(self, request, *args, **kwargs):
+        self.object_list = self.queryset.filter(Q(project__id=kwargs.get('project_id'), site__isnull=True,
+                                                  is_deployed=True, is_deleted=False) |
+                                                Q(project__id=kwargs.get('project_id'), site__isnull=True,
+                                                  is_survey=True, is_deleted=False))
 
         serializer = self.get_serializer(self.object_list, many=True)
 
