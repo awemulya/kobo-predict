@@ -31,7 +31,7 @@ class InstanceResponseViewSet(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         try:
-            fsfom=FieldSightXF.objects.get(pk=self.kwargs.get('pk'))
+            fsform=FieldSightXF.objects.get(pk=self.kwargs.get('pk'))
         except FieldSightXF.DoesNotExist:
             raise Http404("No MyModel matches the given query.")
         if fsform.poject is not None:
