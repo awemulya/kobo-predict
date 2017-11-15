@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import json
+from io import BytesIO
 from django.http import HttpResponse
 
 from django.conf import settings
@@ -60,7 +61,6 @@ from django.core.files.storage import FileSystemStorage
 import pyexcel as p
 from onadata.apps.fieldsight.tasks import multiuserassignproject, bulkuploadsites, multiuserassignsite
 from .generatereport import MyPrint
-from io import BytesIO
 
 @login_required
 def dashboard(request):
