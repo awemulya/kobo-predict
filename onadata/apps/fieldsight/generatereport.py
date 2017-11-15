@@ -41,7 +41,7 @@ class MyPrint:
         canvas.restoreState()
 
 
-    def print_users(self, data):
+    def print_users(self, forms):
         buffer = self.buffer
         doc = SimpleDocTemplate(buffer,
                                 rightMargin=72,
@@ -69,7 +69,7 @@ class MyPrint:
         # for i, user in enumerate(users):
         #         elements.append(Paragraph(user['name'], styles['Normal']))
 
-        for form in data:
+        for form in forms:
             elements.append(Paragraph(form.id, styles['Normal']))
 
 
