@@ -1553,9 +1553,20 @@ class SitedataSubmissionView(TemplateView):
 
 
 def project_html_export(request, pk):
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+    forms = FieldSightXF.objects.filter(site_id=pk)
+    # site_responses_report(forms)
+    # # data = {}
+    # # for fsxf in forms:
+    # #     data['form_detail'] = fsxf
+    # #     xform = fsxf.xf
+    # #     id_string = xform.id_string
+    # #     data['form_responces'] = get_instances_for_project_field_sight_form(fsxf_id)
     buffer = BytesIO()
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="My Users.pdf"'
+ 
+   
+ 
     report = MyPrint(buffer, 'Letter')
     pdf = report.print_users(forms)
  
