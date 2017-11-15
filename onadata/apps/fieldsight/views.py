@@ -60,6 +60,8 @@ from django.core.files.storage import FileSystemStorage
 import pyexcel as p
 from onadata.apps.fieldsight.tasks import multiuserassignproject, bulkuploadsites, multiuserassignsite
 from .generatereport import MyPrint
+from io import BytesIO
+
 @login_required
 def dashboard(request):
     current_role_count = request.roles.count()
