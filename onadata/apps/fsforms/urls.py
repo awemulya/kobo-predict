@@ -111,6 +111,7 @@ urlpatterns = [
 
 urlpatterns = urlpatterns + [
         url(r'^assignedFormList/(?P<site_id>\d+)$', AssignedXFormListApi.as_view({'get': 'list'}), name='form-list'),
+        url(r'^assignedFormList/project/(?P<project_id>\d+)$', AssignedXFormListApi.as_view({'get': 'project_forms'}), name='project-form-list'),
         url(r'^(?P<pk>\d+)/form\.xml$',
                 'onadata.apps.fsforms.views.download_xform', name='download_xform'),
 

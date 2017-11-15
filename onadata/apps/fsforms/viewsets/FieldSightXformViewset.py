@@ -62,6 +62,8 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         fxf = serializer.save()
         fxf.is_deployed = True
+        if not fxf.project:
+            fxf.from_project = False
         fxf.save()
         org = None
         if fxf.project:

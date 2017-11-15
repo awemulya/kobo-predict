@@ -104,6 +104,8 @@ class StageSerializer1(serializers.ModelSerializer):
                         # ChannelGroup("site-{}".format(fxf.site.id)).send({"text": json.dumps(result)})
                         ChannelGroup("project-{}".format(fxf.project.id)).send({"text": json.dumps(result)})
                     else:
+                        fxf.from_project = False
+                        fxf.save()
                         noti = fxf.logs.create(source=api_request.user, type=19, title="Stage",
                                                organization=fxf.site.project.organization,
                                                project=fxf.site.project,
@@ -152,8 +154,13 @@ class StageSerializer1(serializers.ModelSerializer):
                             old_fsxf.stage=None
                             old_fsxf.save()
                             #create new fieldsight form
-                            FieldSightXF.objects.create(xf_id=xf_id,site=stage.site, project=stage.project, is_staged=True,
-                                                stage=sub_stage)
+                            if stage.project:
+                                FieldSightXF.objects.create(xf_id=xf_id, site=stage.site, project=stage.project,
+                                                            is_staged=True, stage=sub_stage)
+                            else:
+                                FieldSightXF.objects.create(xf_id=xf_id, site=stage.site, project=stage.project,
+                                                            is_staged=True, stage=sub_stage,from_project=False)
+
                             # org = stage.project.organization if stage.project else stage.site.project.organization
                             # desc = "deleted form of stage {} substage {} by {}".format(stage.name, sub_stage.name,
                             #                                                            self.context['request'].user.username)
@@ -177,7 +184,12 @@ class StageSerializer1(serializers.ModelSerializer):
 
                         sub_stage_data.update({'stage':stage, 'order':order+1})
                         sub_stage_obj = Stage.objects.create(**sub_stage_data)
-                        FieldSightXF.objects.create(xf_id=xf_id,site=stage.site, project=stage.project, is_staged=True, stage=sub_stage_obj)
+                        if stage.project:
+                            FieldSightXF.objects.create(xf_id=xf_id,site=stage.site, project=stage.project,
+                                                        is_staged=True, stage=sub_stage_obj)
+                        else:
+                            FieldSightXF.objects.create(xf_id=xf_id, site=stage.site, project=stage.project,
+                                                        is_staged=True, stage=sub_stage_obj,from_project=False)
             return stage
 
 
