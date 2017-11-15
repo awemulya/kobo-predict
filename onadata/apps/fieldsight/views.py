@@ -1561,6 +1561,7 @@ def project_html_export(request, pk):
     # #     xform = fsxf.xf
     # #     id_string = xform.id_string
     # #     data['form_responces'] = get_instances_for_project_field_sight_form(fsxf_id)
+    # forms = Organization.objects.all()
     buffer = BytesIO()
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="My Users.pdf"'
@@ -1572,8 +1573,16 @@ def project_html_export(request, pk):
  
 
 
-    buffer.seek(0)  
+    buffer.seek(0)
+ 
+#     with open('arquivo.pdf', 'wb') as f:
+#         f.write()    
     response.write(buffer.read())
+
+
+
+    # Get the value of the BytesIO buffer and write it to the response.
+    pdf = buffer.getvalue()
     buffer.close()
     
     return response

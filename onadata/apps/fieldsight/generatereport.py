@@ -59,18 +59,18 @@ class MyPrint:
  
         # Draw things on the PDF. Here's where the PDF generation happens.
         # See the ReportLab documentation for the full list of functionality.
-        users = [
-            {'name':'Teste'},
-            {'name':'Teste1'},
-            {'name':'Teste2'}
-        ]
+        # users = [
+        #     {'name':'Teste'},
+        #     {'name':'Teste1'},
+        #     {'name':'Teste2'}
+        # ]
         # elements.append(Paragraph('My User Names', styles['Heading1']))
         # print data
         # for i, user in enumerate(users):
         #         elements.append(Paragraph(user['name'], styles['Normal']))
 
         for form in forms:
-            elements.append(Paragraph(user['name'], styles['Normal']))
+            elements.append(Paragraph(form.xform.title, styles['Normal']))
 
 
 
