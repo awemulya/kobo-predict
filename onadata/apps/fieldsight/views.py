@@ -1347,6 +1347,7 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         group = Group.objects.get(name=data.get('group'))
         user = request.user
         multiuserassignsite.delay(user, pk, sites, users, group.id)
+
         return HttpResponse('sucess')
 # if(Group="Reviewer or Site Supervisor") and request.user not in test
 # return reverse redirect login
@@ -1401,19 +1402,23 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
 
 
 class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
-    def get(self, request, pk):
-        org_obj = Organization.objects.get(pk=pk)
-        return render(request, 'fieldsight/multi_user_assign.html',{'type': "project", 'pk':pk})
 
     def post(self, request, pk, *args, **kwargs):
         data = json.loads(self.request.body)
         projects = data.get('projects')
-
         users = data.get('users')
+        group = Group.objects.get(name=data.get('group'))
         group_id = Group.objects.get(name="Project Manager").id
         user = request.user
         print user
         multiuserassignproject.delay(user, pk, projects, users, group_id)
+        
+        if request.user not in "Project" and group == "Site Supervisor" or "Reviewer":
+            return HttpResponseRedirect('/login/')
+        elif request.user not in "Project" and group == "Project Manager":
+            return HttpResponseRedirect('/login/')
+        else:
+            return HttpResponseRedirect('/login/')
 
         return HttpResponse("Sucess")
 
