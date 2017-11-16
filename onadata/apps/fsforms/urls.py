@@ -111,6 +111,10 @@ urlpatterns = [
 
 urlpatterns = urlpatterns + [
         url(r'^assignedFormList/(?P<site_id>\d+)$', AssignedXFormListApi.as_view({'get': 'list'}), name='form-list'),
+        url(r'^assignedFormList/project/(?P<project_id>\d+)$', AssignedXFormListApi.as_view(
+            {'get': 'project_forms'}), name='project-form-list'),
+        url(r'^assignedFormList/siteLevel/(?P<project_id>\d+)$', AssignedXFormListApi.as_view(
+            {'get': 'site_overide_forms'}), name='site-overide-form-list'),
         url(r'^(?P<pk>\d+)/form\.xml$',
                 'onadata.apps.fsforms.views.download_xform', name='download_xform'),
 
@@ -187,7 +191,7 @@ urlpatterns = urlpatterns + [
     url(r'^api/delete-substage/(?P<id>\d+)/$', delete_substage, name='delete_substage_api'),
     url(r'^api/delete-mainstage/(?P<id>\d+)/$', delete_mainstage, name='delete_mainstage_api'),
     url(r'^api/save_educational_material/$', save_educational_material),
-    url(r'^api/insta/(?P<pk>\d+)$', InstanceResponseViewSet.as_view({'get': 'list'})),
+    url(r'^api/responses/(?P<pk>\d+)/$', InstanceResponseViewSet.as_view({'get': 'list'})),
 
 ]
 

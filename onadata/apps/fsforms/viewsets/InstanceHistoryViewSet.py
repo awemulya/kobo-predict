@@ -3,6 +3,8 @@ from rest_framework import viewsets
 from onadata.apps.fsforms.models import InstanceStatusChanged, FInstance
 from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import InstanceStatusChangedSerializer, FInstanceResponcesSerializer
 from rest_framework.pagination import PageNumberPagination
+from onadata.apps.fsforms.models import FieldSightXF
+from django.http import Http404
 
 
 class InstanceHistoryViewSet(viewsets.ModelViewSet):
@@ -28,5 +30,11 @@ class InstanceResponseViewSet(viewsets.ModelViewSet):
     pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
+        try:
+            fsform=FieldSightXF.objects.get(pk=self.kwargs.get('pk'))
+        except FieldSightXF.DoesNotExist:
+            raise Http404("No MyModel matches the given query.")
+        if fsform.project is not None:
+            return queryset.filter(project_fxf_id = self.kwargs.get('pk'))     
         return queryset.filter(site_fxf_id = self.kwargs.get('pk')) 
 

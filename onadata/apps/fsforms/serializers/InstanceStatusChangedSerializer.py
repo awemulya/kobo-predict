@@ -22,8 +22,8 @@ class InstanceSerializer(serializers.ModelSerializer):
         exclude = ()
 
 class FInstanceResponcesSerializer(serializers.ModelSerializer):
-    site_fxf = FSXFSerializer()
-    project_fxf = FSXFSerializer()
+    # site_fxf = FSXFSerializer()
+    # project_fxf = FSXFSerializer()
     instance_json = serializers.ReadOnlyField()
     # instance = InstanceSerializer()
     class Meta:

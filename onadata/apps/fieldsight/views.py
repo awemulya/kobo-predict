@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import json
+from io import BytesIO
 from django.http import HttpResponse
 
 from django.conf import settings
@@ -58,7 +59,8 @@ from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
 from onadata.apps.fieldsight.tasks import multiuserassignproject, bulkuploadsites, multiuserassignsite
-from .generatereport import site_responses_report
+from .generatereport import MyPrint
+
 @login_required
 def dashboard(request):
     current_role_count = request.roles.count()
@@ -1549,17 +1551,6 @@ class SitedataSubmissionView(TemplateView):
         return data
 
 
-def project_html_export(request, pk):
-    forms = FieldSightXF.objects.filter(site_id=pk)
-    site_responses_report(forms)
-    # data = {}
-    # for fsxf in forms:
-    #     data['form_detail'] = fsxf
-    #     xform = fsxf.xf
-    #     id_string = xform.id_string
-    #     data['form_responces'] = get_instances_for_project_field_sight_form(fsxf_id)
-    return None
-
 class RegionView(object):
     model = Region
     success_url = reverse_lazy('fieldsight:region-list')
@@ -1584,3 +1575,32 @@ class RegionUpdateView(RegionView, UpdateView):
         self.object = form.save()
 
         return HttpResponseRedirect(self.get_success_url())
+    
+def project_html_export(request, pk):
+    forms = FieldSightXF.objects.filter(site_id=pk)
+    # site_responses_report(forms)
+    # # data = {}
+    # # for fsxf in forms:
+    # #     data['form_detail'] = fsxf
+    # #     xform = fsxf.xf
+    # #     id_string = xform.id_string
+    # #     data['form_responces'] = get_instances_for_project_field_sight_form(fsxf_id)
+    # forms = Organization.objects.all()
+    buffer = BytesIO()
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="My Users.pdf"'
+
+    report = MyPrint(buffer, 'Letter')
+    pdf = report.print_users(forms)
+
+    buffer.seek(0)
+
+    #     with open('arquivo.pdf', 'wb') as f:
+    #         f.write()
+    response.write(buffer.read())
+
+    # Get the value of the BytesIO buffer and write it to the response.
+    pdf = buffer.getvalue()
+    buffer.close()
+
+    return response

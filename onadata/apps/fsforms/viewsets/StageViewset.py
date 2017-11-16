@@ -33,7 +33,7 @@ class MainStageViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and Main Stages.
     """
-    queryset = Stage.objects.filter(stage_forms__isnull=True,stage__isnull=True)
+    queryset = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True)
     serializer_class = StageSerializer
 
 
