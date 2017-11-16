@@ -44,6 +44,10 @@ from .views import (
     OrganizationdataSubmissionView,
     ProjectdataSubmissionView,
     SitedataSubmissionView,
+    RegionCreateView,
+    RegionUpdateView,
+    RegionDeleteView,
+    RegionListView,
     UserListView, site_images, FilterUserView, UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
     ManagePeopleProjectView, ManagePeopleOrganizationView, SiteSurveyListView, ajax_upload_sites, ajax_save_site,
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList,
@@ -153,5 +157,10 @@ urlpatterns = [
 
     #for Regions
 
-    url(r'^api/project/(?P<pk>\d+)/regions/$', ProjectRegionslistViewSet.as_view({'get': 'list'}), name='project-regions-list')
+    url(r'^api/project/(?P<pk>\d+)/regions/$', ProjectRegionslistViewSet.as_view({'get': 'list'}), name='project-regions-list'),
+    url(r'^region/add/$', RegionCreateView.as_view(), name='region-add'),
+    url(r'^region/delete/(?P<pk>[0-9]+)$', RegionDeleteView.as_view(), name='region-delete'),
+    url(r'^region/(?P<pk>[0-9]+)$', RegionUpdateView.as_view(), name='region-update'),
+    url(r'^region/$', RegionListView.as_view(), name='region-list'),
+
 ]

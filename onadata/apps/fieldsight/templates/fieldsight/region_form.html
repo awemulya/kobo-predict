@@ -1,0 +1,53 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block content %}
+{% load filters %}
+<link href="{% static 'css/cropper.min.css' %}" rel="stylesheet">
+
+{% block breadcrumbs %}
+    <a href="">{% trans 'Region' %}</a>
+    /{{ scenario }}
+{% endblock %}
+			<div id="main-content" class="padding">
+				<section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-building"></i>{% trans 'New' %}{% trans 'Region' %} </h3>
+                    </header>
+					<div class="panel-body">
+						<!-- Add New Organization-->
+						<div id="newOrganization" class="margin-top">
+							<form form enctype="multipart/form-data" method="post">
+
+								<div class="form-row">
+									{% csrf_token %}
+
+									 {{ form.media }}
+									{% for field in form  %}
+									<div class="form-group col-md-6">
+									  <div class="col-md-12">{{ field.label }}</div>
+                                      <div class="col-md-12">{{ field }}</div>
+                                      <div class="col-md-12">{{ field.errors }}</div>
+								    </div>
+									{% endfor %}
+
+								</div>
+								<button class="btn btn-primary registration__action" type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans ' Save' %}</button>
+								{% if form.instance.id %}
+								<a href="{% url 'fieldsight:region-delete' form.instance.id %}">
+								<button type="button" class="btn btn-danger "><i class="la la-trash"></i>{% trans 'Delete' %}</button></a>
+								</a>
+								{% endif %}
+							</form>
+						</div>
+					</div>
+
+                </section>
+
+			</div>
+{% endblock %}
+{%block extrascript %}
+
+{% endblock %}
+
+

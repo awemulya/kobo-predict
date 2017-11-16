@@ -11,7 +11,7 @@ from registration import forms as registration_forms
 
 from onadata.apps.fieldsight.helpers import AdminImageWidget
 from .utils.forms import HTML5BootstrapModelForm, KOModelForm
-from .models import Organization, Project, Site, BluePrints
+from .models import Organization, Project, Site, BluePrints, Region
 from onadata.apps.userrole.models import UserRole
 
 USERNAME_REGEX = r'^[a-z][a-z0-9_]+$'
@@ -369,3 +369,8 @@ class BluePrintForm(forms.ModelForm):
     class Meta:
         model = BluePrints
         fields = ('image', )
+
+class RegionForm(forms.ModelForm):
+    class Meta:
+        model = Region
+        exclude = ['project','date_created','date_updated']

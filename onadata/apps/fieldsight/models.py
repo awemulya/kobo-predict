@@ -454,3 +454,8 @@ class Region(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     date_updated = models.DateTimeField(null=True, blank=True)
     logs = GenericRelation('eventlog.FieldSightLog')
+
+    def get_absolute_url(self):
+        return reverse('fieldsight:region-dashboard', kwargs={'pk': self.pk})
+
+

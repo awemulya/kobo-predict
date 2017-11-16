@@ -26,7 +26,6 @@ from registration.backends.default.views import RegistrationView
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
 from channels import Group as ChannelGroup
 
 from onadata.apps.eventlog.models import FieldSightLog
@@ -42,9 +41,9 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
 from .rolemixins import SiteSupervisorRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
-from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite
+from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
-                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo)
+                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm)
 from django.views.generic import TemplateView
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
@@ -1559,7 +1558,29 @@ def project_html_export(request, pk):
     #     xform = fsxf.xf
     #     id_string = xform.id_string
     #     data['form_responces'] = get_instances_for_project_field_sight_form(fsxf_id)
-
-    
-
     return None
+
+class RegionView(object):
+    model = Region
+    success_url = reverse_lazy('fieldsight:region-list')
+    form_class = RegionForm
+
+class RegionListView(RegionView, LoginRequiredMixin, ListView):
+    pass
+
+class RegionCreateView(RegionView, CreateView):
+
+    def from_valid(self, form):
+        self.object = form.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+class RegionDeleteView(RegionView, DeleteView):
+    pass
+
+class RegionUpdateView(RegionView, UpdateView):
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        return HttpResponseRedirect(self.get_success_url())
