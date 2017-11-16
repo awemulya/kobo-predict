@@ -1412,13 +1412,6 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
         user = request.user
         print user
         multiuserassignproject.delay(user, pk, projects, users, group_id)
-        
-        if request.user not in "Project" and group == "Site Supervisor" or "Reviewer":
-            return HttpResponseRedirect('/login/')
-        elif request.user not in "Project" and group == "Project Manager":
-            return HttpResponseRedirect('/login/')
-        else:
-            return HttpResponseRedirect('/login/')
 
         return HttpResponse("Sucess")
 
