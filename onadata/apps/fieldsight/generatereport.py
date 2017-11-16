@@ -15,6 +15,36 @@ class MyPrint:
 
 
     def __init__(self, buffer, pagesize):
+        self.answer = {u'__version__': u'3675', u'_geolocation': [27.88883562, 85.77280079],
+         u'_submission_time': u'2017-11-12T09:07:31',
+         u'_submitted_by': u'sulax2017',
+         u'_xform_id_string': u'aaL5F2CHSiNVogLbyb54yK',
+         u'end': u'2017-11-12T14:50:36.402+05:45',
+         u'formhub/uuid': u'c94a9da48d4748d4bdc815f4a05ace0f',
+         u'group_md5fu05': [{u'group_md5fu05/brief_explanation_of_photograph': u'Crown part of the landslide',
+           u'group_md5fu05/photograph': u'1510137163267.jpg'},
+          {u'group_md5fu05/brief_explanation_of_photograph': u'Downslope view of from the settlement',
+           u'group_md5fu05/photograph': u'1510137183753.jpg'},
+          {u'group_md5fu05/brief_explanation_of_photograph': u'Settlement',
+           u'group_md5fu05/photograph': u'1510137231088.jpg'},
+          {u'group_md5fu05/brief_explanation_of_photograph': u'Downslope view from landslide',
+           u'group_md5fu05/photograph': u'1510137319805.jpg'},
+          {u'group_md5fu05/photograph': u'1510138045834.jpg'},
+          {u'group_md5fu05/brief_explanation_of_photograph': u'Shear zone seen along the road',
+           u'group_md5fu05/photograph': u'1510138153572.jpg'},
+          {u'group_md5fu05/photograph': u'1510138171216.jpg'},
+          {u'group_md5fu05/brief_explanation_of_photograph': u'Close up view',
+           u'group_md5fu05/photograph': u'1510138205633.jpg'},
+          {u'group_md5fu05/photograph': u'1510138244944.jpg'},
+          {u'group_md5fu05/photograph': u'1510138319607.jpg'},
+          {u'group_md5fu05/brief_explanation_of_photograph': u'Rock outcrop and zoints',
+           u'group_md5fu05/photograph': u'1510150248447.jpg'},
+          {u'group_md5fu05/photograph': u'1510150291827.jpg'}],
+         u'meta/instanceID': u'uuid:83cd98ad-ea41-4f8f-af1e-5006ea978e15',
+         u'settlement_location': u'27.88883562 85.77280079 1539.0 5.0',
+         u'settlement_name': u'Ghunga, kartikay',
+         u'settlement_reference_number': u'Si038',
+         u'start': u'2017-11-08T16:16:28.146+05:45'}
         self.buffer = buffer
         if pagesize == 'A4':
             self.pagesize = A4
@@ -41,6 +71,45 @@ class MyPrint:
         # Release the canvas
         canvas.restoreState()
 
+    def parse_group_n_repeat(self, gnr_object):
+        gnr_question = gnr_object['name']
+
+        for gnr_answer in self.answer[gnr_question]:
+        
+            for first_children in gnr_object['children']:
+
+                print "---"
+                print first_children['name']
+                print "Ans---"
+                question = first_children['name']
+                group_answer = self.answer[gnr_question]
+                
+                if gnr_question+"/"+question in gnr_answer:
+                    answer = gnr_answer[gnr_question+"/"+question]
+                else:
+                    answer = 'nope'
+                print answer
+
+    def parsequestions(self, parent_object):
+        for first_children in parent_object:
+            # print first_children
+            # if 'children' in first_children:
+            #     #print first_children
+            #     self.parsequestions(first_children['children'])
+            
+
+            # else:
+            if first_children['type'] == 'group' or first_children['type'] == "repeat":
+                if not first_children['name'] == 'meta':
+                    self.parse_group_n_repeat(first_children)
+            else:
+                if not first_children['type'] == 'note':
+                    print "---"
+                    print first_children['name']
+                    print "Ans---"
+                    question = first_children['name']
+                    answer = self.answer[question]
+                    print answer
 
     def print_users(self, forms):
         buffer = self.buffer
@@ -58,6 +127,70 @@ class MyPrint:
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
         elements.append(Paragraph('Site Resonses', styles['Heading1']))
+
+
+        q={u'children': [{u'bind': {u'required': u'true'},
+   u'label': u'Settlement Reference Number',
+   u'name': u'settlement_reference_number',
+   u'type': u'text'},
+  {u'bind': {u'required': u'true'},
+   u'label': u'Settlement Name',
+   u'name': u'settlement_name',
+   u'type': u'text'},
+  {u'bind': {u'required': u'false'},
+   u'label': u'Settlement Location',
+   u'name': u'settlement_location',
+   u'type': u'geopoint'},
+  {u'bind': {u'required': u'false'},
+   u'label': u'Please take and upload additional photographs using this form. For each photograph, you will be asked to upload a photograph and a brief explanation. You can add additional photographs by adding a "group."',
+   u'name': u'please_take_and_upload_additional_photographs_using_this_form_for_each_photograph_you_will_be_asked_to_upload_a_photograph_and_a_brief_explanation_you_can_add_additional_photographs_by_adding_a_group_',
+   u'type': u'note'},
+  {u'children': [{u'bind': {u'required': u'false'},
+     u'label': u'Photograph',
+     u'name': u'photograph',
+     u'type': u'photo'},
+    {u'bind': {u'required': u'false'},
+     u'label': u'Brief Explanation of Photograph',
+     u'name': u'brief_explanation_of_photograph',
+     u'type': u'text'}],
+   u'control': {u'appearance': u'field-list'},
+   u'label': u'Photograph',
+   u'name': u'group_md5fu05',
+   u'type': u'repeat'},
+  {u'name': u'start', u'type': u'start'},
+  {u'name': u'end', u'type': u'end'},
+  {u'bind': {u'calculate': u'3675'},
+   u'name': u'__version__',
+   u'type': u'calculate'},
+  {u'children': [{u'bind': {u'calculate': u"concat('uuid:', uuid())",
+      u'readonly': u'true()'},
+     u'name': u'instanceID',
+     u'type': u'calculate'}],
+   u'control': {u'bodyless': True},
+   u'name': u'meta',
+   u'type': u'group'}],
+ u'default_language': u'default',
+ u'id_string': u'aaL5F2CHSiNVogLbyb54yK',
+ u'name': u'aaL5F2CHSiNVogLbyb54yK',
+ u'sms_keyword': u'aaL5F2CHSiNVogLbyb54yK',
+ u'title': u'Form 8 Photographs',
+ u'type': u'survey',
+ u'version': u'3675'}
+
+        
+
+        # print q
+
+        # for qq in q['children']:
+        #     print ""
+        #     print ""
+        #     print qq
+
+        self.parsequestions(q['children'])
+
+        # print q['start']
+
+
         # Draw things on the PDF. Here's where the PDF generation happens.
         # See the ReportLab documentation for the full list of functionality.
         # users = [
@@ -80,7 +213,7 @@ class MyPrint:
             elements.append(Paragraph(form.xf.title, styles['Normal']))
 
             t1 = Table([
-                ('plain text','plain text','shortpara','plain text', 'long para'),
+                (a['start'], 'long para'),
                 ('Text','more text', Paragraph('Is this para level?', styBackground), 'Back to text', Paragraph('Short para again', styBackground)),
                 ('Text',
                     'more text',

@@ -1551,7 +1551,6 @@ class SitedataSubmissionView(TemplateView):
 
         return data
 
-
 def project_html_export(request, pk):
     forms = FieldSightXF.objects.filter(site_id=pk)
     # site_responses_report(forms)
