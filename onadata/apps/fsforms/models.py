@@ -372,6 +372,7 @@ class FInstance(models.Model):
         data=[]
         json_answer = self.instance.json
         json_question = self.instance.xform.json
+        children = json_question['children']
         def parse_group_n_repeat(gnr_object):
             gnr_question = gnr_object['name']
             for gnr_answer in json_answer[gnr_question]:
@@ -411,7 +412,7 @@ class FInstance(models.Model):
                         question = first_children['label']
                     row=[question, answer]
                     data.append(row)
-        parse_individual_questions(json_question['children'])
+        parse_individual_questions(children)
         return data
 
 class InstanceStatusChanged(models.Model):
