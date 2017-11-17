@@ -411,7 +411,7 @@ class FInstance(models.Model):
                         question = first_children['label']
                     row=[question, answer]
                     data.append(row)
-        parse_individual_questions(json_question)
+        parse_individual_questions(json_question['children'])
         return data
 
 class InstanceStatusChanged(models.Model):
