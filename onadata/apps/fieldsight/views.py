@@ -27,7 +27,6 @@ from registration.backends.default.views import RegistrationView
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
 from channels import Group as ChannelGroup
 
 from onadata.apps.eventlog.models import FieldSightLog
@@ -43,9 +42,9 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
 from .rolemixins import SiteSupervisorRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
-from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite
+from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
-                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo)
+                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm)
 from django.views.generic import TemplateView
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
@@ -1348,6 +1347,7 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         group = Group.objects.get(name=data.get('group'))
         user = request.user
         multiuserassignsite.delay(user, pk, sites, users, group.id)
+
         return HttpResponse('sucess')
 # if(Group="Reviewer or Site Supervisor") and request.user not in test
 # return reverse redirect login
@@ -1402,15 +1402,12 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
 
 
 class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
-    def get(self, request, pk):
-        org_obj = Organization.objects.get(pk=pk)
-        return render(request, 'fieldsight/multi_user_assign.html',{'type': "project", 'pk':pk})
 
     def post(self, request, pk, *args, **kwargs):
         data = json.loads(self.request.body)
         projects = data.get('projects')
-
         users = data.get('users')
+        group = Group.objects.get(name=data.get('group'))
         group_id = Group.objects.get(name="Project Manager").id
         user = request.user
         print user
@@ -1551,6 +1548,34 @@ class SitedataSubmissionView(TemplateView):
 
         return data
 
+
+
+class RegionView(object):
+    model = Region
+    success_url = reverse_lazy('fieldsight:region-list')
+    form_class = RegionForm
+
+class RegionListView(RegionView, LoginRequiredMixin, ListView):
+    pass
+
+class RegionCreateView(RegionView, CreateView):
+
+    def from_valid(self, form):
+        self.object = form.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+class RegionDeleteView(RegionView, DeleteView):
+    pass
+
+class RegionUpdateView(RegionView, UpdateView):
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+    
+
 def project_html_export(request, pk):
     forms = FieldSightXF.objects.filter(site_id=pk)
     # site_responses_report(forms)
@@ -1564,24 +1589,18 @@ def project_html_export(request, pk):
     buffer = BytesIO()
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="My Users.pdf"'
- 
-   
- 
+
     report = MyPrint(buffer, 'Letter')
     pdf = report.print_users(forms)
- 
-
 
     buffer.seek(0)
- 
-#     with open('arquivo.pdf', 'wb') as f:
-#         f.write()    
+
+    #     with open('arquivo.pdf', 'wb') as f:
+    #         f.write()
     response.write(buffer.read())
-
-
 
     # Get the value of the BytesIO buffer and write it to the response.
     pdf = buffer.getvalue()
     buffer.close()
-    
+
     return response
