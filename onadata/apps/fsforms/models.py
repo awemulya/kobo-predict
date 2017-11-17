@@ -392,7 +392,7 @@ class FInstance(models.Model):
                         answer = ''
                     if 'label' in first_children:
                         question = first_children['label']
-                    row=[question_type, question,answer]
+                    row={question_type, question,answer}
                     data.append(row)
 
         def parse_individual_questions(parent_object):
@@ -412,7 +412,7 @@ class FInstance(models.Model):
                         answer = json_answer[question]
                     if 'label' in first_children:
                         question = first_children['label']
-                    row=[question_type, question, answer]
+                    row={question_type, question, answer}
                     data.append(row)
             submitted_by=['Submitted by', json_answer['_submitted_by']]
             submittion_time=['Submittion Time', json_answer['_submission_time']]
