@@ -412,7 +412,7 @@ class FInstance(models.Model):
                         answer = json_answer[question]
                     if 'label' in first_children:
                         question = first_children['label']
-                    row={question_type, question, answer}
+                    row={"tes":question_type, "sad":question, "asda":answer}
                     data.append(row)
             submitted_by=['Submitted by', json_answer['_submitted_by']]
             submittion_time=['Submittion Time', json_answer['_submission_time']]
