@@ -372,10 +372,12 @@ class FInstance(models.Model):
         data=[]
         json_answer = self.instance.json
         json_question = json.loads(self.instance.xform.json)
+        
         def parse_group_n_repeat(gnr_object):
             gnr_question = gnr_object['name']
             for gnr_answer in json_answer[gnr_question]:
                 for first_children in gnr_object['children']:
+                    question_type = first_children['type']
                     question = first_children['name']
                     group_answer = json_answer[gnr_question]
                     question_label = first_children['label']
@@ -390,7 +392,7 @@ class FInstance(models.Model):
                         answer = ''
                     if 'label' in first_children:
                         question = first_children['label']
-                    row=[question,answer]
+                    row=[question_type, question,answer]
                     data.append(row)
 
         def parse_individual_questions(parent_object):
@@ -400,6 +402,7 @@ class FInstance(models.Model):
                         self.parse_group_n_repeat(first_children)
                 else:
                     question = first_children['name']
+                    question_type = first_children['type']
                     if first_children['type'] == 'note':
                         answer= '' 
 
@@ -409,7 +412,7 @@ class FInstance(models.Model):
                         answer = json_answer[question]
                     if 'label' in first_children:
                         question = first_children['label']
-                    row=[question, answer]
+                    row=[question_type, question, answer]
                     data.append(row)
             submitted_by=['Submitted by', json_answer['_submitted_by']]
             submittion_time=['Submittion Time', json_answer['_submission_time']]
