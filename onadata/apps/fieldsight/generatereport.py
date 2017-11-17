@@ -1,3 +1,4 @@
+import json
 from io import BytesIO
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.platypus import SimpleDocTemplate, Paragraph
@@ -45,6 +46,7 @@ class MyPrint:
          u'settlement_name': u'Ghunga, kartikay',
          u'settlement_reference_number': u'Si038',
          u'start': u'2017-11-08T16:16:28.146+05:45'}
+        self.data=[]
         self.buffer = buffer
         if pagesize == 'A4':
             self.pagesize = A4
@@ -72,44 +74,49 @@ class MyPrint:
         canvas.restoreState()
 
     def parse_group_n_repeat(self, gnr_object):
+        styNormal = styleSheet['Normal']
+        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
         gnr_question = gnr_object['name']
-
         for gnr_answer in self.answer[gnr_question]:
-        
             for first_children in gnr_object['children']:
-
-                print "---"
-                print first_children['name']
-                print "Ans---"
                 question = first_children['name']
                 group_answer = self.answer[gnr_question]
-                
+                question_label = first_children['label']
                 if gnr_question+"/"+question in gnr_answer:
-                    answer = gnr_answer[gnr_question+"/"+question]
+                    if first_children['type'] == 'note':
+                        answer= '' 
+                    elif first_children['type'] == 'photo':
+                        answer = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
+                    else:
+                        answer = gnr_answer[gnr_question+"/"+question]
                 else:
-                    answer = 'nope'
-                print answer
+                    answer = ''
+                if 'label' in first_children:
+                    question = first_children['label']
+                row=[Paragraph(question, styBackground), Paragraph(answer, styBackground)]
+                self.data.append(row)
 
-    def parsequestions(self, parent_object):
+    def parse_individual_questions(self, parent_object):
+        styNormal = styleSheet['Normal']
+        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
         for first_children in parent_object:
-            # print first_children
-            # if 'children' in first_children:
-            #     #print first_children
-            #     self.parsequestions(first_children['children'])
-            
-
-            # else:
             if first_children['type'] == 'group' or first_children['type'] == "repeat":
                 if not first_children['name'] == 'meta':
                     self.parse_group_n_repeat(first_children)
             else:
-                if not first_children['type'] == 'note':
-                    print "---"
-                    print first_children['name']
-                    print "Ans---"
-                    question = first_children['name']
+                question = first_children['name']
+                if first_children['type'] == 'note':
+                    answer= '' 
+
+                elif first_children['type'] == 'photo':
+                    answer = '/media/user/attachments/'+self.answer[question]
+                else:
                     answer = self.answer[question]
-                    print answer
+                if 'label' in first_children:
+                    question = first_children['label']
+                row=(Paragraph(question, styBackground), Paragraph(answer, styBackground))
+                self.data.append(row)
+
 
     def print_users(self, forms):
         buffer = self.buffer
@@ -186,8 +193,8 @@ class MyPrint:
         #     print ""
         #     print qq
 
-        self.parsequestions(q['children'])
-
+        self.parse_individual_questions(q['children'])
+        # print json.dumps(self.data)
         # print q['start']
 
 
@@ -209,11 +216,15 @@ class MyPrint:
             ('GRID', (0,0), (-1,-1), 0.25, colors.black),
                 ])
 
+        t1 = Table(self.data)
+        t1.setStyle(ts1)
+        elements.append(t1)
+
         for form in forms:
             elements.append(Paragraph(form.xf.title, styles['Normal']))
 
             t1 = Table([
-                (a['start'], 'long para'),
+                (['start'], 'long para'),
                 ('Text','more text', Paragraph('Is this para level?', styBackground), 'Back to text', Paragraph('Short para again', styBackground)),
                 ('Text',
                     'more text',
