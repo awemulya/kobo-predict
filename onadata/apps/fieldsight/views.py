@@ -1260,7 +1260,7 @@ def checkusernameexists(request):
         return HttpResponse("No existing User found.<a href='#' onclick='sendnewuserinvite()'>send</a>")
 
 
-class ProjectSummaryReport(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
+class ProjectSummaryReport(TemplateView):
     def get(self, request, pk):
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
         organization = Organization.objects.get(pk=obj.organization_id)
