@@ -1301,7 +1301,7 @@ class ProjectSummaryReport(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
         return render(request, 'fieldsight/project_individual_submission_report.html', dashboard_data)
 
 
-class SiteSummaryReport(LoginRequiredMixin, TemplateView):
+class SiteSummaryReport(TemplateView):
 
     def get(self, request, **kwargs):
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
