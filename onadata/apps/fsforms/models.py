@@ -371,8 +371,7 @@ class FInstance(models.Model):
     def get_responces(self):
         data=[]
         json_answer = self.instance.json
-        json_question = self.instance.xform.json
-        children = json_question['children']
+        json_question = json.loads(self.instance.xform.json)
         def parse_group_n_repeat(gnr_object):
             gnr_question = gnr_object['name']
             for gnr_answer in json_answer[gnr_question]:
