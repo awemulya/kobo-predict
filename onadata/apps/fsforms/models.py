@@ -383,7 +383,7 @@ class FInstance(models.Model):
                     question_label = first_children['label']
                     if gnr_question+"/"+question in gnr_answer:
                         if first_children['type'] == 'note':
-                            answer= '' 
+                            answer= ''
                         elif first_children['type'] == 'photo':
                             answer = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
                         else:
@@ -392,7 +392,7 @@ class FInstance(models.Model):
                         answer = ''
                     if 'label' in first_children:
                         question = first_children['label']
-                    row={'question':question_type, 'question':question,'ans':answer}
+                    row={question_type, question,answer}
                     data.append(row)
 
         def parse_individual_questions(parent_object):
