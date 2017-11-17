@@ -411,6 +411,10 @@ class FInstance(models.Model):
                         question = first_children['label']
                     row=[question, answer]
                     data.append(row)
+            submitted_by=['Submitted by', answer['_submitted_by']]
+            submittion_time=['Submittion Time', answer['_submission_time']]
+            data.append(submitted_by)
+            data.append(submittion_time)
         parse_individual_questions(json_question['children'])
         return data
 
