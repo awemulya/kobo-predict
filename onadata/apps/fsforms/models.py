@@ -392,7 +392,7 @@ class FInstance(models.Model):
                         answer = ''
                     if 'label' in first_children:
                         question = first_children['label']
-                    row={"type":question_type, "question":question, "answer":answer}
+                    row={'type':question_type, 'question':question, 'answer':answer}
                     data.append(row)
 
         def parse_individual_questions(parent_object):
