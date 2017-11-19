@@ -50,13 +50,13 @@ class MyPrint:
         image = Image(absolute_path)
         image._restrictSize(3 * inch, 3 * inch) 
         return image
-    def parse_group_n_repeat(self, gnr_object):
+    def parse_repeat(self, r_object):
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
         answer = self.answer
-        gnr_question = gnr_object['name']
+        gnr_question = r_object['name']
         for gnr_answer in self.answer[gnr_question]:
-            for first_children in gnr_object['children']:
+            for first_children in r_object['children']:
                 question = first_children['name']
                 group_answer = self.answer[gnr_question]
                 question_label = first_children['label']
@@ -77,13 +77,39 @@ class MyPrint:
                 row=[Paragraph(question, styBackground), answer]
                 self.data.append(row)
 
+    def parse_group(self, g_object):
+        styNormal = styleSheet['Normal']
+        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
+        answer = self.answer
+        gnr_question = g_object['name']
+        for first_children in g_object:
+            question = first_children['name']
+            if gnr_question+"/"+question in gnr_answer:
+                if first_children['type'] == 'note':
+                    answer= '' 
+                elif first_children['type'] == 'photo':
+                    #photo = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
+                    #photo = 'http://'+self.base_url+'/media/user_aasis/Screenshot%20from%202017-08-02%2012-45-05.png'
+                    #answer = self.create_logo(photo)
+                    answer =''
+                else:
+                    answer = gnr_answer[gnr_question+"/"+question]
+            else:
+                answer = ''
+            if 'label' in first_children:
+                question = first_children['label']
+            row=[Paragraph(question, styBackground), answer]
+            self.data.append(row)
+
     def parse_individual_questions(self, parent_object):
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
         for first_children in parent_object:
-            if first_children['type'] == 'group' or first_children['type'] == "repeat":
+            if first_children['type'] == "repeat":
                 if not first_children['name'] == 'meta':
-                    self.parse_group_n_repeat(first_children)
+                    self.parse_repeat(first_children)
+            elif first_children['type'] == 'group':
+                self.parse_group(first_children)
             else:
                 question = first_children['name']
                 if first_children['type'] == 'note':
