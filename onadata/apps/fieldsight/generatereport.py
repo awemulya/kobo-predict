@@ -234,7 +234,7 @@ class MyPrint:
             json_question = form.xf.json
             form_user_name = form.xf.user.username
             elements.append(Paragraph("Form Created By:"+form_user_name, styles['Normal']))
-            cursor = get_instaces_for_site_individual_form(form_id)
+            cursor = get_instaces_for_site_individual_form(form.id)
             for instances in cursor:
               print "yello"
 
