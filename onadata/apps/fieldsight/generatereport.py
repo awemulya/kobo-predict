@@ -8,6 +8,7 @@ from reportlab.lib.units import inch
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
 from reportlab.platypus import Spacer, SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import Image
 from reportlab.lib import colors
 
 styleSheet = getSampleStyleSheet()
@@ -53,7 +54,7 @@ class MyPrint:
         elif pagesize == 'Letter':
             self.pagesize = letter
         self.width, self.height = self.pagesize
-
+        self.base_url = ''
     @staticmethod
     def _header_footer(canvas, doc):
         # Save the state of our canvas so we can draw on it
@@ -72,7 +73,10 @@ class MyPrint:
  
         # Release the canvas
         canvas.restoreState()
-
+    def create_logo(self, absolute_path):
+        image = Image(absolute_path)
+        image._restrictSize(3 * inch, 3 * inch) 
+        return image
     def parse_group_n_repeat(self, gnr_object):
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
@@ -86,14 +90,16 @@ class MyPrint:
                     if first_children['type'] == 'note':
                         answer= '' 
                     elif first_children['type'] == 'photo':
-                        answer = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
+                        #photo = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
+                        photo = 'http://'+self.base_url+'/media/user_aasis/Screenshot%20from%202017-08-02%2012-45-05.png'
+                        answer = self.create_logo(photo)
                     else:
                         answer = gnr_answer[gnr_question+"/"+question]
                 else:
                     answer = ''
                 if 'label' in first_children:
                     question = first_children['label']
-                row=[Paragraph(question, styBackground), Paragraph(answer, styBackground)]
+                row=[Paragraph(question, styBackground), answer]
                 self.data.append(row)
 
     def parse_individual_questions(self, parent_object):
@@ -118,7 +124,8 @@ class MyPrint:
                 self.data.append(row)
 
 
-    def print_users(self, forms):
+    def print_users(self, forms, base_url):
+        self.base_url = base_url
         buffer = self.buffer
         doc = SimpleDocTemplate(buffer,
                                 rightMargin=72,
@@ -216,25 +223,16 @@ class MyPrint:
             ('GRID', (0,0), (-1,-1), 0.25, colors.black),
                 ])
 
-        t1 = Table(self.data)
+        t1 = Table(self.data, colWidths=(60*mm, None))
         t1.setStyle(ts1)
         elements.append(t1)
 
         for form in forms:
             elements.append(Paragraph(form.xf.title, styles['Normal']))
-
-            t1 = Table([
-                (['start'], 'long para'),
-                ('Text','more text', Paragraph('Is this para level?', styBackground), 'Back to text', Paragraph('Short para again', styBackground)),
-                ('Text',
-                    'more text',
-                    Paragraph('Is this level?', styBackground),
-                    'This is plain\ntext with line breaks\nto compare against\nthe para on right',
-                    Paragraph('Long paragraph we expect to wrap over several lines accurately', styBackground)),
-                
-                ])
-            t1.setStyle(ts1)
-            elements.append(t1)
+            json_question = form.xf.json
+            form_user_name = form.xf.user
+            elements.append(Paragraph(form_user_name, styles['Normal']))
+            # self.parse_individual_questions(json_question['children'])
 
 
 
