@@ -192,11 +192,11 @@ class MyPrint:
               t1 = Table(self.data, colWidths=(60*mm, None))
               t1.setStyle(ts1)
               elements.append(t1)
-              elements.append(Paragraph("------------------------"))
-              elements.append(Paragraph(""))
+              elements.append(Paragraph("------------------------"), styles['Heading1'])
+              elements.append(Paragraph(""), styles['Heading1'])
             else:
-              elements.append(Paragraph("No Forms submitted yet."))
-              elements.append(Paragraph(""))
+              elements.append(Paragraph("No Forms submitted yet."), styles['Heading1'])
+              elements.append(Paragraph(""), styles['Heading1'])
 
 
 
