@@ -103,6 +103,7 @@ class MyPrint:
     def parse_individual_questions(self, parent_object):
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
+        answer=main_answer
         for first_children in parent_object:
             if first_children['type'] == "repeat":
                 self.parse_repeat(first_children)
