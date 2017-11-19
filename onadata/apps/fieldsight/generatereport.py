@@ -231,7 +231,7 @@ class MyPrint:
         for form in forms:
             elements.append(Paragraph(form.xf.title, styles['Normal']))
             json_question = form.xf.json
-            form_user_name = form.xf.user
+            form_user_name = form.xf.user.username
             elements.append(Paragraph(form_user_name, styles['Normal']))
             # self.parse_individual_questions(json_question['children'])
 
