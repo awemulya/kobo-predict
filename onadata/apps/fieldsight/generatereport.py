@@ -93,7 +93,7 @@ class MyPrint:
                     #answer = self.create_logo(photo)
                     answer =''
                 else:
-                    answer = gnr_answer[gnr_question+"/"+question]
+                    answer = self.answer[gnr_question+"/"+question]
             else:
                 answer = ''
             if 'label' in first_children:
