@@ -91,8 +91,9 @@ class MyPrint:
                         answer= '' 
                     elif first_children['type'] == 'photo':
                         #photo = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
-                        photo = 'http://'+self.base_url+'/media/user_aasis/Screenshot%20from%202017-08-02%2012-45-05.png'
-                        answer = self.create_logo(photo)
+                        #photo = 'http://'+self.base_url+'/media/user_aasis/Screenshot%20from%202017-08-02%2012-45-05.png'
+                        #answer = self.create_logo(photo)
+                        answer =''
                     else:
                         answer = gnr_answer[gnr_question+"/"+question]
                 else:
