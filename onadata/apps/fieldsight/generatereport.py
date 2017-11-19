@@ -151,7 +151,8 @@ class MyPrint:
             cursor = get_instaces_for_site_individual_form(form.id)
             for instance in cursor:
               self.answer = instance
-              self.parse_individual_questions(json_question['children'])
+              question = json.loads(json_question)
+              self.parse_individual_questions(question['children'])
               styNormal = styleSheet['Normal']
               styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
               ts1 = TableStyle([
