@@ -82,7 +82,7 @@ class MyPrint:
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
         answer = self.answer
         gnr_question = g_object['name']
-        for first_children in g_object:
+        for first_children in g_object['children']:
             question = first_children['name']
             if gnr_question+"/"+question in gnr_answer:
                 if first_children['type'] == 'note':
@@ -106,8 +106,7 @@ class MyPrint:
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
         for first_children in parent_object:
             if first_children['type'] == "repeat":
-                if not first_children['name'] == 'meta':
-                    self.parse_repeat(first_children)
+                self.parse_repeat(first_children)
             elif first_children['type'] == 'group':
                 self.parse_group(first_children)
             else:
