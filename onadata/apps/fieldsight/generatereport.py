@@ -194,9 +194,6 @@ class MyPrint:
               elements.append(t1)
               elements.append(Paragraph("------------------------"), styles['Normal'])
               elements.append(Paragraph(""), styles['Normal'])
-            else:
-              elements.append(Paragraph("No Forms submitted yet."), styles['Normal'])
-              elements.append(Paragraph(""), styles['Normal'])
 
 
             # self.parse_individual_questions(json_question['children'])
