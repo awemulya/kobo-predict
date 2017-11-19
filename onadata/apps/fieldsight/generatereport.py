@@ -192,8 +192,6 @@ class MyPrint:
               t1 = Table(self.data, colWidths=(60*mm, None))
               t1.setStyle(ts1)
               elements.append(t1)
-              elements.append(Paragraph("------------------------"), styles['Normal'])
-              elements.append(Paragraph(""), styles['Normal'])
 
 
             # self.parse_individual_questions(json_question['children'])
