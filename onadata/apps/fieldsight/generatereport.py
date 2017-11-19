@@ -53,6 +53,7 @@ class MyPrint:
     def parse_group_n_repeat(self, gnr_object):
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
+        answer = self.answer
         gnr_question = gnr_object['name']
         for gnr_answer in self.answer[gnr_question]:
             for first_children in gnr_object['children']:
