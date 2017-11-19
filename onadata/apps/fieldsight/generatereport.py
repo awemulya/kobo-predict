@@ -28,6 +28,7 @@ class MyPrint:
             self.pagesize = letter
         self.width, self.height = self.pagesize
         self.base_url = ''
+        self.media_folder = ''
     @staticmethod
     def _header_footer(canvas, doc):
         # Save the state of our canvas so we can draw on it
@@ -64,9 +65,9 @@ class MyPrint:
                         answer= '' 
                     elif first_children['type'] == 'photo':
                         #photo = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
-                        #photo = 'http://'+self.base_url+'/media/user_aasis/Screenshot%20from%202017-08-02%2012-45-05.png'
-                        #answer = self.create_logo(photo)
-                        answer =''
+                        photo = 'http://'+self.base_url+'/media/'+media_folder+'/attachments/'+ gnr_answer[gnr_question+"/"+question]
+                        answer = self.create_logo(photo)
+                        # answer =''
                     else:
                         answer = gnr_answer[gnr_question+"/"+question]
                 else:
@@ -86,10 +87,8 @@ class MyPrint:
                 if first_children['type'] == 'note':
                     answer= '' 
                 elif first_children['type'] == 'photo':
-                    #photo = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
-                    #photo = 'http://'+self.base_url+'/media/user_aasis/Screenshot%20from%202017-08-02%2012-45-05.png'
-                    #answer = self.create_logo(photo)
-                    answer =''
+                    photo = 'http://'+self.base_url+'/media/'+media_folder+'/attachments/'+self.main_answer[gnr_question+"/"+question]
+                    answer = self.create_logo(photo)
                 else:
                     answer = self.main_answer[gnr_question+"/"+question]
             else:
@@ -117,7 +116,8 @@ class MyPrint:
                     answer= '' 
 
                 elif first_children['type'] == 'photo':
-                    answer = '/media/user/attachments/'+self.main_answer[question]
+                    photo = 'http://'+self.base_url+'/media/'+media_folder+'/attachments/'+self.main_answer[question]
+                    answer = self.create_logo(photo)
                 else:
                     answer = self.main_answer[question]
                 
@@ -174,6 +174,7 @@ class MyPrint:
             elements.append(Paragraph("Form Name:"+form.xf.title, styles['Normal']))
             json_question = form.xf.json
             form_user_name = form.xf.user.username
+            self.media_folder = form_user_name
             elements.append(Paragraph("Form Created By:"+form_user_name, styles['Normal']))
             cursor = get_instaces_for_site_individual_form(form.id)
             for instance in cursor:
