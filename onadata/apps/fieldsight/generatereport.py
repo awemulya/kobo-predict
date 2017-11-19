@@ -84,7 +84,7 @@ class MyPrint:
         gnr_question = g_object['name']
         for first_children in g_object['children']:
             question = first_children['name']
-            if gnr_question+"/"+question in gnr_answer:
+            if gnr_question+"/"+question in self.answer:
                 if first_children['type'] == 'note':
                     answer= '' 
                 elif first_children['type'] == 'photo':
