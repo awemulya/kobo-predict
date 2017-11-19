@@ -10,6 +10,7 @@ from reportlab.lib.units import mm
 from reportlab.platypus import Spacer, SimpleDocTemplate, Table, TableStyle
 from reportlab.platypus import Image
 from reportlab.lib import colors
+from onadata.apps.fsforms.reports_util import get_instaces_for_site_individual_form
 
 styleSheet = getSampleStyleSheet()
  
@@ -229,10 +230,15 @@ class MyPrint:
         elements.append(t1)
 
         for form in forms:
-            elements.append(Paragraph(form.xf.title, styles['Normal']))
+            elements.append(Paragraph("Form Name:"+form.xf.title, styles['Normal']))
             json_question = form.xf.json
             form_user_name = form.xf.user.username
-            elements.append(Paragraph(form_user_name, styles['Normal']))
+            elements.append(Paragraph("Form Created By:"+form_user_name, styles['Normal']))
+            cursor = get_instaces_for_site_individual_form(form_id)
+            for instances in cursor:
+              print "yello"
+
+
             # self.parse_individual_questions(json_question['children'])
 
 
