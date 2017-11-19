@@ -176,28 +176,24 @@ class MyPrint:
             form_user_name = form.xf.user.username
             elements.append(Paragraph("Form Created By:"+form_user_name, styles['Normal']))
             cursor = get_instaces_for_site_individual_form(form.id)
-            if cursor:
-                for instance in cursor:
-                  self.main_answer = instance
-                  question = json.loads(json_question)
-                  self.parse_individual_questions(question['children'])
-                  styNormal = styleSheet['Normal']
-                  styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
-                  ts1 = TableStyle([
-                      ('ALIGN', (0,0), (-1,0), 'RIGHT'),
-                      ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
-                      ('VALIGN', (0,0), (-1,-1), 'TOP'),
-                      ('GRID', (0,0), (-1,-1), 0.25, colors.black),
-                          ])
+            for instance in cursor:
+              self.main_answer = instance
+              question = json.loads(json_question)
+              self.parse_individual_questions(question['children'])
+              styNormal = styleSheet['Normal']
+              styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
+              ts1 = TableStyle([
+                  ('ALIGN', (0,0), (-1,0), 'RIGHT'),
+                  ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+                  ('VALIGN', (0,0), (-1,-1), 'TOP'),
+                  ('GRID', (0,0), (-1,-1), 0.25, colors.black),
+                      ])
 
-                  t1 = Table(self.data, colWidths=(60*mm, None))
-                  t1.setStyle(ts1)
-                  elements.append(t1)
-                  elements.append(Paragraph("------------------------")
-                  elements.append(Paragraph("")
-              else:            
-                  elements.append(Paragraph("No Forms submitted yet.")
-                  elements.append(Paragraph("")
+              t1 = Table(self.data, colWidths=(60*mm, None))
+              t1.setStyle(ts1)
+              elements.append(t1)
+              elements.append(Paragraph("------------------------")
+              elements.append(Paragraph("")
 
 
 
