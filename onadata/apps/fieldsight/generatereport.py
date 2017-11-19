@@ -53,7 +53,6 @@ class MyPrint:
     def parse_repeat(self, r_object):
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
-        answer = self.main_answer
         gnr_question = r_object['name']
         for gnr_answer in self.main_answer[gnr_question]:
             for first_children in r_object['children']:
@@ -111,15 +110,17 @@ class MyPrint:
                 self.parse_group(first_children)
             else:
                 question = first_children['name']
-                if first_children['type'] == 'note':
+                if 'label' in first_children:
+                    question = first_children['label']
+
+                if first_children['type'] == 'note' or question not in self.main_answer:
                     answer= '' 
 
                 elif first_children['type'] == 'photo':
                     answer = '/media/user/attachments/'+self.main_answer[question]
                 else:
                     answer = self.main_answer[question]
-                if 'label' in first_children:
-                    question = first_children['label']
+                
                 row=(Paragraph(question, styBackground), Paragraph(answer, styBackground))
                 self.data.append(row)
 
