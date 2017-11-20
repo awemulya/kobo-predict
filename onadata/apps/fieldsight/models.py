@@ -459,3 +459,8 @@ class Region(models.Model):
         return reverse('fieldsight:region-dashboard', kwargs={'pk': self.pk})
 
 
+class Timezone():
+    city = models.CharField(max_length=255)
+    offset_time = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+    

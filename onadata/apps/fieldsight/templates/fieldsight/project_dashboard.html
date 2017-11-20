@@ -95,7 +95,7 @@ var project = "{{obj.pk}}";
 											<i class="la la-users"></i>
 											<div class="org-mini-stat-info">
 												<span>{{peoples_involved.count}}</span>
-												{% trans 'Total Users' %}
+												{% trans 'Users' %}
 											</div>
 										</a>
 									</li>
@@ -104,7 +104,7 @@ var project = "{{obj.pk}}";
 											<i class="la la-map-marker"></i>
 											<div class="org-mini-stat-info">
 												<span>{{total_sites}}</span>
-												{% trans 'Total Sites' %}
+												{% trans 'Sites' %}
 											</div>
 										</a>
 									</li>
@@ -204,7 +204,7 @@ var project = "{{obj.pk}}";
 						<div class="col-lg-6 col-sm-12">
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<a href="{% url 'fieldsight:proj-loc-map' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map" ></i>{% trans ' View' %}{% trans ' Full Map' %}</a>
+									<a href="{% url 'fieldsight:proj-loc-map' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map" ></i>{% trans ' Full Map' %}</a>
 									<h4>Site Map</h4>
 								</div>
 								<div class="widget-body">
