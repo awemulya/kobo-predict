@@ -1577,7 +1577,7 @@ class RegionUpdateView(RegionView, UpdateView):
     
 
 def project_html_export(request, pk):
-    forms = FieldSightXF.objects.filter(site_id=pk)
+    
     # site_responses_report(forms)
     # # data = {}
     # # for fsxf in forms:
@@ -1591,7 +1591,7 @@ def project_html_export(request, pk):
     response['Content-Disposition'] = 'attachment; filename="My Users.pdf"'
     base_url = request.get_host()
     report = MyPrint(buffer, 'Letter')
-    pdf = report.print_users(forms, base_url)
+    pdf = report.print_users(pk, base_url)
 
     buffer.seek(0)
 

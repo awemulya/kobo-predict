@@ -125,7 +125,7 @@ class MyPrint:
                 self.data.append(row)
 
 
-    def print_users(self, forms, base_url):
+    def print_users(self, site_pk, base_url):
         self.base_url = base_url
         buffer = self.buffer
         doc = SimpleDocTemplate(buffer,
@@ -142,7 +142,8 @@ class MyPrint:
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
         elements.append(Paragraph('Site Resonses', styles['Heading1']))
-
+        forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk).prefetch_related(Prefetch('site_form_instances', queryset=Finstance.objects.select_related('instance')))
+        #a=FieldSightXF.objects.select_related('xf').filter(site_id=291).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')))
 
        
         
@@ -176,7 +177,7 @@ class MyPrint:
             form_user_name = form.xf.user.username
             self.media_folder = form_user_name
             elements.append(Paragraph("Form Created By:"+form_user_name, styles['Normal']))
-            cursor = get_instaces_for_site_individual_form(form.id)
+            #cursor = get_instaces_for_site_individual_form(form.id)
             styNormal = styleSheet['Normal']
             styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
             ts1 = TableStyle([
@@ -185,9 +186,9 @@ class MyPrint:
                 ('VALIGN', (0,0), (-1,-1), 'TOP'),
                 ('GRID', (0,0), (-1,-1), 0.25, colors.black),
                     ])
-            for instance in cursor:
+            for instance in form.site_form_instances:
               t1 = None
-              self.main_answer = instance
+              self.main_answer = json.loads(instance.instance.json)
               question = json.loads(json_question)
               self.parse_individual_questions(question['children'])
               
