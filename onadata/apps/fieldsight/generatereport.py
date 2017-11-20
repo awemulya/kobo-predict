@@ -143,7 +143,7 @@ class MyPrint:
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
         elements.append(Paragraph('Site Resonses', styles['Heading1']))
-        forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk).prefetch_related(Prefetch('site_form_instances', queryset=Finstance.objects.select_related('instance')))
+        forms = FieldSightXF.objects.select_related('xf').filter(site_id=site_pk).prefetch_related(Prefetch('site_form_instances', queryset=Finstance.objects.select_related('instance')))
         #a=FieldSightXF.objects.select_related('xf').filter(site_id=291).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')))
 
        
