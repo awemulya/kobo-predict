@@ -176,8 +176,7 @@ class MyPrint:
             form_user_name = form.xf.user.username
             self.media_folder = form_user_name
             elements.append(Paragraph("Form Created By:"+form_user_name, styles['Normal']))
-            #cursor = get_instaces_for_site_individual_form(form.id)
-            cursor = 
+            cursor = get_instaces_for_site_individual_form(form.id)
             styNormal = styleSheet['Normal']
             styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
             ts1 = TableStyle([
