@@ -189,7 +189,7 @@ class MyPrint:
                     ])
             for instance in form.site_form_instances.all():
               t1 = None
-              self.main_answer = json.loads(instance.instance.json)
+              self.main_answer = instance.instance.json
               question = json.loads(json_question)
               self.parse_individual_questions(question['children'])
               
