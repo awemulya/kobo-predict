@@ -176,7 +176,8 @@ class MyPrint:
             form_user_name = form.xf.user.username
             self.media_folder = form_user_name
             elements.append(Paragraph("Form Created By:"+form_user_name, styles['Normal']))
-            cursor = get_instaces_for_site_individual_form(form.id)
+            #cursor = get_instaces_for_site_individual_form(form.id)
+            cursor = 
             styNormal = styleSheet['Normal']
             styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
             ts1 = TableStyle([
@@ -198,12 +199,12 @@ class MyPrint:
               elements.append(t1)
               elements.append(Paragraph("===============", styles['Normal']))
               elements.append(Spacer(0,10))
-            else:
-                elements.append(Paragraph("No Submissions Yet.", styles['Normal']))
-                elements.append(Spacer(0,10)) 
-        else:
-            elements.append(Paragraph("No Forms Yet.", styles['Normal']))
-            elements.append(Spacer(0,10)) 
+        #     else:
+        #         elements.append(Paragraph("No Submissions Yet.", styles['Normal']))
+        #         elements.append(Spacer(0,10)) 
+        # else:
+        #     elements.append(Paragraph("No Forms Yet.", styles['Normal']))
+        #     elements.append(Spacer(0,10)) 
         
 
 
