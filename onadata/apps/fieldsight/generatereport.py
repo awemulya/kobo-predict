@@ -197,7 +197,7 @@ class MyPrint:
               t1 = Table(self.data, colWidths=(60*mm, None))
               t1.setStyle(ts1)
               elements.append(Spacer(0,10))
-              # elements.append(t1)
+              elements.append(t1)
               elements.append(Paragraph("===============", styles['Normal']))
               elements.append(Spacer(0,10))
         #     else:
