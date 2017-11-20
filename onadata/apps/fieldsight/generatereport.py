@@ -187,7 +187,7 @@ class MyPrint:
                 ('VALIGN', (0,0), (-1,-1), 'TOP'),
                 ('GRID', (0,0), (-1,-1), 0.25, colors.black),
                     ])
-            for instance in form.site_form_instances:
+            for instance in form.site_form_instances.all():
               t1 = None
               self.main_answer = json.loads(instance.instance.json)
               question = json.loads(json_question)
