@@ -178,6 +178,7 @@ class MyPrint:
             elements.append(Paragraph("Form Created By:"+form_user_name, styles['Normal']))
             cursor = get_instaces_for_site_individual_form(form.id)
             for instance in cursor:
+              elements.append(Spacer(0,10))
               self.main_answer = instance
               question = json.loads(json_question)
               self.parse_individual_questions(question['children'])
