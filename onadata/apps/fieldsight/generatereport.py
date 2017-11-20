@@ -187,19 +187,22 @@ class MyPrint:
                 ('VALIGN', (0,0), (-1,-1), 'TOP'),
                 ('GRID', (0,0), (-1,-1), 0.25, colors.black),
                     ])
+            track = 0
             for instance in form.site_form_instances.all():
-              t1 = None
-              self.main_answer = instance.instance.json
-              question = json.loads(json_question)
-              self.parse_individual_questions(question['children'])
-              
+                track += 1
+                t1 = None
+                self.main_answer = instance.instance.json
+                question = json.loads(json_question)
+                self.parse_individual_questions(question['children'])
+                
 
-              t1 = Table(self.data, colWidths=(60*mm, None))
-              t1.setStyle(ts1)
-              elements.append(Spacer(0,10))
-              elements.append(t1)
-              elements.append(Paragraph("===============", styles['Normal']))
-              elements.append(Spacer(0,10))
+                t1 = Table(self.data, colWidths=(60*mm, None))
+                t1.setStyle(ts1)
+                elements.append(Spacer(0,10))
+                # elements.append(t1)
+                elements.append(Paragraph("table"+str(track), styles['Normal']))
+                elements.append(Paragraph("===============", styles['Normal']))
+                elements.append(Spacer(0,10))
         #     else:
         #         elements.append(Paragraph("No Submissions Yet.", styles['Normal']))
         #         elements.append(Spacer(0,10)) 
