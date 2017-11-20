@@ -198,12 +198,12 @@ class MyPrint:
               elements.append(t1)
               elements.append(Paragraph("===============", styles['Normal']))
               elements.append(Spacer(0,10))
-            else:
-                elements.append(Paragraph("No Submissions Yet.", styles['Normal']))
-                elements.append(Spacer(0,10)) 
-        else:
-            elements.append(Paragraph("No Forms Yet.", styles['Normal']))
-            elements.append(Spacer(0,10)) 
+        #     else:
+        #         elements.append(Paragraph("No Submissions Yet.", styles['Normal']))
+        #         elements.append(Spacer(0,10)) 
+        # else:
+        #     elements.append(Paragraph("No Forms Yet.", styles['Normal']))
+        #     elements.append(Spacer(0,10)) 
         
 
 
