@@ -112,17 +112,17 @@ class MyPrint:
                 question = first_children['name']
 
                 if first_children['type'] == 'note' or question not in self.main_answer:
-                    answer= '' 
+                    answer= Paragraph('', styBackground) 
 
                 elif first_children['type'] == 'photo':
                     photo = 'http://'+self.base_url+'/media/'+self.media_folder+'/attachments/'+self.main_answer[question]
                     answer = self.create_logo(photo)
                 else:
-                    answer = self.main_answer[question]
+                    answer = Paragraph(self.main_answer[question], styBackground)
                 
                 if 'label' in first_children:
                     question = first_children['label']
-                row=(Paragraph(question, styBackground), Paragraph(answer, styBackground))
+                row=(Paragraph(question, styBackground), answer)
                 self.data.append(row)
 
 
