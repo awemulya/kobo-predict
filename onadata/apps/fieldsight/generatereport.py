@@ -177,24 +177,34 @@ class MyPrint:
             self.media_folder = form_user_name
             elements.append(Paragraph("Form Created By:"+form_user_name, styles['Normal']))
             cursor = get_instaces_for_site_individual_form(form.id)
+            styNormal = styleSheet['Normal']
+            styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
+            ts1 = TableStyle([
+                ('ALIGN', (0,0), (-1,0), 'RIGHT'),
+                ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+                ('VALIGN', (0,0), (-1,-1), 'TOP'),
+                ('GRID', (0,0), (-1,-1), 0.25, colors.black),
+                    ])
             for instance in cursor:
+              t1 = None
               self.main_answer = instance
               question = json.loads(json_question)
               self.parse_individual_questions(question['children'])
-              styNormal = styleSheet['Normal']
-              styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
-              ts1 = TableStyle([
-                  ('ALIGN', (0,0), (-1,0), 'RIGHT'),
-                  ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
-                  ('VALIGN', (0,0), (-1,-1), 'TOP'),
-                  ('GRID', (0,0), (-1,-1), 0.25, colors.black),
-                      ])
+              
 
               t1 = Table(self.data, colWidths=(60*mm, None))
               t1.setStyle(ts1)
+              elements.append(Spacer(0,10))
               elements.append(t1)
-              elements.append(Paragraph("<br/>", styles['Normal']))
-              elements.append(Paragraph("<br/>", styles['Normal']))
+              elements.append(Paragraph("===============", styles['Normal']))
+              elements.append(Spacer(0,10))
+            else:
+                elements.append(Paragraph("No Submissions Yet.", styles['Normal']))
+                elements.append(Spacer(0,10)) 
+        else:
+            elements.append(Paragraph("No Forms Yet.", styles['Normal']))
+            elements.append(Spacer(0,10)) 
+        
 
 
             # self.parse_individual_questions(json_question['children'])
