@@ -110,8 +110,6 @@ class MyPrint:
                 self.parse_group(first_children)
             else:
                 question = first_children['name']
-                if 'label' in first_children:
-                    question = first_children['label']
 
                 if first_children['type'] == 'note' or question not in self.main_answer:
                     answer= '' 
@@ -122,6 +120,8 @@ class MyPrint:
                 else:
                     answer = self.main_answer[question]
                 
+                if 'label' in first_children:
+                    question = first_children['label']
                 row=(Paragraph(question, styBackground), Paragraph(answer, styBackground))
                 self.data.append(row)
 
@@ -189,8 +189,6 @@ class MyPrint:
                     ])
             track = 0
             for instance in form.site_form_instances.all():
-                track += 1
-                t1 = None
                 self.data = []
                 self.main_answer = instance.instance.json
                 question = json.loads(json_question)
@@ -200,8 +198,6 @@ class MyPrint:
                 t1 = Table(self.data, colWidths=(60*mm, None))
                 t1.setStyle(ts1)
                 elements.append(t1)
-                elements.append(Paragraph("table"+str(track), styles['Normal']))
-                elements.append(Paragraph("===============", styles['Normal']))
                 elements.append(Spacer(0,10))
         #     else:
         #         elements.append(Paragraph("No Submissions Yet.", styles['Normal']))
