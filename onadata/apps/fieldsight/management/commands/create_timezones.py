@@ -10,14 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         timezonesreader = csv.reader(open("onadata/apps/fieldsight/management/commands/timezones.csv"), delimiter=",")
-        for country_name, country_name, time_zone, gmt_offset, in timezonesreader:
+        for country_code, country_name, time_zone, gmt_offset, in timezonesreader:
 
-            print country_name, country_name, time_zone, gmt_offset
-            # timezones = ['Country Code', 'Country Name', 'Time Zone', 'GMT Offset']
-            # if timezones:
-            #     print timezones
-                # created = Timezone.objects.get_or_create(timezones=timezones)
-                # self.stdout.write('Successfully created timezones .. "%s"' % timezones)
-
-
-
+            timezone, created = Timezone.objects.get_or_create(country_code=country_code,country=country_name,time_zone=time_zone,offset_time=gmt_offset  )
+            self.stdout.write('Successfully created Timestamp .. "%s"' % timezone)

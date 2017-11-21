@@ -460,10 +460,15 @@ class Region(models.Model):
 
 
 class Timezone(models.Model):
-    city = models.CharField(max_length=255, blank=True, null=True)
+    time_zone = models.CharField(max_length=255, blank=True, null=True)
     country = models.CharField(max_length=255, blank=True, null=True)
     country_code = models.CharField(max_length=255, blank=True, null=True)
-    offset_time = models.DateTimeField(auto_now_add=True, auto_now=False)
+    offset_time = models.CharField(max_length=255, blank=True, null=False)
+
+    def __str__(self):
+        return self.country
+
+
 
 
     
