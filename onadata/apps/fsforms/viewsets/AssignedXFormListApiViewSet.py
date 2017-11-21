@@ -54,7 +54,7 @@ class AssignedXFormListApi(XFormListApi):
         return Response(serializer.data, headers=self.get_openrosa_headers())
 
     def site_overide_forms(self, request, *args, **kwargs):
-        self.object_list = self.queryset.filter(site__project_id=kwargs.get('project_id'), from_project=False)
+        self.object_list = self.queryset.filter(site__project_id=kwargs.get('project_id'), from_project=False, is_deployed=True)
 
         serializer = self.get_serializer(self.object_list, many=True)
 
