@@ -140,7 +140,7 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
         sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
-        projects = Project.objects.filter(organization=obj)
+        projects = Project.objects.filter(organization_id=obj.pk)
         total_projects = projects.count()
         total_sites = sites.count()
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
