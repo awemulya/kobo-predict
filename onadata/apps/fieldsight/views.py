@@ -41,7 +41,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
-from .rolemixins import SiteSupervisorRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
+from .rolemixins import SiteDeleteRoleMixin, SiteSupervisorRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm)
@@ -677,7 +677,7 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class SiteDeleteView(SiteView, ProjectRoleMixin, DeleteView):
+class SiteDeleteView(SiteView, SiteDeleteRoleMixin, DeleteView):
     def get_success_url(self):
         return reverse('fieldsight:proj-site-list', kwargs={'pk': self.object.project_id})
 

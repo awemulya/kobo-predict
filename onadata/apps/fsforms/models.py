@@ -373,21 +373,21 @@ class FInstance(models.Model):
         json_answer = self.instance.json
         json_question = json.loads(self.instance.xform.json)
         
-        def parse_group_n_repeat(gnr_object):
-            gnr_question = gnr_object['name']
-            for gnr_answer in json_answer[gnr_question]:
-                for first_children in gnr_object['children']:
+        def parse_repeat(r_object):
+            r_question = r_object['name']
+            for gnr_answer in json_answer[r_question]:
+                for first_children in r_object['children']:
                     question_type = first_children['type']
                     question = first_children['name']
-                    group_answer = json_answer[gnr_question]
+                    group_answer = json_answer[r_question]
                     question_label = first_children['label']
-                    if gnr_question+"/"+question in gnr_answer:
+                    if r_question+"/"+question in gnr_answer:
                         if first_children['type'] == 'note':
                             answer= ''
                         elif first_children['type'] == 'photo':
-                            answer = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
+                            answer = 'http://'+self.base_url+'/media/'+self.instance.user.username+'/attachments/'+self.main_answer[r_question+"/"+question]
                         else:
-                            answer = gnr_answer[gnr_question+"/"+question]
+                            answer = gnr_answer[r_question+"/"+question]
                     else:
                         answer = ''
                     if 'label' in first_children:
@@ -395,11 +395,31 @@ class FInstance(models.Model):
                     row={'type':question_type, 'question':question, 'answer':answer}
                     data.append(row)
 
+        def parse_group(self, g_object):
+            g_question = g_object['name']
+            for first_children in g_object['children']:
+                question = first_children['name']
+                question_type = first_children['type']
+                if g_question+"/"+question in self.main_answer:
+                    if question_type == 'note':
+                        answer= '' 
+                    elif question_type == 'photo':
+                        answer = 'http://'+self.base_url+'/media/'+self.instance.user.username+'/attachments/'+self.main_answer[g_question+"/"+question]
+                    else:
+                        answer = self.main_answer[g_question+"/"+question]
+                else:
+                    answer = ''
+                if 'label' in first_children:
+                    question = first_children['label']
+                row={'type':question_type, 'question':question, 'answer':answer}
+                data.append(row)
+
         def parse_individual_questions(parent_object):
             for first_children in parent_object:
-                if first_children['type'] == 'group' or first_children['type'] == "repeat":
-                    if not first_children['name'] == 'meta':
-                        self.parse_group_n_repeat(first_children)
+                if first_children['type'] == "repeat":
+                    self.parse_repeat(first_children)
+                elif first_children['type'] == 'group':
+                    self.parse_group(first_children)
                 else:
                     question = first_children['name']
                     question_type = first_children['type']
