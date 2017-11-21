@@ -395,7 +395,7 @@ class FInstance(models.Model):
                     row={'type':question_type, 'question':question, 'answer':answer}
                     data.append(row)
 
-        def parse_group(self, g_object):
+        def parse_group(g_object):
             g_question = g_object['name']
             for first_children in g_object['children']:
                 question = first_children['name']
