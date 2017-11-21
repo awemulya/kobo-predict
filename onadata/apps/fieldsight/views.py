@@ -639,6 +639,7 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.object.id})
 
     def form_valid(self, form):
+        print "Test"
         self.object = form.save(project_id=self.kwargs.get('pk'), new=True)
         noti = self.object.logs.create(source=self.request.user, type=11, title="new Site",
                                        organization=self.object.project.organization,
@@ -785,7 +786,7 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
                 sitefile=request.FILES['file']
                 # sites = request.FILES['file'].get_records()
                 user = request.user
-                bulkuploadsites.delay(user, sitefile, pk)
+                bulkuploadsites.apply_async((user, sitefile, pk), countdown=3)
                 # sites = request.FILES['file'].get_records()
                 # with transaction.atomic():
                 #     for site in sites:
@@ -1346,7 +1347,7 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         users = data.get('users')
         group = Group.objects.get(name=data.get('group'))
         user = request.user
-        multiuserassignsite.delay(user, pk, sites, users, group.id)
+        multiuserassignsite.apply_async((user, pk, sites, users, group.id), countdown=3)
 
         return HttpResponse('sucess')
 # if(Group="Reviewer or Site Supervisor") and request.user not in test
@@ -1411,7 +1412,7 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
         group_id = Group.objects.get(name="Project Manager").id
         user = request.user
         print user
-        multiuserassignproject.delay(user, pk, projects, users, group_id)
+        multiuserassignproject.apply_async((user, pk, projects, users, group_id), countdown=3)
 
         return HttpResponse("Sucess")
 
