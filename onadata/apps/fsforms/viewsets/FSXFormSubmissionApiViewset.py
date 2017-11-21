@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from onadata.apps.api.viewsets.xform_submission_api import XFormSubmissionApi
-from onadata.apps.fsforms.models import FieldSightXF
+from onadata.apps.fsforms.models import FieldSightXF, Stage
 from onadata.apps.fsforms.serializers.FieldSightSubmissionSerializer import FieldSightSubmissionSerializer
 from ..fieldsight_logger_tools import safe_create_instance
 from channels import Group as ChannelGroup
@@ -28,8 +28,8 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
         if self.request.user.is_anonymous():
             self.permission_denied(self.request)
 
-        fsxfid = kwargs.get('pk',None)
-        siteid = kwargs.get('site_id',None)
+        fsxfid = kwargs.get('pk', None)
+        siteid = kwargs.get('site_id', None)
         if fsxfid is None or siteid is None:
             return self.error_response("Site Id Or Form ID Not Given", False, request)
         try:
@@ -50,7 +50,84 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
 
         noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Submission",
                                        organization=instance.fieldsight_instance.site.project.organization,
-                                       project=instance.fieldsight_instance.site.project, site=instance.fieldsight_instance.site, extra_object=instance.fieldsight_instance.site, content_object=instance.fieldsight_instance)
+                                       project=instance.fieldsight_instance.site.project,
+                                                        site=instance.fieldsight_instance.site,
+                                                        extra_object=instance.fieldsight_instance.site,
+                                                        content_object=instance.fieldsight_instance)
+        result = {}
+        result['description'] = noti.description
+        result['url'] = noti.get_absolute_url()
+        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
+        ChannelGroup("site-{}".format(instance.fieldsight_instance.site.id)).send({"text": json.dumps(result)})
+
+        # modify create instance
+
+        if error or not instance:
+            return self.error_response(error, False, request)
+
+        context = self.get_serializer_context()
+        serializer = FieldSightSubmissionSerializer(instance, context=context)
+        return Response(serializer.data,
+                        headers=self.get_openrosa_headers(request),
+                        status=status.HTTP_201_CREATED,
+                        template_name=self.template_name)
+
+
+class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
+    serializer_class = FieldSightSubmissionSerializer
+    template_name = 'fsforms/submission.xml'
+
+    def create(self, request, *args, **kwargs):
+        if self.request.user.is_anonymous():
+            self.permission_denied(self.request)
+
+        fsxfid = kwargs.get('pk', None)
+        siteid = kwargs.get('site_id', None)
+        if siteid == '0':
+            siteid = None
+        if fsxfid is None:
+            return self.error_response("Fieldsight Form ID Not Given", False, request)
+        try:
+            fsxfid = int(fsxfid)
+            fs_proj_xf = get_object_or_404(FieldSightXF, pk=kwargs.get('pk'))
+            fxf = None
+            try:
+                if fs_proj_xf.is_survey:
+                    xform = fs_proj_xf.xf
+                elif fs_proj_xf.is_scheduled and siteid:
+                    fxf = FieldSightXF.objects.get(is_scheduled=True, site__id=siteid, xf=fs_proj_xf.xf, from_project=True)
+                    xform = fxf.xf
+                elif (fs_proj_xf.is_scheduled is False and fs_proj_xf.is_staged is False) and siteid:
+                    fxf = FieldSightXF.objects.get(is_scheduled=False,is_staged=False, site__id=siteid, xf=fs_proj_xf.xf, from_project=True)
+                    xform = fxf.xf
+                elif fs_proj_xf.is_staged and siteid:
+                    project_stage = fs_proj_xf.stage
+                    site_stage = Stage.objects.get(site__id=siteid, project_stage_id=project_stage.id)
+                    fxf = site_stage.stage_forms
+                    xform = fxf.xf
+            except Exception as e:
+                xform = fs_proj_xf.xf
+            proj_id = fs_proj_xf.project.id
+
+        except:
+            return self.error_response("Site Id Or Form ID Not Vaild", False, request)
+
+        if request.method.upper() == 'HEAD':
+            return Response(status=status.HTTP_204_NO_CONTENT,
+                            headers=self.get_openrosa_headers(request),
+                            template_name=self.template_name)
+        site_fsxf_id = None
+        if fxf:
+            site_fsxf_id = fxf.id
+        error, instance = create_instance_from_xml(request, site_fsxf_id, siteid, fs_proj_xf.id, proj_id, xform)
+
+        noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Submission",
+                                       organization=instance.fieldsight_instance.site.project.organization,
+                                       project=instance.fieldsight_instance.site.project,
+                                                        site=instance.fieldsight_instance.site,
+                                                        extra_object=instance.fieldsight_instance.site,
+                                                        content_object=instance.fieldsight_instance)
         result = {}
         result['description'] = noti.description
         result['url'] = noti.get_absolute_url()

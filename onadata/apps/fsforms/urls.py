@@ -4,7 +4,7 @@ from onadata.apps.fsforms.viewsets.FieldSightXformViewset import GeneralFormsVie
 from onadata.apps.fsforms.viewsets.InstanceHistoryViewSet import InstanceHistoryViewSet, InstanceResponseViewSet, InstanceHistoryDetailViewSet
 from onadata.apps.fsforms.viewsets.ScheduleViewset import ScheduleViewset, DayViewset
 from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXFormListApi
-from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSubmissionApi
+from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSubmissionApi, ProjectFSXFormSubmissionApi
 from onadata.apps.fsforms.viewsets.SiteFormsViewset import SiteFormViewSet
 from onadata.apps.fsforms.viewsets.StageViewset import SiteMainStageViewSet, \
         SubStageViewSet, StageViewSet
@@ -123,6 +123,9 @@ urlpatterns = urlpatterns + [
         url(r'^submission/(?P<pk>\d+)/(?P<site_id>\d+)$',
             FSXFormSubmissionApi.as_view({'post': 'create', 'head': 'create'}),
                                                         name='submissions'),
+        url(r'^submission/project/(?P<pk>\d+)/(?P<site_id>\d+)$',
+            ProjectFSXFormSubmissionApi.as_view({'post': 'create', 'head': 'create'}),
+                                                        name='psubmissions'),
 ]
 
 urlpatterns = urlpatterns + [
