@@ -1430,6 +1430,9 @@ def delete_mainstage(request, id):
 
 @api_view(['GET', 'POST'])
 def instance_status(request, instance):
+    status_changed = None
+    message = None
+    comment_url = None
     try:
         fi = FInstance.objects.get(instance__id=instance)
         if request.method == 'POST':
@@ -1448,28 +1451,28 @@ def instance_status(request, instance):
                 fi.save()
                 comment_url = reverse("forms:instance_status_change_detail",
                                                 kwargs={'pk': status_changed.id})
-                send_message(fi.site_fxf, fi.form_status, message, comment_url)
-                org = fi.project.organization if fi.project else fi.site.project.organization
-                noti = status_changed.logs.create(source=request.user, type=17, title="form status changed",
-                                                  organization=org,
-                                                  project=fi.project,
-                                                  site = fi.site,
-                                                  content_object=status_changed,
-                                                  extra_object=fi.site,
-                                                  description='{0} reviewed a response for {1} form {2} in {3}'.format(
-                                                      request.user.get_full_name(),
-                                                      fi.site_fxf.form_type(),
-                                                      fi.site_fxf.xf.title,
-                                                      fi.site.name
-                                                  ))
-                result = {}
-                result['description'] = noti.description
-                result['url'] = noti.get_absolute_url()
-                ChannelGroup("site-{}".format(fi.site.id)).send({"text": json.dumps(result)})
-
-        return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        org = fi.project.organization if fi.project else fi.site.project.organization
+        noti = status_changed.logs.create(source=request.user, type=17, title="form status changed",
+                                          organization=org,
+                                          project=fi.project,
+                                          site = fi.site,
+                                          content_object=status_changed,
+                                          extra_object=fi.site,
+                                          description='{0} reviewed a response for {1} form {2} in {3}'.format(
+                                              request.user.get_full_name(),
+                                              fi.site_fxf.form_type(),
+                                              fi.site_fxf.xf.title,
+                                              fi.site.name
+                                          ))
+        result = {}
+        result['description'] = noti.description
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("site-{}".format(fi.site.id)).send({"text": json.dumps(result)})
+        send_message(fi.site_fxf, fi.form_status, message, comment_url)
+        return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
 
 
 class AlterStatusDetailView(DetailView):
