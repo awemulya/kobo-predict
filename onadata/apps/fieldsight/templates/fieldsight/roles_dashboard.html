@@ -23,7 +23,7 @@
                                                 <a href="{% url 'fieldsight:organizations-dashboard' role.organization.pk %}" title="">
                                                 <div class="project-item-wrap clearfix">
                                                     <div class="project-logo">
-                                                        <img src="{% if organization.logo %}{{ role.organization.logo.url }}{% else %}{% static 'dummy/assets/img/default-org.jpg' %}{% endif %}" alt="" width="50" height="50">
+                                                        <img src="{% if role.organization.logo %}{{ role.organization.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
                                                     </div>
                                                     <div class="project-basic-info">
                                                         <h4>{{ role.organization.name }}</h4>
@@ -64,7 +64,7 @@
                                                 <a href="{% url 'fieldsight:project-dashboard' role.project.pk %}" title="">
                                                 <div class="project-item-wrap clearfix">
                                                     <div class="project-logo">
-                                                        <img src="{% if project.logo %}{{ role.project.logo.url }}{% else %}{% static 'dummy/assets/img/default-org.jpg' %}{% endif %}" alt="" width="50" height="50">
+                                                        <img src="{% if role.project.logo %}{{ role.project.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
                                                     </div>
                                                     <div class="project-basic-info">
                                                         <h4>{{ role.project.name }}</h4>
@@ -104,7 +104,7 @@
                                                  <a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
                                                 <div class="project-item-wrap clearfix">
                                                     <div class="project-logo">
-                                                        <img src="{% if site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default-org.jpg' %}{% endif %}" alt="" width="50" height="50">
+                                                        <img src="{% if role.site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
                                                     </div>
                                                     <div class="project-basic-info">
                                                         <h4>{{ role.site.name }}</h4>
@@ -144,7 +144,7 @@
                                                 <a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title=""> 
                                                 <div class="project-item-wrap clearfix">
                                                     <div class="project-logo">
-                                                        <img src="{% if site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default-org.jpg' %}{% endif %}" alt="" width="50" height="50">
+                                                        <img src="{% if role.site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
                                                     </div>
                                                     <div class="project-basic-info">
                                                         <h4>{{ role.site.name }}</h4>
