@@ -575,7 +575,7 @@ def set_deploy_stages(request, is_project, pk):
             # result['description'] = "Project Form Deployed to sites."
             # result['url'] = noti.get_absolute_url()
             # ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
-            ChannelGroup("notify-0").send({"text": json.dumps(result)})
+            # ChannelGroup("notify-0").send({"text": json.dumps(result)})
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
