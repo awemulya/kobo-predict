@@ -111,7 +111,7 @@ class SiteDeleteRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
 
         if request.group.name == "Super Admin":
-            return super(ReviewerRoleMixin, self).dispatch(request, *args, **kwargs)
+            return super(SiteDeleteRoleMixin, self).dispatch(request, *args, **kwargs)
         
         site_id = self.kwargs.get('pk')
         user_id = request.user.id
