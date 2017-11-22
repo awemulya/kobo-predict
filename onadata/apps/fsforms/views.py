@@ -1464,7 +1464,7 @@ def instance_status(request, instance):
                                           description='{0} reviewed a response for {1} form {2} in {3}'.format(
                                               request.user.get_full_name(),
                                               fi.site_fxf.form_type(),
-                                              fi.site_fxf.xf.title,
+                                              str(fi.site_fxf.xf.title),
                                               fi.site.name
                                           ))
         result = {}
