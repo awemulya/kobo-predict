@@ -22,7 +22,7 @@ class ScheduleViewset(viewsets.ModelViewSet):
         if is_project == "1":
             queryset = queryset.filter(project__id=pk)
         else:
-            queryset = queryset.filter(site__id=pk)
+            queryset = queryset.filter(site__id=pk, schedule_forms__is_deleted=False)
         return queryset
 
     def get_serializer_context(self):

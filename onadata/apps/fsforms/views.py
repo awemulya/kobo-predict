@@ -575,7 +575,7 @@ def set_deploy_stages(request, is_project, pk):
             # result['description'] = "Project Form Deployed to sites."
             # result['url'] = noti.get_absolute_url()
             # ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
-            ChannelGroup("notify-0").send({"text": json.dumps(result)})
+            # ChannelGroup("notify-0").send({"text": json.dumps(result)})
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
@@ -743,13 +743,18 @@ def deploy_general(request, is_project, pk):
                 if fxf_status:
                     fxf.is_deployed = False
                     fxf.save()
-                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=False, is_staged=False).update(id_deployed=False)
+                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=False, is_staged=False).update(is_deployed=False, is_deleted=True)
                 else:
                     fxf.is_deployed = True
                     fxf.save()
                     for site in fxf.project.sites.filter(is_active=True):
-                        child, created = FieldSightXF.objects.get_or_create(is_staged=False, is_scheduled=False, xf=fxf.xf, site=site, fsform_id=fxf_id)
+                        child, created = FieldSightXF.objects.get_or_create(is_staged=False,
+                                                                            is_scheduled=False,
+                                                                            is_survey=False,
+                                                                            xf=fxf.xf, site=site, fsform_id=fxf_id)
                         child.is_deployed = True
+                        child.is_deleted = False
+                        child.from_project = True
                         child.save()
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
         else:
@@ -760,6 +765,7 @@ def deploy_general(request, is_project, pk):
                 send_message_un_deploy(fxf)
             else:
                 fxf.is_deployed = True
+                fxf.is_deleted = False
                 fxf.save()
                 send_message_un_deploy(fxf)
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
@@ -846,7 +852,7 @@ def deploy_survey(request, is_project, pk):
                     # deployed case
                     fxf.is_deployed = True
                     fxf.save()
-                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project__id=pk).update(is_deployed=True)
+                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project__id=pk).update(is_deployed=True, is_deleted=False)
                     for site in Site.objects.filter(project__id=pk,is_active=True):
                         _schedule, created = Schedule.objects.get_or_create(name=schedule.name, site=site)
                         if created:
@@ -859,7 +865,7 @@ def deploy_survey(request, is_project, pk):
                     # undeploy
                     fxf.is_deployed = False
                     fxf.save()
-                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project_id=pk).update(is_deployed=False)
+                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project_id=pk).update(is_deployed=False, is_deleted=True)
 
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
         else:
@@ -1424,6 +1430,9 @@ def delete_mainstage(request, id):
 
 @api_view(['GET', 'POST'])
 def instance_status(request, instance):
+    status_changed = None
+    message = None
+    comment_url = None
     try:
         fi = FInstance.objects.get(instance__id=instance)
         if request.method == 'POST':
@@ -1442,28 +1451,29 @@ def instance_status(request, instance):
                 fi.save()
                 comment_url = reverse("forms:instance_status_change_detail",
                                                 kwargs={'pk': status_changed.id})
-                send_message(fi.site_fxf, fi.form_status, message, comment_url)
-                org = fi.project.organization if fi.project else fi.site.project.organization
-                noti = status_changed.logs.create(source=request.user, type=17, title="form status changed",
-                                                  organization=org,
-                                                  project=fi.project,
-                                                  site = fi.site,
-                                                  content_object=status_changed,
-                                                  extra_object=fi.site,
-                                                  description='{0} reviewed a response for {1} form {2} in {3}'.format(
-                                                      request.user.get_full_name(),
-                                                      fi.site_fxf.form_type(),
-                                                      fi.site_fxf.xf.title,
-                                                      fi.site.name
-                                                  ))
-                result = {}
-                result['description'] = noti.description
-                result['url'] = noti.get_absolute_url()
-                ChannelGroup("site-{}".format(fi.site.id)).send({"text": json.dumps(result)})
-
-        return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        # org = fi.project.organization if fi.project else fi.site.project.organization
+        # noti = status_changed.logs.create(source=request.user, type=17, title="form status changed",
+        #                                   organization=org,
+        #                                   project=fi.project,
+        #                                   site = fi.site,
+        #                                   content_object=status_changed,
+        #                                   extra_object=fi.site,
+        #                                   description='{0} reviewed a response for {1} form {2} in {3}'.format(
+        #                                       request.user.get_full_name(),
+        #                                       fi.site_fxf.form_type(),
+        #                                       str(fi.site_fxf.xf.title),
+        #                                       str(fi.site.name)
+        #                                   ))
+        # result = {}
+        # result['description'] = noti.description
+        # result['url'] = noti.get_absolute_url()
+        # ChannelGroup("site-{}".format(fi.site.id)).send({"text": json.dumps(result)})
+        if request.method == 'POST':
+            send_message(fi.site_fxf, fi.form_status, message, comment_url)
+        return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
 
 
 class AlterStatusDetailView(DetailView):

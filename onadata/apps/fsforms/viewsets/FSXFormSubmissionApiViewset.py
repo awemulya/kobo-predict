@@ -96,15 +96,17 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                 if fs_proj_xf.is_survey:
                     xform = fs_proj_xf.xf
                 elif fs_proj_xf.is_scheduled and siteid:
-                    fxf = FieldSightXF.objects.get(is_scheduled=True, site__id=siteid, xf=fs_proj_xf.xf, from_project=True)
+                    fxf = FieldSightXF.objects.get(is_scheduled=True, site__id=siteid, xf=fs_proj_xf.xf, from_project=True, fsform=fs_proj_xf)
                     xform = fxf.xf
                 elif (fs_proj_xf.is_scheduled is False and fs_proj_xf.is_staged is False) and siteid:
-                    fxf = FieldSightXF.objects.get(is_scheduled=False,is_staged=False, site__id=siteid, xf=fs_proj_xf.xf, from_project=True)
+                    fxf = FieldSightXF.objects.get(is_scheduled=False,is_staged=False, site__id=siteid,
+                                                   xf=fs_proj_xf.xf, from_project=True, fsform=fs_proj_xf)
                     xform = fxf.xf
                 elif fs_proj_xf.is_staged and siteid:
                     project_stage = fs_proj_xf.stage
                     site_stage = Stage.objects.get(site__id=siteid, project_stage_id=project_stage.id)
                     fxf = site_stage.stage_forms
+                    # or get from project fsform same as general and schedule
                     xform = fxf.xf
             except Exception as e:
                 xform = fs_proj_xf.xf
@@ -122,11 +124,10 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
             site_fsxf_id = fxf.id
         error, instance = create_instance_from_xml(request, site_fsxf_id, siteid, fs_proj_xf.id, proj_id, xform)
 
-        noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Submission",
-                                       organization=instance.fieldsight_instance.site.project.organization,
-                                       project=instance.fieldsight_instance.site.project,
-                                                        site=instance.fieldsight_instance.site,
-                                                        extra_object=instance.fieldsight_instance.site,
+        noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Project level Submission",
+                                       organization=fs_proj_xf.project.organization,
+                                       project=fs_proj_xf.project,
+                                                        extra_object=fs_proj_xf.project,
                                                         content_object=instance.fieldsight_instance)
         result = {}
         result['description'] = noti.description
