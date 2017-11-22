@@ -743,13 +743,18 @@ def deploy_general(request, is_project, pk):
                 if fxf_status:
                     fxf.is_deployed = False
                     fxf.save()
-                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=False, is_staged=False).update(id_deployed=False)
+                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=False, is_staged=False).update(is_deployed=False, is_deleted=True)
                 else:
                     fxf.is_deployed = True
                     fxf.save()
                     for site in fxf.project.sites.filter(is_active=True):
-                        child, created = FieldSightXF.objects.get_or_create(is_staged=False, is_scheduled=False, xf=fxf.xf, site=site, fsform_id=fxf_id)
+                        child, created = FieldSightXF.objects.get_or_create(is_staged=False,
+                                                                            is_scheduled=False,
+                                                                            is_survey=False,
+                                                                            xf=fxf.xf, site=site, fsform_id=fxf_id)
                         child.is_deployed = True
+                        child.is_deleted = False
+                        child.from_project = True
                         child.save()
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
         else:
@@ -760,6 +765,7 @@ def deploy_general(request, is_project, pk):
                 send_message_un_deploy(fxf)
             else:
                 fxf.is_deployed = True
+                fxf.is_deleted = False
                 fxf.save()
                 send_message_un_deploy(fxf)
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
@@ -846,7 +852,7 @@ def deploy_survey(request, is_project, pk):
                     # deployed case
                     fxf.is_deployed = True
                     fxf.save()
-                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project__id=pk).update(is_deployed=True)
+                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project__id=pk).update(is_deployed=True, is_deleted=False)
                     for site in Site.objects.filter(project__id=pk,is_active=True):
                         _schedule, created = Schedule.objects.get_or_create(name=schedule.name, site=site)
                         if created:
@@ -859,7 +865,7 @@ def deploy_survey(request, is_project, pk):
                     # undeploy
                     fxf.is_deployed = False
                     fxf.save()
-                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project_id=pk).update(is_deployed=False)
+                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project_id=pk).update(is_deployed=False, is_deleted=True)
 
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
         else:
