@@ -1465,7 +1465,7 @@ def instance_status(request, instance):
                                               request.user.get_full_name(),
                                               fi.site_fxf.form_type(),
                                               str(fi.site_fxf.xf.title),
-                                              fi.site.name
+                                              str(fi.site.name)
                                           ))
         result = {}
         result['description'] = noti.description
