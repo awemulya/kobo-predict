@@ -1,3 +1,4 @@
+import json
 from django.db.models import Q
 from django.utils.timezone import now
 from django.shortcuts import render, redirect
@@ -16,7 +17,9 @@ from onadata.apps.eventlog.models import FieldSightLog
 from rest_framework.pagination import PageNumberPagination
 from onadata.apps.fieldsight.rolemixins import LoginRequiredMixin
 from django.db.models import Q
+
 from django.http import JsonResponse
+from celery.result import AsyncResult
 
 class LogSerializer(serializers.ModelSerializer):
     source_uid = serializers.ReadOnlyField(source='source_id', read_only=True)
@@ -86,7 +89,6 @@ class NotificationCountnSeen(View):
             project_ids = request.roles.filter(group__name='Project Manager').values('project_id')
             site_ids = request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')) .values('site_id')
             count = queryset.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids)).exclude(seen_by__id=request.user.id).count()
-        print count
         data = {
             'id': request.user.id,
             'count': count,
@@ -122,6 +124,21 @@ class NotificationDetailView(View):
             return redirect('/users/profile/{}'.format(notification.content_object.user.id))
         url =  notification.content_object.get_absolute_url()
         return redirect(url)
+
+class CeleryTaskProgressView(View):
+    """ A view to report the progress to the user """
+    def get(self, request, *args, **kwargs):
+        if 'task_id' in request.GET:
+            task_id = request.GET['task_id']
+        else:
+            data = {
+            'status': 'No Task Id given.',
+            }
+            return JsonResponse(data)
+
+        task = AsyncResult(task_id)
+        data = task.result or task.state
+        return JsonResponse(data)
 
 
 

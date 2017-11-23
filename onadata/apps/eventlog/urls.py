@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from onadata.apps.eventlog.views import NotificationListView, NotificationCountnSeen, NotificationViewSet, NotificationDetailView, MessageListView
+from onadata.apps.eventlog.views import CeleryTaskProgressView, NotificationListView, NotificationCountnSeen, NotificationViewSet, NotificationDetailView, MessageListView
 from onadata.apps.fieldsight.mixins import group_required
 
 
@@ -16,4 +16,5 @@ urlpatterns = [
     url(r'^message/$', MessageListView.as_view(), name='message-list'),
     url(r'^notification/(?P<pk>[0-9]+)/$', NotificationDetailView.as_view(), name='notification-detail'),
     url(r'^message/(?P<pk>[0-9]+)/$', notifications, name='message-detail'),
+    url(r'^task_state$', CeleryTaskProgressView.as_view(), name="task_state"),
     ]

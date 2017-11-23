@@ -6,10 +6,11 @@ from django.contrib.gis.geos import Point
 from celery import shared_task
 from onadata.apps.fieldsight.models import Organization, Project, Site
 from onadata.apps.userrole.models import UserRole
-from onadata.apps.eventlog.models import FieldSightLog
+from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from django.contrib import messages
 from channels import Group as ChannelGroup
 from django.contrib.auth.models import Group
+from celery import task, current_task
 
 @shared_task()
 def printr():
@@ -19,15 +20,22 @@ def printr():
         print a
     return ' random users created with success!'
 
-@shared_task()
+@task()
 def bulkuploadsites(source_user, file, pk):
     time.sleep(5)
+    project = Project.objects.get(pk=pk)
     try:
         sites = file.get_records()
-        project = Project.objects.get(pk=pk)
         count = len(sites)
+        task_id = bulkuploadsites.request.id
+        task = CeleryTaskProgress.objects.get(task_id=task_id)
+        task.status=1
+        task.save()
+        
         with transaction.atomic():
+            i=0
             for site in sites:
+                # time.sleep(0.7)
                 site = dict((k, v) for k, v in site.iteritems() if v is not '')
                 lat = site.get("longitude", 85.3240)
                 long = site.get("latitude", 27.7172)
@@ -43,6 +51,10 @@ def bulkuploadsites(source_user, file, pk):
                 _site.location = location
                 _site.logo = "logo/default-org.jpg"
                 _site.save()
+                i += 1
+                current_task.update_state(state='PROGRESS',meta={'current': i, 'total': count})
+            task.status = 2
+            task.save()
             noti = project.logs.create(source=source_user, type=12, title="Bulk Sites",
                                        organization=project.organization,
                                        project=project, content_object=project,

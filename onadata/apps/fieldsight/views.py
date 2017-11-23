@@ -29,7 +29,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from channels import Group as ChannelGroup
 
-from onadata.apps.eventlog.models import FieldSightLog
+from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from onadata.apps.fieldsight.bar_data_project import BarGenerator
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
@@ -786,7 +786,8 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
                 sitefile=request.FILES['file']
                 # sites = request.FILES['file'].get_records()
                 user = request.user
-                bulkuploadsites.apply_async((user, sitefile, pk), countdown=3)
+                task = bulkuploadsites.delay(user, sitefile, pk)
+                if CeleryTaskProgress.objects.create(task_id=task.id, user=user):
                 # sites = request.FILES['file'].get_records()
                 # with transaction.atomic():
                 #     for site in sites:
@@ -805,7 +806,9 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
                 #         _site.location = location
                 #         _site.save()
                 # messages.info(request, 'Site Upload Succesfull')
-                messages.success(request, 'Sites are being uploaded. You will be notified in notifications list as well.')
+                    messages.success(request, 'Sites are being uploaded. You will be notified in notifications list as well.')
+                else:
+                    messages.success(request, 'Sites cannot be updated a the moment.')
                 return HttpResponseRedirect(reverse('fieldsight:proj-site-list', kwargs={'pk': pk}))
             except Exception as e:
                 print e
@@ -1347,7 +1350,7 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         users = data.get('users')
         group = Group.objects.get(name=data.get('group'))
         user = request.user
-        multiuserassignsite.apply_async((user, pk, sites, users, group.id), countdown=3)
+        multiuserassignsite.delay(user, pk, sites, users, group.id)
 
         return HttpResponse('sucess')
 # if(Group="Reviewer or Site Supervisor") and request.user not in test
@@ -1412,7 +1415,7 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
         group_id = Group.objects.get(name="Project Manager").id
         user = request.user
         print user
-        multiuserassignproject.apply_async((user, pk, projects, users, group_id), countdown=3)
+        multiuserassignproject.delay(user, pk, projects, users, group_id)
 
         return HttpResponse("Sucess")
 
