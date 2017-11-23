@@ -541,6 +541,7 @@ def set_deploy_stages(request, is_project, pk):
 
                 FieldSightXF.objects.filter(is_staged=True, site__project=project,stage__isnull=False).\
                     update(stage=None, is_deployed=False, is_deleted=True)
+                FieldSightXF.objects.filter(is_staged=True, project=project,is_deleted=False).update(is_deployed=True)
                 Stage.objects.filter(site__project=project).delete()
                 for main_stage in main_stages:
                     for site in sites:
@@ -555,8 +556,11 @@ def set_deploy_stages(request, is_project, pk):
                             site_sub_stage.save()
                             if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
                                 fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
-                                FieldSightXF.objects.get_or_create(is_staged=True, xf=fsxf.xf, site=site,
-                                                                   fsform=fsxf, stage=site_sub_stage, is_deployed=True)
+                                site_fsxf, created = FieldSightXF.objects.get_or_create(is_staged=True, xf=fsxf.xf, site=site,
+                                                                   fsform=fsxf, stage=site_sub_stage)
+                                site_fsxf.is_deleted = False
+                                site_fsxf.is_deployed = True
+                                site_fsxf.save()
             # noti = project.logs.create(source=request.user, type=4, title="Project Stages Deployed",
             # organization=project.organization, description="Project Stages Deployed to sites.")
             # result = {}
