@@ -567,7 +567,7 @@ def set_deploy_stages(request, is_project, pk):
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
         else:
             site = Site.objects.get(pk=pk)
-            site.site_forms.filter(is_staged=True, xf__isnull=False, is_deleted=False).update(is_deployed=True)
+            site.site_forms.filter(is_staged=True, xf__isnull=False, is_deployed=False, is_deleted=False).update(is_deployed=True)
             send_message_stages(site)
             # noti = site.logs.create(source=request.user, type=4, title="Site Stages Deployed",
             # organization=site.project.organization, description="Project Form Deployed to sites.")
