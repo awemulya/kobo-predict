@@ -1,4 +1,4 @@
-{% extends "fieldsight/fieldsight_base.html" %}
+
 {% load i18n staticfiles %}
 
 
@@ -10,14 +10,17 @@
     <div id="main-content" class="padding">
 				<section class="panel">
                     <header class="panel-heading clearfix">
-
-
-
-						<div class="row">
+                        <div class="row">
 							<img src="https://www.inzjobs.com/resources/frontend/images/404-error-page.png" >
                         </div>
                     </header>
-
+                    <div class="panel-body">
+						<!-- Add New Organization-->
+						<div id="newOrganization" class="margin-top">
+                            <h6>You have no roles yet,Login again.</h6>
+                            <a href="" title="" class="btn btn-sm btn-xs btn-primary">{% trans 'Login' %}</a>
+						</div>
+					</div>
                 </section>
 
 			</div>
