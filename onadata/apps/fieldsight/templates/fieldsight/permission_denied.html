@@ -1,7 +1,6 @@
 
 {% load i18n staticfiles %}
-
-
+<link rel="stylesheet" href="{% static 'bs3/css/bootstrap.min.css' %}">
 {%block extracss %}
 {% endblock %}
 
@@ -18,7 +17,7 @@
 						<!-- Add New Organization-->
 						<div id="newOrganization" class="margin-top">
                             <h6>You have no roles yet,Login again.</h6>
-                            <a href="" title="" class="btn btn-sm btn-xs btn-primary">{% trans 'Login' %}</a>
+                            <a href="{% url 'dashboard' %}" title="" class="btn btn-sm btn-xs btn-primary">{% trans 'Logout' %}</a>
 						</div>
 					</div>
                 </section>
