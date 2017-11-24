@@ -29,7 +29,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from channels import Group as ChannelGroup
 
-from onadata.apps.eventlog.models import FieldSightLog
+from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from onadata.apps.fieldsight.bar_data_project import BarGenerator
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
@@ -41,7 +41,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
-from .rolemixins import SiteSupervisorRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
+from .rolemixins import SiteDeleteRoleMixin, SiteSupervisorRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm)
@@ -140,7 +140,7 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
         sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
-        projects = Project.objects.filter(organization=obj)
+        projects = Project.objects.filter(organization_id=obj.pk)
         total_projects = projects.count()
         total_sites = sites.count()
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
@@ -639,6 +639,7 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.object.id})
 
     def form_valid(self, form):
+        print "Test"
         self.object = form.save(project_id=self.kwargs.get('pk'), new=True)
         noti = self.object.logs.create(source=self.request.user, type=11, title="new Site",
                                        organization=self.object.project.organization,
@@ -677,7 +678,7 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class SiteDeleteView(SiteView, ProjectRoleMixin, DeleteView):
+class SiteDeleteView(SiteView, SiteDeleteRoleMixin, DeleteView):
     def get_success_url(self):
         return reverse('fieldsight:proj-site-list', kwargs={'pk': self.object.project_id})
 
@@ -785,7 +786,8 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
                 sitefile=request.FILES['file']
                 # sites = request.FILES['file'].get_records()
                 user = request.user
-                bulkuploadsites.delay(user, sitefile, pk)
+                task = bulkuploadsites.delay(user, sitefile, pk)
+                if CeleryTaskProgress.objects.create(task_id=task.id, user=user):
                 # sites = request.FILES['file'].get_records()
                 # with transaction.atomic():
                 #     for site in sites:
@@ -804,7 +806,9 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
                 #         _site.location = location
                 #         _site.save()
                 # messages.info(request, 'Site Upload Succesfull')
-                messages.success(request, 'Sites are being uploaded. You will be notified in notifications list as well.')
+                    messages.success(request, 'Sites are being uploaded. You will be notified in notifications list as well.')
+                else:
+                    messages.success(request, 'Sites cannot be updated a the moment.')
                 return HttpResponseRedirect(reverse('fieldsight:proj-site-list', kwargs={'pk': pk}))
             except Exception as e:
                 print e
@@ -1577,7 +1581,7 @@ class RegionUpdateView(RegionView, UpdateView):
     
 
 def project_html_export(request, pk):
-    forms = FieldSightXF.objects.filter(site_id=pk)
+    
     # site_responses_report(forms)
     # # data = {}
     # # for fsxf in forms:
@@ -1591,7 +1595,7 @@ def project_html_export(request, pk):
     response['Content-Disposition'] = 'attachment; filename="My Users.pdf"'
     base_url = request.get_host()
     report = MyPrint(buffer, 'Letter')
-    pdf = report.print_users(forms, base_url)
+    pdf = report.print_users(pk, base_url)
 
     buffer.seek(0)
 

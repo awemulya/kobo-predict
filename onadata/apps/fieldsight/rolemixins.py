@@ -107,6 +107,27 @@ class SiteSupervisorRoleMixin(LoginRequiredMixin):
 
         raise PermissionDenied()
 
+class SiteDeleteRoleMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+
+        if request.group.name == "Super Admin":
+            return super(SiteDeleteRoleMixin, self).dispatch(request, *args, **kwargs)
+        
+        site_id = self.kwargs.get('pk')
+        user_id = request.user.id
+        
+        project = Site.objects.get(pk=site_id).project
+        user_role_aspadmin = request.roles.filter(user_id = user_id, project_id = project.id, group__name="Project Manager")
+        if user_role_aspadmin:
+            return super(SiteDeleteRoleMixin, self).dispatch(request, *args, **kwargs)
+
+        organization_id = project.organization.id
+        user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+        if user_role_asorgadmin:
+            return super(SiteDeleteRoleMixin, self).dispatch(request, *args, **kwargs)
+
+        raise PermissionDenied()
+
 
 
 class ProjectRoleMixinDeleteView(LoginRequiredMixin):

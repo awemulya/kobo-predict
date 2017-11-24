@@ -11,7 +11,8 @@ from reportlab.platypus import Spacer, SimpleDocTemplate, Table, TableStyle
 from reportlab.platypus import Image
 from reportlab.lib import colors
 from onadata.apps.fsforms.reports_util import get_instaces_for_site_individual_form
-
+from django.db.models import Prefetch
+from onadata.apps.fsforms.models import FieldSightXF, FInstance
 styleSheet = getSampleStyleSheet()
  
 class MyPrint:
@@ -65,7 +66,7 @@ class MyPrint:
                         answer= '' 
                     elif first_children['type'] == 'photo':
                         #photo = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
-                        photo = 'http://'+self.base_url+'/media/'+media_folder+'/attachments/'+ gnr_answer[gnr_question+"/"+question]
+                        photo = 'http://'+self.base_url+'/media/'+self.media_folder+'/attachments/'+ gnr_answer[gnr_question+"/"+question]
                         answer = self.create_logo(photo)
                         # answer =''
                     else:
@@ -87,7 +88,7 @@ class MyPrint:
                 if first_children['type'] == 'note':
                     answer= '' 
                 elif first_children['type'] == 'photo':
-                    photo = 'http://'+self.base_url+'/media/'+media_folder+'/attachments/'+self.main_answer[gnr_question+"/"+question]
+                    photo = 'http://'+self.base_url+'/media/'+self.media_folder+'/attachments/'+self.main_answer[gnr_question+"/"+question]
                     answer = self.create_logo(photo)
                 else:
                     answer = self.main_answer[gnr_question+"/"+question]
@@ -109,23 +110,23 @@ class MyPrint:
                 self.parse_group(first_children)
             else:
                 question = first_children['name']
-                if 'label' in first_children:
-                    question = first_children['label']
 
                 if first_children['type'] == 'note' or question not in self.main_answer:
-                    answer= '' 
+                    answer= Paragraph('', styBackground) 
 
                 elif first_children['type'] == 'photo':
-                    photo = 'http://'+self.base_url+'/media/'+media_folder+'/attachments/'+self.main_answer[question]
+                    photo = 'http://'+self.base_url+'/media/'+self.media_folder+'/attachments/'+self.main_answer[question]
                     answer = self.create_logo(photo)
                 else:
-                    answer = self.main_answer[question]
+                    answer = Paragraph(self.main_answer[question], styBackground)
                 
-                row=(Paragraph(question, styBackground), Paragraph(answer, styBackground))
+                if 'label' in first_children:
+                    question = first_children['label']
+                row=(Paragraph(question, styBackground), answer)
                 self.data.append(row)
 
 
-    def print_users(self, forms, base_url):
+    def print_users(self, pk, base_url):
         self.base_url = base_url
         buffer = self.buffer
         doc = SimpleDocTemplate(buffer,
@@ -142,7 +143,8 @@ class MyPrint:
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
         elements.append(Paragraph('Site Resonses', styles['Heading1']))
-
+        forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')))
+        #a=FieldSightXF.objects.select_related('xf').filter(site_id=291).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')))
 
        
         
@@ -176,7 +178,7 @@ class MyPrint:
             form_user_name = form.xf.user.username
             self.media_folder = form_user_name
             elements.append(Paragraph("Form Created By:"+form_user_name, styles['Normal']))
-            cursor = get_instaces_for_site_individual_form(form.id)
+            #cursor = get_instaces_for_site_individual_form(form.id)
             styNormal = styleSheet['Normal']
             styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
             ts1 = TableStyle([
@@ -185,19 +187,18 @@ class MyPrint:
                 ('VALIGN', (0,0), (-1,-1), 'TOP'),
                 ('GRID', (0,0), (-1,-1), 0.25, colors.black),
                     ])
-            for instance in cursor:
-              t1 = None
-              self.main_answer = instance
-              question = json.loads(json_question)
-              self.parse_individual_questions(question['children'])
-              
+            track = 0
+            for instance in form.site_form_instances.all():
+                self.data = []
+                self.main_answer = instance.instance.json
+                question = json.loads(json_question)
+                self.parse_individual_questions(question['children'])
+                
 
-              t1 = Table(self.data, colWidths=(60*mm, None))
-              t1.setStyle(ts1)
-              elements.append(Spacer(0,10))
-              elements.append(t1)
-              elements.append(Paragraph("===============", styles['Normal']))
-              elements.append(Spacer(0,10))
+                t1 = Table(self.data, colWidths=(60*mm, None))
+                t1.setStyle(ts1)
+                elements.append(t1)
+                elements.append(Spacer(0,10))
         #     else:
         #         elements.append(Paragraph("No Submissions Yet.", styles['Normal']))
         #         elements.append(Spacer(0,10)) 

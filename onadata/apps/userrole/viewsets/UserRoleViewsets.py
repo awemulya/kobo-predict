@@ -232,7 +232,7 @@ class MultiUserlistViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, ManagePeoplePermission)
     # pagination_class = LargeResultsSetPagination
     def get_queryset(self):
-        queryset = UserRole.objects.filter(organization__isnull=False, ended_at__isnull=True)
+        queryset = UserRole.objects.filter(organization__isnull=False)
         level = self.kwargs.get('level', None)
         pk = self.kwargs.get('pk', None)
         if level == "0":

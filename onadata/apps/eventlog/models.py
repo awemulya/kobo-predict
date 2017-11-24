@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import json
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
@@ -10,6 +11,8 @@ from django.db.models import Q
 
 from onadata.apps.fieldsight.models import Organization, Project, Site
 from onadata.apps.users.models import UserProfile
+from django.http import JsonResponse
+from celery.result import AsyncResult
 
 user_type = ContentType.objects.get(app_label="users", model="userprofile")
 
@@ -136,4 +139,27 @@ class FieldSightMessage(models.Model):
     @classmethod
     def user_messages(cls, user):
         return FieldSightMessage.objects.filter(Q(sender=user) | Q(receiver=user))
+
+
+class CeleryTaskProgress(models.Model):
+    Task_Status =(
+        (0, 'Pending'),
+        (1, 'In Progress'),
+        (2, 'Completed')
+        )
+    task_id = models.CharField(max_length=255, unique=True)
+    date_added = models.DateTimeField(auto_now_add=True)
+    date_completed = models.DateTimeField(blank=True, null=True)
+    user = models.ForeignKey(User, related_name="task_owner")
+    status = models.IntegerField(default=0, choices=Task_Status)
+
+    def get_progress(self):
+        if self.status == 1:
+            task = AsyncResult(self.task_id)
+            data = task.result or task.state
+            return json.dumps(data)
+        return None
+
+
+
 

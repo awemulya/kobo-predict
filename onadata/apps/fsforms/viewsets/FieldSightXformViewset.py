@@ -53,7 +53,7 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
         if is_project == "1":
             queryset = queryset.filter(project__id=pk)
         else:
-            queryset = queryset.filter(site__id=pk)
+            queryset = queryset.filter(site__id=pk, is_deleted=False)
         return queryset
 
     def get_serializer_context(self):
