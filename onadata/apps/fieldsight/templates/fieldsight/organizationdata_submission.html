@@ -35,16 +35,16 @@
 
     	<ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link " id ="0" data-toggle="tab" href="#tab0" role="tab">Rejected Submission</a>
+              <a class="nav-link " id ="0" data-toggle="tab" href="#tab0" role="tab">Rejected Submissions</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id ="1" data-toggle="tab" href="#tab1" role="tab">Flagged Submission</a>
+              <a class="nav-link" id ="1" data-toggle="tab" href="#tab1" role="tab">Flagged Submissions</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id ="2" data-toggle="tab" href="#tab2" role="tab">Pending Submission</a>
+              <a class="nav-link" id ="2" data-toggle="tab" href="#tab2" role="tab">Pending Submissions</a>
             </li>
 			<li class="nav-item">
-              <a class="nav-link" id ="3" data-toggle="tab" href="#tab3" role="tab">Approved Submission</a>
+              <a class="nav-link" id ="3" data-toggle="tab" href="#tab3" role="tab">Approved Submissions</a>
             </li>
 		</ul>
 
@@ -75,7 +75,7 @@
 					</td>
 				</tr>
 				{% empty %}
-				No data
+				No any rejected submissions
 				{% endfor %}
 			</table>
 				{% paginate %}
@@ -106,7 +106,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				 No data
+				 No any flagged submissions
 				  {% endfor %}
 			  </table>
 			  {% paginate %}
@@ -139,7 +139,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				  No data
+				  No any pending submissions
 				  {% endfor %}
 			  </table>
 			  {% paginate %}
@@ -170,7 +170,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				 No data
+				 No any approved submissions
 				  {% endfor %}
 			  </table>
 			  {% paginate %}

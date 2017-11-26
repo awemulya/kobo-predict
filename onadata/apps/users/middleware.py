@@ -1,5 +1,9 @@
 from onadata.apps.userrole.models import UserRole as Role
 from rest_framework.authtoken.models import Token
+from django.contrib.auth import logout
+
+from django.shortcuts import get_object_or_404, render, redirect
+
 
 
 def clear_roles(request):
@@ -53,7 +57,11 @@ class RoleMiddleware(object):
                 #         groups.append(role.group)
                 #     request.__class__.groups = groups
             else:
-                request = clear_roles(request)
+                # request = clear_roles(request)
+                logout(request)
+
+                return render(request, 'fieldsight/permission_denied.html')
+
         else:
             request = clear_roles(request)
 

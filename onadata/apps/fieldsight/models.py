@@ -59,7 +59,7 @@ class Organization(models.Model):
     address = models.TextField(blank=True, null=True)
     public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
-    logo = models.ImageField(upload_to="logo")
+    logo = models.ImageField(upload_to="logo", default="logo/default_image.png")
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True,)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
@@ -159,7 +159,7 @@ class Project(models.Model):
     public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
     organization = models.ForeignKey(Organization, related_name='projects')
-    logo = models.ImageField(upload_to="logo")
+    logo = models.ImageField(upload_to="logo", default="logo/default_image.png")
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
@@ -256,7 +256,7 @@ class Site(models.Model):
     public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
     project = models.ForeignKey(Project, related_name='sites')
-    logo = models.ImageField(upload_to="logo")
+    logo = models.ImageField(upload_to="logo", default="logo/default_image.png")
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     is_survey = models.BooleanField(default=False)
@@ -459,3 +459,16 @@ class Region(models.Model):
         return reverse('fieldsight:region-dashboard', kwargs={'pk': self.pk})
 
 
+class Timezone(models.Model):
+    time_zone = models.CharField(max_length=255, blank=True, null=True)
+    country = models.CharField(max_length=255, blank=True, null=True)
+    country_code = models.CharField(max_length=255, blank=True, null=True)
+    offset_time = models.CharField(max_length=255, blank=True, null=False)
+
+    def __str__(self):
+        return self.time_zone
+
+
+
+
+    
