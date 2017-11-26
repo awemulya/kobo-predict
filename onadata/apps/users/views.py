@@ -28,7 +28,7 @@ from onadata.apps.users.serializers import AuthCustomTokenSerializer
 from .forms import LoginForm, ProfileForm, UserEditForm
 from rest_framework import viewsets
 from onadata.apps.fsforms.models import FInstance
-
+from django.db.models import Q
 
 from rest_framework import serializers
 
@@ -298,11 +298,20 @@ def my_profile(request, pk=None):
     else:
         user = get_object_or_404(User.objects.filter(pk=pk))
         profile, created = UserProfile.objects.get_or_create(user_id=pk)
+
         roles_org = user.user_roles.select_related('organization').filter(organization__isnull = False, project__isnull = True, site__isnull = True, ended_at__isnull=True)
         roles_project = user.user_roles.select_related('project').filter(organization__isnull = False, project__isnull = False, site__isnull = True, ended_at__isnull=True)
         roles_reviewer = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Reviewer", ended_at__isnull=True)
         roles_SA = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Site Supervisor", ended_at__isnull=True)
-        responses = FInstance.objects.filter(submitted_by = user).order_by('-date')[:10]
+        
+        if request.role is not None and request.role.group.name != "Super Admin":
+            org_ids = request.user.user_roles.select_related('organization').filter(ended_at__isnull=True).distinct('organization_id').values('organization_id')
+            roles_org = roles_org.filter(organization_id__in=org_ids)
+            roles_project = roles_project.filter(organization_id__in=org_ids)
+            roles_reviewer = roles_reviewer.filter(organization_id__in=org_ids)
+            roles_SA = roles_SA.filter(organization_id__in=org_ids)
+
+        responses = FInstance.objects.filter(Q(submitted_by = user) & (Q(site__project__organization_id__in=org_ids) | Q(project__organization_id__in=org_ids))).order_by('-date')[:10]
         return render(request, 'users/profile.html', {'obj': profile, 'roles_org': roles_org, 'roles_project': roles_project, 'roles_site': roles_reviewer, 'roles_SA': roles_SA, 'roles_reviewer': roles_reviewer, 'responses': responses })
 
 class UsersListView(TemplateView, SuperAdminMixin):
