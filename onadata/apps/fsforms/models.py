@@ -380,7 +380,7 @@ class FInstance(models.Model):
                     question_type = first_children['type']
                     question = first_children['name']
                     group_answer = json_answer[r_question]
-                    question_label = first_children['label']
+                    answer = ''
                     if r_question+"/"+question in gnr_answer:
                         if first_children['type'] == 'note':
                             answer= ''
@@ -388,8 +388,7 @@ class FInstance(models.Model):
                             answer = 'http://'+self.base_url+'/media/'+self.instance.user.username+'/attachments/'+gnr_answer[r_question+"/"+question]
                         else:
                             answer = gnr_answer[r_question+"/"+question]
-                    else:
-                        answer = ''
+                            
                     if 'label' in first_children:
                         question = first_children['label']
                     row={'type':question_type, 'question':question, 'answer':answer}
@@ -400,6 +399,7 @@ class FInstance(models.Model):
             for first_children in g_object['children']:
                 question = first_children['name']
                 question_type = first_children['type']
+                answer = ''
                 if g_question+"/"+question in json_answer:
                     if question_type == 'note':
                         answer= '' 
@@ -407,8 +407,7 @@ class FInstance(models.Model):
                         answer = 'http://'+self.base_url+'/media/'+self.instance.user.username+'/attachments/'+json_answer[g_question+"/"+question]
                     else:
                         answer = json_answer[g_question+"/"+question]
-                else:
-                    answer = ''
+
                 if 'label' in first_children:
                     question = first_children['label']
                 row={'type':question_type, 'question':question, 'answer':answer}
@@ -423,13 +422,14 @@ class FInstance(models.Model):
                 else:
                     question = first_children['name']
                     question_type = first_children['type']
-                    if first_children['type'] == 'note':
-                        answer= '' 
-
-                    elif first_children['type'] == 'photo':
-                        answer = '/media/user/attachments/'+json_answer[question]
-                    else:
-                        answer = json_answer[question]
+                    answer= ''
+                    if question in json_answer:
+                        if first_children['type'] == 'note':
+                            answer= '' 
+                        elif first_children['type'] == 'photo':
+                            answer = '/media/user/attachments/'+json_answer[question]
+                        else:
+                            answer = json_answer[question]
                     if 'label' in first_children:
                         question = first_children['label']
                     row={"type":question_type, "question":question, "answer":answer}
