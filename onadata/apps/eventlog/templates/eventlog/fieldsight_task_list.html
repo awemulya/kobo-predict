@@ -1,0 +1,87 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block content %}
+{% load filters %}
+<div id="main-content" class="padding">
+                <section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-building"></i>{% trans 'New' %}{% trans 'Site' %} </h3>
+                    </header>
+                    <div class="panel-body">
+                      
+
+                    <style >
+    .panel-body{
+        position: relative;
+        bottom: 46px;
+    }
+</style>
+    <span class="title2_note">Your Pending Tasks</span>
+    <div class="gap"></div>
+    <div class='well'>
+
+        
+
+       <ul class="menu" id="notificationul">
+       
+       <li class=" note-div-sm unread" id="374list" style=""><div class="notification-item"><div class="notification-avatar pull-left"><i class="avatar-icon la la-bolt"></i></div>
+       Bulk Upload Sites.
+       <p class="notification-highlight-time">November, 23, 2017, 5:59 pm.</p></div></li>
+       
+       </ul>
+
+        <center>
+                <input style="display:none;" type="button" id="getnextlist" value="load more">
+            </center>
+    </div>
+
+
+
+    <span class="title2_note">Completed Tasks</span>
+    <div class="gap"></div>
+    <div class='well'>
+
+        
+
+       <ul class="menu" id="notificationul">
+       
+       <li class=" note-div-sm unread" id="374list" style=""><div class="notification-item"><div class="notification-avatar pull-left"><i class="avatar-icon la la-bolt"></i></div>
+       Bulk Upload Sites.
+       <p class="notification-highlight-time">November, 23, 2017, 5:59 pm.</p></div></li>
+       
+       </ul>
+
+        <center>
+                <input style="display:none;" type="button" id="getnextlist" value="load more">
+            </center>
+    </div>
+
+
+
+                    </div>
+                </section>
+
+            </div>
+{% endblock %}
+{% block extrascript %}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
