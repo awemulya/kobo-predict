@@ -83,7 +83,6 @@ def bulkuploadsites(source_user, file, pk):
     except Exception as e:
         task.status = 3
         task.save()
-        print str(i)+"--------"
         print 'Site Upload Unsuccesfull. %s' % e
         noti = project.logs.create(source=source_user, type=412, title="Bulk Sites",
                                        content_object=project, recipient=source_user,
