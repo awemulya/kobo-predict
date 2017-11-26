@@ -385,7 +385,7 @@ class FInstance(models.Model):
                         if first_children['type'] == 'note':
                             answer= ''
                         elif first_children['type'] == 'photo':
-                            answer = 'http://'+self.base_url+'/media/'+self.instance.user.username+'/attachments/'+self.main_answer[r_question+"/"+question]
+                            answer = 'http://'+self.base_url+'/media/'+self.instance.user.username+'/attachments/'+gnr_answer[r_question+"/"+question]
                         else:
                             answer = gnr_answer[r_question+"/"+question]
                     else:
@@ -400,13 +400,13 @@ class FInstance(models.Model):
             for first_children in g_object['children']:
                 question = first_children['name']
                 question_type = first_children['type']
-                if g_question+"/"+question in self.main_answer:
+                if g_question+"/"+question in json_answer:
                     if question_type == 'note':
                         answer= '' 
                     elif question_type == 'photo':
-                        answer = 'http://'+self.base_url+'/media/'+self.instance.user.username+'/attachments/'+self.main_answer[g_question+"/"+question]
+                        answer = 'http://'+self.base_url+'/media/'+self.instance.user.username+'/attachments/'+json_answer[g_question+"/"+question]
                     else:
-                        answer = self.main_answer[g_question+"/"+question]
+                        answer = json_answer[g_question+"/"+question]
                 else:
                     answer = ''
                 if 'label' in first_children:
@@ -427,7 +427,7 @@ class FInstance(models.Model):
                         answer= '' 
 
                     elif first_children['type'] == 'photo':
-                        answer = '/media/user/attachments/'+self.answer[question]
+                        answer = '/media/user/attachments/'+json_answer[question]
                     else:
                         answer = json_answer[question]
                     if 'label' in first_children:
