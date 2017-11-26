@@ -373,7 +373,7 @@ class FInstance(models.Model):
         json_answer = self.instance.json
         json_question = json.loads(self.instance.xform.json)
         
-        def parse_repeat(r_object):
+        def parse_repeat(self, r_object):
             r_question = r_object['name']
             for gnr_answer in json_answer[r_question]:
                 for first_children in r_object['children']:
@@ -395,7 +395,7 @@ class FInstance(models.Model):
                     row={'type':question_type, 'question':question, 'answer':answer}
                     data.append(row)
 
-        def parse_group(g_object):
+        def parse_group(self, g_object):
             g_question = g_object['name']
             for first_children in g_object['children']:
                 question = first_children['name']

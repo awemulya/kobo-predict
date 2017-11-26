@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.utils.timezone import now
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, View
-
+from django.views.generic import ListView, TemplateView
 from onadata.apps.eventlog.models import FieldSightLog, FieldSightMessage
 
 from onadata.apps.users.models import UserProfile
@@ -13,7 +13,7 @@ from onadata.apps.fieldsight.mixins import OrganizationMixin
 from rest_framework import routers, serializers, viewsets
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
-from onadata.apps.eventlog.models import FieldSightLog
+from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from rest_framework.pagination import PageNumberPagination
 from onadata.apps.fieldsight.rolemixins import LoginRequiredMixin
 from django.db.models import Q
@@ -140,5 +140,11 @@ class CeleryTaskProgressView(View):
         data = task.result or task.state
         return JsonResponse(data)
 
+
+class MyCeleryTaskProgress(TemplateView):
+    def get(self, request, *args, **kwargs):
+        pending = CeleryTaskProgress.objects.filter(user_id = request.user.id).exclude(status=2)
+        completed = CeleryTaskProgress.objects.filter(user_id = request.user.id, status=2)
+        return render(request, 'eventlog/fieldsight_task_list.html',{'pending':pending, 'completed': completed,})
 
 

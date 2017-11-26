@@ -145,13 +145,24 @@ class CeleryTaskProgress(models.Model):
     Task_Status =(
         (0, 'Pending'),
         (1, 'In Progress'),
-        (2, 'Completed')
+        (2, 'Completed'),
+        (3, 'Failed'),
+        )
+    Task_Type =(
+        (0, 'Bulk Site Upload'),
+        (1, 'Multi User Assign Project'),
+        (2, 'Multi User Assign Site')
         )
     task_id = models.CharField(max_length=255, unique=True)
     date_added = models.DateTimeField(auto_now_add=True)
     date_completed = models.DateTimeField(blank=True, null=True)
     user = models.ForeignKey(User, related_name="task_owner")
     status = models.IntegerField(default=0, choices=Task_Status)
+    description = models.CharField(max_length=755, blank=True)
+    task_type = models.IntegerField(default=0, choices=Task_Type)
+    content_type = models.ForeignKey(ContentType, related_name='task_object', blank=True, null=True)
+    object_id = models.CharField(max_length=255, blank=True, null=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     def get_progress(self):
         if self.status == 1:

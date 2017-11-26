@@ -784,34 +784,15 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
         if form.is_valid():
             try:
                 sitefile=request.FILES['file']
-                # sites = request.FILES['file'].get_records()
                 user = request.user
+                print sitefile
                 task = bulkuploadsites.delay(user, sitefile, pk)
-                if CeleryTaskProgress.objects.create(task_id=task.id, user=user):
-                # sites = request.FILES['file'].get_records()
-                # with transaction.atomic():
-                #     for site in sites:
-                #         site = dict((k, v) for k, v in site.iteritems() if v is not '')
-                #         lat = site.get("longitude", 85.3240)
-                #         long = site.get("latitude", 27.7172)
-                #         location = Point(lat, long, srid=4326)
-                #         type_id = int(site.get("type", "1"))
-                #         _site, created = Site.objects.get_or_create(identifier=str(site.get("id")),
-                #                                                     name=site.get("name"),
-                #                                                     project=project, type_id=type_id)
-                #         _site.phone = site.get("phone")
-                #         _site.address = site.get("address")
-                #         _site.public_desc = site.get("public_desc"),
-                #         _site.additional_desc = site.get("additional_desc")
-                #         _site.location = location
-                #         _site.save()
-                # messages.info(request, 'Site Upload Succesfull')
+                if CeleryTaskProgress.objects.create(task_id=task.id, user=user, task_type=0):
                     messages.success(request, 'Sites are being uploaded. You will be notified in notifications list as well.')
                 else:
                     messages.success(request, 'Sites cannot be updated a the moment.')
                 return HttpResponseRedirect(reverse('fieldsight:proj-site-list', kwargs={'pk': pk}))
             except Exception as e:
-                print e
                 form.full_clean()
                 form._errors[NON_FIELD_ERRORS] = form.error_class(['Sites Upload Failed, UnSupported Data', e])
                 messages.warning(request, 'Site Upload Failed, UnSupported Data ')
@@ -1350,9 +1331,11 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         users = data.get('users')
         group = Group.objects.get(name=data.get('group'))
         user = request.user
-        multiuserassignsite.delay(user, pk, sites, users, group.id)
-
-        return HttpResponse('sucess')
+        task = multiuserassignsite.delay(user, pk, sites, users, group.id)
+        if CeleryTaskProgress.objects.create(task_id=task.id, user=user, task_type=2):
+            return HttpResponse('sucess')
+        else:
+            return HttpResponse('Failed')
 # if(Group="Reviewer or Site Supervisor") and request.user not in test
 # return reverse redirect login
 # if(Gropp="Project Manager")and not in request.user not in test
@@ -1415,10 +1398,11 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
         group_id = Group.objects.get(name="Project Manager").id
         user = request.user
         print user
-        multiuserassignproject.delay(user, pk, projects, users, group_id)
-
-        return HttpResponse("Sucess")
-
+        task = multiuserassignproject.delay(user, pk, projects, users, group_id)
+        if CeleryTaskProgress.objects.create(task_id=task.id, user=user, task_type=1):
+            return HttpResponse("Sucess")
+        else:
+            return HttpResponse("Failed")
 
 
 #May need it
@@ -1608,3 +1592,4 @@ def project_html_export(request, pk):
     buffer.close()
 
     return response
+
