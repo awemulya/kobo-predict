@@ -55,7 +55,7 @@ def bulkuploadsites(source_user, file, pk):
                 _site.logo = "logo/default-org.jpg"
                 _site.save()
                 i += 1
-                current_task.update_state(state='PROGRESS',meta={'current': i, 'total': count})
+                bulkuploadsites.update_state(state='PROGRESS',meta={'current': i, 'total': count})
             task.status = 2
             task.save()
             noti = project.logs.create(source=source_user, type=12, title="Bulk Sites",
