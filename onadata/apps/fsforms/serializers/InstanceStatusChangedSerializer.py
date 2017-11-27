@@ -25,6 +25,7 @@ class FInstanceResponcesSerializer(serializers.ModelSerializer):
     # site_fxf = FSXFSerializer()
     # project_fxf = FSXFSerializer()
     get_responces = serializers.ReadOnlyField()
+    submitted_by_username = ReadOnlyField(source="submitted_by.username")
     # instance = InstanceSerializer()
     class Meta:
         model = FInstance
