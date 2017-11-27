@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django import forms
 from PIL import Image
 from django.utils.translation import ugettext_lazy as _
@@ -33,7 +34,7 @@ class ProfileForm(forms.ModelForm):
         model = UserProfile
         fields = ['first_name','last_name','address','gender','phone','skype','primary_number','secondary_number'
             ,'office_number', 'viber', 'whatsapp', 'wechat', 'line', 'tango', 'hike', 'qq', 'google_talk', 'twitter',
-                  'profile_picture',]
+                  'profile_picture', 'timezone',]
 
     def save(self):
         photo = super(ProfileForm, self).save()

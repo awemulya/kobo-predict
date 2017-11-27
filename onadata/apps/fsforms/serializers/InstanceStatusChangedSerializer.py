@@ -29,7 +29,7 @@ class FInstanceResponcesSerializer(serializers.ModelSerializer):
     # instance = InstanceSerializer()
     class Meta:
         model = FInstance
-        exclude = ()
+        exclude = ('submitted_by')
 
 
 class InstanceStatusChangedSerializer(serializers.ModelSerializer):
@@ -48,7 +48,6 @@ class InstanceStatusChangedSerializer(serializers.ModelSerializer):
 
     def get_new_status(self,obj):
         return obj.get_new_status_display()
-
 
     def get_date(self,obj):
         return obj.date.isoformat()

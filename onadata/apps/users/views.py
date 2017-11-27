@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import datetime
 import json
 from django.shortcuts import get_object_or_404
@@ -110,7 +111,8 @@ def current_user(request):
                                   'add_desc': site.additional_desc, 'blueprints':bp},
                          'project': {'name': project.name, 'id': project.id, 'description': project.public_desc,
                                      'address':project.address, 'type_id':project.type.id,
-                                     'type_label':project.type.name,'phone':project.phone,
+                                     'type_label':project.type.name,'phone':project.phone, 'organization_name':project.organization.name,
+                                     'organization_url':project.organization.logo.url,
                                      'lat': repr(project.latitude), 'lon': repr(project.longitude)},
                          }
             field_sight_info.append(site_info)
@@ -252,14 +254,18 @@ class MyProfileView(ProfileView):
 
 
 class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
-    pass
+    # pass
     #
-    # def form_valid(self, form):
-    #     user = self.request.user
-    #     user.first_name = form.cleaned_data['first_name']
-    #     user.last_name = form.cleaned_data['last_name']
-    #     user.save()
-    #     profile = UserProfile.objects.get(user=user)
+    def form_valid(self, form):
+        print "sadas333333333"
+        user = self.request.user
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+        user.save()
+        self.object = form.save()
+        return HttpResponseRedirect(self.success_url)
+
+        # profile = UserProfile.objects.get(user=user)
     #     profile.address = form.cleaned_data['address']
     #     profile.gender = form.cleaned_data['gender']
     #     profile.phone = form.cleaned_data['phone']
@@ -303,15 +309,15 @@ def my_profile(request, pk=None):
         roles_project = user.user_roles.select_related('project').filter(organization__isnull = False, project__isnull = False, site__isnull = True, ended_at__isnull=True)
         roles_reviewer = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Reviewer", ended_at__isnull=True)
         roles_SA = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Site Supervisor", ended_at__isnull=True)
-        
+        responses = FInstance.objects.filter(submitted_by = user).order_by('-date')[:10]
+                
         if request.role is not None and request.role.group.name != "Super Admin":
             org_ids = request.user.user_roles.select_related('organization').filter(ended_at__isnull=True).distinct('organization_id').values('organization_id')
             roles_org = roles_org.filter(organization_id__in=org_ids)
             roles_project = roles_project.filter(organization_id__in=org_ids)
             roles_reviewer = roles_reviewer.filter(organization_id__in=org_ids)
             roles_SA = roles_SA.filter(organization_id__in=org_ids)
-
-        responses = FInstance.objects.filter(Q(submitted_by = user) & (Q(site__project__organization_id__in=org_ids) | Q(project__organization_id__in=org_ids))).order_by('-date')[:10]
+            responses = FInstance.objects.filter(Q(submitted_by = user) & (Q(site__project__organization_id__in=org_ids) | Q(project__organization_id__in=org_ids))).order_by('-date')[:10]
         return render(request, 'users/profile.html', {'obj': profile, 'roles_org': roles_org, 'roles_project': roles_project, 'roles_site': roles_reviewer, 'roles_SA': roles_SA, 'roles_reviewer': roles_reviewer, 'responses': responses })
 
 class UsersListView(TemplateView, SuperAdminMixin):

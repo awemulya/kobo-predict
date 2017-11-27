@@ -1,7 +1,7 @@
 import csv
 from datetime import datetime
 from django.core.management.base import BaseCommand
-from onadata.apps.fieldsight.models import Timezone
+from onadata.apps.fieldsight.models import TimeZone
 
 class Command(BaseCommand):
     help = 'Create default groups'
@@ -12,5 +12,5 @@ class Command(BaseCommand):
         timezonesreader = csv.reader(open("onadata/apps/fieldsight/management/commands/timezones.csv"), delimiter=",")
         for country_code, country_name, time_zone, gmt_offset, in timezonesreader:
 
-            timezone, created = Timezone.objects.get_or_create(country_code=country_code,country=country_name,time_zone=time_zone,offset_time=gmt_offset  )
+            timezone, created = TimeZone.objects.get_or_create(country_code=country_code,country=country_name,time_zone=time_zone,offset_time=gmt_offset)
             self.stdout.write('Successfully created Timestamp .. "%s"' % timezone)

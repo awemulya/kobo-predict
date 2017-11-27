@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django.utils.timezone import now
 from PIL import Image
 from django.contrib.auth.models import User
@@ -9,7 +10,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.forms import forms
 
-from onadata.apps.fieldsight.models import Organization
+from onadata.apps.fieldsight.models import Organization, TimeZone
 
 
 def user_directory_path(instance, filename):
@@ -38,6 +39,7 @@ class UserProfile(models.Model):
     profile_picture = models.ImageField(upload_to=user_directory_path, default="logo/default_user.png")
     organization = models.ForeignKey(Organization, null=True, blank=True)
     notification_seen_date = models.DateTimeField(default=now, blank=True)
+    timezone = models.ForeignKey(TimeZone, null=True,blank=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     def __unicode__(self):

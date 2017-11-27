@@ -30,7 +30,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='celerytaskprogress',
             name='task_type',
-            field=models.IntegerField(default=0, choices=[(0, 'Bulk Site Upload'), (1, 'Multi User Assign')]),
+            field=models.IntegerField(default=0, choices=[(0, 'Bulk Site Upload'), (1, 'Multi User Assign Project'), (2, 'Multi User Assign Site')]),
+        ),
+        migrations.AlterField(
+            model_name='celerytaskprogress',
+            name='status',
+            field=models.IntegerField(default=0, choices=[(0, 'Pending'), (1, 'In Progress'), (2, 'Completed'), (3, 'Failed')]),
         ),
         migrations.AlterField(
             model_name='celerytaskprogress',
