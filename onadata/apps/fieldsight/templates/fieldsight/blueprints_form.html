@@ -10,14 +10,15 @@
 
 
 {% block content %}
-{% block breadcrumbs %}
-<li><a href="{% url 'fieldsight:site-dashboard' id %}">
-     {% trans 'Site Dashboard' %}</a></li>
-<li>{% trans 'Upload Blueprints image files' %}</li>
-{% endblock %}
     <div id="main-content" class="padding">
+		<ul class="breadcrumbb">
+					{% block breadcrumbs %}
+					<li><a href="{% url 'fieldsight:site-dashboard' id %}">
+     				{% trans 'Site Dashboard' %}</a></li>
+					<li>{% trans 'Upload Blueprints image files' %}</li>
+					{% endblock %}
+				</ul>
 				<section class="panel">
-
 					<div class="panel-body">
 						<!-- Add New Organization-->
 						<div id="newOrganization" class="margin-top">
