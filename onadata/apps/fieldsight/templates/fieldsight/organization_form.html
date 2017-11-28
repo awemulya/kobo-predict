@@ -74,16 +74,18 @@
 
     });
   </script>
-            {% block breadcrumbs %}
-            {% if form.instance.id %}
-                <a href="{% url 'fieldsight:organizations-dashboard' form.instance.pk %}">{{ form.instance }}</a>
-            {% endif %}
-            {% if not form.instance.id %}
-                <a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organizations' %}</a>
-            {% endif %}
-               /{{ scenario }}
-            {% endblock %}
 			<div id="main-content" class="padding">
+                    {% block breadcrumbs %}
+                    <ul class="breadcrumbb">
+                    {% if form.instance.id %}
+                    <li><a href="{% url 'fieldsight:organizations-dashboard' form.instance.pk %}">{{ form.instance }}</a></li>
+                    {% endif %}
+                    {% if not form.instance.id %}
+                    <li><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organizations' %}</a></li>
+                    {% endif %}
+                        <li>{{ scenario }}</li>
+                    </ul>
+                    {% endblock %}
 				<section class="panel">
                     <header class="panel-heading clearfix">
                         <h3><i class="la la-building"></i>{% trans 'New' %}{% trans 'Organization' %}</h3>

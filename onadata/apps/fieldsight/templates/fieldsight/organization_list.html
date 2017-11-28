@@ -5,10 +5,10 @@
 
 {% block content %}
 {% load filters %}
-{% block breadcrumbs %}
-{% endblock %}
         {% autopaginate object_list 30 as paginated_objects %}
 		<div id="main-content" class="padding">
+			{% block breadcrumbs %}
+			{% endblock %}
 				<section class="panel">
                     <header class="panel-heading clearfix">
                         <h3><i class="la la-building"></i>{% block page-title %}{% trans 'Organizations' %}{% endblock %}</h3>

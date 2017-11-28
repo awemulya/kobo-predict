@@ -971,6 +971,7 @@ class OrgUserList(OrganizationRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(OrgUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['type'] = "organization"
         return context
     def get_queryset(self):
         #queryset = UserRole.objects.select_related('User').filter(organization_id=self.kwargs.get('pk')).distinct('user_id')
