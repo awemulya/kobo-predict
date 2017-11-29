@@ -635,7 +635,12 @@ class SiteListView(SiteView, ReviewerRoleMixin, ListView):
 
 
 class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
-
+    def get_context_data(self, **kwargs):
+        context = super(SiteCreateView, self).get_context_data(**kwargs)
+        context['project'] = Project.objects.get(pk=self.kwargs.get('pk'))
+        context['pk'] = self.kwargs.get('pk')
+        return context
+        
     def get_success_url(self):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.object.id})
 
@@ -1570,8 +1575,33 @@ class RegionalSitelist(ProjectRoleMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         obj = get_object_or_404(Region, id=self.kwargs.get('region_pk'))
         return render(request, 'fieldsight/site_list.html',{'obj':obj, 'type':"region",'pk':self.kwargs.get('region_pk'),})
-     
 
+     
+class RegionalSiteCreateView(SiteView, ProjectRoleMixin, CreateView):
+    def get_context_data(self, **kwargs):
+        context = super(RegionalSiteCreateView, self).get_context_data(**kwargs)
+        context['project'] = Project.objects.get(pk=self.kwargs.get('pk'))
+        context['pk'] = self.kwargs.get('pk')
+        return context
+
+    def get_success_url(self):
+        return reverse('fieldsight:site-dashboard', kwargs={'pk': self.object.id})
+
+    def form_valid(self, form):
+        self.object = form.save(project_id=self.kwargs.get('pk'), region_id=self.kwargs.get('region_pk'), new=True)
+        noti = self.object.logs.create(source=self.request.user, type=11, title="new Site",
+                                       organization=self.object.project.organization,
+                                       project=self.object.project, content_object=self.object, extra_object=self.object.project,
+                                       description='{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
+                                                                                 self.object.name, self.object.project.name))
+        result = {}
+        result['description'] = '{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
+                                                                                 self.object.name, self.object.project.name)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+        return HttpResponseRedirect(self.get_success_url())
 def project_html_export(request, pk):
     
     # site_responses_report(forms)
