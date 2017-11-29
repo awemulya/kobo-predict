@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 import json
 from io import BytesIO
 from django.http import HttpResponse
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
@@ -273,8 +272,11 @@ class SiteSupervisorDashboardView(SiteSupervisorRoleMixin, TemplateView):
 
 class OrganizationView(object):
     model = Organization
+    paginate_by = 6
+    queryset = Organization.objects.all()
     success_url = reverse_lazy('fieldsight:organizations-list')
     form_class = OrganizationForm
+
 
 
 class UserDetailView(object):
@@ -285,7 +287,6 @@ class UserDetailView(object):
 
 class OrganizationListView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, ListView):
     pass
-
 
 class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, CreateView):
     def form_valid(self, form):
@@ -920,6 +921,8 @@ class RolesView(LoginRequiredMixin, TemplateView):
 
 
 class OrgProjectList(OrganizationRoleMixin, ListView):
+    model =   Project
+    paginate_by = 6
     def get_context_data(self, **kwargs):
         context = super(OrgProjectList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
@@ -955,6 +958,7 @@ class OrgUserList(OrganizationRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(OrgUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['type'] = "organization"
         return context
     def get_queryset(self):
         #queryset = UserRole.objects.select_related('User').filter(organization_id=self.kwargs.get('pk')).distinct('user_id')
@@ -1596,4 +1600,30 @@ def project_html_export(request, pk):
     buffer.close()
 
     return response
+
+class OrganizationSearchView(ListView):
+    model = Organization
+    template_name = 'fieldsight/organization_list.html'
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.model.objects.filter(name__icontains=query)
+
+
+class ProjectSearchView(ListView):
+    model = Project
+    template_name = 'fieldsight/project_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectSearchView, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['type'] = "project"
+        return context
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.model.objects.filter(name__icontains=query)
+
+
+
 

@@ -33,17 +33,6 @@
 
 {% block head %}
 {% endblock %}
-{% block breadcrumbs %}
-{% if is_project == "0" %}
-<li><a href="{% url 'fieldsight:site-dashboard' pk %}">
-     {% trans 'Site Dashboard' %}</a></li>
-{% else %}
-<li><a href="{% url 'fieldsight:project-dashboard' pk %}">
-     {% trans 'Project Dashboard' %}</a></li>
-{% endif %}
-<li>{% trans 'Manage Forms' %}</li>
-{% endblock %}
-
 {%block kocript %}
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
 <link rel="stylesheet" href="{% static 'css/datepicker.css' %}">
@@ -72,6 +61,18 @@ var pk = "{{pk}}";
 
 {% block content %}
 <div id="main-content" class="padding">
+<ul class="breadcrumbb">
+    {% block breadcrumbs %}
+    {% if is_project == "0" %}
+    <li><a href="{% url 'fieldsight:site-dashboard' pk %}">
+     {% trans 'Site Dashboard' %}</a></li>
+    {% else %}
+    <li><a href="{% url 'fieldsight:project-dashboard' pk %}">
+     {% trans 'Project Dashboard' %}</a></li>
+    {% endif %}
+    <li>{% trans 'Manage Forms' %}</li>
+    {% endblock %}
+</ul>
 				<!-- Nav tabs -->
 				<div class="tabbing">
 					<ul class="nav nav-tabs" role="tablist">

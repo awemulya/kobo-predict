@@ -12,16 +12,19 @@
 {% block content %}
 {% load pagination_tags %}
     {% load filters %}
-	{% block breadcrumbs %}
-	    {% ifrole "Organization" %}
-    <a href="{% url 'fieldsight:organizations-dashboard' obj.project.organization.pk %}">{{obj.project.organization.name}}</a>/
- 	{% endrole %}
-	{% ifrole "Project" %}
-		<a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">{{obj.project.name}}</a>
-	 {% endrole %}/
-		{{obj.name}}
-	{% endblock %}
 			<div id="main-content" class="padding" onload="change()">
+				<ul class="breadcrumbb">
+					{% block breadcrumbs %}
+					{% ifrole "Organization" %}
+					<li><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization List' %}</a></li>
+					<li><a href="{% url 'fieldsight:organizations-dashboard' obj.project.organization.pk %}">{{obj.project.organization.name}}</a></li>
+ 					{% endrole %}
+					{% ifrole "Project" %}
+					<li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">{{obj.project.name}}</a></li>
+					{% endrole %}
+					<li>{{obj.name}}</li>
+					{% endblock %}
+				</ul>
 				<div class="org-profile-top-action">
 					<div class="action-left">
 
