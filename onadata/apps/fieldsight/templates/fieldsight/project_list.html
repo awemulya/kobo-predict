@@ -2,11 +2,7 @@
 {% load i18n staticfiles %}
 {% load filters %}
 {% block content %}
-{% load pagination_tags %}
-{% load sorting_tags %}
 {% load filters %}
-        {% autosort object_list as sorted_objects %}
-        {% autopaginate object_list 30 as paginated_objects %}
 		<div id="main-content" class="padding">
 				<section class="panel">
                     <header class="panel-heading clearfix">
@@ -19,13 +15,13 @@
 					<div class="panel-body">
 						<!--Search Organization-->
 						<div class="collapse margin-top" id="searchOrganization">
-							<form class="padding">
+							<form method="GET" class="padding" action="{% url 'fieldsight:search-proj-list'  pk%}">
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+										  <input type="text" name="q" placeholder="Search for..." value='{{ request.GET.q }}'/>
 										  <span class="input-group-btn">
-											<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+											  <button class="btn btn-primary" type="submit" value="Search"><i class="la la-search"></i>Search</button>
 										  </span>
 										</div>
 									</div>
@@ -35,7 +31,7 @@
 						</div>
 						<!--Organization Listing-->
 						<div class="row">
-                            {% for obj in paginated_objects %}
+							{% for obj in object_list %}
 							<div class="col-md-4 col-sm-6">
 								<div class="organization-item-wrap  margin-top clearfix">
 									<div class="logo">
@@ -52,9 +48,33 @@
 									</div>
 								</div>
 							</div>
-                            {% endfor %}
+							{% endfor %}
 						</div>
-                        {% paginate %}
+						<!--pagination-->
+						{% if is_paginated %}
+						<nav class="pagination justify-content-center" aria-label="page-navigation">
+						  <ul class="pagination">
+							{% if page_obj.has_previous %}
+							  <li class="page-item disabled"><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+							{% else %}
+							  <li class="disabled"><span>&laquo;</span></li>
+							{% endif %}
+							{% for i in paginator.page_range %}
+							  {% if page_obj.number == i %}
+							  <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+
+							  {% else %}
+								<li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+							  {% endif %}
+							{% endfor %}
+							{% if page_obj.has_next %}
+							  <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+							{% else %}
+							  <li class="disabled"><span>&raquo;</span></li>
+							{% endif %}
+						  </ul>
+						</nav>
+						{% endif %}
 					</div>
 
                 </section>

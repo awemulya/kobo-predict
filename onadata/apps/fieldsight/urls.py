@@ -16,6 +16,7 @@ from .forms import RegistrationForm
 
 from .views import (
     OrganizationSearchView,
+    ProjectSearchView,
     OrganizationListView,
     OrganizationCreateView,
     OrganizationUpdateView,
@@ -163,6 +164,7 @@ urlpatterns = [
     url(r'^region/delete/(?P<pk>[0-9]+)$', RegionDeleteView.as_view(), name='region-delete'),
     url(r'^region/(?P<pk>[0-9]+)$', RegionUpdateView.as_view(), name='region-update'),
     url(r'^region/$', RegionListView.as_view(), name='region-list'),
-    url(r'^search-org/$', OrganizationSearchView.as_view(), name='search-list'),
+    url(r'^search-org/$', OrganizationSearchView.as_view(), name='search-org-list'),
+    url(r'^search-proj/(?P<pk>\d+)/$', ProjectSearchView.as_view(), name='search-proj-list'),
 
 ]

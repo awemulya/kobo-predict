@@ -272,6 +272,8 @@ class SiteSupervisorDashboardView(SiteSupervisorRoleMixin, TemplateView):
 
 class OrganizationView(object):
     model = Organization
+    paginate_by = 6
+    queryset = Organization.objects.all()
     success_url = reverse_lazy('fieldsight:organizations-list')
     form_class = OrganizationForm
 
@@ -920,6 +922,8 @@ class RolesView(LoginRequiredMixin, TemplateView):
 
 
 class OrgProjectList(OrganizationRoleMixin, ListView):
+    model =   Project
+    paginate_by = 6
     def get_context_data(self, **kwargs):
         context = super(OrgProjectList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
@@ -1600,5 +1604,22 @@ class OrganizationSearchView(ListView):
     def get_queryset(self):
         query = self.request.REQUEST.get("q")
         return self.model.objects.filter(name__icontains=query)
+
+
+class ProjectSearchView(ListView):
+    model = Project
+    template_name = 'fieldsight/project_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectSearchView, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['type'] = "project"
+        return context
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.model.objects.filter(name__icontains=query)
+
+
 
 
