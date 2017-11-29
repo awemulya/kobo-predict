@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 import json
 from io import BytesIO
 from django.http import HttpResponse
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
@@ -277,6 +276,7 @@ class OrganizationView(object):
     form_class = OrganizationForm
 
 
+
 class UserDetailView(object):
     model = User
     success_url = reverse_lazy('users:users')
@@ -285,7 +285,6 @@ class UserDetailView(object):
 
 class OrganizationListView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, ListView):
     pass
-
 
 class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, CreateView):
     def form_valid(self, form):
@@ -1593,4 +1592,13 @@ def project_html_export(request, pk):
     buffer.close()
 
     return response
+
+class OrganizationSearchView(ListView):
+    model = Organization
+    template_name = 'fieldsight/organization_list.html'
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.model.objects.filter(name__icontains=query)
+
 
