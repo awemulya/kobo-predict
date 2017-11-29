@@ -8,10 +8,10 @@ from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProject
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet, ProjectRegionslistViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProjectViewSet
-
+from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionViewSet
 from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
     SiteReviewViewSet, ProjectTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet, SiteUpdateViewSet, \
-    ProjectUpdateViewSet, SiteUnderOrgViewSet
+    ProjectUpdateViewSet, SiteUnderOrgViewSet, SiteUnderRegionViewSet
 from .forms import RegistrationForm
 
 from .views import (
@@ -52,7 +52,7 @@ from .views import (
     ManagePeopleProjectView, ManagePeopleOrganizationView, SiteSurveyListView, ajax_upload_sites, ajax_save_site,
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList,
     senduserinvite, ActivateRole, checkemailforinvite, ProjectSummaryReport, SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView,
-    stages_status_download, sendmultiroleuserinvite, project_html_export)
+    stages_status_download, sendmultiroleuserinvite, project_html_export, RegionalSitelist )
 
 
 urlpatterns = [
@@ -162,5 +162,7 @@ urlpatterns = [
     url(r'^region/delete/(?P<pk>[0-9]+)$', RegionDeleteView.as_view(), name='region-delete'),
     url(r'^region/(?P<pk>[0-9]+)$', RegionUpdateView.as_view(), name='region-update'),
     url(r'^region/$', RegionListView.as_view(), name='region-list'),
-
+    url(r'^api/project-regions/(?P<pk>\d+)/$', RegionViewSet.as_view({'get': 'list'}), name='project_regions_api'),
+    url(r'^project/(?P<pk>\d+)/regional-sites/(?P<region_pk>\d+)/$', RegionalSitelist.as_view(), name='regional-sites'),
+    url(r'^api/project/(?P<pk>\d+)/regional-sites/(?P<region_pk>\d+)/$', SiteUnderRegionViewSet.as_view({'get': 'list'}), name='region-sites-list'),
 ]

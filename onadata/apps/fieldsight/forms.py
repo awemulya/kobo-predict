@@ -295,6 +295,8 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
         'logo': AdminImageWidget()
         }
 
+
+
     def save(self, commit=True, *args, **kwargs):
 
         is_new = kwargs.pop('new')
@@ -325,6 +327,8 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
         long = self.data.get("Latitude")
         p = Point(float(lat), float(long),srid=4326)
         self.cleaned_data["location"] = p
+        if self.cleaned_data["region"]:
+            print "0000000000000000000000000000000000000000000"
         super(SiteForm, self).clean()
 
 

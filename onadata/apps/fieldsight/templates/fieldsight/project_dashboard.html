@@ -23,12 +23,15 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_sites.js"></script>
+<!-- <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_sites.js"></script> -->
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_regions.js"></script>
 
     <script>
 $(document).ready(function() {
 var project = "{{obj.pk}}";
- vm = new SitesViewModel(project);
+ // vm = new SitesViewModel(project);
+ vm = new RegionViewModel(project);
+ 
  ko.applyBindings(vm);
 });
     </script>
@@ -222,6 +225,45 @@ var project = "{{obj.pk}}";
 						</div>
 						<div class="col-lg-6 col-sm-12">
 							<div class="row">
+								
+								{% if obj.cluster_sites %}
+
+								<div class="col-md-6 col-sm-12">
+									<div class="widget-info widget-scolling-list margin-top bg-white padding">
+										<div class="widget-head">
+											<h4>Regions</h4>
+											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:site-add' obj.pk %} "><i class="la la-plus"></i></a>
+											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i></a>
+										</div>
+										<div class="widget-body">
+											<!--Search Sites-->
+											<div class="collapse margin-bottom" id="searchSite">
+												<form>
+													<div class="input-group input-group-sm">
+														<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for..." data-bind="value:search_key, valueUpdate:'afterkeydown'">
+														<span class="input-group-btn">
+														<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+														</span>
+													</div>
+												</form>
+											</div>
+											<!-- ko foreach: regions  -->
+											<a data-bind="attr:{ href: url }" class="project-item-wrap margin-top clearfix " style="width: 100%;">
+												<div class="project-logo">
+													<!-- <img data-bind="attr:{src: logo}" width="50" height="50"/> -->
+												</div>
+												<div class="project-basic-info">
+													<h4 data-bind="text: name"></h4>
+													<!-- <p data-bind="text: address"></p> -->
+												</div>
+											</a>
+											<!-- /ko-->
+										</div>
+									</div>
+								</div>
+
+								{% else %}
+
 								<div class="col-md-6 col-sm-12">
 									<div class="widget-info widget-scolling-list margin-top bg-white padding">
 										<div class="widget-head">
@@ -242,29 +284,7 @@ var project = "{{obj.pk}}";
 												</form>
 											</div>
 											<!-- ko foreach: sites  -->
-											{% if sites.count == 1%}
-											<a data-bind="attr:{ href: url }" class="project-item-wrap clearfix " style="width: 100%;">
-												<div class="project-logo">
-													<img data-bind="attr:{src: logo}" width="50" height="50"/>
-												</div>
-												<div class="project-basic-info">
-													<h4 data-bind="text: name"></h4>
-													<p data-bind="text: address"></p>
-													<!--<span class="space site-label"></span>-->
-																	 <!--<span data-bind="text: name" class="detail-text">-->
-																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
-
-																	 <!--<span class="space site-label"></span>-->
-																	 <!--<span data-bind="text: identifier">-->
-																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
-																	 <!--<br>-->
-																	 <!--<span class="space site-label"></span>-->
-																	 <!--<span data-bind="text: address" class="detail-text1">-->
-																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
-
-												</div>
-											</a>
-											{% else %}
+											
 											<a data-bind="attr:{ href: url }" class="project-item-wrap margin-top clearfix " style="width: 100%;">
 												<div class="project-logo">
 													<img data-bind="attr:{src: logo}" width="50" height="50"/>
@@ -272,55 +292,25 @@ var project = "{{obj.pk}}";
 												<div class="project-basic-info">
 													<h4 data-bind="text: name"></h4>
 													<p data-bind="text: address"></p>
-													<!--<span class="space site-label"></span>-->
-																	 <!--<span data-bind="text: name" class="detail-text">-->
-																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
-
-																	 <!--<span class="space site-label"></span>-->
-																	 <!--<span data-bind="text: identifier">-->
-																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
-																	 <!--<br>-->
-																	 <!--<span class="space site-label"></span>-->
-																	 <!--<span data-bind="text: address" class="detail-text1">-->
-																	 <!--<i class="fa fa-building-o fa-fw" aria-hidden="true"></i></span>-->
+													
 
 												</div>
 											</a>
-											{% endif %}
 											<!-- /ko-->
+											
 										</div>
 									</div>
 								</div>
+
+								{% endif %}
+
+
 								<div class="col-md-6 col-sm-12">
 									<div class="widget-info widget-scolling-list margin-top bg-white padding">
 										<div class="widget-head">
 											<h4> {% trans 'People' %}</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:manage-people-project' obj.pk %}"><i class="la la-plus"></i></a>
-											<!--<div class="modal fade" id="projectManagerModal" tabindex="-1" role="dialog" aria-labelledby="projectManagerModalLabel" aria-hidden="true">-->
-												<!--<div class="modal-dialog" role="document">-->
-													<!--<div class="modal-content">-->
-														<!--<div class="modal-header">-->
-															<!--<h5 class="modal-title" id="projectManagerModalLabel">New Project Manager</h5>-->
-															<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-															  <!--<span aria-hidden="true">&times;</span>-->
-															<!--</button>-->
-														<!--</div>-->
-														<!--<div class="modal-body">-->
-															<!--<form>-->
-															  <!--<div class="form-group">-->
-																<!--<label for="recipient-name" class="form-control-label">Input Field:</label>-->
-																<!--<input type="text" class="form-control" id="recipient-name">-->
-															  <!--</div>-->
-															  <!---->
-															<!--</form>-->
-														<!--</div>-->
-														<!--<div class="modal-footer">-->
-															<!--<button type="button" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add Project Manager</button>-->
-															<!--<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>-->
-														<!--</div>-->
-													<!--</div>-->
-												<!--</div>-->
-											<!--</div>-->
+											
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchProjectManager" aria-expanded="false" aria-controls="searchProjectManager"><i class="la la-search"></i></a>
 										</div>
 										<div class="widget-body">
@@ -419,6 +409,7 @@ var project = "{{obj.pk}}";
 							</div>
 
 						</div>
+						
 
 					</div>
 					<!--<div class="row">-->

@@ -639,7 +639,6 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.object.id})
 
     def form_valid(self, form):
-        print "Test"
         self.object = form.save(project_id=self.kwargs.get('pk'), new=True)
         noti = self.object.logs.create(source=self.request.user, type=11, title="new Site",
                                        organization=self.object.project.organization,
@@ -1562,7 +1561,12 @@ class RegionUpdateView(RegionView, UpdateView):
         self.object = form.save()
 
         return HttpResponseRedirect(self.get_success_url())
-    
+
+class RegionalSitelist(ProjectRoleMixin, TemplateView):
+    def get(self, request, *args, **kwargs):
+        obj = get_object_or_404(Region, id=self.kwargs.get('region_pk'))
+        return render(request, 'fieldsight/site_list.html',{'obj':obj, 'type':"region",'pk':self.kwargs.get('region_pk'),})
+     
 
 def project_html_export(request, pk):
     

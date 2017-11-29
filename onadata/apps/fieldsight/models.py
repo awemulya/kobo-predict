@@ -18,6 +18,16 @@ from django.utils.encoding import force_bytes
 from django.utils.encoding import force_text
 from django.conf import settings
 
+
+class TimeZone(models.Model):
+    time_zone = models.CharField(max_length=255, blank=True, null=True)
+    country = models.CharField(max_length=255, blank=True, null=True)
+    country_code = models.CharField(max_length=255, blank=True, null=True)
+    offset_time = models.CharField(max_length=255, blank=True, null=False)
+
+    def __str__(self):
+        return self.time_zone
+
 class ExtraUserDetail(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='extra_details')
     data = JSONField(default={})
@@ -163,6 +173,7 @@ class Project(models.Model):
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
+    cluster_sites = models.BooleanField(default=False)
     logs = GenericRelation('eventlog.FieldSightLog')
 
 
@@ -246,6 +257,17 @@ class Project(models.Model):
     def get_absolute_url(self):
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.pk})
 
+class Region(models.Model):
+    name = models.CharField(max_length=255)
+    project = models.ForeignKey(Project, null=True, blank=True, related_name="project_region")
+    date_created = models.DateTimeField(auto_now_add=True, blank=True)
+    date_updated = models.DateTimeField(null=True, blank=True)
+    logs = GenericRelation('eventlog.FieldSightLog')
+
+    def get_absolute_url(self):
+        return reverse('fieldsight:region-dashboard', kwargs={'pk': self.pk})
+
+
 
 class Site(models.Model):
     identifier = models.CharField("ID", max_length=255)
@@ -261,6 +283,7 @@ class Site(models.Model):
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     is_survey = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
+    region = models.ForeignKey(Region, related_name='regions', blank=True, null=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
 
@@ -448,25 +471,7 @@ class UserInvite(models.Model):
     def get_absolute_url(self):
         return reverse('fieldsight:activate-role', kwargs={'invite_idb64': urlsafe_base64_encode(force_bytes(self.pk)), 'token':self.token,})
 
-class Region(models.Model):
-    name = models.CharField(max_length=255)
-    project = models.ForeignKey(Project, null=True, blank=True, related_name="project_region")
-    date_created = models.DateTimeField(auto_now_add=True, blank=True)
-    date_updated = models.DateTimeField(null=True, blank=True)
-    logs = GenericRelation('eventlog.FieldSightLog')
 
-    def get_absolute_url(self):
-        return reverse('fieldsight:region-dashboard', kwargs={'pk': self.pk})
-
-
-class TimeZone(models.Model):
-    time_zone = models.CharField(max_length=255, blank=True, null=True)
-    country = models.CharField(max_length=255, blank=True, null=True)
-    country_code = models.CharField(max_length=255, blank=True, null=True)
-    offset_time = models.CharField(max_length=255, blank=True, null=False)
-
-    def __str__(self):
-        return self.time_zone
 
 
 

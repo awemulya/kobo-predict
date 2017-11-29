@@ -29,7 +29,7 @@ class FInstanceResponcesSerializer(serializers.ModelSerializer):
     # instance = InstanceSerializer()
     class Meta:
         model = FInstance
-        exclude = ('submitted_by')
+        exclude = ("submitted_by",)
 
 
 class InstanceStatusChangedSerializer(serializers.ModelSerializer):

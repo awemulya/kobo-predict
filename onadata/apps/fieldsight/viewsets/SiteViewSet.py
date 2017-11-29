@@ -176,6 +176,18 @@ class SiteCreationSurveyViewSet(viewsets.ModelViewSet):
             return site
 
 
+class SiteUnderRegionViewSet(viewsets.ModelViewSet):
+    queryset = Site.objects.filter(is_survey=False)
+    serializer_class = SiteSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    permission_classes = (SiteUnderProjectPermission,)
+    parser_classes = (MultiPartParser, FormParser,)
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(project_id = self.kwargs.get('pk'), region_id=self.kwargs.get('region_pk'))
+
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 class SiteUnderProjectViewSet(viewsets.ModelViewSet):
     queryset = Site.objects.filter(is_survey=False)

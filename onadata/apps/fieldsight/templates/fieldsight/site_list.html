@@ -18,6 +18,10 @@ var id="{{ pk }}"
 if (type == "org"){
 var url = '/fieldsight/api/org-sites/'+id+'/';
  }
+ else if (type == "region"){
+var region_proj_id = "{{ obj.project.id }}"
+var url = '/fieldsight/api/project/'+ region_proj_id +'/regional-sites/'+ id +'/';
+ }
  else{
 var url = '/fieldsight/api/project-sites/'+id+'/';
  }

@@ -35,6 +35,6 @@ class InstanceResponseViewSet(viewsets.ModelViewSet):
         except FieldSightXF.DoesNotExist:
             raise Http404("No Responces matches the given query.")
         if fsform.project is not None:
-            return queryset.filter(project_fxf_id = self.kwargs.get('pk'))     
-        return queryset.filter(site_fxf_id = self.kwargs.get('pk')) 
+            return queryset.filter(project_fxf_id = self.kwargs.get('pk')).order_by('-date')     
+        return queryset.filter(site_fxf_id = self.kwargs.get('pk')).order_by('-date') 
 
