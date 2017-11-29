@@ -284,7 +284,7 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
 
     class Meta:
         model = Site
-        exclude = ('project', 'is_survey', 'is_active',)
+        exclude = ('project', 'is_survey', 'is_active', 'region',)
        
         # project_filters = ['project']
         widgets = {
@@ -304,6 +304,8 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
         if is_new:
             photo = super(SiteForm, self).save(commit=False)
             photo.project_id = kwargs.pop('project_id')
+            if 'region_id' in kwargs:
+                photo.region_id = kwargs.pop('region_id')
             photo.save()
 
         photo = super(SiteForm, self).save()
@@ -327,9 +329,8 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
         long = self.data.get("Latitude")
         p = Point(float(lat), float(long),srid=4326)
         self.cleaned_data["location"] = p
-        if self.cleaned_data["region"]:
-            print "0000000000000000000000000000000000000000000"
         super(SiteForm, self).clean()
+
 
 
 class ProjectFormKo(HTML5BootstrapModelForm, KOModelForm):
