@@ -57,7 +57,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from onadata.apps.fieldsight.tasks import multiuserassignproject, bulkuploadsites, multiuserassignsite
+from onadata.apps.fieldsight.tasks import multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
 from .generatereport import MyPrint
 
 @login_required
@@ -903,9 +903,10 @@ class ManagePeopleSiteView(LoginRequiredMixin, ReviewerRoleMixin, TemplateView):
 
 class ManagePeopleProjectView(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
-        organization = Project.objects.get(pk=pk).organization.id
+        project = Project.objects.get(pk=pk)
+        organization=project.organization_id
         return render(request, "fieldsight/manage_people_site.html",
-                      {'pk': pk, 'level': "1", 'category':"Project Manager", 'organization': organization, 'project': pk, 'type':'project'})
+                      {'pk': pk, 'level': "1", 'category':"Project Manager", 'organization': organization, 'project': pk, 'type':'project', 'obj':project, })
 
 
 class ManagePeopleOrganizationView(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
@@ -1608,6 +1609,24 @@ class RegionalSiteCreateView(SiteView, ProjectRoleMixin, CreateView):
         # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
+
+class MultiUserAssignRegionView(ProjectRoleMixin, TemplateView):
+    def get(self, request, pk):
+        project_obj = Project.objects.get(pk=pk)
+        return render(request, 'fieldsight/multi_user_assign.html',{'type': "site", 'pk':pk})
+
+    def post(self, request, pk, *args, **kwargs):
+        data = json.loads(self.request.body)
+        regions = data.get('regions')
+        users = data.get('users')
+        group = Group.objects.get(name=data.get('group'))
+        user = request.user
+        task = multiuserassignregion.delay(user, pk, regions, users, group.id)
+        if CeleryTaskProgress.objects.create(task_id=task.id, user=user, task_type=2):
+            return HttpResponse('sucess')
+        else:
+            return HttpResponse('Failed')
+
 def project_html_export(request, pk):
     
     # site_responses_report(forms)

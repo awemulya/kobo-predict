@@ -324,3 +324,122 @@ def multiuserassignsite(source_user, project_id, sites, users, group_id):
         result['seen_by']= [],
         ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
         return None
+
+@shared_task()
+def multiuserassignregion(source_user, project_id, regions, users, group_id):
+    project = Project.objects.get(pk=project_id)
+    group_name = Group.objects.get(pk=group_id).name
+    sites_count = len(regions)
+    users_count = len(users)
+
+    task_id = multiuserassignregion.request.id
+    task = CeleryTaskProgress.objects.get(task_id=task_id)
+    task.content_object = project
+    task.description = "Assign "+str(users_count)+" people in "+str(sites_count)+" regions."
+    task.status=1
+    task.save()
+    try:
+        with transaction.atomic():
+            roles_created = 0            
+            for region_id in regions:
+                sites = Site.objects.filter(region_id = region_id).values('id')
+                for site_id in sites:
+                    for user in users:
+                        site = Site.objects.filter(pk=site_id['id']).first()
+                        if site and site.project_id == project.id: 
+                            role, created = UserRole.objects.get_or_create(user_id=user, site_id=site_id['id'],
+                                                                           project__id=project.id, organization__id=project.organization_id, group_id=group_id, ended_at=None)
+                            if created:
+                                roles_created += 1
+                           
+                                # description = "{0} was assigned  as {1} in {2}".format(
+                                #     role.user.get_full_name(), role.lgroup.name, role.project)
+                                # noti_type = 8
+
+                                # if data.get('group') == "Reviewer":
+                                #     noti_type =7
+                                
+                                # noti = role.logs.create(source=role.user, type=noti_type, title=description,
+                                #                         description=description, content_type=site, extra_object=self.request.user,
+                                #                         site=role.site)
+                                # result = {}
+                                # result['description'] = description
+                                # result['url'] = noti.get_absolute_url()
+                                # ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                                # ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
+                                # ChannelGroup("site-{}".format(role.site.id)).send({"text": json.dumps(result)})
+                                # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+                                # Device = get_device_model()
+                                # if Device.objects.filter(name=role.user.email).exists():
+                                #     message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
+                                #     Device.objects.filter(name=role.user.email).send_message(message)
+        task.status = 2
+        task.save()
+        if roles_created == 0:
+            noti = FieldSightLog.objects.create(source=source_user, type=23, title="Task Completed.",
+                                       content_object=project, recipient=source_user, 
+                                       extra_message="All "+str(users_count) +" users were already assigned as "+ group_name +" in " + str(sites_count) + " selected regions ")
+            result={}
+            result['id']= noti.id,
+            result['source_uid']= source_user.id,
+            result['source_name']= source_user.username,
+            result['source_img']= source_user.user_profile.profile_picture.url,
+            result['get_source_url']= noti.get_source_url(),
+            result['get_event_name']= noti.get_event_name(),
+            result['get_event_url']= noti.get_event_url(),
+            result['get_extraobj_name']= None,
+            result['get_extraobj_url']= None,
+            result['get_absolute_url']= noti.get_absolute_url(),
+            result['type']= 23,
+            result['date']= str(noti.date),
+            result['extra_message']= "All "+str(users_count) +" users were already assigned as "+ group_name +" in " + str(sites_count) + " selected regions ",
+            result['seen_by']= [],
+            ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
+
+        else:
+
+            noti = FieldSightLog.objects.create(source=source_user, type=22, title="Bulk site User Assign",
+                                           content_object=project, organization=project.organization, project=project, 
+                                           extra_message=str(roles_created) + " new "+ group_name +" Roles in " + str(sites_count) + " regions ")
+            result={}
+            result['id']= noti.id,
+            result['source_uid']= source_user.id,
+            result['source_name']= source_user.username,
+            result['source_img']= source_user.user_profile.profile_picture.url,
+            result['get_source_url']= noti.get_source_url(),
+            result['get_event_name']= noti.get_event_name(),
+            result['get_event_url']= noti.get_event_url(),
+            result['get_extraobj_name']= None,
+            result['get_extraobj_url']= None,
+            result['get_absolute_url']= noti.get_absolute_url(),
+            result['type']= 22,
+            result['date']= str(noti.date),
+            result['extra_message']= str(roles_created) + " new "+ group_name +" Roles in " + str(sites_count) + " regions ",
+            result['seen_by']= [],
+            ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
+
+    except Exception as e:
+        print 'Site Upload Unsuccesfull. ------------------------------------------%s' % e
+        task.status = 3
+        task.save()
+        noti = FieldSightLog.objects.create(source=source_user, type=422, title="Bulk Region User Assign",
+                                       content_object=project, recipient=source_user,
+                                       extra_message=group_name +" for "+str(users_count)+" people in "+str(sites_count)+" regions ")
+        result={}
+        result['id']= noti.id,
+        result['source_uid']= source_user.id,
+        result['source_name']= source_user.username,
+        result['source_img']= source_user.user_profile.profile_picture.url,
+        result['get_source_url']= noti.get_source_url(),
+        result['get_event_name']= noti.get_event_name(),
+        result['get_event_url']= noti.get_event_url(),
+        result['get_extraobj_name']= None,
+        result['get_extraobj_url']= None,
+        result['get_absolute_url']= noti.get_absolute_url(),
+        result['type']= 422,
+        result['date']= str(noti.date),
+        result['extra_message']= group_name +" role for "+str(users_count)+" people in "+str(sites_count)+" regions ",
+        result['seen_by']= [],
+        ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
+        return None

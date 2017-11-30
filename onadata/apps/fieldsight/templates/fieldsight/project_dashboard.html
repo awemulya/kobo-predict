@@ -23,18 +23,28 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
-<!-- <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_sites.js"></script> -->
+{% if obj.cluster_sites %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_regions.js"></script>
+ <script>
 
-    <script>
 $(document).ready(function() {
 var project = "{{obj.pk}}";
- // vm = new SitesViewModel(project);
  vm = new RegionViewModel(project);
- 
  ko.applyBindings(vm);
 });
     </script>
+{% else %}
+	<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_sites.js"></script>
+	 <script>
+
+	$(document).ready(function() {
+	var project = "{{obj.pk}}";
+	 vm = new SitesViewModel(project);
+	 ko.applyBindings(vm);
+	});
+	 </script>
+{% endif %}
+   
 
 {% endblock %}
 {% block content %}

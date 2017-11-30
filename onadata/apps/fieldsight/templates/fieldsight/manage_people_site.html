@@ -19,10 +19,17 @@ var all_proj_site=[];
 var CSRF_TOKEN = '{{ csrf_token }}';
 
 {% if type == "project" %}
-
+  {% if obj.cluster_sites %}
+  var proj_region_url = '{% url 'fieldsight:project_regions_list' pk %}';
+  assignurl = '{% url 'fieldsight:multi_user_region_assign' pk %}';
+  var type = "region";
+  {% else %}
   var proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
-  userurl = '{% url 'role:multi_user_list' 1 pk %}';
   assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
+  var type = "site";
+  {% endif %}
+  userurl = '{% url 'role:multi_user_list' 1 pk %}';
+  
 
 {% elif type == "org" %}
   
@@ -517,7 +524,32 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllUnSelected">
-              
+              {% if obj.cluster_sites %}
+
+                <ul class="row" data-bind="foreach:regions">
+                
+                  <li class="col-md-12">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$parent.setSelected">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                          <div class="project-logo">
+                            <!-- <img data-bind="attr:{src: logo()}" alt="" width="50" height="50"> -->
+                          </div>
+                          <div class="project-basic-info">
+                            <h4 data-bind="text:name()"></h4>
+                          </div>
+                        </div>
+                       
+                      </span>
+                    </label>
+                  </li>
+                  
+                  <li class="clearfix"></li>
+                </ul>              
+
+              {% else %}
 
                 <ul class="row" data-bind="foreach:sites">
                 
@@ -542,7 +574,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   
                   <li class="clearfix"></li>
                 </ul>
-                
+              {% endif %}
               </div>
             </div>
           </div>
