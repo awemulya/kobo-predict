@@ -236,6 +236,7 @@ var project = "{{obj.pk}}";
 											<h4>Regions</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:site-add' obj.pk %} "><i class="la la-plus"></i></a>
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i></a>
+											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:region-list' obj.pk %}"><i class="la la-cogs"></i>Manage Region</a>
 										</div>
 										<div class="widget-body">
 											<!--Search Sites-->
@@ -272,7 +273,6 @@ var project = "{{obj.pk}}";
 											<h4>Sites</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:site-add' obj.pk %} "><i class="la la-plus"></i></a>
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i></a>
-											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:region-list' obj.pk %}"><i class="la la-cogs"></i>Manage Region</a>
 										</div>
 										<div class="widget-body">
 											<!--Search Sites-->

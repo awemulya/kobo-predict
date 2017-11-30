@@ -1593,7 +1593,7 @@ class RegionDeleteView(RegionView, DeleteView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class RegionUpdateView(RegionView, UpdateView):
+class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.project_id=self.kwargs.get('pk')
@@ -1639,6 +1639,7 @@ class RegionalSiteCreateView(SiteView, ProjectRoleMixin, CreateView):
         # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
+
 def project_html_export(request, pk):
     
     # site_responses_report(forms)
