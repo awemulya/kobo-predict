@@ -1559,31 +1559,62 @@ class RegionView(object):
     form_class = RegionForm
 
 class RegionListView(RegionView, LoginRequiredMixin, ListView):
-    pass
+    def get_context_data(self, **kwargs):
+        context = super(RegionListView, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['type'] = "region"
+        return context
 
-class RegionCreateView(RegionView, CreateView):
+class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
 
-    def from_valid(self, form):
-        self.object = form.save()
+    def get_context_data(self, **kwargs):
+        context = super(RegionCreateView, self).get_context_data(**kwargs)
+        context['project'] = Project.objects.get(pk=self.kwargs.get('pk'))
+        context['pk'] = self.kwargs.get('pk')
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.project_id=self.kwargs.get('pk')
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
+
+class RegionDeleteView(RegionView, DeleteView):
+
+    def get_success_url(self):
+        return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
+
+    def delete(self,*args, **kwargs):
+        self.kwargs['pk'] = self.get_object().id
+        self.object = self.get_object().delete()
 
         return HttpResponseRedirect(self.get_success_url())
 
-class RegionDeleteView(RegionView, DeleteView):
-    pass
 
-class RegionUpdateView(RegionView, UpdateView):
+class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.project_id=self.kwargs.get('pk')
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
 
     def form_valid(self, form):
         self.object = form.save()
-
         return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
+
 
 class RegionalSitelist(ProjectRoleMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         obj = get_object_or_404(Region, id=self.kwargs.get('region_pk'))
         return render(request, 'fieldsight/site_list.html',{'obj':obj, 'type':"region",'pk':self.kwargs.get('region_pk'),})
 
-     
+
 class RegionalSiteCreateView(SiteView, ProjectRoleMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(RegionalSiteCreateView, self).get_context_data(**kwargs)
@@ -1610,6 +1641,7 @@ class RegionalSiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
         return HttpResponseRedirect(self.get_success_url())
 
+
 class MultiUserAssignRegionView(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
         project_obj = Project.objects.get(pk=pk)
@@ -1626,6 +1658,7 @@ class MultiUserAssignRegionView(ProjectRoleMixin, TemplateView):
             return HttpResponse('sucess')
         else:
             return HttpResponse('Failed')
+
 
 def project_html_export(request, pk):
     

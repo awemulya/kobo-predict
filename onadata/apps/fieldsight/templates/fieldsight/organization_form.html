@@ -77,7 +77,7 @@
 			<div id="main-content" class="padding">
                     {% block breadcrumbs %}
                     <ul class="breadcrumbb">
-                    {% if form.instance.id %}
+                    {% if role %}
                     <li><a href="{% url 'fieldsight:organizations-dashboard' form.instance.pk %}">{{ form.instance }}</a></li>
                     {% endif %}
                     {% if not form.instance.id %}

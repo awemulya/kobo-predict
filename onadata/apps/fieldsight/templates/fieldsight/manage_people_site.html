@@ -66,8 +66,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
 
 			<div id="main-content" class="padding">
+              {% block breadcrumbs %}
               <ul class="breadcrumbb">
-                {% block breadcrumbs %}
                 {% if level == "0" %}
                 <li><a href="{% url 'fieldsight:site-dashboard' pk %}">
                  {% trans 'Site Dashboard' %}</a></li>
@@ -81,8 +81,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                  {% trans 'Organization Dashboard' %}</a></li>
                 {% endif %}
                 <li>{% trans 'Manage People' %}</li>
-                {% endblock %}
               </ul>
+              {% endblock %}
 				<div class="row" data-bind="with:siteVm ,visible: currentVm() == 'site'" style="display:none;">
 
 

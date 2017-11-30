@@ -10,6 +10,23 @@
     {% load sorting_tags %}
     {% load filters %}
 				<div id="main-content" class="padding">
+					{% block breadcrumbs %}
+					  <ul class="breadcrumbb">
+						{% if type == "site" %}
+						<li><a href="{% url 'fieldsight:site-dashboard' pk %}">
+						 {% trans 'Site Dashboard' %}</a></li>
+						{% endif %}
+						{% if type == "project" %}
+						<li><a href="{% url 'fieldsight:project-dashboard' pk %}">
+						 {% trans 'Project Dashboard' %}</a></li>
+						{% endif %}
+						{% if type == "organization" %}
+						<li><a href="{% url 'fieldsight:organizations-dashboard' pk %}">
+						 {% trans 'Organization Dashboard' %}</a></li>
+						{% endif %}
+						<li>{% trans 'Manage People' %}</li>
+					  </ul>
+					{% endblock %}
 				<section class="panel">
                     <header class="panel-heading clearfix">
                         <h3>Users</h3></i>
@@ -77,6 +94,8 @@
 
 								</div>
 							</div>
+							{% empty %}
+							No Users are available 
                             {% endfor %}
                             {% paginate %}
 						</div>

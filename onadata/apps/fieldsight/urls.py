@@ -159,17 +159,21 @@ urlpatterns = [
 
     #for Regions
 
+
     url(r'^api/project/(?P<pk>\d+)/regions/$', ProjectRegionslistViewSet.as_view({'get': 'list'}), name='project_regions_list'),
     url(r'^region/add/$', RegionCreateView.as_view(), name='region-add'),
+
     url(r'^region/delete/(?P<pk>[0-9]+)$', RegionDeleteView.as_view(), name='region-delete'),
     url(r'^region/(?P<pk>[0-9]+)$', RegionUpdateView.as_view(), name='region-update'),
-    url(r'^region/$', RegionListView.as_view(), name='region-list'),
+    url(r'^region-list/(?P<pk>\d+)/$', RegionListView.as_view(), name='region-list'),
 
     url(r'^api/project-regions/(?P<pk>\d+)/$', RegionViewSet.as_view({'get': 'list'}), name='project_regions_api'),
     url(r'^project/(?P<pk>\d+)/regional-sites/(?P<region_pk>\d+)/$', RegionalSitelist.as_view(), name='regional-sites'),
     url(r'^api/project/(?P<pk>\d+)/regional-sites/(?P<region_pk>\d+)/$', SiteUnderRegionViewSet.as_view({'get': 'list'}), name='region-sites-list'),
     url(r'^site/add/(?P<pk>[0-9]+)/(?P<region_pk>[0-9]+)/', RegionalSiteCreateView.as_view(), name='regional-site-add'),
+
     url(r'^multi-user-assign-region/(?P<pk>\d+)/$', MultiUserAssignRegionView.as_view(), name='multi_user_region_assign'),
+
 
     url(r'^search-org/$', OrganizationSearchView.as_view(), name='search-org-list'),
     url(r'^search-proj/(?P<pk>\d+)/$', ProjectSearchView.as_view(), name='search-proj-list'),
