@@ -79,7 +79,7 @@
                     <li><a href="{% url 'fieldsight:project-dashboard' form.instance.pk %}">{{ form.instance }}</a></li>
                     {% endif %}
                     {% if not form.instance.id %}
-                    <li><a href="{% url 'fieldsight:project-dashboard' form.instance.pk %}">{% trans 'Project' %}</a></li>
+                    <li><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{{ org.name }}</a></li>
                     {% endif %}
 					<li>{{ scenario }}</li>
 				</ul>

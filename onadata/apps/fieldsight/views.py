@@ -562,6 +562,12 @@ class ProjectListView(ProjectRoleView, OrganizationMixin, ListView):
 
 
 class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
+    
+    def get_context_data(self, **kwargs):
+        context = super(ProjectCreateView, self).get_context_data(**kwargs)
+        context['org'] = Organization.objects.get(pk=self.kwargs.get('pk'))
+        context['pk'] = self.kwargs.get('pk')
+        return context
 
     def form_valid(self, form):
         self.object = form.save(organization_id=self.kwargs.get('pk'), new=True)
