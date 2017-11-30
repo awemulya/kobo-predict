@@ -13,8 +13,8 @@
 {% load pagination_tags %}
     {% load filters %}
 			<div id="main-content" class="padding" onload="change()">
+				{% block breadcrumbs %}
 				<ul class="breadcrumbb">
-					{% block breadcrumbs %}
 					{% ifrole "Organization" %}
 					<li><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization List' %}</a></li>
 					<li><a href="{% url 'fieldsight:organizations-dashboard' obj.project.organization.pk %}">{{obj.project.organization.name}}</a></li>
@@ -23,8 +23,8 @@
 					<li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">{{obj.project.name}}</a></li>
 					{% endrole %}
 					<li>{{obj.name}}</li>
-					{% endblock %}
 				</ul>
+				{% endblock %}
 				<div class="org-profile-top-action">
 					<div class="action-left">
 

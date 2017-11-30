@@ -47,8 +47,8 @@ var project = "{{obj.pk}}";
 					<li><a href="{% url 'fieldsight:organizations-dashboard' obj.organization.pk %}">{{obj.organization.name}}</a></li>
  				{% endrole %}
 					<li>{{obj.name}}</li>
-				{% endblock %}
 				</ul>
+				{% endblock %}
 				<div class="org-profile-top-action">
 					<div class="action-left">
 
@@ -230,7 +230,6 @@ var project = "{{obj.pk}}";
 							<div class="row">
 								
 								{% if obj.cluster_sites %}
-
 								<div class="col-md-6 col-sm-12">
 									<div class="widget-info widget-scolling-list margin-top bg-white padding">
 										<div class="widget-head">
@@ -273,6 +272,7 @@ var project = "{{obj.pk}}";
 											<h4>Sites</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:site-add' obj.pk %} "><i class="la la-plus"></i></a>
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i></a>
+											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:region-list' obj.pk %}"><i class="la la-cogs"></i>Manage Region</a>
 										</div>
 										<div class="widget-body">
 											<!--Search Sites-->
