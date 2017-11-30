@@ -1564,7 +1564,7 @@ class RegionListView(RegionView, LoginRequiredMixin, ListView):
         context['type'] = "region"
         return context
 
-class RegionCreateView(RegionView, CreateView):
+class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(RegionCreateView, self).get_context_data(**kwargs)
