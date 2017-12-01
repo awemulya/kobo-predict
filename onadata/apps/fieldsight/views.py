@@ -1565,6 +1565,9 @@ class RegionListView(RegionView, LoginRequiredMixin, ListView):
         context['type'] = "region"
         return context
 
+    def get_queryset(self):
+        return self.model.objects.filter(project_id=self.kwargs.get('pk'))
+
 class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
