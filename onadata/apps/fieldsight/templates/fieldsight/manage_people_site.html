@@ -422,7 +422,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-6">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Invite new site users</h4>
+                <h4>Invite new users</h4>
               </div>
 
               <div class="widget-body">
@@ -464,7 +464,13 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <strong>OR</strong>
                 </h4>
                 <div class="widget-head">
-                <h4>Select Users to assign to sites</h4>
+                <h4>
+                    {% if obj.cluster_sites %}
+                Select Users to assign to all sites in regions.
+                  {% else %}
+                Select Users to assign to sites                  
+                  {% endif %}
+                </h4>
                 </div>
                   <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
@@ -512,7 +518,14 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-6">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Select Sites</h4>
+                <h4>
+                  {% if obj.cluster_sites %}
+                Select Sites
+                  {% else %}
+                Select Regions
+                  {% endif %}
+                </h4>
+
               </div>
               <div class="widget-body">
                 <!-- <ul class="row max-260-scroll" id="multi-ass-proj_site">
