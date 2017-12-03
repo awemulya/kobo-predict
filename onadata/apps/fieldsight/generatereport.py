@@ -172,7 +172,7 @@ class MyPrint:
             elements.append(Spacer(0,10))
             elements.append(Paragraph(form.xf.title, styles['Heading3']))
             elements.append(Paragraph(form.form_type(), styles['Heading4']))
-            if form.is_staged:
+            if form.stage:
                 if form.stage.stage:
                     elements.append(Paragraph("Stage: " + str(form.stage.stage.project_stage_id), styles['Heading5']))
                     elements.append(Paragraph("Sub Stage: " + str(form.stage.project_stage_id), styles['Heading5']))    
