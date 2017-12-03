@@ -174,10 +174,10 @@ class MyPrint:
             elements.append(Paragraph(form.form_type() + " Form", styles['Heading4']))
             if form.stage:
                 if form.stage.stage:
-                    elements.append(Paragraph("Stage Id: " + str(form.stage.stage.project_stage_id), styles['Heading5']))
-                    elements.append(Paragraph("Sub Stage Id: " + str(form.stage.project_stage_id), styles['Heading5']))    
+                    elements.append(Paragraph("Stage Id: " + str(form.stage.stage.order), styles['Heading5']))
+                    elements.append(Paragraph("Sub Stage Id: " + str(form.stage.order), styles['Heading5']))    
                 else:
-                    elements.append(Paragraph("Stage Id: " + str(form.stage.project_stage_id), styles['Heading5']))
+                    elements.append(Paragraph("Stage Id: " + str(form.stage.order), styles['Heading5']))
 
             json_question = form.xf.json
             form_user_name = form.xf.user.username
