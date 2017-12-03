@@ -182,9 +182,11 @@ class MyPrint:
             sub_count = 0
             for instance in form.site_form_instances.all():
                 sub_count += 1
+                elements.append(Spacer(0,10))
                 elements.append(Paragraph("Submision "+ str(sub_count), styles['Normal']))
                 elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, styles['Normal']))
                 elements.append(Paragraph("Submitted Date:"+str(instance.date), styles['Normal']))
+                elements.append(Spacer(0,10))
                 self.data = []
                 self.main_answer = instance.instance.json
                 question = json.loads(json_question)
@@ -194,6 +196,8 @@ class MyPrint:
                 t1 = Table(self.data, colWidths=(60*mm, None))
                 t1.setStyle(ts1)
                 elements.append(t1)
+                elements.append(Spacer(0,10))
+                elements.append(Spacer(0,10))
                 elements.append(Spacer(0,10))
         #     else:
         #         elements.append(Paragraph("No Submissions Yet.", styles['Normal']))
