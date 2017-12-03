@@ -184,7 +184,7 @@ class MyPrint:
                 sub_count += 1
                 elements.append(Paragraph("Submision "+ str(sub_count), styles['Normal']))
                 elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, styles['Normal']))
-                elements.append(Paragraph("Submitted Date:"+instance.date, styles['Normal']))
+                elements.append(Paragraph("Submitted Date:"+str(instance.date), styles['Normal']))
                 self.data = []
                 self.main_answer = instance.instance.json
                 question = json.loads(json_question)
