@@ -172,6 +172,14 @@ class MyPrint:
             elements.append(Spacer(0,10))
             elements.append(Paragraph(form.xf.title, styles['Heading3']))
             elements.append(Paragraph(form.form_type(), styles['Heading4']))
+            if form.is_staged:
+                if form.stage.stage:
+                    elements.append(Paragraph("Stage: " + form.stage.stage.project_stage_id, styles['Heading5']))
+                    elements.append(Paragraph("Sub Stage: " + form.stage.project_stage_id, styles['Heading5']))    
+                else:
+                    elements.append(Paragraph("Stage: " + form.stage.project_stage_id, styles['Heading5']))
+
+                elements.append(Paragraph(form.form_type(), styles['Heading4']))
             json_question = form.xf.json
             form_user_name = form.xf.user.username
             self.media_folder = form_user_name
@@ -180,25 +188,26 @@ class MyPrint:
             
             
             sub_count = 0
-            for instance in form.site_form_instances.all():
-                sub_count += 1
-                elements.append(Spacer(0,10))
-                elements.append(Paragraph("Submision "+ str(sub_count), styles['Heading4']))
-                elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, styles['Normal']))
-                elements.append(Paragraph("Submitted Date:"+str(instance.date), styles['Normal']))
-                elements.append(Spacer(0,10))
-                self.data = []
-                self.main_answer = instance.instance.json
-                question = json.loads(json_question)
-                self.parse_individual_questions(question['children'])
-                
+            if form.site_form_instances.all():
+                for instance in form.site_form_instances.all():
+                    sub_count += 1
+                    elements.append(Spacer(0,10))
+                    elements.append(Paragraph("Submision "+ str(sub_count), styles['Heading4']))
+                    elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, styles['Normal']))
+                    elements.append(Paragraph("Submitted Date:"+str(instance.date), styles['Normal']))
+                    elements.append(Spacer(0,10))
+                    self.data = []
+                    self.main_answer = instance.instance.json
+                    question = json.loads(json_question)
+                    self.parse_individual_questions(question['children'])
+                    
 
-                t1 = Table(self.data, colWidths=(60*mm, None))
-                t1.setStyle(ts1)
-                elements.append(t1)
-                elements.append(Spacer(0,10))
+                    t1 = Table(self.data, colWidths=(60*mm, None))
+                    t1.setStyle(ts1)
+                    elements.append(t1)
+                    elements.append(Spacer(0,10))
             else:
-                elements.append(Paragraph("No Submisions Yet. ", styles['Heading4']))
+                elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
             elements.append(PageBreak())
         #     else:
         #         elements.append(Paragraph("No Submissions Yet.", styles['Normal']))
