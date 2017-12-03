@@ -149,7 +149,6 @@ class MyPrint:
         elements.append(Paragraph(site.phone, styles['Normal']))
         if site.region:
             elements.append(Paragraph(site.region.name, styles['Normal']))
-        elements.append(Paragraph(site.location, styles['Normal']))
         elements.append(Spacer(0,10))
         elements.append(Spacer(0,10))
         elements.append(Paragraph('Responses', styles['Heading2']))
