@@ -171,7 +171,7 @@ class MyPrint:
         for form in forms:
             elements.append(Spacer(0,10))
             elements.append(Paragraph(form.xf.title, styles['Heading3']))
-            elements.append(Paragraph(form.form_type(), styles['Normal']))
+            elements.append(Paragraph(form.form_type(), styles['Heading4']))
             json_question = form.xf.json
             form_user_name = form.xf.user.username
             self.media_folder = form_user_name
@@ -183,7 +183,7 @@ class MyPrint:
             for instance in form.site_form_instances.all():
                 sub_count += 1
                 elements.append(Spacer(0,10))
-                elements.append(Paragraph("Submision "+ str(sub_count), styles['Normal']))
+                elements.append(Paragraph("Submision "+ str(sub_count), styles['Heading4']))
                 elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, styles['Normal']))
                 elements.append(Paragraph("Submitted Date:"+str(instance.date), styles['Normal']))
                 elements.append(Spacer(0,10))
