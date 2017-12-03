@@ -37,7 +37,7 @@ class MyPrint:
         styles = getSampleStyleSheet()
  
         # Header
-        header = Paragraph('Fieldsight   ' * 5, styles['Normal'])
+        header = Paragraph('Fieldsight', styles['Normal'])
         w, h = header.wrap(doc.width, doc.topMargin)
         header.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin)
  
@@ -54,7 +54,7 @@ class MyPrint:
         return image
     def parse_repeat(self, r_object):
         styNormal = styleSheet['Normal']
-        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
+        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
         gnr_question = r_object['name']
         for gnr_answer in self.main_answer[gnr_question]:
             for first_children in r_object['children']:
@@ -80,7 +80,7 @@ class MyPrint:
 
     def parse_group(self, g_object):
         styNormal = styleSheet['Normal']
-        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
+        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
         gnr_question = g_object['name']
         for first_children in g_object['children']:
             question = first_children['name']
@@ -101,7 +101,7 @@ class MyPrint:
 
     def parse_individual_questions(self, parent_object):
         styNormal = styleSheet['Normal']
-        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
+        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
         answer=self.main_answer
         for first_children in parent_object:
             if first_children['type'] == "repeat":
@@ -142,53 +142,49 @@ class MyPrint:
         # A large collection of style sheets pre-made for us
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
-        elements.append(Paragraph('Site Resonses', styles['Heading1']))
-        forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')))
+        site = Site.objects.get(pk=pk)
+        elements.append(Paragraph(site.name, styles['Heading1']))
+        elements.append(Paragraph(site.identifier, styles['Normal']))
+        elements.append(Paragraph(site.address, styles['Normal']))
+        elements.append(Paragraph(site.phone, styles['Normal']))
+        elements.append(Paragraph(site.region.name, styles['Normal']))
+        elements.append(Paragraph(site.location, styles['Normal']))
+        elements.append(Spacer(0,10))
+        elements.append(Spacer(0,10))
+        elements.append(Paragraph('Responses', styles['Heading2']))
+        elements.append(Spacer(0,10))
+        
+        forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk, is_survey=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
         #a=FieldSightXF.objects.select_related('xf').filter(site_id=291).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')))
 
        
         
-
-        # print q
-
-        # for qq in q['children']:
-        #     print ""
-        #     print ""
-        #     print qq
-
-        
-        # print json.dumps(self.data)
-        # print q['start']
-
-
-        # Draw things on the PDF. Here's where the PDF generation happens.
-        # See the ReportLab documentation for the full list of functionality.
-        # users = [
-           
-        # ]
-        # # elements.append(Paragraph('My User Names', styles['Heading1']))
-        # # print data
-        # # for i, user in enumerate(users):
-        # #         elements.append(Paragraph(user['name'], styles['Normal']))
-       
-
-        for form in forms:
-            elements.append(Paragraph("Form Name:"+form.xf.title, styles['Normal']))
-            json_question = form.xf.json
-            form_user_name = form.xf.user.username
-            self.media_folder = form_user_name
-            elements.append(Paragraph("Form Created By:"+form_user_name, styles['Normal']))
-            #cursor = get_instaces_for_site_individual_form(form.id)
-            styNormal = styleSheet['Normal']
-            styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.pink)
-            ts1 = TableStyle([
+        ts1 = TableStyle([
                 ('ALIGN', (0,0), (-1,0), 'RIGHT'),
                 ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
                 ('VALIGN', (0,0), (-1,-1), 'TOP'),
                 ('GRID', (0,0), (-1,-1), 0.25, colors.black),
                     ])
-            track = 0
+        styNormal = styleSheet['Normal']
+        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
+
+        for form in forms:
+            elements.append(Spacer(0,10))
+            elements.append(Paragraph(form.xf.title, styles['Normal']))
+            elements.append(Paragraph(form.form_type(), styles['Normal']))
+            json_question = form.xf.json
+            form_user_name = form.xf.user.username
+            self.media_folder = form_user_name
+
+            #cursor = get_instaces_for_site_individual_form(form.id)
+            
+            
+            sub_count = 0
             for instance in form.site_form_instances.all():
+                sub_count += 1
+                elements.append(Paragraph("Submision "+sub_count, styles['Normal']))
+                elements.append(Paragraph("Submitted By:"+instance.submitted_by, styles['Normal']))
+                elements.append(Paragraph("Submitted Date:"+instance.date, styles['Normal']))
                 self.data = []
                 self.main_answer = instance.instance.json
                 question = json.loads(json_question)
