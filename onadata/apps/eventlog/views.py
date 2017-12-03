@@ -143,10 +143,10 @@ class CeleryTaskProgressView(View):
 
 class MyCeleryTaskProgress(TemplateView):
     def get(self, request, *args, **kwargs):
-        pending = CeleryTaskProgress.objects.filter(user_id = request.user.id).filter(status=0)
-        ongoing = CeleryTaskProgress.objects.filter(user_id = request.user.id).filter(status=1)
-        completed = CeleryTaskProgress.objects.filter(user_id = request.user.id).filter(status=2)
-        failed = CeleryTaskProgress.objects.filter(user_id = request.user.id).filter(status=3)
+        pending = CeleryTaskProgress.objects.filter(user_id = request.user.id, status=0)
+        ongoing = CeleryTaskProgress.objects.filter(user_id = request.user.id, status=1)
+        completed = CeleryTaskProgress.objects.filter(user_id = request.user.id, status=2)
+        failed = CeleryTaskProgress.objects.filter(user_id = request.user.id, status=3)
 
         return render(request, 'eventlog/fieldsight_task_list.html',{'pending':pending, 'ongoing':ongoing, 'completed': completed, 'failed':failed })
 
