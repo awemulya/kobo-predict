@@ -7,7 +7,7 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.units import inch
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
-from reportlab.platypus import Spacer, SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import Spacer, SimpleDocTemplate, Table, TableStyle, PageBreak
 from reportlab.platypus import Image
 from reportlab.lib import colors
 from onadata.apps.fsforms.reports_util import get_instaces_for_site_individual_form
