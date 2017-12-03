@@ -147,7 +147,8 @@ class MyPrint:
         elements.append(Paragraph(site.identifier, styles['Normal']))
         elements.append(Paragraph(site.address, styles['Normal']))
         elements.append(Paragraph(site.phone, styles['Normal']))
-        elements.append(Paragraph(site.region.name, styles['Normal']))
+        if site.region:
+            elements.append(Paragraph(site.region.name, styles['Normal']))
         elements.append(Paragraph(site.location, styles['Normal']))
         elements.append(Spacer(0,10))
         elements.append(Spacer(0,10))
