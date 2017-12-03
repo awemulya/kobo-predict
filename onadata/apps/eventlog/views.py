@@ -147,7 +147,7 @@ class MyCeleryTaskProgress(TemplateView):
         ongoing = CeleryTaskProgress.objects.filter(user_id = request.user.id, status=1)
         completed = CeleryTaskProgress.objects.filter(user_id = request.user.id, status=2)
         failed = CeleryTaskProgress.objects.filter(user_id = request.user.id, status=3)
-        
+
         return render(request, 'eventlog/fieldsight_task_list.html',{'pending':pending, 'ongoing':ongoing, 'completed': completed, 'failed':failed })
 
 
