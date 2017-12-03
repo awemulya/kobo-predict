@@ -42,7 +42,7 @@ class MyPrint:
         header.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin)
  
         # Footer
-        footer = Paragraph('Naxalicious  ' * 5, styles['Normal'])
+        footer = Paragraph('Naxa  ', styles['Normal'])
         w, h = footer.wrap(doc.width, doc.bottomMargin)
         footer.drawOn(canvas, doc.leftMargin, h)
  
@@ -171,7 +171,7 @@ class MyPrint:
         for form in forms:
             elements.append(Spacer(0,10))
             elements.append(Paragraph(form.xf.title, styles['Heading3']))
-            elements.append(Paragraph(form.form_type(), styles['Heading4']))
+            elements.append(Paragraph(form.form_type() + " Form", styles['Heading4']))
             if form.stage:
                 if form.stage.stage:
                     elements.append(Paragraph("Stage Id: " + str(form.stage.stage.project_stage_id), styles['Heading5']))
