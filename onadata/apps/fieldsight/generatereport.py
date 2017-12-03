@@ -143,7 +143,7 @@ class MyPrint:
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
         site = Site.objects.get(pk=pk)
-        elements.append(Paragraph(site.name, styles['Heading1']))
+        elements.append(Paragraph(site.name, styles['Heading3']))
         elements.append(Paragraph(site.identifier, styles['Normal']))
         elements.append(Paragraph(site.address, styles['Normal']))
         elements.append(Paragraph(site.phone, styles['Normal']))
