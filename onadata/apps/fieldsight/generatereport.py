@@ -197,6 +197,8 @@ class MyPrint:
                 t1.setStyle(ts1)
                 elements.append(t1)
                 elements.append(Spacer(0,10))
+            else:
+                elements.append(Paragraph("No Submisions Yet. ", styles['Heading4']))
             elements.append(PageBreak())
         #     else:
         #         elements.append(Paragraph("No Submissions Yet.", styles['Normal']))
