@@ -12,7 +12,7 @@ from reportlab.platypus import Image
 from reportlab.lib import colors
 from onadata.apps.fsforms.reports_util import get_instaces_for_site_individual_form
 from django.db.models import Prefetch
-from onadata.apps.fsforms.models import FieldSightXF, FInstance
+from onadata.apps.fsforms.models import FieldSightXF, FInstance, Site
 styleSheet = getSampleStyleSheet()
  
 class MyPrint:
