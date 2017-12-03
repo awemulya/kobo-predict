@@ -182,7 +182,7 @@ class MyPrint:
             sub_count = 0
             for instance in form.site_form_instances.all():
                 sub_count += 1
-                elements.append(Paragraph("Submision "+sub_count, styles['Normal']))
+                elements.append(Paragraph("Submision "+ str(sub_count), styles['Normal']))
                 elements.append(Paragraph("Submitted By:"+instance.submitted_by, styles['Normal']))
                 elements.append(Paragraph("Submitted Date:"+instance.date, styles['Normal']))
                 self.data = []
