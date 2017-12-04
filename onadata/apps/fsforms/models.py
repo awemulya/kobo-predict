@@ -388,7 +388,7 @@ class FInstance(models.Model):
                         if first_children['type'] == 'note':
                             answer= ''
                         elif first_children['type'] == 'photo':
-                            answer = 'http://'+base_url+'/media/'+self.instance.user.username+'/attachments/'+gnr_answer[r_question+"/"+question]
+                            answer = 'http://'+base_url+'/media/kobo/attachments/'+gnr_answer[r_question+"/"+question]
                         else:
                             answer = gnr_answer[r_question+"/"+question]
                             
@@ -407,7 +407,7 @@ class FInstance(models.Model):
                     if question_type == 'note':
                         answer= '' 
                     elif question_type == 'photo':
-                        answer = 'http://'+base_url+'/media/'+self.instance.user.username+'/attachments/'+json_answer[g_question+"/"+question]
+                        answer = 'http://'+base_url+'/media/kobo/attachments/'+json_answer[g_question+"/"+question]
                     else:
                         answer = json_answer[g_question+"/"+question]
 
@@ -430,7 +430,7 @@ class FInstance(models.Model):
                         if first_children['type'] == 'note':
                             answer= '' 
                         elif first_children['type'] == 'photo':
-                            answer = 'http://'+base_url+'/media/'+self.instance.user.username+'/attachments/'+json_answer[question]
+                            answer = 'http://'+base_url+'/media/kobo/attachments/'+json_answer[question]
                         else:
                             answer = json_answer[question]
                     if 'label' in first_children:
