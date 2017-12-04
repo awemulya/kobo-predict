@@ -19,7 +19,7 @@ from onadata.apps.viewer.models import ParsedInstance
 from onadata.apps.fsforms.fsxform_responses import get_instances_for_field_sight_form
 
 #To get domain to give complete url for app devs to make them easier.
-from django.contrib.sites.models import Site
+from django.contrib.sites.models import Site as DjangoSite
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
 FORM_STATUS = [(0, 'Pending'), (1, 'Rejected'), (2, 'Flagged'), (3, 'Approved'), ]
@@ -375,7 +375,7 @@ class FInstance(models.Model):
         data=[]
         json_answer = self.instance.json
         json_question = json.loads(self.instance.xform.json)
-        base_url = Site.objects.get_current().domain
+        base_url = DjangoSite.objects.get_current().domain
         def parse_repeat(r_object):
             r_question = r_object['name']
             for gnr_answer in json_answer[r_question]:
