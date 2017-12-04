@@ -427,7 +427,7 @@ class FInstance(models.Model):
                         if first_children['type'] == 'note':
                             answer= '' 
                         elif first_children['type'] == 'photo':
-                            answer = '/media/user/attachments/'+json_answer[question]
+                            answer = 'http://'+self.base_url+'/media/'+self.instance.user.username+'/attachments/'+json_answer[question]
                         else:
                             answer = json_answer[question]
                     if 'label' in first_children:
