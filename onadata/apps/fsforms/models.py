@@ -387,7 +387,7 @@ class FInstance(models.Model):
                     if r_question+"/"+question in gnr_answer:
                         if first_children['type'] == 'note':
                             answer= ''
-                        elif first_children['type'] == 'photo':
+                        elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or first_children['type'] == 'video':
                             answer = 'http://'+base_url+'/media/kobo/attachments/'+gnr_answer[r_question+"/"+question]
                         else:
                             answer = gnr_answer[r_question+"/"+question]
@@ -406,7 +406,7 @@ class FInstance(models.Model):
                 if g_question+"/"+question in json_answer:
                     if question_type == 'note':
                         answer= '' 
-                    elif question_type == 'photo':
+                    elif question_type == 'photo' or question_type == 'audio' or question_type == 'video':
                         answer = 'http://'+base_url+'/media/kobo/attachments/'+json_answer[g_question+"/"+question]
                     else:
                         answer = json_answer[g_question+"/"+question]
@@ -429,7 +429,7 @@ class FInstance(models.Model):
                     if question in json_answer:
                         if first_children['type'] == 'note':
                             answer= '' 
-                        elif first_children['type'] == 'photo':
+                        elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or first_children['type'] == 'video':
                             answer = 'http://'+base_url+'/media/kobo/attachments/'+json_answer[question]
                         else:
                             answer = json_answer[question]
