@@ -7,7 +7,7 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.units import inch
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
-from reportlab.platypus import Spacer, SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import Spacer, SimpleDocTemplate, Table, TableStyle, PageBreak
 from reportlab.platypus import Image
 from reportlab.lib import colors
 from onadata.apps.fsforms.reports_util import get_instaces_for_site_individual_form
@@ -42,7 +42,7 @@ class MyPrint:
         header.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin)
  
         # Footer
-        footer = Paragraph('Naxalicious  ' * 5, styles['Normal'])
+        footer = Paragraph('Naxa  ', styles['Normal'])
         w, h = footer.wrap(doc.width, doc.bottomMargin)
         footer.drawOn(canvas, doc.leftMargin, h)
  
@@ -66,7 +66,7 @@ class MyPrint:
                         answer= '' 
                     elif first_children['type'] == 'photo':
                         #photo = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
-                        photo = 'http://'+self.base_url+'/media/'+self.media_folder+'/attachments/'+ gnr_answer[gnr_question+"/"+question]
+                        photo = 'http://'+self.base_url+'/media/kobo/attachments/'+ gnr_answer[gnr_question+"/"+question]
                         answer = self.create_logo(photo)
                         # answer =''
                     else:
@@ -88,7 +88,7 @@ class MyPrint:
                 if first_children['type'] == 'note':
                     answer= '' 
                 elif first_children['type'] == 'photo':
-                    photo = 'http://'+self.base_url+'/media/'+self.media_folder+'/attachments/'+self.main_answer[gnr_question+"/"+question]
+                    photo = 'http://'+self.base_url+'/media/kobo/attachments/'+self.main_answer[gnr_question+"/"+question]
                     answer = self.create_logo(photo)
                 else:
                     answer = self.main_answer[gnr_question+"/"+question]
@@ -115,7 +115,7 @@ class MyPrint:
                     answer= Paragraph('', styBackground) 
 
                 elif first_children['type'] == 'photo':
-                    photo = 'http://'+self.base_url+'/media/'+self.media_folder+'/attachments/'+self.main_answer[question]
+                    photo = 'http://'+self.base_url+'/media/kobo/attachments/'+self.main_answer[question]
                     answer = self.create_logo(photo)
                 else:
                     answer = Paragraph(self.main_answer[question], styBackground)
@@ -171,7 +171,14 @@ class MyPrint:
         for form in forms:
             elements.append(Spacer(0,10))
             elements.append(Paragraph(form.xf.title, styles['Heading3']))
-            elements.append(Paragraph(form.form_type(), styles['Heading4']))
+            elements.append(Paragraph(form.form_type() + " Form", styles['Heading4']))
+            if form.stage:
+                if form.stage.stage:
+                    elements.append(Paragraph("Stage Id: " + str(form.stage.stage.order), styles['Heading5']))
+                    elements.append(Paragraph("Sub Stage Id: " + str(form.stage.order), styles['Heading5']))    
+                else:
+                    elements.append(Paragraph("Stage Id: " + str(form.stage.order), styles['Heading5']))
+
             json_question = form.xf.json
             form_user_name = form.xf.user.username
             self.media_folder = form_user_name
@@ -180,25 +187,27 @@ class MyPrint:
             
             
             sub_count = 0
-            for instance in form.site_form_instances.all():
-                sub_count += 1
-                elements.append(Spacer(0,10))
-                elements.append(Paragraph("Submision "+ str(sub_count), styles['Heading4']))
-                elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, styles['Normal']))
-                elements.append(Paragraph("Submitted Date:"+str(instance.date), styles['Normal']))
-                elements.append(Spacer(0,10))
-                self.data = []
-                self.main_answer = instance.instance.json
-                question = json.loads(json_question)
-                self.parse_individual_questions(question['children'])
-                
+            if form.site_form_instances.all():
+                for instance in form.site_form_instances.all():
+                    sub_count += 1
+                    elements.append(Spacer(0,10))
+                    elements.append(Paragraph("Submision "+ str(sub_count), styles['Heading4']))
+                    elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, styles['Normal']))
+                    elements.append(Paragraph("Submitted Date:"+str(instance.date), styles['Normal']))
+                    elements.append(Spacer(0,10))
+                    self.data = []
+                    self.main_answer = instance.instance.json
+                    question = json.loads(json_question)
+                    self.parse_individual_questions(question['children'])
+                    
 
-                t1 = Table(self.data, colWidths=(60*mm, None))
-                t1.setStyle(ts1)
-                elements.append(t1)
-                elements.append(Spacer(0,10))
-            elements.append(Spacer(0,10))
-            elements.append(Spacer(0,10))
+                    t1 = Table(self.data, colWidths=(60*mm, None))
+                    t1.setStyle(ts1)
+                    elements.append(t1)
+                    elements.append(Spacer(0,10))
+            else:
+                elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
+            elements.append(PageBreak())
         #     else:
         #         elements.append(Paragraph("No Submissions Yet.", styles['Normal']))
         #         elements.append(Spacer(0,10)) 
