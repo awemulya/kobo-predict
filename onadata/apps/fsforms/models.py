@@ -438,14 +438,6 @@ class FInstance(models.Model):
                     row={"type":question_type, "question":question, "answer":answer}
                     data.append(row)
 
-            if '_attachments' in json_answer:
-            att_count = 0
-                for attachments in json_answer['_attachments']:
-                    att_count += 1
-                    answer='http://'+self.base_url + attachments['download_url']
-                    row={"type":"_attachment", "question":"Attachment "+str(att_count), "answer":answer}                
-                    data.append(row)
-
             submitted_by={'type':'submitted_by','question':'Submitted by', 'answer':json_answer['_submitted_by']}
             submittion_time={'type':'submittion_time','question':'Submittion Time', 'answer':json_answer['_submission_time']}
             data.append(submitted_by)
