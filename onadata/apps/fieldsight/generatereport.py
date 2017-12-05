@@ -198,9 +198,9 @@ class MyPrint:
         
         ts1 = TableStyle([
                 ('ALIGN', (0,0), (-1,0), 'RIGHT'),
-                ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+                ('BACKGROUND', (0,0), (-1,0), colors.white),
                 ('VALIGN', (0,0), (-1,-1), 'TOP'),
-                ('GRID', (0,0), (-1,-1), 0.25, colors.black),
+                ('GRID', (0,0), (-1,-1), 0.25, colors.white),
                     ])
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
