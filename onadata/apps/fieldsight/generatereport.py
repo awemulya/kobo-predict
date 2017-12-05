@@ -46,29 +46,37 @@ class MyPrint:
         # Save the state of our canvas so we can draw on it
         canvas.saveState()
         styles = getSampleStyleSheet()
-        style_right = ParagraphStyle(name='right', parent=styles['Normal'], fontName='Helvetica-Bold',
-                fontSize=12, alignment=TA_RIGHT)
+        style_right = ParagraphStyle(name='right', parent=styles['Normal'], fontName='Helvetica',
+                fontSize=10, alignment=TA_RIGHT)
         # Header
-        photo = self.create_logo('http://localhost:8001/media/logo/Screenshot_from_2017-08-21_11-18-40_oMvm61o.png')
-        headerleft = Paragraph("FieldSight", styles['Normal'])
+        
+        
+        fieldsight_logo = Image('http://' + self.base_url +'/static/images/fs1.jpg')
+        fieldsight_logo._restrictSize(1.5 * inch, 1.5 * inch)
+        
+
+        # headerleft = Paragraph("FieldSight", styles['Normal'])
         headerright = Paragraph(self.project_name, style_right)
 
-        w1, h1 = headerleft.wrap(doc.width, doc.topMargin)
+        # w1, h1 = headerleft.wrap(doc.width, doc.topMargin)
         w2, h2 = headerright.wrap(doc.width, doc.topMargin)
 
-        textWidth = stringWidth(self.project_name, fontName='Helvetica-Bold',
-                fontSize=12) 
+        textWidth = stringWidth(self.project_name, fontName='Helvetica',
+                fontSize=10) 
         
-        headerleft.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin + 20)
+        fieldsight_logo.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin + 12)
         headerright.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin + 20)
-        photo.drawOn(canvas, headerright.width - textWidth, doc.height + doc.topMargin +20)
+
+        project_logo = Image('http://' + self.base_url + self.project_logo)
+        project_logo._restrictSize(0.4 * inch, 0.4 * inch)
+        project_logo.drawOn(canvas, headerright.width + doc.leftMargin -0.5 * inch - textWidth, doc.height + doc.topMargin + 10)
         
         # header.drawOn(canvas, doc.leftMargin + doc.width, doc.height + doc.topMargin +20)
         
         # Footer
-        footer = Paragraph('Naxa', styles['Normal'])
-        w, h = footer.wrap(doc.width, doc.bottomMargin)
-        footer.drawOn(canvas, doc.leftMargin, h + 40)
+        # footer = Paragraph('Naxa', styles['Normal'])
+        # w, h = footer.wrap(doc.width, doc.bottomMargin)
+        # footer.drawOn(canvas, doc.leftMargin, h + 40)
  
         # Release the canvas
         canvas.restoreState()
@@ -165,10 +173,15 @@ class MyPrint:
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
         site = Site.objects.select_related('project').get(pk=pk)
         self.project_name = site.project.name
+        self.project_logo = site.project.logo.url
+        print self.project_logo
+        
         elements.append(Paragraph(site.name, styles['Heading1']))
         elements.append(Paragraph(site.identifier, styles['Normal']))
-        elements.append(Paragraph(site.address, styles['Normal']))
-        elements.append(Paragraph(site.phone, styles['Normal']))
+        if site.address:
+            elements.append(Paragraph(site.address, styles['Normal']))
+        if site.phone:
+            elements.append(Paragraph(site.phone, styles['Normal']))
         if site.region:
             elements.append(Paragraph(site.region.name, styles['Normal']))
         elements.append(Spacer(0,10))
