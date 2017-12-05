@@ -174,7 +174,6 @@ class MyPrint:
         site = Site.objects.select_related('project').get(pk=pk)
         self.project_name = site.project.name
         self.project_logo = site.project.logo.url
-        print self.project_logo
         
         elements.append(Paragraph(site.name, styles['Heading1']))
         elements.append(Paragraph(site.identifier, styles['Normal']))
@@ -191,6 +190,8 @@ class MyPrint:
         
         forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk, is_survey=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
         
+        if not forms:
+            elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))
         #a=FieldSightXF.objects.select_related('xf').filter(site_id=291).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')))
 
        
@@ -241,6 +242,7 @@ class MyPrint:
                     t1.setStyle(ts1)
                     elements.append(t1)
                     elements.append(Spacer(0,10))
+
             else:
                 elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
             elements.append(PageBreak())
