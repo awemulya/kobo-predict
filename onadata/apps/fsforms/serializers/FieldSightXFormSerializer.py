@@ -134,6 +134,7 @@ class EMSerializer(serializers.ModelSerializer):
 class FSXFormSerializer(serializers.ModelSerializer):
     em = EMSerializer(read_only=True)
     name = serializers.SerializerMethodField('get_title', read_only=True)
+    id_string = serializers.SerializerMethodField()
     responses_count = serializers.SerializerMethodField()
 
     def validate(self, data):
@@ -157,6 +158,10 @@ class FSXFormSerializer(serializers.ModelSerializer):
     @check_obj
     def get_title(self, obj):
         return u"%s" % obj.xf.title
+
+    @check_obj
+    def get_id_string(self, obj):
+        return u"%s" % obj.xf.id_string
 
     def get_responses_count(self, obj):
         is_project = self.context.get('is_project', False)
