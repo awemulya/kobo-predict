@@ -200,7 +200,7 @@ class MyPrint:
                 ('ALIGN', (0,0), (-1,0), 'RIGHT'),
                 ('BACKGROUND', (0,0), (-1,0), colors.white),
                 ('VALIGN', (0,0), (-1,-1), 'TOP'),
-                ('GRID', (0,0), (-1,-1), 0.25, colors.white),
+                ('GRID', (0,0), (-1,-1), 0.1, colors.lightgrey),
                     ])
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
