@@ -39,7 +39,7 @@ class MyPrint:
 
     def create_logo(self, absolute_path):
         image = Image(absolute_path)
-        image._restrictSize(0.5 * inch, 0.5 * inch)
+        image._restrictSize(2.5 * inch, 2.5 * inch)
         return image
 
     def _header_footer(self, canvas, doc):
