@@ -155,6 +155,8 @@ urlpatterns = [
     url(r'^org-submission/(?P<pk>[0-9]+)/(?P<type>[0-9]+)/$', OrganizationdataSubmissionView.as_view(), name='org-submission-data'),
     url(r'^proj-submission/(?P<pk>[0-9]+)/(?P<type>[0-9]+)/$', ProjectdataSubmissionView.as_view(), name='proj-submission-data'),
     url(r'^site-submission/(?P<pk>[0-9]+)/(?P<type>[0-9]+)/$', SitedataSubmissionView.as_view(), name='site-submission-data'),
+    
+    # Site Responses / Report url
     url(r'^site/report/(?P<pk>\d+)/$', project_html_export, name='site-responses-report'),
 
     #for Regions

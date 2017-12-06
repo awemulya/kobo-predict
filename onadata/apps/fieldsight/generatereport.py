@@ -13,6 +13,9 @@ from reportlab.lib import colors
 from onadata.apps.fsforms.reports_util import get_instaces_for_site_individual_form
 from django.db.models import Prefetch
 from onadata.apps.fsforms.models import FieldSightXF, FInstance, Site
+from reportlab.lib.enums import TA_RIGHT
+from reportlab.pdfbase.pdfmetrics import stringWidth
+
 styleSheet = getSampleStyleSheet()
  
 class MyPrint:
@@ -30,28 +33,54 @@ class MyPrint:
         self.width, self.height = self.pagesize
         self.base_url = ''
         self.media_folder = ''
-    @staticmethod
-    def _header_footer(canvas, doc):
+        self.project_name = ''
+        self.project_logo = ''
+
+
+    def create_logo(self, absolute_path):
+        image = Image(absolute_path)
+        image._restrictSize(2.5 * inch, 2.5 * inch)
+        return image
+
+    def _header_footer(self, canvas, doc):
         # Save the state of our canvas so we can draw on it
         canvas.saveState()
         styles = getSampleStyleSheet()
- 
+        style_right = ParagraphStyle(name='right', parent=styles['Normal'], fontName='Helvetica',
+                fontSize=10, alignment=TA_RIGHT)
         # Header
-        header = Paragraph('Fieldsight', styles['Normal'])
-        w, h = header.wrap(doc.width, doc.topMargin)
-        header.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin)
- 
+        
+        
+        fieldsight_logo = Image('http://' + self.base_url +'/static/images/fs1.jpg')
+        fieldsight_logo._restrictSize(1.5 * inch, 1.5 * inch)
+        
+
+        # headerleft = Paragraph("FieldSight", styles['Normal'])
+        headerright = Paragraph(self.project_name, style_right)
+
+        # w1, h1 = headerleft.wrap(doc.width, doc.topMargin)
+        w2, h2 = headerright.wrap(doc.width, doc.topMargin)
+
+        textWidth = stringWidth(self.project_name, fontName='Helvetica',
+                fontSize=10) 
+        
+        fieldsight_logo.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin + 12)
+        headerright.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin + 20)
+
+        project_logo = Image('http://' + self.base_url + self.project_logo)
+        project_logo._restrictSize(0.4 * inch, 0.4 * inch)
+        project_logo.drawOn(canvas, headerright.width + doc.leftMargin -0.5 * inch - textWidth, doc.height + doc.topMargin + 10)
+        
+        # header.drawOn(canvas, doc.leftMargin + doc.width, doc.height + doc.topMargin +20)
+        
         # Footer
-        footer = Paragraph('Naxa  ', styles['Normal'])
-        w, h = footer.wrap(doc.width, doc.bottomMargin)
-        footer.drawOn(canvas, doc.leftMargin, h)
+        # footer = Paragraph('Naxa', styles['Normal'])
+        # w, h = footer.wrap(doc.width, doc.bottomMargin)
+        # footer.drawOn(canvas, doc.leftMargin, h + 40)
  
         # Release the canvas
         canvas.restoreState()
-    def create_logo(self, absolute_path):
-        image = Image(absolute_path)
-        image._restrictSize(3 * inch, 3 * inch) 
-        return image
+    
     def parse_repeat(self, r_object):
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
@@ -142,11 +171,16 @@ class MyPrint:
         # A large collection of style sheets pre-made for us
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
-        site = Site.objects.get(pk=pk)
+        site = Site.objects.select_related('project').get(pk=pk)
+        self.project_name = site.project.name
+        self.project_logo = site.project.logo.url
+        
         elements.append(Paragraph(site.name, styles['Heading1']))
         elements.append(Paragraph(site.identifier, styles['Normal']))
-        elements.append(Paragraph(site.address, styles['Normal']))
-        elements.append(Paragraph(site.phone, styles['Normal']))
+        if site.address:
+            elements.append(Paragraph(site.address, styles['Normal']))
+        if site.phone:
+            elements.append(Paragraph(site.phone, styles['Normal']))
         if site.region:
             elements.append(Paragraph(site.region.name, styles['Normal']))
         elements.append(Spacer(0,10))
@@ -155,15 +189,18 @@ class MyPrint:
         elements.append(Spacer(0,10))
         
         forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk, is_survey=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
+        
+        if not forms:
+            elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))
         #a=FieldSightXF.objects.select_related('xf').filter(site_id=291).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')))
 
        
         
         ts1 = TableStyle([
                 ('ALIGN', (0,0), (-1,0), 'RIGHT'),
-                ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+                ('BACKGROUND', (0,0), (-1,0), colors.white),
                 ('VALIGN', (0,0), (-1,-1), 'TOP'),
-                ('GRID', (0,0), (-1,-1), 0.25, colors.black),
+                ('GRID', (0,0), (-1,-1), 0.1, colors.lightgrey),
                     ])
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
@@ -205,6 +242,7 @@ class MyPrint:
                     t1.setStyle(ts1)
                     elements.append(t1)
                     elements.append(Spacer(0,10))
+
             else:
                 elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
             elements.append(PageBreak())

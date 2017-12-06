@@ -6,14 +6,14 @@
 			<div id="main-content" class="padding">
 				<section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3><i class="fa fa-tasks "></i>My Tasks</h3>
+                        <h3><i class="la la-tasks "></i>My Tasks</h3>
 
                     </header>
                     <br>
 					<div class="container">
                         <div class="row">
                             <div class="text-center col-md-6">
-                                <div class="classWithPad" style="background-color:white;"><i class="fa fa-tasks" style="color: #00628E" aria-hidden="true"></i>
+                                <div class="classWithPad" style="background-color:white;"><i class="la la-tasks" style="color: #00628E" aria-hidden="true"></i>
                                     Ongoing Tasks
                                     <br>
                                     <br>
@@ -33,14 +33,14 @@
                                 </div>
                             </div>
                             <div class="text-center col-md-6" >
-                                <div class="classWithPad" style="background-color:white;"> <i class="fa fa-check-square-o" style="color: green" aria-hidden="true"></i> Completed Tasks
+                                <div class="classWithPad" style="background-color:white;"> <i class="la la-check-square-o" style="color: green" aria-hidden="true"></i> Completed Tasks
                                 <br>
                                 <br>
                                     {% if pending %}
                                     {% for task in pending %}
                                 <div class="alert alert-primary alert-dismissable">
                                     <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                                    <i class="fa fa-upload" style="font-size:12px" aria-hidden="true"></i>{{ task.description }}
+                                    <i class="la la-upload" style="font-size:12px" aria-hidden="true"></i>{{ task.description }}
                                 </div>
                                     {% endfor %}
                                     {% endif %}
@@ -49,28 +49,28 @@
                         </div>
                         <div class="row">
                             <div class="text-center col-md-6">
-                                <div class="classWithPad" style="background-color:white;"><i class="fa fa-clock-o" style="color:orange" aria-hidden="true"></i> Pending Tasks
+                                <div class="classWithPad" style="background-color:white;"><i class="la la-clock-o" style="color:orange" aria-hidden="true"></i> Pending Tasks
                                 <br>
                                 <br>
                                     {% if completed %}
                                     {% for completed in completed %}
                                 <div class="alert alert-primary alert-dismissable">
                                     <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                                    <i class="fa fa-upload" style="font-size:12px" aria-hidden="true"></i>{{ task.description }}
+                                    <i class="la la-upload" style="font-size:12px" aria-hidden="true"></i>{{ task.description }}
                                 </div>
                                     {% endfor %}
                                     {% endif %}
                                 </div>
                             </div>
                             <div class="text-center col-md-6" >
-                                <div class="classWithPad" style="background-color:white;"> <i class="fa fa-exclamation-triangle" style="color:red " aria-hidden="true"></i> Failed Tasks
+                                <div class="classWithPad" style="background-color:white;"> <i class="la la-exclamation-triangle" style="color:red " aria-hidden="true"></i> Failed Tasks
                                 <br>
                                 <br>
                                     {% if failed %}
                                     {% for task in failed %}
                                 <div class="alert alert-primary alert-dismissable">
                                     <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                                    <i class="fa fa-upload" style="font-size:12px" aria-hidden="true"></i>{{ task.description }}
+                                    <i class="la la-upload" style="font-size:12px" aria-hidden="true"></i>{{ task.description }}
                                 </div>
                                     {% endfor %}
                                     {% endif %}
