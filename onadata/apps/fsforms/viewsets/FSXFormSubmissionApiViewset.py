@@ -136,7 +136,10 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         result['url'] = noti.get_absolute_url()
         # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
         # ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
-        ChannelGroup("site-{}".format(instance.fieldsight_instance.site.id)).send({"text": json.dumps(result)})
+        if instance.fieldsight_instance.site:
+            ChannelGroup("site-{}".format(instance.fieldsight_instance.site.id)).send({"text": json.dumps(result)})
+        else:
+            ChannelGroup("project-{}".format(instance.fieldsight_instance.project.id)).send({"text": json.dumps(result)})
 
         # modify create instance
 
