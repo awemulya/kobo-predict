@@ -85,7 +85,9 @@ def _get_instance(xml, new_uuid, submitted_by, status, xform, fxfid, project_fxf
         instance = Instance.objects.create(
             xml=xml, user=submitted_by, status=status, xform=xform)
         print(fxfid ,site_id , project_fxf ,project_id)
-        if fxfid and site_id and project_fxf and project_id:
+        import ipdb
+        ipdb.set_trace()
+        if fxfid and site_id and project_fxf and project_id and fxfid:
             FInstance.objects.create(instance=instance, site_id=site_id, project_id=project_id, site_fxf_id=fxfid,
                                  project_fxf_id=project_fxf, submitted_by=submitted_by)
         elif fxfid and site_id and project_id:
@@ -239,6 +241,10 @@ def create_instance(fsxfid, xml_file, media_files,
         #             instance=duplicate_instances[0],
         #             media_file=f, mimetype=f.content_type)
         # else:
+        if fsxfid is None:
+            fsxfid = ""
+        if site is None:
+            site = ""
         instance = save_submission(xform, xml, media_files, uuid,
                                        submitted_by, status,
                                        date_created_override, str(fsxfid), str(site), fs_proj_xf, proj_id)
