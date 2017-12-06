@@ -84,6 +84,7 @@ def _get_instance(xml, new_uuid, submitted_by, status, xform, fxfid, project_fxf
         # new submission
         instance = Instance.objects.create(
             xml=xml, user=submitted_by, status=status, xform=xform)
+        print(fxfid ,site_id , project_fxf ,project_id)
         if fxfid and site_id and project_fxf and project_id:
             FInstance.objects.create(instance=instance, site_id=site_id, project_id=project_id, site_fxf_id=fxfid,
                                  project_fxf_id=project_fxf, submitted_by=submitted_by)
