@@ -15,9 +15,43 @@ from django.db.models import Prefetch
 from onadata.apps.fsforms.models import FieldSightXF, FInstance, Site
 from reportlab.lib.enums import TA_RIGHT
 from reportlab.pdfbase.pdfmetrics import stringWidth
-
+from  reportlab.lib.styles import ParagraphStyle as PS
+from  reportlab.platypus.tableofcontents import TableOfContents
 styleSheet = getSampleStyleSheet()
- 
+
+class MyDocTemplate(SimpleDocTemplate):
+     def __init__(self, filename, **kw):
+         self.allowSplitting = 0
+         apply(SimpleDocTemplate.__init__, (self, filename), kw)
+
+# Entries to the table of contents can be done either manually by
+# calling the addEntry method on the TableOfContents object or automatically
+# by sending a 'TOCEntry' notification in the afterFlowable method of
+# the DocTemplate you are using. The data to be passed to notify is a list
+# of three or four items countaining a level number, the entry text, the page
+# number and an optional destination key which the entry should point to.
+# This list will usually be created in a document template's method like
+# afterFlowable(), making notification calls using the notify() method
+# with appropriate data.
+
+     def afterFlowable(self, flowable):
+        if flowable.__class__.__name__ == 'Paragraph':
+            text = flowable.getPlainText()
+            style = flowable.style.name
+            if style == 'Heading1':
+                 key = 'h1-%s' % self.seq.nextf('heading1')
+                 self.canv.bookmarkPage(key)
+                 self.notify('TOCEntry', (0, text, self.page, key))
+            if style == 'Heading2':
+                 key = 'h2-%s' % self.seq.nextf('heading2')
+                 self.canv.bookmarkPage(key)
+                 self.notify('TOCEntry', (1, text, self.page, key))
+                 
+            if style == 'Heading3':
+                 key = 'h3-%s' % self.seq.nextf('heading3')
+                 self.canv.bookmarkPage(key)
+                 self.notify('TOCEntry', (2, text, self.page, key))
+
 class MyPrint:
 
 
@@ -74,9 +108,9 @@ class MyPrint:
         # header.drawOn(canvas, doc.leftMargin + doc.width, doc.height + doc.topMargin +20)
         
         # Footer
-        # footer = Paragraph('Naxa', styles['Normal'])
-        # w, h = footer.wrap(doc.width, doc.bottomMargin)
-        # footer.drawOn(canvas, doc.leftMargin, h + 40)
+        footer = Paragraph('Page no. '+str(canvas._pageNumber), styles['Normal'])
+        w, h = footer.wrap(doc.width, doc.bottomMargin)
+        footer.drawOn(canvas, doc.leftMargin, h + 40)
  
         # Release the canvas
         canvas.restoreState()
@@ -156,9 +190,34 @@ class MyPrint:
 
 
     def print_users(self, pk, base_url):
+        centered = PS(name = 'centered',
+        fontSize = 14,
+        leading = 16,
+        alignment = 1,
+        spaceAfter = 20,
+        fontName = 'Helvetica-Bold')
+
+        h1 = PS(
+            name = 'Heading1',
+            fontSize = 16,
+            leading = 16,
+            fontName = 'Helvetica-Bold',
+            spaceAfter = 20,)
+
+        h2 = PS(name = 'Heading2',
+            fontSize = 14,
+            leading = 14,
+            fontName = 'Helvetica-Bold',
+            spaceAfter = 20)
+        h3 = PS(name = 'Heading3',
+            fontSize = 12,
+            leading = 12,
+            fontName = 'Helvetica-BoldOblique',
+            spaceAfter = 20,)
+        
         self.base_url = base_url
         buffer = self.buffer
-        doc = SimpleDocTemplate(buffer,
+        doc = MyDocTemplate(buffer,
                                 rightMargin=72,
                                 leftMargin=72,
                                 topMargin=72,
@@ -167,6 +226,17 @@ class MyPrint:
  
         # Our container for 'Flowable' objects
         elements = []
+        toc = TableOfContents()
+        toc.levelStyles = [
+            PS(fontName='Helvetica-Bold', fontSize=14, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
+            PS(fontName='Helvetica', fontSize=12, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+            PS(fontName='Helvetica', ontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+        ]
+        elements.append(Paragraph('Responses Report for Site', centered))
+        elements.append(PageBreak())
+        elements.append(Paragraph('Table of contents', centered))
+        elements.append(toc)
+        elements.append(PageBreak())
         
         # A large collection of style sheets pre-made for us
         styles = getSampleStyleSheet()
@@ -175,7 +245,7 @@ class MyPrint:
         self.project_name = site.project.name
         self.project_logo = site.project.logo.url
         
-        elements.append(Paragraph(site.name, styles['Heading1']))
+        elements.append(Paragraph(site.name, h1))
         elements.append(Paragraph(site.identifier, styles['Normal']))
         if site.address:
             elements.append(Paragraph(site.address, styles['Normal']))
@@ -183,10 +253,9 @@ class MyPrint:
             elements.append(Paragraph(site.phone, styles['Normal']))
         if site.region:
             elements.append(Paragraph(site.region.name, styles['Normal']))
-        elements.append(Spacer(0,10))
-        elements.append(Spacer(0,10))
-        elements.append(Paragraph('Responses', styles['Heading2']))
-        elements.append(Spacer(0,10))
+
+        elements.append(PageBreak())
+        elements.append(Paragraph('Responses', h2))
         
         forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk, is_survey=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
         
@@ -207,7 +276,7 @@ class MyPrint:
 
         for form in forms:
             elements.append(Spacer(0,10))
-            elements.append(Paragraph(form.xf.title, styles['Heading3']))
+            elements.append(Paragraph(form.xf.title, h3))
             elements.append(Paragraph(form.form_type() + " Form", styles['Heading4']))
             if form.stage:
                 if form.stage.stage:
@@ -266,8 +335,7 @@ class MyPrint:
 
 
      
-        doc.build(elements, onFirstPage=self._header_footer, onLaterPages=self._header_footer,
-                  canvasmaker=NumberedCanvas)
+        doc.multiBuild(elements, onLaterPages=self._header_footer)
  
         # Get the value of the BytesIO buffer and write it to the response.
         #pdf = buffer.getvalue()
@@ -292,33 +360,39 @@ class MyPrint:
     '''
 
 
-class NumberedCanvas(canvas.Canvas):
+# class NumberedCanvas(canvas.Canvas):
+#     def __init__(self, *args, **kwargs):
+#         canvas.Canvas.__init__(self, *args, **kwargs)
+#         self._saved_page_states = []
+ 
+    
 
-
-    def __init__(self, *args, **kwargs):
-        canvas.Canvas.__init__(self, *args, **kwargs)
-        self._saved_page_states = []
+#     def showPage(self):
+#         self._saved_page_states.append(dict(self.__dict__))
+#         self._startPage()
  
 
-    def showPage(self):
-        self._saved_page_states.append(dict(self.__dict__))
-        self._startPage()
+#     def save(self):
+#         """add page info to each page (page x of y)"""
+#         num_pages = len(self._saved_page_states)
+#         print "----------------"
+#         print num_pages
+# #         count = 0
+# #         for state in self._saved_page_states:
+# #             count += 1
+# #             if count==2:
+# #                 self.__dict__.update(state)
+# #                 self.draw_page_number(num_pages)
+# #                 canvas.Canvas.showPage(self)
+# #             canvas.Canvas.showPage(self)
+                    
+#         canvas.Canvas.save(self)
  
-
-    def save(self):
-        """add page info to each page (page x of y)"""
-        num_pages = len(self._saved_page_states)
-        for state in self._saved_page_states:
-            self.__dict__.update(state)
-            self.draw_page_number(num_pages)
-            canvas.Canvas.showPage(self)
-        canvas.Canvas.save(self)
  
- 
-    def draw_page_number(self, page_count):
-        # Change the position of this to wherever you want the page number to be
-        self.drawRightString(211 * mm, 15 * mm + (0.2 * inch),
-                             "Page %d of %d" % (self._pageNumber, page_count))
+#     def draw_page_number(self, page_count):
+#         # Change the position of this to wherever you want the page number to be
+#         self.drawRightString(211 * mm, 15 * mm + (0.2 * inch),
+#                              "Page %d of %d" % (self._pageNumber, page_count))
 
 
 
@@ -342,3 +416,5 @@ class NumberedCanvas(canvas.Canvas):
  
 #     with open('arquivo.pdf', 'wb') as f:
 #         f.write(buffer.read())    
+
+
