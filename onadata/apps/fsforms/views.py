@@ -262,9 +262,10 @@ def project_responses(request, project_id=None):
     schedules = Schedule.objects.filter(project_id=project_id, site__isnull=True, schedule_forms__isnull=False)
     stages = Stage.objects.filter(stage__isnull=True, project_id=project_id, stage_forms__isnull=True).order_by('order')
     generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=project_id)
+    surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=project_id, is_survey=True)
     deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_deleted=True,project_id=project_id)
     return render(request, "fsforms/project/project_responses_list.html",
-                  {'schedules': schedules, 'stages':stages, 'generals':generals,
+                  {'schedules': schedules, 'stages':stages, 'generals':generals, 'surveys': surveys,
                    "deleted_forms":deleted_forms, 'project': project_id})
 
 @login_required()

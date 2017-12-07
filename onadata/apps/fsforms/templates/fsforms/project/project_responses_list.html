@@ -35,6 +35,9 @@
             <li class="nav-item">
               <a class="nav-link" data-toggle="tab" href="#stage3" role="tab">Staged Forms</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#survey4" role="tab">Survey Forms</a>
+            </li>
           </ul>
 
     <div class="tab-content">
@@ -51,6 +54,41 @@
               </thead>
               <tbody>
               {% for obj in generals %}
+                  <tr>
+                      <td>
+                          {{ obj.xf.title }}
+                      </td>
+                      <td>
+                          {{ obj.date_created }}
+                      </td>
+                      <td>
+                           <a href="{% url 'forms:project_html_export' obj.id %}">
+                               {{ obj.id|project_submissions }}
+                               {% trans ' View ' %}</a>
+                      </td>
+                      <td>
+                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.xf.id_string 'xls' 1 obj.id %}">
+                          <i class="la la-download" aria-hidden="true"></i></a>
+                      </td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+          </table>
+        {% endif %}
+      </div>
+        <div id="survey4" class="tab-pane active">
+        {% if surveys %}
+          <h3><b> {% trans 'Survey Forms' %} </b></h3>
+
+          <table class="table table-striped" id="dynamic-table3">
+              <thead>
+              <th>{% trans 'Form Name' %}</th>
+              <th>{% trans 'Created Date' %}</th>
+              <th>{% trans 'View Submissions' %}</th>
+              <th>{% trans 'Download Excel' %}</th>
+              </thead>
+              <tbody>
+              {% for obj in surveys %}
                   <tr>
                       <td>
                           {{ obj.xf.title }}

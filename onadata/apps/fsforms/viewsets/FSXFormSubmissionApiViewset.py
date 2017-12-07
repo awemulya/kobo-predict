@@ -89,7 +89,6 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         if fsxfid is None:
             return self.error_response("Fieldsight Form ID Not Given", False, request)
         try:
-            fsxfid = int(fsxfid)
             fs_proj_xf = get_object_or_404(FieldSightXF, pk=kwargs.get('pk'))
             fxf = None
             try:
@@ -122,7 +121,10 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         site_fsxf_id = None
         if fxf:
             site_fsxf_id = fxf.id
-        error, instance = create_instance_from_xml(request, site_fsxf_id, siteid, fs_proj_xf.id, proj_id, xform)
+        if fs_proj_xf.is_survey:
+            error, instance = create_instance_from_xml(request, None, None, fs_proj_xf.id, proj_id, xform)
+        else:
+            error, instance = create_instance_from_xml(request, site_fsxf_id, siteid, fs_proj_xf.id, proj_id, xform)
 
         noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Project level Submission",
                                        organization=fs_proj_xf.project.organization,
@@ -134,7 +136,10 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         result['url'] = noti.get_absolute_url()
         # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
         # ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
-        ChannelGroup("site-{}".format(instance.fieldsight_instance.site.id)).send({"text": json.dumps(result)})
+        if instance.fieldsight_instance.site:
+            ChannelGroup("site-{}".format(instance.fieldsight_instance.site.id)).send({"text": json.dumps(result)})
+        else:
+            ChannelGroup("project-{}".format(instance.fieldsight_instance.project.id)).send({"text": json.dumps(result)})
 
         # modify create instance
 
