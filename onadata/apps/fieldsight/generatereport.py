@@ -108,7 +108,7 @@ class MyPrint:
         # header.drawOn(canvas, doc.leftMargin + doc.width, doc.height + doc.topMargin +20)
         
         # Footer
-        footer = Paragraph('Page no. '+str(canvas._pageNumber), styles['Normal'])
+        footer = Paragraph('Page no. '+str(canvas._pageNumber), style_right)
         w, h = footer.wrap(doc.width, doc.bottomMargin)
         footer.drawOn(canvas, doc.leftMargin, h + 40)
  
