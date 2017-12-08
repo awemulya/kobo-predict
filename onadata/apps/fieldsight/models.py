@@ -262,6 +262,7 @@ class Region(models.Model):
     project = models.ForeignKey(Project, null=True, blank=True, related_name="project_region")
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     date_updated = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     def get_absolute_url(self):
