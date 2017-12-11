@@ -1727,3 +1727,16 @@ class DefineProjectSteMeta(ProjectRoleMixin, TemplateView):
         project.save()
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')})
 
+class SiteMetaForm(ReviewerRoleMixin, TemplateView):
+    def get(self, request, pk):
+        site_obj = Site.objects.get(pk=pk)
+        json_answers = json.dumps(site_obj.site_meta_attributes_ans)
+        json_questions = json.dumps(site_obj.project.site_meta_attributes)
+        return render(request, 'fieldsight/site_meta_form.html', {'obj': site_obj, 'json_questions': json_questions, 'json_answers': json_answers})
+
+    def post(self, request, pk, *args, **kwargs):
+        project = Project.objects.get(pk=pk)
+        project.site_meta_attributes = request.POST.get('json_questions');
+        project.save()
+        return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')})
+

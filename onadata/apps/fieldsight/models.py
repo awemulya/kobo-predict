@@ -286,6 +286,7 @@ class Site(models.Model):
     is_survey = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     region = models.ForeignKey(Region, related_name='regions', blank=True, null=True)
+    site_meta_attributes_ans = JSONField(default=list)
     logs = GenericRelation('eventlog.FieldSightLog')
 
 
