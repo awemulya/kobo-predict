@@ -129,7 +129,7 @@ class MyPrint:
                         answer= '' 
                     elif first_children['type'] == 'photo':
                         #photo = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
-                        photo = 'http://'+self.base_url+'/media/kobo/attachments/'+ gnr_answer[gnr_question+"/"+question]
+                        photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ gnr_answer[gnr_question+"/"+question]
                         answer = self.create_logo(photo)
                         # answer =''
                     else:
@@ -151,7 +151,7 @@ class MyPrint:
                 if first_children['type'] == 'note':
                     answer= '' 
                 elif first_children['type'] == 'photo':
-                    photo = 'http://'+self.base_url+'/media/kobo/attachments/'+self.main_answer[gnr_question+"/"+question]
+                    photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[gnr_question+"/"+question]
                     answer = self.create_logo(photo)
                 else:
                     answer = self.main_answer[gnr_question+"/"+question]
@@ -178,7 +178,7 @@ class MyPrint:
                     answer= Paragraph('', styBackground) 
 
                 elif first_children['type'] == 'photo':
-                    photo = 'http://'+self.base_url+'/media/kobo/attachments/'+self.main_answer[question]
+                    photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[question]
                     answer = self.create_logo(photo)
                 else:
                     answer = Paragraph(self.main_answer[question], styBackground)
