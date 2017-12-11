@@ -295,9 +295,18 @@ class MyPrint:
             sub_count = 0
             if form.site_form_instances.all():
                 for instance in form.site_form_instances.all():
+                    if instance.form_status ==  0:
+                        form_status = "Pending"
+                    elif instance.form_status == 1:
+                        form_status = "Rejected"
+                    elif instance.form_status == 2:
+                        form_status = "Flagged"
+                    elif instance.form_status == 3:
+                        form_status = "Approved"
                     sub_count += 1
                     elements.append(Spacer(0,10))
                     elements.append(Paragraph("Submision "+ str(sub_count), styles['Heading4']))
+                    elements.append(Paragraph("Status : "+form_status, styles['Normal']))
                     elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, styles['Normal']))
                     elements.append(Paragraph("Submitted Date:"+str(instance.date), styles['Normal']))
                     elements.append(Spacer(0,10))

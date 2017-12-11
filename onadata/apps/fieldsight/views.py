@@ -1715,6 +1715,15 @@ class ProjectSearchView(ListView):
         query = self.request.REQUEST.get("q")
         return self.model.objects.filter(name__icontains=query)
 
+class DefineProjectSteMeta(ProjectRoleMixin, TemplateView):
+    def get(self, request, pk):
+        project_obj = Project.objects.get(pk=pk)
+        json_questions = json.dumps(project_obj.site_meta_attributes)
+        return render(request, 'fieldsight/project_define_site_meta.html', {'obj': project_obj, 'json_questions': json_questions,})
 
-
+    def post(self, request, pk, *args, **kwargs):
+        project = Project.objects.get(pk=pk)
+        project.site_meta_attributes = request.POST.get('json_questions');
+        project.save()
+        return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')})
 

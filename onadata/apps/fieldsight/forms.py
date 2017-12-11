@@ -228,9 +228,8 @@ class ProjectForm(forms.ModelForm):
         #self.fields['organization'].empty_label = None
 
     class Meta:
-        exclude = ['is_active']
         model = Project
-        exclude = ['organization']
+        exclude = ('organization', 'is_active', 'site_meta_attributes',)
         #organization_filters = ['organization']
         widgets = {
         'is_active': forms.HiddenInput(),

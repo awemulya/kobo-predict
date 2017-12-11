@@ -1,0 +1,203 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block content %}
+{% load filters %}
+
+ <script src="{% static 'js/reactjs/react.min.js' %}"></script>
+ <script src="{% static 'js/reactjs/browser.min.js' %}"></script>
+ <script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
+
+
+            <div id="main-content" class="padding">
+                {% block breadcrumbs %}
+                <ul class="breadcrumbb">
+                    {% if form.instance.id %}
+                    <li><a href="{% url 'fieldsight:project-dashboard' form.instance.pk %}">{{ form.instance }}</a></li>
+                    {% endif %}
+                    {% if not form.instance.id %}
+                 
+                    {% endif %}
+                    <li>{{ scenario }}</li>
+                </ul>
+                {% endblock %}
+                <section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-building"></i>{% trans 'New' %}{% trans 'Project' %}</h3>
+                    </header>
+                    <div class="panel-body">
+                      
+                        <div id="newOrganization" class="margin-top">
+                           
+                        </div>
+                    </div>
+                   {{ json_questions }}
+
+                </section>
+                   <div id="app"></div>
+                    <form id="theForm" action="{% url 'fieldsight:define-site-meta' obj.pk %}" method="post">
+                    {% csrf_token %}
+                      <input name="json_questions" id="json_questions" type="hidden" value="" />
+                    </form> 
+
+            </div>
+{% endblock %}
+
+{%block extrascript %}
+<script>
+
+</script>
+    <script type="text/babel">
+     var editing_list =[];
+     var _json_question = JSON.parse("{{json_questions|escapejs}}");
+     console.log(_json_question);
+     var Question = React.createClass({
+            
+            getInitialState: function () {
+                return {editing: false}
+            },
+            
+            edit:function(){
+               editing_list.push(this.props.index);
+               this.setState({editing: true});
+            },
+
+            save: function () {
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
+                editing_list.splice(editing_list.indexOf(this.props.index), 1);
+                this.setState({editing: false });
+            },
+            
+            remove:function(){
+                console.log('Delete pressed.')
+                this.props.deleteFromForm(this.props.index);
+            },
+            
+   
+            renderNormal:function(){
+                return(
+                    <div className="QuestionContainer">
+                        <div className="QuestionText">{this.props.question}</div>
+                        <div className="QuestionText">{this.props.question_type}</div>
+                        <button onClick={this.edit} className="button-primary">Edit</button>
+                        <button onClick={this.remove} className="button-danger">Remove</button>
+                    </div>
+
+            );
+            },
+            renderForm:function(){
+                return(
+                    <div className="QuestionContainer">
+                        <textarea ref="newText"  defaultValue={this.props.question}></textarea>
+                        <select ref="questionType" defaultValue={this.props.question_type}>
+                          <option value="Textual">Textual Question</option>
+                          <option value="Date">Date</option>
+                          <option value="Number">Number only</option>
+                        </select>
+                        <button onClick={this.save} className="button-primary">save</button>
+                        
+                    </div>
+
+            );
+            },
+            render: function () {
+                if(this.state.editing){
+                    return this.renderForm();
+                }
+                else{
+                    return this.renderNormal();
+                }
+            }
+        });
+
+     var Form = React.createClass({
+        getInitialState: function () {
+            return {
+                Questions: _json_question
+            }
+        },
+
+    addQuestion: function (text) {
+        var arr =this.state.Questions;
+
+        var question = {
+            "question_text": "New Question.",
+            "question_type": "textual",
+            "is_deleted":false,
+        }
+        arr.push(question);
+        console.log(editing_list);
+
+        this.setState({Questions: arr});
+    },
+
+    save: function () {
+        if(this.state.Questions.length < 1){ return alert("No Any Questions Found."); }
+        if (editing_list.length < 1){    
+        var json_convertible = this.state.Questions.filter(function(item) {
+            return item.is_deleted == false;
+        });
+        var json_Question = JSON.stringify(json_convertible);
+        console.log(json_convertible);
+
+        document.getElementById('json_questions').value = json_Question;
+        document.getElementById('theForm').submit();
+
+        }else{
+            alert("Please Save all the Questions.");
+        }
+    },
+    removeQuestion: function(i){
+        // console.log('Removing Question:' + i);
+        var arr= this.state.Questions;
+        arr[i].is_deleted=true;
+        this.setState({Questions: arr});
+    },
+
+    updateQuestion: function (newtext, questionType, i) {
+        // console.log('Updating Question');
+        var arr = this.state.Questions;
+        arr[i].question_text=newtext;
+        arr[i].question_type=questionType;
+        this.setState({Questions:arr});
+        // console.log(arr);
+    },
+
+     eachQuestion: function (text, i){
+        if(text.is_deleted == false){
+        return(
+                <Question key={i} index={i} question={text.question_text} question_type={text.question_type}  updateQuestionText={this.updateQuestion} deleteFromForm={this.removeQuestion} />
+            );
+        }
+      },
+      render: function () {
+            return (
+                <div>
+                    <div className="Form">
+                        {   
+                            this.state.Questions.map(this.eachQuestion)
+                        }
+                    </div>
+                    <button onClick={this.addQuestion.bind(null, 'New Question')} className="button-info create">Add New Question</button>
+                    <button onClick={this.save.bind()} className="button-info create">Save Form</button>
+                    
+
+                </div>
+                );
+            }
+  });
+
+        
+        ReactDOM.render(<Form /> , document.getElementById('app')
+            );
+    </script>
+
+
+
+
+
+
+  
+{% endblock %}
+
+

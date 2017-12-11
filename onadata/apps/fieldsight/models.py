@@ -174,6 +174,7 @@ class Project(models.Model):
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     cluster_sites = models.BooleanField(default=False)
+    site_meta_attributes = JSONField(blank=True, null=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
 
