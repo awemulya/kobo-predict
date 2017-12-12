@@ -117,9 +117,10 @@
         var arr =this.state.Questions;
 
         var question = {
-            "question_text": "New Question.",
+            "question_text": "",
             "question_type": "textual",
             "is_deleted":false,
+            "question_name": ""
         }
         arr.push(question);
 
@@ -131,14 +132,18 @@
         var json_convertible = this.state.Questions.filter(function(item) {
             return item.is_deleted == false;
         });
+        for (var key in json_convertible) {
+        json_convertible[key].question_name = json_convertible[key].question_text.replace(/\W/g,"_");
+        }
+
+        console.log(json_convertible);
         var json_Question = JSON.stringify(json_convertible);
-        console.log(this.state.Questions);
+        
 
         document.getElementById('json_questions').value = json_Question;
         document.getElementById('theForm').submit();
-
-       
     },
+
     removeQuestion: function(i){
         // console.log('Removing Question:' + i);
         var arr= this.state.Questions;

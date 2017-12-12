@@ -274,6 +274,7 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
     y = forms.FloatField(widget=forms.HiddenInput(), required=False)
     width = forms.FloatField(widget=forms.HiddenInput(), required=False)
     height = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    site_meta_attributes_ans = forms.CharField(widget=forms.HiddenInput(), required=False)
     def __init__(self, *args, **kwargs):
         super(SiteForm, self).__init__(*args, **kwargs)
         if not self.fields['location'].initial:

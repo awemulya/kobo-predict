@@ -79,40 +79,32 @@
 
      var Question = React.createClass({
             
-            renderNormal:function(){
-                return(
-                    <div className="QuestionContainer">
-                        <div className="QuestionText">{this.props.question}</div>
-                        <div className="QuestionText">{this.props.question_type}</div>
-                       
-                    </div>
-
-            );
+            save: function () {
+                this.props.updateAnswerText(this.refs.answer.value, this.props.index);
+                console.log('save');
             },
+
+           
             renderForm:function(){
                 return(
                     <div className="QuestionContainer">
-                        <textarea ref="newText"  defaultValue={this.props.question}></textarea>
-                        <select ref="questionType" defaultValue={this.props.question_type}>
-                          <option value="Textual">Textual Question</option>
-                          <option value="Date">Date</option>
-                          <option value="Number">Number only</option>
-                        </select>
-                       
+                        <label ref="newText">{this.props.question}</label>
+                        
+                        <input ref="answer" onChange={this.save} defaultValue={this.props.answer}></input>   
                         
                     </div>
 
             );
             },
             render: function () {
-                if(this.props.question == "New Question.5466"){
-                    return this.renderForm();
-                }
-                else{
-                    return this.renderNormal();
-                }
+                return this.renderForm();
             }
         });
+
+    
+
+
+
 
      var Form = React.createClass({
         getInitialState: function () {
@@ -121,14 +113,21 @@
             }
         },
 
+    updateAnswer: function (answer, i) {
+        // console.log('Updating Question');
+        var arr = this.state.Questions;
+        arr[i].answer=answer;
+        this.setState({Questions:arr});
+        // console.log(arr);
+    },
+
     save: function () {
         console.log(this.key);
     },
      eachQuestion: function (text, i){
         if(text.is_deleted == false){
         return(
-                <Question key={i} index={i} question={text.question_text} question_type={text.question_type} />
-            );
+                <Question key={i} index={i} answer={text.answer} question={text.question_text} question_type={text.question_type} updateAnswerText={this.updateAnswer} />   );
         }
       },
       render: function () {

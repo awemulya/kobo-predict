@@ -91,7 +91,7 @@
 					<div class="panel-body">
 						<!-- Add New Organization-->
 						<div id="newOrganization" class="margin-top">
-							<form form enctype="multipart/form-data" method="post">
+							<form id="SiteForm" enctype="multipart/form-data" method="post">
 								
 								<div class="form-row">
 									{% csrf_token %}
@@ -124,10 +124,16 @@
 									<div class="form-group col-md-12">
 										<div id="map" class="full-map margin-top"></div>
 									</div>
+
+									
 								</div>
-								<button class="btn btn-primary registration__action" type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans ' Save' %}</button>
-                                <button type="button" class="btn btn-danger " data-toggle="modal" data-target="#myModal"><i class="la la-trash"></i> {% trans 'Delete' %}</button>
+							<!-- 	<button class="btn btn-primary registration__action" type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans ' Save' %}</button> -->
+                              
 							</form>
+							<div class="form-group col-md-6" id="metaattribs">
+									 
+									</div>
+									  <button type="button" class="btn btn-danger " data-toggle="modal" data-target="#myModal"><i class="la la-trash"></i> {% trans 'Delete' %}</button>
 						</div>
 					</div>
 
@@ -206,12 +212,132 @@
 						  </div>
 						</div>
 					  </div>
-
+{{json_answers}} 
                 </section>
 
 			</div>
 {% endblock %}
 {%block extrascript %}
+ <script src="{% static 'js/reactjs/react.min.js' %}"></script>
+ <script src="{% static 'js/reactjs/browser.min.js' %}"></script>
+ <script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
+
+
+
+    <script type="text/babel">
+     var editing_list =[];
+
+     function safelyParseJSON (json) {
+          var parsed
+          try {
+            parsed = JSON.parse(json);
+          } catch (e) {
+            parsed = [];
+            alert("Json  Error Occured Could not read Json objects." +e);
+          }
+          return parsed 
+        }
+     var _json_answer = safelyParseJSON("{{json_answers|escapejs}}");
+     var _json_question = safelyParseJSON("{{json_questions|escapejs}}");
+     
+     function getanswer(question){
+        if(_json_answer.hasOwnProperty(question)){
+                return _json_answer[question];
+            }
+            else{
+                return "";
+            }
+        }
+
+     _json_question.map(function(item){
+     	alert(item.question_name);
+     	alert(_json_answer);
+        item['answer']=getanswer(item.question_name);
+    })
+
+     var Question = React.createClass({
+            
+            save: function () {
+                this.props.updateAnswerText(this.refs.answer.value, this.props.index);
+                console.log('save');
+            },
+
+           
+            renderForm:function(){
+                return(
+                    <div className="QuestionContainer">
+                        <label ref="newText">{this.props.question}</label>
+                        <input ref="answer" onChange={this.save} defaultValue={this.props.answer}></input>   
+                        
+                    </div>
+
+            );
+            },
+            render: function () {
+                return this.renderForm();
+            }
+        });
+
+    
+
+
+
+
+     var Form = React.createClass({
+        getInitialState: function () {
+            return {
+                Questions: _json_question
+            }
+        },
+
+    updateAnswer: function (answer, i) {
+        // console.log('Updating Question');
+        var arr = this.state.Questions;
+        arr[i].answer=answer;
+        this.setState({Questions:arr});
+        console.log(this.state.Questions);
+    },
+
+    save: function () {
+    	var answers ={}
+    	var Questions = this.state.Questions
+       for (var key in Questions) {
+    	
+        answers[Questions[key].question_name] = Questions[key].answer;
+        
+        
+    	
+	}
+	var answer = JSON.stringify(answers);
+    document.getElementById('id_site_meta_attributes_ans').value = answer;
+    document.getElementById('SiteForm').submit();
+    },
+     eachQuestion: function (text, i){
+        if(text.is_deleted == false){
+        return(
+                <Question key={i} index={i} answer={text.answer} question={text.question_text} question_type={text.question_type} updateAnswerText={this.updateAnswer} />   );
+        }
+      },
+      render: function () {
+            return (
+                <div>
+                    <div className="Form">
+                        {   
+                            this.state.Questions.map(this.eachQuestion)
+                        }
+                    </div>
+                    <button onClick={this.save.bind()} className="button-info create">Save Form</button>
+                </div>
+                );
+            }
+  });
+
+        
+        ReactDOM.render(<Form /> , document.getElementById('metaattribs')
+            );
+    </script>
+
+
 	<script src="{{ STATIC_URL }}js/cropper.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
     <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
