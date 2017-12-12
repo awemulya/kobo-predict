@@ -1,0 +1,163 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block content %}
+{% load filters %}
+
+ <script src="{% static 'js/reactjs/react.min.js' %}"></script>
+ <script src="{% static 'js/reactjs/browser.min.js' %}"></script>
+ <script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
+
+
+            <div id="main-content" class="padding">
+                {% block breadcrumbs %}
+                <ul class="breadcrumbb">
+                    {% if form.instance.id %}
+                    <li><a href="{% url 'fieldsight:project-dashboard' form.instance.pk %}">{{ form.instance }}</a></li>
+                    {% endif %}
+                    {% if not form.instance.id %}
+                 
+                    {% endif %}
+                    <li>{{ scenario }}</li>
+                </ul>
+                {% endblock %}
+                <section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-building"></i>{% trans 'New' %}{% trans 'Project' %}</h3>
+                    </header>
+                    <div class="panel-body">
+                      
+                        <div id="newOrganization" class="margin-top">
+                           
+                        </div>
+                    </div>
+                   {{ json_questions }}
+
+                </section>
+                   <div id="app"></div>
+                    <form id="theForm" action="{% url 'fieldsight:define-site-meta' obj.pk %}" method="post">
+                    {% csrf_token %}
+                      <input name="json_questions" id="json_questions" type="hidden" value="" />
+                    </form> 
+
+            </div>
+{% endblock %}
+
+{%block extrascript %}
+<script>
+
+</script>
+    <script type="text/babel">
+     var editing_list =[];
+
+     function safelyParseJSON (json) {
+          var parsed
+          try {
+            parsed = JSON.parse(json);
+          } catch (e) {
+            parsed = [];
+            alert("Json  Error Occured Could not read Json objects.");
+          }
+          return parsed 
+        }
+
+     var _json_answer = safelyParseJSON("{{json_answers|escapejs}}");
+     var _json_question = safelyParseJSON("{{json_questions|escapejs}}");
+     
+     function getanswer(question){
+        if(_json_answer.hasOwnProperty(question)){
+                return _json_answer[question];
+            }
+            else{
+                return "";
+            }
+        }
+
+     _json_question.map(function(item){
+        item['answer']=getanswer(item.question);
+    })
+
+     var Question = React.createClass({
+            
+            renderNormal:function(){
+                return(
+                    <div className="QuestionContainer">
+                        <div className="QuestionText">{this.props.question}</div>
+                        <div className="QuestionText">{this.props.question_type}</div>
+                       
+                    </div>
+
+            );
+            },
+            renderForm:function(){
+                return(
+                    <div className="QuestionContainer">
+                        <textarea ref="newText"  defaultValue={this.props.question}></textarea>
+                        <select ref="questionType" defaultValue={this.props.question_type}>
+                          <option value="Textual">Textual Question</option>
+                          <option value="Date">Date</option>
+                          <option value="Number">Number only</option>
+                        </select>
+                       
+                        
+                    </div>
+
+            );
+            },
+            render: function () {
+                if(this.props.question == "New Question.5466"){
+                    return this.renderForm();
+                }
+                else{
+                    return this.renderNormal();
+                }
+            }
+        });
+
+     var Form = React.createClass({
+        getInitialState: function () {
+            return {
+                Questions: _json_question
+            }
+        },
+
+    save: function () {
+        console.log(this.key);
+    },
+     eachQuestion: function (text, i){
+        if(text.is_deleted == false){
+        return(
+                <Question key={i} index={i} question={text.question_text} question_type={text.question_type} />
+            );
+        }
+      },
+      render: function () {
+            return (
+                <div>
+                    <div className="Form">
+                        {   
+                            this.state.Questions.map(this.eachQuestion)
+                        }
+                        
+                    </div>
+                    <button onClick={this.save.bind()} className="button-info create">Save Form</button>
+
+                </div>
+                );
+            }
+  });
+
+        
+        ReactDOM.render(<Form /> , document.getElementById('app')
+            );
+    </script>
+
+
+
+
+
+
+  
+{% endblock %}
+
+

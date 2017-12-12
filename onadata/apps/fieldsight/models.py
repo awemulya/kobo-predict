@@ -174,6 +174,7 @@ class Project(models.Model):
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     cluster_sites = models.BooleanField(default=False)
+    site_meta_attributes = JSONField(default=list)
     logs = GenericRelation('eventlog.FieldSightLog')
 
 
@@ -285,6 +286,7 @@ class Site(models.Model):
     is_survey = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     region = models.ForeignKey(Region, related_name='regions', blank=True, null=True)
+    site_meta_attributes_ans = JSONField(default=list)
     logs = GenericRelation('eventlog.FieldSightLog')
 
 

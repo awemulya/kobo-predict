@@ -108,7 +108,7 @@ class MyPrint:
         # header.drawOn(canvas, doc.leftMargin + doc.width, doc.height + doc.topMargin +20)
         
         # Footer
-        footer = Paragraph('Page no. '+str(canvas._pageNumber), styles['Normal'])
+        footer = Paragraph('Page no. '+str(canvas._pageNumber), style_right)
         w, h = footer.wrap(doc.width, doc.bottomMargin)
         footer.drawOn(canvas, doc.leftMargin, h + 40)
  
@@ -129,7 +129,7 @@ class MyPrint:
                         answer= '' 
                     elif first_children['type'] == 'photo':
                         #photo = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
-                        photo = 'http://'+self.base_url+'/media/kobo/attachments/'+ gnr_answer[gnr_question+"/"+question]
+                        photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ gnr_answer[gnr_question+"/"+question]
                         answer = self.create_logo(photo)
                         # answer =''
                     else:
@@ -151,7 +151,7 @@ class MyPrint:
                 if first_children['type'] == 'note':
                     answer= '' 
                 elif first_children['type'] == 'photo':
-                    photo = 'http://'+self.base_url+'/media/kobo/attachments/'+self.main_answer[gnr_question+"/"+question]
+                    photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[gnr_question+"/"+question]
                     answer = self.create_logo(photo)
                 else:
                     answer = self.main_answer[gnr_question+"/"+question]
@@ -178,7 +178,7 @@ class MyPrint:
                     answer= Paragraph('', styBackground) 
 
                 elif first_children['type'] == 'photo':
-                    photo = 'http://'+self.base_url+'/media/kobo/attachments/'+self.main_answer[question]
+                    photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[question]
                     answer = self.create_logo(photo)
                 else:
                     answer = Paragraph(self.main_answer[question], styBackground)
@@ -295,9 +295,18 @@ class MyPrint:
             sub_count = 0
             if form.site_form_instances.all():
                 for instance in form.site_form_instances.all():
+                    if instance.form_status ==  0:
+                        form_status = "Pending"
+                    elif instance.form_status == 1:
+                        form_status = "Rejected"
+                    elif instance.form_status == 2:
+                        form_status = "Flagged"
+                    elif instance.form_status == 3:
+                        form_status = "Approved"
                     sub_count += 1
                     elements.append(Spacer(0,10))
                     elements.append(Paragraph("Submision "+ str(sub_count), styles['Heading4']))
+                    elements.append(Paragraph("Status : "+form_status, styles['Normal']))
                     elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, styles['Normal']))
                     elements.append(Paragraph("Submitted Date:"+str(instance.date), styles['Normal']))
                     elements.append(Spacer(0,10))
