@@ -1566,7 +1566,9 @@ class RegionListView(RegionView, LoginRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
-        return self.model.objects.filter(project_id=self.kwargs.get('pk'))
+        queryset = Region.objects.filter(project_id=self.kwargs.get('pk'), is_active=True)
+        return queryset
+
 
 class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
 
@@ -1585,16 +1587,25 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
 
-class RegionDeleteView(RegionView, DeleteView):
+# class RegionDeleteView(RegionView, DeleteView):
+#
+#     def get_success_url(self):
+#         return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
+#
+#     def delete(self,*args, **kwargs):
+#         self.kwargs['pk'] = self.get_object().id
+#         self.object = self.get_object().delete()
+#
+#         return HttpResponseRedirect(self.get_success_url())
+#
+class RegionDeactivateView(RegionView, TemplateView):
+    template_name = "fieldsight/region_list.html"
 
-    def get_success_url(self):
-        return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
-
-    def delete(self,*args, **kwargs):
-        self.kwargs['pk'] = self.get_object().id
-        self.object = self.get_object().delete()
-
-        return HttpResponseRedirect(self.get_success_url())
+    def deactivate(self, *args, **kwargs):
+        self.object = self.get_object().id
+        self.object.is_active = False
+        self.object = self.get_object().deactivate()
+        self.object.save()
 
 
 class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):

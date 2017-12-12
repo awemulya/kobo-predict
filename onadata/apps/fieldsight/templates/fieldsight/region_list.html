@@ -20,8 +20,7 @@
 					<div class="container">
 
                       <div class="table-striped">
-                      {% autosort object_list as sorted_objects %}
-                      {% autopaginate object_list 25 as paginated_objects %}
+                          {% for obj in object_list %}
                       <table class="table">
                         <thead>
                           <tr>
@@ -34,7 +33,6 @@
                           </tr>
                         </thead>
                         <tbody>
-                        {% for obj in paginated_objects %}
                           <tr>
                             <td class="text-center">{{ obj.id }}</td>
                             <td class="text-center">{{ obj.name }}</td>
@@ -44,10 +42,9 @@
 
 							</td>
 						  </tr>
-                        {% endfor %}
                         </tbody>
                       </table>
-                      {% paginate %}
+                      {% endfor %}
                       </div>
                     </div>
 					<!--Pagination-->
