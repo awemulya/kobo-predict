@@ -115,7 +115,7 @@ class FieldSightLog(models.Model):
         return self.site.get_absolute_url()
 
     def __str__(self):
-        return self.get_type_display()
+        return str(self.get_type_display())
 
 
 class FieldSightMessage(models.Model):

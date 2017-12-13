@@ -643,8 +643,10 @@ class SiteListView(SiteView, ReviewerRoleMixin, ListView):
 class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(SiteCreateView, self).get_context_data(**kwargs)
-        context['project'] = Project.objects.get(pk=self.kwargs.get('pk'))
+        project=Project.objects.get(pk=self.kwargs.get('pk'))
+        context['project'] = project
         context['pk'] = self.kwargs.get('pk')
+        context['json_questions'] = json.dumps(project.site_meta_attributes)
         return context
         
     def get_success_url(self):
@@ -669,6 +671,15 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
 
 class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
+    def get_context_data(self, **kwargs):
+        context = super(SiteUpdateView, self).get_context_data(**kwargs)
+        site=Site.objects.get(pk=self.kwargs.get('pk'))
+        context['project'] = site.project
+        context['pk'] = self.kwargs.get('pk')
+        context['json_questions'] = json.dumps(site.project.site_meta_attributes)
+        context['json_answers'] = json.dumps(site.site_meta_attributes_ans)
+        return context
+
     def get_success_url(self):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.kwargs['pk']})
 
@@ -1573,8 +1584,10 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(RegionCreateView, self).get_context_data(**kwargs)
-        context['project'] = Project.objects.get(pk=self.kwargs.get('pk'))
+        project = Project.objects.get(pk=self.kwargs.get('pk'))
+        context['project'] = project
         context['pk'] = self.kwargs.get('pk')
+        context['json_questions'] = json.dumps(project.site_meta_attributes)
         return context
 
     def form_valid(self, form):

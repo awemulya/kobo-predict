@@ -360,9 +360,13 @@ class FInstance(models.Model):
             return self.site_fxf.id
 
     def get_absolute_url(self):
+        if self.site_fxf is None:
+            return reverse('forms:instance', kwargs={'fsxf_id': self.project_fxf.pk})
         return reverse('forms:instance', kwargs={'fsxf_id': self.site_fxf.pk})
 
     def getname(self):
+        if self.site_fxf is None:
+            return '{0} form {1}'.format(self.project_fxf.form_type(), self.project_fxf.xf.title,)
         return '{0} form {1}'.format(self.site_fxf.form_type(),
                                            self.site_fxf.xf.title,)
     def __unicode__(self):
