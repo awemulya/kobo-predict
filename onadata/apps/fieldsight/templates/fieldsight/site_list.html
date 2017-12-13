@@ -65,18 +65,18 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 						</div>
 						<div class="col-md-6 pull-right">
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i> Search</a>
-							
+
 							{% if type == "project" %}
 							<a href="{% url 'fieldsight:site-add' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add New</a>
 
-							<a href="{% url 'fieldsight:define-site-meta' obj.pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i>Meta Attributes</a>
+							<a href="{% url 'fieldsight:define-site-meta' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i>Meta Attributes</a>
 							<a href="{% url 'fieldsight:site-upload' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Bulk Upload Sites</a>
 							{% endif %}
 							{% if type == "region" %}
 							
 							<a href="{% url 'fieldsight:regional-site-add' obj.project.id pk %}" title="" class="btn btn-sm 
 							btn-primary"><i class="la la-plus"></i>{% trans 'Add New Regional Site' %}</a>
-							<a href="{% url 'fieldsight:define-site-meta' obj.pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i>Meta Attributes</a>
+							<a href="{% url 'fieldsight:define-site-meta' obj.project.id %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i>Meta Attributes</a>
 							{% endif %}
 						</div>
                     </header>
