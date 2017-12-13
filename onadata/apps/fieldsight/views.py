@@ -181,7 +181,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
 
         sites = obj.sites.filter(is_active=True, is_survey=False)
         data = serialize('custom_geojson', sites, geometry_field='location',
-                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
+                         fields=('location', 'id',))
 
         total_sites = sites.count()
         total_survey_sites = obj.sites.filter(is_survey=True).count()

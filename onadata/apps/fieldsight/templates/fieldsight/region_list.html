@@ -12,7 +12,7 @@
 <div id="main-content" class="padding">
 				<section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3><i class="la la-building"></i>{% trans 'Region' %} {% trans 'List'%}</h3>
+                        <h3><i class="la la-building"></i>{% trans 'Manage' %} {% trans 'Regions'%}</h3>
 						<div class="panel-heading-right">
 							<a href="{% url 'fieldsight:region-add' pk%}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Add' %} {% trans 'New'%} </a>
 						</div>
@@ -34,7 +34,7 @@
                         </thead>
                         <tbody>
                           <tr>
-                            <td class="text-center">{{ obj.id }}</td>
+                            <td class="text-center">{{ obj.identifier }}</td>
                             <td class="text-center">{{ obj.name }}</td>
                             <td class="text-center">{{ obj.date_created }}</td>
                             <td class="text-center">
