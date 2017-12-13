@@ -1604,10 +1604,11 @@ class RegionDeactivateView(View):
 
     def get(self, request, pk, *args, **kwargs):
         region = Region.objects.get(pk=pk)
+        project_id = region.project.id
         region.is_active = False
         region.save()
 
-        return HttpResponseRedirect(reverse('fieldsight:region-deactivate', kwargs={'pk': self.kwargs.get('pk')}))
+        return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk':region.project.id}))
 
 
 class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
