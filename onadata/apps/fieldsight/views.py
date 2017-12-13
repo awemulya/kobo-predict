@@ -1606,7 +1606,7 @@ class RegionDeactivateView(View):
         region = Region.objects.get(pk=pk)
         region.is_active = False
         region.save()
-        return render(request, 'fieldsight/region_list.html',{'pk':pk})
+        return HttpResponseRedirect(request, 'fieldsight/region_list.html',kwargs={'pk': self.kwargs.get('pk')})
 
 class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
