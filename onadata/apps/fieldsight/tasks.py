@@ -4,7 +4,7 @@ import json
 from django.db import transaction
 from django.contrib.gis.geos import Point
 from celery import shared_task
-from onadata.apps.fieldsight.models import Organization, Project, Site
+from onadata.apps.fieldsight.models import Organization, Project, Site, Region
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from django.contrib import messages
@@ -44,7 +44,14 @@ def bulkuploadsites(source_user, file, pk):
                 long = site.get("latitude", 27.7172)
                 location = Point(lat, long, srid=4326)
                 type_id = int(site.get("type", "1"))
-                region_id = site.get("region_id", None)
+                
+                region_idf = site.get("region_id", None)
+                region_id = None
+
+                if region_idf is not None:
+                    region, created  = Region.objects.get_or_create(identifier=str(region_idf), project = project)
+                    region_id = region.id
+                
                 _site, created = Site.objects.get_or_create(identifier=str(site.get("id")),
                                                             name=site.get("name"),
                                                             project=project, type_id=type_id, region_id = region_id)
@@ -343,7 +350,10 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
         with transaction.atomic():
             roles_created = 0            
             for region_id in regions:
-                sites = Site.objects.filter(region_id = region_id).values('id')
+                if region_id == "no_region":
+                    sites = Site.objects.filter(region__isnull=True, project_id=project_id).values('id')
+                else: 
+                    sites = Site.objects.filter(region_id = region_id, project_id=project_id).values('id')
                 for site_id in sites:
                     for user in users:
                         site = Site.objects.filter(pk=site_id['id']).first()

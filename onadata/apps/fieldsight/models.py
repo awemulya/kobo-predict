@@ -259,12 +259,16 @@ class Project(models.Model):
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.pk})
 
 class Region(models.Model):
-    name = models.CharField(max_length=255)
-    project = models.ForeignKey(Project, null=True, blank=True, related_name="project_region")
+    identifier = models.CharField("ID", max_length=255)
+    name = models.CharField(max_length=255, null=True, blank=True,)
+    project = models.ForeignKey(Project, related_name="project_region")
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     date_updated = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     logs = GenericRelation('eventlog.FieldSightLog')
+
+    class Meta:
+        unique_together = [('identifier', 'project'),]
 
     def get_absolute_url(self):
         return reverse('fieldsight:region-list', kwargs={'pk': self.pk})
