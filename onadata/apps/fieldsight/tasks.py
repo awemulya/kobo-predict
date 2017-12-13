@@ -44,9 +44,10 @@ def bulkuploadsites(source_user, file, pk):
                 long = site.get("latitude", 27.7172)
                 location = Point(lat, long, srid=4326)
                 type_id = int(site.get("type", "1"))
+                region_id = site.get("region_id", None)
                 _site, created = Site.objects.get_or_create(identifier=str(site.get("id")),
                                                             name=site.get("name"),
-                                                            project=project, type_id=type_id)
+                                                            project=project, type_id=type_id, region_id = region_id)
                 _site.phone = site.get("phone")
                 _site.address = site.get("address")
                 _site.public_desc = site.get("public_desc"),
