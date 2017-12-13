@@ -53,7 +53,7 @@ var org = "{{obj.pk}}";
 					<div class="action-right">
 						<span class="dropdown">
 							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<i class="la la-cogs"></i> Manage
+								<i class="la la-cogs"></i>{% trans 'Manage' %}
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-organization' obj.pk %}"><i class="la la-user"></i>{% trans 'People' %}</a>
@@ -208,16 +208,16 @@ var org = "{{obj.pk}}";
 							<div class="widget-info margin-top bg-white padding">
 
 								<div class="widget-head">
-									<h4>Project Map</h4>
+									<h4>{% trans 'Project Map' %}</h4>
 									<a href="{% url 'fieldsight:org-loc-map' obj.pk%}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map"></i>{% trans ' Full Map' %}</a>
 								</div>
 								<div class="widget-body">
 									<div class="radio-div card">
 									<div class="radio">
-								  		<label><input class = "switch" id = "form_status" type="radio" name="status" value="male" checked="checked"> Form Status</label><br>
+								  		<label><input class = "switch" id = "form_status" type="radio" name="status" value="male" checked="checked">{% trans 'Form Status' %}</label><br>
 							  		</div>
 							  		 <div class="radio">
-								  <label><input class = "switch" id = "project_progress" type="radio" name="progress" value="male"> Site Progress</label><br>
+								  <label><input class = "switch" id = "project_progress" type="radio" name="progress" value="male">{% trans 'Site Progress' %}</label><br>
 							    </div>
 							   </div>
 									<div id="map" class="full-map"></div>
@@ -229,7 +229,7 @@ var org = "{{obj.pk}}";
 								<div class="col-md-6 col-sm-12">
 									<div class="widget-info widget-scolling-list margin-top bg-white padding">
 										<div class="widget-head">
-											<h4>Projects</h4>
+											<h4>{% trans 'Projects' %}</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:project-add' obj.pk%}"><i class="la la-plus"></i></a>
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchProject" aria-expanded="false" aria-controls="searchProject"><i class="la la-search"></i></a>
 										</div>

@@ -17,22 +17,22 @@
 {% block content %}
 
     <div class="col-md-8">
-      <h3>Assign User</h3>
-      <h4>what do you want to do?</h4>
+      <h3>{% trans 'Assign User '  %}</h3>
+      <h4>{% trans 'what do you want to do?'  %}</h4>
       <div class="role">
-        <h4>Role for person:</h4>
+        <h4>{% trans 'Role for person:'  %}</h4>
         <input type="radio" id="radio1" name="group" checked/>
-        <label for="radio1">Project Manager</label>
+        <label for="radio1">{% trans 'Project Manager'  %}</label>
 
         <input type="radio" id="radio2" name="group" />
-        <label for="radio2">Reviewer</label>
+        <label for="radio2">{% trans 'Reviewer'  %}</label>
 
       </div>
       <div class="user-assign-create">
         <h4>user</h4>
         <ul class="nav nav-tabs">
-          <li class="active"><a data-toggle="tab" href="#selectUser">Select User</a></li>
-          <li><a data-toggle="tab" href="#AddNewUser">Add New User</a></li>
+          <li class="active"><a data-toggle="tab" href="#selectUser">{% trans 'Select User' %}</a></li>
+          <li><a data-toggle="tab" href="#AddNewUser">{% trans 'Add New User'  %}</a></li>
         </ul>
 
         <div class="tab-content">

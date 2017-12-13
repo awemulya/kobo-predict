@@ -12,7 +12,7 @@ from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template.response import TemplateResponse
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, View
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
@@ -1412,7 +1412,6 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
         group = Group.objects.get(name=data.get('group'))
         group_id = Group.objects.get(name="Project Manager").id
         user = request.user
-        print user
         task = multiuserassignproject.delay(user, pk, projects, users, group_id)
         if CeleryTaskProgress.objects.create(task_id=task.id, user=user, task_type=1):
             return HttpResponse("Sucess")
@@ -1587,26 +1586,22 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
 
-# class RegionDeleteView(RegionView, DeleteView):
-#
-#     def get_success_url(self):
-#         return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
-#
-#     def delete(self,*args, **kwargs):
-#         self.kwargs['pk'] = self.get_object().id
-#         self.object = self.get_object().delete()
-#
-#         return HttpResponseRedirect(self.get_success_url())
-#
-class RegionDeactivateView(RegionView, TemplateView):
-    template_name = "fieldsight/region_list.html"
 
-    def deactivate(self, *args, **kwargs):
-        self.object = self.get_object().id
-        self.object.is_active = False
-        self.object = self.get_object().deactivate()
-        self.object.save()
+class RegionDeactivateView(View):
+    
+    def get(self, request, pk, *args, **kwargs):
+        region = Region.objects.get(pk=pk)
+        region.is_active = False
+        region.save()
+        return reverse('fieldsight:region-deactivate', kwargs={'pk': self.kwargs.get('pk')})
 
+
+    # def post(self, *args, **kwargs):
+    #     self.object.is_active=False
+    #     self.kwargs['pk'] = self.get_object().id
+    #     self.object = self.get_object()
+    #     self.object.save()
+    #     return reverse('fieldsight:region-deactivate')
 
 class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
     def form_valid(self, form):

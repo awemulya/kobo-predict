@@ -130,11 +130,11 @@
     <div>
       <div class="col-md-4">
         <div class="substages-main-list">
-            <a class="btn" href="{% url 'forms:edit-sub-stage' stage.pk obj.pk 0 %}">Edit</a>
-          <h3><span>Order:</span> <b>{{stage.order}}</b></h3>
-          <h4><span>Name:</span> <b>{{stage.name}}</b></h4>
-          <p><span>Description:</span>{{stage.description}}</p>
-            <p><span>Fom Assigned:</span> {{stage.form_name}}</p>
+            <a class="btn" href="{% url 'forms:edit-sub-stage' stage.pk obj.pk 0 %}">{% trans 'Edit' %}</a>
+          <h3><span>{% trans 'Order:' %}</span> <b>{{stage.order}}</b></h3>
+          <h4><span>{% trans 'Name:' %}</span> <b>{{stage.name}}</b></h4>
+          <p><span>{% trans 'Description:' %}</span>{{stage.description}}</p>
+            <p><span>{% trans 'Fom Assigned:' %}</span> {{stage.form_name}}</p>
 
 
         </div>
@@ -146,7 +146,7 @@
       <div class="col-md-4">
         <div class="substages-main-list">
             <form method="post" id='form' action="{% url 'forms:stage-add-sub-stage' obj.pk %}">
-            <b><span>New Stage:</span></b>
+            <b><span>{% trans 'New Stage:' %}</span></b>
             <b><span>
                {{ form.non_field_errors }}
               </span> </b>

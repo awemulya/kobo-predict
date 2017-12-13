@@ -267,7 +267,7 @@ class Region(models.Model):
     logs = GenericRelation('eventlog.FieldSightLog')
 
     def get_absolute_url(self):
-        return reverse('fieldsight:region-dashboard', kwargs={'pk': self.pk})
+        return reverse('fieldsight:region-list', kwargs={'pk': self.pk})
 
 
 

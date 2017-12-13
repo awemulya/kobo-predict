@@ -1,8 +1,3 @@
-
-
-
-
-
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -18,7 +13,7 @@
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>KoBoToolbox </title>
+<title>{% trans 'KoBoToolbox' %}</title>
 <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico" />
@@ -73,15 +68,15 @@
                 <center><div id="alert" style="color: red;">
 
                   {% if status == "error-1" %}
-                  Username must only include alpha-numeric characters.
+                  {% trans 'Username must only include alpha-numeric characters.' %}
                   {% endif %}
 
                   {% if status == "error-2" %}
-                  Username already taken
+                  {% trans'Username already taken' %}
                   {% endif %}
 
                   {% if status == "error-3" %}
-                  Username must only include small letters
+                  {% trans 'Username must only include small letters' %}
                   {% endif %}
 
 

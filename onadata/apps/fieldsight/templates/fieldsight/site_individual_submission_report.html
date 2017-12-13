@@ -126,17 +126,17 @@ td, th {
                   <div class="col-lg-6 col-md-6 col-sm-12">
                   <div class="widget-info margin-top bg-white padding">
                    <div class="widget-head">
-                  <h4><u>Site Overview</u></h4>
+                  <h4><u>{% trans 'Site Overview' %}</u></h4>
                 </div>
-                    <p><b>Address</b>: {{ obj.address }}, {{ obj.get_country_display }}</p>
-                    <p><b>Phone</b>: {{ obj.phone }}</p>
+                    <p><b>{% trans 'Address' %}</b>: {{ obj.address }}, {{ obj.get_country_display }}</p>
+                    <p><b>{% trans 'Phone' %}</b>: {{ obj.phone }}</p>
 
-                      <p><b>Type </b> : {{ obj.type }}</p>
-                      <p><b>Fax </b> : {{ obj.fax }}</p>
-                      <p><b>Email </b> : {{ obj.email }} </p>
-                      <p><b>Website </b>: {{ obj.website }} </p>
-                      <p><b>Donor </b> : {{ obj.donor }} </p>
-                      <p><b>Description </b>: {{ obj.public_desc }} </p>
+                      <p><b>{% trans 'Type' %}</b> : {{ obj.type }}</p>
+                      <p><b>{% trans 'Fax' %}</b> : {{ obj.fax }}</p>
+                      <p><b>{% trans 'Email' %}</b> : {{ obj.email }} </p>
+                      <p><b>{% trans 'Website' %}</b>: {{ obj.website }} </p>
+                      <p><b>{% trans 'Donor' %}</b> : {{ obj.donor }} </p>
+                      <p><b>{% trans 'Description' %}</b>: {{ obj.public_desc }} </p>
 
 
 
@@ -146,8 +146,8 @@ td, th {
 
                    <div class="col-lg-12 col-md-12 col-sm-12">
                    <div class="widget-info bg-white padding">
-                  <p><b>Total Supervisors</b>: {{ supervisor.count }}</p>
-                   <p><b>Total Reviewers </b>: {{ reviewer.count }}</p>
+                  <p><b>{% trans 'Total Supervisors' %}</b>: {{ supervisor.count }}</p>
+                   <p><b>{% trans 'Total Reviewers' %}</b>: {{ reviewer.count }}</p>
                </div>
                </div>
                </div>
@@ -156,13 +156,13 @@ td, th {
                <div class="col-lg-12 col-md-12 col-sm-12">
                   <div class="widget-info margin-top bg-white padding">
                   <div class="widget-head">
-                   <h4><u>Submission Status</u></h4>
+                   <h4><u>{% trans 'Submission Status' %}</u></h4>
                    </div>
                     <ul>
-                    <li><b><p>Rejected Submissions</b>: {{ rejected|length }}</p></li>
-                    <li><b><p>Flagged Submissions</b>: {{ flagged|length }}</p></li>
-                     <li><b><p>Pending Submissions</b>: {{ outstanding|length }}</p></li>
-                      <li><b><p>Approved Submissions</b>: {{ approved|length }}</p></li>
+                    <li><b><p>{% trans 'Rejected Submissions' %}</b>: {{ rejected|length }}</p></li>
+                    <li><b><p>{% trans 'Flagged Submissions' %}</b>: {{ flagged|length }}</p></li>
+                     <li><b><p>{% trans 'Pending Submissions' %}</b>: {{ outstanding|length }}</p></li>
+                      <li><b><p>{% trans 'Approved Submissions' %}</b>: {{ approved|length }}</p></li>
                     </ul>
                   </div>
                   </div>
@@ -173,7 +173,7 @@ td, th {
             <div class="col-lg-12 col-sm-12">
               <div class="widget-info margin-top bg-white padding">
                 <div class="widget-head">
-                  <h4><u>Site Map</u></h4>
+                  <h4><u>{% trans 'Site Map' %}</u></h4>
                 </div>
                 <div class="widget-body">
                   <div id="map" class="full-map"></div>
@@ -225,7 +225,7 @@ td, th {
 
                 </div>
                 <div class="widget-body">
-                Total Submissions:
+                {% trans 'Total Submissions:' %}
                 {{ total_submissions }}
                   <div id="submission-chart">
                     <canvas id="myChart" width="500px" height="250"></canvas>

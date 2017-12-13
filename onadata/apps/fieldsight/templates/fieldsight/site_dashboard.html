@@ -30,27 +30,27 @@
 
 					</div>
 					<div class="action-right">
-						<a href="{% url 'forms:site-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i> Responses</a>
+						<a href="{% url 'forms:site-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i> Responses' %}</a>
 						<span class="dropdown">
 							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<i class="la la-cogs"></i> Manage
+								<i class="la la-cogs"></i> {% trans 'Manage' %}
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
-								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-site' obj.pk %}"><i class="la la-user"></i> People</a>
-								<a class="dropdown-item" href="{% url 'forms:setup-forms' 0 obj.pk %}"><i class="la la-clipboard"></i> Forms</a>
-								<a class="dropdown-item" href="{% url 'fieldsight:site-blue-prints' obj.pk %}"><i class="la la-pencil-square-o"></i> Site Documents</a>
+								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-site' obj.pk %}"><i class="la la-user"></i>{% trans 'People' %}</a>
+								<a class="dropdown-item" href="{% url 'forms:setup-forms' 0 obj.pk %}"><i class="la la-clipboard"></i>{% trans 'Forms' %}</a>
+								<a class="dropdown-item" href="{% url 'fieldsight:site-blue-prints' obj.pk %}"><i class="la la-pencil-square-o"></i>{% trans 'Site Documents' %}</a>
 							</div>
 						</span>
 						<span class="dropdown">
 							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<i class="la la-clipboard"></i> Reports
+								<i class="la la-clipboard"></i> {% trans 'Reports' %}
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:site-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i>{% trans 'Site Summary Report' %}</a>
 								<a class="dropdown-item" target="_blank" href="{% url 'fieldsight:site-responses-report' obj.pk %}"><i class="la la-reply"></i>{% trans 'Site Responses Report' %}</a>
 							</div>
 						</span>
-						<a href="{% url 'fieldsight:site-edit' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-edit"></i> Edit</a>
+						<a href="{% url 'fieldsight:site-edit' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
 					</div>
 				</div>
 				<section class="org-profile-body margin-top">
@@ -126,7 +126,7 @@
 							<div class="widget-info widget-site-map margin-top bg-white padding">
 								<div class="widget-head">
 									<a href="{% url 'fieldsight:site-loc-map' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map"></i>{% trans ' Full Map' %}</a>
-									<h4>Site Map</h4>
+									<h4>{% trans 'Site Map' %}</h4>
 								</div>
 								<div class="widget-body">
 									<div id="map" class="full-map"></div>
@@ -397,7 +397,7 @@
 						<div class="col-md-6">
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>Site Progress</h4>
+									<h4>{% trans 'Site Progress' %}</h4>
 								</div>
 								<div class="widget-body">
 									<div id="siteprogress-chart"></div>

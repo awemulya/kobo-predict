@@ -10,7 +10,7 @@
                     <header class="panel-heading clearfix">
                         <h3><i class="la la-building"></i>{% block page-title %}{% trans 'Organizations' %}{% endblock %}</h3>
 						<div class="panel-heading-right">
-							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i> Search</a>
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i>{% trans 'Search' %}</a>
 							<a href="{% url 'fieldsight:organization-add'%}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Add' %} {% trans 'New'%} </a>
 						</div>
                     </header>
@@ -23,7 +23,7 @@
 										<div class="input-group">
 										  <input type="text" name="q" placeholder="Search for..." value='{{ request.GET.q }}'/>
 										  <span class="input-group-btn">
-											  <button class="btn btn-primary" value="Search"><i class="la la-search"></i>Search</button>
+											  <button class="btn btn-primary" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
 										  </span>
 										</div>
 									</div>
@@ -45,7 +45,7 @@
 										<p>{{ obj.get_country_display }}</p>
 									</div>
 									<div class="action-button margin-top">
-										<a href="{% url 'fieldsight:organizations-dashboard' obj.pk %}" title="" class="btn btn-sm btn-primary">View</a>
+										<a href="{% url 'fieldsight:organizations-dashboard' obj.pk %}" title="" class="btn btn-sm btn-primary">{% trans 'View' %}</a>
 										<a href="{% url 'fieldsight:organization-edit' obj.pk %}" title="" class="btn btn-sm btn-primary">{% trans 'Edit' %}</a>
 									</div>
 								</div>

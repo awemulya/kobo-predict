@@ -40,19 +40,19 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 				<section class="panel">
                     <header class="panel-heading clearfix">
                     <div class="panel-heading">
-                        <h3><i class="la la-map-marker"></i>Sites</h3>
+                        <h3><i class="la la-map-marker"></i>{% trans 'Sites' %}</h3>
 					</div>	
 						<div class="col-md-6">
 						
 							<select name ="sortby" class="form-control no-btn-search" data-bind="value:sortby, valueUpdate:'afterkeydown'">
-							<option value="sitename" disabled selected>Select your option</option>
-								<option value="rejected">Rejected</option>
-								<option value="flagged">Flagged</option>
-								<option value="pending">Pending</option>
-								<option value="approved">Approved</option>
-								<option value="progress">Progress</option>
-								<option value="identifier">Identifier</option>
-								<option value="sitename">Name</option>
+							<option value="sitename" disabled selected>{% trans 'Select your option' %}</option>
+								<option value="rejected">{% trans 'Rejected' %}</option>
+								<option value="flagged">{% trans 'Flagged' %}</option>
+								<option value="pending">{% trans 'Pending' %}</option>
+								<option value="approved">{% trans 'Approved' %}</option>
+								<option value="progress">{% trans 'Progress' %}</option>
+								<option value="identifier">{% trans 'Identifier' %}</option>
+								<option value="sitename">{% trans 'Name' %}</option>
 								
 
 
@@ -72,7 +72,7 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 							{% if type == "region" %}
 							
 							<a href="{% url 'fieldsight:regional-site-add' obj.project.id pk %}" title="" class="btn btn-sm 
-							btn-primary"><i class="la la-plus"></i> Add New Regional Site</a>
+							btn-primary"><i class="la la-plus"></i>{% trans 'Add New Regional Site' %}</a>
 
 							{% endif %}
 						</div>
