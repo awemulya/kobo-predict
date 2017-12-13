@@ -1726,7 +1726,7 @@ class ProjectSearchView(ListView):
         query = self.request.REQUEST.get("q")
         return self.model.objects.filter(name__icontains=query)
 
-class DefineProjectSteMeta(ProjectRoleMixin, TemplateView):
+class DefineProjectSiteMeta(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
         project_obj = Project.objects.get(pk=pk)
         json_questions = json.dumps(project_obj.site_meta_attributes)

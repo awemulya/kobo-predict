@@ -212,7 +212,7 @@
 						  </div>
 						</div>
 					  </div>
-{{json_answers}} 
+
                 </section>
 
 			</div>
@@ -250,8 +250,6 @@
         }
 
      _json_question.map(function(item){
-     	alert(item.question_name);
-     	alert(_json_answer);
         item['answer']=getanswer(item.question_name);
     })
 
