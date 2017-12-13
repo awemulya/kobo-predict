@@ -1601,20 +1601,12 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
 
 
 class RegionDeactivateView(View):
-    
+
     def get(self, request, pk, *args, **kwargs):
         region = Region.objects.get(pk=pk)
         region.is_active = False
         region.save()
-        return reverse('fieldsight:region-deactivate', kwargs={'pk': self.kwargs.get('pk')})
-
-
-    # def post(self, *args, **kwargs):
-    #     self.object.is_active=False
-    #     self.kwargs['pk'] = self.get_object().id
-    #     self.object = self.get_object()
-    #     self.object.save()
-    #     return reverse('fieldsight:region-deactivate')
+        return render(request, 'fieldsight/region_list.html',{'pk':pk})
 
 class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
