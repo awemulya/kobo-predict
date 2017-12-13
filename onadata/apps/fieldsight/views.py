@@ -699,6 +699,10 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
 
         return HttpResponseRedirect(self.get_success_url())
 
+class SiteDeactivationView(View):
+    def post(self, request, *args, **kwargs):
+
+        return render(request, 'fieldsight/user_list.html', {'object_list': object_list, 'groups': groups})
 
 class SiteDeleteView(SiteView, SiteDeleteRoleMixin, DeleteView):
     def get_success_url(self):
