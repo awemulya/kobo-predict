@@ -1606,7 +1606,9 @@ class RegionDeactivateView(View):
         region = Region.objects.get(pk=pk)
         region.is_active = False
         region.save()
-        return render(request, 'fieldsight/region_list.html',{'pk':pk})
+
+        return HttpResponseRedirect(reverse('fieldsight:region-deactivate', kwargs={'pk': self.kwargs.get('pk')}))
+
 
 class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
@@ -1749,5 +1751,6 @@ class SiteMetaForm(ReviewerRoleMixin, TemplateView):
         project = Project.objects.get(pk=pk)
         project.site_meta_attributes = request.POST.get('json_questions');
         project.save()
-        return HttpResponseRedirect(everse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
+        return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
+
 
