@@ -1606,7 +1606,7 @@ class RegionDeactivateView(View):
         region = Region.objects.get(pk=pk)
         region.is_active = False
         region.save()
-        return HttpResponseRedirect(request, 'fieldsight/region_list.html',kwargs={'pk': self.kwargs.get('pk')})
+        return HttpResponseRedirect(reverse, 'fieldsight/region_list.html',kwargs={'pk': self.kwargs.get('pk')})
 
 class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
@@ -1726,7 +1726,7 @@ class ProjectSearchView(ListView):
         query = self.request.REQUEST.get("q")
         return self.model.objects.filter(name__icontains=query)
 
-class DefineProjectSteMeta(ProjectRoleMixin, TemplateView):
+class DefineProjectSiteMeta(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
         project_obj = Project.objects.get(pk=pk)
         json_questions = json.dumps(project_obj.site_meta_attributes)
@@ -1736,7 +1736,7 @@ class DefineProjectSteMeta(ProjectRoleMixin, TemplateView):
         project = Project.objects.get(pk=pk)
         project.site_meta_attributes = request.POST.get('json_questions');
         project.save()
-        return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')})
+        return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
 
 class SiteMetaForm(ReviewerRoleMixin, TemplateView):
     def get(self, request, pk):
@@ -1749,5 +1749,5 @@ class SiteMetaForm(ReviewerRoleMixin, TemplateView):
         project = Project.objects.get(pk=pk)
         project.site_meta_attributes = request.POST.get('json_questions');
         project.save()
-        return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')})
+        return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
 
