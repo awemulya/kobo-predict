@@ -81,7 +81,6 @@ var project = "{{obj.pk}}";
 								<i class="la la-cogs"></i>{% trans 'Manage' %}
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
-								<a class="dropdown-item" href="{% url 'fieldsight:define-site-meta' obj.pk %}"><i class="la la-user"></i>{% trans 'Meta Attributes' %}</a>
 								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-project' obj.pk %}"><i class="la la-user"></i>{% trans ' People' %}</a>
 								<a class="dropdown-item" href="{% url 'forms:setup-forms' 1 obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Forms' %}</a>
 								<a class="dropdown-item" href="{% url 'fieldsight:proj-site-list' obj.id%}"><i class="la la-map-marker"></i>{% trans ' Sites' %}</a>
@@ -247,7 +246,7 @@ var project = "{{obj.pk}}";
 											<h4>{% trans 'Regions' %}</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:site-add' obj.pk %} "><i class="la la-plus"></i></a>
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i></a>
-											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:region-list' obj.pk %}"><i class="la la-cogs"></i>{% trans 'Manage Region' %}</a>
+											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:region-list' obj.pk %}"><i class="la la-cogs"></i>{% trans 'Manage' %}</a>
 										</div>
 										<div class="widget-body">
 											<!--Search Sites-->
