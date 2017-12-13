@@ -56,16 +56,16 @@
                             {{obj.form.xf.title}}:
                           {% endif %}
                     </td>
-                    <td><a href="{% url 'forms:project-schedule-edit' obj.pk %}">Edit</a></td>
+                    <td><a href="{% url 'forms:project-schedule-edit' obj.pk %}">{% trans 'Edit' %}</a></td>
                     <td>{% if obj.form.xf %}
                           <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-survey' obj.pk %}">
-                            Deploy To Sites</a>
+                            {% trans 'Deploy To Sites' %}</a>
                         {% endif %}
                     </td>
 
                 </tr>
             {% empty %}
-            <p> No Schedules </p>
+            <p>{% trans 'No Schedules' %}</p>
             {% endfor %}
 
             </tbody>

@@ -13,7 +13,7 @@
      {{obj.site.name}} {% trans 'Dashboard' %}</a>
 <a class="btn btn-success btn-raised" href="{% url 'forms:setup-project-stages' obj.project.pk %}">{% trans 'Main Stages' %}</a>
 {% endif %}
-   <a class="btn btn-success btn-raised" href="{% url 'forms:stages-detail' obj.pk %}">Sub Stages</a>
+   <a class="btn btn-success btn-raised" href="{% url 'forms:stages-detail' obj.pk %}">{% trans 'Sub Stages' %}</a>
 {% endblock %}
 
 {% block content %}

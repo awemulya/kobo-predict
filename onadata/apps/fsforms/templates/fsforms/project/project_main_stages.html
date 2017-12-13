@@ -128,10 +128,10 @@
   <div>
     <div class="col-md-4">
       <div class="stages-main-list">
-          <a class="btn" href="{% url 'forms:edit-main-stage' stage.pk obj.pk 1 %}">Edit</a>
-        <h3><span>Stage:</span> <b>{{stage.order}}</b></h3>
-        <h4><span>Name:</span> <b>{{stage.name}}</b></h4>
-        <p><span>Description:</span>{{stage.description}}</p>
+          <a class="btn" href="{% url 'forms:edit-main-stage' stage.pk obj.pk 1 %}">{% trans 'Edit' %}</a>
+        <h3><span>{% trans 'Stage:' %}</span> <b>{{stage.order}}</b></h3>
+        <h4><span>{% trans 'Name:' %}</span> <b>{{stage.name}}</b></h4>
+        <p><span>{% trans 'Description:' %}</span>{{stage.description}}</p>
            <a class="btn btn-success btn-raised" href="{% url 'forms:stages-detail' stage.pk %}">
                             {% trans 'List Sub Stages' %}({{stage.sub_stage_count}})</a>
       </div>

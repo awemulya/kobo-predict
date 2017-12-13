@@ -17,8 +17,8 @@
 <div id="main-content" class="padding">
 <ul class="breadcrumbb">
     {% block breadcrumbs %}
-    <li><a href="{% url 'fieldsight:project-dashboard' project %}">Project Dashboard</a></li>
-    <li>Responses</li>
+    <li><a href="{% url 'fieldsight:project-dashboard' project %}">{% trans 'Project Dashboard' %}</a></li>
+    <li>{% trans 'Responses' %}</li>
 {% endblock %}
 
 </ul>
@@ -27,16 +27,16 @@
 
     <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#general1" role="tab">General Forms</a>
+              <a class="nav-link active" data-toggle="tab" href="#general1" role="tab">{% trans 'General Forms' %}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#schedule2" role="tab">Scheduled Forms</a>
+              <a class="nav-link" data-toggle="tab" href="#schedule2" role="tab">{% trans 'Scheduled Forms' %}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#stage3" role="tab">Staged Forms</a>
+              <a class="nav-link" data-toggle="tab" href="#stage3" role="tab">{% trans 'Staged Forms' %}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#survey4" role="tab">Survey Forms</a>
+              <a class="nav-link" data-toggle="tab" href="#survey4" role="tab">{% trans 'Survey Forms' %}</a>
             </li>
           </ul>
 
@@ -218,7 +218,7 @@
 
           </div>
              <div class="col-sm-4 card">
-                 <div class="well well-sm notice-danger"><h4>Deleted Form Responses</h4></div>
+                 <div class="well well-sm notice-danger"><h4>{% trans 'Deleted Form Responses' %}</h4></div>
             {% for obj in deleted_forms %}
             <div class="row card_inside">{{obj.xf.title}} {% trans 'with' %}
              <a href="{% url 'forms:project_html_export' obj.id %}">

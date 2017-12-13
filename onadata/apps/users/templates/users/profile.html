@@ -64,7 +64,7 @@
 							{% if roles_org %}
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>Organization Admin At :</h4>
+									<h4>{% trans 'Organization Admin At :' %}</h4>
 								</div>
 								<div class="widget-body">
 									<div class="" style="overflow-y: scroll;">
@@ -96,7 +96,7 @@
 							{% if roles_project %}
 							<div class="widget-info margin-top bg-white padding" >
 								<div class="widget-head">
-									<h4>Project Manager At :</h4>
+									<h4>{% trans 'Project Manager At :' %}</h4>
 								</div>
 								<div class="widget-body">
 									<div class="" style="overflow-y: scroll;">
@@ -125,7 +125,7 @@
 							{% if roles_reviewer %}
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>Site Reviewer At :</h4>
+									<h4>{% trans 'Site Reviewer At :' %}</h4>
 								</div>
 								<div class="widget-body">
 									<div class="" style="overflow-y: scroll;">
@@ -156,7 +156,7 @@
 							{% if roles_SA %}
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>Site Supervisor At :</h4>
+									<h4>{% trans 'Site Supervisor At :' %}</h4>
 								</div>
 								<div class="widget-body">
 									<div class="">
@@ -186,7 +186,7 @@
 							{% if not roles_org and not roles_project and not roles_site and roles == "Super Admin" %}
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>Super Admin</h4>
+									<h4>{% trans 'Super Admin' %}</h4>
 								</div>
 							</div>				
 							{% else%}
@@ -203,7 +203,7 @@
 						<div class="col-md-12 col-lg-4">
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>Latest Submission</h4>
+									<h4>{% trans 'Latest Submission' %}</h4>
 								</div>
 								<div class="widget-body">
 									<div class="">

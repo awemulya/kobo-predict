@@ -26,8 +26,8 @@
         <table class="table table-striped" id="dynamic-table1">
             <thead>
             <th>{% anchor name _('Name') %}</th>
-            <th>Created Date</th>
-            <th colspan="2">Actions</th>
+            <th>{% trans 'Created Date' %}</th>
+            <th colspan="2">{% trans 'Actions' %}</th>
             </thead>
             <tbody>
             {% for obj in paginated_objects %}

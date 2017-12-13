@@ -21,17 +21,17 @@
   <div>
   </div>
 </div>
-<div class="col-sm-12"> Form Details</div>
+<div class="col-sm-12">{% trans 'Form Details' %}</div>
 
 
     <div class="form-details-all">
         <div class="col-md-9">
             <div class="formmdetails">
-                <h2><span class="form-name">Name:</span>{{ obj.xf.title }}</h2>
-                <p><span class="site-name">Site:</span>{{ obj.site }}</p>
-                <p><span class="creeated-date">Created date:</span>{{ obj.date_created }}</p>
-                <p><span class="form-type">Form type:</span>{{obj.form_type}}</p>
-                <p><span class="stage-schedule">Stage/Schedule:</span>
+                <h2><span class="form-name">{% trans 'Name:</span>{{ obj.xf.title }}</h2>
+                <p><span class="site-name">{% trans 'Site:</span>{{ obj.site }}</p>
+                <p><span class="creeated-date">{% trans 'Created date:</span>{{ obj.date_created }}</p>
+                <p><span class="form-type">{% trans 'Form type:</span>{{obj.form_type}}</p>
+                <p><span class="stage-schedule">{% trans 'Stage/Schedule:</span>
                     {% if obj.is_staged %}
                          {{obj.stage_name }}
                          {% endif %}
@@ -55,8 +55,8 @@
   <table class="table table-striped table-bordered">
       <thead>
         <tr>
-          <th>Questions</th>
-          <th>Answers</th>
+          <th>{% trans 'Questions' %}</th>
+          <th>{% trans 'Answers' %}</th>
         </tr>
       </thead>
       <tbody>
@@ -71,7 +71,7 @@
 </div>
 
 <div class="medias-img">
-  <h3>Medias</h3>
+  <h3>{% trans 'Medias' %}</h3>
     {% for link in medias %}
                  <a href="{{link}}" data-lightbox="roadtrip"><img height="100" width="100" src="{{link}}"/></a>
     {% endfor %}
