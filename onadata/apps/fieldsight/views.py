@@ -1736,7 +1736,7 @@ class DefineProjectSiteMeta(ProjectRoleMixin, TemplateView):
         project = Project.objects.get(pk=pk)
         project.site_meta_attributes = request.POST.get('json_questions');
         project.save()
-         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
+        return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
 
 class SiteMetaForm(ReviewerRoleMixin, TemplateView):
     def get(self, request, pk):
@@ -1749,5 +1749,5 @@ class SiteMetaForm(ReviewerRoleMixin, TemplateView):
         project = Project.objects.get(pk=pk)
         project.site_meta_attributes = request.POST.get('json_questions');
         project.save()
-         return HttpResponseRedirect(everse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
+        return HttpResponseRedirect(everse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
 
