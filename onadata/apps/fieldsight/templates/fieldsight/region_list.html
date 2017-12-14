@@ -20,7 +20,7 @@
 					<div class="container">
 
                       <div class="table-striped">
-                          {% for obj in object_list %}
+
                       <table class="table">
                         <thead>
                           <tr>
@@ -28,23 +28,21 @@
                             <th class="text-center">{% trans 'Region Name' %}</th>
                             <th class="text-center"> {% trans 'Created Date' %}</th>
                             <th class="text-center">{% trans 'Actions' %}</th>
-
-
                           </tr>
                         </thead>
                         <tbody>
+                        {% for obj in object_list %}
                           <tr>
                             <td class="text-center">{{ obj.identifier }}</td>
                             <td class="text-center">{{ obj.name }}</td>
                             <td class="text-center">{{ obj.date_created }}</td>
                             <td class="text-center">
 								<a class="btn btn-primary btn-sm" href="{% url 'fieldsight:region-update' obj.pk %}"><i class="la la-pencil-square-o"></i>{% trans ' Edit' %}</a>
-
 							</td>
 						  </tr>
+                        {% endfor %}
                         </tbody>
                       </table>
-                      {% endfor %}
                       </div>
                     </div>
 					<!--Pagination-->
