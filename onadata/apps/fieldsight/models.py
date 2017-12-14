@@ -270,9 +270,6 @@ class Region(models.Model):
     class Meta:
         unique_together = [('identifier', 'project'),]
 
-    def get_absolute_url(self):
-        return reverse('fieldsight:region-list', kwargs={'pk': self.pk})
-
 
 
 class Site(models.Model):

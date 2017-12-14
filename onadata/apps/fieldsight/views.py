@@ -1619,18 +1619,20 @@ class RegionDeactivateView(View):
 
 
 class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
+
+    def get_context_data(self, **kwargs):
+        context = super(RegionUpdateView, self).get_context_data(**kwargs)
+        region = Region.objects.get(pk=self.kwargs.get('pk'))
+        context['project'] = region.project
+        context['pk'] = self.kwargs.get('pk')
+        return context
+
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.project_id=self.kwargs.get('pk')
         self.object.save()
-        return HttpResponseRedirect(self.get_success_url())
+        return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk':self.object.project.id}))
 
-    def form_valid(self, form):
-        self.object = form.save()
-        return HttpResponseRedirect(self.get_success_url())
 
-    def get_success_url(self):
-        return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
 
 
 class RegionalSitelist(ProjectRoleMixin, TemplateView):
