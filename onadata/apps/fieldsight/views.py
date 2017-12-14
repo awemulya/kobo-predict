@@ -1612,14 +1612,17 @@ class RegionDeactivateView(View):
 
 
 class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.project_id=self.kwargs.get('pk')
-        self.object.save()
-        return HttpResponseRedirect(self.get_success_url())
+
+    def get_context_data(self, **kwargs):
+        context = super(RegionUpdateView, self).get_context_data(**kwargs)
+        region = Region.objects.get(pk=self.kwargs.get('pk'))
+        context['project'] = region.project
+        context['pk'] = self.kwargs.get('pk')
+        return context
 
     def form_valid(self, form):
-        self.object = form.save()
+        self.object = form.save(commit=False)
+        self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
