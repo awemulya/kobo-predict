@@ -208,7 +208,11 @@
 								<div class="widget-body">
 									<div class="">
 										{% for sub in responses %}
+										{% if sub.site %}
 										<a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}" title="">
+										{% else %}
+										<a href="{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}" title="">
+										{% endif %}
 										<div class="project-item-wrap margin-top clearfix">
 											<div class="project-logo">
 												<img src="assets/img/logo-org1.jpg" alt="" width="50" height="50">

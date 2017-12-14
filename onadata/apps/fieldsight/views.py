@@ -4,7 +4,7 @@ from io import BytesIO
 from django.http import HttpResponse
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group, User, Permission
 from django.contrib.gis.geos import Point
 from django.db import transaction
 from django.db.models import Q
@@ -1226,6 +1226,13 @@ class ActivateRole(TemplateView):
             user = User(username=request.POST.get('username'), email=invite.email, first_name=request.POST.get('firstname'), last_name=request.POST.get('lastname'))
             user.set_password(request.POST.get('password1'))
             user.save()
+            
+## Needs completion
+            codenames=['add_asset', 'change_asset','delete_asset', 'view_asset', 'share_asset']
+            permissions = Permission.objects.filter(codename__in=codenames)
+            user.user_permissions.set(permissions)
+
+
             profile, created = UserProfile.objects.get_or_create(user=user, organization=invite.organization)
             userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
             invite.is_used = True

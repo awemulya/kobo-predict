@@ -2,10 +2,10 @@ Country Code,Country Name,Time Zone,GMT Offset
 AF,Afghanistan,Asia/Kabul,UTC +04:30
 AX,Aland Islands,Europe/Mariehamn,UTC +02:00
 AL,Albania,Europe/Tirane,UTC +01:00
-DZ,Algeria,Africa/Algiers,UTC +01:00
+DZ,Algeria,Algiers,UTC +01:00
 AS,American Samoa,Pacific/Pago_Pago,UTC -11:00
 AD,Andorra,Europe/Andorra,UTC +01:00
-AO,Angola,Africa/Luanda,UTC +01:00
+AO,Angola,Luanda,UTC +01:00
 AI,Anguilla,America/Anguilla,UTC -04:00
 AQ,Antarctica,Antarctica/Casey,UTC +11:00
 AQ,Antarctica,Antarctica/Davis,UTC +07:00
@@ -54,13 +54,13 @@ BB,Barbados,America/Barbados,UTC -04:00
 BY,Belarus,Europe/Minsk,UTC +03:00
 BE,Belgium,Europe/Brussels,UTC +01:00
 BZ,Belize,America/Belize,UTC -06:00
-BJ,Benin,Africa/Porto-Novo,UTC +01:00
+BJ,Benin,Porto-Novo,UTC +01:00
 BM,Bermuda,Atlantic/Bermuda,UTC -04:00
 BT,Bhutan,Asia/Thimphu,UTC +06:00
 BO,Bolivia,America/La_Paz,UTC -04:00
 BQ,"Bonaire, Saint Eustatius and Saba ",America/Kralendijk,UTC -04:00
 BA,Bosnia and Herzegovina,Europe/Sarajevo,UTC +01:00
-BW,Botswana,Africa/Gaborone,UTC +02:00
+BW,Botswana,Gaborone,UTC +02:00
 BR,Brazil,America/Araguaina,UTC -03:00
 BR,Brazil,America/Bahia,UTC -03:00
 BR,Brazil,America/Belem,UTC -03:00
@@ -81,10 +81,10 @@ IO,British Indian Ocean Territory,Indian/Chagos,UTC +06:00
 VG,British Virgin Islands,America/Tortola,UTC -04:00
 BN,Brunei,Asia/Brunei,UTC +08:00
 BG,Bulgaria,Europe/Sofia,UTC +02:00
-BF,Burkina Faso,Africa/Ouagadougou,UTC
-BI,Burundi,Africa/Bujumbura,UTC +02:00
+BF,Burkina Faso,Ouagadougou,UTC
+BI,Burundi,Bujumbura,UTC +02:00
 KH,Cambodia,Asia/Phnom_Penh,UTC +07:00
-CM,Cameroon,Africa/Douala,UTC +01:00
+CM,Cameroon,Douala,UTC +01:00
 CA,Canada,America/Atikokan,UTC -05:00
 CA,Canada,America/Blanc-Sablon,UTC -04:00
 CA,Canada,America/Cambridge_Bay,UTC -07:00
@@ -115,8 +115,8 @@ CA,Canada,America/Winnipeg,UTC -06:00
 CA,Canada,America/Yellowknife,UTC -07:00
 CV,Cape Verde,Atlantic/Cape_Verde,UTC -01:00
 KY,Cayman Islands,America/Cayman,UTC -05:00
-CF,Central African Republic,Africa/Bangui,UTC +01:00
-TD,Chad,Africa/Ndjamena,UTC +01:00
+CF,Central African Republic,Bangui,UTC +01:00
+TD,Chad,Ndjamena,UTC +01:00
 CL,Chile,America/Punta_Arenas,UTC -03:00
 CL,Chile,America/Santiago,UTC -03:00
 CL,Chile,Pacific/Easter,UTC -05:00
@@ -134,21 +134,21 @@ CW,Curaçao,America/Curacao,UTC -04:00
 CY,Cyprus,Asia/Famagusta,UTC +02:00
 CY,Cyprus,Asia/Nicosia,UTC +02:00
 CZ,Czech Republic,Europe/Prague,UTC +01:00
-CD,Democratic Republic of the Congo,Africa/Kinshasa,UTC +01:00
-CD,Democratic Republic of the Congo,Africa/Lubumbashi,UTC +02:00
+CD,Democratic Republic of the Congo,Kinshasa,UTC +01:00
+CD,Democratic Republic of the Congo,Lubumbashi,UTC +02:00
 DK,Denmark,Europe/Copenhagen,UTC +01:00
-DJ,Djibouti,Africa/Djibouti,UTC +03:00
+DJ,Djibouti,Djibouti,UTC +03:00
 DM,Dominica,America/Dominica,UTC -04:00
 DO,Dominican Republic,America/Santo_Domingo,UTC -04:00
 TL,East Timor,Asia/Dili,UTC +09:00
 EC,Ecuador,America/Guayaquil,UTC -05:00
 EC,Ecuador,Pacific/Galapagos,UTC -06:00
-EG,Egypt,Africa/Cairo,UTC +02:00
+EG,Egypt,Cairo,UTC +02:00
 SV,El Salvador,America/El_Salvador,UTC -06:00
-GQ,Equatorial Guinea,Africa/Malabo,UTC +01:00
-ER,Eritrea,Africa/Asmara,UTC +03:00
+GQ,Equatorial Guinea,Malabo,UTC +01:00
+ER,Eritrea,Asmara,UTC +03:00
 EE,Estonia,Europe/Tallinn,UTC +02:00
-ET,Ethiopia,Africa/Addis_Ababa,UTC +03:00
+ET,Ethiopia,Addis_Ababa,UTC +03:00
 FK,Falkland Islands,Atlantic/Stanley,UTC -03:00
 FO,Faroe Islands,Atlantic/Faroe,UTC
 FJ,Fiji,Pacific/Fiji,UTC +13:00
@@ -159,12 +159,12 @@ PF,French Polynesia,Pacific/Gambier,UTC -09:00
 PF,French Polynesia,Pacific/Marquesas,UTC -09:30
 PF,French Polynesia,Pacific/Tahiti,UTC -10:00
 TF,French Southern Territories,Indian/Kerguelen,UTC +05:00
-GA,Gabon,Africa/Libreville,UTC +01:00
-GM,Gambia,Africa/Banjul,UTC
+GA,Gabon,Libreville,UTC +01:00
+GM,Gambia,Banjul,UTC
 GE,Georgia,Asia/Tbilisi,UTC +04:00
 DE,Germany,Europe/Berlin,UTC +01:00
 DE,Germany,Europe/Busingen,UTC +01:00
-GH,Ghana,Africa/Accra,UTC
+GH,Ghana,Accra,UTC
 GI,Gibraltar,Europe/Gibraltar,UTC +01:00
 GR,Greece,Europe/Athens,UTC +02:00
 GL,Greenland,America/Danmarkshavn,UTC
@@ -176,8 +176,8 @@ GP,Guadeloupe,America/Guadeloupe,UTC -04:00
 GU,Guam,Pacific/Guam,UTC +10:00
 GT,Guatemala,America/Guatemala,UTC -06:00
 GG,Guernsey,Europe/Guernsey,UTC
-GN,Guinea,Africa/Conakry,UTC
-GW,Guinea-Bissau,Africa/Bissau,UTC
+GN,Guinea,Conakry,UTC
+GW,Guinea-Bissau,Bissau,UTC
 GY,Guyana,America/Guyana,UTC -04:00
 HT,Haiti,America/Port-au-Prince,UTC -05:00
 HN,Honduras,America/Tegucigalpa,UTC -06:00
@@ -195,7 +195,7 @@ IE,Ireland,Europe/Dublin,UTC
 IM,Isle of Man,Europe/Isle_of_Man,UTC
 IL,Israel,Asia/Jerusalem,UTC +02:00
 IT,Italy,Europe/Rome,UTC +01:00
-CI,Ivory Coast,Africa/Abidjan,UTC
+CI,Ivory Coast,Abidjan,UTC
 JM,Jamaica,America/Jamaica,UTC -05:00
 JP,Japan,Asia/Tokyo,UTC +09:00
 JE,Jersey,Europe/Jersey,UTC
@@ -206,7 +206,7 @@ KZ,Kazakhstan,Asia/Aqtobe,UTC +05:00
 KZ,Kazakhstan,Asia/Atyrau,UTC +05:00
 KZ,Kazakhstan,Asia/Oral,UTC +05:00
 KZ,Kazakhstan,Asia/Qyzylorda,UTC +06:00
-KE,Kenya,Africa/Nairobi,UTC +03:00
+KE,Kenya,Nairobi,UTC +03:00
 KI,Kiribati,Pacific/Enderbury,UTC +13:00
 KI,Kiribati,Pacific/Kiritimati,UTC +14:00
 KI,Kiribati,Pacific/Tarawa,UTC +12:00
@@ -215,25 +215,25 @@ KG,Kyrgyzstan,Asia/Bishkek,UTC +06:00
 LA,Laos,Asia/Vientiane,UTC +07:00
 LV,Latvia,Europe/Riga,UTC +02:00
 LB,Lebanon,Asia/Beirut,UTC +02:00
-LS,Lesotho,Africa/Maseru,UTC +02:00
-LR,Liberia,Africa/Monrovia,UTC
-LY,Libya,Africa/Tripoli,UTC +02:00
+LS,Lesotho,Maseru,UTC +02:00
+LR,Liberia,Monrovia,UTC
+LY,Libya,Tripoli,UTC +02:00
 LI,Liechtenstein,Europe/Vaduz,UTC +01:00
 LT,Lithuania,Europe/Vilnius,UTC +02:00
 LU,Luxembourg,Europe/Luxembourg,UTC +01:00
 MO,Macao,Asia/Macau,UTC +08:00
 MK,Macedonia,Europe/Skopje,UTC +01:00
 MG,Madagascar,Indian/Antananarivo,UTC +03:00
-MW,Malawi,Africa/Blantyre,UTC +02:00
+MW,Malawi,Blantyre,UTC +02:00
 MY,Malaysia,Asia/Kuala_Lumpur,UTC +08:00
 MY,Malaysia,Asia/Kuching,UTC +08:00
 MV,Maldives,Indian/Maldives,UTC +05:00
-ML,Mali,Africa/Bamako,UTC
+ML,Mali,Bamako,UTC
 MT,Malta,Europe/Malta,UTC +01:00
 MH,Marshall Islands,Pacific/Kwajalein,UTC +12:00
 MH,Marshall Islands,Pacific/Majuro,UTC +12:00
 MQ,Martinique,America/Martinique,UTC -04:00
-MR,Mauritania,Africa/Nouakchott,UTC
+MR,Mauritania,Nouakchott,UTC
 MU,Mauritius,Indian/Mauritius,UTC +04:00
 YT,Mayotte,Indian/Mayotte,UTC +03:00
 MX,Mexico,America/Bahia_Banderas,UTC -06:00
@@ -257,10 +257,10 @@ MN,Mongolia,Asia/Hovd,UTC +07:00
 MN,Mongolia,Asia/Ulaanbaatar,UTC +08:00
 ME,Montenegro,Europe/Podgorica,UTC +01:00
 MS,Montserrat,America/Montserrat,UTC -04:00
-MA,Morocco,Africa/Casablanca,UTC
-MZ,Mozambique,Africa/Maputo,UTC +02:00
+MA,Morocco,Casablanca,UTC
+MZ,Mozambique,Maputo,UTC +02:00
 MM,Myanmar,Asia/Yangon,UTC +06:30
-NA,Namibia,Africa/Windhoek,UTC +02:00
+NA,Namibia,Windhoek,UTC +02:00
 NR,Nauru,Pacific/Nauru,UTC +12:00
 NP,Nepal,Asia/Kathmandu,UTC +05:45
 NL,Netherlands,Europe/Amsterdam,UTC +01:00
@@ -268,8 +268,8 @@ NC,New Caledonia,Pacific/Noumea,UTC +11:00
 NZ,New Zealand,Pacific/Auckland,UTC +13:00
 NZ,New Zealand,Pacific/Chatham,UTC +13:45
 NI,Nicaragua,America/Managua,UTC -06:00
-NE,Niger,Africa/Niamey,UTC +01:00
-NG,Nigeria,Africa/Lagos,UTC +01:00
+NE,Niger,Niamey,UTC +01:00
+NG,Nigeria,Lagos,UTC +01:00
 NU,Niue,Pacific/Niue,UTC -11:00
 NF,Norfolk Island,Pacific/Norfolk,UTC +11:00
 KP,North Korea,Asia/Pyongyang,UTC +08:30
@@ -293,7 +293,7 @@ PT,Portugal,Atlantic/Madeira,UTC
 PT,Portugal,Europe/Lisbon,UTC
 PR,Puerto Rico,America/Puerto_Rico,UTC -04:00
 QA,Qatar,Asia/Qatar,UTC +04:00
-CG,Republic of the Congo,Africa/Brazzaville,UTC +01:00
+CG,Republic of the Congo,Brazzaville,UTC +01:00
 RE,Reunion,Indian/Reunion,UTC +04:00
 RO,Romania,Europe/Bucharest,UTC +02:00
 RU,Russia,Asia/Anadyr,UTC +12:00
@@ -323,7 +323,7 @@ RU,Russia,Europe/Saratov,UTC +04:00
 RU,Russia,Europe/Simferopol,UTC +03:00
 RU,Russia,Europe/Ulyanovsk,UTC +04:00
 RU,Russia,Europe/Volgograd,UTC +03:00
-RW,Rwanda,Africa/Kigali,UTC +02:00
+RW,Rwanda,Kigali,UTC +02:00
 BL,Saint Barthélemy,America/St_Barthelemy,UTC -04:00
 SH,Saint Helena,Atlantic/St_Helena,UTC
 KN,Saint Kitts and Nevis,America/St_Kitts,UTC -04:00
@@ -333,48 +333,48 @@ PM,Saint Pierre and Miquelon,America/Miquelon,UTC -03:00
 VC,Saint Vincent and the Grenadines,America/St_Vincent,UTC -04:00
 WS,Samoa,Pacific/Apia,UTC +14:00
 SM,San Marino,Europe/San_Marino,UTC +01:00
-ST,Sao Tome and Principe,Africa/Sao_Tome,UTC
+ST,Sao Tome and Principe,Sao_Tome,UTC
 SA,Saudi Arabia,Asia/Riyadh,UTC +03:00
-SN,Senegal,Africa/Dakar,UTC
+SN,Senegal,Dakar,UTC
 RS,Serbia,Europe/Belgrade,UTC +01:00
 SC,Seychelles,Indian/Mahe,UTC +04:00
-SL,Sierra Leone,Africa/Freetown,UTC
+SL,Sierra Leone,Freetown,UTC
 SG,Singapore,Asia/Singapore,UTC +08:00
 SX,Sint Maarten,America/Lower_Princes,UTC -04:00
 SK,Slovakia,Europe/Bratislava,UTC +01:00
 SI,Slovenia,Europe/Ljubljana,UTC +01:00
 SB,Solomon Islands,Pacific/Guadalcanal,UTC +11:00
-SO,Somalia,Africa/Mogadishu,UTC +03:00
-ZA,South Africa,Africa/Johannesburg,UTC +02:00
+SO,Somalia,Mogadishu,UTC +03:00
+ZA,South Africa,Johannesburg,UTC +02:00
 GS,South Georgia and the South Sandwich Islands,Atlantic/South_Georgia,UTC -02:00
 KR,South Korea,Asia/Seoul,UTC +09:00
-SS,South Sudan,Africa/Juba,UTC +03:00
-ES,Spain,Africa/Ceuta,UTC +01:00
+SS,South Sudan,Juba,UTC +03:00
+ES,Spain,Ceuta,UTC +01:00
 ES,Spain,Atlantic/Canary,UTC
 ES,Spain,Europe/Madrid,UTC +01:00
 LK,Sri Lanka,Asia/Colombo,UTC +05:30
-SD,Sudan,Africa/Khartoum,UTC +02:00
+SD,Sudan,Khartoum,UTC +02:00
 SR,Suriname,America/Paramaribo,UTC -03:00
 SJ,Svalbard and Jan Mayen,Arctic/Longyearbyen,UTC +01:00
-SZ,Swaziland,Africa/Mbabane,UTC +02:00
+SZ,Swaziland,Mbabane,UTC +02:00
 SE,Sweden,Europe/Stockholm,UTC +01:00
 CH,Switzerland,Europe/Zurich,UTC +01:00
 SY,Syria,Asia/Damascus,UTC +02:00
 TW,Taiwan,Asia/Taipei,UTC +08:00
 TJ,Tajikistan,Asia/Dushanbe,UTC +05:00
-TZ,Tanzania,Africa/Dar_es_Salaam,UTC +03:00
+TZ,Tanzania,Dar_es_Salaam,UTC +03:00
 TH,Thailand,Asia/Bangkok,UTC +07:00
-TG,Togo,Africa/Lome,UTC
+TG,Togo,Lome,UTC
 TK,Tokelau,Pacific/Fakaofo,UTC +13:00
 TO,Tonga,Pacific/Tongatapu,UTC +13:00
 TT,Trinidad and Tobago,America/Port_of_Spain,UTC -04:00
-TN,Tunisia,Africa/Tunis,UTC +01:00
+TN,Tunisia,Tunis,UTC +01:00
 TR,Turkey,Europe/Istanbul,UTC +03:00
 TM,Turkmenistan,Asia/Ashgabat,UTC +05:00
 TC,Turks and Caicos Islands,America/Grand_Turk,UTC -05:00
 TV,Tuvalu,Pacific/Funafuti,UTC +12:00
 VI,U.S. Virgin Islands,America/St_Thomas,UTC -04:00
-UG,Uganda,Africa/Kampala,UTC +03:00
+UG,Uganda,Kampala,UTC +03:00
 UA,Ukraine,Europe/Kiev,UTC +02:00
 UA,Ukraine,Europe/Uzhgorod,UTC +02:00
 UA,Ukraine,Europe/Zaporozhye,UTC +02:00
@@ -419,7 +419,7 @@ VA,Vatican,Europe/Vatican,UTC +01:00
 VE,Venezuela,America/Caracas,UTC -04:00
 VN,Vietnam,Asia/Ho_Chi_Minh,UTC +07:00
 WF,Wallis and Futuna,Pacific/Wallis,UTC +12:00
-EH,Western Sahara,Africa/El_Aaiun,UTC
+EH,Western Sahara,El_Aaiun,UTC
 YE,Yemen,Asia/Aden,UTC +03:00
-ZM,Zambia,Africa/Lusaka,UTC +02:00
-ZW,Zimbabwe,Africa/Harare,UTC +02:00
+ZM,Zambia,Lusaka,UTC +02:00
+ZW,Zimbabwe,Harare,UTC +02:00
