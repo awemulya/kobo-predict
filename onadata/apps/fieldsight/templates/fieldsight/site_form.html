@@ -87,6 +87,7 @@
 				<section class="panel">
                     <header class="panel-heading clearfix">
                         <h3><i class="la la-building"></i>{% trans 'New' %}{% trans 'Site' %} </h3>
+                          <button type="button" class="btn btn-danger pull-right" data-toggle="modal" data-target="#myModal"><i class="la la-trash"></i> {% trans 'Delete' %}</button>
                     </header>
 					<div class="panel-body">
 						<!-- Add New Organization-->
@@ -133,7 +134,7 @@
 							<div class="form-group col-md-6" id="metaattribs">
 									 
 									</div>
-									  <button type="button" class="btn btn-danger " data-toggle="modal" data-target="#myModal"><i class="la la-trash"></i> {% trans 'Delete' %}</button>
+									
 						</div>
 					</div>
 
@@ -233,7 +234,7 @@
             parsed = JSON.parse(json);
           } catch (e) {
             parsed = [];
-            alert("Json  Error Occured Could not read Json objects." +e);
+            // alert("Json  Error Occured Could not read Json objects." +e);
           }
           return parsed 
         }

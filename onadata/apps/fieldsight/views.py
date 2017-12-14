@@ -1102,7 +1102,7 @@ def sendmultiroleuserinvite(request):
     group = Group.objects.get(name=data.get('group'))
 
     response=""
-
+    print levels
     for level in levels:
         organization_id = None
         project_id =None
@@ -1121,8 +1121,8 @@ def sendmultiroleuserinvite(request):
             organization_id = site.project.organization_id
 
         
-
         for email in emails:
+
             user = User.objects.filter(email=email)
             userinvite = UserInvite.objects.filter(email=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
             
@@ -1634,7 +1634,9 @@ class RegionalSitelist(ProjectRoleMixin, TemplateView):
 class RegionalSiteCreateView(SiteView, ProjectRoleMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(RegionalSiteCreateView, self).get_context_data(**kwargs)
-        context['project'] = Project.objects.get(pk=self.kwargs.get('pk'))
+        project =Project.objects.get(pk=self.kwargs.get('pk'))
+        context['project'] = project
+        context['json_questions'] = json.dumps(project.site_meta_attributes)
         context['pk'] = self.kwargs.get('pk')
         return context
 

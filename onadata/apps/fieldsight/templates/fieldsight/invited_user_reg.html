@@ -4,7 +4,7 @@
 <!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
-    
+    {% load i18n %}
     
     
 
@@ -68,15 +68,15 @@
                 <center><div id="alert" style="color: red;">
 
                   {% if status == "error-1" %}
-                  {% trans 'Username must only include alpha-numeric characters.' %}
+                    {% trans 'Username must only include alpha-numeric characters.' %}
                   {% endif %}
 
                   {% if status == "error-2" %}
-                  {% trans'Username already taken' %}
+                    {% trans 'Username already taken' %}
                   {% endif %}
 
                   {% if status == "error-3" %}
-                  {% trans 'Username must only include small letters' %}
+                    {% trans 'Username must only include small letters' %}
                   {% endif %}
 
 
