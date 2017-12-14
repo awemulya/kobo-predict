@@ -534,16 +534,17 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
                 </ul>
                 <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more"> -->
-                <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
-                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:setAllAssignAsSelected">
-                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllUnSelected">
+               
               {% if obj.cluster_sites %}
-
+              
+          <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:setAllAssignRegionAsSelected">
+                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllRegionUnSelected">
                 <ul class="row" data-bind="foreach:regions">
                 
                   <li class="col-md-12">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
-                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$parent.setSelected">
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$parent.setRegionSelected">
                       <span class="custom-control-indicator"></span>
                       <span class="custom-control-description">
                         <div class="project-item-wrap clearfix">
@@ -564,12 +565,15 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </ul>              
 
               {% else %}
-
+     
+                <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:setAllAssignSiteAsSelected">
+                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllSiteUnSelected">
                 <ul class="row" data-bind="foreach:sites">
                 
                   <li class="col-md-12">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
-                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$parent.setSelected">
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$parent.setSiteSelected">
                       <span class="custom-control-indicator"></span>
                       <span class="custom-control-description">
                         <div class="project-item-wrap clearfix">

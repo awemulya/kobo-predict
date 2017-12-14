@@ -266,8 +266,9 @@ var project = "{{obj.pk}}";
 													<!-- <img data-bind="attr:{src: logo}" width="50" height="50"/> -->
 												</div>
 												<div class="project-basic-info">
-													<h4 data-bind="text: name"></h4>
-													<!-- <p data-bind="text: address"></p> -->
+													<h4 data-bind="text:identifier()"></h4>
+                            						<h6 data-bind="text:name()"></h6>
+													
 												</div>
 											</a>
 											<!-- /ko-->
@@ -303,8 +304,7 @@ var project = "{{obj.pk}}";
 													<img data-bind="attr:{src: logo}" width="50" height="50"/>
 												</div>
 												<div class="project-basic-info">
-
-
+												
 													<h4 data-bind="text:identifier()"></h4>
                             						<h6 data-bind="text:name()"></h6>
 													
