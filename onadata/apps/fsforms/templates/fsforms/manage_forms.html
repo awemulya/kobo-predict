@@ -437,7 +437,7 @@ var pk = "{{pk}}";
                   <input data-bind="text : date_range_end" type="date">
               </div>
            <div class="form-group">
-              <span style="font-weight: bold;">{% trans 'Days:</span>
+              <span style="font-weight: bold;">{% trans 'Days:' %}</span>
                 <div data-bind="foreach: $parent.days">
                     <div class="col-sm-1" style="width: 14.28% !important">
                         <span data-bind="text:day"></span>
@@ -1047,7 +1047,7 @@ var pk = "{{pk}}";
                                                         <strong>Form Name: ' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
-                                                        <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i> Edit</a>
+                                                        <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
 
                                                         <a href="javascript:void(0);"  class="badge badge-success" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> Materials</a>
 
