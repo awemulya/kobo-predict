@@ -36,7 +36,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="col-sm-12">{% trans 'Form Details</div>
+<div class="col-sm-12">{% trans 'Form Details' %}</div>
     <table class="table table-striped" id="dynamic-table1">
             <thead>
             <th>{% trans 'Name' %}</th>
@@ -77,7 +77,7 @@
 
     <section id="data-view">
         <div class="page-header">
-            <h1>{% trans "Data View" %}
+            <h1>{% trans 'Data View' %}
                 <small>
                     {% if obj.project %}
                     <a href="{% url 'forms:project_html_export' obj.pk %}">{{ xform.title }}</a>
