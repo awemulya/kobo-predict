@@ -945,7 +945,7 @@ var pk = "{{pk}}";
                                          role="tabpanel" data-bind="attr: { aria-labelledby: 'heading_' + $index() }" data-parent="#accordion">
                                       <div class="card-body">
                                         <div class="sub-stages margin-top">
-                                            <h3><i class="la la-sitemap"></i>{% trans ' Sub Stages :' %}</h3>
+                                            <h3><i class="la la-sitemap"></i>{% trans 'Sub Stages :' %}</h3>
                                             <ul data-bind="attr: { id: 'substages_' + $index() }, foreach:parent">
 
                                                 <li class="clearfix">
@@ -1044,7 +1044,7 @@ var pk = "{{pk}}";
                                                         <span data-bind="text:name"></span>
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
-                                                        <strong>Form Name: ' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
+                                                        <strong>{% trans 'Form Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
                                                         <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
@@ -1123,7 +1123,7 @@ var pk = "{{pk}}";
                                     </div>
                             </div>
 							<a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:add_form">
-                                <i class="la la-upload"></i>{% trans ' Assign New Form' %}</a>
+                                <i class="la la-upload"></i>{% trans 'Assign New Form' %}</a>
 														<!--Assign New-->
                                 <div class="modal fade" id="assignModalSurvey" tabindex="-1" role="dialog" aria-labelledby="assignModalSurveyLabel" aria-hidden="true">
                                     <div class="modal-dialog model-lg" role="document">
