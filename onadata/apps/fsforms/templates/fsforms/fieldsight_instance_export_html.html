@@ -27,11 +27,11 @@
     <div class="form-details-all">
         <div class="col-md-9">
             <div class="formmdetails">
-                <h2><span class="form-name">{% trans 'Name:</span>{{ obj.xf.title }}</h2>
-                <p><span class="site-name">{% trans 'Site:</span>{{ obj.site }}</p>
-                <p><span class="creeated-date">{% trans 'Created date:</span>{{ obj.date_created }}</p>
-                <p><span class="form-type">{% trans 'Form type:</span>{{obj.form_type}}</p>
-                <p><span class="stage-schedule">{% trans 'Stage/Schedule:</span>
+                <h2><span class="form-name">{% trans 'Name:' %}</span>{{ obj.xf.title }}</h2>
+                <p><span class="site-name">{% trans 'Site:' %}</span>{{ obj.site }}</p>
+                <p><span class="creeated-date">{% trans 'Created date:' %}</span>{{ obj.date_created }}</p>
+                <p><span class="form-type">{% trans 'Form type:' %}</span>{{obj.form_type}}</p>
+                <p><span class="stage-schedule">{% trans 'Stage/Schedule:' %}</span>
                     {% if obj.is_staged %}
                          {{obj.stage_name }}
                          {% endif %}

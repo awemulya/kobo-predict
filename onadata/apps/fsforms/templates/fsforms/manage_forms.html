@@ -377,7 +377,7 @@ var pk = "{{pk}}";
 
                                               {{schedule_form.as_p}}
                                               <div class="form-group date1">
-                                                  <label for="start">{% trans 'Start :' %}</label>
+                                                  <label for="start">{% trans 'Start:' %}</label>
                                                   <input data-bind="datePicker : date_range_start" type="date" id="start">
                                               </div>
                                               <div class="form-group date2">
@@ -437,7 +437,7 @@ var pk = "{{pk}}";
                   <input data-bind="text : date_range_end" type="date">
               </div>
            <div class="form-group">
-              <span style="font-weight: bold;">{% trans 'Days:</span>
+              <span style="font-weight: bold;">{% trans 'Days:' %}</span>
                 <div data-bind="foreach: $parent.days">
                     <div class="col-sm-1" style="width: 14.28% !important">
                         <span data-bind="text:day"></span>
@@ -689,7 +689,7 @@ var pk = "{{pk}}";
                                      </div>
 
                                   </div>
-                                  <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">{% trans 'Save ' %}</button>
+                                  <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">{% trans 'Save' %}</button>
                               </div>
                             </div>
                           </div>
@@ -792,9 +792,9 @@ var pk = "{{pk}}";
                                                                             <div class="col-sm-10" data-bind="visible:editable">
                                                                             <div class="sub-stage-name-c">{% trans 'Sub Stage' %}
                                                                                 <span data-bind='text: $index()+1'></span><br>
-                                                                                {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Sub Stage Name"><br>
-                                                                                {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br>
-                                                                                {% trans 'Form Assigned: ' %}
+                                                                                {% trans 'Name:' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Sub Stage Name"><br>
+                                                                                {% trans 'Description:' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br>
+                                                                                {% trans 'Form Assigned:' %}
                                                                                 <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
                                                                                     value: stage_forms().xf().id">
                                                                                 </select>
@@ -824,7 +824,7 @@ var pk = "{{pk}}";
 
                                                                     <div class="col-sm-12">
                                                                       <div class="form-group">
-                                                                          <label for="stagename"><span class="stage-label">{% trans 'Name: ' %}</span></label>
+                                                                          <label for="stagename"><span class="stage-label">{% trans 'Name:' %}</span></label>
                                                                          <input class="form-control"  data-bind="value: name" placeholder="Name of SUb Stage ">
 
                                                                           <div class="gap"></div>
@@ -833,7 +833,7 @@ var pk = "{{pk}}";
 
                                                                     <div class="col-sm-12">
                                                                       <div class="form-group">
-                                                                          <label for="stagename"><span class="stage-label">{% trans 'Description: ' %}</span></label>
+                                                                          <label for="stagename"><span class="stage-label">{% trans 'Description:' %}</span></label>
                                                                          <input class="form-control"  data-bind="value: description" placeholder="Sub Stage Description">
                                                                           <div class="gap"></div>
                                                                     </div>
@@ -843,7 +843,7 @@ var pk = "{{pk}}";
 
                                                                      <div class="col-sm-12">
                                                                       <div class="form-group">
-                                                                          <label for="stagename"><span class="stage-label">{% trans 'Form Assigned: ' %}</span></label>
+                                                                          <label for="stagename"><span class="stage-label">{% trans 'Form Assigned:' %}</span></label>
                                                                           <select class="form-control" data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
                                                                                         value: stage_forms().xf().id">
                                                                                     </select>
@@ -945,7 +945,7 @@ var pk = "{{pk}}";
                                          role="tabpanel" data-bind="attr: { aria-labelledby: 'heading_' + $index() }" data-parent="#accordion">
                                       <div class="card-body">
                                         <div class="sub-stages margin-top">
-                                            <h3><i class="la la-sitemap"></i>{% trans ' Sub Stages :' %}</h3>
+                                            <h3><i class="la la-sitemap"></i>{% trans 'Sub Stages :' %}</h3>
                                             <ul data-bind="attr: { id: 'substages_' + $index() }, foreach:parent">
 
                                                 <li class="clearfix">
@@ -1032,7 +1032,7 @@ var pk = "{{pk}}";
                                                                      </div>
 
                                                                   </div>
-                                                                  <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">{% trans 'Save ' %}</button>
+                                                                  <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">{% trans 'Save' %}</button>
                                                               </div>
                                                             </div>
                                                           </div>
@@ -1044,10 +1044,10 @@ var pk = "{{pk}}";
                                                         <span data-bind="text:name"></span>
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
-                                                        <strong>Form Name: ' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
+                                                        <strong>{% trans 'Form Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
-                                                        <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i> Edit</a>
+                                                        <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
 
                                                         <a href="javascript:void(0);"  class="badge badge-success" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> Materials</a>
 
@@ -1062,9 +1062,9 @@ var pk = "{{pk}}";
                                                               </div>
                                                               <div class="modal-body">
                                                                   <div class="sub-stage-name-c">{% trans 'Sub Stage' %}
-                                                            {% trans 'Name: ' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name"><br>
-                                                            {% trans 'Description: ' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description"><br>
-                                                            {% trans 'Form Assigned: ' %}
+                                                            {% trans 'Name:' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name"><br>
+                                                            {% trans 'Description:' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description"><br>
+                                                            {% trans 'Form Assigned:' %}
                                                             <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id', value:stage_forms().xf().id">
                                                             </select>
 
@@ -1123,7 +1123,7 @@ var pk = "{{pk}}";
                                     </div>
                             </div>
 							<a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:add_form">
-                                <i class="la la-upload"></i>{% trans ' Assign New Form' %}</a>
+                                <i class="la la-upload"></i>{% trans 'Assign New Form' %}</a>
 														<!--Assign New-->
                                 <div class="modal fade" id="assignModalSurvey" tabindex="-1" role="dialog" aria-labelledby="assignModalSurveyLabel" aria-hidden="true">
                                     <div class="modal-dialog model-lg" role="document">
@@ -1320,7 +1320,7 @@ var pk = "{{pk}}";
                                                                         <div class="form-group row">
                                                                             <div class="col-sm-12">
                                                                                 <div data-bind="visible:pdf">
-                                                                                    {% trans 'Current pdf
+                                                                                    {% trans 'Current pdf' %}
                                                                                     <a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank">{% trans 'View' %} </a>
 
                                                                                       <!--<button data-bind="click: addPdf">Load PDF</button>-->
