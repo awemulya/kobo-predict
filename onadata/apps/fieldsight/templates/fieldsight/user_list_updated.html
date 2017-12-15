@@ -62,9 +62,9 @@
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										  <input type="text" class="form-control" placeholder="Invite Users" aria-label="Invite">
+										  <input type="text" class="form-control" id="invite_email" placeholder="Invite Users" aria-label="Invite">
 										  <span class="input-group-btn">
-											<button class="btn btn-primary" type="button"><i class="fa fa-plus"></i> Invite</button>
+											<button class="btn btn-primary" onclick="sendmultiplerequest()" type="button"><i class="fa fa-plus"></i> Invite</button>
 										  </span>
 										</div>
 									</div>
@@ -100,5 +100,109 @@
                             {% paginate %}
 						</div>
 					</div>
+
+					 <div class="modal fade" id="myinvitemodal" role="dialog" >
+                      <div class="modal-dialog">
+                      
+                        <!-- Modal content-->
+                        <div class="modal-content" style="margin-top: 15%;">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">{% trans 'Invite Status' %}</h4>
+                          </div>
+                          <div class="modal-body">
+                          <center>
+                            <div id="update-next-step">
+                            <h2>{% trans 'Inviting ...' %}</h2>
+                          
+                            </div>
+                            </center>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Close' %}</button>
+                          </div>
+                        </div>
+                        
+                      </div>
+                    </div>
+
+					<script type="text/javascript">
+					var status_email = true;
+					
+					console.log(typeof status_email);
+						function validateemail(email){
+							  var atherate = email.indexOf("@");
+							  var dot = email.indexOf(".", atherate);
+							    
+							      if(atherate != -1 && dot != -1){
+							        return {
+							        status1: true,
+							        email: email
+							        };
+							      }
+							      else{
+							        // alert("Enter valid email address.");
+							        return {
+							        status1: false,
+							        email: email
+							        };
+							      }
+							}
+							 function getNewInsertion(newValue) {
+							     if(newValue.indexOf(',') > -1){
+							        $("#retry").val('Invite Users');  
+							        }
+							     else{
+							       $("#retry").val('Search User');
+							     }
+							}
+
+
+							function sendmultiplerequest(group){
+							    var email = $("#invite_email").val();
+							    status_email=true;
+							    emails = email.split(",");
+							    emails.forEach(multiemailvalidate);
+							    console.log(status_email);
+							    console.log(typeof status_email);
+							    if(status_email == true ){ sendinvite(emails, group); }
+							    else{ alert('failed'); }
+							}
+
+							function multiemailvalidate(entry) {
+								if(status_email == false){
+									return false;
+								}
+							    email_res = validateemail(entry);
+							    if(email_res.status1 == false){
+							      
+							      var email_input = document.getElementById("invite_email");
+							      email = email_input.value;
+							      start = email.search(email_res.email);
+							      end = email.indexOf(",", start);
+							      // console.log(start +" "+ end);
+							      email_input.setSelectionRange(start, end);
+							      email_input.focus();
+							      status_email=false;
+
+
+							      }
+							    }
+
+							 function sendinvite(emails, group){ 
+							      $('#myinvitemodal').modal(); 
+							      $.ajax({
+							        url: "{% url 'fieldsight:senduserinvite' %}",
+							        data: {'emails[]': emails, 'organization_id':{{ organization_id }}, 'project_id':'', 'site_id':'', 'group':'Unassigned', 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+							        type: 'POST',
+							        success: function (html) {
+
+							           $('#update-next-step').html(html);
+							            
+							        }
+							      });
+								}
+      
+					</script>
 
  {% endblock %}

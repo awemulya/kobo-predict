@@ -305,8 +305,8 @@ def my_profile(request, pk=None):
         user = get_object_or_404(User.objects.filter(pk=pk))
         profile, created = UserProfile.objects.get_or_create(user_id=pk)
 
-        roles_org = user.user_roles.select_related('organization').filter(organization__isnull = False, project__isnull = True, site__isnull = True, ended_at__isnull=True)
-        roles_project = user.user_roles.select_related('project').filter(organization__isnull = False, project__isnull = False, site__isnull = True, ended_at__isnull=True)
+        roles_org = user.user_roles.select_related('organization').filter(organization__isnull = False, project__isnull = True, site__isnull = True, ended_at__isnull=True, group__name="Organization Admin")
+        roles_project = user.user_roles.select_related('project').filter(organization__isnull = False, project__isnull = False, site__isnull = True, ended_at__isnull=True, group__name="Project Manager")
         roles_reviewer = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Reviewer", ended_at__isnull=True)
         roles_SA = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Site Supervisor", ended_at__isnull=True)
         responses = FInstance.objects.filter(submitted_by = user).order_by('-date')[:10]

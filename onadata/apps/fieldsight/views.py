@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
 from django.forms.forms import NON_FIELD_ERRORS
 from django.http import HttpResponse
+from django.core.exceptions import PermissionDenied
 
 from fcm.utils import get_device_model
 
@@ -66,6 +67,8 @@ def dashboard(request):
     if current_role_count == 1:
         current_role = request.roles[0]
         role_type = request.roles[0].group.name
+        if role_type == "Unassigned":
+            raise PermissionDenied()
         if role_type == "Site Supervisor":
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
         if role_type == "Reviewer":
@@ -981,6 +984,7 @@ class OrgUserList(OrganizationRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(OrgUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['organization_id'] = self.kwargs.get('pk')
         context['type'] = "organization"
         return context
     def get_queryset(self):
@@ -995,6 +999,7 @@ class ProjUserList(ProjectRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ProjUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['organization_id'] = Project.objects.get(pk=self.kwargs.get('pk')).organization.id
         context['type'] = "project"
         return context
     def get_queryset(self):
@@ -1006,6 +1011,7 @@ class SiteUserList(ReviewerRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(SiteUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['organization_id'] = Site.objects.get(pk=self.kwargs.get('pk')).project.organization.id
         context['type'] = "site"
         return context
     def get_queryset(self):
@@ -1049,14 +1055,20 @@ def senduserinvite(request):
         userinvite = UserInvite.objects.filter(email=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
 
         if userinvite:
-            response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
+            if group.name == "Unassigned":
+                response += 'Invite for '+ email + ' has already been sent.<br>'
+            else:
+                response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
             continue
         if user:
             userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
             
             if userrole:
                 if userrole[0].ended_at==None:
-                    response += email + ' already has the role for '+group.name+'.<br>' 
+                    if group.name == "Unassigned":
+                        response += email + ' has already joined this organization.<br>'
+                    else:
+                        response += email + ' already has the role for '+group.name+'.<br>' 
                     continue
             invite = UserInvite(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
 
@@ -1087,7 +1099,10 @@ def senduserinvite(request):
             })
         email_to = (invite.email,)
         send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
-        response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
+        if group.name == "Unassigned":
+            response += "Sucessfully invited "+ email +" to join this organization.<br>"
+        else:    
+            response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
         continue
     return HttpResponse(response)
 
@@ -1230,7 +1245,7 @@ class ActivateRole(TemplateView):
 ## Needs completion
             codenames=['add_asset', 'change_asset','delete_asset', 'view_asset', 'share_asset']
             permissions = Permission.objects.filter(codename__in=codenames)
-            user.user_permissions.set(permissions[0], permission[1], permission[2], permission[3], permission[4])
+            user.user_permissions.add(permissions[0], permission[1], permission[2], permission[3], permission[4])
 
 
             profile, created = UserProfile.objects.get_or_create(user=user, organization=invite.organization)
@@ -1248,6 +1263,9 @@ class ActivateRole(TemplateView):
             noti_type = 3
             content = invite.site
         elif invite.group.name == "Site Supervisor":
+            noti_type = 4
+            content = invite.site
+        elif invite.group.name == "Unassigned":
             noti_type = 4
             content = invite.site
         
