@@ -37,7 +37,7 @@
                         <tbody>
                         {% for obj in paginated_objects %}
                           <tr>
-                            <td class="text-center">{{ obj.id }}</td>
+                            <td class="text-center">{{ forloop.counter }}</td>
                             <td class="text-center">{{ obj.title }}</td>
                             <td class="text-center">{{ obj.date_created }}</td>
                             <td class="text-center"><a class="btn btn-primary btn-sm" href="{{ koboform_url }}#/forms/{{ obj.id_string }}/edit" style="height:27px"><i class="la la-pencil-square-o"></i>{% trans ' Edit' %}</a>
