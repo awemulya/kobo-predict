@@ -184,6 +184,8 @@ class SiteUnderRegionViewSet(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, FormParser,)
 
     def filter_queryset(self, queryset):
+        if self.kwargs.get('region_pk') == "0":
+            return queryset.filter(project_id = self.kwargs.get('pk'), region_id__isnull=True)
         return queryset.filter(project_id = self.kwargs.get('pk'), region_id=self.kwargs.get('region_pk'))
 
     def get_serializer_context(self):

@@ -260,6 +260,16 @@ var project = "{{obj.pk}}";
 													</div>
 												</form>
 											</div>
+											<a href="{% url 'fieldsight:regional-sites' obj.pk 0 %}" class="project-item-wrap margin-top clearfix " style="width: 100%;">
+												<div class="project-logo">
+													<!-- <img data-bind="attr:{src: logo}" width="50" height="50"/> -->
+												</div>
+												<div class="project-basic-info">
+													<h4>Un Assigned Sites</h4>
+                            						
+													
+												</div>
+											</a>
 											<!-- ko foreach: regions  -->
 											<a data-bind="attr:{ href: url }" class="project-item-wrap margin-top clearfix " style="width: 100%;">
 												<div class="project-logo">
