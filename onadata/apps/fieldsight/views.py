@@ -1272,8 +1272,13 @@ class ActivateRole(TemplateView):
             content = invite.site
         elif invite.group.name == "Unassigned":
             noti_type = 4
-            content = invite.site
-        
+            if invite.site:
+                content = invite.site
+            elif invite.project:
+                content =  invite.project
+            else:
+                context = invite.organization
+
         noti = invite.logs.create(source=user, type=noti_type, title="new Role",
                                        organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.by_user,
                                        description="{0} was added as the {1} of {2} by {3}.".
@@ -1660,7 +1665,7 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
 
 class RegionalSitelist(ProjectRoleMixin, TemplateView):
     def get(self, request, *args, **kwargs):
-        if self.kwargs.get('region_pk'):
+        if self.kwargs.get('region_pk') == "0":
             return render(request, 'fieldsight/site_list.html',{'project_id':self.kwargs.get('pk'),'type':"Unregioned",'pk':self.kwargs.get('region_pk'),})
 
         obj = get_object_or_404(Region, id=self.kwargs.get('region_pk'))
