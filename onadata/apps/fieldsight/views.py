@@ -182,13 +182,13 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
 
         peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
-
-        # sites = obj.sites.filter(is_active=True, is_survey=False)
+        total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
+        sites = obj.sites.filter(is_active=True, is_survey=False)
         # data = serialize('custom_geojson', sites, geometry_field='location',
                          # fields=('location', 'id',))
 
         # total_sites = sites.count()
-        # total_survey_sites = obj.sites.filter(is_survey=True).count()
+        total_survey_sites = obj.sites.filter(is_survey=True).count()
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
         bar_graph = BarGenerator(sites)
         line_chart = LineChartGenerator(obj)
@@ -196,11 +196,11 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         roles_project = UserRole.objects.filter(organization__isnull = False, project_id = self.kwargs.get('pk'), site__isnull = True, ended_at__isnull=True)
 
         dashboard_data = {
-            # 'sites': sites,
+            'sites': sites,
             'obj': obj,
             'peoples_involved': peoples_involved,
-            # 'total_sites': total_sites,
-            # 'total_survey_sites': total_survey_sites,
+            'total_sites': total_sites,
+            'total_survey_sites': total_survey_sites,
             'outstanding': outstanding,
             'flagged': flagged,
             'approved': approved,
