@@ -23,8 +23,8 @@
                                         <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
                                         <i class="fa fa-upload" style="font-size:12px" aria-hidden="true"></i>{{ task.description }}
                                         <div class="progress">
-                                            <div class="progress-bar" role="progressbar" aria-valuenow="{{ task.get_progress }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ task.get_progress }}">
-                                             <!--57%-->
+                                            <div class="progress-bar" role="progressbar" aria-valuenow="50%" aria-valuemin="0" aria-valuemax="100" style="width:{{ task.get_progress }}">
+                                             <!--57%-->{{ task.get_progress }}
                                             </div>
                                         </div>
                                     </div>
@@ -53,7 +53,7 @@
                                 <br>
                                 <br>
                                     {% if completed %}
-                                    {% for completed in completed %}
+                                    {% for task in completed %}
                                 <div class="alert alert-primary alert-dismissable">
                                     <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
                                     <i class="la la-upload" style="font-size:12px" aria-hidden="true"></i>{{ task.description }}
