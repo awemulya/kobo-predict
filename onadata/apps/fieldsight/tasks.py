@@ -111,7 +111,7 @@ def bulkuploadsites(source_user, file, pk):
         result['get_absolute_url']= noti.get_absolute_url(),
         result['type']= 412,
         result['date']= str(noti.date),
-        result['extra_message']= str(count)+" Sites",
+        result['extra_message']= "failed Sites",
         result['seen_by']= [],
         ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
         return None
