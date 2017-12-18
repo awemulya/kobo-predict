@@ -22,6 +22,10 @@ var url = '/fieldsight/api/org-sites/'+id+'/';
 var region_proj_id = "{{ obj.project.id }}"
 var url = '/fieldsight/api/project/'+ region_proj_id +'/regional-sites/'+ id +'/';
  }
+ else if (type == "Unregioned"){
+var region_proj_id = "{{ project_id }}"
+var url = '/fieldsight/api/project/'+ region_proj_id +'/regional-sites/0/';
+ }
  else{
 var url = '/fieldsight/api/project-sites/'+id+'/';
  }
@@ -77,6 +81,10 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 							<a href="{% url 'fieldsight:regional-site-add' obj.project.id pk %}" title="" class="btn btn-sm 
 							btn-primary"><i class="la la-plus"></i>{% trans 'Add New Regional Site' %}</a>
 							<a href="{% url 'fieldsight:define-site-meta' obj.project.id %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i>Meta Attributes</a>
+							{% elif type == "Unregioned" %}
+							<a href="{% url 'fieldsight:regional-site-add' project_id pk %}" title="" class="btn btn-sm 
+							btn-primary"><i class="la la-plus"></i>{% trans 'Add New Regional Site' %}</a>
+							<a href="{% url 'fieldsight:define-site-meta' project_id %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i>Meta Attributes</a>
 							{% endif %}
 						</div>
                     </header>

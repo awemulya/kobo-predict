@@ -1209,6 +1209,8 @@ class ActivateRole(TemplateView):
 
     def get(self, request, invite, invite_idb64, token):
         user = User.objects.filter(email=invite.email)
+        user.is_active = True
+        user.save()
         if invite.is_used==True:
             return HttpResponseRedirect(reverse('login'))
         if user:
@@ -1656,6 +1658,9 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
 
 class RegionalSitelist(ProjectRoleMixin, TemplateView):
     def get(self, request, *args, **kwargs):
+        if self.kwargs.get('region_pk'):
+            return render(request, 'fieldsight/site_list.html',{'project_id':self.kwargs.get('pk'),'type':"Unregioned",'pk':self.kwargs.get('region_pk'),})
+
         obj = get_object_or_404(Region, id=self.kwargs.get('region_pk'))
         return render(request, 'fieldsight/site_list.html',{'obj':obj, 'type':"region",'pk':self.kwargs.get('region_pk'),})
 
