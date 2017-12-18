@@ -26,7 +26,7 @@ class TimeZone(models.Model):
     offset_time = models.CharField(max_length=255, blank=True, null=False)
 
     def __str__(self):
-        return self.time_zone
+        return self.time_zone +" - " + self.country
 
 class ExtraUserDetail(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='extra_details')

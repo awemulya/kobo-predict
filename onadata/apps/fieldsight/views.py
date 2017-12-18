@@ -81,40 +81,41 @@ def dashboard(request):
     if current_role_count > 1:
         return HttpResponseRedirect(reverse("fieldsight:roles-dashboard"))
 
-    total_users = User.objects.all().count()
-    total_organizations = Organization.objects.all().count()
-    total_projects = Project.objects.all().count()
-    total_sites = Site.objects.all().count()
-    data = serialize('custom_geojson', Site.objects.prefetch_related('site_instances').filter(is_survey=False, is_active=True), geometry_field='location', fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id'))
-   
-   
-    # outstanding_query = FInstance.objects.filter(form_status=0)
-    # data = serialize('custom_geojson', Site.objects.filter(is_survey=False, is_active=True).prefetch_related(Prefetch('site_instances', queryset=outstanding_query, to_attr='outstanding')), geometry_field='location', fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id'))
-    # fs_forms = FieldSightXF.objects.all()
-    # fs_forms = list(fs_forms)
-    # # outstanding = flagged = approved = rejected = 0
-    # for form in fs_forms:
-    #     if form.form_status == 0:
-    #         outstanding += 1
-    #     elif form.form_status == 1:
-    #         flagged +=1
-    #     elif form.form_status == 2:
-    #         approved +=1
-    #     else:
-    #         rejected +=1
+    # total_users = User.objects.all().count()
+    # total_organizations = Organization.objects.all().count()
+    # total_projects = Project.objects.all().count()
+    # total_sites = Site.objects.all().count()
+    # data = serialize('custom_geojson', Site.objects.prefetch_related('site_instances').filter(is_survey=False, is_active=True), geometry_field='location', fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id'))
 
-    dashboard_data = {
-        'total_users': total_users,
-        'total_organizations': total_organizations,
-        'total_projects': total_projects,
-        'total_sites': total_sites,
-        # 'outstanding': outstanding,
-        # 'flagged': flagged,
-        # 'approved': approved,
-        # 'rejected': rejected,
-        'data': data,
-    }
-    return TemplateResponse(request, "fieldsight/fieldsight_dashboard.html", dashboard_data)
+    #
+    # # outstanding_query = FInstance.objects.filter(form_status=0)
+    # # data = serialize('custom_geojson', Site.objects.filter(is_survey=False, is_active=True).prefetch_related(Prefetch('site_instances', queryset=outstanding_query, to_attr='outstanding')), geometry_field='location', fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id'))
+    # # fs_forms = FieldSightXF.objects.all()
+    # # fs_forms = list(fs_forms)
+    # # # outstanding = flagged = approved = rejected = 0
+    # # for form in fs_forms:
+    # #     if form.form_status == 0:
+    # #         outstanding += 1
+    # #     elif form.form_status == 1:
+    # #         flagged +=1
+    # #     elif form.form_status == 2:
+    # #         approved +=1
+    # #     else:
+    # #         rejected +=1
+    #
+    # dashboard_data = {
+    #     'total_users': total_users,
+    #     'total_organizations': total_organizations,
+    #     'total_projects': total_projects,
+    #     'total_sites': total_sites,
+    #     # 'outstanding': outstanding,
+    #     # 'flagged': flagged,
+    #     # 'approved': approved,
+    #     # 'rejected': rejected,
+    #     'data': data,
+    # }
+    # return TemplateResponse(request, "fieldsight/fieldsight_dashboard.html", dashboard_data)
+    return HttpResponseRedirect(reverse("fieldsight:organizations-list"))
 
 
 def get_site_images(site_id):
