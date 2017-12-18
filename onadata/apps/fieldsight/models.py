@@ -25,8 +25,11 @@ class TimeZone(models.Model):
     country_code = models.CharField(max_length=255, blank=True, null=True)
     offset_time = models.CharField(max_length=255, blank=True, null=False)
 
-    def __str__(self):
-        return self.time_zone +" - " + self.country
+    class Meta:
+         ordering = ['time_zone']
+    
+    def __unicode__(self):
+        return self.time_zone + " - " + self.country
 
 class ExtraUserDetail(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='extra_details')
@@ -142,7 +145,7 @@ class Organization(models.Model):
     @property
     def get_staffs(self):
         staffs = self.organization_roles.filter(group__name="Organization Admin").values_list('id', 'user__username')
-        return staffs\
+        return staffs
 
     @property
     def get_staffs_org(self):

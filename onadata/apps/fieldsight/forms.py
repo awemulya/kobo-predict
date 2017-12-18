@@ -1,4 +1,6 @@
+from __future__ import unicode_literals
 from django import forms
+
 from PIL import Image
 from django.core.files import File
 from django.contrib.auth.models import User, Group
