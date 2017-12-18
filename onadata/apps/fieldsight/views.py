@@ -1035,6 +1035,7 @@ def RepresentsInt(s):
 
 @login_required()
 def senduserinvite(request):
+
     emails =request.POST.getlist('emails[]')
     group = Group.objects.get(name=request.POST.get('group'))
 
@@ -1209,8 +1210,6 @@ class ActivateRole(TemplateView):
 
     def get(self, request, invite, invite_idb64, token):
         user = User.objects.filter(email=invite.email)
-        user.is_active = True
-        user.save()
         if invite.is_used==True:
             return HttpResponseRedirect(reverse('login'))
         if user:
@@ -1224,6 +1223,9 @@ class ActivateRole(TemplateView):
         if user_exists:
             user = user_exists[0] 
             if request.POST.get('response') == "accept":
+                if not user.is_active:
+                    user.is_active = True
+                    user.save()
                 userrole = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
             else:
                 invite.is_declined = True
