@@ -8,7 +8,7 @@ from rest_framework.permissions import BasePermission
 
 class RegionViewSet(viewsets.ModelViewSet):
     """
-    A simple ViewSet for viewing and editing organization.
+    A simple ViewSet for viewing and editing Region.
     """
     queryset = Region.objects.all()
     serializer_class = RegionSerializer

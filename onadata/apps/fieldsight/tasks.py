@@ -350,7 +350,7 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
         with transaction.atomic():
             roles_created = 0            
             for region_id in regions:
-                if region_id == "no_region":
+                if region_id == "0":
                     sites = Site.objects.filter(region__isnull=True, project_id=project_id).values('id')
                 else: 
                     sites = Site.objects.filter(region_id = region_id, project_id=project_id).values('id')
