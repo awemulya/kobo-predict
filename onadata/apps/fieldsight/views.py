@@ -1650,7 +1650,7 @@ class RegionDeleteView(RegionView, DeleteView):
         return super(RegionDeleteView, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
+        return reverse('fieldsight:region-list', kwargs={'pk': self.object.project.id})
 
 
 # class RegionDeactivateView(View):
