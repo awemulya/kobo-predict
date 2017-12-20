@@ -19,14 +19,15 @@ var all_proj_site=[];
 var CSRF_TOKEN = '{{ csrf_token }}';
 
 {% if type == "project" %}
+
   {% if obj.cluster_sites %}
-  var proj_region_url = '{% url 'fieldsight:project_regions_list' pk %}';
-  assignurl = '{% url 'fieldsight:multi_user_region_assign' pk %}';
-  var type = "region";
+    var proj_region_url = '{% url 'fieldsight:project_regions_list' pk %}';
+    assignurl = '{% url 'fieldsight:multi_user_region_assign' pk %}';
+    var type = "region";
   {% else %}
-  var proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
-  assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
-  var type = "site";
+    var proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
+    assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
+    var type = "site";
   {% endif %}
   userurl = '{% url 'role:multi_user_list' 1 pk %}';
   
