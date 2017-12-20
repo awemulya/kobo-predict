@@ -104,7 +104,7 @@ class OrganizationsProjectViewSet(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         id = self.kwargs.get('pk', None)
-        return queryset.filter(organization__id=id, is_active=True)
+        return queryset.filter(organization__id=id)
 
     def get_serializer_context(self):
         return {'request': self.request}
