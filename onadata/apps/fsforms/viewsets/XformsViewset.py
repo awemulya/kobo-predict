@@ -14,4 +14,4 @@ class XFormViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return self.queryset.filter(Q(user=self.request.user) |
-                Q(user__userprofile__organization=self.request.organization))
+                Q(user__user_profile__organization=self.request.organization))

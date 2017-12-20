@@ -29,33 +29,33 @@
 					{% endblock %}
 				<section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3>Users</h3></i>
+                        <h3>{% trans 'Users' %}</h3></i>
                         <div class="panel-heading-right">
-							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i> Search</a>
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i>{% trans 'Search' %}</a>
 
-							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#addfriend" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-plus"></i> Add/Invite Users</a>
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#addfriend" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-plus"></i>{% trans 'Add/Invite Users' %}</a>
 
 
 						</div>
                     </header>
                     <div class="panel-body">
 
-								<div class="collapse margin-top" id="searchOrganization">
-							<form class="padding">
+						<div class="collapse margin-top" id="searchOrganization">
+							<form method="GET" class="padding" action="{% url 'fieldsight:search-org-user-list' %}" >
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+										  <input type="text" name="q" placeholder="Search for..." value='{{ request.GET.q }}'/>
 										  <span class="input-group-btn">
-											<button class="btn btn-primary" type="button"><i class="fa fa-search"></i> Search</button>
+											  <button class="btn btn-primary" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
 										  </span>
 										</div>
 									</div>
-
 									<div class="col-md-3"></div>
 								</div>
 							</form>
 						</div>
+
 						 <div class="panel-body">
                              <div class="collapse margin-top" id="addfriend">
 							<form class="padding">
@@ -64,7 +64,7 @@
 										<div class="input-group">
 										  <input type="text" class="form-control" id="invite_email" placeholder="Invite Users" aria-label="Invite">
 										  <span class="input-group-btn">
-											<button class="btn btn-primary" onclick="sendmultiplerequest()" type="button"><i class="fa fa-plus"></i> Invite</button>
+											<button class="btn btn-primary" onclick="sendmultiplerequest()" type="button"><i class="fa fa-plus"></i>{% trans 'Invite' %}</button>
 										  </span>
 										</div>
 									</div>

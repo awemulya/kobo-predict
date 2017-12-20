@@ -1626,9 +1626,17 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
+        # print form.cleaned_data['identifier']
         self.object = form.save(commit=False)
         self.object.project_id=self.kwargs.get('pk')
-        self.object.save()
+        existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'))
+        if existing_identifier:
+            messages.add_message(self.request, messages.INFO, 'Your identifier conflict with existing region please use different identifier to create region')
+            return HttpResponseRedirect(reverse('fieldsight:region-add', kwargs={'pk': self.kwargs.get('pk')}))
+        else:
+            self.object.save()
+            messages.add_message(self.request, messages.INFO, 'Sucessfully new region is created')
+            return HttpResponseRedirect(self.get_success_url())
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
@@ -1640,6 +1648,8 @@ class RegionDeactivateView(View):
     def get(self, request, pk, *args, **kwargs):
         region = Region.objects.get(pk=pk)
         project_id = region.project.id
+        site=Site.objects.filter(region_id=self.kwargs.get('pk'))
+        site.update(region=None)
         region.is_active = False
         region.save()
 
