@@ -8,10 +8,10 @@ from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProject
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet, ProjectRegionslistViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProjectViewSet
-from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionViewSet
+from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionViewSet, RegionPagignatedViewSet
 from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
     SiteReviewViewSet, ProjectTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet, SiteUpdateViewSet, \
-    ProjectUpdateViewSet, SiteUnderOrgViewSet, SiteUnderRegionViewSet
+    ProjectUpdateViewSet, SiteUnderOrgViewSet, SiteUnderRegionViewSet, SitePagignatedViewSet
 from .forms import RegistrationForm
 
 from .views import (
@@ -56,7 +56,7 @@ from .views import (
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList,
     senduserinvite, ActivateRole, checkemailforinvite, ProjectSummaryReport, SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView,
     stages_status_download, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
-    SiteMetaForm )
+    SiteMetaForm, MultiSiteAssignRegionView )
 
 
 urlpatterns = [
@@ -174,6 +174,10 @@ urlpatterns = [
     url(r'^region-list/(?P<pk>\d+)/$', RegionListView.as_view(), name='region-list'),
 
     url(r'^api/project-regions/(?P<pk>\d+)/$', RegionViewSet.as_view({'get': 'list'}), name='project_regions_api'),
+    url(r'^api/project-pregions/(?P<pk>\d+)/$', RegionPagignatedViewSet.as_view({'get': 'list'}), name='project_regions_p_api'),
+
+    url(r'^api/project-sites-page/(?P<pk>\d+)/$', SitePagignatedViewSet.as_view({'get': 'list'}), name='project_sites_p_api'),
+    
     url(r'^project/(?P<pk>\d+)/regional-sites/(?P<region_pk>\d+)/$', RegionalSitelist.as_view(), name='regional-sites'),
     url(r'^api/project/(?P<pk>\d+)/regional-sites/(?P<region_pk>\d+)/$', SiteUnderRegionViewSet.as_view({'get': 'list'}), name='region-sites-list'),
     url(r'^site/add/(?P<pk>[0-9]+)/(?P<region_pk>[0-9]+)/', RegionalSiteCreateView.as_view(), name='regional-site-add'),
@@ -186,4 +190,5 @@ urlpatterns = [
 
     url(r'^project/(?P<pk>\d+)/define-site-meta/$', DefineProjectSiteMeta.as_view(), name='define-site-meta'),
     url(r'^site/(?P<pk>\d+)/site-meta-form/$', SiteMetaForm.as_view(), name='site-meta-form'),
+    url(r'^multi-site-assign-region/(?P<pk>\d+)/$', MultiSiteAssignRegionView.as_view(), name='multi_site_region_assign'),
 ]

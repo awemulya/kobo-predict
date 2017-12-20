@@ -184,10 +184,10 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
         total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
         sites = obj.sites.filter(is_active=True, is_survey=False)
-        # data = serialize('custom_geojson', sites, geometry_field='location',
-                         # fields=('location', 'id',))
+        data = serialize('custom_geojson', sites, geometry_field='location',
+                         fields=('location', 'id',))
 
-        # total_sites = sites.count()
+        total_sites = sites.count()
         total_survey_sites = obj.sites.filter(is_survey=True).count()
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
         bar_graph = BarGenerator(sites)
@@ -205,7 +205,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'flagged': flagged,
             'approved': approved,
             'rejected': rejected,
-            # 'data': data,
+            'data': data,
             'cumulative_data': line_chart_data.values(),
             'cumulative_labels': line_chart_data.keys(),
             'progress_data': bar_graph.data.values(),
@@ -1277,7 +1277,7 @@ class ActivateRole(TemplateView):
             elif invite.project:
                 content =  invite.project
             else:
-                context = invite.organization
+                content = invite.organization
 
         noti = invite.logs.create(source=user, type=noti_type, title="new Role",
                                        organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.by_user,
@@ -1795,5 +1795,27 @@ class SiteMetaForm(ReviewerRoleMixin, TemplateView):
         project.site_meta_attributes = request.POST.get('json_questions');
         project.save()
         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
+
+class MultiSiteAssignRegionView(ProjectRoleMixin, TemplateView):
+    def get(self, request, pk):
+        project = Project.objects.get(pk=pk)
+        
+        if project.cluster_sites is False:
+            raise PermissionDenied()
+
+        return render(request, 'fieldsight/multi_site_assign_region.html', {'project':project})
+
+    def post(self, request, pk, *args, **kwargs):
+        data = json.loads(self.request.body)
+        region = data.get('region')
+        sites = data.get('sites')
+        if len(region) == 0:
+            sitetoassign = Site.objects.filter(pk__in=sites)
+            sitetoassign.update(region=None)
+        else:        
+            sitetoassign = Site.objects.filter(pk__in=sites)
+            sitetoassign.update(region_id=region[0])
+
+        return HttpResponse("Success")
 
 

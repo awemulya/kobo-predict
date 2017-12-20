@@ -83,7 +83,13 @@ var project = "{{obj.pk}}";
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-project' obj.pk %}"><i class="la la-user"></i>{% trans ' People' %}</a>
 								<a class="dropdown-item" href="{% url 'forms:setup-forms' 1 obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Forms' %}</a>
+
+								{% if obj.cluster_sites %}
+								<a class="dropdown-item" href="{% url 'fieldsight:multi_site_region_assign' obj.id%}"><i class="la la-map-marker"></i>{% trans 'Assign Site Regions' %}</a>
+								{% else %}
 								<a class="dropdown-item" href="{% url 'fieldsight:proj-site-list' obj.id%}"><i class="la la-map-marker"></i>{% trans ' Sites' %}</a>
+								{% endif %}
+
 							</div>
 						</span>
 						<a href="{% url 'fieldsight:project-edit' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-edit"></i> Edit</a>

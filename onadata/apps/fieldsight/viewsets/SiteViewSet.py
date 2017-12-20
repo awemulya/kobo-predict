@@ -9,12 +9,12 @@ from channels import Group as ChannelGroup
 
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
 from onadata.apps.fieldsight.models import Site, ProjectType, Project
-from onadata.apps.fieldsight.serializers.SiteSerializer import SiteSerializer, SiteCreationSurveySerializer, \
+from onadata.apps.fieldsight.serializers.SiteSerializer import MinimalSiteSerializer, SiteSerializer, SiteCreationSurveySerializer, \
     SiteReviewSerializer, ProjectTypeSerializer, SiteUpdateSerializer, ProjectUpdateSerializer
 from onadata.apps.userrole.models import UserRole
 from django.contrib.auth.models import Group
 from django.db import transaction
-
+from rest_framework.pagination import PageNumberPagination
 
 class SiteSurveyPermission(BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -254,6 +254,20 @@ class ProjectTypeViewset(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return {'request': self.request}
 
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 20
+
+class SitePagignatedViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing Region.
+    """
+    queryset = Site.objects.filter(is_survey=False)
+    serializer_class = MinimalSiteSerializer
+    pagination_class = LargeResultsSetPagination
+
+    def filter_queryset(self, queryset):
+        project_id = self.kwargs.get('pk', None)
+        return queryset.filter(project__id=project_id)
 
 def all_notification(user,  message):
     ChannelGroup("%s" % user).send({

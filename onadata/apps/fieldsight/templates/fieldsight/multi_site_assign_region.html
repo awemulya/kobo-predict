@@ -1,0 +1,226 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block kocript %}
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/site_region_assign.js"></script>
+
+<script>
+var proj_site_url = "";
+var userurl = "";
+var speed=0;
+var selected_users=[];
+var all_users=[];
+var selected_proj_site=[];
+var all_proj_site=[];
+var CSRF_TOKEN = '{{ csrf_token }}';
+
+
+$(document).ready(function() {
+var pk = "{{ pk }}";
+
+var csrf_token = "{{ csrf_token }}";
+var next_url_region = "{% url 'fieldsight:project_regions_p_api' project.id %}";
+var next_url_site = "{% url 'fieldsight:project_sites_p_api' project.id %}";
+var assignurl = "sadsa";
+
+var project = "{{ project.id }}";
+
+assigntoken(csrf_token);
+vm = new RegionViewModel(next_url_region, next_url_site, project);
+ ko.applyBindings(vm);
+});
+
+</script>
+
+{% endblock %}
+{% block content %}
+{% csrf_token %}
+
+
+			<div id="main-content" class="padding">
+              {% block breadcrumbs %}
+              <ul class="breadcrumbb">
+                {% if level == "0" %}
+                <li><a href="{% url 'fieldsight:site-dashboard' pk %}">
+                 {% trans 'Site Dashboard' %}</a></li>
+                {% endif %}
+                {% if level == "1" %}
+                <li><a href="{% url 'fieldsight:project-dashboard' pk %}">
+                 {% trans 'Project Dashboard' %}</a></li>
+                {% endif %}
+                {% if level == "2" %}
+                <li><a href="{% url 'fieldsight:organizations-dashboard' pk %}">
+                 {% trans 'Organization Dashboard' %}</a></li>
+                {% endif %}
+                <li>{% trans 'Manage People' %}</li>
+              </ul>
+              {% endblock %}
+				
+
+
+
+      <!-- for project -->
+
+      <div class="">
+
+
+
+
+        
+                
+            
+
+  <div class="row">
+          <div class="col-md-6">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>{% trans 'Select Sites' %}</h4>
+              </div>
+
+              <div class="widget-body">
+
+                 <div class="input-group">
+                  
+                  
+                  </span>
+                  </span>
+                  </div>
+                
+               
+                  <input type="text" class="form-control" data-bind="value:$root.search_key_site, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                  
+                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllSiteUnSelected">
+                 <input type="button" value="Assign Selected Sites" class="btn btn-primary margin-top" data-bind="click:doAssign">
+                
+                 <input type="button" value="Unassign Selected Sites" class="btn btn-danger margin-top" data-bind="click:unAssign">
+                
+                 <span class="dropdown">
+                          
+                            
+                          </span>
+                <ul class="row" data-bind="foreach:sites">
+                  <li class="col-md-12">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$parent.setSiteSelected">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                          <div class="project-logo">
+                            <img alt="" width="50" height="50">
+                          </div>
+                          <div class="project-basic-info">
+                            <h4 data-bind="text:name()"></h4>
+                            <p data-bind="text:identifier()"></p>
+                            <p>Region : <span data-bind="text:region()"></span></p>
+                          </div>
+                        </div>
+                       
+                      </span>
+                    </label>
+                  </li>
+                  
+                  <li class="clearfix"></li>
+                </ul>
+              <button class="btn btn-default margin-top" data-bind="visible: show_next_page_site, click:loadMoreSites">Load More</button>            
+
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="col-md-6">
+            <div class="widget-info margin-top bg-white padding">
+              <div class="widget-head">
+                <h4>
+                Select Region
+                </h4>
+
+              </div>
+              <div class="widget-body">
+                <!-- <ul class="row max-260-scroll" id="multi-ass-proj_site">
+                  <input type="button" value="Select All" onclick="selectall('proj_site')">
+                 <input type="button" value="Unselect All" onclick="unselectall('proj_site')">
+
+                </ul>
+                <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more"> -->
+               
+        
+              
+          <input type="text" class="form-control" data-bind="value:search_key_region, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                  
+                 
+                <ul class="row" data-bind="foreach:regions">
+                
+                  <li class="col-md-12">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$parent.setRegionSelected">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                          <div class="project-logo">
+                            <!-- <img data-bind="attr:{src: logo()}" alt="" width="50" height="50"> -->
+                          </div>
+                          <div class="project-basic-info">
+                            <h4 data-bind="text:identifier()"></h4>
+                            <h6 data-bind="text:name()"></h6>
+
+                          </div>
+                        </div>
+                       
+                      </span>
+                    </label>
+                  </li>
+                  
+                  <li class="clearfix"></li>
+                </ul>  
+                <button  class="btn btn-default margin-top" data-bind="visible: show_next_page_region, click:loadMoreRegions">Load More</button>            
+
+            
+              </div>
+            </div>
+          </div>
+
+                
+                
+            </div>
+        
+
+    
+        <!-- <div class="margin-top">
+          <div class="padding bg-white">
+            <button type="submit" class="btn btn-primary btn-block"><i class="la la-user-plus"></i> Assign Users</button>
+          </div>
+        </div> -->
+        </div>
+        </div></div></ul></div><div class="modal fade" id="myinvitemodal" role="dialog" >
+                      <div class="modal-dialog">
+                      
+                        <!-- Modal content-->
+                        <div class="modal-content" style="margin-top: 15%;">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">{% trans 'Invite Status' %}</h4>
+                          </div>
+                          <div class="modal-body">
+                          <center>
+                            <div id="update-next-step">
+                            <h2>{% trans 'Inviting ...' %}</h2>
+                          
+                            </div>
+                            </center>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary margin-top" class="btn btn-default" data-dismiss="modal">{% trans 'Close' %}</button>
+                          </div>
+                        </div>
+                        
+                      </div>
+                    </div>
+
+
+    {% endblock %}
