@@ -11,14 +11,15 @@
 
 {% block content %}
     <div id="main-content" class="padding">
-		<ul class="breadcrumbb">
-					{% block breadcrumbs %}
-					<li><a href="{% url 'fieldsight:site-dashboard' id %}">
-     				{% trans 'Site Dashboard' %}</a></li>
-					<li>{% trans 'Upload Blueprints image files' %}</li>
-					{% endblock %}
-				</ul>
-				<section class="panel">
+		<nav aria-label="breadcrumb" role="navigation">
+			<ol class="breadcrumb">
+				{% block breadcrumbs %}
+				<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' id %}">{% trans 'Site Dashboard' %}</a></li>
+				<li class="breadcrumb-item active" aria-current="page">{% trans 'Upload Blueprints image files' %}</li>
+		    	{% endblock %}
+			</ol>
+		</nav>
+			<section class="panel">
 					<div class="panel-body">
 						<!-- Add New Organization-->
 						<div id="newOrganization" class="margin-top">

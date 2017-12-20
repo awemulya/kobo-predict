@@ -73,20 +73,26 @@
     });
   </script>
 			<div id="main-content" class="padding">
-				{% block breadcrumbs %}
-				<ul class="breadcrumbb">
-					{% if form.instance.name %}
-					<li><a href="{% url 'fieldsight:site-dashboard' form.instance.pk %}">{{ form.instance.name }}</a></li>
-                    {% else %}
-                    <li><a href="{% url 'fieldsight:project-dashboard' project.pk %}">{{ project.name }}</a></li>
-                    {% endif %}
-					<li>{{ scenario }}</li>
-				</ul>
-				{% endblock %}
+				<nav aria-label="breadcrumb" role="navigation">
+					{% block breadcrumbs %}
+					<ol class="breadcrumb">
+						{% if form.instance.name %}
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' form.instance.pk %}">{{ form.instance.name }}</a></li>
+						 {% else %}
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' project.pk %}">{{ project.name }}</a></li>
+						 {% endif %}
+						<li class="breadcrumb-item active" aria-current="page">{{ scenario }}</li>
+					 </ol>
+					{% endblock %}
+				</nav>
 				<section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3><i class="la la-building"></i>{% trans 'New' %}{% trans 'Site' %} </h3>
-                          <button type="button" class="btn btn-danger pull-right" data-toggle="modal" data-target="#myModal"><i class="la la-trash"></i> {% trans 'Delete' %}</button>
+						{% if form.instance.name %}
+                        <h3><i class="la la-building"></i>{% trans 'Edit' %} {% trans 'Site' %} </h3>
+						{% else %}
+						<h3><i class="la la-building"></i>{% trans 'New' %} {% trans 'Site' %} </h3>
+						{% endif %}
+                         <button type="button" class="btn btn-danger pull-right" data-toggle="modal" data-target="#myModal"><i class="la la-trash"></i> {% trans 'Delete' %}</button>
                     </header>
 					<div class="panel-body">
 						<!-- Add New Organization-->

@@ -1643,17 +1643,27 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
         return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
 
 
-class RegionDeactivateView(View):
+class RegionDeleteView(RegionView, DeleteView):
+    def dispatch(self, request, *args, **kwargs):
+        site = Site.objects.filter(region_id=self.kwargs.get('pk'))
+        site.update(region_id=None)
+        return super(RegionDeleteView, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, pk, *args, **kwargs):
-        region = Region.objects.get(pk=pk)
-        project_id = region.project.id
-        site=Site.objects.filter(region_id=self.kwargs.get('pk'))
-        site.update(region=None)
-        region.is_active = False
-        region.save()
+    def get_success_url(self):
+        return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
 
-        return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk':region.project.id}))
+
+# class RegionDeactivateView(View):
+#
+#     def get(self, request, pk, *args, **kwargs):
+#         region = Region.objects.get(pk=pk)
+#         project_id = region.project.id
+#         site=Site.objects.filter(region_id=self.kwargs.get('pk'))
+#         site.update(region=None)
+#         region.is_active = False
+#         region.save()
+#
+#         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk':region.project.id}))
 
 
 class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
