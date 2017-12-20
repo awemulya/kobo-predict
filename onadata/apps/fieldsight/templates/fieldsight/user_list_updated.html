@@ -41,16 +41,17 @@
                     <div class="panel-body">
 
 						<div class="collapse margin-top" id="searchOrganization">
-							<form method="GET" class="padding" action="{% url 'fieldsight:search-org-user-list' %}" >
+							<form class="padding">
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										  <input type="text" name="q" placeholder="Search for..." value='{{ request.GET.q }}'/>
+										  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
 										  <span class="input-group-btn">
-											  <button class="btn btn-primary" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
+											<button class="btn btn-primary" type="button"><i class="fa fa-search"></i> Search</button>
 										  </span>
 										</div>
 									</div>
+
 									<div class="col-md-3"></div>
 								</div>
 							</form>
