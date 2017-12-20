@@ -28,6 +28,14 @@
 });
 </script>
 <div id="main-content" class="padding" style="display:none;">
+	<nav aria-label="breadcrumb" role="navigation">
+		<ol class="breadcrumb">
+            {% block breadcrumbs %}
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{% trans 'Project Dashboard' %}</a></li>
+			<li class="breadcrumb-item active" aria-current="page">{% trans 'Submissions Data' %}</li>
+		    {% endblock %}
+        </ol>
+    </nav>
 <div class="row">
 <div class="col-md-12">
     <div class="tabbing">

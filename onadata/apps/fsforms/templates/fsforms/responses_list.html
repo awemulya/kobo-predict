@@ -13,17 +13,16 @@
 
 {% block head %}
 {% endblock %}
-{% block breadcrumbs %}
-
-<li><a href="{% url 'fieldsight:project-dashboard' pk %}">
-  {% trans 'Project Dashboard' %}</a></li>
-<li>{% trans 'Responses' %}</li>
-{% endblock %}
-
-
-
 {% block content %}
 <div id="main-content" class="padding">
+    <nav aria-label="breadcrumb" role="navigation">
+		<ol class="breadcrumb">
+            {% block breadcrumbs %}
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' site %}">{% trans 'Site Dashboard' %}</a></li>
+			<li class="breadcrumb-item active" aria-current="page">{% trans 'Responses' %}</li>
+		    {% endblock %}
+        </ol>
+    </nav>
 
     <div class="tabbing">
 

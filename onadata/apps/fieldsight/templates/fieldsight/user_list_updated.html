@@ -10,23 +10,22 @@
     {% load sorting_tags %}
     {% load filters %}
 				<div id="main-content" class="padding">
+				<nav aria-label="breadcrumb" role="navigation">
 					{% block breadcrumbs %}
-					  <ul class="breadcrumbb">
+					<ol class="breadcrumb">
 						{% if type == "site" %}
-						<li><a href="{% url 'fieldsight:site-dashboard' pk %}">
-						 {% trans 'Site Dashboard' %}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{% trans 'Site Dashboard' %}</a></li>
 						{% endif %}
 						{% if type == "project" %}
-						<li><a href="{% url 'fieldsight:project-dashboard' pk %}">
-						 {% trans 'Project Dashboard' %}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{% trans 'Project Dashboard' %}</a></li>
 						{% endif %}
 						{% if type == "organization" %}
-						<li><a href="{% url 'fieldsight:organizations-dashboard' pk %}">
-						 {% trans 'Organization Dashboard' %}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{% trans 'Organization Dashboard' %}</a></li>
 						{% endif %}
-						<li>{% trans 'Manage People' %}</li>
-					  </ul>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage People' %}</li>
+					 </ol>
 					{% endblock %}
+				</nav>
 				<section class="panel">
                     <header class="panel-heading clearfix">
                         <h3>{% trans 'Users' %}</h3></i>

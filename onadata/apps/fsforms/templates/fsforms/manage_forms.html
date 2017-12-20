@@ -61,18 +61,19 @@ var pk = "{{pk}}";
 
 {% block content %}
 <div id="main-content" class="padding">
-<ul class="breadcrumbb">
-    {% block breadcrumbs %}
-    {% if is_project == "0" %}
-    <li><a href="{% url 'fieldsight:site-dashboard' pk %}">
-     {% trans 'Site Dashboard' %}</a></li>
-    {% else %}
-    <li><a href="{% url 'fieldsight:project-dashboard' pk %}">
-     {% trans 'Project Dashboard' %}</a></li>
-    {% endif %}
-    <li>{% trans 'Manage Forms' %}</li>
-    {% endblock %}
-</ul>
+    <nav aria-label="breadcrumb" role="navigation">
+        <ol class="breadcrumb">
+            {% block breadcrumbs %}
+            {% if is_project == "0" %}
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{% trans 'Site Dashboard' %}</a></li>
+            {% else %}
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{% trans 'Project Dashboard' %}</a></li>
+            {% endif %}
+			<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage Forms' %}</li>
+		    {% endblock %}
+        </ol>
+    </nav>
+
 				<!-- Nav tabs -->
 				<div class="tabbing">
 					<ul class="nav nav-tabs" role="tablist">

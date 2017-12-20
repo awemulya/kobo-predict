@@ -66,28 +66,23 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
 
 			<div id="main-content" class="padding">
-              {% block breadcrumbs %}
-              <ul class="breadcrumbb">
-                {% if level == "0" %}
-                <li><a href="{% url 'fieldsight:site-dashboard' pk %}">
-                 {% trans 'Site Dashboard' %}</a></li>
-                {% endif %}
-                {% if level == "1" %}
-                <li><a href="{% url 'fieldsight:project-dashboard' pk %}">
-                 {% trans 'Project Dashboard' %}</a></li>
-                {% endif %}
-                {% if level == "2" %}
-                <li><a href="{% url 'fieldsight:organizations-dashboard' pk %}">
-                 {% trans 'Organization Dashboard' %}</a></li>
-                {% endif %}
-                <li>{% trans 'Manage People' %}</li>
-              </ul>
-              {% endblock %}
-				<div class="" data-bind="with:siteVm ,visible: currentVm() == 'site'" style="display:none;">
-
-
-
-
+              <nav aria-label="breadcrumb" role="navigation">
+                {% block breadcrumbs %}
+					<ol class="breadcrumb">
+                      {% if level == "0" %}
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{% trans 'Site Dashboard' %}</a></li>
+                      {% endif %}
+                      {% if level == "1" %}
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{% trans 'Project Dashboard' %}</a></li>
+                      {% endif %}
+                      {% if level == "2" %}
+                        <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{% trans 'Organization Dashboard' %}</a></li>
+                      {% endif %}
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage People' %}</li>
+					 </ol>
+                {% endblock %}
+              </nav>
+          <div class="" data-bind="with:siteVm ,visible: currentVm() == 'site'" style="display:none;">
           <div class="tabbing margin-top">
           <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
