@@ -175,6 +175,7 @@ urlpatterns = [
 
     url(r'^api/project-regions/(?P<pk>\d+)/$', RegionViewSet.as_view({'get': 'list'}), name='project_regions_api'),
     url(r'^api/project-pregions/(?P<pk>\d+)/$', RegionPagignatedViewSet.as_view({'get': 'list'}), name='project_regions_p_api'),
+    url(r'^api/search-regions/(?P<pk>\d+)/$', RegionSearchViewSet.as_view({'get': 'list'}), name='search_regions_api'),
 
     url(r'^api/project-sites-page/(?P<pk>\d+)/$', SitePagignatedViewSet.as_view({'get': 'list'}), name='project_sites_p_api'),
 
@@ -193,6 +194,5 @@ urlpatterns = [
     url(r'^project/(?P<pk>\d+)/define-site-meta/$', DefineProjectSiteMeta.as_view(), name='define-site-meta'),
     url(r'^site/(?P<pk>\d+)/site-meta-form/$', SiteMetaForm.as_view(), name='site-meta-form'),
     url(r'^multi-site-assign-region/(?P<pk>\d+)/$', MultiSiteAssignRegionView.as_view(), name='multi_site_region_assign'),
-    url(r'^api/search-regions/(?P<pk>\d+)/$', RegionSearchViewSet.as_view({'get': 'list'}), name='search_regions_api'),
 
 ]
