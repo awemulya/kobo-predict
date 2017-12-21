@@ -33,3 +33,20 @@ class RegionPagignatedViewSet(viewsets.ModelViewSet):
     def filter_queryset(self, queryset):
         project_id = self.kwargs.get('pk', None)
         return queryset.filter(project__id=project_id)
+
+
+class RegionSearchViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing Region.
+    """
+    queryset = Region.objects.all()
+    serializer_class = RegionSerializer
+
+    def filter_queryset(self, queryset):
+        project_id = self.kwargs.get('pk', None)
+        return queryset.filter(project__id=project_id)
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.queryset.filter(name__icontains=query)
+
