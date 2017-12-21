@@ -1,9 +1,9 @@
 import json
-
 from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import BasePermission
+
 from channels import Group as ChannelGroup
 
 
@@ -268,6 +268,22 @@ class SitePagignatedViewSet(viewsets.ModelViewSet):
     def filter_queryset(self, queryset):
         project_id = self.kwargs.get('pk', None)
         return queryset.filter(project__id=project_id)
+
+class SiteSearchViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing Region.
+    """
+    queryset = Site.objects.filter(is_survey=False)
+    serializer_class = MinimalSiteSerializer
+
+    def filter_queryset(self, queryset):
+        project_id = self.kwargs.get('pk', None)
+        return queryset.filter(project__id=project_id)
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.queryset.filter(name__icontains=query)
+
 
 def all_notification(user,  message):
     ChannelGroup("%s" % user).send({
