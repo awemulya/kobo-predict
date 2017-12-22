@@ -70,7 +70,7 @@ def dashboard(request):
         if role_type == "Unassigned":
             raise PermissionDenied()
         if role_type == "Site Supervisor":
-            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
+            return HttpResponse("Your account is  registered as a site supervisor. You only have access to FieldSight through the mobile app. Have a Good Day Thank You")
         if role_type == "Reviewer":
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
         if role_type == "Project Manager":
