@@ -15,7 +15,7 @@ from onadata.apps.userrole.models import UserRole
 from django.contrib.auth.models import Group
 from django.db import transaction
 from rest_framework.pagination import PageNumberPagination
-
+from django.db.models import Q
 class SiteSurveyPermission(BasePermission):
     def has_object_permission(self, request, view, obj):
         if not obj.is_survey:
@@ -283,7 +283,7 @@ class SiteSearchViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         query = self.request.GET.get("q")
-        return self.queryset.filter(name__icontains=query)
+        return self.queryset.filter(Q(name__icontains=query) | Q(identifier__icontains=query))
 
 
 def all_notification(user,  message):

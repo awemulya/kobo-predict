@@ -128,7 +128,7 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                   <li class="clearfix"></li>
                 
                 </ul>
-              <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_search_all_button, click:dbsearchallSites">Full search</button>            
+              <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_search_site_button, click:dbsearchallSites">Search All</button>            
 
               <button class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_next_page_site, click:loadMoreSites">Load More</button>            
 
@@ -156,7 +156,7 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                
         
               
-          <input type="text" class="form-control" data-bind="value:search_key_region, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+          <input type="text" class="form-control" data-bind="value:search_key_region, valueUpdate:'keyup'" placeholder="Search..." aria-label="Search...">
                   
                   <input type="button" value="Assign Selected Sites" class="btn btn-primary margin-top" data-bind="click:doAssign">
                 
@@ -184,6 +184,7 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                   
                   <li class="clearfix"></li>
                 </ul>  
+                <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_search_region_button, click:dbsearchallRegions">Search All</button> 
                 <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_next_page_region, click:loadMoreRegions">Load More</button>            
 
             
