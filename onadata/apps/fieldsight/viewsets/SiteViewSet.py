@@ -255,7 +255,7 @@ class ProjectTypeViewset(viewsets.ModelViewSet):
         return {'request': self.request}
 
 class LargeResultsSetPagination(PageNumberPagination):
-    page_size = 20
+    page_size = 10
 
 class SitePagignatedViewSet(viewsets.ModelViewSet):
     """
@@ -275,13 +275,14 @@ class SiteSearchViewSet(viewsets.ModelViewSet):
     """
     queryset = Site.objects.filter(is_survey=False)
     serializer_class = MinimalSiteSerializer
+    pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
         project_id = self.kwargs.get('pk', None)
         return queryset.filter(project__id=project_id)
 
     def get_queryset(self):
-        query = self.request.REQUEST.get("q")
+        query = self.request.GET.get("q")
         return self.queryset.filter(name__icontains=query)
 
 

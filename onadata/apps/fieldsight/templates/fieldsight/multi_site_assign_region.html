@@ -26,11 +26,13 @@ var csrf_token = "{{ csrf_token }}";
 var next_url_region = "{% url 'fieldsight:project_regions_p_api' project.id %}";
 var next_url_site = "{% url 'fieldsight:project_sites_p_api' project.id %}";
 var assignurl = "sadsa";
+var site_query_url ="{% url 'fieldsight:search_sites_api' project.id %}";
+var region_query_url ="{% url 'fieldsight:search_regions_api' project.id %}";
 
 var project = "{{ project.id }}";
 
 assigntoken(csrf_token);
-vm = new RegionViewModel(next_url_region, next_url_site, project);
+vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_query_url, project);
  ko.applyBindings(vm);
 });
 
@@ -91,14 +93,13 @@ vm = new RegionViewModel(next_url_region, next_url_site, project);
                   </div>
                 
                
-                  <input type="text" class="form-control" data-bind="value:$root.search_key_site, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                  <input type="text" class="form-control" data-bind="value:$root.search_key_site, valueUpdate:'keyup'," placeholder="Search..." aria-label="Search...">
                   
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllSiteUnSelected">
                 
                  <input type="button" value="Unassign Selected Sites" class="btn btn-danger margin-top" data-bind="click:unAssign">
                   
-                <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_search_all_button, click:loadMoreRegions">close search</button>            
-
+                  
                  <span class="dropdown">
                           
                             
@@ -125,7 +126,10 @@ vm = new RegionViewModel(next_url_region, next_url_site, project);
                   </li>
                   
                   <li class="clearfix"></li>
+                
                 </ul>
+              <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_search_all_button, click:dbsearchallSites">Full search</button>            
+
               <button class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_next_page_site, click:loadMoreSites">Load More</button>            
 
               </div>
