@@ -15,6 +15,9 @@ from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteVie
 from .forms import RegistrationForm
 
 from .views import (
+    OrganizationUserSearchView,
+    ProjectUserSearchView,
+    SiteUserSearchView,
     OrganizationSearchView,
     ProjectSearchView,
     OrganizationListView,
@@ -189,6 +192,10 @@ urlpatterns = [
 
 
     url(r'^search-org/$', OrganizationSearchView.as_view(), name='search-org-list'),
+    url(r'^search-org-users/$', OrganizationUserSearchView.as_view(), name='search-org-users'),
+    url(r'^search-proj-users/$', ProjectUserSearchView.as_view(), name='search-proj-users'),
+    url(r'^search-site-users/$', SiteUserSearchView.as_view(), name='search-site-users'),
+
     url(r'^search-proj/(?P<pk>\d+)/$', ProjectSearchView.as_view(), name='search-proj-list'),
 
     url(r'^project/(?P<pk>\d+)/define-site-meta/$', DefineProjectSiteMeta.as_view(), name='define-site-meta'),

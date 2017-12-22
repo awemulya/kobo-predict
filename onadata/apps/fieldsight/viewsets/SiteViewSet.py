@@ -1,4 +1,5 @@
 import json
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -275,6 +276,7 @@ class SiteSearchViewSet(viewsets.ModelViewSet):
     """
     queryset = Site.objects.filter(is_survey=False)
     serializer_class = MinimalSiteSerializer
+    pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
         project_id = self.kwargs.get('pk', None)
@@ -282,7 +284,7 @@ class SiteSearchViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         query = self.request.REQUEST.get("q")
-        return self.queryset.filter(name__icontains=query)
+        return self.queryset.filter(Q(identifier__icontains=query)|Q(name__icontains=query))
 
 
 def all_notification(user,  message):

@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from django.db.models import Q
 
 from onadata.apps.fieldsight.models import Region
 from onadata.apps.fieldsight.serializers.RegionSerializer import RegionSerializer
@@ -41,6 +42,7 @@ class RegionSearchViewSet(viewsets.ModelViewSet):
     """
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
+    pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
         project_id = self.kwargs.get('pk', None)
@@ -48,5 +50,5 @@ class RegionSearchViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         query = self.request.REQUEST.get("q")
-        return self.queryset.filter(name__icontains=query)
+        return self.queryset.filter(Q(id__icontains=query)|Q(name__icontains=query))
 

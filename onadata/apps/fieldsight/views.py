@@ -1838,4 +1838,36 @@ class MultiSiteAssignRegionView(ProjectRoleMixin, TemplateView):
 
         return HttpResponse("Success")
 
+class OrganizationUserSearchView(ListView):
+    model = UserRole
+    template_name = 'fieldsight/user_list_updated.html'
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.model.objects.filter(user__username__icontains=query)
+
+class OrganizationUserSearchView(ListView):
+    model = UserRole
+    template_name = 'fieldsight/user_list_updated.html'
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.model.objects.filter(user__username__icontains=query)
+
+class ProjectUserSearchView(ListView):
+    model = UserRole
+    template_name = 'fieldsight/user_list_updated.html'
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.model.objects.filter(user__username__icontains=query)
+
+class SiteUserSearchView(ListView):
+    model = UserRole
+    template_name = 'fieldsight/user_list_updated.html'
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.model.objects.filter(user__username__icontains=query)
+
 
