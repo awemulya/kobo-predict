@@ -13,5 +13,7 @@ class XFormViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = XFormListSerializer
 
     def get_queryset(self):
+        if self.request.user.user_roles.filter(group__name="Super Admin"):
+            return self.queryset
         return self.queryset.filter(Q(user=self.request.user) |
                 Q(user__user_profile__organization=self.request.organization))
