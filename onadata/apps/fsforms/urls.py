@@ -195,7 +195,7 @@ urlpatterns = urlpatterns + [
     url(r'^api/delete-mainstage/(?P<id>\d+)/$', delete_mainstage, name='delete_mainstage_api'),
     url(r'^api/save_educational_material/$', save_educational_material),
     url(r'^api/responses/(?P<pk>\d+)/$', InstanceResponseViewSet.as_view({'get': 'list'})),
-    url(r'^api/responses/(?P<form_pk>\d+)/(?P<site_pk>\d+)$', SiteInstanceResponseViewSet.as_view({'get': 'list'})),
+    url(r'^api/responses/(?P<form_pk>\d+)/(?P<site_pk>\d+)/$', SiteInstanceResponseViewSet.as_view({'get': 'list'})),
 
 ]
 
