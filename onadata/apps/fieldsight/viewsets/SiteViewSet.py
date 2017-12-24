@@ -16,7 +16,7 @@ from onadata.apps.userrole.models import UserRole
 from django.contrib.auth.models import Group
 from django.db import transaction
 from rest_framework.pagination import PageNumberPagination
-
+from django.db.models import Q
 class SiteSurveyPermission(BasePermission):
     def has_object_permission(self, request, view, obj):
         if not obj.is_survey:
@@ -256,7 +256,7 @@ class ProjectTypeViewset(viewsets.ModelViewSet):
         return {'request': self.request}
 
 class LargeResultsSetPagination(PageNumberPagination):
-    page_size = 20
+    page_size = 10
 
 class SitePagignatedViewSet(viewsets.ModelViewSet):
     """
@@ -283,8 +283,10 @@ class SiteSearchViewSet(viewsets.ModelViewSet):
         return queryset.filter(project__id=project_id)
 
     def get_queryset(self):
-        query = self.request.REQUEST.get("q")
-        return self.queryset.filter(Q(identifier__icontains=query)|Q(name__icontains=query))
+
+        query = self.request.GET.get("q")
+        return self.queryset.filter(Q(name__icontains=query) | Q(identifier__icontains=query))
+
 
 
 def all_notification(user,  message):
