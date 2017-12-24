@@ -112,7 +112,7 @@ class GeneralForm(HTML5BootstrapModelForm, KOModelForm):
         if hasattr(self.request, "organization") and self.request.organization is not None:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) |
-                Q(user__userprofile__organization=self.request.organization))
+                Q(user__user_profile__organization=self.request.organization))
         else:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
@@ -291,7 +291,7 @@ class KoScheduleForm(HTML5BootstrapModelForm, KOModelForm):
         if hasattr(self.request, "organization") and self.request.organization is not None:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) |
-                Q(user__userprofile__organization=self.request.organization))
+                Q(user__user_profile__organization=self.request.organization))
         else:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
