@@ -1842,35 +1842,12 @@ class OrganizationUserSearchView(ListView):
     model = UserRole
     template_name = 'fieldsight/user_list_updated.html'
 
-
     def get_context_data(self, **kwargs):
         context = super(OrganizationUserSearchView, self).get_context_data(**kwargs)
-        context['organization_id'] = self.kwargs.get('pk')
-        context['type'] = "organization"
+        context['org'] = Organization.objects.get(pk=self.kwargs.get('pk'))
         return context
 
-    def filter_queryset(self, queryset):
-        organization_id = self.kwargs.get('pk', None)
-        return queryset.filter(organization__id=organization_id)
-
     def get_queryset(self):
-        query = self.request.REQUEST.get("q")
-        return self.model.objects.filter(user__username__icontains=query).distinct('user_id')
+        query = self.request.GET.get("q")
+        return self.model.objects.filter(user__username__icontains=query, organization_id = self.kwargs.get('pk'), project__isnull = True, site__isnull = True, ended_at__isnull=True).distinct('user')
 
-# class ProjectUserSearchView(ListView):
-#     model = UserRole
-#     template_name = 'fieldsight/user_list_updated.html'
-#
-#     def get_queryset(self):
-#         query = self.request.REQUEST.get("q")
-#         return self.model.objects.select_related("user").filter(user__username__icontains=query)
-#
-# class SiteUserSearchView(ListView):
-#     model = UserRole
-#     template_name = 'fieldsight/user_list_updated.html'
-#
-#     def get_queryset(self):
-#         query = self.request.REQUEST.get("q")
-#         return self.model.objects.select_related("user").filter(user__username__icontains=query)
-#
-#

@@ -10,22 +10,7 @@
     {% load sorting_tags %}
     {% load filters %}
 				<div id="main-content" class="padding">
-				<nav aria-label="breadcrumb" role="navigation">
-					{% block breadcrumbs %}
-					<ol class="breadcrumb">
-						{% if type == "site" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{% trans 'Site Dashboard' %}</a></li>
-						{% endif %}
-						{% if type == "project" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{% trans 'Project Dashboard' %}</a></li>
-						{% endif %}
-						{% if type == "organization" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{% trans 'Organization Dashboard' %}</a></li>
-						{% endif %}
-						<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage People' %}</li>
-					 </ol>
-					{% endblock %}
-				</nav>
+
 				<section class="panel">
                     <header class="panel-heading clearfix">
                         <h3>{% trans 'Users' %}</h3></i>
@@ -40,13 +25,13 @@
                     <div class="panel-body">
 
 						<div class="collapse margin-top" id="searchOrganization">
-							<form method="GET" class="padding" action="{% url 'fieldsight:search-org-users' %}" >
+							<form method="GET" class="padding" action="{% url 'fieldsight:search-org-users' org.pk %}">
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
 										  <input type="text" name="q" placeholder="Search for..." value='{{ request.GET.q }}'/>
 										  <span class="input-group-btn">
-											  <button class="btn btn-primary" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
+											  <button class="btn btn-primary" type="submit" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
 										  </span>
 										</div>
 									</div>

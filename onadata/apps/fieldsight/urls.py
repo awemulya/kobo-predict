@@ -192,7 +192,7 @@ urlpatterns = [
 
 
     url(r'^search-org/$', OrganizationSearchView.as_view(), name='search-org-list'),
-    url(r'^search-org-users/$', OrganizationUserSearchView.as_view(), name='search-org-users'),
+    url(r'^search-org-users/(?P<pk>\d+)/$', OrganizationUserSearchView.as_view(), name='search-org-users'),
     # url(r'^search-proj-users/$', ProjectUserSearchView.as_view(), name='search-proj-users'),
     # url(r'^search-site-users/$', SiteUserSearchView.as_view(), name='search-site-users'),
 
