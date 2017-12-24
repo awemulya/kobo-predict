@@ -1842,32 +1842,35 @@ class OrganizationUserSearchView(ListView):
     model = UserRole
     template_name = 'fieldsight/user_list_updated.html'
 
-    def get_queryset(self):
-        query = self.request.REQUEST.get("q")
-        return self.model.objects.filter(user__username__icontains=query)
 
-class OrganizationUserSearchView(ListView):
-    model = UserRole
-    template_name = 'fieldsight/user_list_updated.html'
+    def get_context_data(self, **kwargs):
+        context = super(OrganizationUserSearchView, self).get_context_data(**kwargs)
+        context['organization_id'] = self.kwargs.get('pk')
+        context['type'] = "organization"
+        return context
 
-    def get_queryset(self):
-        query = self.request.REQUEST.get("q")
-        return self.model.objects.filter(user__username__icontains=query)
-
-class ProjectUserSearchView(ListView):
-    model = UserRole
-    template_name = 'fieldsight/user_list_updated.html'
+    def filter_queryset(self, queryset):
+        organization_id = self.kwargs.get('pk', None)
+        return queryset.filter(organization__id=organization_id)
 
     def get_queryset(self):
         query = self.request.REQUEST.get("q")
-        return self.model.objects.filter(user__username__icontains=query)
+        return self.model.objects.filter(user__username__icontains=query).distinct('user_id')
 
-class SiteUserSearchView(ListView):
-    model = UserRole
-    template_name = 'fieldsight/user_list_updated.html'
-
-    def get_queryset(self):
-        query = self.request.REQUEST.get("q")
-        return self.model.objects.filter(user__username__icontains=query)
-
-
+# class ProjectUserSearchView(ListView):
+#     model = UserRole
+#     template_name = 'fieldsight/user_list_updated.html'
+#
+#     def get_queryset(self):
+#         query = self.request.REQUEST.get("q")
+#         return self.model.objects.select_related("user").filter(user__username__icontains=query)
+#
+# class SiteUserSearchView(ListView):
+#     model = UserRole
+#     template_name = 'fieldsight/user_list_updated.html'
+#
+#     def get_queryset(self):
+#         query = self.request.REQUEST.get("q")
+#         return self.model.objects.select_related("user").filter(user__username__icontains=query)
+#
+#
