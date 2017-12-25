@@ -366,10 +366,14 @@ class FInstance(models.Model):
 
     def getname(self):
         if self.site_fxf is None:
+        
             return '{0} form {1}'.format(self.project_fxf.form_type(), self.project_fxf.xf.title,)
+        
         return '{0} form {1}'.format(self.site_fxf.form_type(),
                                            self.site_fxf.xf.title,)
     def __unicode__(self):
+        if self.site_fxf is None:
+            return u"%s" % str(self.submitted_by) + "---" + self.project_fxf.xf.title
         return u"%s" % str(self.submitted_by) + "---" + self.site_fxf.xf.title
 
     def instance_json(self):
