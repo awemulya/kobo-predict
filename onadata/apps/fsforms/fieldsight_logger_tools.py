@@ -266,7 +266,7 @@ def safe_create_instance(fsxfid, xml_file, media_files, uuid, request, site, fs_
 
     try:
         instance = create_instance(
-            fsxfid, xml_file, media_files, uuid=uuid, request=request, site=291, fs_proj_xf=fs_proj_xf,
+            fsxfid, xml_file, media_files, uuid=uuid, request=request, site=site, fs_proj_xf=fs_proj_xf,
             proj_id=proj_id, xform=xform)
     except InstanceInvalidUserError:
         error = OpenRosaResponseBadRequest(_(u"Username or ID required."))
