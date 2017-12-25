@@ -260,7 +260,7 @@ var pk = "{{pk}}";
                                     <tbody data-bind="foreach: forms">
                                         <tr>
                                             <th scope="row" data-bind="text: $index()+1"></th>
-                                            <td><span data-bind="text: name"></span><span style="display:none;" data-bind="visible: ((1 == 1) ? true:false)">Project Level</span></td>
+                                            <td><span data-bind="text: name"></span><span style="display:none;" data-bind="visible: ((site() == null) ? true:false)">Project Level</span></td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text:responses_count"></td>
                                             <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
