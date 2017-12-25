@@ -269,19 +269,18 @@ var pk = "{{pk}}";
                                                       <div class="modal-dialog form-modal" role="document">
                                                         <div class="modal-content">
                                                           <div class="modal-header">
+                                                            <h5 class="modal-title">{% trans 'Education Material' %}</h5>
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                            <h4 class="modal-title">{% trans 'Education Material' %}</h4>
                                                           </div>
                                                           <div class="modal-body">
-                                                              <div class="col-sm-8">
-                                                                  <h3>{% trans 'Create A Education Material' %}</h3>
+                                                                  <h6>{% trans 'Create A Education Material' %}</h6>
 
                                                                 <div class="form-group">
-                                                                  <label for="title" id="sizing-addon2"><h4>{% trans 'Title' %}</h4></label>
-                                                                  <textarea data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></textarea>
+                                                                  <label for="title" id="sizing-addon2">{% trans 'Title' %}</label>
+                                                                  <input type="text" data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></input>
                                                                 </div>
                                                                 <div class="form-group">
-                                                                  <label for="comment" id="sizing-addon2"><h4>{% trans 'Text' %}</h4></label>
+                                                                  <label for="comment" id="sizing-addon2">{% trans 'Text' %}</label>
                                                                   <textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="3" id="comment"></textarea>
                                                                 </div>
                                                                 <div>
@@ -291,7 +290,7 @@ var pk = "{{pk}}";
                                                                           <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
                                                                       </div>
                                                                   </div>
-                                                                  <h4>{% trans 'Multiple Images Uploads' %}</h4>
+                                                                  <h5>{% trans 'Multiple Images Uploads' %}</h5>
                                                                   <div class="well" data-bind="fileDrag: multiFileData">
                                                                             <div class="form-group row">
                                                                                 <div class="col-md-6">
@@ -312,10 +311,7 @@ var pk = "{{pk}}";
                                                                             </div>
                                                                         </div>
                                                                  </div>
-                                                              </div>
-
-                                                              <div class="col-sm-4">
-                                                                  <h4> {% trans 'Upload PDF OF Education Material' %}</h4>
+                                                               <h6> {% trans 'Upload PDF OF Education Material' %}</h6>
                                                                   <div>
                                                                     <div class="well">
                                                                         <div class="form-group row">
@@ -335,9 +331,10 @@ var pk = "{{pk}}";
                                                                         </div>
                                                                     </div>
                                                                  </div>
-
+                                                              <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
+                                                                <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">{% trans 'Save Changes' %}</button>
                                                               </div>
-                                                              <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">{% trans 'Save' %}</button>
                                                           </div>
                                                         </div>
                                                       </div>
@@ -613,85 +610,74 @@ var pk = "{{pk}}";
                         <div data-bind="with: em">
                           <div class="modal-dialog form-modal" role="document">
                             <div class="modal-content">
-                              <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title">{% trans 'Education Material' %}</h4>
-                              </div>
-                              <div class="modal-body">
-                                  <div class="col-sm-8">
-                                      <h3>{% trans 'Create A Education Material' %}</h3>
+                             <div class="modal-header">
+                                 <h5 class="modal-title">{% trans 'Education Material' %}</h5>
+                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                             </div>
+                               <div class="modal-body">
+                                   <h6>{% trans 'Create A Education Material' %}</h6>
 
-                                    <div class="form-group">
-                                      <label for="title" id="sizing-addon2"><h4>{% trans 'Title' %}</h4></label>
-                                      <textarea data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></textarea>
-                                    </div>
+                                   <div class="form-group">
+                                       <label for="title" id="sizing-addon2">{% trans 'Title' %}</label>
+                                       <input type="text" data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></input>
+                                   </div>
+                                   <div class="form-group">
+                                       <label for="comment" id="sizing-addon2">{% trans 'Text' %}</label>
+                                       <textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="3" id="comment"></textarea>
+                                   </div>
+                                   <div>
+                                       <div data-bind="visible:em_images().length">
+                                           <p>{% trans 'Saved Images' %}</p>
+                                           <div data-bind="foreach:em_images">
+                                               <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
+                                           </div>
+                                       </div>
+                                       <h5>{% trans 'Multiple Images Uploads' %}</h5>
+                                       <div class="well" data-bind="fileDrag: multiFileData">
+                                           <div class="form-group row">
+                                               <div class="col-md-6">
+                                                   <!-- ko foreach: {data: multiFileData().dataURLArray, as: 'dataURL'} -->
+                                                   <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">
+                                                   <!-- /ko -->
+                                                   <div data-bind="ifnot: multiFileData().fileArray">
+                                                       <label class="drag-label">{% trans 'Drag files here' %}</label>
+                                                   </div>
+                                               </div>
+                                               <div class="col-md-6">
+                                                   <input type="file" multiple data-bind="fileInput: multiFileData, customFileInput: {
+                                                                                      buttonClass: 'btn btn-success',
+                                                                                      fileNameClass: 'disabled form-control',
+                                                                                      onClear: onClear,
+                                                                                    }" accept="image/*">
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                                   <h6> {% trans 'Upload PDF OF Education Material' %}</h6>
+                                   <div>
+                                       <div class="well">
+                                           <div class="form-group row">
+                                               <div class="col-sm-12">
+                                                   <div data-bind="visible:pdf">
+                                                       {% trans 'Current pdf' %}
+                                                       <a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank">{% trans 'View' %}</a>
 
-
-
-
-
-                                    <div class="form-group">
-                                      <label for="comment" id="sizing-addon2"><h4>{% trans 'Text' %}</h4></label>
-                                      <textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="3" id="comment"></textarea>
-                                    </div>
-
-
-
-                                  <div>
-                                          <div data-bind="visible:em_images().length">
-                                              <p>{% trans 'Saved Images' %}</p>
-                                              <div data-bind="foreach:em_images">
-                                                  <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
-                                              </div>
-                                          </div>
-                                        <h4>{% trans 'Multiple Images Uploads' %}</h4>
-                                            <div class="well" data-bind="fileDrag: multiFileData">
-                                                <div class="form-group row">
-                                                    <div class="col-md-6">
-                                                              <!-- ko foreach: {data: multiFileData().dataURLArray, as: 'dataURL'} -->
-                                                              <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">
-                                                              <!-- /ko -->
-                                                        <div data-bind="ifnot: multiFileData().fileArray">
-                                                            <label class="drag-label">{% trans 'Drag files here' %}</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <input type="file" multiple data-bind="fileInput: multiFileData, customFileInput: {
-                                                          buttonClass: 'btn btn-success',
-                                                          fileNameClass: 'disabled form-control',
-                                                          onClear: onClear,
-                                                        }" accept="image/*">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                     </div>
-                                      </div>
-
-                                  <div class="col-sm-4">
-                                      <h4> {% trans 'Upload PDF OF Education Material' %}</h4>
-                                      <div>
-                                        <div class="well">
-                                            <div class="form-group row">
-                                                <div class="col-sm-12">
-                                                    <div data-bind="visible:pdf">
-                                                        {% trans 'Current pdf' %}
-                                                        <a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank">{% trans 'View' %}</a>
-
-                                              <!--<button data-bind="click: addPdf">Load PDF</button>-->
-                                            <!--<div class="documentviewerpdf"></div>-->
-                                          </div>
-                                                    </div>
-                                                <div class="col-sm-12">
-                                                    <span>{% trans 'Change PDf File' %}</span>
-                                                    <input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">
-                                                </div>
-                                            </div>
-                                        </div>
-                                     </div>
-
-                                  </div>
-                                  <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">{% trans 'Save' %}</button>
-                              </div>
+                                                       <!--<button data-bind="click: addPdf">Load PDF</button>-->
+                                                       <!--<div class="documentviewerpdf"></div>-->
+                                                   </div>
+                                               </div>
+                                               <div class="col-sm-12">
+                                                   <span>{% trans 'Change PDf File' %}</span>
+                                                   <input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                                   <div class="modal-footer">
+                                       <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
+                                       <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">{% trans 'Save Changes' %}</button>
+                                   </div>
+                               </div>
                             </div>
                           </div>
                         </div>

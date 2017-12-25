@@ -1838,4 +1838,3 @@ class MultiSiteAssignRegionView(ProjectRoleMixin, TemplateView):
 
         return HttpResponse("Success")
 
-
