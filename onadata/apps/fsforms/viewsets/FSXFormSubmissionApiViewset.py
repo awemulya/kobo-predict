@@ -124,7 +124,8 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         if fs_proj_xf.is_survey:
             error, instance = create_instance_from_xml(request, None, None, fs_proj_xf.id, proj_id, xform)
         else:
-            error, instance = create_instance_from_xml(request, site_fsxf_id=317, siteid, fs_proj_xf.id, proj_id, xform)
+            siteid=317
+            error, instance = create_instance_from_xml(request, site_fsxf_id, siteid, fs_proj_xf.id, proj_id, xform)
 
         noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Project level Submission",
                                        organization=fs_proj_xf.project.organization,
