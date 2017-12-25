@@ -19,19 +19,18 @@
 
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#addfriend" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-plus"></i>{% trans 'Add/Invite Users' %}</a>
 
-
 						</div>
                     </header>
                     <div class="panel-body">
 
 						<div class="collapse margin-top" id="searchOrganization">
-							<form method="GET" class="padding" action="{% url 'fieldsight:search-org-users' org.pk %}">
+							<form class="padding">
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										  <input type="text" name="q" placeholder="Search for..." value='{{ request.GET.q }}'/>
+										  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
 										  <span class="input-group-btn">
-											  <button class="btn btn-primary" type="submit" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
+											<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
 										  </span>
 										</div>
 									</div>

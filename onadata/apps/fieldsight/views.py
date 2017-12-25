@@ -1838,16 +1838,3 @@ class MultiSiteAssignRegionView(ProjectRoleMixin, TemplateView):
 
         return HttpResponse("Success")
 
-class OrganizationUserSearchView(ListView):
-    model = UserRole
-    template_name = 'fieldsight/user_list_updated.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(OrganizationUserSearchView, self).get_context_data(**kwargs)
-        context['org'] = Organization.objects.get(pk=self.kwargs.get('pk'))
-        return context
-
-    def get_queryset(self):
-        query = self.request.GET.get("q")
-        return self.model.objects.filter(user__username__icontains=query, organization_id = self.kwargs.get('pk'), project__isnull = True, site__isnull = True, ended_at__isnull=True).distinct('user')
-
