@@ -42,10 +42,13 @@ class ContactSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('username', 'email', 'address','gender','phone','skype', 'twitter','tango','hike','qq', 'google_talk',
-                  'profile_picture', 'viber', 'whatsapp', 'wechat', 'full_name', 'role', 'primary_number',
-                'secondary_number', 'office_number')
+        # fields = ('username', 'email', 'address','gender','phone','skype', 'twitter','tango','hike','qq', 'google_talk',
+        #           'profile_picture', 'viber', 'whatsapp', 'wechat', 'full_name', 'role', 'primary_number',
+        #         'secondary_number', 'office_number')
 
+        fields = ('username', 'email', 'address','gender','phone','skype', 'twitter','tango','hike','qq', 'google_talk',
+                  'profile_picture', 'viber', 'whatsapp', 'wechat', 'full_name', 'primary_number',
+                'secondary_number', 'office_number')
     # def get_role(self, obj):
     #     #exclude site supervisors.
     #     group = Group.objects.get(name__exact="Site Supervisor")
