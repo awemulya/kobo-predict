@@ -46,14 +46,14 @@ class ContactSerializer(serializers.ModelSerializer):
                   'profile_picture', 'viber', 'whatsapp', 'wechat', 'full_name', 'role', 'primary_number',
                 'secondary_number', 'office_number')
 
-    # def get_role(self, obj):
-    #     #exclude site supervisors.
-    #     group = Group.objects.get(name__exact="Site Supervisor")
-    #     roles =  UserRole.objects.filter(~Q(group = group),user=obj.user, ended_at__isnull=True)
-    #     role_list =  []
-    #     for r in roles:
-    #         role_list.append({'group':str(r.group), 'project':str(r.project),'site':str(r.site)})
-    #     return role_list
+    def get_role(self, obj):
+        #exclude site supervisors.
+        group = Group.objects.get(name__exact="Site Supervisor")
+        roles =  UserRole.objects.filter(~Q(group = group),user=obj.user, ended_at__isnull=True)
+        role_list =  []
+        for r in roles:
+            role_list.append({'group':str(r.group)})
+        return role_list
 
 
 class ContactViewSet(viewsets.ModelViewSet):
