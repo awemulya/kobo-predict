@@ -43,7 +43,7 @@ def bulkuploadsites(source_user, file, pk):
                 lat = site.get("longitude", 85.3240)
                 long = site.get("latitude", 27.7172)
                 location = Point(lat, long, srid=4326)
-                type_id = int(site.get("type", "1"))
+                type_id = int(site.get("type", None))
                 
                 region_idf = site.get("region_id", None)
                 region_id = None
@@ -61,6 +61,14 @@ def bulkuploadsites(source_user, file, pk):
                 _site.additional_desc = site.get("additional_desc")
                 _site.location = location
                 _site.logo = "logo/default-org.jpg"
+
+                meta_ques = project.site_meta_attributes
+
+                myanswers = {}
+                for question in meta_ques:
+                    myanswers[question['question_name']]=site.get("region_id", "")
+                
+                _site.site_meta_attributes_ans = myanswers
                 _site.save()
                 i += 1
                 interval = count/20
@@ -95,9 +103,10 @@ def bulkuploadsites(source_user, file, pk):
         task.status = 3
         task.save()
         print 'Site Upload Unsuccesfull. %s' % e
+        print e.__dict__
         noti = project.logs.create(source=source_user, type=412, title="Bulk Sites",
                                        content_object=project, recipient=source_user,
-                                       extra_message=str(count) + " Sites")
+                                       extra_message=str(count) + " Sites @error " + u'{}'.format(e.message))
         result={}
         result['id']= noti.id,
         result['source_uid']= source_user.id,
@@ -111,7 +120,7 @@ def bulkuploadsites(source_user, file, pk):
         result['get_absolute_url']= noti.get_absolute_url(),
         result['type']= 412,
         result['date']= str(noti.date),
-        result['extra_message']= "failed Sites",
+        result['extra_message']= str(count) + " Sites @error " + u'{}'.format(e.message),
         result['seen_by']= [],
         ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
         return None

@@ -176,9 +176,6 @@ class Project(models.Model):
     cluster_sites = models.BooleanField(default=False)
     site_meta_attributes = JSONField(default=list)
     logs = GenericRelation('eventlog.FieldSightLog')
-
-
-
     objects = GeoManager()
 
     class Meta:
@@ -293,7 +290,7 @@ class Site(models.Model):
     objects = GeoManager()
 
     class Meta:
-         ordering = ['-is_active', 'name', ]
+         ordering = ['-is_active', '-id']
          unique_together = [('identifier', 'project'), ]
 
     @property
