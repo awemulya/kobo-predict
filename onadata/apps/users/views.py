@@ -52,7 +52,7 @@ class ContactSerializer(serializers.ModelSerializer):
         roles =  UserRole.objects.filter(~Q(group = group),user=obj.user, ended_at__isnull=True)
         role_list =  []
         for r in roles:
-            role_list.append({'group':str(r.group), 'project':str(r.project.phone),'site':str(r.site)})
+            role_list.append({'group':str(r.group), 'project':u'{}'.format(r.project),'site':str(r.site)})
         return role_list
 
 
