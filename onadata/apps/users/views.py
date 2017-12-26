@@ -38,7 +38,7 @@ class ContactSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source='user.username')
     email = serializers.ReadOnlyField(source='user.email')
     full_name = serializers.ReadOnlyField(source='user.get_full_name')
-    role = serializers.SerializerMethodField()
+    # role = serializers.SerializerMethodField()
 
     class Meta:
         model = UserProfile
@@ -46,14 +46,14 @@ class ContactSerializer(serializers.ModelSerializer):
                   'profile_picture', 'viber', 'whatsapp', 'wechat', 'full_name', 'role', 'primary_number',
                 'secondary_number', 'office_number')
 
-    def get_role(self, obj):
-        #exclude site supervisors.
-        group = Group.objects.get(name__exact="Site Supervisor")
-        roles =  UserRole.objects.filter(~Q(group = group),user=obj.user, ended_at__isnull=True)
-        role_list =  []
-        for r in roles:
-            role_list.append({'group':str(r.group), 'project':str(r.project),'site':str(r.site)})
-        return role_list
+    # def get_role(self, obj):
+    #     #exclude site supervisors.
+    #     group = Group.objects.get(name__exact="Site Supervisor")
+    #     roles =  UserRole.objects.filter(~Q(group = group),user=obj.user, ended_at__isnull=True)
+    #     role_list =  []
+    #     for r in roles:
+    #         role_list.append({'group':str(r.group), 'project':str(r.project),'site':str(r.site)})
+    #     return role_list
 
 
 class ContactViewSet(viewsets.ModelViewSet):
