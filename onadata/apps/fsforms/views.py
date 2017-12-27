@@ -1091,8 +1091,12 @@ def project_survey(request, project_id):
 
 @group_required("Project")
 def setup_forms(request, is_project, pk):
+    if is_project == '1':
+        obj = Project.objects.get(pk=pk)
+    else:
+        obj = Site.objects.get(pk=pk)
     return render(request, "fsforms/manage_forms.html",
-                  {'is_project': is_project, 'pk': pk, 'form': GeneralForm(request=request),
+                  {'obj': obj, 'is_project': is_project, 'pk': pk, 'form': GeneralForm(request=request),
                    'schedule_form': KoScheduleForm(request=request)})
 
 # kobo form related

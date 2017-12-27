@@ -65,9 +65,9 @@ var pk = "{{pk}}";
         <ol class="breadcrumb">
             {% block breadcrumbs %}
             {% if is_project == "0" %}
-			<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{% trans 'Site Dashboard' %}</a></li>
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{{ obj.name }}</a></li>
             {% else %}
-			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{% trans 'Project Dashboard' %}</a></li>
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ obj.name }}</a></li>
             {% endif %}
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage Forms' %}</li>
 		    {% endblock %}
