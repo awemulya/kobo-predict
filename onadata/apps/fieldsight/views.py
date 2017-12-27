@@ -233,7 +233,13 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
 
         line_chart = LineChartGeneratorSite(obj)
         line_chart_data = line_chart.data()
-
+        meta_questions = obj.project.site_meta_attributes
+        meta_answers = obj.site_meta_attributes_ans
+        mylist =[]
+        for question in meta_questions:
+            mylist.append({question['question_text'] : meta_answers[question['question_name']]})
+        myanswers = mylist
+        print myanswers
         outstanding, flagged, approved, rejected = obj.get_site_submission()
         dashboard_data = {
             'obj': obj,
@@ -245,6 +251,7 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
             'data': data,
             'cumulative_data': line_chart_data.values(),
             'cumulative_labels': line_chart_data.keys(),
+            'meta_data': myanswers,
         }
         return dashboard_data
 
@@ -1231,7 +1238,7 @@ class ActivateRole(TemplateView):
         if user_exists:
             user = user_exists[0]
             #To ensure profile exists because many users still dont have profile.
-            profile = UserProfile.objects.get_or_create(user=user, organization=invite.organization) 
+            
             if request.POST.get('response') == "accept":
                 if not user.is_active:
                     user.is_active = True

@@ -70,7 +70,12 @@
 												<h6>{{ obj.identifier }}</h6>
 												<p>{{ obj.address }}, {{ obj.get_country_display }}</p>
                                                 <p>{{ obj.email }}</p>
-											</div>
+                                                {% for data in meta_data %}
+                                            	{% for key, value in data.items %}
+                                            	<p>{{ key }} : {{ value }}</p>
+                                            	{% endfor %}
+                                            	{% endfor %}
+       										</div>
 										</div>
 									</div>
 									<div class="col-lg-6 col-sm-12">
