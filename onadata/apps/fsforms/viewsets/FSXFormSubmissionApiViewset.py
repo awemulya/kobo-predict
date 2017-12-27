@@ -107,6 +107,8 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                                                                       fsform=fs_proj_xf, schedule=s)
                     xform = fxf.xf
                 elif (fs_proj_xf.is_scheduled is False and fs_proj_xf.is_staged is False) and siteid:
+                    import ipdb
+                    ipdb.set_trace()
                     fxf, created = FieldSightXF.objects.get_or_create(is_scheduled=False,is_staged=False, site__id=siteid,
                                                    xf=fs_proj_xf.xf, from_project=True, fsform=fs_proj_xf)
                     xform = fxf.xf
