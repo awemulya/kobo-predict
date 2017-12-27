@@ -913,21 +913,23 @@ class BluePrintsView(LoginRequiredMixin, TemplateView):
 
 class ManagePeopleSiteView(LoginRequiredMixin, ReviewerRoleMixin, TemplateView):
     def get(self, request, pk):
+        obj = get_object_or_404(Site, id=self.kwargs.get('pk'))
         project = Site.objects.get(pk=pk).project
-        return render(request, 'fieldsight/manage_people_site.html', {'pk':pk, 'level': "0", 'category':"site", 'organization': project.organization.id, 'project':project.id, 'site':pk})
+        return render(request, 'fieldsight/manage_people_site.html', {'obj': obj, 'pk':pk, 'level': "0", 'category':"site", 'organization': project.organization.id, 'project':project.id, 'site':pk})
 
 
 class ManagePeopleProjectView(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
+        obj = get_object_or_404(Project, id=self.kwargs.get('pk'))
         project = Project.objects.get(pk=pk)
         organization=project.organization_id
-        return render(request, "fieldsight/manage_people_site.html",
-                      {'pk': pk, 'level': "1", 'category':"Project Manager", 'organization': organization, 'project': pk, 'type':'project', 'obj':project, })
+        return render(request, 'fieldsight/manage_people_site.html', {'obj': obj, 'pk': pk, 'level': "1", 'category':"Project Manager", 'organization': organization, 'project': pk, 'type':'project', 'obj':project, })
 
 
 class ManagePeopleOrganizationView(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
     def get(self, request, pk):
-        return render(request, 'fieldsight/manage_people_site.html', {'pk': pk, 'level': "2", 'category':"Organization Admin", 'organization': pk, 'type':'org'})
+        obj = get_object_or_404(Organization, id=self.kwargs.get('pk'))
+        return render(request, 'fieldsight/manage_people_site.html', {'obj': obj, 'pk': pk, 'level': "2", 'category':"Organization Admin", 'organization': pk, 'type':'org'})
 
 
 def all_notification(user,  message):
@@ -986,6 +988,7 @@ class OrgUserList(OrganizationRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(OrgUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['obj'] = Organization.objects.get(pk=self.kwargs.get('pk'))
         context['organization_id'] = self.kwargs.get('pk')
         context['type'] = "organization"
         return context
@@ -1001,6 +1004,7 @@ class ProjUserList(ProjectRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ProjUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['obj'] = Project.objects.get(pk=self.kwargs.get('pk'))
         context['organization_id'] = Project.objects.get(pk=self.kwargs.get('pk')).organization.id
         context['type'] = "project"
         return context
@@ -1013,6 +1017,7 @@ class SiteUserList(ReviewerRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(SiteUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['obj'] = Site.objects.get(pk=self.kwargs.get('pk'))
         context['organization_id'] = Site.objects.get(pk=self.kwargs.get('pk')).project.organization.id
         context['type'] = "site"
         return context
@@ -1560,7 +1565,7 @@ class OrganizationdataSubmissionView(TemplateView):
 
     def get_context_data(self, **kwargs):
         data = super(OrganizationdataSubmissionView, self).get_context_data(**kwargs)
-        obj = Organization.objects.get(pk=self.kwargs.get('pk'))
+        data['obj'] = Organization.objects.get(pk=self.kwargs.get('pk'))
         data['pending'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='0').order_by('-date')
         data['rejected'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='1').order_by('-date')
         data['flagged'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='2').order_by('-date')
@@ -1575,7 +1580,7 @@ class ProjectdataSubmissionView(ProjectRoleMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         data = super(ProjectdataSubmissionView, self).get_context_data(**kwargs)
-        obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        data['obj'] = Project.objects.get(pk=self.kwargs.get('pk'))
         data['pending'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='0').order_by('-date')
         data['rejected'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='1').order_by('-date')
         data['flagged'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='2').order_by('-date')
@@ -1590,7 +1595,7 @@ class SitedataSubmissionView(TemplateView):
 
     def get_context_data(self, **kwargs):
         data = super(SitedataSubmissionView, self).get_context_data(**kwargs)
-        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        data['obj'] = Site.objects.get(pk=self.kwargs.get('pk'))
         data['pending'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '0').order_by('-date')
         data['rejected'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '1').order_by('-date')
         data['flagged'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '2').order_by('-date')

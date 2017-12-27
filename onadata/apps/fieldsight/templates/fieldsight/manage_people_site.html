@@ -71,13 +71,13 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 {% block breadcrumbs %}
 					<ol class="breadcrumb">
                       {% if level == "0" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{% trans 'Site Dashboard' %}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{{ obj.name }}</a></li>
                       {% endif %}
                       {% if level == "1" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{% trans 'Project Dashboard' %}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ obj.name }}</a></li>
                       {% endif %}
                       {% if level == "2" %}
-                        <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{% trans 'Organization Dashboard' %}</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{{ obj.name }}</a></li>
                       {% endif %}
 						<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage People' %}</li>
 					 </ol>
@@ -150,7 +150,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
                   <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignsupervisors"><i class="la la-user-plus"></i> Assign selected as Supervisors</button>
-               
+
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
