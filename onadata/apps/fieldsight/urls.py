@@ -170,7 +170,7 @@ urlpatterns = [
     url(r'^region/delete/(?P<pk>[0-9]+)$', RegionDeleteView.as_view(), name='region-delete'),
     # url(r'^region/deactivate/(?P<pk>[0-9]+)$', RegionDeactivateView.as_view(), name='region-deactivate'),
 
-    url(r'^region/(?P<pk>[0-9]+)$', RegionUpdateView.as_view(), name='region-update'),
+    url(r'^region/(?P<pk>[0-9]+)/$', RegionUpdateView.as_view(), name='region-update'),
     url(r'^region-list/(?P<pk>\d+)/$', RegionListView.as_view(), name='region-list'),
 
     url(r'^api/project-regions/(?P<pk>\d+)/$', RegionViewSet.as_view({'get': 'list'}), name='project_regions_api'),

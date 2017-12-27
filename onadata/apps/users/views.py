@@ -257,7 +257,6 @@ class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
     # pass
     #
     def form_valid(self, form):
-        print "sadas333333333"
         user = self.request.user
         user.first_name = form.cleaned_data['first_name']
         user.last_name = form.cleaned_data['last_name']
@@ -300,7 +299,8 @@ def my_profile(request, pk=None):
         profile, created = UserProfile.objects.get_or_create(user=request.user)
         # roles = request.user.user_roles.all()
         responses = FInstance.objects.filter(submitted_by = request.user).order_by('-date')[:10]
-        return render(request, 'users/profile.html', {'obj': profile, 'roles': "Super Admin", 'responses': responses })
+        return render(request, 'users/profile.html', {'obj': profile, 'responses': responses })
+        # return render(request, 'users/profile.html', {'obj': profile, 'roles': "Super Admin", 'responses': responses })
     else:
         user = get_object_or_404(User.objects.filter(pk=pk))
         profile, created = UserProfile.objects.get_or_create(user_id=pk)

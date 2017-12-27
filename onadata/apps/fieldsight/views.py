@@ -810,10 +810,12 @@ def ajax_save_project(request):
 class UploadSitesView(ProjectRoleMixin, TemplateView):
 
     def get(self, request, pk):
+        obj = get_object_or_404(Project, pk=pk)
         form = UploadFileForm()
-        return render(request, 'fieldsight/upload_sites.html',{'form':form, 'project':pk})
+        return render(request, 'fieldsight/upload_sites.html',{'obj': obj, 'form':form, 'project':pk})
 
     def post(self, request, pk=id):
+        obj = get_object_or_404(Project, pk=pk)
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             try:
@@ -830,7 +832,7 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
                 form.full_clean()
                 form._errors[NON_FIELD_ERRORS] = form.error_class(['Sites Upload Failed, UnSupported Data', e])
                 messages.warning(request, 'Site Upload Failed, UnSupported Data ')
-        return render(request, 'fieldsight/upload_sites.html', {'form': form, 'project': pk})
+        return render(request, 'fieldsight/upload_sites.html', {'obj': obj, 'form': form, 'project': pk})
 
 
 def download(request):
@@ -1624,6 +1626,8 @@ class RegionView(object):
 class RegionListView(RegionView, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(RegionListView, self).get_context_data(**kwargs)
+        project = Project.objects.get(pk=self.kwargs.get('pk'))
+        context['project'] = project
         context['pk'] = self.kwargs.get('pk')
         context['type'] = "region"
         return context

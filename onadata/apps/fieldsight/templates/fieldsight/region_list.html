@@ -10,6 +10,12 @@
 {% load sorting_tags %}
 {% load fs_filters %}
 <div id="main-content" class="padding">
+                <nav aria-label="breadcrumb" role="navigation">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ project.name }}</a></li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Region List' %}</li>
+					</ol>
+				</nav>
 				<section class="panel">
                     <header class="panel-heading clearfix">
                         <h3><i class="la la-building"></i>{% trans 'Manage' %} {% trans 'Regions'%}</h3>
