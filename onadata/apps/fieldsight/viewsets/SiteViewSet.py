@@ -162,6 +162,8 @@ class SiteCreationSurveyViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         with transaction.atomic():
             site = serializer.save()
+            site.is_active = True
+            site.save()
             group = Group.objects.get(name="Site Supervisor")
             UserRole.objects.get_or_create(user=self.request.user, site_id=site.id,
                                            project__id=site.project.id, group=group)
