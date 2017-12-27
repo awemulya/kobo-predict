@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from onadata.apps.api.viewsets.xform_submission_api import XFormSubmissionApi
-from onadata.apps.fsforms.models import FieldSightXF, Stage
+from onadata.apps.fsforms.models import FieldSightXF, Stage, Schedule
 from onadata.apps.fsforms.serializers.FieldSightSubmissionSerializer import FieldSightSubmissionSerializer
 from ..fieldsight_logger_tools import safe_create_instance
 from channels import Group as ChannelGroup
@@ -95,18 +95,48 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                 if fs_proj_xf.is_survey:
                     xform = fs_proj_xf.xf
                 elif fs_proj_xf.is_scheduled and siteid:
-                    fxf = FieldSightXF.objects.get(is_scheduled=True, site__id=siteid, xf=fs_proj_xf.xf, from_project=True, fsform=fs_proj_xf)
+                    schedule = fs_proj_xf.schedule
+                    selected_days = tuple(schedule.selected_days.all())
+                    s, created = Schedule.objects.get_or_create(name=schedule.name, site__id=siteid, date_range_start=schedule.date_range_start,
+                                                date_range_end=schedule.date_range_end)
+                    if created:
+                        s.selected_days.add(*selected_days)
+                        s.save()
+                    fxf, created = FieldSightXF.objects.get_or_create(is_scheduled=True, site__id=siteid,
+                                                                      xf=fs_proj_xf.xf, from_project=True,
+                                                                      fsform=fs_proj_xf, schedule=s)
                     xform = fxf.xf
                 elif (fs_proj_xf.is_scheduled is False and fs_proj_xf.is_staged is False) and siteid:
-                    fxf = FieldSightXF.objects.get(is_scheduled=False,is_staged=False, site__id=siteid,
+                    fxf, created = FieldSightXF.objects.get_or_create(is_scheduled=False,is_staged=False, site__id=siteid,
                                                    xf=fs_proj_xf.xf, from_project=True, fsform=fs_proj_xf)
                     xform = fxf.xf
                 elif fs_proj_xf.is_staged and siteid:
                     project_stage = fs_proj_xf.stage
-                    site_stage = Stage.objects.get(site__id=siteid, project_stage_id=project_stage.id)
-                    fxf = site_stage.stage_forms
-                    # or get from project fsform same as general and schedule
-                    xform = fxf.xf
+                    try:
+                        site_stage = Stage.objects.get(site__id=siteid, project_stage_id=project_stage.id)
+                        fxf = site_stage.stage_forms
+                        xform = fxf.xf
+                    except Exception as e:
+                        project = fs_proj_xf.project
+                        project_main_stages = project.stages.filter(stage__isnull=True)
+                        for pms in project_main_stages:
+                            project_sub_stages = Stage.objects.filter(stage__id=pms.pk, stage_forms__is_deleted=False)
+                            site_main_stage, created = Stage.objects.get_or_create(name=pms.name, order=pms.order,
+                                                                                   site__id=siteid,
+                                                                                   description=pms.description,
+                                                                                   project_stage_id=pms.id)
+                            for pss in project_sub_stages:
+                                site_sub_stage, created = Stage.objects.get_or_create(name=pss.name, order=pss.order, site=siteid,
+                                               description=pss.description, stage=site_main_stage, project_stage_id=pss.id)
+                                if FieldSightXF.objects.filter(stage=pss).exists():
+                                    project_fsxf = pss.stage_forms
+                                    site_form, created = FieldSightXF.objects.get_or_create(is_staged=True, xf=project_fsxf.xf,
+                                                                                            site=siteid,fsform=project_fsxf,
+                                                                                            stage=site_sub_stage,
+                                                                                            is_deployed=True)
+                                    if project_fsxf.id == fs_proj_xf.id:
+                                        fxf = site_form
+                                        xform = fxf.xf
             except Exception as e:
                 xform = fs_proj_xf.xf
             proj_id = fs_proj_xf.project.id
