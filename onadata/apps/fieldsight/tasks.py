@@ -43,7 +43,7 @@ def bulkuploadsites(source_user, file, pk):
                 lat = site.get("longitude", 85.3240)
                 long = site.get("latitude", 27.7172)
                 location = Point(lat, long, srid=4326)
-                type_id = int(site.get("type", None))
+                type_id = int(site.get("type", ))
                 
                 region_idf = site.get("region_id", None)
                 region_id = None
@@ -66,7 +66,7 @@ def bulkuploadsites(source_user, file, pk):
 
                 myanswers = {}
                 for question in meta_ques:
-                    myanswers[question['question_name']]=site.get("region_id", "")
+                    myanswers[question['question_name']]=site.get(question['question_name'], "")
                 
                 _site.site_meta_attributes_ans = myanswers
                 _site.save()
