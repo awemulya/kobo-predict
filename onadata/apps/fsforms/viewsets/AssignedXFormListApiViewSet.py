@@ -45,7 +45,7 @@ class AssignedXFormListApi(XFormListApi):
 
     def project_forms(self, request, *args, **kwargs):
         self.object_list = self.queryset.filter(Q(project__id=kwargs.get('project_id'), site__isnull=True,
-                                                  is_deployed=True, is_deleted=False) |
+                                                  is_deleted=False) |
                                                 Q(project__id=kwargs.get('project_id'), site__isnull=True,
                                                   is_survey=True, is_deleted=False))
 
