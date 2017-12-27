@@ -682,7 +682,7 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
 
 
-class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
+class SiteUpdateView(SiteView, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(SiteUpdateView, self).get_context_data(**kwargs)
         site=Site.objects.get(pk=self.kwargs.get('pk'))
@@ -1236,7 +1236,10 @@ class ActivateRole(TemplateView):
         if user_exists:
             user = user_exists[0]
             #To ensure profile exists because many users still dont have profile.
-            
+            profile, created = UserProfile.objects.get_or_create(user=user)
+            if created:
+                profile.organization = invite.organization
+                profile.save() 
             if request.POST.get('response') == "accept":
                 if not user.is_active:
                     user.is_active = True
@@ -1868,7 +1871,7 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
         font_style = xlwt.XFStyle()
         font_style.font.bold = True
 
-        columns = ['id', 'name', 'type of site', 'phone', 'address', 'public_desc', 'additional_desc', 'latitude', 'longitude',]
+        columns = ['id', 'name', 'type', 'phone', 'address', 'public_desc', 'additional_desc', 'latitude', 'longitude',]
         if project.cluster_sites:
             columns += ['region_id',]
         meta_ques = project.site_meta_attributes
