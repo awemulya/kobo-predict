@@ -67,6 +67,7 @@ def bulkuploadsites(source_user, file, pk):
                 myanswers = {}
                 for question in meta_ques:
                     myanswers[question['question_name']]=site.get(question['question_name'], "")
+                    print site.get(question['question_name'])
                 
                 _site.site_meta_attributes_ans = myanswers
                 _site.save()
