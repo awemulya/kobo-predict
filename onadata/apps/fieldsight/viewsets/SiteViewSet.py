@@ -1,4 +1,5 @@
 import json
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -282,8 +283,10 @@ class SiteSearchViewSet(viewsets.ModelViewSet):
         return queryset.filter(project__id=project_id)
 
     def get_queryset(self):
+
         query = self.request.GET.get("q")
         return self.queryset.filter(Q(name__icontains=query) | Q(identifier__icontains=query))
+
 
 
 def all_notification(user,  message):

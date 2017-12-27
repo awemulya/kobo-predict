@@ -10,22 +10,7 @@
     {% load sorting_tags %}
     {% load filters %}
 				<div id="main-content" class="padding">
-				<nav aria-label="breadcrumb" role="navigation">
-					{% block breadcrumbs %}
-					<ol class="breadcrumb">
-						{% if type == "site" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{% trans 'Site Dashboard' %}</a></li>
-						{% endif %}
-						{% if type == "project" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{% trans 'Project Dashboard' %}</a></li>
-						{% endif %}
-						{% if type == "organization" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{% trans 'Organization Dashboard' %}</a></li>
-						{% endif %}
-						<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage People' %}</li>
-					 </ol>
-					{% endblock %}
-				</nav>
+
 				<section class="panel">
                     <header class="panel-heading clearfix">
                         <h3>{% trans 'Users' %}</h3></i>
@@ -33,7 +18,6 @@
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i>{% trans 'Search' %}</a>
 
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#addfriend" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-plus"></i>{% trans 'Add/Invite Users' %}</a>
-
 
 						</div>
                     </header>
@@ -46,11 +30,10 @@
 										<div class="input-group">
 										  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
 										  <span class="input-group-btn">
-											<button class="btn btn-primary" type="button"><i class="fa fa-search"></i> Search</button>
+											<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
 										  </span>
 										</div>
 									</div>
-
 									<div class="col-md-3"></div>
 								</div>
 							</form>

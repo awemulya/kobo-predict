@@ -100,9 +100,6 @@ class Organization(models.Model):
     def getname(self):
         return self.name
 
-    def __str__(self):
-        return self.name
-
     @property
     def status(self):
         if self.organization_instances.filter(form_status=1).count():
@@ -179,9 +176,6 @@ class Project(models.Model):
     cluster_sites = models.BooleanField(default=False)
     site_meta_attributes = JSONField(default=list)
     logs = GenericRelation('eventlog.FieldSightLog')
-
-
-
     objects = GeoManager()
 
     class Meta:
@@ -200,9 +194,8 @@ class Project(models.Model):
     def getname(self):
         return self.name
 
-    def __str__(self):
-        return self.name
-
+    def __unicode__(self):
+        return u'{}'.format(self.name)
     @property
     def get_staffs(self):
         staffs = self.project_roles.filter(group__name__in=["Reviewer", "Project Manager"])
@@ -297,7 +290,7 @@ class Site(models.Model):
     objects = GeoManager()
 
     class Meta:
-         ordering = ['-is_active', 'name', ]
+         ordering = ['-is_active', '-id']
          unique_together = [('identifier', 'project'), ]
 
     @property
@@ -313,9 +306,8 @@ class Site(models.Model):
     def getname(self):
         return self.name
 
-    def __str__(self):
-        return self.name
-
+    def __unicode__(self):
+        return u'{}'.format(self.name)
     @property
     def get_supervisors(self):
         return self.site_roles.all()

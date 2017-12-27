@@ -27,6 +27,7 @@
 									<div class="form-group col-sm-12">
 
 									  <div class="col-sm-3"><h3> {% trans 'Upload A File' %}</h3></div><br>
+									  <div class="col-sm-3"><a href="{% url 'fieldsight:excel_bulk_site_sample' project %}" target="_blank">Download Excel Bulk Upload Form.</a></div><br>
                                       <div class="col-sm-0">      {{ field }}</div>
                                       <div class="col-sm-6">      {{ field.errors }}</div>
 									</div>
