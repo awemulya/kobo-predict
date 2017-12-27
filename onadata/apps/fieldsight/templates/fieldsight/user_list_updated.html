@@ -14,13 +14,13 @@
 					{% block breadcrumbs %}
 					<ol class="breadcrumb">
 						{% if type == "site" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{% trans 'Site Dashboard' %}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{{ obj.name }}</a></li>
 						{% endif %}
 						{% if type == "project" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{% trans 'Project Dashboard' %}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ obj.name }}</a></li>
 						{% endif %}
 						{% if type == "organization" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{% trans 'Organization Dashboard' %}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{{ obj.name }}</a></li>
 						{% endif %}
 						<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage People' %}</li>
 					 </ol>

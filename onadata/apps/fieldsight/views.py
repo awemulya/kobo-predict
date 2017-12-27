@@ -987,6 +987,7 @@ class OrgUserList(OrganizationRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(OrgUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['obj'] = Organization.objects.get(pk=self.kwargs.get('pk'))
         context['organization_id'] = self.kwargs.get('pk')
         context['type'] = "organization"
         return context
@@ -1002,6 +1003,7 @@ class ProjUserList(ProjectRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ProjUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['obj'] = Project.objects.get(pk=self.kwargs.get('pk'))
         context['organization_id'] = Project.objects.get(pk=self.kwargs.get('pk')).organization.id
         context['type'] = "project"
         return context
@@ -1014,6 +1016,7 @@ class SiteUserList(ReviewerRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(SiteUserList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['obj'] = Site.objects.get(pk=self.kwargs.get('pk'))
         context['organization_id'] = Site.objects.get(pk=self.kwargs.get('pk')).project.organization.id
         context['type'] = "site"
         return context
@@ -1559,7 +1562,7 @@ class OrganizationdataSubmissionView(TemplateView):
 
     def get_context_data(self, **kwargs):
         data = super(OrganizationdataSubmissionView, self).get_context_data(**kwargs)
-        obj = Organization.objects.get(pk=self.kwargs.get('pk'))
+        data['obj'] = Organization.objects.get(pk=self.kwargs.get('pk'))
         data['pending'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='0').order_by('-date')
         data['rejected'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='1').order_by('-date')
         data['flagged'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='2').order_by('-date')
@@ -1574,7 +1577,7 @@ class ProjectdataSubmissionView(ProjectRoleMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         data = super(ProjectdataSubmissionView, self).get_context_data(**kwargs)
-        obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        data['obj'] = Project.objects.get(pk=self.kwargs.get('pk'))
         data['pending'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='0').order_by('-date')
         data['rejected'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='1').order_by('-date')
         data['flagged'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), form_status='2').order_by('-date')
@@ -1589,7 +1592,7 @@ class SitedataSubmissionView(TemplateView):
 
     def get_context_data(self, **kwargs):
         data = super(SitedataSubmissionView, self).get_context_data(**kwargs)
-        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        data['obj'] = Site.objects.get(pk=self.kwargs.get('pk'))
         data['pending'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '0').order_by('-date')
         data['rejected'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '1').order_by('-date')
         data['flagged'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '2').order_by('-date')
