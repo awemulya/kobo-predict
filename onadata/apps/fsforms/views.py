@@ -1273,11 +1273,11 @@ class Html_export(ListView):
         context['obj'] = fsxf
         return context
     
-    def get_queryset(self):
-        fsxf_id = int(self.request.get('fsxf_id'))
+    def get_queryset(self, **kwargs):
+        fsxf_id = int(self.kwargs.get('fsxf_id'))
         queryset = FInstance.objects.filter(site_fxf=fsxf)
         return queryset
-        
+
 
 @group_required('KoboForms')
 def project_html_export(request, fsxf_id):
