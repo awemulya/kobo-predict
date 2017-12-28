@@ -1825,8 +1825,7 @@ class OrganizationUserSearchView(ListView):
 
     def get_queryset(self):
         query = self.request.REQUEST.get("q")
-        return self.model.objects.filter(user__username__icontains=query, organization_id=self.kwargs.get('pk'),project__isnull=True, site__isnull=True).distinct('user')
-        return queryset
+        return self.model.objects.select_related('user').filter(user__username__icontains=query, organization_id=self.kwargs.get('pk'), ended_at__isnull=True).distinct('user_id')
 
 class ProjectUserSearchView(ListView):
     model = UserRole
@@ -1842,18 +1841,13 @@ class ProjectUserSearchView(ListView):
 
     def get_queryset(self):
         query = self.request.REQUEST.get("q")
-        return self.model.objects.select_related('user').filter(user__username__icontains=query, project_id=self.kwargs.get('pk'),
-                                                                  ended_at__isnull=True).distinct('user_id')
+        return self.model.objects.select_related('user').filter(user__username__icontains=query, project_id=self.kwargs.get('pk'), ended_at__isnull=True).distinct('user_id')
 
 class SiteUserSearchView(ListView):
     model = UserRole
     template_name = "fieldsight/user_list_updated.html"
 
-    def get_queryset(self):
-        queryset = UserRole.objects.select_related('user').filter(site_id=self.kwargs.get('pk'),
-                                                                  ended_at__isnull=True).distinct('user_id')
 
-        return queryset
     def get_context_data(self, **kwargs):
         context = super(SiteUserSearchView, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
@@ -1864,8 +1858,7 @@ class SiteUserSearchView(ListView):
 
     def get_queryset(self):
         query = self.request.REQUEST.get("q")
-        return self.model.objects.select_related('user').filter(user__username__icontains=query, site_id=self.kwargs.get('pk'),
-                                                                  ended_at__isnull=True).distinct('user_id')
+        return self.model.objects.select_related('user').filter(user__username__icontains=query, site_id=self.kwargs.get('pk'), ended_at__isnull=True).distinct('user_id')
 
 class DefineProjectSiteMeta(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
