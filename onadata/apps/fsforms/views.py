@@ -1261,6 +1261,7 @@ def html_export(request, fsxf_id):
 class Html_export(ListView):
     model =   FInstance
     paginate_by = 10
+    template_name = "fsforms/fieldsight_export_html.html"
 
     def get_context_data(self, **kwargs):
         context = super(Html_export, self).get_context_data(**kwargs)
