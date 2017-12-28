@@ -1246,17 +1246,17 @@ def download_xform(request, pk):
 
 
 
-# @group_required('KoboForms')
-# def html_export(request, fsxf_id):
+@group_required('KoboForms')
+def html_export(request, fsxf_id):
     
-#     cursor = FInstance.objects.filter(site_fxf=fsxf)
-#     context={}
-#     context['is_site_data'] = True
-#     context['site_data'] = cursor
-#     context['form_name'] = fsxf.xf.title
-#     context['fsxfid'] = fsxf_id
-#     context['obj'] = fsxf
-#     return render(request, 'fsforms/fieldsight_export_html.html', context)
+    cursor = FInstance.objects.filter(site_fxf=fsxf)
+    context={}
+    context['is_site_data'] = True
+    context['site_data'] = cursor
+    context['form_name'] = fsxf.xf.title
+    context['fsxfid'] = fsxf_id
+    context['obj'] = fsxf
+    return render(request, 'fsforms/fieldsight_export_html.html', context)
 
 class Html_export(ListView):
     model =   FInstance
