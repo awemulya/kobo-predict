@@ -55,7 +55,10 @@
               {% for obj in generals %}
                   <tr>
                       <td>
-                          {{ obj.xf.title }}</a>
+                          {{ obj.xf.title }}
+                          {% if obj.fsform %}
+                            <span class="pull-right">Project Level</span>
+                          {% endif %}
                       </td>
                       <td>
                           {{ obj.date_created }}
@@ -99,6 +102,9 @@
                   <tr>
                       <td>
                           {{ obj.name}}
+                          {% if obj.fsform %}
+                            <span class="pull-right">Project Level</span>
+                          {% endif %}
                       </td>
                       <td>
                           {{ obj.schedule_forms.xf.title }}
@@ -155,6 +161,9 @@
                           <tr>
                               <td>
                                   {{ obj.name}}
+                                  {% if obj.fsform %}
+                                    <span class="pull-right">Project Level</span>
+                                  {% endif %}
                               </td>
                               <td>
                                   {{ obj.order }}
