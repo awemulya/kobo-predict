@@ -1264,7 +1264,7 @@ class Html_export(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(Html_export, self).get_context_data(**kwargs)
-        fsxf_id = int(self.request.get('fsxf_id'))
+        fsxf_id = int(self.kwargs.get('fsxf_id'))
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)    
         context['pk'] = self.kwargs.get('pk')
         context['is_site_data'] = True
