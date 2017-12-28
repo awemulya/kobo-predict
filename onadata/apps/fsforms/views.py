@@ -1275,7 +1275,7 @@ class Html_export(ListView):
     
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
-        queryset = FInstance.objects.filter(site_fxf=fsxf)
+        queryset = FInstance.objects.filter(site_fxf=fsxf_id)
         return queryset
 
 
