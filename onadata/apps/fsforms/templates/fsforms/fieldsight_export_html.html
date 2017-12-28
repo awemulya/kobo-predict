@@ -25,7 +25,7 @@
 <div id="main-content" class="padding">
         <section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3><i class="la la-pencil-square-o"></i>{% trans 'Form Submissions' %}</h3>
+                        <h3><i class="la la-pencil-square-o"></i>{% trans 'Form Submissions' %} | {{ form_name  }}</h3>
             <div class="panel-heading-right">
               <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForms" aria-expanded="false" aria-controls="searchForms"><i class="la la-search"></i> Search</a>
             
@@ -48,16 +48,11 @@
                 </div>
               </form>
             </div>
-          <div class="title-module">
-            <h5>{{ form_name  }}</h5>
-
-          </div>
-            <div class="pre-scrollable">
-              
+         
 <div class="container">
     
    {% if is_project_data %}
-   {% autopaginate project_data 10 as data %}         
+          
   <table class="table table-hover ceter-block sortable">
     <thead>
       <tr>
@@ -71,7 +66,7 @@
     </thead>
     <tbody>
 
-    {% for sub in data  %}
+    {% for sub in object_list  %}
             <!--   {% if sub.site_fxf %}
                <tr>
                  
@@ -87,7 +82,7 @@
               {% if sub.project_fxf %} -->
                <tr onclick="redirectto(`{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
                  
-                  <td>{{ forloop.counter }}</td>
+                  <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
                   <td>{{ sub.site.name }}</td>
                   <td>{{ sub.site.identifier }}</td>
                   <td>{{ sub.submitted_by.username }}</td>
@@ -105,21 +100,76 @@
 
 
 
+  {% if is_site_data %}
 
+  <table class="table table-hover ceter-block sortable">
+    <thead>
+      <tr>
+        <th>{% trans 'S.N' %}</th>
+
+        <th>{% trans 'Site Name' %}</th>
+        <th>{% trans 'Site Id' %}</th>
+        <th>{% trans 'Submitted By' %}</th>
+        <th>{% trans 'Submission Date' %}</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    {% for sub in object_list  %}
+           
+               <tr onclick="redirectto(`{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
+                 
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ sub.site.name }}</td>
+                  <td>{{ sub.site.identifier }}</td>
+                  <td>{{ sub.submitted_by.username }}</td>
+                  <td>{{ sub.date }}</td>
+                  </tr>
+            
+        
+
+    {% endfor %}
+     
+     
+    </tbody>
+  </table>
+  {% endif %}
 </div>
 
 
+{% if is_paginated %}
+            <nav class="pagination justify-content-center" aria-label="page-navigation">
+              <ul class="pagination">
+              {% if page_obj.has_previous %}
+                <li class="page-item disabled"><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+              {% else %}
+                <li class="disabled"><span>&laquo;</span></li>
+              {% endif %}
+              {% for i in paginator.page_range %}
+                {% if page_obj.number == i %}
+                <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
 
-            </div>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+              {% endfor %}
+              {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+              {% else %}
+                <li class="disabled"><span>&raquo;</span></li>
+              {% endif %}
+              </ul>
+            </nav>
+            {% endif %}
+           
           </div>
 
           
+
                 </section>
         
       </div>
-<div id="pagination">
-    {{ page.render }}
-</div>
+
 
 {% endblock %}
 
