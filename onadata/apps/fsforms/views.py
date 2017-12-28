@@ -1279,6 +1279,27 @@ class Html_export(ListView):
         queryset = FInstance.objects.filter(site_fxf=fsxf_id)
         return queryset
 
+class Project_html_export(ListView):
+    model =   FInstance
+    paginate_by = 10
+    template_name = "fsforms/fieldsight_export_html.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(Html_export, self).get_context_data(**kwargs)
+        fsxf_id = int(self.kwargs.get('fsxf_id'))
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)    
+        context['pk'] = self.kwargs.get('pk')
+        context['is_project_data'] = True
+        context['form_name'] = fsxf.xf.title
+        context['fsxfid'] = fsxf_id
+        context['obj'] = fsxf
+        return context
+    
+    def get_queryset(self, **kwargs):
+        fsxf_id = int(self.kwargs.get('fsxf_id'))
+        queryset = FInstance.objects.filter(project_fxf=fsxf_id)
+        return queryset
+
 
 @group_required('KoboForms')
 def project_html_export(request, fsxf_id):

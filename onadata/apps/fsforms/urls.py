@@ -42,7 +42,7 @@ from .views import (
     project_html_export, deploy_survey, deploy_stages, deploy_general, set_deploy_stages, share_stages,
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, setup_forms,
     instance_status, rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
-    save_educational_material, AlterStatusDetailView, Html_export)
+    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export)
 
 
 urlpatterns = [
@@ -129,8 +129,8 @@ urlpatterns = urlpatterns + [
 ]
 
 urlpatterns = urlpatterns + [
-        url(r'reports/(?P<fsxf_id>\d+)$', html_export, name='formpack_html_export'),
-        url(r'project-submissions/(?P<fsxf_id>\d+)$', Html_export.as_view(), name='project_html_export'),
+        url(r'reports/(?P<fsxf_id>\d+)$', Html_export.as_view(), name='formpack_html_export'),
+        url(r'project-submissions/(?P<fsxf_id>\d+)$', Project_html_export.as_view(), name='project_html_export'),
         url(r'^forms/(?P<fsxf_id>\d+)$', instance_kobo, name='instance'),
         url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', instance_detail, name='instance_detail'),
         url(r'^forms/alter-answer-status/(?P<instance_id>\d+)/(?P<status>\d)/(?P<fsid>\d+)$', alter_answer_status, name='alter-answer-status'),
