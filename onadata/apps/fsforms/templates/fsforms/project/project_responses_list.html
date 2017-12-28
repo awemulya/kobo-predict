@@ -68,7 +68,7 @@
                                {% trans ' View ' %}</a>
                       </td>
                       <td>
-                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" request.user.username obj.xf.id_string 'xls' 1 obj.id %}">
+                      <a target="_blank" href="{% url "onadata.apps.viewer.views.create_export" request.user.username obj.xf.id_string 'xls' 1 obj.id %}">
                           <i class="la la-download" aria-hidden="true"></i></a>
                       </td>
                   </tr>
