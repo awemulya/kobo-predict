@@ -129,9 +129,11 @@
 				  {% for instance in data %}
 				  <tr>
 					  <td style="width:60%;">
+						  {% if instance.site_fxf %}
 						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
 							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
 						  </a>
+						  {% endif %}
 					  </td>
 					  <td>
 						  <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
