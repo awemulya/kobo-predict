@@ -87,7 +87,7 @@
               {% if sub.project_fxf %} -->
                <tr onclick="redirectto(`{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
                  
-                  <td>{{ forloop.counter }}</td>
+                  <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
                   <td>{{ sub.site.name }}</td>
                   <td>{{ sub.site.identifier }}</td>
                   <td>{{ sub.submitted_by.username }}</td>
