@@ -15,6 +15,9 @@ from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteVie
 from .forms import RegistrationForm
 
 from .views import (
+    OrganizationUserSearchView,
+    ProjectUserSearchView,
+    SiteUserSearchView,
     OrganizationSearchView,
     ProjectSearchView,
     OrganizationListView,
@@ -187,6 +190,9 @@ urlpatterns = [
 
     url(r'^multi-user-assign-region/(?P<pk>\d+)/$', MultiUserAssignRegionView.as_view(), name='multi_user_region_assign'),
 
+    url(r'^search-org-user/(?P<pk>\d+)/$', OrganizationUserSearchView.as_view(), name='search-org-user'),
+    url(r'^search-proj-user/(?P<pk>\d+)/$', ProjectUserSearchView.as_view(), name='search-proj-user'),
+    url(r'^search-site-user/(?P<pk>\d+)/$', SiteUserSearchView.as_view(), name='search-site-user'),
 
     url(r'^search-org/$', OrganizationSearchView.as_view(), name='search-org-list'),
     url(r'^search-proj/(?P<pk>\d+)/$', ProjectSearchView.as_view(), name='search-proj-list'),

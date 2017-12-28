@@ -1814,6 +1814,59 @@ class ProjectSearchView(ListView):
         query = self.request.REQUEST.get("q")
         return self.model.objects.filter(name__icontains=query)
 
+class OrganizationUserSearchView(ListView):
+    model = UserRole
+    template_name = "fieldsight/user_list_updated.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(OrganizationUserSearchView, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        return context
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.model.objects.filter(user__username__icontains=query, organization_id=self.kwargs.get('pk'),project__isnull=True, site__isnull=True).distinct('user')
+        return queryset
+
+class ProjectUserSearchView(ListView):
+    model = UserRole
+    template_name = "fieldsight/user_list_updated.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectUserSearchView, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['obj'] = Project.objects.get(pk=self.kwargs.get('pk'))
+        context['organization_id'] = Project.objects.get(pk=self.kwargs.get('pk')).organization.id
+        context['type'] = "project"
+        return context
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.model.objects.select_related('user').filter(user__username__icontains=query, project_id=self.kwargs.get('pk'),
+                                                                  ended_at__isnull=True).distinct('user_id')
+
+class SiteUserSearchView(ListView):
+    model = UserRole
+    template_name = "fieldsight/user_list_updated.html"
+
+    def get_queryset(self):
+        queryset = UserRole.objects.select_related('user').filter(site_id=self.kwargs.get('pk'),
+                                                                  ended_at__isnull=True).distinct('user_id')
+
+        return queryset
+    def get_context_data(self, **kwargs):
+        context = super(SiteUserSearchView, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['obj'] = Site.objects.get(pk=self.kwargs.get('pk'))
+        context['organization_id'] = Site.objects.get(pk=self.kwargs.get('pk')).project.organization.id
+        context['type'] = "site"
+        return context
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.model.objects.select_related('user').filter(user__username__icontains=query, site_id=self.kwargs.get('pk'),
+                                                                  ended_at__isnull=True).distinct('user_id')
+
 class DefineProjectSiteMeta(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
         project_obj = Project.objects.get(pk=pk)
@@ -1825,6 +1878,7 @@ class DefineProjectSiteMeta(ProjectRoleMixin, TemplateView):
         project.site_meta_attributes = request.POST.get('json_questions');
         project.save()
         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
+
 
 class SiteMetaForm(ReviewerRoleMixin, TemplateView):
     def get(self, request, pk):
