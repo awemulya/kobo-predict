@@ -237,7 +237,10 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
         meta_answers = obj.site_meta_attributes_ans
         mylist =[]
         for question in meta_questions:
-            mylist.append({question['question_text'] : meta_answers[question['question_name']]})
+            answer = ""
+            if question['question_name'] in meta_answers:
+                answer = meta_answers[question['question_name']]
+            mylist.append({question['question_text'] : answer})
         myanswers = mylist
         print myanswers
         outstanding, flagged, approved, rejected = obj.get_site_submission()
