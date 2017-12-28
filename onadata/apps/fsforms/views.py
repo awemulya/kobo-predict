@@ -1246,19 +1246,38 @@ def download_xform(request, pk):
 
 
 
-@group_required('KoboForms')
-def html_export(request, fsxf_id):
-    fsxf_id = int(fsxf_id)
-    fsxf = FieldSightXF.objects.get(pk=fsxf_id)
-    cursor = FInstance.objects.filter(site_fxf=fsxf)
-    context={}
-    context['is_site_data'] = True
-    context['site_data'] = cursor
-    context['form_name'] = fsxf.xf.title
-    context['fsxfid'] = fsxf_id
-    context['obj'] = fsxf
-    return render(request, 'fsforms/fieldsight_export_html.html', context)
+# @group_required('KoboForms')
+# def html_export(request, fsxf_id):
+    
+#     cursor = FInstance.objects.filter(site_fxf=fsxf)
+#     context={}
+#     context['is_site_data'] = True
+#     context['site_data'] = cursor
+#     context['form_name'] = fsxf.xf.title
+#     context['fsxfid'] = fsxf_id
+#     context['obj'] = fsxf
+#     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
+class Html_export(ListView):
+    model =   FInstance
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(Html_export, self).get_context_data(**kwargs)
+        fsxf_id = int(self.request.get('fsxf_id'))
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)    
+        context['pk'] = self.kwargs.get('pk')
+        context['is_site_data'] = True
+        context['form_name'] = fsxf.xf.title
+        context['fsxfid'] = fsxf_id
+        context['obj'] = fsxf
+        return context
+    
+    def get_queryset(self):
+        fsxf_id = int(self.request.get('fsxf_id'))
+        queryset = FInstance.objects.filter(site_fxf=fsxf)
+        return queryset
+        
 
 @group_required('KoboForms')
 def project_html_export(request, fsxf_id):
