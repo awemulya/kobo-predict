@@ -686,7 +686,7 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 class SiteUpdateView(SiteView, BaseUpdateView):
     def get_context_data(self, **kwargs):
         context = super(SiteUpdateView, self).get_context_data(**kwargs)
-        site=Site.objects.get(pk=self.kwargs.get('pk'))
+        site=Site.objects.get(pk=1)
         context['project'] = site.project
         context['pk'] = self.kwargs.get('pk')
         context['json_questions'] = json.dumps(site.project.site_meta_attributes)
