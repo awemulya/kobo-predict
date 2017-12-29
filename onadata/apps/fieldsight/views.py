@@ -20,7 +20,7 @@ from django.core.serializers import serialize
 from django.forms.forms import NON_FIELD_ERRORS
 from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied
-from django.views.generic.edit import UpdateView as BaseUpdateView
+
 from fcm.utils import get_device_model
 
 import django_excel as excel
@@ -683,35 +683,34 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
 
 
-class SiteUpdateView(SiteView, BaseUpdateView):
+class SiteUpdateView(SiteView, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(SiteUpdateView, self).get_context_data(**kwargs)
-        raise PermissionDenied
-        site=Site.objects.get(pk=1)
+        site=Site.objects.get(pk=self.kwargs.get('pk'))
         context['project'] = site.project
         context['pk'] = self.kwargs.get('pk')
         context['json_questions'] = json.dumps(site.project.site_meta_attributes)
         context['json_answers'] = json.dumps(site.site_meta_attributes_ans)
         return context
 
-    # def get_success_url(self):
-    #     return reverse('fieldsight:site-dashboard', kwargs={'pk': self.kwargs['pk']})
+    def get_success_url(self):
+        return reverse('fieldsight:site-dashboard', kwargs={'pk': self.kwargs['pk']})
 
-    # def form_valid(self, form):
-    #     self.object = form.save(project_id=self.kwargs.get('pk'), new=False)
-    #     noti = self.object.logs.create(source=self.request.user, type=15, title="edit Site",
-    #                                    organization=self.object.project.organization, project=self.object.project, content_object=self.object,
-    #                                    description='{0} changed the details of site named {1}'.format(
-    #                                        self.request.user.get_full_name(), self.object.name))
-    #     result = {}
-    #     result['description'] = 'new site {0} updated by {1}'.format(self.object.name, self.request.user.username)
-    #     result['url'] = noti.get_absolute_url()
-    #     ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-    #     ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
-    #     ChannelGroup("site-{}".format(self.object.id)).send({"text": json.dumps(result)})
-    #     # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+    def form_valid(self, form):
+        self.object = form.save(project_id=self.kwargs.get('pk'), new=False)
+        noti = self.object.logs.create(source=self.request.user, type=15, title="edit Site",
+                                       organization=self.object.project.organization, project=self.object.project, content_object=self.object,
+                                       description='{0} changed the details of site named {1}'.format(
+                                           self.request.user.get_full_name(), self.object.name))
+        result = {}
+        result['description'] = 'new site {0} updated by {1}'.format(self.object.name, self.request.user.username)
+        result['url'] = noti.get_absolute_url()
+        ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+        ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
+        ChannelGroup("site-{}".format(self.object.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
-    #     return HttpResponseRedirect(self.get_success_url())
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class SiteDeleteView(SiteView, SiteDeleteRoleMixin, DeleteView):
@@ -1826,7 +1825,8 @@ class OrganizationUserSearchView(ListView):
 
     def get_queryset(self):
         query = self.request.REQUEST.get("q")
-        return self.model.objects.select_related('user').filter(user__username__icontains=query, organization_id=self.kwargs.get('pk'), ended_at__isnull=True).distinct('user_id')
+        return self.model.objects.filter(user__username__icontains=query, organization_id=self.kwargs.get('pk'),project__isnull=True, site__isnull=True).distinct('user')
+        return queryset
 
 class ProjectUserSearchView(ListView):
     model = UserRole
@@ -1842,13 +1842,18 @@ class ProjectUserSearchView(ListView):
 
     def get_queryset(self):
         query = self.request.REQUEST.get("q")
-        return self.model.objects.select_related('user').filter(user__username__icontains=query, project_id=self.kwargs.get('pk'), ended_at__isnull=True).distinct('user_id')
+        return self.model.objects.select_related('user').filter(user__username__icontains=query, project_id=self.kwargs.get('pk'),
+                                                                  ended_at__isnull=True).distinct('user_id')
 
 class SiteUserSearchView(ListView):
     model = UserRole
     template_name = "fieldsight/user_list_updated.html"
 
+    def get_queryset(self):
+        queryset = UserRole.objects.select_related('user').filter(site_id=self.kwargs.get('pk'),
+                                                                  ended_at__isnull=True).distinct('user_id')
 
+        return queryset
     def get_context_data(self, **kwargs):
         context = super(SiteUserSearchView, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
@@ -1859,7 +1864,8 @@ class SiteUserSearchView(ListView):
 
     def get_queryset(self):
         query = self.request.REQUEST.get("q")
-        return self.model.objects.select_related('user').filter(user__username__icontains=query, site_id=self.kwargs.get('pk'), ended_at__isnull=True).distinct('user_id')
+        return self.model.objects.select_related('user').filter(user__username__icontains=query, site_id=self.kwargs.get('pk'),
+                                                                  ended_at__isnull=True).distinct('user_id')
 
 class DefineProjectSiteMeta(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
