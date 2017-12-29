@@ -70,11 +70,7 @@
 												<h6>{{ obj.identifier }}</h6>
 												<p>{{ obj.address }}, {{ obj.get_country_display }}</p>
                                                 <p>{{ obj.email }}</p>
-                                                {% for data in meta_data %}
-                                            	{% for key, value in data.items %}
-                                            	<p>{{ key }} : {{ value }}</p>
-                                            	{% endfor %}
-                                            	{% endfor %}
+                                                
        										</div>
 										</div>
 									</div>
@@ -124,8 +120,13 @@
 									<h4>{% trans 'About' %}</h4>
 								</div>
 								<div class="widget-body">
-									<p>
-									{{ obj.public_desc}}</p>
+									<!-- <p>
+									{{ obj.public_desc}}</p> -->
+									{% for data in meta_data %}
+                                            	{% for key, value in data.items %}
+                                            	<p><b>{{ key }} :</b> {{ value }}</p>
+                                            	{% endfor %}
+                                            	{% endfor %}
 								</div>
 							</div>
 						</div>

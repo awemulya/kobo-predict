@@ -20,7 +20,7 @@ from django.core.serializers import serialize
 from django.forms.forms import NON_FIELD_ERRORS
 from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied
-
+from django.views.generic.edit import UpdateView as BaseUpdateView
 from fcm.utils import get_device_model
 
 import django_excel as excel
@@ -683,7 +683,7 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
 
 
-class SiteUpdateView(SiteView, UpdateView):
+class SiteUpdateView(SiteView, BaseUpdateView):
     def get_context_data(self, **kwargs):
         context = super(SiteUpdateView, self).get_context_data(**kwargs)
         site=Site.objects.get(pk=self.kwargs.get('pk'))
