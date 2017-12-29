@@ -640,7 +640,7 @@ class ProjectDeleteView(ProjectView, ProjectRoleMixinDeleteView, DeleteView):
 
 
 
-class SiteView(PView):
+class SiteView(object):
     model = Site
     # success_url = reverse_lazy('fieldsight:org-site-list')
     form_class = SiteForm
