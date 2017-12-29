@@ -683,7 +683,7 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
 
 
-class SiteUpdateView(SiteView, UpdateView):
+class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(SiteUpdateView, self).get_context_data(**kwargs)
         site=Site.objects.get(pk=self.kwargs.get('pk'))
