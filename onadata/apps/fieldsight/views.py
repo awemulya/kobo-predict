@@ -71,7 +71,7 @@ def dashboard(request):
         if role_type == "Unassigned":
             raise PermissionDenied()
         if role_type == "Site Supervisor":
-            return HttpResponse("Your account is  registered as a site supervisor. You only have access to FieldSight through the mobile app. Thank You !")
+            return HttpResponseRedirect(reverse("fieldsight:roles-dashboard"))
         if role_type == "Reviewer":
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
         if role_type == "Project Manager":
@@ -683,7 +683,7 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
 
 
-class SiteUpdateView(SiteView, UpdateView):
+class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(SiteUpdateView, self).get_context_data(**kwargs)
         site=Site.objects.get(pk=self.kwargs.get('pk'))
