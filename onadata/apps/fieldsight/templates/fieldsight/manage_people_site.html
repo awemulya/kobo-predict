@@ -149,7 +149,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </form>
                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
-                  <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignsupervisors"><i class="la la-user-plus"></i> Assign selected as Supervisors</button>
+                  <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignsupervisors"><i class="la la-user-plus"></i>{% trans 'Assign selected as Supervisors' %}</button>
 
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
@@ -198,7 +198,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                       <div class="col-md-4">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Current Reviewers</h4>
+                <h4>{% trans 'Current Reviewers' %}</h4>
               </div>
 
               <div class="widget-body max-513-scolling" data-bind="foreach:allReviewers">
@@ -516,9 +516,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               <div class="widget-head">
                 <h4>
                   {% if obj.cluster_sites %}
-                Select Regions
+                  {% trans 'Select Regions' %}
                   {% else %}
-                Select Sites 
+                  {% trans 'Select Sites' %}
                   {% endif %}
                 </h4>
 
