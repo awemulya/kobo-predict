@@ -136,7 +136,7 @@
 							<!-- 	<button class="btn btn-primary registration__action" type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans ' Save' %}</button> -->
                               
 							</form>
-							<div class="form-group col-md-6" id="metaattribs">
+							<div  id="metaattribs">
 									 
 									</div>
 									
@@ -269,9 +269,9 @@
            
             renderForm:function(){
                 return(
-                    <div className="QuestionContainer">
-                        <label ref="newText">{this.props.question}</label>
-                        <input ref="answer" onChange={this.save} defaultValue={this.props.answer}></input>   
+                    <div className="form-group col-md-6 QuestionContainer ">
+                        <label className="col-form-label" ref="newText">{this.props.question}</label>
+                        <input className="form-control" ref="answer" onChange={this.save} defaultValue={this.props.answer}></input>   
                         
                     </div>
 
@@ -325,12 +325,12 @@
       render: function () {
             return (
                 <div>
-                    <div className="Form">
+                    <div className="Form form-row">
                         {   
                             this.state.Questions.map(this.eachQuestion)
                         }
                     </div>
-                    <button onClick={this.save.bind()} className="button-info create">Save Form</button>
+                    <button className="btn btn-success" onClick={this.save.bind()} >Save Form</button>
                 </div>
                 );
             }

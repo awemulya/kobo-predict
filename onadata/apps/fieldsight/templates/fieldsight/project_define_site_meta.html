@@ -3,7 +3,11 @@
 {% load filters %}
 {% block content %}
 {% load filters %}
-
+<style type="text/css">
+    #removebutton{
+    margin-top:33px;  
+}
+</style>
  <script src="{% static 'js/reactjs/react.min.js' %}"></script>
  <script src="{% static 'js/reactjs/browser.min.js' %}"></script>
  <script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
@@ -86,21 +90,25 @@
                     <div className="QuestionContainer form-row">
                         <div className="form-group col-md-4">
                             <label for="input1" className="col-form-label">Input Label:</label>
-                            <textarea ref="newText"  onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></textarea>
+                            <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
                         </div>
-                        <div class="form-group col-md-4">
-                            <label for="input2" class="col-form-label">Input Type:</label>
-                            <select ref="questionType" onChange={this.save} defaultValue={this.props.question_type}>
+                        <div className="form-group col-md-4">
+                            <label for="input2" className="col-form-label">Input Type:</label>
+                            <select className="form-control" ref="questionType" id="input2" onChange={this.save} defaultValue={this.props.question_type}>
                               <option value="Text">Text</option>
                              <option value="Number">Number</option>
                               <option value="Date">Date</option>
                             </select>
                         </div>
 
+                        
+
                         <div className="form-group col-md-4">
-                            <label class="col-form-label">&nbsp;</label>
-                            <br/>
-                            <button class="btn btn-danger" type="button" onClick={this.remove}><i class="la la-close"></i>Remove</button>
+                            <label className="col-form-label"> &nbsp; </label>                     
+
+                            <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
+                            
+
                         </div>
                     </div>
 
@@ -179,18 +187,18 @@
       },
       render: function () {
             return (
-                <div>
+                <form>
                     
                         {   
                             this.state.Questions.map(this.eachQuestion)
                         }
                     
-                    <button onClick={this.addQuestion.bind(null, 'New Question')} className="button-info create">Add New</button>
-                    <br />
-                    <button onClick={this.save.bind()} className="button-info create">Save Form</button>
+                    <button onClick={this.addQuestion.bind(null, 'New Question')} className="btn btn-primary"><i className="la la-plus"></i>Add New</button>
+                  
+                    <button onClick={this.save.bind()} className="btn btn-success pull-right"><i className="la la-save"></i>Save Form</button>
                     
 
-                </div>
+                </form>
                 );
             }
   });
