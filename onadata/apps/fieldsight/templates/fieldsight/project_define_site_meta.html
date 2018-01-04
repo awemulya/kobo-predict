@@ -15,15 +15,10 @@
 
             <div id="main-content" class="padding">
                 {% block breadcrumbs %}
-                <ul class="breadcrumbb">
-                    {% if form.instance.id %}
-                    <li><a href="{% url 'fieldsight:project-dashboard' form.instance.pk %}">{{ form.instance }}</a></li>
-                    {% endif %}
-                    {% if not form.instance.id %}
-                 
-                    {% endif %}
-                    <li>{{ scenario }}</li>
-                </ul>
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:define-site-meta' project_obj %}">{{ obj.name }}</a></li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk Site Upload' %}</li>
+					</ol>
                 {% endblock %}
                 <section class="panel">
                     <header class="panel-heading clearfix">
