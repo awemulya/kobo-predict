@@ -565,3 +565,19 @@ def add_class(field, class_name):
     return field.as_widget(attrs={
         "class": " ".join((field.css_classes(), class_name))
     })
+
+
+@register.filter
+def divide(value):
+    try:
+        return int(value) % 6 == 1
+    except (ValueError, ZeroDivisionError):
+        return True
+
+
+@register.filter
+def divend(value):
+    try:
+        return (int(value) % 6 == 0) and (int(value) > 5)
+    except (ValueError, ZeroDivisionError):
+        return True

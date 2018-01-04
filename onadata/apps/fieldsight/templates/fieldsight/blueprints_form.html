@@ -1,5 +1,6 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n staticfiles %}
+{% load filters %}
 
 {% block page-title %}{{ scenario }} {% trans 'Site' %}{% endblock %}
 {%block extracss %}
@@ -42,6 +43,31 @@
 						</div>
 					</div>
                 </section>
+
+				<div class="col">
+            <div class="wrapper-md">
+              <div class="panel pannel-default">
+
+                <div class="pannel-body" style="padding: 0 20px; overflow: visible;">
+                   {% for blueprint in blueprints %}
+                   {% if forloop.counter|divide %}
+                    <div class="row wrapper">
+                       {% endif %}
+
+                      <div class="col-sm-2 well">
+                        <image src="{{blueprint.image.url}}"></image>
+                      </div>
+
+                         {% if forloop.counter|divend %}
+                    </div>
+                          {% endif %}
+
+
+                   {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
 
     </div>
 {% endblock %}

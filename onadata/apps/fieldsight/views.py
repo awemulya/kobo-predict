@@ -898,9 +898,13 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
 
 class BluePrintsView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
+        site = Site.objects.get(pk=self.kwargs.get('id'))
+        blueprints = site.blueprints.all()
+
         ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
         formset = ImageFormSet(queryset=BluePrints.objects.none())
-        return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': self.kwargs.get('id')},)
+        return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': self.kwargs.get('id'),
+                                                                   'blueprints':blueprints},)
 
     def post(self, request, id):
         ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
@@ -915,7 +919,15 @@ class BluePrintsView(LoginRequiredMixin, TemplateView):
                     photo.save()
             messages.success(request,
                              "Blueprints saved!")
-            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': id}))
+            site = Site.objects.get(pk=id)
+            blueprints = site.blueprints.all()
+
+            ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
+            formset = ImageFormSet(queryset=BluePrints.objects.none())
+            return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': self.kwargs.get('id'),
+                                                                   'blueprints':blueprints},)
+
+            # return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': id}))
 
         formset = ImageFormSet(queryset=BluePrints.objects.none())
         return render(request, 'fieldsight/blueprints_form.html', {'formset': formset, 'id': self.kwargs.get('id')}, )
