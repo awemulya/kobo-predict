@@ -994,6 +994,8 @@ class ProjSiteList(ProjectRoleMixin, ListView):
         return queryset
 
 class OrgUserList(OrganizationRoleMixin, ListView):
+    model = UserRole
+    paginate_by = 51
     template_name = "fieldsight/user_list_updated.html"
     def get_context_data(self, **kwargs):
         context = super(OrgUserList, self).get_context_data(**kwargs)
@@ -1010,6 +1012,8 @@ class OrgUserList(OrganizationRoleMixin, ListView):
         return queryset
 
 class ProjUserList(ProjectRoleMixin, ListView):
+    model = UserRole
+    paginate_by = 51
     template_name = "fieldsight/user_list_updated.html"
     def get_context_data(self, **kwargs):
         context = super(ProjUserList, self).get_context_data(**kwargs)
@@ -1023,6 +1027,8 @@ class ProjUserList(ProjectRoleMixin, ListView):
         return queryset
 
 class SiteUserList(ReviewerRoleMixin, ListView):
+    model = UserRole
+    paginate_by = 51
     template_name = "fieldsight/user_list_updated.html"
     def get_context_data(self, **kwargs):
         context = super(SiteUserList, self).get_context_data(**kwargs)
