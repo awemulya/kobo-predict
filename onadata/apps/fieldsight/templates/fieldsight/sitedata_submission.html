@@ -84,6 +84,31 @@
 				{% trans 'No data' %}
 				{% endfor %}
 			</table>
+				<!--pagination-->
+								{% if is_paginated %}
+								<nav class="pagination justify-content-center" aria-label="page-navigation">
+								  <ul class="pagination">
+									{% if page_obj.has_previous %}
+									  <li class="page-item disabled"><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+									{% else %}
+									  <li class="disabled"><span>&laquo;</span></li>
+									{% endif %}
+									{% for i in paginator.page_range %}
+									  {% if page_obj.number == i %}
+									  <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+
+									  {% else %}
+										<li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+									  {% endif %}
+									{% endfor %}
+									{% if page_obj.has_next %}
+									  <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+									{% else %}
+									  <li class="disabled"><span>&raquo;</span></li>
+									{% endif %}
+								  </ul>
+								</nav>
+								{% endif %}
 		  </div>
 
 
@@ -113,6 +138,31 @@
 				 {% trans 'No data' %}
 				  {% endfor %}
 			  </table>
+			  <!--pagination-->
+								{% if is_paginated %}
+								<nav class="pagination justify-content-center" aria-label="page-navigation">
+								  <ul class="pagination">
+									{% if page_obj.has_previous %}
+									  <li class="page-item disabled"><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+									{% else %}
+									  <li class="disabled"><span>&laquo;</span></li>
+									{% endif %}
+									{% for i in paginator.page_range %}
+									  {% if page_obj.number == i %}
+									  <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+
+									  {% else %}
+										<li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+									  {% endif %}
+									{% endfor %}
+									{% if page_obj.has_next %}
+									  <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+									{% else %}
+									  <li class="disabled"><span>&raquo;</span></li>
+									{% endif %}
+								  </ul>
+								</nav>
+								{% endif %}
 		  </div>
 
 
@@ -142,6 +192,31 @@
 				  {% trans 'No data' %}
 				  {% endfor %}
 			  </table>
+			  <!--pagination-->
+								{% if is_paginated %}
+								<nav class="pagination justify-content-center" aria-label="page-navigation">
+								  <ul class="pagination">
+									{% if page_obj.has_previous %}
+									  <li class="page-item disabled"><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+									{% else %}
+									  <li class="disabled"><span>&laquo;</span></li>
+									{% endif %}
+									{% for i in paginator.page_range %}
+									  {% if page_obj.number == i %}
+									  <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+
+									  {% else %}
+										<li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+									  {% endif %}
+									{% endfor %}
+									{% if page_obj.has_next %}
+									  <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+									{% else %}
+									  <li class="disabled"><span>&raquo;</span></li>
+									{% endif %}
+								  </ul>
+								</nav>
+								{% endif %}
 
 		  </div>
 
@@ -171,12 +246,7 @@
 				  {% trans 'No data' %}
 				  {% endfor %}
 			  </table>
-
-		  </div>
-
-
-		</div>
-		<!--pagination-->
+				<!--pagination-->
 								{% if is_paginated %}
 								<nav class="pagination justify-content-center" aria-label="page-navigation">
 								  <ul class="pagination">
@@ -201,6 +271,11 @@
 								  </ul>
 								</nav>
 								{% endif %}
+		  </div>
+
+
+		</div>
+
 
 	</div>
 </div>
