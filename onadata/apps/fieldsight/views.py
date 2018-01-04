@@ -1574,6 +1574,8 @@ class SiteFullmap(ReviewerRoleMixin, TemplateView):
 
 
 class OrganizationdataSubmissionView(TemplateView):
+    model = FInstance
+    paginate_by = 10
     template_name = "fieldsight/organizationdata_submission.html"
 
     def get_context_data(self, **kwargs):
@@ -1589,6 +1591,8 @@ class OrganizationdataSubmissionView(TemplateView):
 
 
 class ProjectdataSubmissionView(ProjectRoleMixin, TemplateView):
+    model = FInstance
+    paginate_by = 10
     template_name = "fieldsight/projectdata_submission.html"
 
     def get_context_data(self, **kwargs):
@@ -1604,6 +1608,8 @@ class ProjectdataSubmissionView(ProjectRoleMixin, TemplateView):
 
 
 class SitedataSubmissionView(TemplateView):
+    model = FInstance
+    paginate_by = 10
     template_name = "fieldsight/sitedata_submission.html"
 
     def get_context_data(self, **kwargs):

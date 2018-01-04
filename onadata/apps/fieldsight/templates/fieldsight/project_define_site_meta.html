@@ -14,12 +14,7 @@
 
 
             <div id="main-content" class="padding">
-                {% block breadcrumbs %}
-					<ol class="breadcrumb">
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:define-site-meta' project_obj %}">{{ obj.name }}</a></li>
-						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk Site Upload' %}</li>
-					</ol>
-                {% endblock %}
+                
                 <section class="panel">
                     <header class="panel-heading clearfix">
                         <h3><i class="la la-building"></i>{% trans 'Site Meta Attributes' %}</h3>

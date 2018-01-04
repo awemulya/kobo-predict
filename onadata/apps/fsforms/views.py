@@ -56,6 +56,7 @@ class UniqueXformMixin(object):
 
 class FSFormView(object):
     model = XForm
+    paginate_by = 50
     success_url = reverse_lazy('forms:library-forms-list')
     form_class = FSFormForm
 
