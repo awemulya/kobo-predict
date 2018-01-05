@@ -81,13 +81,13 @@
 						</a>
 					
 						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification" style="width:480px;">
-							<div class="dropdown-header">{% trans 'New Notifications' %}(<span id="noticount" class="not_count"></span>) <span><a href="#" onclick="updateseen()">Mark All as read<a></span></div>
+							<div class="dropdown-header">{% trans 'New' %} {% trans 'Notifications' %}(<span id="noticount" class="not_count"></span>) <span><a href="#" onclick="updateseen()">{% trans 'Mark' %} {% trans 'All' %} {% trans 'as' %} {% trans 'read' %}<a></span></div>
 							<ul class="menu" id="notification-ul" style="height:500px; overflow:hidden; overflow-y: scroll;">
-							Loading...
+							{% trans 'Loading...' %}
 						
 							</ul>
 							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="{% url 'eventlog:notification-list' %}">{% trans 'View all' %}</a>
+							<a class="dropdown-item" href="{% url 'eventlog:notification-list' %}">{% trans 'View' %} {% trans 'all' %}</a>
 						</div>
 					</li>
 					<li class="dropdown">
@@ -98,8 +98,8 @@
 							<span class="hidden-sm hidden-xs">{% trans request.user.username %}</span>
 						</a>
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonUser">
-							<a class="dropdown-item" href="{% url 'users:profile' request.user.id %}"><i class="la la-user"></i>{% trans 'My Profile' %}</a>
-							<a class="dropdown-item" href="{% url 'auth_password_change' %}"><i class="la la-key"></i>{% trans 'Change Password' %}</a>
+							<a class="dropdown-item" href="{% url 'users:profile' request.user.id %}"><i class="la la-user"></i>{% trans 'My' %} {% trans 'Profile' %}</a>
+							<a class="dropdown-item" href="{% url 'auth_password_change' %}"><i class="la la-key"></i>{% trans 'Change' %} {% trans 'Password' %}</a>
 							<a class="dropdown-item" href="{% url 'auth_logout' %}"><i class="la la-sign-out"></i>{% trans 'Logout' %}</a>
 						</div>
 					</li>
@@ -145,8 +145,8 @@
 								<span>{% trans 'Forms' %}</span>
 							</a>
 							<ul class="sub">
-								<li><a href="{{ koboform_url }}#/forms/new">{% trans 'Create New' %}</a></li>
-								<li><a href="{% url 'forms:forms-list' %}">{% trans 'My Forms' %}</a></li>
+								<li><a href="{{ koboform_url }}#/forms/new">{% trans 'Create' %} {% trans 'New' %}</a></li>
+								<li><a href="{% url 'forms:forms-list' %}">{% trans 'My' %} {% trans 'Forms' %}</a></li>
 							</ul>
 						</li>
 						<!--<li class="sub-menu">-->

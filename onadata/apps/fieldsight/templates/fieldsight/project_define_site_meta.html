@@ -18,14 +18,14 @@
 					{% block breadcrumbs %}
 					<ol class="breadcrumb">
 						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
-						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk Site Upload' %}</li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</li>
 					 </ol>
 					{% endblock %}
 				</nav>
 
                 <section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3><i class="la la-building"></i>{% trans 'Site Meta Attributes' %}</h3>
+                        <h3><i class="la la-building"></i>{% trans 'Site' %} {% trans 'Meta' %} {% trans 'Attributes' %}</h3>
                     </header>
                     <div class="panel-body">
                       
