@@ -52,13 +52,13 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                 {% endif %}
                 {% if level == "1" %}
                 <li><a href="{% url 'fieldsight:project-dashboard' pk %}">
-                 {% trans 'Project Dashboard' %}</a></li>
+                 {% trans 'Project' %} {% trans 'Dashboard' %}</a></li>
                 {% endif %}
                 {% if level == "2" %}
                 <li><a href="{% url 'fieldsight:organizations-dashboard' pk %}">
                  {% trans 'Organization Dashboard' %}</a></li>
                 {% endif %}
-                <li>{% trans 'Manage People' %}</li>
+                <li>{% trans 'Manage' %} {% trans 'Regions' %}</li>
               </ul>
               {% endblock %}
 				
@@ -80,7 +80,7 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
           <div class="col-md-6">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>{% trans 'Select Sites' %}</h4>
+                <h4>{% trans 'Select' %} {% trans 'Sites' %}</h4>
               </div>
 
               <div class="widget-body">
@@ -95,9 +95,11 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                
                   <input type="text" class="form-control" data-bind="value:$root.search_key_site, valueUpdate:'keyup'," placeholder="Search..." aria-label="Search...">
                   
-                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllSiteUnSelected">
+                 
+                 <input type="button" value="Unassign Selected Sites" class="btn btn-danger margin-top" data-bind="enable:parent.is_siteselected, click:unAssign">
+
+                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="visible:parent.is_siteselected, click:setAllSiteUnSelected">
                 
-                 <input type="button" value="Unassign Selected Sites" class="btn btn-danger margin-top" data-bind="click:unAssign">
                   
                   
                  <span class="dropdown">
@@ -117,7 +119,7 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                           <div class="project-basic-info">
                             <h4 data-bind="text:name()"></h4>
                             <p data-bind="text:identifier()"></p>
-                            <p>Region : <span data-bind="text:region()"></span></p>
+                            <p>{% trans 'Region' %}: <span data-bind="text:region()"></span></p>
                           </div>
                         </div>
                        
@@ -128,9 +130,9 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                   <li class="clearfix"></li>
                 
                 </ul>
-              <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_search_site_button, click:dbsearchallSites">Search All</button>            
+              <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_search_site_button, click:dbsearchallSites">{% trans 'Select' %} {% trans 'All' %}</button>            
 
-              <button class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_next_page_site, click:loadMoreSites">Load More</button>            
+              <button class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_next_page_site, click:loadMoreSites">{% trans 'Load' %} {% trans 'More' %}</button>            
 
               </div>
             </div>
@@ -142,7 +144,7 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
                 <h4>
-                Select Region
+                {% trans 'Select' %} {% trans 'Region' %}
                 </h4>
 
               </div>
@@ -158,13 +160,13 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
               
           <input type="text" class="form-control" data-bind="value:search_key_region, valueUpdate:'keyup'" placeholder="Search..." aria-label="Search...">
                   
-                  <input type="button" value="Assign Selected Sites" class="btn btn-primary margin-top" data-bind="click:doAssign">
+                  <input type="button" value="Assign Selected Sites" class="btn btn-primary margin-top" data-bind="enable: (is_regionselected() && is_siteselected()), click:doAssign">
                 
                 <ul class="row" data-bind="foreach:regions">
                 
                   <li class="col-md-12">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
-                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$parent.setRegionSelected">
+                      <input type="checkbox" class="custom-control-input" data-bind="click:$parent.setRegionSelected, checked: selected">
                       <span class="custom-control-indicator"></span>
                       <span class="custom-control-description">
                         <div class="project-item-wrap clearfix">
@@ -184,8 +186,8 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                   
                   <li class="clearfix"></li>
                 </ul>  
-                <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_search_region_button, click:dbsearchallRegions">Search All</button> 
-                <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_next_page_region, click:loadMoreRegions">Load More</button>            
+                <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_search_region_button, click:dbsearchallRegions">{% trans 'Search' %} {% trans 'All' %}</button> 
+                <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_next_page_region, click:loadMoreRegions">{% trans 'Load' %} {% trans 'More' %}</button>            
 
             
               </div>
