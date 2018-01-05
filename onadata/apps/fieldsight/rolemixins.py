@@ -184,3 +184,13 @@ class ProjectRoleView(LoginRequiredMixin):
 
 
 
+class SPFmixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if self.kwargs.get('is_project') == '1':
+            ProjectRoleMixin()
+        else:
+            ReviewerRoleMixin()
+        return super(SPFmixin, self).dispatch(request, *args, **kwargs)
+
+
+

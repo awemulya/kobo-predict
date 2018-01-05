@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView, View
 from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpResponseBadRequest
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
@@ -45,6 +45,7 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
 from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
     EducationMaterial, EducationalImages, InstanceImages
 from django.db.models import Q
+from onadata.apps.fieldsight.rolemixins import SPFmixin
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -1092,14 +1093,14 @@ def project_survey(request, project_id):
     return render(request, "fsforms/project/schedule_list.html", {'object_list': objlist, 'project': Project(id=project_id)})
 
 
-@group_required("Project")
-def setup_forms(request, is_project, pk):
-    if is_project == '1':
-        obj = Project.objects.get(pk=pk)
-    else:
-        obj = Site.objects.get(pk=pk)
-    return render(request, "fsforms/manage_forms.html",
-                  {'obj': obj, 'is_project': is_project, 'pk': pk, 'form': GeneralForm(request=request),
+class Setup_forms(SPFmixin, View):
+    def get(self, request, *args, **kwargs):
+        if self.kwargs.get('is_project') == '1':
+            obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        else:
+            obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        return render(request, "fsforms/manage_forms.html",
+                  {'obj': obj, 'is_project': self.kwargs.get('is_project'), 'pk': self.kwargs.get('pk'), 'form': GeneralForm(request=request),
                    'schedule_form': KoScheduleForm(request=request)})
 
 # kobo form related
