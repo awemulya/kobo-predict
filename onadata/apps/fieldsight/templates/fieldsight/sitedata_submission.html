@@ -31,7 +31,7 @@
 	<nav aria-label="breadcrumb" role="navigation">
 		<ol class="breadcrumb">
             {% block breadcrumbs %}
-			<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{{ obj.name }}</a></li>
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{% trans 'Site Dashboard' %}</a></li>
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Submissions Data' %}</li>
 		    {% endblock %}
         </ol>
@@ -83,7 +83,7 @@
 					</td>
 				</tr>
 				{% empty %}
-				{% trans 'No data' %}
+				No data
 				{% endfor %}
 			</table>
 				{% paginate %}
@@ -114,7 +114,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				 {% trans 'No data' %}
+				 No data
 				  {% endfor %}
 			  </table>
 			  {% paginate %}
@@ -147,7 +147,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				  {% trans 'No data' %}
+				  No data
 				  {% endfor %}
 			  </table>
 			  {% paginate %}
@@ -178,7 +178,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				  {% trans 'No data' %}
+				  No data
 				  {% endfor %}
 			  </table>
 			  {% paginate %}

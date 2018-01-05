@@ -181,18 +181,18 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-md-6">
+							<div class="col-md-6">
 							<!-- Nav tabs -->
 							<div class="tabbing margin-top">
 								<ul class="nav nav-tabs" role="tablist">
 								  <li class="nav-item">
-									<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">{% trans 'Pending' %} ({{outstanding|length}})</a>
+									<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Pending ({{outstanding|length}})</a>
 								  </li>
 								  <li class="nav-item">
-									<a class="nav-link" data-toggle="tab" href="#tab002" role="tab">{% trans 'Rejected' %} ({{rejected|length}})</a>
+									<a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Rejected ({{rejected|length}})</a>
 								  </li>
 								  <li class="nav-item">
-									<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">{% trans 'Flagged' %} ({{flagged|length}})</a>
+									<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Flagged ({{flagged|length}})</a>
 								  </li>
 								</ul>
 
@@ -225,7 +225,7 @@
 													  </td>
 												  </tr>
 												  {% empty %}
-												  {% trans 'No data' %}
+												  No data
 												  {% endfor %}
 											  </table>
 												{% paginate %}
@@ -261,7 +261,7 @@
 													  </td>
 												  </tr>
 												  {% empty %}
-												  {% trans 'No data' %}
+												  No data
 												  {% endfor %}
 											  </table>
 												{% paginate %}
@@ -297,7 +297,7 @@
 													  </td>
 												  </tr>
 												  {% empty %}
-										  		  {% trans 'No data' %}
+										  		  No data
 												  {% endfor %}
 											  </table>
 												{% paginate %}
@@ -309,6 +309,8 @@
 								</div>
 							</div>
 						</div>
+						</div>
+					</div>
 						<!--<div class="col-md-6">-->
 							<!--<div class="row">-->
 								<!--<div class="col-md-12">-->

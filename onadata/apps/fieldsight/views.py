@@ -901,9 +901,13 @@ class CreateUserView(LoginRequiredMixin, SuperAdminMixin, UserDetailView, Regist
 
 class BluePrintsView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
+        site = Site.objects.get(pk=self.kwargs.get('id'))
+        blueprints = site.blueprints.all()
+
         ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
         formset = ImageFormSet(queryset=BluePrints.objects.none())
-        return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': self.kwargs.get('id')},)
+        return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': self.kwargs.get('id'),
+                                                                   'blueprints':blueprints},)
 
     def post(self, request, id):
         ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
@@ -918,7 +922,15 @@ class BluePrintsView(LoginRequiredMixin, TemplateView):
                     photo.save()
             messages.success(request,
                              "Blueprints saved!")
-            return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': id}))
+            site = Site.objects.get(pk=id)
+            blueprints = site.blueprints.all()
+
+            ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
+            formset = ImageFormSet(queryset=BluePrints.objects.none())
+            return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': self.kwargs.get('id'),
+                                                                   'blueprints':blueprints},)
+
+            # return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': id}))
 
         formset = ImageFormSet(queryset=BluePrints.objects.none())
         return render(request, 'fieldsight/blueprints_form.html', {'formset': formset, 'id': self.kwargs.get('id')}, )
@@ -997,6 +1009,8 @@ class ProjSiteList(ProjectRoleMixin, ListView):
         return queryset
 
 class OrgUserList(OrganizationRoleMixin, ListView):
+    model = UserRole
+    paginate_by = 51
     template_name = "fieldsight/user_list_updated.html"
     def get_context_data(self, **kwargs):
         context = super(OrgUserList, self).get_context_data(**kwargs)
@@ -1013,6 +1027,8 @@ class OrgUserList(OrganizationRoleMixin, ListView):
         return queryset
 
 class ProjUserList(ProjectRoleMixin, ListView):
+    model = UserRole
+    paginate_by = 51
     template_name = "fieldsight/user_list_updated.html"
     def get_context_data(self, **kwargs):
         context = super(ProjUserList, self).get_context_data(**kwargs)
@@ -1026,6 +1042,8 @@ class ProjUserList(ProjectRoleMixin, ListView):
         return queryset
 
 class SiteUserList(ReviewerRoleMixin, ListView):
+    model = UserRole
+    paginate_by = 51
     template_name = "fieldsight/user_list_updated.html"
     def get_context_data(self, **kwargs):
         context = super(SiteUserList, self).get_context_data(**kwargs)

@@ -31,7 +31,7 @@
 	<nav aria-label="breadcrumb" role="navigation">
 		<ol class="breadcrumb">
             {% block breadcrumbs %}
-			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ obj.name }}</a></li>
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{% trans 'Project Dashboard' %}</a></li>
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Submissions Data' %}</li>
 		    {% endblock %}
         </ol>
@@ -83,7 +83,7 @@
 					</td>
 				</tr>
 				{% empty %}
-				{% trans 'No data' %}
+				No data
 				{% endfor %}
 			</table>
 				{% paginate %}
@@ -114,7 +114,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				  {% trans 'No data' %}
+				  No data
 				  {% endfor %}
 			  </table>
 			  {% paginate %}
@@ -129,11 +129,9 @@
 				  {% for instance in data %}
 				  <tr>
 					  <td style="width:60%;">
-						  {% if instance.site_fxf %}
 						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
 							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
 						  </a>
-						  {% endif %}
 					  </td>
 					  <td>
 						  <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
@@ -149,7 +147,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				  {% trans 'No data' %}
+				  No data
 				  {% endfor %}
 			  </table>
 			  {% paginate %}
@@ -180,7 +178,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				  {% trans 'No data' %}
+				  No data
 				  {% endfor %}
 			  </table>
 			  {% paginate %}
