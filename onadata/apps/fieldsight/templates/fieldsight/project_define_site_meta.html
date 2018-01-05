@@ -14,6 +14,14 @@
 
 
             <div id="main-content" class="padding">
+                <nav aria-label="breadcrumb" role="navigation">
+					{% block breadcrumbs %}
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk Site Upload' %}</li>
+					 </ol>
+					{% endblock %}
+				</nav>
 
                 <section class="panel">
                     <header class="panel-heading clearfix">
