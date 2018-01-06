@@ -43,7 +43,7 @@
                                     <div class="well well-sm our-office">
                                     <span class="well-header">
                                         <i class="fa fa-location-arrow blue" aria-hidden="true"></i>
-                                          {% trans 'Our Office' %}
+                                          {% trans 'Our' %} {% trans 'Office' %}
                                       </span>
                                      </div>
                                     <div class="office-information">
@@ -65,19 +65,19 @@
                                    <div class=" well well-sm our-office">
                                       <span class="well-header">
                                         <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                          Our Introduction' %}
+                                          {% trans 'Our' %} {% trans 'Introduction' %}
                                       </span>
                                     </div>
                                     <div class="office-information">
                                       <!-- <div class="gap"></div> -->
                                       <!-- <p class="short-detail">{{ obj.description }}</p> -->
-                                      <span class="line-header">Public Description</span>
+                                      <span class="line-header">{% trans 'Public' %} {% trans 'Description' %}</span>
                                       <div class="gap"></div>
                                       <div class="public_desc">
                                           <p class="short-detail">{{ obj.public_desc}}</p>
                                       </div>
                                       <div class="gap-high"></div>
-                                      <span class="line-header">Additional Description</span>
+                                      <span class="line-header">{% trans 'Additional' %} {% trans 'Description' %}</span>
                                       <div class="gap"></div>
                                       <div class="additional_desc">
                                           <p class="short-detail">{{ obj.additional_desc }}</p>

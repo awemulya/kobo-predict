@@ -1914,7 +1914,7 @@ class SiteMetaForm(ReviewerRoleMixin, TemplateView):
 class MultiSiteAssignRegionView(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
         project = Project.objects.get(pk=pk)
-        
+
         if project.cluster_sites is False:
             raise PermissionDenied()
 
