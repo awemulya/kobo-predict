@@ -17,25 +17,19 @@ var all_users=[];
 var selected_proj_site=[];
 var all_proj_site=[];
 var CSRF_TOKEN = '{{ csrf_token }}';
-
-
 $(document).ready(function() {
 var pk = "{{ pk }}";
-
 var csrf_token = "{{ csrf_token }}";
 var next_url_region = "{% url 'fieldsight:project_regions_p_api' project.id %}";
 var next_url_site = "{% url 'fieldsight:project_sites_p_api' project.id %}";
 var assignurl = "sadsa";
 var site_query_url ="{% url 'fieldsight:search_sites_api' project.id %}";
 var region_query_url ="{% url 'fieldsight:search_regions_api' project.id %}";
-
 var project = "{{ project.id }}";
-
 assigntoken(csrf_token);
 vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_query_url, project);
  ko.applyBindings(vm);
 });
-
 </script>
 
 {% endblock %}
@@ -44,20 +38,11 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
 
 
 			<div id="main-content" class="padding">
-             <nav aria-label="breadcrumb" role="navigation">
-					{% block breadcrumbs %}
-					<ol class="breadcrumb">
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' project.pk %}">{{ project.name }}</a></li>
-						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</li>
-					 </ol>
-					{% endblock %}
-				</nav>
-
               {% block breadcrumbs %}
               <ul class="breadcrumbb">
                 {% if level == "0" %}
                 <li><a href="{% url 'fieldsight:site-dashboard' pk %}">
-                 {% trans 'Site' %} {% trans 'Dashboard' %}</a></li>
+                 {% trans 'Site Dashboard' %}</a></li>
                 {% endif %}
                 {% if level == "1" %}
                 <li><a href="{% url 'fieldsight:project-dashboard' pk %}">
@@ -65,16 +50,24 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                 {% endif %}
                 {% if level == "2" %}
                 <li><a href="{% url 'fieldsight:organizations-dashboard' pk %}">
-                 {% trans 'Organization' %} {% trans 'Dashboard' %}</a></li>
+                 {% trans 'Organization Dashboard' %}</a></li>
                 {% endif %}
                 <li>{% trans 'Manage' %} {% trans 'Regions' %}</li>
               </ul>
               {% endblock %}
-				
+
 
 
 
       <!-- for project -->
+
+      <div class="">
+
+
+
+
+
+
 
 
   <div class="row">
@@ -94,14 +87,15 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                   </div>
 
 
-                 <input type="text" class="form-control" data-bind="value:$root.search_key_site, valueUpdate:'keyup'," placeholder="Search..." aria-label="Search...">
+                  <input type="text" class="form-control" data-bind="value:$root.search_key_site, valueUpdate:'keyup'," placeholder="Search..." aria-label="Search...">
+
+
                  <input type="button" value="Unassign Selected Sites" class="btn btn-danger margin-top" data-bind="enable:parent.is_siteselected, click:unAssign">
+
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="visible:parent.is_siteselected, click:setAllSiteUnSelected">
-                 <input type="button" value="Unassign Selected Sites" class="btn btn-danger margin-top" data-bind="click:unAssign">
 
 
 
-                  
                  <span class="dropdown">
 
 
@@ -119,7 +113,6 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                           <div class="project-basic-info">
                             <h4 data-bind="text:name()"></h4>
                             <p data-bind="text:identifier()"></p>
-                            <p>{% trans 'Region:' %}<span data-bind="text:region()"></span></p>
                             <p>{% trans 'Region' %}: <span data-bind="text:region()"></span></p>
                           </div>
                         </div>
@@ -131,10 +124,10 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                   <li class="clearfix"></li>
 
                 </ul>
-              <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_search_site_button, click:dbsearchallSites">{% trans 'Search' %} {% trans 'All' %}</button>
-              <button class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_next_page_site, click:loadMoreSites">{% trans 'Load' %} {% trans 'More' %}</button>
               <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_search_site_button, click:dbsearchallSites">{% trans 'Select' %} {% trans 'All' %}</button>
+
               <button class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_next_page_site, click:loadMoreSites">{% trans 'Load' %} {% trans 'More' %}</button>
+
               </div>
             </div>
           </div>
@@ -153,17 +146,17 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                 <!-- <ul class="row max-260-scroll" id="multi-ass-proj_site">
                   <input type="button" value="Select All" onclick="selectall('proj_site')">
                  <input type="button" value="Unselect All" onclick="unselectall('proj_site')">
-
                 </ul>
                 <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more"> -->
 
 
 
           <input type="text" class="form-control" data-bind="value:search_key_region, valueUpdate:'keyup'" placeholder="Search..." aria-label="Search...">
-                  <input type="button" value="Assign Selected Sites" class="btn btn-primary margin-top" data-bind="click:doAssign">
+
                   <input type="button" value="Assign Selected Sites" class="btn btn-primary margin-top" data-bind="enable: (is_regionselected() && is_siteselected()), click:doAssign">
+
                 <ul class="row" data-bind="foreach:regions">
-                
+
                   <li class="col-md-12">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
                       <input type="checkbox" class="custom-control-input" data-bind="click:$parent.setRegionSelected, checked: selected">
@@ -179,49 +172,47 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
 
                           </div>
                         </div>
-                       
+
                       </span>
                     </label>
                   </li>
-                  
+
                   <li class="clearfix"></li>
-                </ul>  
+                </ul>
                 <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_search_region_button, click:dbsearchallRegions">{% trans 'Search' %} {% trans 'All' %}</button>
                 <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_next_page_region, click:loadMoreRegions">{% trans 'Load' %} {% trans 'More' %}</button>
-                <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_search_region_button, click:dbsearchallRegions">{% trans 'Search' %} {% trans 'All' %}</button>
-                <button  class="btn btn-default margin-top" style="display:none;" data-bind="visible: show_next_page_region, click:loadMoreRegions">{% trans 'Load' %} {% trans 'More' %}</button>            
 
-            
+
               </div>
             </div>
           </div>
 
-                
-                
-            </div>
-        
 
-    
+
+            </div>
+
+
+
         <!-- <div class="margin-top">
           <div class="padding bg-white">
             <button type="submit" class="btn btn-primary btn-block"><i class="la la-user-plus"></i> Assign Users</button>
           </div>
         </div> -->
         </div>
-        <div class="modal fade" id="myinvitemodal" role="dialog" >
+        </div></div></ul></div><div class="modal fade" id="myinvitemodal" role="dialog" >
                       <div class="modal-dialog">
-                      
+
                         <!-- Modal content-->
                         <div class="modal-content" style="margin-top: 15%;">
                           <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">{% trans 'Invite' %} {% trans 'Status' %}</h4>
+                            <h4 class="modal-title">{% trans 'Invite Status' %}</h4>
                           </div>
                           <div class="modal-body">
                           <center>
                             <div id="update-next-step">
                             <h2>{% trans 'Inviting ...' %}</h2>
-                          
+
                             </div>
                             </center>
                           </div>
@@ -229,9 +220,9 @@ vm = new RegionViewModel(next_url_region, next_url_site, site_query_url, region_
                             <button type="button" class="btn btn-primary margin-top" class="btn btn-default" data-dismiss="modal">{% trans 'Close' %}</button>
                           </div>
                         </div>
-                        
+
                       </div>
                     </div>
 
 
-    {% endblock %}
+{% endblock %}
