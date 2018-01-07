@@ -573,7 +573,7 @@ class Set_deploy_stages(SPFmixin, View):
                 # result['url'] = noti.get_absolute_url()
                 # ChannelGroup("notify-{}".format(project.organization.id)).send({"text": json.dumps(result)})
                 # ChannelGroup("notify-0").send({"text": json.dumps(result)})
-                return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+                return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
             else:
                 site = Site.objects.get(pk=pk)
                 site.site_forms.filter(is_staged=True, xf__isnull=False, is_deployed=False, is_deleted=False).update(is_deployed=True)
@@ -585,9 +585,9 @@ class Set_deploy_stages(SPFmixin, View):
                 # result['url'] = noti.get_absolute_url()
                 # ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
                 # ChannelGroup("notify-0").send({"text": json.dumps(result)})
-                return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+                return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 @group_required("Project")
 @api_view(['POST', 'GET'])
