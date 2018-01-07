@@ -3983,7 +3983,7 @@ msgid "Edit Substage"
 msgstr ""
 
 #: onadata/apps/fsforms/templates/fsforms/manage_forms.html:1225
-msgid " Search"
+msgid "Search"
 msgstr ""
 
 #: onadata/apps/fsforms/templates/fsforms/my_project_form_list.html:61
