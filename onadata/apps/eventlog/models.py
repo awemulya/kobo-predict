@@ -81,20 +81,20 @@ class FieldSightLog(models.Model):
         if self.extra_object is None:
             return None
 
-        if self.extra_content_type.id == 6:
+        if self.extra_content_type.model == "user":
             if self.extra_object.user_profile:
                 return self.extra_object.user_profile.get_absolute_url()
             return "#";
-        return self.extra_content_type.id
+        return self.extra_object.get_absolute_url()
 
     def get_extraobj_name(self):
         if self.extra_object is None:
             return None
-        if self.extra_content_type.id == 6:
+        if self.extra_content_type.model == "user":
             if self.extra_object.user_profile:
                 return self.extra_object.user_profile.getname()
             return self.extra_object.email
-        return self.extra_content_type.model
+        return self.extra_object.getname()
 
     def get_source_url(self):
         try:
