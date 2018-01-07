@@ -45,7 +45,7 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
 from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
     EducationMaterial, EducationalImages, InstanceImages
 from django.db.models import Q
-from onadata.apps.fieldsight.rolemixins import SPFmixin
+from onadata.apps.fieldsight.rolemixins import SPFmixin, ReviewerRoleMixin, ProjectRoleMixin
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -258,30 +258,28 @@ def stage_add(request, site_id=None):
     form = StageForm(instance=instance)
     return render(request, "fsforms/stage_form.html", {'form': form, 'obj': site})
 
-@login_required()
-@group_required("Project")
-def project_responses(request, project_id=None):
-    obj = get_object_or_404(Project, pk=project_id)
-    schedules = Schedule.objects.filter(project_id=project_id, site__isnull=True, schedule_forms__isnull=False)
-    stages = Stage.objects.filter(stage__isnull=True, project_id=project_id, stage_forms__isnull=True).order_by('order')
-    generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=project_id)
-    surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=project_id, is_survey=True)
-    deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_deleted=True,project_id=project_id)
-    return render(request, "fsforms/project/project_responses_list.html",
-                  {'obj': obj, 'schedules': schedules, 'stages':stages, 'generals':generals, 'surveys': surveys,
-                   "deleted_forms":deleted_forms, 'project': project_id})
+class ProjectResponses(ProjectRoleMixin, View): 
+    def get(request, pk=None):
+        obj = get_object_or_404(Project, pk=pk)
+        schedules = Schedule.objects.filter(project_id=pk, site__isnull=True, schedule_forms__isnull=False)
+        stages = Stage.objects.filter(stage__isnull=True, project_id=pk, stage_forms__isnull=True).order_by('order')
+        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=pk)
+        surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=pk, is_survey=True)
+        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_deleted=True,project_id=pk)
+        return render(request, "fsforms/project/project_responses_list.html",
+                      {'obj': obj, 'schedules': schedules, 'stages':stages, 'generals':generals, 'surveys': surveys,
+                       "deleted_forms":deleted_forms, 'project': pk})
 
-@login_required()
-@group_required("Reviewer")
-def responses(request, site_id=None):
-    obj = get_object_or_404(Site, pk=site_id)
-    schedules = Schedule.objects.filter(site_id=site_id, project__isnull=True, schedule_forms__isnull=False)
-    stages = Stage.objects.filter(stage__isnull=True, site_id=site_id).order_by('order')
-    generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,site_id=site_id)
-    deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_scheduled=False,site_id=site_id, is_deleted=True)
-    return render(request, "fsforms/responses_list.html",
-                  {'obj': obj, 'schedules': schedules, 'stages':stages,'generals':generals,
-                    "deleted_forms":deleted_forms,'site': site_id})
+class Responses(ReviewerRoleMixin, View):
+    def get(self, request, pk=None):
+        obj = get_object_or_404(Site, pk=pk)
+        schedules = Schedule.objects.filter(site_id=pk, project__isnull=True, schedule_forms__isnull=False)
+        stages = Stage.objects.filter(stage__isnull=True, site_id=pk).order_by('order')
+        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,site_id=pk)
+        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_scheduled=False,site_id=pk, is_deleted=True)
+        return render(request, "fsforms/responses_list.html",
+                      {'obj': obj, 'schedules': schedules, 'stages':stages,'generals':generals,
+                        "deleted_forms":deleted_forms,'site': pk})
 
 
 @group_required("Project")
