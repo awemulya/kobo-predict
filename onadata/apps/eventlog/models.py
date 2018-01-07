@@ -90,7 +90,7 @@ class FieldSightLog(models.Model):
     def get_extraobj_name(self):
         if self.extra_object is None:
             return None
-
+        a=self.extra_content_type.id
         if self.extra_content_type.id == 6:
             if self.extra_object.user_profile:
                 return self.extra_object.user_profile.getname()
