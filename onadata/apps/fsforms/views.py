@@ -536,7 +536,7 @@ def edit_schedule(request, id):
 # @api_view(['POST', 'GET'])
 
 class Set_deploy_stages(SPFmixin, View):
-    def post(request, is_project, pk):
+    def post(self, request, is_project, pk):
         try:
             if is_project == "1":
                 project = Project.objects.get(pk=pk)
