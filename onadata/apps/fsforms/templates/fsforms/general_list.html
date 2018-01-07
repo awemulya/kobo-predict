@@ -2,19 +2,19 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Forms Library' %}{% endblock %}
+{% block page-title %}{% trans 'Forms' %} {% trans 'Library' %}{% endblock %}
 
 {% block head %}
 {% if site %}
 <a class="btn btn-success btn-raised" href="{% url 'forms:schedule-add' site.pk %}">{% trans 'New' %} {% trans 'Survey' %}</a>
 
-<a class="btn btn-success btn-raised" href="{% url 'forms:site-survey' site.pk %}">{% trans 'Scheduled Forms' %}</a>
+<a class="btn btn-success btn-raised" href="{% url 'forms:site-survey' site.pk %}">{% trans 'Scheduled' %} {% trans 'Forms' %}</a>
 {% endif %}
 
 {% if project %}
 <a class="btn btn-success btn-raised" href="{% url 'forms:project-schedule-add' project.pk %}">{% trans 'New' %} {% trans 'Survey' %}</a>
 
-<a class="btn btn-success btn-raised" href="{% url 'forms:project-survey' project.pk %}">{% trans 'Scheduled Forms' %}</a>
+<a class="btn btn-success btn-raised" href="{% url 'forms:project-survey' project.pk %}">{% trans 'Scheduled' %} {% trans 'Forms' %}</a>
 
 
 {% endif %}
@@ -22,13 +22,13 @@
 
 {% block breadcrumbs %}
 {% if project %}
-    <li><a href="{% url 'fieldsight:project-dashboard' project.pk %}">{% trans 'Project Dashboard' %}</a></li>
+    <li><a href="{% url 'fieldsight:project-dashboard' project.pk %}">{% trans 'Project' %} {% trans 'Dashboard' %}</a></li>
 {% endif %}
 
 {% if site %}
-<li><a href="{% url 'fieldsight:site-dashboard' site.pk %}">{% trans 'Site Dashboard' %}</a></li>
+<li><a href="{% url 'fieldsight:site-dashboard' site.pk %}">{% trans 'Site' %} {% trans 'Dashboard' %}</a></li>
 {% endif %}
-    <li>{% trans 'Schedules Info' %}</li>
+    <li>{% trans 'Schedules' %} {% trans 'Info' %}</li>
 {% endblock %}
 {% block content %}
 
@@ -48,8 +48,8 @@
         <table class="table table-striped" id="dynamic-table1">
             <thead>
             <th>{% anchor title _('Name') %}</th>
-            <th>{% trans 'Created Date' %}</th>
-            <th>{% trans 'Shared Level' %}</th>
+            <th>{% trans 'Created' %} {% trans 'Date' %}</th>
+            <th>{% trans 'Shared' %} {% trans 'Level' %}</th>
             <th colspan="2">{% trans 'Actions' %}</th>
             </thead>
             <tbody>
@@ -65,13 +65,13 @@
                         {{ obj.get_shared_level_display}}
                     </td>
                     <td>
-                        <a href="{% url 'forms:edit-general' obj.pk %}">Edit</a>
+                        <a href="{% url 'forms:edit-general' obj.pk %}">{% trans 'Edit' %}</a>
                     </td>
                     <td>{% if obj.xf %}
                         {% if project %}
-                          <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-general' obj.pk %}"> Deploy To Sites</a>
+                          <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-general' obj.pk %}">{% trans 'Deploy' %} {% trans 'To' %} {% trans 'Sites' %}</a>
                           <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-general-remaining-sites' obj.pk %}">
-                            Deploy To Remaining Sites</a>
+                            {% trans 'Deploy' %} {% trans 'To' %} {% trans 'Remaining' %} {% trans 'Sites' %}</a>
 
                         {% endif %}
                         {% endif %}

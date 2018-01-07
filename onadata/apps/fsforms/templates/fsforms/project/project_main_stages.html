@@ -2,16 +2,16 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Main Stages' %}  {{obj.name}}
+{% block page-title %}{% trans 'Main' %} {% trans 'Stages' %}  {{obj.name}}
 {% endblock %}
 
 {% block head %}
 <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-stages' obj.pk %}">
-    {% trans 'Deploy All Stages To Sites' %}</a>
+    {% trans 'Deploy' %} {% trans 'All' %} {% trans 'Stages' %} {% trans 'To' %} {% trans 'Sites' %}</a>
 <a class="btn btn-danger btn-raised" href="{% url 'forms:share-stages' obj.pk 1%}">
-    {% trans 'Share All Stages To Library' %}</a>
+    {% trans 'Share' %} {% trans 'All' %} {% trans 'Stages' %} {% trans 'To' %} {% trans 'Library' %}</a>
     <a class="btn btn-success btn-raised" href="{% url 'forms:project-stage-add' obj.pk %}">
-                            {% trans 'Add New Stage' %}</a>
+                            {% trans 'Add' %} {% trans 'New' %} {% trans 'Stage' %}</a>
 {% endblock %}
 {%block extracss %}
 <style>
@@ -115,8 +115,8 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{% trans 'Project Dashboard' %}</a></li>
-    <li>{% trans 'Main Stages' %}</li>
+    <li><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{% trans 'Project' %} {% trans 'Dashboard' %}</a></li>
+    <li>{% trans 'Main' %} {% trans 'Stages' %}</li>
 {% endblock %}
 
 {% block content %}
@@ -133,7 +133,7 @@
         <h4><span>{% trans 'Name:' %}</span> <b>{{stage.name}}</b></h4>
         <p><span>{% trans 'Description:' %}</span>{{stage.description}}</p>
            <a class="btn btn-success btn-raised" href="{% url 'forms:stages-detail' stage.pk %}">
-                            {% trans 'List Sub Stages' %}({{stage.sub_stage_count}})</a>
+                            {% trans 'List' %} {% trans 'Sub' %} {% trans 'Stages' %}({{stage.sub_stage_count}})</a>
       </div>
 
     </div>

@@ -132,7 +132,7 @@ var org = "{{obj.pk}}";
 						<div class="col-lg-4 col-md-12">
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>Contact Info</h4>
+									<h4>{% trans 'Contact' %} {% trans 'Info' %}</h4>
 								</div>
 								<div class="widget-body">
 									<ul class="contact-info-list">
@@ -174,7 +174,7 @@ var org = "{{obj.pk}}";
 								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
 								<div class="mini-stat-info">
 									<span>{{rejected}}</span>
-									{% trans 'Rejected Submissions' %}
+									{% trans 'Rejected' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>
@@ -183,7 +183,7 @@ var org = "{{obj.pk}}";
 								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
 								<div class="mini-stat-info">
 									<span>{{flagged}}</span>
-									{% trans 'flagged Submissions' %}
+									{% trans 'flagged' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>
@@ -192,7 +192,7 @@ var org = "{{obj.pk}}";
 								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
 								<div class="mini-stat-info">
 									<span>{{outstanding}}</span>
-									{% trans 'Pending Submissions' %}
+									{% trans 'Pending' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>
@@ -201,7 +201,7 @@ var org = "{{obj.pk}}";
 								<span class="mini-stat-icon"><i class="la la-thumbs-up"></i></span>
 								<div class="mini-stat-info">
 									<span>{{approved}}</span>
-									{% trans 'Approved Submissions' %}
+									{% trans 'Approved' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>
@@ -211,7 +211,7 @@ var org = "{{obj.pk}}";
 							<div class="widget-info margin-top bg-white padding">
 
 								<div class="widget-head">
-									<h4>{% trans 'Project Map' %}</h4>
+									<h4>{% trans 'Project' %} {% trans 'Map' %}</h4>
 									<a href="{% url 'fieldsight:org-loc-map' obj.pk%}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map"></i>{% trans ' Full Map' %}</a>
 								</div>
 								<div class="widget-body">

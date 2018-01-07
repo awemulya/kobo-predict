@@ -15,8 +15,8 @@
 		<nav aria-label="breadcrumb" role="navigation">
 			<ol class="breadcrumb">
 				{% block breadcrumbs %}
-				<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' id %}">{% trans 'Site Dashboard' %}</a></li>
-				<li class="breadcrumb-item active" aria-current="page">{% trans 'Upload Blueprints image files' %}</li>
+				<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' id %}">{% trans 'Site' %} {% trans 'Dashboard' %}</a></li>
+				<li class="breadcrumb-item active" aria-current="page">{% trans 'Upload' %} {% trans 'Blueprints' %} {% trans 'image' %} {% trans 'files' %}</li>
 		    	{% endblock %}
 			</ol>
 		</nav>

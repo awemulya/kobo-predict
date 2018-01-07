@@ -2,25 +2,25 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans ' Sub Stages of ' %}{{obj.name}}
+{% block page-title %}{% trans 'Sub' %} {% trans 'Stages' %} of' %}{{obj.name}}
 {% endblock %}
 
 {% block head %}
     <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add-sub-stage' obj.pk %}">
-        {% trans 'Add Sub Stage' %}</a>
+        {% trans 'Add' %} {% trans 'Sub' %} {% trans 'Stage' %}</a>
 <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
 {% endblock %}
 {% block breadcrumbs %}
 {% if obj.site.pk %}
 <li><a href="{% url 'fieldsight:site-dashboard' obj.site.pk %}">
-     {{obj.site.name}} {% trans 'Site Dashboard' %}</a></li>
-<li><a href="{% url 'forms:setup-site-stages' obj.site.pk %}">{% trans 'Main Stages' %}</a></li>
+     {{obj.site.name}} {% trans 'Site' %} {% trans 'Dashboard' %}</a></li>
+<li><a href="{% url 'forms:setup-site-stages' obj.site.pk %}">{% trans 'Main' %} {% trans 'Stages' %}</a></li>
 {% else %}
 <li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">
-     {{obj.site.name}} {% trans 'Project Dashboard' %}</a></li>
-<li><a href="{% url 'forms:setup-project-stages' obj.project.pk %}">{% trans 'Main Stages' %}</a></li>
+     {{obj.site.name}} {% trans 'Project' %} {% trans 'Dashboard' %}</a></li>
+<li><a href="{% url 'forms:setup-project-stages' obj.project.pk %}">{% trans 'Main' %} {% trans 'Stages' %}</a></li>
 {% endif %}
-    <li>{{obj.sub_stage_count}}{% trans ' Sub Stages of ' %}{{obj.name}}</li>
+    <li>{{obj.sub_stage_count}}{% trans ' Sub' %} {% trans 'Stages' %} of ' %}{{obj.name}}</li>
 {% endblock %}
 {%block extracss %}
 <style>
@@ -134,7 +134,7 @@
           <h3><span>{% trans 'Order:' %}</span> <b>{{stage.order}}</b></h3>
           <h4><span>{% trans 'Name:' %}</span> <b>{{stage.name}}</b></h4>
           <p><span>{% trans 'Description:' %}</span>{{stage.description}}</p>
-            <p><span>{% trans 'Fom Assigned:' %}</span> {{stage.form_name}}</p>
+            <p><span>{% trans 'Fom' %} {% trans 'Assigned:' %}</span> {{stage.form_name}}</p>
 
 
         </div>
@@ -146,7 +146,7 @@
       <div class="col-md-4">
         <div class="substages-main-list">
             <form method="post" id='form' action="{% url 'forms:stage-add-sub-stage' obj.pk %}">
-            <b><span>{% trans 'New Stage:' %}</span></b>
+            <b><span>{% trans 'New' %} {% trans 'Stage:' %}</span></b>
             <b><span>
                {{ form.non_field_errors }}
               </span> </b>

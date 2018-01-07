@@ -31,8 +31,8 @@
 	<nav aria-label="breadcrumb" role="navigation">
 		<ol class="breadcrumb">
             {% block breadcrumbs %}
-			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{% trans 'Project Dashboard' %}</a></li>
-			<li class="breadcrumb-item active" aria-current="page">{% trans 'Submissions Data' %}</li>
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{% trans 'Project' %} {% trans 'Dashboard' %}</a></li>
+			<li class="breadcrumb-item active" aria-current="page">{% trans 'Submissions' %} {% trans 'Data' %}</li>
 		    {% endblock %}
         </ol>
     </nav>
@@ -43,16 +43,16 @@
 
     	<ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link " id ="0" data-toggle="tab" href="#tab0" role="tab">{% trans 'Rejected Submissions' %}</a>
+              <a class="nav-link " id ="0" data-toggle="tab" href="#tab0" role="tab">{% trans 'Rejected' %} {% trans 'Submissions' %}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id ="1" data-toggle="tab" href="#tab1" role="tab">{% trans 'Flagged Submissions' %}</a>
+              <a class="nav-link" id ="1" data-toggle="tab" href="#tab1" role="tab">{% trans 'Flagged' %} {% trans 'Submissions' %}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id ="2" data-toggle="tab" href="#tab2" role="tab">{% trans 'Pending Submissions' %}</a>
+              <a class="nav-link" id ="2" data-toggle="tab" href="#tab2" role="tab">{% trans 'Pending' %} {% trans 'Submissions' %}</a>
             </li>
 			<li class="nav-item">
-              <a class="nav-link" id ="3" data-toggle="tab" href="#tab3" role="tab">{% trans 'Approved Submissions' %}</a>
+              <a class="nav-link" id ="3" data-toggle="tab" href="#tab3" role="tab">{% trans 'Approved' %} {% trans 'Submissions' %}</a>
             </li>
 		</ul>
 
@@ -83,7 +83,7 @@
 					</td>
 				</tr>
 				{% empty %}
-				No data
+				{% trans 'No' %} {% trans 'data' %}
 				{% endfor %}
 			</table>
 				{% paginate %}
@@ -114,7 +114,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				  No data
+				  {% trans 'No' %} {% trans 'data' %}
 				  {% endfor %}
 			  </table>
 			  {% paginate %}
@@ -147,7 +147,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				  No data
+				  {% trans 'No' %} {% trans 'data' %}
 				  {% endfor %}
 			  </table>
 			  {% paginate %}
@@ -178,7 +178,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				  No data
+				  {% trans 'No' %} {% trans 'data' %}
 				  {% endfor %}
 			  </table>
 			  {% paginate %}

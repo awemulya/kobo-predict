@@ -1,25 +1,25 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 
-{% block page-title %}{{ scenario }} {% trans 'New Survey Info' %}{% endblock %}
+{% block page-title %}{{ scenario }} {% trans 'New' %} {% trans 'Survey' %} {% trans 'Info' %}{% endblock %}
 
 {% block head %}
 {% if is_project %}
     <a class="btn btn-success btn-raised" href="{% url 'forms:project-survey' obj.pk%}">{% trans 'Schedules' %}</a>
-    <a class="btn btn-success btn-raised" href="{% url 'forms:project-general' obj.pk%}">{% trans 'General Forms' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'forms:project-general' obj.pk%}">{% trans 'General' %} {% trans 'Forms' %}</a>
 {% else %}
     <a class="btn btn-success btn-raised" href="{% url 'forms:site-survey' obj.pk%}">{% trans 'Schedules' %}</a>
-    <a class="btn btn-success btn-raised" href="{% url 'forms:site-general' obj.pk%}">{% trans 'General Forms' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'forms:site-general' obj.pk%}">{% trans 'General' %} {% trans 'Forms' %}</a>
 {% endif %}
 {% endblock %}
 
 {% block breadcrumbs %}
 {% if is_project %}
-    <li><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{% trans 'Project Dashboard' %}</a></li>
+    <li><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{% trans 'Project' %} {% trans 'Dashboard' %}</a></li>
 {% else %}
-<li><a href="{% url 'fieldsight:site-dashboard' obj.pk %}">{% trans 'Site Dashboard' %}</a></li>
+<li><a href="{% url 'fieldsight:site-dashboard' obj.pk %}">{% trans 'Site' %} {% trans 'Dashboard' %}</a></li>
 {% endif %}
-    <li>{% trans 'New Survey Info' %}</li>
+    <li>{% trans 'New' %} {% trans 'Survey' %} {% trans 'Info' %}</li>
 {% endblock %}
 
 {% block content %}

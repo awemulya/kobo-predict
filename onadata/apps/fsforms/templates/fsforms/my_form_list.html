@@ -2,7 +2,7 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Forms Library' %}{% endblock %}
+{% block page-title %}{% trans 'Forms' %} {% trans 'Library' %}{% endblock %}
 
 
 {% block content %}
@@ -12,7 +12,7 @@
 <div id="main-content" class="padding">
 				<section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3><i class="fa fa-wpforms "></i>{% trans 'My Forms' %}</h3>
+                        <h3><i class="fa fa-wpforms "></i>{% trans 'My' %} {% trans 'Forms' %}</h3>
 						<!--<div class="panel-heading-right">-->
 
 							<!--<a href="#" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> New Form</a>-->
@@ -26,7 +26,7 @@
                           <tr>
                             <th class="text-center">{% trans 'S.N' %}</th>
                             <th class="text-center">{% anchor title _('Form Name') %}</th>
-                            <th class="text-center"> {% trans 'Created Date' %}</th>
+                            <th class="text-center"> {% trans 'Created' %} {% trans 'Date' %}</th>
                             <th class="text-center">{% trans 'Actions' %}</th>
 
 
@@ -44,7 +44,7 @@
 
                           </tr>
                         {% empty %}
-						{% trans 'No matching results' %}
+						{% trans 'No' %} {% trans 'matching' %} {% trans 'results' %}
 						{% endfor %}
                         </tbody>
                       </table>

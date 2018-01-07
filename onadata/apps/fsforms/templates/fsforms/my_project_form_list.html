@@ -2,7 +2,7 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'My Forms' %}{% endblock %}
+{% block page-title %}{% trans 'My' %} {% trans 'Forms' %}{% endblock %}
 
 {% block head %}
     <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
@@ -27,7 +27,7 @@
             <thead>
             <th>{% trans 'Name' %}</th>
             <th>{% trans 'Site' %}</th>
-            <th>{% trans 'Created Date' %}</th>
+            <th>{% trans 'Created' %} {% trans 'Date' %}</th>
             <th>{% trans 'Form Type' %}</th>
             <th>{% trans 'Stage/Schedule' %}</th>
             <th colspan="2">{% trans 'Actions' %}</th>
@@ -58,25 +58,25 @@
 
                      <td>
                         <a class="btn btn-info btn-raised" href="{% url 'forms:formpack_html_export' obj.id %}">
-                             {% trans 'View Data' %}</a>
+                             {% trans 'View' %} {% trans 'Data' %}</a>
                     </td>
                     <td>
                         <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}/edit">
-                             {% trans 'Edit Form Questions' %}</a>
+                             {% trans 'Edit' %} {% trans 'Form' %} {% trans 'Questions' %}</a>
                     </td>
                     <!--if form is scheduled add link to fill schedule data or stage data or choose stage o schedule data-->
                     <td>
                         {% if obj.form_type == "Normal" %}
                         <a class="btn btn-success btn-raised" href="{% url 'forms:fill_form_type' obj.id %}">
-                             {% trans 'Stage or Schedule Form' %}</a>
+                             {% trans 'Stage' %} {% trans 'or' %} {% trans 'Schedule' %} {% trans 'Form' %}</a>
                         {% endif %}
                         {% if obj.is_staged and not obj.stage_name%}
                         <a class="btn btn-success btn-raised" href="{% url 'forms:fill_details_stage' pk=obj.id %}">
-                             {% trans 'Select Stage' %}</a>
+                             {% trans 'Select' %} {% trans 'Stage' %}</a>
                         {% endif %}
                         {% if obj.is_scheduled and not obj.schedule_name%}
                         <a class="btn btn-success btn-raised" href="{% url 'forms:fill_details_schedule' pk=obj.id %}">
-                             {% trans 'Make Schedule' %}</a>
+                             {% trans 'Make' %} {% trans 'Schedule' %}</a>
                         {% endif %}
                     </td>
                 </tr>

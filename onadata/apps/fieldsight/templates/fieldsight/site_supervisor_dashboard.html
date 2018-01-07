@@ -151,7 +151,7 @@
                                                                 <div class="well well-sm our-office">
                                                                 <span class="well-header">
                                                                     <i class="fa fa-location-arrow blue" aria-hidden="true"></i>
-                                                                      {% trans 'Our Office' %}
+                                                                      {% trans 'Our' %} {% trans 'Office' %}
                                                                   </span>
                                                                  </div>
                                                                 <div class="office-information">
@@ -173,19 +173,19 @@
                                                                <div class=" well well-sm our-office">
                                                                   <span class="well-header">
                                                                     <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                                                      {% trans 'Our Introduction' %}
+                                                                      {% trans 'Our' %} {% trans 'Introduction' %}
                                                                   </span>
                                                                 </div>
                                                                 <div class="office-information">
                                                                   <!-- <div class="gap"></div> -->
                                                                   <!-- <p class="short-detail">{{ obj.description }}</p> -->
-                                                                  <span class="line-header">Public Description</span>
+                                                                  <span class="line-header">{% trans 'Public' %} {% trans 'Description' %}</span>
                                                                   <div class="gap"></div>
                                                                   <div class="public_desc">
                                                                       <p class="short-detail">{{ obj.public_desc}}</p>
                                                                   </div>
                                                                   <div class="gap-high"></div>
-                                                                  <span class="line-header">Additional Description</span>
+                                                                  <span class="line-header">{% trans 'Additional' %} {% trans 'Description' %}</span>
                                                                   <div class="gap"></div>
                                                                   <div class="additional_desc">
                                                                       <p class="short-detail">{{ obj.additional_desc }}</p>
@@ -255,9 +255,9 @@
 
                       <div class="info-box-content">
                           <span class="info-box-number">{{rejected|length}}</span>
-                          <span class="info-box-text">{% trans 'Rejected Submissions' %}</span>
-                        
-                        
+                          <span class="info-box-text">{% trans 'Rejected' %} {% trans 'Submissions' %}</span>
+
+
                       </div>
                       <!-- /.info-box-content -->
                     </div>
@@ -277,7 +277,7 @@
                       <div class="info-box-content">
                         
                         <span class="info-box-number">{{flagged|length}}</span>
-                        <span class="info-box-text">{% trans 'Flagged Submissions' %}</span>
+                        <span class="info-box-text">{% trans 'Flagged' %} {% trans 'Submissions' %}</span>
                       </div>
                       <!-- /.info-box-content -->
                     </div>
@@ -291,7 +291,7 @@
 
             <div class="info-box-content">
                 <span class="info-box-number">{{outstanding|length}}</span>
-                <span class="info-box-text">{% trans 'Pending Submissions' %}</span>
+                <span class="info-box-text">{% trans 'Pending' %} {% trans 'Submissions' %}</span>
             </div>
             <!-- /.info-box-content -->
           </div>
@@ -304,7 +304,7 @@
 
             <div class="info-box-content">
               <span class="info-box-number">{{approved|length}}</span>
-              <span class="info-box-text">{% trans 'Approved Submissions' %}</span>
+              <span class="info-box-text">{% trans 'Approved' %} {% trans 'Submissions' %}</span>
               
             </div>
             <!-- /.info-box-content -->
@@ -534,7 +534,7 @@
                   <canvas id="myChart" width="500" height="300"></canvas>
 
               </div>
-              <h4 class="widget-h">{% trans 'Form Submissions' %}</h4>
+              <h4 class="widget-h">{% trans 'Form' %} {% trans 'Submissions' %}</h4>
 
           </div>
             <hr>

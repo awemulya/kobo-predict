@@ -2,12 +2,12 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Stage Details' %}{% endblock %}
+{% block page-title %}{% trans 'Stage' %} {% trans 'Details' %}{% endblock %}
 
 {% block head %}
 {% endblock %}
 {% block breadcrumbs %}
-    <li>{% trans 'Stage Details' %}</li>
+    <li>{% trans 'Stage' %} {% trans 'Details' %}</li>
 {% endblock %}
 {% block content %}
      <div class="panel-group" id="accordion">
@@ -25,10 +25,10 @@
 
                   <table class="table table-striped">
                       <thead>
-                      <th>{% trans 'Sub Stage Name' %}</th>
+                      <th>{% trans 'Sub' %} {% trans 'Stage' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Order' %}</th>
-                      <th>{% trans 'Form Name' %}</th>
-                      <th>{% trans 'Created Date' %}</th>
+                      <th>{% trans 'Form' %} {% trans 'Name' %}</th>
+                      <th>{% trans 'Created' %} {% trans 'Date' %}</th>
                       </thead>
                       <tbody>
                       {% for obj in stage.parent.all %}

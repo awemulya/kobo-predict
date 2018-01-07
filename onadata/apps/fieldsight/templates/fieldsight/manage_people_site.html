@@ -79,7 +79,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                       {% if level == "2" %}
                         <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{{ obj.name }}</a></li>
                       {% endif %}
-						<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage People' %}</li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage' %} {% trans 'People' %}</li>
 					 </ol>
                 {% endblock %}
               </nav>
@@ -149,7 +149,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </form>
                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
-                  <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignsupervisors"><i class="la la-user-plus"></i>{% trans 'Assign selected as Supervisors' %}</button>
+                  <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignsupervisors"><i class="la la-user-plus"></i>{% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Supervisors' %}</button>
 
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
@@ -227,7 +227,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <div class="input-group">
                     <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
                     <span class="input-group-btn">
-                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Reviewer')" type="button"><i class="la la-user-plus"></i> Invite</button>
+                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Reviewer')" type="button"><i class="la la-user-plus"></i>{% trans 'Invite' %}</button>
                     </span>
                   </div>
                 </form>

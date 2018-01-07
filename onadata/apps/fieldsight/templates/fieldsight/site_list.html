@@ -49,7 +49,7 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 						<div class="col-md-6">
 						
 							<select name ="sortby" class="form-control no-btn-search" data-bind="value:sortby, valueUpdate:'afterkeydown'">
-							<option value="sitename" disabled selected>{% trans 'Select your option' %}</option>
+							<option value="sitename" disabled selected>{% trans 'Select' %} {% trans 'your' %} {% trans 'option' %}</option>
 								<option value="rejected">{% trans 'Rejected' %}</option>
 								<option value="flagged">{% trans 'Flagged' %}</option>
 								<option value="pending">{% trans 'Pending' %}</option>
@@ -68,23 +68,23 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 							<!--</select>-->
 						</div>
 						<div class="col-md-6 pull-right">
-							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i> Search</a>
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i>{% trans 'Search' %}</a>
 
 							{% if type == "project" %}
-							<a href="{% url 'fieldsight:site-add' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add New</a>
+							<a href="{% url 'fieldsight:site-add' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Add' %} {% trans 'New' %}</a>
 
-							<a href="{% url 'fieldsight:define-site-meta' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i>Meta Attributes</a>
-							<a href="{% url 'fieldsight:site-upload' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Bulk Upload Sites</a>
+							<a href="{% url 'fieldsight:define-site-meta' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i>{% trans 'Meta' %} {% trans 'Attributes' %}</a>
+							<a href="{% url 'fieldsight:site-upload' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Bulk' %} {% trans 'Upload' %} {% trans 'Sites' %}</a>
 							{% endif %}
 							{% if type == "region" %}
 							
 							<a href="{% url 'fieldsight:regional-site-add' obj.project.id pk %}" title="" class="btn btn-sm 
-							btn-primary"><i class="la la-plus"></i>{% trans 'Add New Regional Site' %}</a>
-							<a href="{% url 'fieldsight:define-site-meta' obj.project.id %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i>Meta Attributes</a>
+							btn-primary"><i class="la la-plus"></i>{% trans 'Add' %} {% trans 'New' %} {% trans 'Regional' %} {% trans 'Site' %}</a>
+							<a href="{% url 'fieldsight:define-site-meta' obj.project.id %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i>{% trans 'Meta' %} {% trans 'Attributes' %}</a>
 							{% elif type == "Unregioned" %}
 							<a href="{% url 'fieldsight:regional-site-add' project_id pk %}" title="" class="btn btn-sm 
-							btn-primary"><i class="la la-plus"></i>{% trans 'Add New Regional Site' %}</a>
-							<a href="{% url 'fieldsight:define-site-meta' project_id %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i>Meta Attributes</a>
+							btn-primary"><i class="la la-plus"></i>{% trans 'Add' %} {% trans 'New' %} {% trans 'Regional' %} {% trans 'Site' %}</a>
+							<a href="{% url 'fieldsight:define-site-meta' project_id %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i>{% trans 'Meta' %} {% trans 'Attributes' %}</a>
 							{% endif %}
 						</div>
                     </header>
@@ -106,7 +106,7 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 										<div class="input-group">
 										<input type="text" class="form-control no-btn-search" placeholder="Search . . . . . "  data-bind="value:search_key, valueUpdate:'afterkeydown'">
 										  <span class="input-group-btn">
-											<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+											<button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
 										  </span>
 										</div>
 									</div>

@@ -1390,7 +1390,7 @@ class SiteSummaryReport(LoginRequiredMixin, TemplateView):
 
     def get(self, request, **kwargs):
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
-        project = Project.objects.get(pk=obj.project_id)
+        project = Project.objects.get(pk=gobj.project_id)
         peoples_involved = obj.site_roles.filter(ended_at__isnull=True).distinct('user')
         data = serialize('custom_geojson', [obj], geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
