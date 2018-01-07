@@ -94,7 +94,7 @@ class FieldSightLog(models.Model):
             if self.extra_object.user_profile:
                 return self.extra_object.user_profile.getname()
             return self.extra_object.email
-        return self.extra_content_type.id
+        return self.extra_content_type.name
 
     def get_source_url(self):
         try:
