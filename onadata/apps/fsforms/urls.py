@@ -57,8 +57,8 @@ urlpatterns = [
 
         url(r'^stage/$', StageListView.as_view(), name='stages-list'),
         url(r'^stage/add/(?P<site_id>\d+)/$', stage_add, name='stage-add'),
-        url(r'^responses/(?P<pk>\d+)/$', Responses, name='site-responses'),
-        url(r'^project-responses/(?P<pk>\d+)/$', ProjectResponses, name='project-responses'),
+        url(r'^responses/(?P<pk>\d+)/$', Responses.as_view(), name='site-responses'),
+        url(r'^project-responses/(?P<pk>\d+)/$', ProjectResponses.as_view(), name='project-responses'),
         url(r'^project-stage/add/(?P<id>\d+)/$', project_stage_add, name='project-stage-add'),
         url(r'^stage/(?P<pk>\d+)/$', StageUpdateView.as_view(), name='stage-edit'),
         url(r'^stage-add-sub-stage/(?P<pk>\d+)/$', add_sub_stage, name='stage-add-sub-stage'),
