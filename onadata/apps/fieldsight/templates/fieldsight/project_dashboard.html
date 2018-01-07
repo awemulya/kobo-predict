@@ -54,7 +54,7 @@ var project = "{{obj.pk}}";
 					{% block breadcrumbs %}
 					<ol class="breadcrumb">
 						{% ifrole "Organization" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization List' %}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization' %} {% trans 'List' %}</a></li>
 						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' obj.organization.pk %}">{{obj.organization.name}}</a></li>
 						{% endrole %}
 						<li class="breadcrumb-item active" aria-current="page">{{obj.name}}</li>
@@ -73,9 +73,9 @@ var project = "{{obj.pk}}";
 								<i class="la la-clipboard"></i>{% trans 'Reports' %}
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
-								<a class="dropdown-item" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i>{% trans ' Project Summary Report' %}</a>
+								<a class="dropdown-item" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i>{% trans ' Project' %} {% trans 'Summary' %} {% trans 'Report' %}</a>
 								<!--<a class="dropdown-item" href="#"><i class="la la-clipboard"></i>{% trans 'Project Detail Report' %}</a>-->
-								<a class="dropdown-item" href="{% url 'fieldsight:download-stages' obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Excel Report' %}</a>
+								<a class="dropdown-item" href="{% url 'fieldsight:download-stages' obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Excel' %} {% trans 'Report' %}</a>
 							</div>
 						</span>
 						<span class="dropdown">
@@ -87,14 +87,14 @@ var project = "{{obj.pk}}";
 								<a class="dropdown-item" href="{% url 'forms:setup-forms' 1 obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Forms' %}</a>
 
 								{% if obj.cluster_sites %}
-								<a class="dropdown-item" href="{% url 'fieldsight:multi_site_region_assign' obj.id%}"><i class="la la-map-marker"></i>{% trans 'Assign Site Regions' %}</a>
+								<a class="dropdown-item" href="{% url 'fieldsight:multi_site_region_assign' obj.id%}"><i class="la la-map-marker"></i>{% trans 'Assign' %} {% trans 'Site' %} {% trans 'Regions' %}</a>
 								{% else %}
 								<a class="dropdown-item" href="{% url 'fieldsight:proj-site-list' obj.id%}"><i class="la la-map-marker"></i>{% trans ' Sites' %}</a>
 								{% endif %}
 
 							</div>
 						</span>
-						<a href="{% url 'fieldsight:project-edit' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-edit"></i> Edit</a>
+						<a href="{% url 'fieldsight:project-edit' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-edit"></i> {% trans 'Edit' %}</a>
 					</div>
 				</div>
 				<section class="org-profile-body margin-top">
@@ -152,7 +152,7 @@ var project = "{{obj.pk}}";
 						<div class="col-lg-4 col-md-12">
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>Contact Info</h4>
+									<h4>{% trans 'Contact' %} {% trans 'Info' %}</h4>
 								</div>
 								<div class="widget-body">
 									<ul class="contact-info-list">
@@ -192,7 +192,7 @@ var project = "{{obj.pk}}";
 								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
 								<div class="mini-stat-info">
 									<span>{{rejected}}</span>
-									{%trans 'Rejected Submissions' %}
+									{% trans 'Rejected' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>
@@ -201,7 +201,7 @@ var project = "{{obj.pk}}";
 								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
 								<div class="mini-stat-info">
 									<span>{{flagged}}</span>
-									{% trans 'flagged Submissions' %}
+									{% trans 'flagged' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>
@@ -210,7 +210,7 @@ var project = "{{obj.pk}}";
 								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
 								<div class="mini-stat-info">
 									<span>{{outstanding }}</span>
-									{% trans 'Pending Submissions' %}
+									{% trans 'Pending' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>
@@ -219,7 +219,7 @@ var project = "{{obj.pk}}";
 								<span class="mini-stat-icon"><i class="la la-thumbs-up"></i></span>
 								<div class="mini-stat-info">
 									<span>{{approved}}</span>
-									{% trans 'Approved Submissions' %}
+									{% trans 'Approved' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>
@@ -228,16 +228,16 @@ var project = "{{obj.pk}}";
 						<div class="col-lg-6 col-sm-12">
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<a href="{% url 'fieldsight:proj-loc-map' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map" ></i>{% trans ' Full Map' %}</a>
-									<h4>{% trans 'Site Map' %}</h4>
+									<a href="{% url 'fieldsight:proj-loc-map' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map" ></i>{% trans 'Full' %} {% trans 'Map' %}</a>
+									<h4>{% trans 'Site' %} {% trans 'Map' %}</h4>
 								</div>
 								<div class="widget-body">
 									<div class="radio-div card">
 									<div class="radio">
-										<label><input class = "switch" id = "form_status" type="radio" name="status" value="male" checked="checked">{% trans 'Form Status' %}</label><br>
+										<label><input class = "switch" id = "form_status" type="radio" name="status" value="male" checked="checked">{% trans 'Form' %} {% trans 'Status' %}</label><br>
 									</div>
 									<div class="radio">
-									  <label><input class = "switch" id = "project_progress" type="radio" name="progress" value="male">{% trans 'Site Progress' %}</label><br>
+									  <label><input class = "switch" id = "project_progress" type="radio" name="progress" value="male">{% trans 'Site' %} {% trans 'Progress' %}</label><br>
 									</div>
 							    </div>
 								<div id="map" class="full-map"></div>
@@ -273,7 +273,7 @@ var project = "{{obj.pk}}";
 													<!-- <img data-bind="attr:{src: logo}" width="50" height="50"/> -->
 												</div>
 												<div class="project-basic-info">
-													<h4>{% trans 'Un Assigned Sites' %}</h4>
+													<h4>{% trans 'Un' %} {% trans 'Assigned' %} {% trans 'Sites' %}</h4>
                             						
 													
 												</div>
@@ -341,7 +341,7 @@ var project = "{{obj.pk}}";
 								<div class="col-md-6 col-sm-12">
 									<div class="widget-info widget-scolling-list margin-top bg-white padding">
 										<div class="widget-head">
-											<h4> {% trans 'People' %}</h4>
+											<h4>{% trans 'People' %}</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:manage-people-project' obj.pk %}"><i class="la la-plus"></i></a>
 											
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchProjectManager" aria-expanded="false" aria-controls="searchProjectManager"><i class="la la-search"></i></a>
@@ -353,7 +353,7 @@ var project = "{{obj.pk}}";
 													<div class="input-group input-group-sm">
 														<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
 														<span class="input-group-btn">
-															<button class="btn btn-primary" type="button"><i class="la la-search"></i> Search</button>
+															<button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
 														</span>
 													</div>
 												</form>
@@ -474,7 +474,7 @@ var project = "{{obj.pk}}";
 						<div class="col-md-6">
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>{% trans 'Form Submissions' %}</h4>
+									<h4>{% trans 'Form' %} {% trans 'Submissions' %}</h4>
 								</div>
 								<div class="widget-body">
 									<div id="submission-chart">
@@ -486,7 +486,7 @@ var project = "{{obj.pk}}";
 						<div class="col-md-6">
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>{% trans 'Site Progress' %}</h4>
+									<h4>{% trans 'Site' %} {% trans 'Progress' %}</h4>
 								</div>
 								<div class="widget-body">
 									<div id="siteprogress-chart">

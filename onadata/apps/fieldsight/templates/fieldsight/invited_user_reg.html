@@ -68,15 +68,15 @@
                 <center><div id="alert" style="color: red;">
 
                   {% if status == "error-1" %}
-                    {% trans 'Username must only include alpha-numeric characters.' %}
+                    {% trans 'Username' %} {% trans 'must' %} {% trans 'only' %} {% trans 'include' %} {% trans 'alpha-numeric' %} {% trans 'characters.' %}
                   {% endif %}
 
                   {% if status == "error-2" %}
-                    {% trans 'Username already taken' %}
+                    {% trans 'Username' %} {% trans 'already' %} {% trans 'taken' %}
                   {% endif %}
 
                   {% if status == "error-3" %}
-                    {% trans 'Username must only include small letters' %}
+                    {% trans 'Username' %} {% trans 'must' %} {% trans 'only' %} {% trans 'include' %} {% trans 'small' %} {% trans 'letters' %}
                   {% endif %}
 
 
@@ -85,7 +85,7 @@
                 
             </div>
            
-            <button onclick="validatepass()" class="btn btn-lg btn-login btn-block registration__action" type="button" value="Login" >Register</button>
+            <button onclick="validatepass()" class="btn btn-lg btn-login btn-block registration__action" type="button" value="Login" >{% trans 'Register' %}</button>
            
 
 

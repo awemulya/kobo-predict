@@ -1,7 +1,7 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 
-{% block page-title %}{% trans 'Assign Multi User'  %}
+{% block page-title %}{% trans 'Assign'  %} {% trans 'Multi'  %} {% trans 'User'  %}
 
 {% endblock %}
 
@@ -25,8 +25,8 @@ var proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
 </table>
  <input style="display:none;" type="button" id="getnextlist" onclick="" value="load more">
 
-  <input type="radio" name="group" id="group" value="Reviewer" checked> Reviewer<br>
-  <input type="radio" name="group" id="group" value="Site Supervisor"> Site Supervisor<br>
+  <input type="radio" name="group" id="group" value="Reviewer" checked>{% trans 'Reviewer' %}<br>
+  <input type="radio" name="group" id="group" value="Site Supervisor"> {% trans 'Site' %} {% trans 'Supervisor' %}<br>
 <br>
 <br>
 <br>
@@ -48,7 +48,7 @@ var proj_site_url = '{% url 'role:multi_ops_list' 1 pk %}';
   </tbody>
 </table>
  <input style="display:none;" type="button" id="getnextlist" onclick="" value="load more">
- <input type="radio" style="display:none;" name="group" id="group" value="Project Manager" checked> Project Manager<br>
+ <input type="radio" style="display:none;" name="group" id="group" value="Project Manager" checked> {% trans 'Project' %} {% trans 'Manager' %}<br>
 <br><br><br>
 <table id="proj_site">
 <tbody id="proj_site_list">
@@ -58,7 +58,7 @@ var proj_site_url = '{% url 'role:multi_ops_list' 1 pk %}';
 </table>
  <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more">
 {% else %}
-<h1>Permission denied.</h1>
+<h1>{% trans 'Permission' %} {% trans 'denied.' %}</h1>
 {% endif %}
 <input type="button" name="submit" onclick="assignusers()">
 

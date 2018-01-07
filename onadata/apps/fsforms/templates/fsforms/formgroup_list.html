@@ -2,7 +2,7 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Stages Library' %}{% endblock %}
+{% block page-title %}{% trans 'Stages' %} {% trans 'Library' %}{% endblock %}
 
 {% block head %}
 {% endblock %}
@@ -49,13 +49,13 @@
                     <td>
                         {% ifequal obj.creator request.user %}
                         <a class="btn btn-danger btn-raised" href="{% url 'forms:edit-share-stages' obj.pk %}">
-                            {% trans 'Edit Details' %}</a>
+                            {% trans 'Edit' %} {% trans 'Details' %}</a>
                         {% endifequal %}
                     </td>
 
                     <td>
                         <a  href="{% url 'forms:view-stages-of-library' obj.pk %}">
-                            {% trans 'View Stages' %}</a>
+                            {% trans 'View' %} {% trans 'Stages' %}</a>
                     </td>
 
                 </tr>

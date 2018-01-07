@@ -2,7 +2,7 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Forms Library' %}{% endblock %}
+{% block page-title %}{% trans 'Forms' %} {% trans 'Library' %}{% endblock %}
 
 {% block head %}
     <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
@@ -26,7 +26,7 @@
         <table class="table table-striped" id="dynamic-table1">
             <thead>
             <th>{% anchor name _('Name') %}</th>
-            <th>{% trans 'Created Date' %}</th>
+            <th>{% trans 'Created' %} {% trans 'Date' %}</th>
             <th colspan="2">{% trans 'Actions' %}</th>
             </thead>
             <tbody>
@@ -40,7 +40,7 @@
                     </td>
                      <td>
                         <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/{{ obj.xf.id_string }}/edit">
-                             {% trans 'Edit Form Questions' %}</a>
+                             {% trans 'Edit' %} {% trans 'Form' %} {% trans 'Questions' %}</a>
                     </td>
                     <td>
                         <a class="btn btn-success btn-raised" href="{% url 'forms:assign' pk=obj.id %}">

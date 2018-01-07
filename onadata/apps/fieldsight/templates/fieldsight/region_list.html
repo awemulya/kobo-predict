@@ -13,7 +13,7 @@
                 <nav aria-label="breadcrumb" role="navigation">
 					<ol class="breadcrumb">
 						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ project.name }}</a></li>
-						<li class="breadcrumb-item active" aria-current="page">{% trans 'Region List' %}</li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Region' %} {% trans 'List' %}</li>
 					</ol>
 				</nav>
 				<section class="panel">
@@ -39,9 +39,9 @@
                       <table class="table">
                         <thead>
                           <tr>
-                            <th class="text-center">{% trans 'Region ID' %}</th>
-                            <th class="text-center">{% trans 'Region Name' %}</th>
-                            <th class="text-center"> {% trans 'Created Date' %}</th>
+                            <th class="text-center">{% trans 'Region' %} {% trans 'ID' %}</th>
+                            <th class="text-center">{% trans 'Region' %} {% trans 'Name' %}</th>
+                            <th class="text-center"> {% trans 'Created' %} {% trans 'Date' %}</th>
                             <th class="text-center">{% trans 'Actions' %}</th>
                           </tr>
                         </thead>

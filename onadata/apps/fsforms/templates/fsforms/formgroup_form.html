@@ -1,13 +1,13 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n %}
 
-{% block page-title %} {% trans 'Share Stages To Library' %}{% endblock %}
+{% block page-title %} {% trans 'Share' %} {% trans 'Stages' %} {% trans 'To' %} {% trans 'Library' %}{% endblock %}
 
 {% block head %}
 {% endblock %}
 
 {% block content %}
-    <h3>{% trans 'Please Enter Library Details For Stages' %}</h3>
+    <h3>{% trans 'Please' %} {% trans 'Enter' %} {% trans 'Library' %} {% trans 'Details' %} {% trans 'For' %} {% trans 'Stages' %}</h3>
     <form method="POST" action="{% url 'forms:share-stages' id is_project %}">
         <div class="">
             <div class="col-sm-12 registration_field">

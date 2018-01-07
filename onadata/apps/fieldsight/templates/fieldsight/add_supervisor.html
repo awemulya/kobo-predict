@@ -2,16 +2,16 @@
 {% load i18n staticfiles %}
 
 
-{% block page-title %}{% trans 'Add Supervisor to '  %}{{obj.name}}
+{% block page-title %}{% trans 'Add'  %} {% trans 'Supervisor'  %} {% trans 'to'  %}{{obj.name}}
 
 {% endblock %}
 
 {% block head %}
 {% endblock %}
 {% block breadcrumbs %}
-    <li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">{% trans 'Project Dashboard'  %}</a></li>
-<li><a href="{% url 'fieldsight:site-dashboard' obj.pk %}">{% trans 'Site Dashboard' %}</a></li>
-    <li>{% trans 'Add Supervisor to '  %}{{obj.name}}</li>
+    <li><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">{% trans 'Project'  %} {% trans 'Dashboard'  %}</a></li>
+<li><a href="{% url 'fieldsight:site-dashboard' obj.pk %}">{% trans 'Site'  %} {% trans 'Dashboard' %}</a></li>
+    <li>{% trans 'Add'  %} {% trans 'Supervisor'  %} {% trans 'to '  %}{{obj.name}}</li>
 {% endblock %}
 
 {%block extracss %}
@@ -31,7 +31,7 @@
       </div>
 
 <div class="col-sm-6">
-      <h3>{% trans 'Current Users' %}</h3>
+      <h3>{% trans 'Current'  %} {% trans 'Users' %}</h3>
       <div class="currentuser-block">
         <div class="search-current">
           <input type="text" class="current-input" placeholder="Search">

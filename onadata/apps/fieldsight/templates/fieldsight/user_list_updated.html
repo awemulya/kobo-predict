@@ -21,7 +21,7 @@
 						{% if type == "organization" %}
 						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{{ obj.name }}</a></li>
 						{% endif %}
-						<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage People' %}</li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage' %} {% trans 'People' %}</li>
 					 </ol>
 					{% endblock %}
 				</nav>
@@ -125,7 +125,7 @@
 								</div>
 							</div>
 							{% empty %}
-							{% trans 'No matching results' %}
+							{% trans 'No' %} {% trans 'matching' %} {% trans 'results' %}
                             {% endfor %}
 						</div>
 							 <!--pagination-->
@@ -162,7 +162,7 @@
                         <div class="modal-content" style="margin-top: 15%;">
                           <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">{% trans 'Invite Status' %}</h4>
+                            <h4 class="modal-title">{% trans 'Invite' %} {% trans 'Status' %}</h4>
                           </div>
                           <div class="modal-body">
                           <center>
@@ -179,6 +179,8 @@
                         
                       </div>
                     </div>
+					</div>
+				</section>
 
 					<script type="text/javascript">
 					var status_email = true;

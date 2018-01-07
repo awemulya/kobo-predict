@@ -25,7 +25,7 @@
 <div id="main-content" class="padding">
         <section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3><i class="la la-pencil-square-o"></i>{% trans 'Form Submissions' %} | {{ form_name  }}</h3>
+                        <h3><i class="la la-pencil-square-o"></i>{% trans 'Form' %} {% trans 'Submissions' %} | {{ form_name  }}</h3>
             <div class="panel-heading-right">
               <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForms" aria-expanded="false" aria-controls="searchForms"><i class="la la-search"></i> Search</a>
             
@@ -58,10 +58,10 @@
       <tr>
         <th>{% trans 'S.N' %}</th>
 
-        <th>{% trans 'Site Name' %}</th>
-        <th>{% trans 'Site Id' %}</th>
-        <th>{% trans 'Submitted By' %}</th>
-        <th>{% trans 'Submission Date' %}</th>
+        <th>{% trans 'Site' %} {% trans 'Name' %}</th>
+        <th>{% trans 'Site' %} {% trans 'Id' %}</th>
+        <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
+        <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
       </tr>
     </thead>
     <tbody>
@@ -107,10 +107,10 @@
       <tr>
         <th>{% trans 'S.N' %}</th>
 
-        <th>{% trans 'Site Name' %}</th>
-        <th>{% trans 'Site Id' %}</th>
-        <th>{% trans 'Submitted By' %}</th>
-        <th>{% trans 'Submission Date' %}</th>
+        <th>{% trans 'Site' %} {% trans 'Name' %}</th>
+        <th>{% trans 'Site' %} {% trans 'Id' %}</th>
+        <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
+        <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
       </tr>
     </thead>
     <tbody>

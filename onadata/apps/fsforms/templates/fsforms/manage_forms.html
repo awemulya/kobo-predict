@@ -2,7 +2,7 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Manage Forms' %}{% endblock %}
+{% block page-title %}{% trans 'Manage' %} {% trans 'Forms' %}{% endblock %}
 
    {%block extracss %}
 <link rel="stylesheet" href="{% static 'css/knockout-file-bindings.css' %}">
@@ -69,7 +69,7 @@ var pk = "{{pk}}";
             {% else %}
 			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ obj.name }}</a></li>
             {% endif %}
-			<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage Forms' %}</li>
+			<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage' %} {% trans 'Forms' %}</li>
 		    {% endblock %}
         </ol>
     </nav>
@@ -78,19 +78,19 @@ var pk = "{{pk}}";
 				<div class="tabbing">
 					<ul class="nav nav-tabs" role="tablist">
 						<li class="nav-item">
-							<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">{% trans 'General Forms' %}</a>
+							<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">{% trans 'General' %} {% trans 'Forms' %}</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" data-toggle="tab" href="#tab002" role="tab"
-                            data-bind="click: function () {setSelectedVm('schedules')}">{% trans 'Scheduled Forms' %}</a>
+                            data-bind="click: function () {setSelectedVm('schedules')}">{% trans 'Scheduled' %} {% trans 'Forms' %}</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" data-toggle="tab" href="#tab003" role="tab"
-                            data-bind="click: function () {setSelectedVm('stages')}">{% trans 'Staged Forms' %}</a>
+                            data-bind="click: function () {setSelectedVm('stages')}">{% trans 'Staged' %} {% trans 'Forms' %}</a>
 						</li>
                         <li class="nav-item" data-bind="visible:is_project=='1'">
 							<a class="nav-link" data-toggle="tab" href="#tab004" role="tab"
-                            data-bind="click: function () {setSelectedVm('survey')}">{% trans 'Survey Forms' %}</a>
+                            data-bind="click: function () {setSelectedVm('survey')}">{% trans 'Survey' %} {% trans 'Forms' %}</a>
 						</li>
 					</ul>
 					<!-- Tab panes -->
@@ -105,7 +105,7 @@ var pk = "{{pk}}";
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                    <h4 class="modal-title">{% trans 'Select Form' %}</h4>
+                                                    <h4 class="modal-title">{% trans 'Select' %} {% trans 'Form' %}</h4>
                                                     </div>
                                                     <div class="modal-body">
 
@@ -125,13 +125,13 @@ var pk = "{{pk}}";
                                         </div>
                                     </div>
 							<a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:add_form">
-                                <i class="la la-upload"></i>{% trans 'Assign New Form' %}</a>
+                                <i class="la la-upload"></i>{% trans 'Assign' %} {% trans 'New' %} {% trans 'Form' %}</a>
 														<!--Assign New-->
                                 <div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-labelledby="assignModalLabel" aria-hidden="true">
                                     <div class="modal-dialog model-lg" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="assignModalLabel">{% trans 'Assign New Form' %}</h5>
+                                                <h5 class="modal-title" id="assignModalLabel">{% trans 'Assign' %} {% trans 'New' %} Form' %}</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -141,7 +141,7 @@ var pk = "{{pk}}";
                                                     <div class="col-md-6 col-sm-12">
                                                         <div class="widget-info margin-top">
                                                             <div class="widget-head">
-                                                                <h4>{% trans 'My Forms' %}</h4>
+                                                                <h4>{% trans 'My' %} {% trans 'Forms' %}</h4>
                                                             </div>
                                                             <div class="widget-body">
                                                                 <div class="input-group input-group-sm margin-top">
@@ -151,28 +151,28 @@ var pk = "{{pk}}";
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio1" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio2" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio3" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio4" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                             </div>
@@ -181,7 +181,7 @@ var pk = "{{pk}}";
                                                     <div class="col-md-6 col-sm-12">
                                                         <div class="widget-info margin-top">
                                                             <div class="widget-head">
-                                                                <h4>{% trans 'Library Forms' %}</h4>
+                                                                <h4>{% trans 'Library' %} {% trans 'Forms' %}</h4>
                                                             </div>
                                                             <div class="widget-body margin-top">
                                                                 <div class="input-group input-group-sm margin-top">
@@ -191,28 +191,28 @@ var pk = "{{pk}}";
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio11" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio12" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio13" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio14" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                             </div>
@@ -221,8 +221,8 @@ var pk = "{{pk}}";
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-primary"><i class="la la-upload"></i>{% trans 'Assign Form' %}</button>
-                                                <a href="#" class="btn btn-secondary"><i class="la la-file-text"></i>{% trans 'New Form' %}</a>
+                                                <button type="button" class="btn btn-primary"><i class="la la-upload"></i>{% trans 'Assign' %} {% trans 'Form' %}</button>
+                                                <a href="#" class="btn btn-secondary"><i class="la la-file-text"></i>{% trans 'New' %} {% trans 'Form' %}</a>
                                             </div>
                                         </div>
                                     </div>
@@ -250,10 +250,10 @@ var pk = "{{pk}}";
                                     <thead class="thead-default">
                                         <tr>
                                             <th>{% trans 'S.N.' %}</th>
-                                            <th>{% trans 'Form Title' %}</th>
-                                            <th>{% trans 'Assigned Date' %}</th>
+                                            <th>{% trans 'Form' %} {% trans 'Title' %}</th>
+                                            <th>{% trans 'Assigned' %} {% trans 'Date' %}</th>
                                             <th>{% trans 'Responses' %}</th>
-                                            <th>{% trans 'Education Material' %}</th>
+                                            <th>{% trans 'Education' %} {% trans 'Material' %}</th>
                                             <th>{% trans 'Actions' %}</th>
                                         </tr>
                                     </thead>
@@ -269,11 +269,11 @@ var pk = "{{pk}}";
                                                       <div class="modal-dialog form-modal" role="document">
                                                         <div class="modal-content">
                                                           <div class="modal-header">
-                                                            <h5 class="modal-title">{% trans 'Education Material' %}</h5>
+                                                            <h5 class="modal-title">{% trans 'Education' %} {% trans 'Material' %}</h5>
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                                           </div>
                                                           <div class="modal-body">
-                                                                  <h6>{% trans 'Create A Education Material' %}</h6>
+                                                                  <h6>{% trans 'Create' %} {% trans 'A' %} {% trans 'Education' %} {% trans 'Material' %}</h6>
 
                                                                 <div class="form-group">
                                                                   <label for="title" id="sizing-addon2">{% trans 'Title' %}</label>
@@ -285,12 +285,12 @@ var pk = "{{pk}}";
                                                                 </div>
                                                                 <div>
                                                                   <div data-bind="visible:em_images().length">
-                                                                      <p>{% trans 'Saved Images' %}</p>
+                                                                      <p>{% trans 'Saved' %} {% trans 'Images' %}</p>
                                                                       <div data-bind="foreach:em_images">
                                                                           <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
                                                                       </div>
                                                                   </div>
-                                                                  <h5>{% trans 'Multiple Images Uploads' %}</h5>
+                                                                  <h5>{% trans 'Multiple' %} {% trans 'Images' %} {% trans 'Uploads' %}</h5>
                                                                   <div class="well" data-bind="fileDrag: multiFileData">
                                                                             <div class="form-group row">
                                                                                 <div class="col-md-6">
@@ -298,7 +298,7 @@ var pk = "{{pk}}";
                                                                                           <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">
                                                                                           <!-- /ko -->
                                                                                     <div data-bind="ifnot: multiFileData().fileArray">
-                                                                                        <label class="drag-label">{% trans 'Drag files here' %}</label>
+                                                                                        <label class="drag-label">{% trans 'Drag' %} {% trans 'files' %} {% trans 'here' %}</label>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="col-md-6">
@@ -311,13 +311,13 @@ var pk = "{{pk}}";
                                                                             </div>
                                                                         </div>
                                                                  </div>
-                                                               <h6> {% trans 'Upload PDF OF Education Material' %}</h6>
+                                                               <h6> {% trans 'Upload' %} {% trans 'PDF' %} {% trans 'OF' %} {% trans 'Education' %} {% trans 'Material' %}</h6>
                                                                   <div>
                                                                     <div class="well">
                                                                         <div class="form-group row">
                                                                             <div class="col-sm-12">
                                                                                 <div data-bind="visible:pdf">
-                                                                                    {% trans 'Current pdf' %}
+                                                                                    {% trans 'Current' %} {% trans 'pdf' %}
                                                                                     <a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank">{% trans 'View' %}</a>
 
                                                                                       <!--<button data-bind="click: addPdf">Load PDF</button>-->
@@ -325,7 +325,7 @@ var pk = "{{pk}}";
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-sm-12">
-                                                                                <span>{% trans 'Change PDf File' %}</span>
+                                                                                <span>{% trans 'Change' %} {% trans 'PDf' %} {% trans 'File' %}</span>
                                                                                 <input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">
                                                                             </div>
                                                                         </div>
@@ -333,7 +333,7 @@ var pk = "{{pk}}";
                                                                  </div>
                                                               <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
-                                                                <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">{% trans 'Save Changes' %}</button>
+                                                                <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">{% trans 'Save' %} {% trans 'Changes' %}</button>
                                                               </div>
                                                           </div>
                                                         </div>
@@ -362,7 +362,7 @@ var pk = "{{pk}}";
                                     <div class="modal-content">
                                       <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title">{% trans 'Create Schedule' %}</h4>
+                                        <h4 class="modal-title">{% trans 'Create' %} {% trans 'Schedule' %}</h4>
                                       </div>
                                       <div class="modal-body">
 
@@ -416,7 +416,7 @@ var pk = "{{pk}}";
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">{% trans 'Modify Schedule' %}</h4>
+        <h4 class="modal-title">{% trans 'Modify' %} {% trans 'Schedule' %}</h4>
       </div>
       <div class="modal-body">
 
@@ -424,7 +424,7 @@ var pk = "{{pk}}";
             {% csrf_token %}
 
               <div class="form-group date1">
-                  <label for="name">{% trans 'Schedule Name :' %}</label>
+                  <label for="name">{% trans 'Schedule' %} {% trans 'Name :' %}</label>
                   <input data-bind="text : name">
               </div><div class="form-group date1">
                   <label for="start">{% trans 'Start :' %}</label>
@@ -461,13 +461,13 @@ var pk = "{{pk}}";
 </div>
 
 </div>
-							<a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:add_form"><i class="la la-upload"></i>{% trans 'Assign New Form' %}</a>
+							<a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:add_form"><i class="la la-upload"></i>{% trans 'Assign' %} {% trans 'New' %} {% trans 'Form' %}</a>
 							<!--Assign Form-->
 							<div class="modal fade" id="assignScheduleFormModal" tabindex="-1" role="dialog" aria-labelledby="assignScheduleFormModalLabel" aria-hidden="true">
 								<div class="modal-dialog model-lg" role="document">
 									<div class="modal-content">
 										<div class="modal-header">
-											<h5 class="modal-title" id="assignModalLabel">{% trans 'Assign New Form' %}</h5>
+											<h5 class="modal-title" id="assignModalLabel">{% trans 'Assign' %} {% trans 'New' %} {% trans 'Form' %}</h5>
 											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 											<span aria-hidden="true">&times;</span>
 											</button>
@@ -477,7 +477,7 @@ var pk = "{{pk}}";
 												<div class="col-md-6 col-sm-12">
 													<div class="widget-info margin-top">
 														<div class="widget-head">
-															<h4>{% trans 'My Forms' %}</h4>
+															<h4>{% trans 'My' %} {% trans 'Forms' %}</h4>
 														</div>
 														<div class="widget-body">
 															<div class="input-group input-group-sm margin-top">
@@ -487,28 +487,28 @@ var pk = "{{pk}}";
 																<label class="custom-control custom-radio">
 																  <input id="radio1" name="radio" type="radio" class="custom-control-input">
 																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">{% trans 'Form Name' %}</span>
+																  <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
 																</label>
 															</div>
 															<div class="form-group">
 																<label class="custom-control custom-radio">
 																  <input id="radio2" name="radio" type="radio" class="custom-control-input">
 																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">{% trans 'Form Name' %}</span>
+																  <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
 																</label>
 															</div>
 															<div class="form-group">
 																<label class="custom-control custom-radio">
 																  <input id="radio3" name="radio" type="radio" class="custom-control-input">
 																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">{% trans 'Form Name' %}</span>
+																  <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
 																</label>
 															</div>
 															<div class="form-group">
 																<label class="custom-control custom-radio">
 																  <input id="radio4" name="radio" type="radio" class="custom-control-input">
 																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">{% trans 'Form Name' %}</span>
+																  <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
 																</label>
 															</div>
 														</div>
@@ -517,7 +517,7 @@ var pk = "{{pk}}";
 												<div class="col-md-6 col-sm-12">
 													<div class="widget-info margin-top">
 														<div class="widget-head">
-															<h4>{% trans 'Library Forms' %}</h4>
+															<h4>{% trans 'Library' %} {% trans 'Forms' %}</h4>
 														</div>
 														<div class="widget-body margin-top">
 															<div class="input-group input-group-sm margin-top">
@@ -527,28 +527,28 @@ var pk = "{{pk}}";
 																<label class="custom-control custom-radio">
 																  <input id="radio11" name="radio" type="radio" class="custom-control-input">
 																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">{% trans 'Form Name' %}</span>
+																  <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
 																</label>
 															</div>
 															<div class="form-group">
 																<label class="custom-control custom-radio">
 																  <input id="radio12" name="radio" type="radio" class="custom-control-input">
 																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">{% trans 'Form Name' %}</span>
+																  <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
 																</label>
 															</div>
 															<div class="form-group">
 																<label class="custom-control custom-radio">
 																  <input id="radio13" name="radio" type="radio" class="custom-control-input">
 																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">{% trans 'Form Name' %}</span>
+																  <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
 																</label>
 															</div>
 															<div class="form-group">
 																<label class="custom-control custom-radio">
 																  <input id="radio14" name="radio" type="radio" class="custom-control-input">
 																  <span class="custom-control-indicator"></span>
-																  <span class="custom-control-description">{% trans 'Form Name' %}</span>
+																  <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
 																</label>
 															</div>
 														</div>
@@ -557,8 +557,8 @@ var pk = "{{pk}}";
 											</div>
 										</div>
 										<div class="modal-footer">
-											<button type="button" class="btn btn-primary"><i class="la la-upload"></i> {% trans 'Assign Form' %}</button>
-											<a href="#" class="btn btn-secondary"><i class="la la-file-text"></i>{% trans ' New Form' %}</a>
+											<button type="button" class="btn btn-primary"><i class="la la-upload"></i> {% trans 'Assign' %} {% trans 'Form' %}</button>
+											<a href="#" class="btn btn-secondary"><i class="la la-file-text"></i>{% trans 'New' %} {% trans 'Form' %}</a>
 										</div>
 									</div>
 								</div>
@@ -586,13 +586,13 @@ var pk = "{{pk}}";
 								<thead class="thead-default">
 									<tr>
 										<th>{% trans 'S.N.' %}</th>
-										<th>{% trans 'Schedule Name' %}</th>
-										<th>{% trans 'Form Title' %}</th>
-										<th>{% trans 'Assigned Date' %}</th>
-										<th>{% trans 'End Date' %}</th>
+										<th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
+										<th>{% trans 'Form' %} {% trans 'Title' %}</th>
+										<th>{% trans 'Assigned' %} {% trans 'Date' %}</th>
+										<th>{% trans 'End' %} {% trans 'Date' %}</th>
 										<th>{% trans 'Days' %}</th>
 										<th>{% trans 'Responses' %}</th>
-										<th>{% trans 'Edu.. M' %}</th>
+										<th>{% trans 'Edu..' %} {% trans 'Mat' %}</th>
 										<th>{% trans 'Actions' %}</th>
 									</tr>
 								</thead>
@@ -611,11 +611,11 @@ var pk = "{{pk}}";
                           <div class="modal-dialog form-modal" role="document">
                             <div class="modal-content">
                              <div class="modal-header">
-                                 <h5 class="modal-title">{% trans 'Education Material' %}</h5>
+                                 <h5 class="modal-title">{% trans 'Education' %} {% trans 'Material' %}</h5>
                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                              </div>
                                <div class="modal-body">
-                                   <h6>{% trans 'Create A Education Material' %}</h6>
+                                   <h6>{% trans 'Create' %} {% trans 'A' %} {% trans 'Education' %} {% trans 'Material' %}</h6>
 
                                    <div class="form-group">
                                        <label for="title" id="sizing-addon2">{% trans 'Title' %}</label>
@@ -627,12 +627,12 @@ var pk = "{{pk}}";
                                    </div>
                                    <div>
                                        <div data-bind="visible:em_images().length">
-                                           <p>{% trans 'Saved Images' %}</p>
+                                           <p>{% trans 'Saved' %} {% trans 'Images' %}</p>
                                            <div data-bind="foreach:em_images">
                                                <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
                                            </div>
                                        </div>
-                                       <h5>{% trans 'Multiple Images Uploads' %}</h5>
+                                       <h5>{% trans 'Multiple' %} {% trans 'Images' %} {% trans 'Uploads' %}</h5>
                                        <div class="well" data-bind="fileDrag: multiFileData">
                                            <div class="form-group row">
                                                <div class="col-md-6">
@@ -640,7 +640,7 @@ var pk = "{{pk}}";
                                                    <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">
                                                    <!-- /ko -->
                                                    <div data-bind="ifnot: multiFileData().fileArray">
-                                                       <label class="drag-label">{% trans 'Drag files here' %}</label>
+                                                       <label class="drag-label">{% trans 'Drag' %} {% trans 'files' %} {% trans 'here' %}</label>
                                                    </div>
                                                </div>
                                                <div class="col-md-6">
@@ -653,13 +653,13 @@ var pk = "{{pk}}";
                                            </div>
                                        </div>
                                    </div>
-                                   <h6> {% trans 'Upload PDF OF Education Material' %}</h6>
+                                   <h6> {% trans 'Upload' %} {% trans 'PDF' %} {% trans 'OF' %} {% trans 'Education' %} {% trans 'Material' %}</h6>
                                    <div>
                                        <div class="well">
                                            <div class="form-group row">
                                                <div class="col-sm-12">
                                                    <div data-bind="visible:pdf">
-                                                       {% trans 'Current pdf' %}
+                                                       {% trans 'Current' %} {% trans 'pdf' %}
                                                        <a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank">{% trans 'View' %}</a>
 
                                                        <!--<button data-bind="click: addPdf">Load PDF</button>-->
@@ -667,7 +667,7 @@ var pk = "{{pk}}";
                                                    </div>
                                                </div>
                                                <div class="col-sm-12">
-                                                   <span>{% trans 'Change PDf File' %}</span>
+                                                   <span>{% trans 'Change' %} {% trans 'PDf' %} {% trans 'File' %}</span>
                                                    <input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">
                                                </div>
                                            </div>
@@ -675,7 +675,7 @@ var pk = "{{pk}}";
                                    </div>
                                    <div class="modal-footer">
                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
-                                       <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">{% trans 'Save Changes' %}</button>
+                                       <button class="btn btn-primary marg3" data-bind="click:$parent.save_em">{% trans 'Save' %} {% trans 'Changes' %}</button>
                                    </div>
                                </div>
                             </div>
@@ -700,7 +700,7 @@ var pk = "{{pk}}";
                                 <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:add_stage"><i class="la la-plus" aria-hidden="true"></i> {% trans 'Add Stage' %}</a>
                                 <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:reorder_stage"><i class="la la-reorder" aria-hidden="true"></i> {% trans 'Reorder Stages' %}</a>
                                 <a href="javascript:void(0);" title="" class="btn btn-sm btn-success" data-bind="visible:stages().length > 0,
-                                            click: deployStages"><i class="la la-rocket" aria-hidden="true"></i> {% trans 'Deploy to Mobile' %}</a>
+                                            click: deployStages"><i class="la la-rocket" aria-hidden="true"></i> {% trans 'Deploy' %} {% trans 'to' %} {% trans 'Mobile' %}</a>
                                 {% csrf_token %}
 
 
@@ -710,7 +710,7 @@ var pk = "{{pk}}";
                                              <div class="modal-content">
                                                 <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                <h4 class="modal-title">{% trans 'Drag To change order of Stages' %}</h4>
+                                                <h4 class="modal-title">{% trans 'Drag' %} {% trans 'To' %} {% trans 'change' %} {% trans 'order' %} {% trans 'of' %} {% trans 'Stages' %}</h4>
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="container" style="margin:0px !important;"
@@ -739,7 +739,7 @@ var pk = "{{pk}}";
                                                 <div class="modal-content">
                                                   <div class="modal-header">
                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                    <h4 class="modal-title">{% trans 'Stage Data' %}</h4>
+                                                    <h4 class="modal-title">{% trans 'Stage' %} {% trans 'Data' %}</h4>
                                                   </div>
                                                   <div class="modal-body">
                                                                 <form method="post" class="">
@@ -748,7 +748,7 @@ var pk = "{{pk}}";
                                                                  <div class="row">
                                                                     <div class="col-sm-12">
                                                                       <div class="form-group">
-                                                                          <label for="stagename"><span class="stage-label">{% trans 'Stage Name:' %}</span></label>
+                                                                          <label for="stagename"><span class="stage-label">{% trans 'Stage' %} {% trans 'Name:' %}</span></label>
                                                                           <input class="form-control"  id="stagename" data-bind="value: name" placeholder="Name Of Stage" required="required">
                                                                           </div>
 
@@ -768,7 +768,7 @@ var pk = "{{pk}}";
                                                                         <div class="item">
                                                                           <div class="col-sm-0"></div>
                                                                           <div class="col-sm-12" data-bind="visible:!editable()">
-                                                                            <a class="sub-stage-name-c">{% trans 'Sub Stage' %}
+                                                                            <a class="sub-stage-name-c">{% trans 'Sub' %} {% trans 'Stage' %}
                                                                                 <span data-bind='text: $index()+1'></span>:
                                                                                 <span class="name-stage-grp"  data-bind="text: name"></span></a>
                                                                                 <a class="sub-stage-name-c"><i class="fa fa-file" aria-hidden="true"></i>
@@ -777,11 +777,11 @@ var pk = "{{pk}}";
                                                                             </a>
                                                                           </div>
                                                                             <div class="col-sm-10" data-bind="visible:editable">
-                                                                            <div class="sub-stage-name-c">{% trans 'Sub Stage' %}
+                                                                            <div class="sub-stage-name-c">{% trans 'Sub' %} {% trans 'Stage' %}
                                                                                 <span data-bind='text: $index()+1'></span><br>
                                                                                 {% trans 'Name:' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Sub Stage Name"><br>
                                                                                 {% trans 'Description:' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br>
-                                                                                {% trans 'Form Assigned:' %}
+                                                                                {% trans 'Form' %} {% trans 'Assigned:' %}
                                                                                 <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
                                                                                     value: stage_forms().xf().id">
                                                                                 </select>
@@ -804,7 +804,7 @@ var pk = "{{pk}}";
                                                                           <div class="col-sm-1"></div>
                                                                           <div class="col-sm-8">
                                                                               <form method="post">
-                                                                                      <h5 class="sub-stage-name-c">{% trans 'New Sub Stage' %} <span data-bind='text: $parent.parent().length+1'></span></h5>
+                                                                                      <h5 class="sub-stage-name-c">{% trans 'New' %} {% trans 'Sub' %} {% trans 'Stage' %} <span data-bind='text: $parent.parent().length+1'></span></h5>
                                                                                         {% csrf_token %}
                                                                     <div>
 
@@ -830,7 +830,7 @@ var pk = "{{pk}}";
 
                                                                      <div class="col-sm-12">
                                                                       <div class="form-group">
-                                                                          <label for="stagename"><span class="stage-label">{% trans 'Form Assigned:' %}</span></label>
+                                                                          <label for="stagename"><span class="stage-label">{% trans 'Form' %} {% trans 'Assigned:' %}</span></label>
                                                                           <select class="form-control" data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
                                                                                         value: stage_forms().xf().id">
                                                                                     </select>
@@ -908,7 +908,7 @@ var pk = "{{pk}}";
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                       <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">{% trans 'Modal title' %}</h5>
+                                                        <h5 class="modal-title" id="exampleModalLabel">{% trans 'Modal' %} {% trans 'title' %}</h5>
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                           <span aria-hidden="true">&times;</span>
                                                         </button>
@@ -918,7 +918,7 @@ var pk = "{{pk}}";
                                                       </div>
                                                       <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
-                                                        <button type="button" class="btn btn-primary">{% trans 'Save changes' %}</button>
+                                                        <button type="button" class="btn btn-primary">{% trans 'Save' %} {% trans 'changes' %}</button>
                                                       </div>
                                                     </div>
                                                 </div>
@@ -932,7 +932,7 @@ var pk = "{{pk}}";
                                          role="tabpanel" data-bind="attr: { aria-labelledby: 'heading_' + $index() }" data-parent="#accordion">
                                       <div class="card-body">
                                         <div class="sub-stages margin-top">
-                                            <h3><i class="la la-sitemap"></i>{% trans 'Sub Stages :' %}</h3>
+                                            <h3><i class="la la-sitemap"></i>{% trans 'Sub' %} {% trans 'Stages :' %}</h3>
                                             <ul data-bind="attr: { id: 'substages_' + $index() }, foreach:parent">
 
                                                 <li class="clearfix">
@@ -943,7 +943,7 @@ var pk = "{{pk}}";
                                                             <div class="modal-content">
                                                               <div class="modal-header">
                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                                <h4 class="modal-title">{% trans 'Education Materials' %}</h4>
+                                                                <h4 class="modal-title">{% trans 'Education' %} {% trans 'Materials' %}</h4>
                                                               </div>
                                                               <div class="modal-body">
                                                                   <div class="col-sm-8">
@@ -967,12 +967,12 @@ var pk = "{{pk}}";
 
                                                                   <div>
                                                                           <div data-bind="visible:em_images().length">
-                                                                              <p>{% trans 'Saved Images' %}</p>
+                                                                              <p>{% trans 'Saved' %} {% trans 'Images' %}</p>
                                                                               <div data-bind="foreach:em_images">
                                                                                   <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
                                                                               </div>
                                                                           </div>
-                                                                        <h4>{% trans 'Multiple Images Uploads' %}</h4>
+                                                                        <h4>{% trans 'Multiple' %} {% trans 'Images' %} {% trans 'Uploads' %}</h4>
                                                                             <div class="well" data-bind="fileDrag: multiFileData">
                                                                                 <div class="form-group row">
                                                                                     <div class="col-md-6">
@@ -980,7 +980,7 @@ var pk = "{{pk}}";
                                                                                               <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">
                                                                                               <!-- /ko -->
                                                                                         <div data-bind="ifnot: multiFileData().fileArray">
-                                                                                            <label class="drag-label">{% trans 'Drag files here' %}</label>
+                                                                                            <label class="drag-label">{% trans 'Drag' %} {% trans 'files' %} {% trans 'here' %}</label>
                                                                                         </div>
                                                                                     </div>
                                                                                     <div class="col-md-6">
@@ -997,13 +997,13 @@ var pk = "{{pk}}";
                                                                       </div>
 
                                                                   <div class="col-sm-4">
-                                                                      <h4> {% trans 'Upload PDF OF Education Material' %}</h4>
+                                                                      <h4> {% trans 'Upload' %} {% trans 'PDF' %} {% trans 'OF' %} {% trans 'Education' %} {% trans 'Material' %}</h4>
                                                                       <div>
                                                                         <div class="well">
                                                                             <div class="form-group row">
                                                                                 <div class="col-sm-12">
                                                                                     <div data-bind="visible:pdf">
-                                                                                        {% trans 'Current pdf' %}
+                                                                                        {% trans 'Current' %} {% trans 'pdf' %}
                                                                                         <a data-bind="attr: {href: pdf()}" target="_blank"> {% trans 'View' %} </a>
 
                                                                               <!--<button data-bind="click: addPdf">Load PDF</button>-->
@@ -1011,7 +1011,7 @@ var pk = "{{pk}}";
                                                                           </div>
                                                                                     </div>
                                                                                 <div class="col-sm-12">
-                                                                                    <span>{% trans 'Change PDf File' %}</span>
+                                                                                    <span>{% trans 'Change' %} {% trans 'PDf' %} {% trans 'File' %}</span>
                                                                                     <input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">
                                                                                 </div>
                                                                             </div>
@@ -1031,7 +1031,7 @@ var pk = "{{pk}}";
                                                         <span data-bind="text:name"></span>
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
-                                                        <strong>{% trans 'Form Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
+                                                        <strong>{% trans 'Form' %} {% trans 'Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
                                                         <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
@@ -1045,13 +1045,13 @@ var pk = "{{pk}}";
                                                             <div class="modal-content">
                                                               <div class="modal-header">
                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                                <h4 class="modal-title">{% trans 'Edit Substage' %}</h4>
+                                                                <h4 class="modal-title">{% trans 'Edit' %} {% trans 'Substage' %}</h4>
                                                               </div>
                                                               <div class="modal-body">
-                                                                  <div class="sub-stage-name-c">{% trans 'Sub Stage' %}
+                                                                  <div class="sub-stage-name-c">{% trans 'Sub' %} {% trans 'Stage' %}
                                                             {% trans 'Name:' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name"><br>
                                                             {% trans 'Description:' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description"><br>
-                                                            {% trans 'Form Assigned:' %}
+                                                            {% trans 'Form' %} {% trans 'Assigned:' %}
                                                             <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id', value:stage_forms().xf().id">
                                                             </select>
 
@@ -1072,7 +1072,7 @@ var pk = "{{pk}}";
                                      </div>
                                       <button type="button" class="btn btn-sm btn-primary margin-top"
                                               data-bind="confirmClick: { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }">
-                                          <i class="la la-save"></i> {% trans 'Save Changes' %}</button>
+                                          <i class="la la-save"></i> {% trans 'Save' %} {% trans 'Changes' %}</button>
 
                                     </div>
                                   </div>
@@ -1090,7 +1090,7 @@ var pk = "{{pk}}";
                                              <div class="modal-content">
                                                 <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                <h4 class="modal-title">{% trans 'Select Form' %}</h4>
+                                                <h4 class="modal-title">{% trans 'Select' %} {% trans 'Form' %}</h4>
                                                 </div>
                                                 <div class="modal-body">
                                                     <form method="post">
@@ -1110,13 +1110,13 @@ var pk = "{{pk}}";
                                     </div>
                             </div>
 							<a href="#" title="" class="btn btn-sm btn-primary" data-bind="click:add_form">
-                                <i class="la la-upload"></i>{% trans 'Assign New Form' %}</a>
+                                <i class="la la-upload"></i>{% trans 'Assign' %} {% trans 'New' %} {% trans 'Form' %}</a>
 														<!--Assign New-->
                                 <div class="modal fade" id="assignModalSurvey" tabindex="-1" role="dialog" aria-labelledby="assignModalSurveyLabel" aria-hidden="true">
                                     <div class="modal-dialog model-lg" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="assignModalSurveyLabel">{% trans 'Assign New Form' %}</h5>
+                                                <h5 class="modal-title" id="assignModalSurveyLabel">{% trans 'Assign' %} {% trans 'New' %} {% trans 'Form' %}</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -1126,7 +1126,7 @@ var pk = "{{pk}}";
                                                     <div class="col-md-6 col-sm-12">
                                                         <div class="widget-info margin-top">
                                                             <div class="widget-head">
-                                                                <h4>{% trans 'My Forms' %}</h4>
+                                                                <h4>{% trans 'My' %} {% trans 'Forms' %}</h4>
                                                             </div>
                                                             <div class="widget-body">
                                                                 <div class="input-group input-group-sm margin-top">
@@ -1136,28 +1136,28 @@ var pk = "{{pk}}";
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio1" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio2" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio3" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio4" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                             </div>
@@ -1166,7 +1166,7 @@ var pk = "{{pk}}";
                                                     <div class="col-md-6 col-sm-12">
                                                         <div class="widget-info margin-top">
                                                             <div class="widget-head">
-                                                                <h4>{% trans 'Library Forms' %}</h4>
+                                                                <h4>{% trans 'Library' %} {% trans 'Forms' %}</h4>
                                                             </div>
                                                             <div class="widget-body margin-top">
                                                                 <div class="input-group input-group-sm margin-top">
@@ -1176,28 +1176,28 @@ var pk = "{{pk}}";
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio11" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio12" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio13" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label class="custom-control custom-radio">
                                                                       <input id="radio14" name="radio" type="radio" class="custom-control-input">
                                                                       <span class="custom-control-indicator"></span>
-                                                                      <span class="custom-control-description">{% trans 'Form Name' %}</span>
+                                                                      <span class="custom-control-description">{% trans 'Form' %} {% trans 'Name' %}</span>
                                                                     </label>
                                                                 </div>
                                                             </div>
@@ -1206,8 +1206,8 @@ var pk = "{{pk}}";
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-primary"><i class="la la-upload"></i> {% trans 'Assign Form' %}</button>
-                                                <a href="#" class="btn btn-secondary"><i class="la la-file-text"></i> {% trans 'New Form' %}</a>
+                                                <button type="button" class="btn btn-primary"><i class="la la-upload"></i> {% trans 'Assign' %} {% trans 'Form' %}</button>
+                                                <a href="#" class="btn btn-secondary"><i class="la la-file-text"></i> {% trans 'New' %} {% trans 'Form' %}</a>
                                             </div>
                                         </div>
                                     </div>
@@ -1235,10 +1235,10 @@ var pk = "{{pk}}";
                                     <thead class="thead-default">
                                         <tr>
                                             <th>{% trans 'S.N.' %}</th>
-                                            <th>{% trans 'Form Title' %}</th>
-                                            <th>{% trans 'Assigned Date' %}</th>
+                                            <th>{% trans 'Form' %} {% trans 'Title' %}</th>
+                                            <th>{% trans 'Assigned' %} {% trans 'Date' %}</th>
                                             <th>{% trans 'Responses' %}</th>
-                                            <th>{% trans 'Education Material' %}</th>
+                                            <th>{% trans 'Education' %} {% trans 'Material' %}</th>
                                         </tr>
                                     </thead>
                                     <tbody data-bind="foreach: surveyForms">
@@ -1256,11 +1256,11 @@ var pk = "{{pk}}";
                                                         <div class="modal-content">
                                                           <div class="modal-header">
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                            <h4 class="modal-title">{% trans 'Education Material' %}</h4>
+                                                            <h4 class="modal-title">{% trans 'Education' %} {% trans 'Material' %}</h4>
                                                           </div>
                                                           <div class="modal-body">
                                                               <div class="col-sm-8">
-                                                                  <h3>{% trans 'Create A Education Material' %}</h3>
+                                                                  <h3>{% trans 'Create' %} {% trans 'A' %} {% trans 'Education' %} {% trans 'Material' %}</h3>
 
                                                                 <div class="form-group">
                                                                   <label for="title" id="sizing-addon2"><h4>{% trans 'Title' %}</h4></label>
@@ -1272,12 +1272,12 @@ var pk = "{{pk}}";
                                                                 </div>
                                                                 <div>
                                                                   <div data-bind="visible:em_images().length">
-                                                                      <p>{% trans 'Saved Images' %}</p>
+                                                                      <p>{% trans 'Saved' %} {% trans 'Images' %}</p>
                                                                       <div data-bind="foreach:em_images">
                                                                           <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
                                                                       </div>
                                                                   </div>
-                                                                  <h4>{% trans 'Multiple Images Uploads' %}</h4>
+                                                                  <h4>{% trans 'Multiple' %} {% trans 'Images' %} {% trans 'Uploads' %}</h4>
                                                                   <div class="well" data-bind="fileDrag: multiFileData">
                                                                             <div class="form-group row">
                                                                                 <div class="col-md-6">
@@ -1285,7 +1285,7 @@ var pk = "{{pk}}";
                                                                                           <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: dataURL }, visible: dataURL">
                                                                                           <!-- /ko -->
                                                                                     <div data-bind="ifnot: multiFileData().fileArray">
-                                                                                        <label class="drag-label">{% trans 'Drag files here' %}</label>
+                                                                                        <label class="drag-label">{% trans 'Drag' %} {% trans 'files' %} {% trans 'here' %}</label>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="col-md-6">
@@ -1301,13 +1301,13 @@ var pk = "{{pk}}";
                                                               </div>
 
                                                               <div class="col-sm-4">
-                                                                  <h4>{% trans 'Upload PDF OF Education Material' %}</h4>
+                                                                  <h4>{% trans 'Upload' %} {% trans 'PDF' %} {% trans 'OF' %} {% trans 'Education' %} {% trans 'Material' %}</h4>
                                                                   <div>
                                                                     <div class="well">
                                                                         <div class="form-group row">
                                                                             <div class="col-sm-12">
                                                                                 <div data-bind="visible:pdf">
-                                                                                    {% trans 'Current pdf' %}
+                                                                                    {% trans 'Current' %} {% trans 'pdf' %}
                                                                                     <a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank">{% trans 'View' %} </a>
 
                                                                                       <!--<button data-bind="click: addPdf">Load PDF</button>-->
@@ -1315,7 +1315,7 @@ var pk = "{{pk}}";
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-sm-12">
-                                                                                <span>{% trans 'Change PDf File' %}</span>
+                                                                                <span>{% trans 'Change' %} {% trans 'PDf' %} {% trans 'File' %}</span>
                                                                                 <input type="file" id="pdf" data-bind="fileUpload: pdf" accept="application/pdf">
                                                                             </div>
                                                                         </div>

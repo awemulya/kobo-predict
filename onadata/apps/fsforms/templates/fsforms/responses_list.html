@@ -29,25 +29,25 @@
 
     <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#general1" role="tab">{% trans 'General Forms' %}</a>
+              <a class="nav-link active" data-toggle="tab" href="#general1" role="tab">{% trans 'General' %} {% trans 'Forms' %}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#schedule2" role="tab">{% trans 'Scheduled Forms' %}</a>
+              <a class="nav-link" data-toggle="tab" href="#schedule2" role="tab">{% trans 'Scheduled' %} {% trans 'Forms' %}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#stage3" role="tab">{% trans 'Staged Form' %}</a>
+              <a class="nav-link" data-toggle="tab" href="#stage3" role="tab">{% trans 'Staged' %} {% trans 'Form' %}</a>
             </li>
           </ul>
 
     <div class="tab-content">
       <div id="general1" class="tab-pane active">
         {% if generals %}
-          <h3><b> {% trans 'General Forms' %} </b></h3>
+          <h3><b> {% trans 'General' %} {% trans 'Forms' %} </b></h3>
 
           <table class="table table-striped" id="dynamic-table2">
               <thead>
-              <th>{% trans 'Form Name' %}</th>
-              <th>{% trans 'Created Date' %}</th>
+              <th>{% trans 'Form' %} {% trans 'Name' %}</th>
+              <th>{% trans 'Created' %} {% trans 'Date' %}</th>
               <th>{% trans 'Submissions' %}</th>
               <th>{% trans 'Download' %}</th>
               </thead>
@@ -57,7 +57,7 @@
                       <td>
                           {{ obj.xf.title }}
                           {% if obj.fsform %}
-                            <span class="pull-right">Project Level</span>
+                            <span class="pull-right">{% trans 'Project' %} {% trans 'Level' %}</span>
                           {% endif %}
                       </td>
                       <td>
@@ -87,13 +87,13 @@
 
       <div id="schedule2" class="tab-pane fade">
         {% if schedules %}
-          <h3><b>{% trans 'Scheduled Forms' %}</b></h3>
+          <h3><b>{% trans 'Scheduled' %} {% trans 'Forms' %}</b></h3>
 
           <table class="table table-striped" id="dynamic-table1">
               <thead>
-              <th>{% trans 'Schedule Name' %}</th>
-              <th>{% trans 'Form Name' %}</th>
-              <th>{% trans 'Created Date' %}</th>
+              <th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
+              <th>{% trans 'Form' %} {% trans 'Name' %}</th>
+              <th>{% trans 'Created' %} {% trans 'Date' %}</th>
               <th>{% trans 'Submissions' %}</th>
               <th>{% trans 'Download' %}</th>
               </thead>
@@ -103,7 +103,7 @@
                       <td>
                           {{ obj.name}}
                           {% if obj.fsform %}
-                            <span class="pull-right">Project Level</span>
+                            <span class="pull-right">Project' %} {% trans 'Level' %}</span>
                           {% endif %}
                       </td>
                       <td>
@@ -141,7 +141,7 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href=""><b>{% trans 'Stage Name' %}:</b> {{stage.name }}</a>
+                  <a data-toggle="collapse" data-parent="#accordion" href=""><b>{% trans 'Stage' %} {% trans 'Name:' %}</b> {{stage.name }}</a>
                 </h4>
               </div>
               <div id="collapse{{stage.id}}">
@@ -150,9 +150,9 @@
 
                   <table class="table table-striped">
                       <thead>
-                      <th>{% trans 'Sub Stage Name' %}</th>
+                      <th>{% trans 'Sub' %} {% trans 'Stage' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Order' %}</th>
-                      <th>{% trans 'Form Name' %}</th>
+                      <th>{% trans 'Form' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Submissions' %}</th>
                       <th>{% trans 'Download' %}</th>
                       </thead>
@@ -162,7 +162,7 @@
                               <td>
                                   {{ obj.name}}
                                   {% if obj.fsform %}
-                                    <span class="pull-right">Project Level</span>
+                                    <span class="pull-right">{% trans 'Project' %} {% trans 'Level</span>
                                   {% endif %}
                               </td>
                               <td>
@@ -197,7 +197,7 @@
           </div> 
         {% endif %}
                        <div class="col-sm-4 card">
-                           <div class="well well-sm notice-danger"><h4>{% trans 'Deleted Form Responses' %}</h4></div>
+                           <div class="well well-sm notice-danger"><h4>{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}</h4></div>
             {% for obj in deleted_forms %}
             <div class="row card_inside">{{obj.xf.title}} {% trans 'with' %}
              <a href="{% url 'forms:project_html_export' obj.id%}">

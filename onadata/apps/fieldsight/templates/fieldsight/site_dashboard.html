@@ -17,7 +17,7 @@
 					{% block breadcrumbs %}
 					<ol class="breadcrumb">
 						{% ifrole "Organization" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization List' %}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization' %} {% trans 'List' %}</a></li>
 						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' obj.project.organization.pk %}">{{obj.project.organization.name}}</a></li>
 						{% endrole %}
 						{% ifrole "Project" %}
@@ -40,7 +40,7 @@
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:manage-people-site' obj.pk %}"><i class="la la-user"></i>{% trans 'People' %}</a>
 								<a class="dropdown-item" href="{% url 'forms:setup-forms' 0 obj.pk %}"><i class="la la-clipboard"></i>{% trans 'Forms' %}</a>
-								<a class="dropdown-item" href="{% url 'fieldsight:site-blue-prints' obj.pk %}"><i class="la la-pencil-square-o"></i>{% trans 'Site Documents' %}</a>
+								<a class="dropdown-item" href="{% url 'fieldsight:site-blue-prints' obj.pk %}"><i class="la la-pencil-square-o"></i>{% trans 'Site' %} {% trans 'Documents' %}</a>
 							</div>
 						</span>
 						<span class="dropdown">
@@ -48,8 +48,8 @@
 								<i class="la la-clipboard"></i> {% trans 'Reports' %}
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
-								<a class="dropdown-item" href="{% url 'fieldsight:site-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i>{% trans 'Site Summary Report' %}</a>
-								<a class="dropdown-item" target="_blank" href="{% url 'fieldsight:site-responses-report' obj.pk %}"><i class="la la-reply"></i>{% trans 'Site Responses Report' %}</a>
+								<a class="dropdown-item" href="{% url 'fieldsight:site-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i>{% trans 'Site' %} {% trans 'Summary' %} {% trans 'Report' %}</a>
+								<a class="dropdown-item" target="_blank" href="{% url 'fieldsight:site-responses-report' obj.pk %}"><i class="la la-reply"></i>{% trans 'Site' %} {% trans 'Responses' %} {% trans 'Report' %}</a>
 							</div>
 						</span>
 						<a href="{% url 'fieldsight:site-edit' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
@@ -134,7 +134,7 @@
 							<div class="widget-info widget-site-map margin-top bg-white padding">
 								<div class="widget-head">
 									<a href="{% url 'fieldsight:site-loc-map' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map"></i>{% trans ' Full Map' %}</a>
-									<h4>{% trans 'Site Map' %}</h4>
+									<h4>{% trans 'Site' %} {% trans 'Map' %}</h4>
 								</div>
 								<div class="widget-body">
 									<div id="map" class="full-map"></div>
@@ -148,7 +148,7 @@
 								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
 								<div class="mini-stat-info">
 									<span>{{rejected|length}}</span>
-									{% trans 'Rejected Submissions' %}
+									{% trans 'Rejected' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>
@@ -157,7 +157,7 @@
 								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
 								<div class="mini-stat-info">
 									<span>{{flagged|length}}</span>
-									{% trans 'Flagged Submissions' %}
+									{% trans 'Flagged' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>
@@ -166,7 +166,7 @@
 								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
 								<div class="mini-stat-info">
 									<span>{{outstanding|length}}</span>
-									{% trans 'Pending Submissions' %}
+									{% trans 'Pending' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>
@@ -175,7 +175,7 @@
 								<span class="mini-stat-icon"><i class="la la-thumbs-up"></i></span>
 								<div class="mini-stat-info">
 									<span>{{approved|length}}</span>
-									{% trans 'Approved Submissions' %}
+									{% trans 'Approved' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>
@@ -225,7 +225,7 @@
 													  </td>
 												  </tr>
 												  {% empty %}
-												  No data
+												   {% trans 'No' %} {% trans 'data' %}
 												  {% endfor %}
 											  </table>
 												{% paginate %}
@@ -261,7 +261,7 @@
 													  </td>
 												  </tr>
 												  {% empty %}
-												  No data
+												   {% trans 'No' %} {% trans 'data' %}
 												  {% endfor %}
 											  </table>
 												{% paginate %}
@@ -297,7 +297,7 @@
 													  </td>
 												  </tr>
 												  {% empty %}
-										  		  No data
+										  		   {% trans 'No' %} {% trans 'data' %}
 												  {% endfor %}
 											  </table>
 												{% paginate %}
@@ -395,7 +395,7 @@
 						<div class="col-md-6">
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>{% trans 'Form Submissions' %}</h4>
+									<h4>{% trans 'Form' %} {% trans 'Submissions' %}</h4>
 								</div>
 								<div class="widget-body">
 									<div id="submission-chart" style="width:100%; display: block">
@@ -407,7 +407,7 @@
 						<div class="col-md-6">
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>{% trans 'Site Progress' %}</h4>
+									<h4>{% trans 'Site' %} {% trans 'Progress' %}</h4>
 								</div>
 								<div class="widget-body">
 									<div id="siteprogress-chart"></div>

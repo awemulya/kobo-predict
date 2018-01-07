@@ -5,7 +5,7 @@
 {% trans 'Of Site: ' %}{{form.instance.site}}{% endblock %}
 
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'forms:library-forms-list' %}">{% trans 'Library Forms' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'forms:library-forms-list' %}">{% trans 'Library' %} {% trans 'Forms' %}</a>
 {% endblock %}
 
 {% block content %}
