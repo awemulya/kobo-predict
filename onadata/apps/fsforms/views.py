@@ -846,46 +846,45 @@ def un_deploy_general(request, fxf_id):
     return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': fxf.site.pk}))
 
 
-@group_required("Project")
-@api_view(['GET', 'POST'])
-def deploy_survey(request, is_project, pk):
-    id = request.data.get('id')
-    fxf_status = request.data.get('is_deployed')
-    try:
-        schedule = Schedule.objects.get(pk=id)
-        if is_project == "1":
-            fxf = schedule.schedule_forms
-            selected_days = tuple(schedule.selected_days.all())
-            with transaction.atomic():
-                if not fxf_status:
-                    # deployed case
-                    fxf.is_deployed = True
-                    fxf.save()
-                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project__id=pk).update(is_deployed=True, is_deleted=False)
-                    for site in Site.objects.filter(project__id=pk,is_active=True):
-                        _schedule, created = Schedule.objects.get_or_create(name=schedule.name, site=site)
-                        if created:
-                            _schedule.selected_days.add(*selected_days)
-                            child = FieldSightXF(is_scheduled=True, xf=fxf.xf, site=site, fsform=fxf,
-                                             schedule=_schedule, is_deployed=True)
-                            child.save()
+class Deploy_survey(SPFmixin, View):
+    def post(request, is_project, pk):
+        id = request.data.get('id')
+        fxf_status = request.data.get('is_deployed')
+        try:
+            schedule = Schedule.objects.get(pk=id)
+            if is_project == "1":
+                fxf = schedule.schedule_forms
+                selected_days = tuple(schedule.selected_days.all())
+                with transaction.atomic():
+                    if not fxf_status:
+                        # deployed case
+                        fxf.is_deployed = True
+                        fxf.save()
+                        FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project__id=pk).update(is_deployed=True, is_deleted=False)
+                        for site in Site.objects.filter(project__id=pk,is_active=True):
+                            _schedule, created = Schedule.objects.get_or_create(name=schedule.name, site=site)
+                            if created:
+                                _schedule.selected_days.add(*selected_days)
+                                child = FieldSightXF(is_scheduled=True, xf=fxf.xf, site=site, fsform=fxf,
+                                                 schedule=_schedule, is_deployed=True)
+                                child.save()
 
-                else:
-                    # undeploy
-                    fxf.is_deployed = False
-                    fxf.save()
-                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project_id=pk).update(is_deployed=False, is_deleted=True)
+                    else:
+                        # undeploy
+                        fxf.is_deployed = False
+                        fxf.save()
+                        FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project_id=pk).update(is_deployed=False, is_deleted=True)
 
-            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
-        else:
-            flag = False if fxf_status else True
-            form = schedule.schedule_forms
-            form.is_deployed = flag
-            form.save()
-            send_message_un_deploy(form)
-            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+            else:
+                flag = False if fxf_status else True
+                form = schedule.schedule_forms
+                form.is_deployed = flag
+                form.save()
+                send_message_un_deploy(form)
+                return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @group_required("Project")

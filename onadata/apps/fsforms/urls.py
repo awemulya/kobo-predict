@@ -39,7 +39,7 @@ from .views import (
     setup_project_stages, project_stage_add, instance_detail, alter_answer_status, project_survey,
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, Responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, ProjectResponses,
-    project_html_export, deploy_survey, deploy_stages, deploy_general, Set_deploy_stages, share_stages,
+    project_html_export, Deploy_survey, deploy_stages, deploy_general, Set_deploy_stages, share_stages,
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms,
     instance_status, rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
     save_educational_material, AlterStatusDetailView, Html_export, Project_html_export)
@@ -81,7 +81,7 @@ urlpatterns = [
         url(r'^deploy-general-remaining/(?P<is_project>\d)/(?P<pk>\d+)$'
             , deploy_general_remaining_sites
             , name='deploy-general-remaining'),
-        url(r'^deploy-survey/(?P<is_project>\d)/(?P<pk>\d+)$', deploy_survey, name='deploy-survey'),
+        url(r'^deploy-survey/(?P<is_project>\d)/(?P<pk>\d+)$', Deploy_survey.as_view(), name='deploy-survey'),
 
         url(r'^api/stage-rearrange/(?P<is_project>\d)/(?P<pk>\d+)$', rearrange_stages),
 
