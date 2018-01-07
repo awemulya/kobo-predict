@@ -77,7 +77,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ obj.name }}</a></li>
                       {% endif %}
                       {% if level == "2" %}
-                        <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{{ obj.name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{{ obj.name }}</a></li>
                       {% endif %}
 						<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage' %} {% trans 'People' %}</li>
 					 </ol>
@@ -105,7 +105,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <h4>{% trans 'Current' %} {% trans 'Supervisors' %}</h4>
               </div>
 
-              <div class="widget-body max-513-scolling" data-bind="foreach:allSupervisors">
+              <div class="widget-body" data-bind="foreach:allSupervisors">
                 <div class="project-item-wrap clearfix">
                   <div class="project-logo">
                     <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
@@ -201,7 +201,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <h4>{% trans 'Current' %} {% trans 'Reviewers' %}</h4>
               </div>
 
-              <div class="widget-body max-513-scolling" data-bind="foreach:allReviewers">
+              <div class="widget-body" data-bind="foreach:allReviewers">
                 <div class="project-item-wrap clearfix">
                   <div class="project-logo">
                     <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
@@ -316,6 +316,13 @@ vm = new ManagePeopleViewModel(pk, level, organization);
             </li>
             <li class="nav-item">
               <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">{% trans 'Assign' %} {% trans 'Site' %} {% trans 'Users' %}</a>
+
+              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">{% if obj.cluster_sites %}
+                {% trans 'Assign' %} {% trans 'Region' %} {% trans 'Users' %}
+                  {% else %}
+                {% trans 'Assign' %} {% trans 'Site' %} {% trans 'Users' %}
+                  {% endif %}</a>
+
             </li>
           </ul>
           <!-- Tab panes -->
@@ -394,7 +401,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <h4>{% trans 'Current' %} {% trans 'Project' %} {% trans 'Managers' %}</h4>
               </div>
 
-              <div class="widget-body max-513-scolling" data-bind="foreach:projectManagers">
+              <div class="widget-body" data-bind="foreach:projectManagers">
                 <div class="project-item-wrap clearfix">
                   <div class="project-logo">
                     <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
@@ -706,7 +713,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <h4>{% trans 'Current' %} {% trans 'Organization' %} {% trans 'Admins' %}</h4>
               </div>
 
-              <div class="widget-body max-513-scolling" data-bind="foreach:admins">
+              <div class="widget-body" data-bind="foreach:admins">
                 <div class="project-item-wrap clearfix">
                   <div class="project-logo">
                     <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">

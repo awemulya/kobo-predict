@@ -80,7 +80,8 @@ class FieldSightLog(models.Model):
     def get_extraobj_url(self):
         if self.extra_object is None:
             return None
-        if self.extra_content_type.name == 'user':
+
+        if self.extra_content_type.model == "user":
             if self.extra_object.user_profile:
                 return self.extra_object.user_profile.get_absolute_url()
             return "#";
@@ -89,7 +90,7 @@ class FieldSightLog(models.Model):
     def get_extraobj_name(self):
         if self.extra_object is None:
             return None
-        if self.extra_content_type.name == 'user':
+        if self.extra_content_type.model == "user":
             if self.extra_object.user_profile:
                 return self.extra_object.user_profile.getname()
             return self.extra_object.email

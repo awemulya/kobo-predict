@@ -61,6 +61,8 @@ from django.core.files.storage import FileSystemStorage
 import pyexcel as p
 from onadata.apps.fieldsight.tasks import multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
 from .generatereport import MyPrint
+from django.utils import translation
+from django.conf import settings
 
 @login_required
 def dashboard(request):
@@ -116,6 +118,7 @@ def dashboard(request):
     #     'data': data,
     # }
     # return TemplateResponse(request, "fieldsight/fieldsight_dashboard.html", dashboard_data)
+    
     return HttpResponseRedirect(reverse("fieldsight:organizations-list"))
 
 

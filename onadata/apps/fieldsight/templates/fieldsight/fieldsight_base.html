@@ -82,6 +82,18 @@
 					
 						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification" style="width:480px;">
 							<div class="dropdown-header">{% trans 'New' %} {% trans 'Notifications' %}(<span id="noticount" class="not_count"></span>) <span><a href="#" onclick="updateseen()">{% trans 'Mark' %} {% trans 'All' %} {% trans 'as' %} {% trans 'read' %}<a></span></div>
+							<div class="dropdown-header">
+								<div class="row">
+									<div class="col text-left">
+									{% trans 'New' %} {% trans 'Notifications' %}(<span id="noticount" class="not_count"></span>)
+									</div>
+									<div class="col text-right">
+										<a href="#" onclick="updateseen()">{% trans 'Mark' %} {% trans 'All' %} {% trans 'As' %} {% trans 'Seen' %}</a>
+									</div>
+								</div>
+
+
+							</div>
 							<ul class="menu" id="notification-ul" style="height:500px; overflow:hidden; overflow-y: scroll;">
 							{% trans 'Loading...' %}
 						
@@ -256,13 +268,16 @@
                                     '<div class="notification-avatar pull-left">' +
                                         '<i class="avatar-icon la la-info"></i>' +
                                     '</div>' +
+                                    '<div class="notification-highlight">'+
+										'<p class="notification-highlight-excerpt">'+
                                    content +
+                                   		'</p>'+
                       '<p class="notification-highlight-time">' + dateparser(data.date) + '</p>' +
+                                    '</div>'+
                                     '</div>' +
                                 '</div>' +
                             
 '</li>';
-
 
 
 			    // var div = document.getElementById('notifications');
