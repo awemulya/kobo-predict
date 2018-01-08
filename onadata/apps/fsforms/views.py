@@ -589,16 +589,16 @@ class Set_deploy_stages(SPFmixin, View):
         except Exception as e:
             return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
-@group_required("Project")
-@api_view(['POST', 'GET'])
-def rearrange_stages(request, is_project, pk):
-    try:
-        with transaction.atomic():
-            for order, stage in enumerate(request.data.get('orders')):
-                Stage.objects.filter(pk=stage.get('id')).update(order=order+1)
-        return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+class Rearrange_stages(SPFmixin, View):
+    def rearrange_stages(request, is_project, pk):
+        try:
+            data = json.loads(self.request.body)
+            with transaction.atomic():
+                for order, stage in enumerate(data.get('orders')):
+                    Stage.objects.filter(pk=stage.get('id')).update(order=order+1)
+            return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
