@@ -848,8 +848,9 @@ def un_deploy_general(request, fxf_id):
 
 class Deploy_survey(SPFmixin, View):
     def post(self, request, is_project, pk):
-        id = self.request.data.get('id')
-        fxf_status = self.request.data.get('is_deployed')
+        data = json.loads(self.request.body)
+        id = data.get('id')
+        fxf_status = data.get('is_deployed')
         try:
             schedule = Schedule.objects.get(pk=id)
             if is_project == "1":
