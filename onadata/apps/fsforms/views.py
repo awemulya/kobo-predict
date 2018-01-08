@@ -1270,7 +1270,7 @@ class Html_export(FormMixin, ListView):
         context = super(Html_export, self).get_context_data(**kwargs)
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)    
-        context['pk'] = self.kwargs.get('pk')
+        # context['pk'] = self.kwargs.get('pk')
         context['is_site_data'] = True
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
@@ -1291,7 +1291,7 @@ class Project_html_export(FormMixin, ListView):
         context = super(Project_html_export, self).get_context_data(**kwargs)
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)    
-        context['pk'] = self.kwargs.get('pk')
+        # context['pk'] = self.kwargs.get('pk')
         context['is_project_data'] = True
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
