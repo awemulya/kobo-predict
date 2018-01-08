@@ -876,16 +876,16 @@ class Deploy_survey(SPFmixin, View):
                         fxf.save()
                         FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project_id=pk).update(is_deployed=False, is_deleted=True)
 
-                return HTTPResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+                return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
             else:
                 flag = False if fxf_status else True
                 form = schedule.schedule_forms
                 form.is_deployed = flag
                 form.save()
                 send_message_un_deploy(form)
-                return HTTPResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+                return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
         except Exception as e:
-            return HTTPResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @group_required("Project")
