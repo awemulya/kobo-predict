@@ -45,7 +45,7 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
 from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
     EducationMaterial, EducationalImages, InstanceImages
 from django.db.models import Q
-from onadata.apps.fieldsight.rolemixins import SPFmixin, ReviewerRoleMixin, ProjectRoleMixin
+from onadata.apps.fieldsight.rolemixins import SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -1261,7 +1261,7 @@ def html_export(request, fsxf_id):
     context['obj'] = fsxf
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
-class Html_export(ListView):
+class Html_export(FormMixin, ListView):
     model =   FInstance
     paginate_by = 10
     template_name = "fsforms/fieldsight_export_html.html"
@@ -1282,7 +1282,7 @@ class Html_export(ListView):
         queryset = FInstance.objects.filter(site_fxf=fsxf_id)
         return queryset
 
-class Project_html_export(ListView):
+class Project_html_export(FormMixin, ListView):
     model =   FInstance
     paginate_by = 10
     template_name = "fsforms/fieldsight_export_html.html"

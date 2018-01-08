@@ -12,10 +12,11 @@ from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 
 from onadata.apps.fieldsight.models import Organization, Project, Site
+from onadata.apps.fsforms.models import FieldSightXF 
 from onadata.apps.users.models import UserProfile
 from .helpers import json_from_object
 from onadata.apps.userrole.models import UserRole
-
+from django.shortcuts import get_object_or_404
 
 class LoginRequiredMixin(object):
     @classmethod
@@ -210,6 +211,36 @@ class SPFmixin(LoginRequiredMixin):
             return super(SPFmixin, self).dispatch(request, *args, **kwargs)
 
         raise PermissionDenied()    
+
+
+class FormMixin(LoginRequiredMixin):
+    def dispatch(self, request, pk):
+        if request.group.name == "Super Admin":
+                return super(FormMixin, self).dispatch(request, *args, **kwargs)
+
+        user_id = request.user.id
+        form = get_object_or_404(FieldSightXF, pk=pk)
+
+        if form.site is not None:
+            site_id = form.site.id
+            user_role = request.roles.filter(user_id = user_id, site_id = site_id, group__name="Reviewer")
+            if user_role:
+                return super(FormMixin, self).dispatch(request, *args, **kwargs)
+            project_id=Site.objects.get(pk=site_id).project
+        
+        else:
+            project_id = form.project.id
+
+        user_role = request.roles.filter(user_id = user_id, project_id = project_id, group__name="Project Manager")
+        if user_role:
+            return super(FormMixin, self).dispatch(request, *args, **kwargs)
+
+        organization_id = Project.objects.get(pk=project_id).organization.id
+        user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+        if user_role_asorgadmin:
+            return super(FormMixin, self).dispatch(request, *args, **kwargs)
+
+        raise PermissionDenied()   
 
                 
                     
