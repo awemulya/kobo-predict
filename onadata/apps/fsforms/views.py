@@ -847,7 +847,7 @@ def un_deploy_general(request, fxf_id):
 
 
 class Deploy_survey(SPFmixin, View):
-    def post(request, is_project, pk):
+    def post(self, request, is_project, pk):
         id = request.data.get('id')
         fxf_status = request.data.get('is_deployed')
         try:
