@@ -214,12 +214,12 @@ class SPFmixin(LoginRequiredMixin):
 
 
 class FormMixin(LoginRequiredMixin):
-    def dispatch(self, request, pk):
+    def dispatch(self, request, fsxf_id):
         if request.group.name == "Super Admin":
                 return super(FormMixin, self).dispatch(request, *args, **kwargs)
 
         user_id = request.user.id
-        form = get_object_or_404(FieldSightXF, pk=pk)
+        form = get_object_or_404(FieldSightXF, pk=fsxf_id)
 
         if form.site is not None:
             site_id = form.site.id
