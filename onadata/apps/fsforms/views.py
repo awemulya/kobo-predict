@@ -740,46 +740,47 @@ def deploy_stages(request, id):
     return HttpResponseRedirect(reverse("forms:setup-project-stages", kwargs={'id': id}))
 
 
-@group_required("Project")
-@api_view(['POST', 'GET'])
-def deploy_general(request, is_project, pk):
-    fxf_id = request.data.get('id')
-    fxf_status = request.data.get('is_deployed')
-    try:
-        if is_project == "1":
-            with transaction.atomic():
+class Deploy_general(SPFmixin, View):
+    def post(self, request, is_project, pk):
+        data = json.loads(self.request.body)
+        fxf_id = data.get('id')
+        fxf_status = data.get('is_deployed')
+        
+        try:
+            if is_project == "1":
+                with transaction.atomic():
+                    fxf = FieldSightXF.objects.get(pk=fxf_id)
+                    if fxf_status:
+                        fxf.is_deployed = False
+                        fxf.save()
+                        FieldSightXF.objects.filter(fsform=fxf, is_scheduled=False, is_staged=False).update(is_deployed=False, is_deleted=True)
+                    else:
+                        fxf.is_deployed = True
+                        fxf.save()
+                        for site in fxf.project.sites.filter(is_active=True):
+                            child, created = FieldSightXF.objects.get_or_create(is_staged=False,
+                                                                                is_scheduled=False,
+                                                                                is_survey=False,
+                                                                                xf=fxf.xf, site=site, fsform_id=fxf_id)
+                            child.is_deployed = True
+                            child.is_deleted = False
+                            child.from_project = True
+                            child.save()
+                return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+            else:
                 fxf = FieldSightXF.objects.get(pk=fxf_id)
                 if fxf_status:
                     fxf.is_deployed = False
                     fxf.save()
-                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=False, is_staged=False).update(is_deployed=False, is_deleted=True)
+                    send_message_un_deploy(fxf)
                 else:
                     fxf.is_deployed = True
+                    fxf.is_deleted = False
                     fxf.save()
-                    for site in fxf.project.sites.filter(is_active=True):
-                        child, created = FieldSightXF.objects.get_or_create(is_staged=False,
-                                                                            is_scheduled=False,
-                                                                            is_survey=False,
-                                                                            xf=fxf.xf, site=site, fsform_id=fxf_id)
-                        child.is_deployed = True
-                        child.is_deleted = False
-                        child.from_project = True
-                        child.save()
-            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
-        else:
-            fxf = FieldSightXF.objects.get(pk=fxf_id)
-            if fxf_status:
-                fxf.is_deployed = False
-                fxf.save()
-                send_message_un_deploy(fxf)
-            else:
-                fxf.is_deployed = True
-                fxf.is_deleted = False
-                fxf.save()
-                send_message_un_deploy(fxf)
-            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+                    send_message_un_deploy(fxf)
+                return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 @group_required("Project")
 @api_view(['POST', 'GET'])
