@@ -590,7 +590,7 @@ class Set_deploy_stages(SPFmixin, View):
             return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 class Rearrange_stages(SPFmixin, View):
-    def rearrange_stages(request, is_project, pk):
+    def post(request, is_project, pk):
         try:
             data = json.loads(self.request.body)
             with transaction.atomic():
