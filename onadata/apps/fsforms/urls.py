@@ -41,7 +41,7 @@ from .views import (
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, ProjectResponses,
     project_html_export, Deploy_survey, deploy_stages, Deploy_general, Set_deploy_stages, share_stages,
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms,
-    instance_status, rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
+    instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
     save_educational_material, AlterStatusDetailView, Html_export, Project_html_export)
 
 urlpatterns = [
@@ -82,7 +82,7 @@ urlpatterns = [
             , name='deploy-general-remaining'),
         url(r'^deploy-survey/(?P<is_project>\d)/(?P<pk>\d+)$', Deploy_survey.as_view(), name='deploy-survey'),
 
-        url(r'^api/stage-rearrange/(?P<is_project>\d)/(?P<pk>\d+)$', rearrange_stages),
+        url(r'^api/stage-rearrange/(?P<is_project>\d)/(?P<pk>\d+)$', Rearrange_stages.as_view()),
 
 
         url(r'^un_deploy-survey/(?P<id>\d+)/$', un_deploy_survey, name='undeploy-survey'),
