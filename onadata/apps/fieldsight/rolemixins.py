@@ -17,6 +17,7 @@ from onadata.apps.users.models import UserProfile
 from .helpers import json_from_object
 from onadata.apps.userrole.models import UserRole
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import BasePermission
 
 class LoginRequiredMixin(object):
     @classmethod
@@ -242,6 +243,27 @@ class FormMixin(LoginRequiredMixin):
 
         raise PermissionDenied()   
 
+# for api mixins/permissions
+
+# class ProjectPermission(BasePermission):
+#     def has_permission(self, request, view):
+#         if request.group.name == "Super Admin":
+#             return super(ProjectRoleMixin, self).dispatch(request, *args, **kwargs)
+        
+#         project_id = self.kwargs.get('pk')
+#         user_id = request.user.id
+#         user_role = request.roles.filter(user_id = user_id, project_id = project_id, group__name="Project Manager")
+        
+#         if user_role:
+#             return True
+        
+#         organization_id = Project.objects.get(pk=project_id).organization.id
+#         user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+        
+#         if user_role_asorgadmin:
+#             return True
+
+#         return False
                 
                     
 

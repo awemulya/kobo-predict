@@ -351,7 +351,7 @@ class FInstance(models.Model):
     date = models.DateTimeField(auto_now=True)
     submitted_by = models.ForeignKey(User, related_name="supervisor")
     logs = GenericRelation('eventlog.FieldSightLog')
-
+    
     @property
     def fsxfid(self):
         if self.project_fxf:
