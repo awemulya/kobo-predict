@@ -1318,30 +1318,30 @@ def project_html_export(request, fsxf_id):
     # return JsonResponse({'data': cursor})
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
-
-def instance_detail(request, fsxf_id, instance_id):
-    fsxf = FieldSightXF.objects.get(pk=fsxf_id)
-    cursor = get_instance(instance_id)
-    cursor = list(cursor)
-    obj = cursor[0]
-    _keys = ['_notes', 'meta/instanceID', 'end', '_uuid', '_bamboo_dataset_id', '_tags', 'start',
-             '_geolocation', '_xform_id_string', '_userform_id', '_status', '__version__', 'formhub/uuid',
-             '_id', 'fs_uuid', 'fs_site', 'fs_project_uuid']
-    data = {}
-    medias = []
-    status = 0
-    for key in obj.keys():
-        if key not in _keys:
-            if key == "_attachments":
-                for media in obj[key]:
-                    if media:
-                        medias.append(media.get('download_url', ''))
-            elif key == "fs_status":
-                status = obj[key]
-            else:
-                data.update({str(key): str(obj[key])})
-    return render(request, 'fsforms/fieldsight_instance_export_html.html',
-                  {'obj': fsxf, 'answer': instance_id, 'status': status, 'data': data, 'medias': medias})
+class Instance_detail(FormMixin, View):
+    def get(self, request, fsxf_id, instance_id):
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)
+        cursor = get_instance(instance_id)
+        cursor = list(cursor)
+        obj = cursor[0]
+        _keys = ['_notes', 'meta/instanceID', 'end', '_uuid', '_bamboo_dataset_id', '_tags', 'start',
+                 '_geolocation', '_xform_id_string', '_userform_id', '_status', '__version__', 'formhub/uuid',
+                 '_id', 'fs_uuid', 'fs_site', 'fs_project_uuid']
+        data = {}
+        medias = []
+        status = 0
+        for key in obj.keys():
+            if key not in _keys:
+                if key == "_attachments":
+                    for media in obj[key]:
+                        if media:
+                            medias.append(media.get('download_url', ''))
+                elif key == "fs_status":
+                    status = obj[key]
+                else:
+                    data.update({str(key): str(obj[key])})
+        return render(request, 'fsforms/fieldsight_instance_export_html.html',
+                      {'obj': fsxf, 'answer': instance_id, 'status': status, 'data': data, 'medias': medias})
 
 
 @api_view(['GET'])

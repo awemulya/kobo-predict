@@ -36,7 +36,7 @@ from .views import (
     stage_add,
     site_survey,
     create_schedule,
-    setup_project_stages, project_stage_add, instance_detail, alter_answer_status, project_survey,
+    setup_project_stages, project_stage_add, Instance_detail, alter_answer_status, project_survey,
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, Responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, ProjectResponses,
     project_html_export, Deploy_survey, deploy_stages, Deploy_general, Set_deploy_stages, share_stages,
@@ -131,7 +131,7 @@ urlpatterns = urlpatterns + [
         url(r'reports/(?P<fsxf_id>\d+)$', Html_export.as_view(), name='formpack_html_export'),
         url(r'project-submissions/(?P<fsxf_id>\d+)$', Project_html_export.as_view(), name='project_html_export'),
         url(r'^forms/(?P<fsxf_id>\d+)$', instance_kobo, name='instance'),
-        url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', instance_detail, name='instance_detail'),
+        url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', Instance_detail.as_view(), name='instance_detail'),
         url(r'^forms/alter-answer-status/(?P<instance_id>\d+)/(?P<status>\d)/(?P<fsid>\d+)$', alter_answer_status, name='alter-answer-status'),
 ]
 
