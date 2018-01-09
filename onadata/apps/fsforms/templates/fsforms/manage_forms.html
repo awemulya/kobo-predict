@@ -263,7 +263,7 @@ var pk = "{{pk}}";
                                             <td><span data-bind="text: name"></span><span class="pull-right" data-bind="text : ((fsform() == null) ? '':'Project level')">Project Level</span>
                                             <span class="col-sm-1" data-bind="text: default_submission_status_text"></span>
 
-                                             <select data-bind="options: availableoptions, selectedOptions: default_submission_status()"></select>
+                                             <select data-bind="options: parent.availableoptions"></select>
                                             </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text:responses_count"></td>
