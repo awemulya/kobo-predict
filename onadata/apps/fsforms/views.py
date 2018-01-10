@@ -1099,7 +1099,7 @@ class AssignFormDefaultStatus(FormMixin, View):
         if int(status) >= 0 and int(status) < 5: 
             fsform.default_submission_status = status
             fsform.save()
-        return HttpResponse({'responseJSON' : {'error':e.message}}, status=status.HTTP_200_OK)
+        return HttpResponse({'responseJSON':'success'}, status=status.HTTP_200_OK)
 
 class Setup_forms(SPFmixin, View):
     def get(self, request, *args, **kwargs):
