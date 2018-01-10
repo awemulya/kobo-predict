@@ -356,7 +356,7 @@ class FInstance(models.Model):
     def save(self, *args, **kwargs):
         if self.form_status is None:
             self.form_status = self.site_fxf.default_submission_status
-        super().save(*args, **kwargs)  # Call the "real" save() method.
+        super(FInstance, self).save(*args, **kwargs)  # Call the "real" save() method.
         
     @property
     def fsxfid(self):
