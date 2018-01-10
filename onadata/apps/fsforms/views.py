@@ -1093,6 +1093,13 @@ def project_survey(request, project_id):
         return HttpResponseRedirect(reverse("forms:project-schedule-add", kwargs={'id': project_id}))
     return render(request, "fsforms/project/schedule_list.html", {'object_list': objlist, 'project': Project(id=project_id)})
 
+class AssignFormDefaultStatus(FormMixin, View)
+    def post(self, request, fsxf_id, status):
+        fsform = FieldSightXF.objects.get(pk=fsxf_id)
+        if int(status) >= 0 and int(status) < 5: 
+            fsform.default_submission_status = status
+            fsform.save()
+        return HttpResponse({'error':e.message}, status=status.HTTP_200_OK)
 
 class Setup_forms(SPFmixin, View):
     def get(self, request, *args, **kwargs):
