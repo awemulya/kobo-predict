@@ -125,7 +125,7 @@ urlpatterns = urlpatterns + [
         url(r'^submission/project/(?P<pk>\d+)/(?P<site_id>\d+)$',
             ProjectFSXFormSubmissionApi.as_view({'post': 'create', 'head': 'create'}),
                                                         name='psubmissions'),
-        url(r'^assigndefaultformstatus/(?P<fsxf_id>\d)/(?P<status>\d+)$', AssignFormDefaultStatus.as_view(), name='assign_default_form_status'),
+        url(r'^assigndefaultformstatus/(?P<fsxf_id>\d+)/(?P<status>\d)$', AssignFormDefaultStatus.as_view(), name='assign_default_form_status'),
 ]
 
 urlpatterns = urlpatterns + [
