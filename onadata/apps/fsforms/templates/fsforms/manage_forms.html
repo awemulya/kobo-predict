@@ -60,6 +60,8 @@ var CSRF_TOKEN = '{{ csrf_token }}';
 {% endblock %}
 
 {% block content %}
+{% csrf_token %}
+
 <div id="main-content" class="padding">
     <nav aria-label="breadcrumb" role="navigation">
         <ol class="breadcrumb">
