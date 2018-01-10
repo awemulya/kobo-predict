@@ -51,7 +51,8 @@ $(document).ready(function() {
 var base_url = "{{request.get_host}}";
 var is_project = "{{is_project}}";
 var pk = "{{pk}}";
-var CSRF_TOKEN = '{{ csrf_token }}';
+var csrf_token = '{{ csrf_token }}';
+assigntoken(csrf_token);
  vm = new SetUpViewModel(is_project, pk, base_url);
  ko.applyBindings(vm);
 });
