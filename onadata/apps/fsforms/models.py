@@ -354,8 +354,8 @@ class FInstance(models.Model):
     logs = GenericRelation('eventlog.FieldSightLog')
 
     def save(self, *args, **kwargs):
-        if form_status == null:
-            form_status = self.site_fxf.default_submission_status
+        if self.form_status == null:
+            self.form_status = self.site_fxf.default_submission_status
         super().save(*args, **kwargs)  # Call the "real" save() method.
         
     @property
