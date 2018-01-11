@@ -184,4 +184,4 @@ class FSXFSerializer(serializers.ModelSerializer):
     xf = XformSerializer()
     class Meta:
         model = FieldSightXF
-        fields = ('xf','id',)
+        fields = ('xf','id', 'default_submission_status',)
