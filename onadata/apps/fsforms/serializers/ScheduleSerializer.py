@@ -24,7 +24,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
     form_name = serializers.SerializerMethodField('get_assigned_form_name', read_only=True)
     id_string = serializers.SerializerMethodField()
     is_deployed = serializers.SerializerMethodField('get_is_deployed_status', read_only=True)
-    default_submission_status = serializers.SerializerMethodField('get_default_submission_status', read_only=True)
+    default_submission_status = serializers.IntegerField()
     responses_count = serializers.SerializerMethodField()
 
     def validate(self, data):
