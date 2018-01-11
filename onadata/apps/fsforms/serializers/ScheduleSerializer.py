@@ -24,6 +24,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
     form_name = serializers.SerializerMethodField('get_assigned_form_name', read_only=True)
     id_string = serializers.SerializerMethodField()
     is_deployed = serializers.SerializerMethodField('get_is_deployed_status', read_only=True)
+    default_submission_status = serializers.SerializerMethodField('get_default_submission_status', read_only=True)
     responses_count = serializers.SerializerMethodField()
 
     def validate(self, data):
@@ -88,6 +89,12 @@ class ScheduleSerializer(serializers.ModelSerializer):
             return False
         else:
             return FieldSightXF.objects.get(schedule=obj).is_deployed
+
+    def get_default_submission_status(self, obj):
+        if not FieldSightXF.objects.filter(schedule=obj).exists():
+            return False
+        else:
+            return FieldSightXF.objects.get(schedule=obj).default_submission_status
 
     def get_education_material(self, obj):
         if not EducationMaterial.objects.filter(fsxf=obj.schedule_forms).exists():
