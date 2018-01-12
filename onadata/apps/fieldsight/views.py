@@ -1968,7 +1968,6 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
 
 class ProjectStageResponsesStatus(ProjectRoleMixin, View): 
     def post(self, request, pk):
-        try:
             data = []
             ss_index = {}
             stages_rows = []
