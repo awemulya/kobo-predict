@@ -1993,4 +1993,4 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                         site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
                         site_row[k] = site_sub_stage.form_status
                 data.append(site_row)
-            print data
+            return HttpResponse(data)
