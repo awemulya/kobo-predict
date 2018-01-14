@@ -197,7 +197,7 @@ class SPFmixin(LoginRequiredMixin):
             user_role = request.roles.filter(user_id = user_id, site_id = site_id, group__name="Reviewer")
             if user_role:
                 return super(SPFmixin, self).dispatch(request, *args, **kwargs)
-            project_id=Site.objects.get(pk=site_id).project
+            project_id=Site.objects.get(pk=site_id).project.id
         
         else:
             project_id = self.kwargs.get('pk')
@@ -227,7 +227,7 @@ class FormMixin(LoginRequiredMixin):
             user_role = request.roles.filter(user_id = user_id, site_id = site_id, group__name="Reviewer")
             if user_role:
                 return super(FormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
-            project_id=Site.objects.get(pk=site_id).project
+            project_id=Site.objects.get(pk=site_id).project.id
         
         else:
             project_id = form.project.id
