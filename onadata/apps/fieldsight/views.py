@@ -1992,7 +1992,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                         ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
                         substages.append(ss.name)
 
-            return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head})
+            return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages})
 
 
             # data.append(head_row)
