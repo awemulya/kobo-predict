@@ -1985,7 +1985,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                 if len(sub_stages):
                     head_row.append("Stage :"+stage.name)
                     stages_rows.append("Stage :"+stage.name)
-                    table_head.append({"name":stage.name, "rowspan":len(substages), "colspan":1 })
+                    table_head.append({"name":stage.name, "rowspan":1, "colspan":len(substages) })
 
                     for ss in sub_stages:
                         head_row.append("Sub Stage :"+ss.name)
