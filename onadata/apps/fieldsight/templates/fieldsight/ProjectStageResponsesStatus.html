@@ -1,0 +1,44 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block content %}
+{% load filters %}
+		<div id="main-content" class="padding">
+				<section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-tasks"></i>{% block page-title %}{% trans 'Projects' %}{% endblock %}</h3>
+						<div class="panel-heading-right">
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i>{% trans 'Search' %}</a>
+							<a href="{% url 'fieldsight:project-add' pk%}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Add' %} {% trans 'New'%}</a>
+						</div>
+                    </header>
+					<div class="panel-body">
+					
+
+					<table class="table table-bordered table-hover">
+						<thead>
+							<tr>
+							{% for cols in table_head %}
+								<th rowspan="{{ cols['colspan'] }}" colspan="{{ cols['rowspan'] }}">{{ cols['name'] }}</th>
+							}
+								
+							</tr>
+							<tr>
+								<th>sub stage1</th>
+								<th>sub stage2</th>
+								<th>sub stage1</th>
+								<th>sub stage2</th>	
+							</tr>
+						</thead>
+						<tbody>
+							
+						
+							
+						</tbody>
+					</table>				
+					</div>
+
+                </section>
+
+			</div>
+{% endblock %}

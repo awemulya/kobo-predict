@@ -1971,19 +1971,31 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             data = []
             ss_index = {}
             stages_rows = []
-            head_row = ["Site ID", "Name", "Address", "Latitude", "longitude", "Status"]
+            head_row = ["Site ID", "Name"]
             project = Project.objects.get(pk=pk)
             stages = project.stages.filter(stage__isnull=True)
+            
+            table_head = []
+            substages =[]
+            table_head.append({"name":"Site Id", "rowspan":2, "colspan":1 })
+            table_head.append({"name":"Site Name", "rowspan":2, "colspan":1 })
+            
             for stage in stages:
                 sub_stages = stage.parent.all()
                 if len(sub_stages):
                     head_row.append("Stage :"+stage.name)
                     stages_rows.append("Stage :"+stage.name)
+                    table_head.append({"name":stage.name, "rowspan":len(substages), "colspan":1 })
 
                     for ss in sub_stages:
                         head_row.append("Sub Stage :"+ss.name)
                         ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
-            data.append(head_row)
+                        substages.append(ss.name)
+
+            return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head})
+
+
+            # data.append(head_row)
             total_cols = len(head_row) - 6 # for non stages
             for site in project.sites.filter(is_active=True, is_survey=False):
                 site_row = [site.identifier, site.name, site.address, site.latitude, site.longitude, site.status]
@@ -1993,4 +2005,4 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                         site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
                         site_row[k] = site_sub_stage.form_status
                 data.append(site_row)
-            return HttpResponse(data)
+            return HttpResponse(table_head)
