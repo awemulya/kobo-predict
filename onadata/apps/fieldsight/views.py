@@ -1999,6 +1999,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             for site in project.sites.filter(is_active=True, is_survey=False):
                 site_row = [site.identifier, site.name]
                 site_row.extend([None]*total_cols)
+                return HttpResponse(ss_index)
                 for k, v in ss_index.items():
                     if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
                         site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
