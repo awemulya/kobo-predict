@@ -2006,5 +2006,5 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                 a= site_row
                 data.append(site_row)
             
-            returns render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "data":data})
+            # return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "data":data})
             # return HttpResponse(table_head)
