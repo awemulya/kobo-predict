@@ -2002,7 +2002,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                 for k, v in ss_index.items():
                     if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
                         site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
-                        site_row[k] = site_sub_stage.id
+                        site_row.append(site_sub_stage.id)
                 a= site_row
                 data.append(site_row)
             
