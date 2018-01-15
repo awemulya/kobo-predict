@@ -35,8 +35,11 @@
 						<tbody>
 						{% for row in data %}
 						<tr>
-						{{ row }}
-
+						{% for value in row %}
+						<td>	
+							{{ value }}
+						</td>
+						{% value %}
 						</tr>
 						{% endfor %}	
 						
