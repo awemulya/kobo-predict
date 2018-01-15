@@ -2003,10 +2003,8 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                     if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
                         site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
                         site_row[k] = site_sub_stage.id
-                    else:
-                        site_row[k] = v
                 a= site_row
                 data.append(site_row)
             
-            return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "data":data})
+            return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "ss":ss_index,  "data":data})
             # return HttpResponse(table_head)
