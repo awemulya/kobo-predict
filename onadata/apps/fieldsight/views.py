@@ -2006,4 +2006,4 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                 data.append(site_row)
             
             return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "data":data})
-            return HttpResponse(table_head)
+            # return HttpResponse(table_head)
