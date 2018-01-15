@@ -1995,14 +1995,14 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             
 
             # data.append(head_row)
-            total_cols = len(head_row) # for non stages
+            total_cols = len(head_row) - 2 # for non stages
             for site in project.sites.filter(is_active=True, is_survey=False):
                 site_row = [site.identifier, site.name]
                 site_row.extend([None]*total_cols)
                 for k, v in ss_index.items():
                     if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
                         site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
-                        site_row[k] = site_sub_stage.form_status
+                        site_row[k] = site_sub_stage.id
                 a= site_row
                 data.append(site_row)
             
