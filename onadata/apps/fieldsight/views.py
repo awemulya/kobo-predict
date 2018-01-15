@@ -1983,7 +1983,6 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             for stage in stages:
                 sub_stages = stage.parent.all()
                 if len(sub_stages) > 0:
-                    head_row.append("Stage :"+stage.name)
                     stages_rows.append("Stage :"+stage.name)
                     table_head.append({"name":stage.name, "rowspan":1, "colspan":len(sub_stages) })
 
@@ -1995,10 +1994,9 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             
 
             # data.append(head_row)
-            total_cols = len(head_row) - 2 # for non stages
             for site in project.sites.filter(is_active=True, is_survey=False):
                 site_row = [site.identifier, site.name]
-                site_row.extend([None]*total_cols)
+                
                 for k, v in ss_index.items():
                     if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
                         site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
