@@ -18,7 +18,31 @@
 
 
 					
-					
+					<table class="table table-bordered table-hover">
+						<thead>
+							<tr rowspan="2">
+							{% for cols in table_head %}
+								<th rowspan="{{ cols.rowspan }}" colspan="{{ cols.colspan }}">{{ cols.name }}</th>
+							{% endfor %}
+								
+							</tr>
+							<tr>
+							{% for substage in substages%}
+								<th>{{ substage }}</th>	
+							{% endfor %}
+							</tr>
+						</thead>
+						<tbody>
+						{% for row in data %}
+						<tr>
+						{{ row }}
+
+						</tr>
+						{% endfor %}	
+						
+							
+						</tbody>
+					</table>				
 					</div>
 
                 </section>
