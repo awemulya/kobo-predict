@@ -1999,17 +1999,21 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                 for el in seq:
                     if el.project_stage_id==value: yield el
 
-            for site in project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages', to_attr='stages')):
+            for site in project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages'), to_attr='allstages'):
                 site_row = [site.identifier, site.name]
                 
                 for k, v in ss_index.items():
-                    substage = filterbyvalue(site.stages.all(), v):
+                    substage = filterbyvalue(site.allstages, v)
                     # if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
                         # site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
-                    return HttpResponse(substage)
-                    site_row.append(sub_stage[0].id)
-                a= site_row
-                data.append(site_row)
-            
+                    substage1 = next(substage, None)
+                    site_row.append(substage1.form_status)
             return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "ss":ss_index,  "data":data})
-            # return HttpResponse(table_head)
+            # return HttpResponse(table_head)\
+
+
+
+
+
+
+

@@ -76,6 +76,8 @@ var project = "{{obj.pk}}";
 								<a class="dropdown-item" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i>{% trans ' Project' %} {% trans 'Summary' %} {% trans 'Report' %}</a>
 								<!--<a class="dropdown-item" href="#"><i class="la la-clipboard"></i>{% trans 'Project Detail Report' %}</a>-->
 								<a class="dropdown-item" href="{% url 'fieldsight:download-stages' obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Excel' %} {% trans 'Report' %}</a>
+
+								<a class="dropdown-item" href="{% url 'fieldsight:ProjectStageResponsesStatus' obj.pk %}"><i class="la la-clipboard"></i>{% trans 'View' %} {% trans 'Tabular' %}{% trans 'Report' %}</a>
 							</div>
 						</span>
 						<span class="dropdown">
