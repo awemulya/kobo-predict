@@ -2008,6 +2008,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                         # site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
                     substage1 = next(substage, None)
                     site_row.append(substage1.form_status)
+                data.append(site_row)
             return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "ss":ss_index,  "data":data})
             # return HttpResponse(table_head)\
 
