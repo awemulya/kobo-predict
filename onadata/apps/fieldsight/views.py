@@ -63,6 +63,7 @@ from onadata.apps.fieldsight.tasks import multiuserassignproject, bulkuploadsite
 from .generatereport import MyPrint
 from django.utils import translation
 from django.conf import settings
+from django.db.models import Prefetch
 
 @login_required
 def dashboard(request):
@@ -1994,13 +1995,19 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             
 
             # data.append(head_row)
-            for site in project.sites.filter(is_active=True, is_survey=False):
+            def filterbyvalue(seq, value):
+                for el in seq:
+                    if el.project_stage_id==value: yield el
+
+            for site in project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages', to_attr='stages')):
                 site_row = [site.identifier, site.name]
                 
                 for k, v in ss_index.items():
-                    if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
-                        site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
-                        site_row.append(site_sub_stage.id)
+                    substage = filterbyvalue(site.stages.all(), v):
+                    # if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
+                        # site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
+                    return HttpResponse(substage)
+                    site_row.append(sub_stage[0].id)
                 a= site_row
                 data.append(site_row)
             
