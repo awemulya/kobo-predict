@@ -1999,7 +1999,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                 for el in seq:
                     if el.project_stage_id==value: yield el
 
-            for site in project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages'), to_attr='allstages'):
+            for site in project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages', to_attr='allstages')):
                 site_row = [site.identifier, site.name]
                 
                 for k, v in ss_index.items():
@@ -2017,3 +2017,20 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
 
 
 
+
+            #   # data.append(head_row)
+            # def filterbyvalue(seq, value):
+            #     for el in seq:
+            #         if el.project_stage_id==value: yield el
+
+            # for site in project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages', to_attr='allstages')):
+            #     site_row = [site.identifier, site.name]
+            #     for k, v in ss_index.items():
+            #         substage = filterbyvalue(site.allstages, v)
+            #         # if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
+            #             # site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
+            #         substage1 = next(substage, None)
+            #         site_row.append(substage1.form_status)
+
+            #     a= site_row
+            #     data.append(site_row)
