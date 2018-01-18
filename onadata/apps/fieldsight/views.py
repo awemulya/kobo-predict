@@ -2033,8 +2033,8 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                     site_row.append(status)
                 data.append(site_row)
             main_body.append({'head_cols':table_head})
-            main_body.append(substages)
-            main_body.append(data)
+            main_body.append({'sub_stages':substages})
+            main_body.append({'rows':data})
 
 
             return HttpResponse(json.dumps(main_body))
