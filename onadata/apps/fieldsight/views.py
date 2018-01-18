@@ -64,6 +64,7 @@ from .generatereport import MyPrint
 from django.utils import translation
 from django.conf import settings
 from django.db.models import Prefetch
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @login_required
 def dashboard(request):
