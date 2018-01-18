@@ -2044,7 +2044,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             main_body.append({'rows':data})
 
 
-            return HttpResponse(json.dumps(main_body))
+            return HttpResponse(json.dumps(main_body), status=status.HTTP_200_OK)
             # return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "ss":ss_index,  "data":data})
             # return HttpResponse(table_head)\
 
