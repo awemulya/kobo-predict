@@ -1970,6 +1970,7 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
 
 class ProjectStageResponsesStatus(ProjectRoleMixin, View): 
     def get(self, request, pk):
+            main_body=[]
             data = []
             ss_index = {}
             stages_rows = []
@@ -2031,8 +2032,13 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                          status = "No substage."
                     site_row.append(status)
                 data.append(site_row)
+            main_body.append(table_head)
+            main_body.append(substages)
+            main_body.append(data)
 
-            return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "ss":ss_index,  "data":data})
+
+            return HttpResponse(json.dumps(main_body))
+            # return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "ss":ss_index,  "data":data})
             # return HttpResponse(table_head)\
 
 
