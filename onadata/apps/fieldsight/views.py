@@ -2040,9 +2040,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                 main_body.append({'next_page':sites.next_page_number()})
             else:
                 main_body.append({'next_page':None})
-            content.append({'head_cols':table_head})
-            content.append({'sub_stages':substages})
-            content.append({'rows':data})
+            content.append({'head_cols':table_head, 'sub_stages':substages, 'rows':data})
             main_body.append({'content':content})
 
             return HttpResponse(json.dumps(main_body), status=200)
