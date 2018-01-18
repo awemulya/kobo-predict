@@ -2032,7 +2032,9 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                          status = "No substage."
                     site_row.append(status)
                 data.append(site_row)
-            main_body.append({'pages':paginator.num_pages})
+            main_body.append({'pages':paginator.count})
+            main_body.append({'total_objects':paginator.num_pages})
+            main_body.append({'next_page':paginator.page.has_next()})
             main_body.append({'head_cols':table_head})
             main_body.append({'sub_stages':substages})
             main_body.append({'rows':data})
