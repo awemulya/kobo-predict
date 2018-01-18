@@ -1973,6 +1973,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             ss_index = {}
             stages_rows = []
             head_row = ["Site ID", "Name"]
+            obj = get_object_or_404(Project, pk=pk)
             project = Project.objects.get(pk=pk)
             stages = project.stages.filter(stage__isnull=True)
             
@@ -2009,7 +2010,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                     substage1 = next(substage, None)
                     site_row.append(substage1.form_status)
                 data.append(site_row)
-            return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "ss":ss_index,  "data":data})
+            return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'obj': obj,'table_head': table_head, "substages":substages, "ss":ss_index,  "data":data})
             # return HttpResponse(table_head)\
 
 
