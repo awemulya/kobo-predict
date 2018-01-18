@@ -908,7 +908,7 @@ class BluePrintsView(LoginRequiredMixin, TemplateView):
 
         ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
         formset = ImageFormSet(queryset=BluePrints.objects.none())
-        return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': self.kwargs.get('id'),
+        return render(request, 'fieldsight/blueprints_form.html', {'site': site, 'formset': formset,'id': self.kwargs.get('id'),
                                                                    'blueprints':blueprints},)
 
     def post(self, request, id):
@@ -929,7 +929,7 @@ class BluePrintsView(LoginRequiredMixin, TemplateView):
 
             ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
             formset = ImageFormSet(queryset=BluePrints.objects.none())
-            return render(request, 'fieldsight/blueprints_form.html', {'formset': formset,'id': self.kwargs.get('id'),
+            return render(request, 'fieldsight/blueprints_form.html', {'site': site, 'formset': formset,'id': self.kwargs.get('id'),
                                                                    'blueprints':blueprints},)
 
             # return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': id}))
@@ -1975,6 +1975,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             ss_index = {}
             stages_rows = []
             head_row = ["Site ID", "Name"]
+            obj = get_object_or_404(Project, pk=pk)
             project = Project.objects.get(pk=pk)
             stages = project.stages.filter(stage__isnull=True)
             
@@ -2032,6 +2033,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                          status = "No substage."
                     site_row.append(status)
                 data.append(site_row)
+
             main_body.append({'pages':paginator.count})
             if sites.has_next():
                 main_body.append({'next_page':sites.next_page_number()})
