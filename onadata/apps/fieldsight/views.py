@@ -2036,7 +2036,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
 
             main_body.append({'pages':paginator.count})
             main_body.append({'total_objects':paginator.num_pages})
-            main_body.append({'next_page':sites.has_next()})
+            main_body.append({'next_page':sites.next_page_number()})
             main_body.append({'head_cols':table_head})
             main_body.append({'sub_stages':substages})
             main_body.append({'rows':data})
