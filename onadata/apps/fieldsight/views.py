@@ -1972,6 +1972,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
     def get(self, request, pk):
             main_body=[]
             data = []
+            content=[]
             ss_index = {}
             stages_rows = []
             head_row = ["Site ID", "Name"]
@@ -2039,10 +2040,10 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                 main_body.append({'next_page':sites.next_page_number()})
             else:
                 main_body.append({'next_page':None})
-            main_body.append({'head_cols':table_head})
-            main_body.append({'sub_stages':substages})
-            main_body.append({'rows':data})
-
+            content.append({'head_cols':table_head})
+            content.append({'sub_stages':substages})
+            content.append({'rows':data})
+            main_body.append({'content':content})
 
             return HttpResponse(json.dumps(main_body), status=status.HTTP_200_OK)
             # return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "ss":ss_index,  "data":data})
