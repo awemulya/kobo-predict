@@ -2032,7 +2032,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                          status = "No substage."
                     site_row.append(status)
                 data.append(site_row)
-            main_body.append(table_head)
+            main_body.append({'head_cols':table_head})
             main_body.append(substages)
             main_body.append(data)
 
