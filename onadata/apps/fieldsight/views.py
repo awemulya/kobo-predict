@@ -2008,7 +2008,14 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             site_list = project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
             paginator = Paginator(site_list, 25) # Show 25 contacts per page
             page = request.GET.get('page')
-            sites = paginator.get_page(page)
+            try:
+                sites = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                sites = paginator.page(1)
+            except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+                sites = paginator.page(paginator.num_pages)
             for site in sites:
                 site_row = [site.identifier, site.name]
                 for k, v in ss_index.items():
