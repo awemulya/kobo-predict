@@ -1972,7 +1972,6 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
     def get(self, request, pk):
             main_body=[]
             data = []
-            content=[]
             ss_index = {}
             stages_rows = []
             head_row = ["Site ID", "Name"]
@@ -2040,7 +2039,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                 main_body.append({'next_page':sites.next_page_number()})
             else:
                 main_body.append({'next_page':None})
-            content.append({'head_cols':table_head, 'sub_stages':substages, 'rows':data})
+            content={'head_cols':table_head, 'sub_stages':substages, 'rows':data}
             main_body.append({'content':content})
 
             return HttpResponse(json.dumps(main_body), status=200)
