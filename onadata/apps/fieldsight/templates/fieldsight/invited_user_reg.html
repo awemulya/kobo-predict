@@ -79,6 +79,10 @@
                     {% trans 'Username must only include small letters' %}
                   {% endif %}
 
+                  {% if status == "error-4" %}
+                    {% trans 'Passwords did not match.' %}
+                  {% endif %}
+
 
                 </div></center>
 
@@ -123,18 +127,18 @@
         document.getElementById("alert").innerHTML = "Password must be atleast 8 characters long.";
       }
       
-      else
-      {
-        if(pass1 == pass2){
+      // else
+      // {
+      //   if(pass1 == pass2){
         
-          document.getElementById("user_reg_form").submit(); 
+      //     document.getElementById("user_reg_form").submit(); 
         
-        }
-        else{
-           document.getElementById("alert").innerHTML = "Passwords did not match.";
-        }
+      //   }
+      //   else{
+      //      document.getElementById("alert").innerHTML = "Passwords did not match.";
+      //   }
 
-      }
+      // }
     }
 
     function validateUsername(){
