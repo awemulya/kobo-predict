@@ -1258,16 +1258,8 @@ class ActivateRole(TemplateView):
     def post(self, request, invite, *args, **kwargs):
         user_exists = User.objects.filter(email=invite.email)
         if user_exists:
-            user = user_exists[0]
-            #To ensure profile exists because many users still dont have profile.
-            profile, created = UserProfile.objects.get_or_create(user=user)
-            if created:
-                profile.organization = invite.organization
-                profile.save() 
+            user = user_exists[0] 
             if request.POST.get('response') == "accept":
-                if not user.is_active:
-                    user.is_active = True
-                    user.save()
                 userrole = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
             else:
                 invite.is_declined = True
@@ -1275,6 +1267,9 @@ class ActivateRole(TemplateView):
             invite.save()
         else:
             username = request.POST.get('username')
+            if len(request.POST.get('username')) < 6:
+                return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-6', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
+
             for i in username:
                 if i.isupper():
                     return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-3', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
@@ -1285,6 +1280,12 @@ class ActivateRole(TemplateView):
             if User.objects.filter(username=request.POST.get('username')).exists():
                 return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-2', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
 
+            if request.POST.get('password1') != request.POST.get('password2'):
+                return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-4', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
+
+            if request.POST.get('password1') == request.POST.get('password2') and len(request.POST.get('password1')) < 8:
+                return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-5', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
+            
             user = User(username=request.POST.get('username'), email=invite.email, first_name=request.POST.get('firstname'), last_name=request.POST.get('lastname'))
             user.set_password(request.POST.get('password1'))
             user.save()
@@ -1314,13 +1315,8 @@ class ActivateRole(TemplateView):
             content = invite.site
         elif invite.group.name == "Unassigned":
             noti_type = 4
-            if invite.site:
-                content = invite.site
-            elif invite.project:
-                content =  invite.project
-            else:
-                content = invite.organization
-
+            content = invite.site
+        
         noti = invite.logs.create(source=user, type=noti_type, title="new Role",
                                        organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.by_user,
                                        description="{0} was added as the {1} of {2} by {3}.".
