@@ -1969,7 +1969,6 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
 
 class ProjectStageResponsesStatus(ProjectRoleMixin, View): 
     def get(self, request, pk):
-            main_body=[]
             data = []
             ss_index = {}
             stages_rows = []
@@ -2033,13 +2032,12 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                     site_row.append(status)
                 data.append(site_row)
 
-            main_body.append({'pages':paginator.count})
             if sites.has_next():
-                main_body.append({'next_page':sites.next_page_number()})
+                has_next = sites.next_page_number()
             else:
-                main_body.append({'next_page':None})
+                has_next = None
             content={'head_cols':table_head, 'sub_stages':substages, 'rows':data}
-            main_body.append({'content':content})
+            main_body = {'pages':paginator.count, 'next_page':has_next,'content':content}
 
             return HttpResponse(json.dumps(main_body), status=200)
             # return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "ss":ss_index,  "data":data})
