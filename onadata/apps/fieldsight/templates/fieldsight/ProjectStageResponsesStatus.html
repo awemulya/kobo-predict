@@ -10,7 +10,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_stage_data.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
-		vm=StageViewModel('/fieldsight/ProjectStageResponsesStatus/'+obj.pk+'/');
+		vm=StageViewModel('/fieldsight/ProjectStageResponsesStatus/'+{{ obj.pk }}+'/');
 		 ko.applyBindings(vm);
 	});
 </script>
