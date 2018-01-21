@@ -2038,7 +2038,6 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                 has_next = None
             content={'head_cols':table_head, 'sub_stages':substages, 'rows':data}
             main_body = {'pages':paginator.count, 'next_page':has_next,'content':content}
-
             return HttpResponse(json.dumps(main_body), status=200)
             # return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "ss":ss_index,  "data":data})
             # return HttpResponse(table_head)\
