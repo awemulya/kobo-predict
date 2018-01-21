@@ -3,6 +3,17 @@
 {% load filters %}
 {% block content %}
 {% load filters %}
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_stage_data.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		vm=StageViewModel('http://localhost:8001/fieldsight/ProjectStageResponsesStatus/1/');
+		 ko.applyBindings(vm);
+	});
+</script>
 		<div id="main-content" class="padding">
 			<nav aria-label="breadcrumb" role="navigation">
 				<ol class="breadcrumb">
@@ -21,7 +32,7 @@
                     </header>
 					<div class="panel-body">
 
-					<table class="table table-bordered table-hover">
+				<!-- 	<table class="table table-bordered table-hover">
 						<thead>
 							<tr rowspan="2">
 							{% for cols in table_head %}
@@ -48,7 +59,39 @@
 						
 							
 						</tbody>
-					</table>				
+					</table> -->				
+					
+
+						<table class="table table-bordered table-hover">
+						<thead>
+							<tr rowspan="2">
+							<!-- ko foreach: headers  -->
+								<th data-bind="text: $data.name, attr: { rowspan: $data.rowspan, colspan: $data.colspan }"></th>
+							<!-- /ko-->
+								
+							</tr>
+							<tr>
+							<!-- ko foreach: subHeaders  -->
+								<th data-bind="text: $data"></th>	
+							<!-- /ko-->
+							</tr>
+						</thead>
+						<tbody>
+						<!-- ko foreach: rows  -->
+						<tr>
+							<!-- ko foreach: $data  -->
+							<td data-bind="text: $data">	
+								
+							</td>
+							<!-- /ko-->
+						</tr>
+						<!-- /ko-->	
+						
+							
+						</tbody>
+					</table>		
+					
+
 					</div>
 
                 </section>

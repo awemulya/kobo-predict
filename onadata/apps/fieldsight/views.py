@@ -2037,7 +2037,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             else:
                 has_next = None
             content={'head_cols':table_head, 'sub_stages':substages, 'rows':data}
-            main_body = {'pages':paginator.count, 'next_page':has_next,'content':content}
+            main_body = {'next_page':has_next,'content':content}
             return HttpResponse(json.dumps(main_body), status=200)
             # return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "ss":ss_index,  "data":data})
             # return HttpResponse(table_head)\
@@ -2125,3 +2125,9 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
 #                          status = "No substage."
 #                     site_row.append(status)
 #                 data.append(site_row)
+
+class StageTemplateView(ProjectRoleMixin, View):
+    def get(self, request, pk):
+        obj = Project.objects.get(pk=pk)
+        return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'obj':obj,})
+            # return HttpResponse(table_head)\
