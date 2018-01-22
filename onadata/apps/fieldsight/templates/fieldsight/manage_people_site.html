@@ -127,7 +127,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
+                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter emails separated  by ',' to invite .." aria-label="Invite to...">
                     <span class="input-group-btn">
                       <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Site Supervisor')" type="button"><i class="la la-user-plus"></i>{% trans 'Invite' %}</button>
                     </span>
@@ -225,7 +225,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
+                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter emails separated  by ',' to invite" aria-label="Invite to...">
                     <span class="input-group-btn">
                       <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Reviewer')" type="button"><i class="la la-user-plus"></i>{% trans 'Invite' %}</button>
                     </span>
@@ -338,7 +338,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
+                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter emails separated  by ',' to invite" aria-label="Invite to...">
                     <span class="input-group-btn">
                       <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Project Manager')" type="button"><i class="la la-user-plus"></i> {% trans 'Invite' %}</button>
                     </span>
@@ -650,7 +650,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
+                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter emails separated  by ',' to invite" aria-label="Invite to...">
                     <span class="input-group-btn">
                       <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Organization Admin')" type="button"><i class="la la-user-plus"></i> {% trans 'Invite' %}</button>
                     </span>
@@ -925,15 +925,23 @@ var status = true;
 //   // }   
 // }
 function validateemail(email){
-  var atherate = email.indexOf("@");
-  var dot = email.indexOf(".", atherate);
-    
-      if(atherate != -1 && dot != -1){
-        return {
+      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if(re.test(email.toLowerCase())){
+      return {
         status: true,
         email: email
         };
+
       }
+  <!--var atherate = email.indexOf("@");-->
+  <!--var dot = email.indexOf(".", atherate);-->
+    <!---->
+      <!--if(atherate != -1 && dot != -1){-->
+        <!--return {-->
+        <!--status: true,-->
+        <!--email: email-->
+        <!--};-->
+      <!--}-->
       else{
         // alert("Enter valid email address.");
         return {
@@ -954,11 +962,18 @@ function validateemail(email){
 
 function sendmultiplerequest(group){
     var email = $("#invite_email").val();
+    if(email.indexOf(' ') != -1){
+    alert("Invalid Input! Enter emails separated  by ',' to send invitations. Do not use spaces.");
+    return
+    }
     status=true;
     emails = email.split(",");
     emails.forEach(multiemailvalidate);
-    if(status == "true" ){ sendinvite(emails, group); }
-    else{ alert('failed'); }
+    if(status == "true" ){
+     sendinvite(emails, group);
+      }else{
+       alert('failed');
+       }
 }
 
 function multiemailvalidate(entry) {
