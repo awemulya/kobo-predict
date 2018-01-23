@@ -924,32 +924,47 @@ var status = true;
 //   // checkemail(email);
 //   // }   
 // }
-function validateemail(email){
-      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      if(re.test(email.toLowerCase())){
-      return {
+// function validateemail(email){
+//   var atherate = email.indexOf("@");
+//   var dot = email.indexOf(".", atherate);
+    
+//       if(atherate != -1 && dot != -1){
+//         return {
+//         status: true,
+//         email: email
+//         };
+//       }
+//       else{
+//         // alert("Enter valid email address.");
+//         return {
+//         status: false,
+//         email: email
+//         };
+//       }
+// }
+
+function validateEmail(email) {
+  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+}
+
+function validateemail(email) {
+  if (validateEmail(email)) {
+        return {
         status: true,
         email: email
         };
 
-      }
-  <!--var atherate = email.indexOf("@");-->
-  <!--var dot = email.indexOf(".", atherate);-->
-    <!---->
-      <!--if(atherate != -1 && dot != -1){-->
-        <!--return {-->
-        <!--status: true,-->
-        <!--email: email-->
-        <!--};-->
-      <!--}-->
-      else{
-        // alert("Enter valid email address.");
+  } 
         return {
-        status: false,
-        email: email
-        };
-      }
+            status: false,
+            email: email
+            };
+  
+  
 }
+
+
  function getNewInsertion(newValue) {
      if(newValue.indexOf(',') > -1){
         $("#retry").val('Invite Users');  
@@ -962,17 +977,15 @@ function validateemail(email){
 
 function sendmultiplerequest(group){
     var email = $("#invite_email").val();
-    if(email.indexOf(' ') != -1){
-    alert("Invalid Input! Enter emails separated  by ',' to send invitations. Do not use spaces.");
-    return
-    }
+    
     status=true;
     emails = email.split(",");
     emails.forEach(multiemailvalidate);
-    if(status == "true" ){
-     sendinvite(emails, group);
-      }else{
-       alert('failed');
+    if(status == "true" ){ sendinvite(emails, group); }
+    else{ 
+      alert("Invalid Input! Enter emails separated  by ',' to send invitations. Do not use spaces.");
+      return false;
+
        }
 }
 
