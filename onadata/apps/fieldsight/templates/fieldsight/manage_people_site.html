@@ -924,24 +924,24 @@ var status = true;
 //   // checkemail(email);
 //   // }   
 // }
-function validateemail(email){
-  var atherate = email.indexOf("@");
-  var dot = email.indexOf(".", atherate);
+// function validateemail(email){
+//   var atherate = email.indexOf("@");
+//   var dot = email.indexOf(".", atherate);
     
-      if(atherate != -1 && dot != -1){
-        return {
-        status: true,
-        email: email
-        };
-      }
-      else{
-        // alert("Enter valid email address.");
-        return {
-        status: false,
-        email: email
-        };
-      }
-}
+//       if(atherate != -1 && dot != -1){
+//         return {
+//         status: true,
+//         email: email
+//         };
+//       }
+//       else{
+//         // alert("Enter valid email address.");
+//         return {
+//         status: false,
+//         email: email
+//         };
+//       }
+// }
 
 function validateEmail(email) {
   var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -981,7 +981,10 @@ function sendmultiplerequest(group){
     emails = email.split(",");
     emails.forEach(multiemailvalidate);
     if(status == "true" ){ sendinvite(emails, group); }
-    else{ alert('failed'); }
+    else{ 
+      alert("Invalid Email.");
+      return false;
+       }
 }
 
 function multiemailvalidate(entry) {
