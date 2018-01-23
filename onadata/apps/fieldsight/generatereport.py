@@ -323,7 +323,8 @@ class MyPrint:
 
             else:
                 elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
-            elements.append(PageBreak())
+                elements.append(Spacer(0,10))
+            # elements.append(PageBreak())
         #     else:
         #         elements.append(Paragraph("No Submissions Yet.", styles['Normal']))
         #         elements.append(Spacer(0,10)) 

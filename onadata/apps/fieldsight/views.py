@@ -1092,6 +1092,7 @@ def senduserinvite(request):
     response=""
 
     for email in emails:
+        email = email.strip()
         user = User.objects.filter(email=email)
         userinvite = UserInvite.objects.filter(email=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
 
@@ -2039,92 +2040,6 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             content={'head_cols':table_head, 'sub_stages':substages, 'rows':data}
             main_body = {'next_page':has_next,'content':content}
             return HttpResponse(json.dumps(main_body), status=200)
-            # return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "ss":ss_index,  "data":data})
-            # return HttpResponse(table_head)\
-
-
-# for site in project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instan$
-#                 site_row = [site.identifier, site.name]
-
-#                 for k, v in ss_index.items():
-#                     substage = filterbyvalue(site.stages.all(), v)
-#                     # if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
-#                         # site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
-#                     substage1 = next(substage, None)
-
-#                     site_row.append(substage1.form_status)
-#                 data.append(site_row)
-
-
-
-
-
-
-            #   # data.append(head_row)
-            # def filterbyvalue(seq, value):
-            #     for el in seq:
-            #         if el.project_stage_id==value: yield el
-
-            # for site in project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages', to_attr='allstages')):
-            #     site_row = [site.identifier, site.name]
-            #     for k, v in ss_index.items():
-            #         substage = filterbyvalue(site.allstages, v)
-            #         # if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
-            #             # site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
-            #         substage1 = next(substage, None)
-            #         site_row.append(substage1.form_status)
-
-            #     a= site_row
-            #     data.append(site_row)
-
-
-
-  # def getStatus(el):
-  #               if el is not None and el.form_status==3: return 3
-  #               elif el is not None and el.form_status==2: return 2
-  #               elif el is not None and el.form_status==1: return 1
-  #               else: return 0
-
-  #           for site in project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instan$
-  #               site_row = [site.identifier, site.name]
-  #               for k, v in ss_index.items():
-  #                   substage = filterbyvalue(site.stages.all(), v)
-  #                   # if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
-  #                       # site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
-  #                   substage1 = next(substage, None)
-  #                   if substage1 is not None:
-  #                        get_status = getStatus(substage1.stage_forms.site_form_instances.all().first())
-  #                        status = get_status
-  #                   else:
-  #                        status = "No substage."
-  #                   site_row.append(status)
-  #               data.append(site_row)
-  #           return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'table_head': table_head, "substages":substages, "ss":ss_in$
-
-
-# def getStatus(el):
-#                 if el is not None and el.form_status==3: return el.id
-#                 elif el is not None and el.form_status==2: return el.id
-#                 elif el is not None and el.form_status==1: return el.id
-#                 else: return 0
-
-#             for site in project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
-#                 site_row = [site.identifier, site.name]
-#                 for k, v in ss_index.items():
-#                     substage = filterbyvalue(site.stages.all(), v)
-#                     # if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
-#                         # site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
-#                     substage1 = next(substage, None)
-#                     if substage1 is not None:
-#                         if  substage1.stage_forms.site_form_instances.all():
-#                              get_status = getStatus(substage1.stage_forms.site_form_instances.all()[0])
-#                              status = get_status
-#                         else:
-#                             status = "No submissions."
-#                     else:
-#                          status = "No substage."
-#                     site_row.append(status)
-#                 data.append(site_row)
 
 class StageTemplateView(ProjectRoleMixin, View):
     def get(self, request, pk):
