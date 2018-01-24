@@ -2,10 +2,74 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
+
+
+
 {% block page-title %}{% trans 'Users' %}{% endblock %}
 
 
 {% block content %}
+
+
+
+ <link href="{{ STATIC_URL }}css/jquery.tagit.css" rel="stylesheet" type="text/css">
+    <link href="{{ STATIC_URL }}css/tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/tag-it.js" type="text/javascript" charset="utf-8"></script>
+    <style type="text/css">
+        .invalid{
+            border: 1px solid red !important;
+        }
+    </style>
+    <script>
+    	var emails=[];
+    	var is_emails_valid = true;
+        $(function(){
+         
+
+            //-------------------------------
+            // Tag events
+            //-------------------------------
+            var emailTags = $('#emailTags');
+
+            var addEvent = function(text) {
+                $('#events_container').append(text + '<br>');
+            };
+
+            emailTags.tagit({
+              
+                beforeTagAdded: function(evt, ui) {
+                    if (!ui.duringInitialization) {
+                        addEvent('beforeTagAdded: ' + emailTags.tagit('tagLabel', ui.tag));
+                    }
+                },
+                afterTagAdded: function(evt, ui) {
+                    emails=emailTags.tagit('assignedTags')
+                    console.log(emails);
+                },
+                beforeTagRemoved: function(evt, ui) {
+                    
+                },
+                afterTagRemoved: function(evt, ui) {
+                    emails=emailTags.tagit('assignedTags')
+                    console.log(emails);
+                },
+                onTagClicked: function(evt, ui) {
+                    addEvent('onTagClicked: ' + emailTags.tagit('tagLabel', ui.tag));
+                },
+                onTagExists: function(evt, ui) {
+                    addEvent('onTagExists: ' + emailTags.tagit('tagLabel', ui.existingTag));
+                }
+            });
+
+
+         
+        });
+    </script>
+
+
+
     {% load sorting_tags %}
     {% load filters %}
 				<div id="main-content" class="padding">
@@ -94,7 +158,8 @@
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										  <input type="text" class="form-control" id="invite_email" placeholder="Invite Users" aria-label="Invite">
+										   <ul id="emailTags">
+                   						   </ul>
 										  <span class="input-group-btn">
 											<button class="btn btn-primary" onclick="sendmultiplerequest()" type="button"><i class="fa fa-plus"></i>{% trans 'Invite' %}</button>
 										  </span>
@@ -182,28 +247,29 @@
 					</div>
 				</section>
 
+
 					<script type="text/javascript">
-					var status_email = true;
-					
-					console.log(typeof status_email);
-						function validateemail(email){
-							  var atherate = email.indexOf("@");
-							  var dot = email.indexOf(".", atherate);
-							    
-							      if(atherate != -1 && dot != -1){
-							        return {
-							        status1: true,
-							        email: email
-							        };
-							      }
-							      else{
-							        // alert("Enter valid email address.");
-							        return {
-							        status1: false,
-							        email: email
-							        };
-							      }
-							}
+
+							function validateEmail(email) {
+								  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+								  return re.test(email);
+								}
+
+								function validateemail(email) {
+								  if (validateEmail(email)) {
+								        return {
+								        status: true,
+								        email: email
+								        };
+
+								  } 
+								        return {
+								            status: false,
+								            email: email
+								            };
+								  
+								  
+								}
 							 function getNewInsertion(newValue) {
 							     if(newValue.indexOf(',') > -1){
 							        $("#retry").val('Invite Users');  
@@ -214,36 +280,31 @@
 							}
 
 
-							function sendmultiplerequest(group){
-							    var email = $("#invite_email").val();
-							    status_email=true;
-							    emails = email.split(",");
-							    emails.forEach(multiemailvalidate);
-							    console.log(status_email);
-							    console.log(typeof status_email);
-							    if(status_email == true ){ sendinvite(emails, group); }
-							    else{ alert('failed'); }
-							}
-
 							function multiemailvalidate(entry) {
-								if(status_email == false){
-									return false;
-								}
 							    email_res = validateemail(entry);
-							    if(email_res.status1 == false){
-							      
-							      var email_input = document.getElementById("invite_email");
-							      email = email_input.value;
-							      start = email.search(email_res.email);
-							      end = email.indexOf(",", start);
-							      // console.log(start +" "+ end);
-							      email_input.setSelectionRange(start, end);
-							      email_input.focus();
-							      status_email=false;
+							    if(!email_res.status){
+							      is_emails_valid=false;
 
 
 							      }
 							    }
+							function sendmultiplerequest(group){
+
+							    if(!emails[0]){
+							      alert("Please insert an email to invite.");
+							      return false;
+							    }
+
+							    is_emails_valid=true;
+							     emails.forEach(multiemailvalidate);
+							    
+							    if(is_emails_valid){ sendinvite(emails, group); }
+							    else{ alert('Contains Invalid Email.'); }
+							}
+
+				
+
+							
 
 							 function sendinvite(emails, group){ 
 							      $('#myinvitemodal').modal(); 

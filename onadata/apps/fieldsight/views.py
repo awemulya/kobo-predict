@@ -1149,6 +1149,69 @@ def senduserinvite(request):
     return HttpResponse(response)
 
 
+def invitemultiregionalusers(request, emails, group, region_ids):
+   
+    response=""
+    for region_id in region_ids:
+        region = Region.objects.get(id=region_id);
+        project_id = region.project_id
+        organization_id = region.project.organization_id  
+        sites = Site.objects.filter(region_id=region_id)  
+        for site in sites:
+
+            for email in emails:
+                email = email.strip()
+                user = User.objects.filter(email=email)
+                userinvite = UserInvite.objects.filter(email=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+
+                if userinvite:
+                    response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
+                    continue
+                if user:
+                    userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
+                    
+                    if userrole:
+                        if userrole[0].ended_at==None:
+                            if group.name == "Unassigned":
+                                response += email + ' has already joined this organization.<br>'
+                            else:
+                                response += email + ' already has the role for '+group.name+'.<br>' 
+                            continue
+                    invite = UserInvite(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
+
+                    invite.save()
+                    # organization = Organization.objects.get(pk=1)
+                    # noti = invite.logs.create(source=user[0], type=9, title="new Role",
+                    #                                organization_id=request.POST.get('organization_id'),
+                    #                                description="{0} sent you an invite to join {1} as the {2}.".
+                    #                                format(request.user.username, organization.name, invite.group.name,))
+                    # result = {}
+                    # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+                    # result['url'] = noti.get_absolute_url()
+                    # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+                    # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+                else:
+                    invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+                    invite.save()
+                current_site = get_current_site(request)
+                subject = 'Invitation for Role'
+                message = render_to_string('fieldsight/email_sample.html',
+                {
+                    'email': invite.email,
+                    'domain': current_site.domain,
+                    'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
+                    'token': invite.token,
+                    'invite': invite,
+                    })
+                email_to = (invite.email,)
+                send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
+                if group.name == "Unassigned":
+                    response += "Sucessfully invited "+ email +" to join this organization.<br>"
+                else:    
+                    response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
+                continue
+    return HttpResponse(response)
 
 @login_required()
 def sendmultiroleuserinvite(request):
@@ -1160,6 +1223,69 @@ def sendmultiroleuserinvite(request):
 
     response=""
     print levels
+    print group
+    if leveltype == "region":
+        for region_id in levels:
+            region = Region.objects.get(id=region_id);
+            project_id = region.project_id
+            organization_id = region.project.organization_id  
+            sites = Site.objects.filter(region_id=region_id)  
+            for site in sites:
+                site_id=site.id
+
+                for email in emails:
+                    email = email.strip()
+                    user = User.objects.filter(email=email)
+                    userinvite = UserInvite.objects.filter(email=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+
+                    if userinvite:
+                        response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
+                        continue
+                    if user:
+                        userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
+                        
+                        if userrole:
+                            if userrole[0].ended_at==None:
+                                if group.name == "Unassigned":
+                                    response += email + ' has already joined this organization.<br>'
+                                else:
+                                    response += email + ' already has the role for '+group.name+'.<br>' 
+                                continue
+                        invite = UserInvite(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
+
+                        invite.save()
+                        # organization = Organization.objects.get(pk=1)
+                        # noti = invite.logs.create(source=user[0], type=9, title="new Role",
+                        #                                organization_id=request.POST.get('organization_id'),
+                        #                                description="{0} sent you an invite to join {1} as the {2}.".
+                        #                                format(request.user.username, organization.name, invite.group.name,))
+                        # result = {}
+                        # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
+                        # result['url'] = noti.get_absolute_url()
+                        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+                        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+                    else:
+                        invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+                        invite.save()
+                    current_site = get_current_site(request)
+                    subject = 'Invitation for Role'
+                    message = render_to_string('fieldsight/email_sample.html',
+                    {
+                        'email': invite.email,
+                        'domain': current_site.domain,
+                        'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
+                        'token': invite.token,
+                        'invite': invite,
+                        })
+                    email_to = (invite.email,)
+                    send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
+                    if group.name == "Unassigned":
+                        response += "Sucessfully invited "+ email +" to join this organization.<br>"
+                    else:    
+                        response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
+                    continue
+        return HttpResponse(response)
     for level in levels:
         organization_id = None
         project_id =None
@@ -1169,7 +1295,7 @@ def sendmultiroleuserinvite(request):
             project_id = level
             organization_id = Project.objects.get(pk=level).organization_id
             print organization_id
-        
+
         elif leveltype == "site":
             site_id = level
             site = Site.objects.get(pk=site_id)
