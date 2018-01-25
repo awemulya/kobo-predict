@@ -414,6 +414,16 @@ class FInstance(models.Model):
                             question = first_children['label']
                         row={'type':question_type, 'question':question, 'answer':answer}
                         data.append(row)
+            else:
+                for first_children in r_object['children']:
+                        question_type = first_children['type']
+                        question = first_children['name']
+                        answer = ''
+                        if 'label' in first_children:
+                            question = first_children['label']
+                        row={'type':question_type, 'question':question, 'answer':answer}
+                        data.append(row)
+
 
         def parse_group(g_object):
             g_question = g_object['name']
