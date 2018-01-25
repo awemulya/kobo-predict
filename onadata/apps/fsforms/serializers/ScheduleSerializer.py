@@ -111,7 +111,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
         if not is_project:
             return 0
         try:
-            fsxf = FieldSightXF.objects.filter(schedule=obj)
+            fsxf = FieldSightXF.objects.get(schedule=obj)
             
             if is_project == "1":
                 return fsxf.project_form_instances.count()
@@ -127,13 +127,13 @@ class ScheduleSerializer(serializers.ModelSerializer):
         if not is_project:
             return 0
         try:
-            fsxf = FieldSightXF.objects.filter(schedule=obj)
+            fsxf = FieldSightXF.objects.get(schedule=obj)
             
             if is_project == "1":
                 response = fsxf.project_form_instances.order_by('-id')[:1]
             else:
                 response = fsxf.site_form_instances.order_by('-id')[:1]
-            serializer = FInstanceResponcesSerializer(instance=response, many=True)
+            serializer = FInstanceResponcesSerializer(instance=response, many=False)
             return serializer.data 
 
         except FieldSightXF.DoesNotExist:
