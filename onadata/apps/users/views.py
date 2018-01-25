@@ -91,13 +91,12 @@ def current_user(request):
     user = request.user
     if user.is_anonymous():
         return Response({'code': 401, 'message': 'Unauthorized User'})
+    elif not user.user_profile.organization:
+        return Response({'code': 403, 'message': 'Not Assigned to Any Organizations Yet'})
     else:
         site_supervisor = False
         field_sight_info = []
         roles = UserRole.get_active_site_roles(user)
-        if not roles:
-            return Response({'code': 403, 'message': 'Not Assigned to Any Organizations Yet'})
-            
         if roles.exists():
             site_supervisor = True
         for role in roles:
