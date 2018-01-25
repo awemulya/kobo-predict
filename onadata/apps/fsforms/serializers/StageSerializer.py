@@ -25,6 +25,7 @@ class EMSerializer(serializers.ModelSerializer):
 class SubStageSerializer1(serializers.ModelSerializer):
     stage_forms = FSXFSerializer()
     em = EMSerializer(read_only=True)
+    responses_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Stage
@@ -57,6 +58,21 @@ class SubStageSerializer1(serializers.ModelSerializer):
                 return fsxf.id
         return None
 
+    def get_responses_count(self, obj):
+        is_project = self.context.get('is_project', False)
+        if not is_project:
+            return 0
+
+        try:
+            fsxf = FieldSightXF.objects.filter(stage=obj)
+            
+            if is_project == "1":
+                return fsxf.project_form_instances.count()
+            else:
+                return fsxf.site_form_instances.count()
+
+        except FieldSightXF.DoesNotExist:
+            return 0
 
 class StageSerializer1(serializers.ModelSerializer):
     # parent = SubStageSerializer1(many=True, read_only=True)
