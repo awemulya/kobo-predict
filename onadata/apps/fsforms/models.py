@@ -393,24 +393,25 @@ class FInstance(models.Model):
         media_folder = self.instance.xform.user.username
         def parse_repeat(r_object):
             r_question = r_object['name']
-            for gnr_answer in json_answer[r_question]:
-                for first_children in r_object['children']:
-                    question_type = first_children['type']
-                    question = first_children['name']
-                    group_answer = json_answer[r_question]
-                    answer = ''
-                    if r_question+"/"+question in gnr_answer:
-                        if first_children['type'] == 'note':
-                            answer= ''
-                        elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or first_children['type'] == 'video':
-                            answer = 'http://'+base_url+'/media/'+ media_folder +'/attachments/'+gnr_answer[r_question+"/"+question]
-                        else:
-                            answer = gnr_answer[r_question+"/"+question]
-                            
-                    if 'label' in first_children:
-                        question = first_children['label']
-                    row={'type':question_type, 'question':question, 'answer':answer}
-                    data.append(row)
+            if r_question in json_answer:
+                for gnr_answer in json_answer[r_question]:
+                    for first_children in r_object['children']:
+                        question_type = first_children['type']
+                        question = first_children['name']
+                        group_answer = json_answer[r_question]
+                        answer = ''
+                        if r_question+"/"+question in gnr_answer:
+                            if first_children['type'] == 'note':
+                                answer= ''
+                            elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or first_children['type'] == 'video':
+                                answer = 'http://'+base_url+'/media/'+ media_folder +'/attachments/'+gnr_answer[r_question+"/"+question]
+                            else:
+                                answer = gnr_answer[r_question+"/"+question]
+                                
+                        if 'label' in first_children:
+                            question = first_children['label']
+                        row={'type':question_type, 'question':question, 'answer':answer}
+                        data.append(row)
 
         def parse_group(g_object):
             g_question = g_object['name']
