@@ -13,7 +13,7 @@ class StageViewSet(viewsets.ModelViewSet):
     """
     queryset = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True)
     serializer_class = StageSerializer1
-    pagination_class = LargeResultsSetPagination
+    # pagination_class = LargeResultsSetPagination
 
     # authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 

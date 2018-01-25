@@ -17,7 +17,7 @@ class ScheduleViewset(viewsets.ModelViewSet):
     """
     queryset = Schedule.objects.filter(schedule_forms__isnull=False)
     serializer_class = ScheduleSerializer
-    pagination_class = LargeResultsSetPagination
+    # pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
         if self.request.user.is_anonymous():

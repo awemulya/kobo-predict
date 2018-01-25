@@ -26,7 +26,7 @@ class SurveyFormsViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_survey=True)
     serializer_class = FSXFormSerializer
-    pagination_class = LargeResultsSetPagination
+    # pagination_class = LargeResultsSetPagination
 
     def get_serializer_context(self):
         return self.kwargs
@@ -49,7 +49,7 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
     """
     queryset = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_survey=False)
     serializer_class = FSXFormSerializer
-    pagination_class = LargeResultsSetPagination
+    # pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
         if self.request.user.is_anonymous():
