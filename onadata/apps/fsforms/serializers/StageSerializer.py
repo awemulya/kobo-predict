@@ -87,7 +87,7 @@ class SubStageSerializer1(serializers.ModelSerializer):
                 response = fsxf.project_form_instances.order_by('-id')[:1]
             else:
                 response = fsxf.site_form_instances.order_by('-id')[:1]
-            serializer = FInstanceResponcesSerializer(instance=response, many=False)
+            serializer = FInstanceResponcesSerializer(instance=response)
             return serializer.data 
 
         except FieldSightXF.DoesNotExist:
