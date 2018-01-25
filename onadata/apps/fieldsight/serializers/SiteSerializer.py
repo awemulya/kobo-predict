@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
 from onadata.apps.fieldsight.models import Site, SiteCreateSurveyImages, ProjectType, Project

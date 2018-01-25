@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from rest_framework import serializers
 
 from onadata.apps.fsforms.models import InstanceStatusChanged, InstanceImages, FInstance

@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
