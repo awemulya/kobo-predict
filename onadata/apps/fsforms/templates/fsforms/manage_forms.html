@@ -51,7 +51,8 @@ $(document).ready(function() {
 var base_url = "{{request.get_host}}";
 var is_project = "{{is_project}}";
 var pk = "{{pk}}";
-
+var csrf_token = '{{ csrf_token }}';
+assigntoken(csrf_token);
  vm = new SetUpViewModel(is_project, pk, base_url);
  ko.applyBindings(vm);
 });
@@ -60,6 +61,8 @@ var pk = "{{pk}}";
 {% endblock %}
 
 {% block content %}
+{% csrf_token %}
+
 <div id="main-content" class="padding">
     <nav aria-label="breadcrumb" role="navigation">
         <ol class="breadcrumb">
@@ -260,7 +263,11 @@ var pk = "{{pk}}";
                                     <tbody data-bind="foreach: forms">
                                         <tr>
                                             <th scope="row" data-bind="text: $index()+1"></th>
-                                            <td><span data-bind="text: name"></span><span class="pull-right" data-bind="text : ((fsform() == null) ? '':'Project level')">Project Level</span></td>
+                                            <td><span data-bind="text: name"></span><span class="pull-right" data-bind="text : ((fsform() == null) ? '':'Project level')">Project Level</span>
+                                            <span class="col-sm-1" data-bind="text: default_submission_status_text"></span>
+
+                                             <select data-bind="options: availableoptions, value: default_submission_status_text"></select>
+                                            </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text:responses_count"></td>
                                             <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
@@ -600,8 +607,11 @@ var pk = "{{pk}}";
 									<tr>
 										<th scope="row" data-bind='text: $index()+1'></th>
 										<td data-bind="text: name"></td>
-										<td data-bind="text: form_name"></td>
-										<td data-bind="text: date_range_start"></td>
+										<td>
+                                        <span data-bind="text: form_name"></span>
+										<select data-bind="options: availableoptions, value: default_submission_status_text"></select>
+                                        </td>
+                                        <td data-bind="text: date_range_start"></td>
 										<td data-bind="text: date_range_end"></td>
 										<td data-bind="text: days"></td>
 										<td data-bind="text: responses_count"></td>
@@ -1032,6 +1042,7 @@ var pk = "{{pk}}";
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
                                                         <strong>{% trans 'Form' %} {% trans 'Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
+                                                         <select data-bind="options: availableoptions, value: default_submission_status_text"></select>
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
                                                         <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
@@ -1244,7 +1255,10 @@ var pk = "{{pk}}";
                                     <tbody data-bind="foreach: surveyForms">
                                         <tr>
                                             <th scope="row" data-bind='text: $index()+1'></th>
-                                            <td data-bind="text: name"></td>
+                                            <td>
+                                             <span data-bind="text: name"></span>
+                                             <select data-bind="options: availableoptions, value: default_submission_status_text"></select>
+                                             </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text: responses_count"></td>
                                             <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>

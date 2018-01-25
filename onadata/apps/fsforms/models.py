@@ -202,6 +202,7 @@ class FieldSightXF(models.Model):
     is_deleted = models.BooleanField(default=False)
     is_survey = models.BooleanField(default=False)
     from_project = models.BooleanField(default=True)
+    default_submission_status = models.IntegerField(default=0, choices=FORM_STATUS)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
@@ -347,11 +348,16 @@ class FInstance(models.Model):
     project = models.ForeignKey(Project, null=True, related_name='project_instances')
     site_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='site_form_instances')
     project_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='project_form_instances')
-    form_status = models.IntegerField(default=0, choices=FORM_STATUS)
+    form_status = models.IntegerField(null=True, blank=True, choices=FORM_STATUS)
     date = models.DateTimeField(auto_now=True)
     submitted_by = models.ForeignKey(User, related_name="supervisor")
     logs = GenericRelation('eventlog.FieldSightLog')
-    
+
+    def save(self, *args, **kwargs):
+        if self.form_status is None:
+            self.form_status = self.site_fxf.default_submission_status
+        super(FInstance, self).save(*args, **kwargs)  # Call the "real" save() method.
+        
     @property
     def fsxfid(self):
         if self.project_fxf:

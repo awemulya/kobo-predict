@@ -1,0 +1,100 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block content %}
+{% load filters %}
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_stage_data.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		vm=StageViewModel('/fieldsight/ProjectStageResponsesStatus/'+{{ obj.pk }}+'/');
+		 ko.applyBindings(vm);
+	});
+</script>
+		<div id="main-content" class="padding">
+			<nav aria-label="breadcrumb" role="navigation">
+				<ol class="breadcrumb">
+					{% block breadcrumbs %}
+					<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
+					<li class="breadcrumb-item active" aria-current="page">{% trans 'Submissions' %} {% trans 'Data' %}</li>
+					{% endblock %}
+				</ol>
+			</nav>
+				<section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-tasks"></i>{% block page-title %}{% trans 'Projects' %} {% trans 'Response' %} {% trans 'Status' %}{% endblock %}</h3>
+						<div class="panel-heading-right">
+
+						</div>
+                    </header>
+					<div class="panel-body">
+
+				<!-- 	<table class="table table-bordered table-hover">
+						<thead>
+							<tr rowspan="2">
+							{% for cols in table_head %}
+								<th rowspan="{{ cols.rowspan }}" colspan="{{ cols.colspan }}">{{ cols.name }}</th>
+							{% endfor %}
+								
+							</tr>
+							<tr>
+							{% for substage in substages%}
+								<th>{{ substage }}</th>	
+							{% endfor %}
+							</tr>
+						</thead>
+						<tbody>
+						{% for row in data %}
+						<tr>
+						{% for value in row %}
+						<td>	
+							{{ value }}
+						</td>
+						{% endfor %}
+						</tr>
+						{% endfor %}	
+						
+							
+						</tbody>
+					</table> -->				
+					
+
+						<table class="table table-bordered table-hover">
+						<thead>
+							<tr rowspan="2">
+							<!-- ko foreach: headers  -->
+								<th data-bind="text: $data.name, attr: { rowspan: $data.rowspan, colspan: $data.colspan }"></th>
+							<!-- /ko-->
+								
+							</tr>
+							<tr>
+							<!-- ko foreach: subHeaders  -->
+								<th data-bind="text: $data"></th>	
+							<!-- /ko-->
+							</tr>
+						</thead>
+						<tbody>
+						<!-- ko foreach: rows  -->
+						<tr>
+							<!-- ko foreach: $data  -->
+							<td data-bind="text: $data">	
+								
+							</td>
+							<!-- /ko-->
+						</tr>
+						<!-- /ko-->	
+						
+							
+						</tbody>
+					</table>		
+					
+
+					</div>
+
+                </section>
+
+			</div>
+{% endblock %}
