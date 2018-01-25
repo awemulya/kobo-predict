@@ -97,6 +97,7 @@ def current_user(request):
         roles = UserRole.get_active_site_roles(user)
         if not roles:
             return Response({'code': 403, 'message': 'Not Assigned to Any Organizations Yet'})
+            
         if roles.exists():
             site_supervisor = True
         for role in roles:
