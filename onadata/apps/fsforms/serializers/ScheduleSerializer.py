@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from onadata.apps.fsforms.models import Schedule, Days, FieldSightXF, EducationMaterial
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import EMSerializer
+from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import FInstanceResponcesSerializer
 
 
 class DaysSerializer(serializers.ModelSerializer):
@@ -27,6 +28,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
     is_deployed = serializers.SerializerMethodField('get_is_deployed_status', read_only=True)
     default_submission_status = serializers.SerializerMethodField()
     responses_count = serializers.SerializerMethodField()
+    latest_submission = serializers.SerializerMethodField()
 
     def validate(self, data):
         """
@@ -108,12 +110,33 @@ class ScheduleSerializer(serializers.ModelSerializer):
         is_project = self.context.get('is_project', False)
         if not is_project:
             return 0
-        if not FieldSightXF.objects.filter(schedule=obj).exists():
-            return 0
-        else:
-            fsxf = FieldSightXF.objects.get(schedule=obj)
+        try:
+            fsxf = FieldSightXF.objects.filter(schedule=obj)
+            
             if is_project == "1":
                 return fsxf.project_form_instances.count()
             else:
                 return fsxf.site_form_instances.count()
 
+        except FieldSightXF.DoesNotExist:
+            return 0
+
+    
+    def get_latest_submission(self, obj):
+        is_project = self.context.get('is_project', False)
+        if not is_project:
+            return 0
+        try:
+            fsxf = FieldSightXF.objects.filter(schedule=obj)
+            
+            if is_project == "1":
+                response = fsxf.project_form_instances.order_by('-id')[:1]
+            else:
+                response = fsxf.site_form_instances.order_by('-id')[:1]
+            serializer = FInstanceResponcesSerializer(instance=response, many=True)
+            return serializer.data 
+
+        except FieldSightXF.DoesNotExist:
+            return 0
+
+        

@@ -8,6 +8,7 @@ from rest_framework.fields import SerializerMethodField
 from onadata.apps.fsforms.models import Stage, FieldSightXF, EducationMaterial, EducationalImages
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFSerializer
 from channels import Group as ChannelGroup
+from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import FInstanceResponcesSerializer
 
 
 class EMImagesSerializer(serializers.ModelSerializer):
@@ -26,7 +27,7 @@ class SubStageSerializer1(serializers.ModelSerializer):
     stage_forms = FSXFSerializer()
     em = EMSerializer(read_only=True)
     responses_count = serializers.SerializerMethodField()
-
+    latest_submission = serializers.SerializerMethodField()
     class Meta:
         model = Stage
         exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage', 'date_modified', 'date_created',)
@@ -74,6 +75,23 @@ class SubStageSerializer1(serializers.ModelSerializer):
         except FieldSightXF.DoesNotExist:
             return 0
 
+
+    def get_latest_submission(self, obj):
+        is_project = self.context.get('is_project', False)
+        if not is_project:
+            return 0
+        try:
+            fsxf = FieldSightXF.objects.filter(stage=obj)
+            
+            if is_project == "1":
+                response = fsxf.project_form_instances.order_by('-id')[:1]
+            else:
+                response = fsxf.site_form_instances.order_by('-id')[:1]
+            serializer = FInstanceResponcesSerializer(instance=response, many=True)
+            return serializer.data 
+
+        except FieldSightXF.DoesNotExist:
+            return 0
 class StageSerializer1(serializers.ModelSerializer):
     # parent = SubStageSerializer1(many=True, read_only=True)
     parent = SerializerMethodField('get_substages')
