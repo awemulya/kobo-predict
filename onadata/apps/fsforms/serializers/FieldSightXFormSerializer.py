@@ -186,7 +186,7 @@ class FSXFormSerializer(serializers.ModelSerializer):
         else:
             response = obj.site_form_instances.order_by('-id')[:1]
 
-        serializer = FInstanceResponcesSerializer(instance=response)
+        serializer = FInstanceResponcesSerializer(instance=response, read_only=True)
         return serializer.data 
 
 
