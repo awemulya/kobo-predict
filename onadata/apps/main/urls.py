@@ -303,12 +303,12 @@ urlpatterns += patterns('django.contrib.staticfiles.views',
 
 
 
-if settings.DEBUG:
-    import debug_toolbar
+# if settings.DEBUG:
+#     import debug_toolbar
 
-    urlpatterns += patterns(
-        '',
-        url(r'^__debug__/', include(debug_toolbar.urls)),
+#     urlpatterns += patterns(
+#         '',
+#         url(r'^__debug__/', include(debug_toolbar.urls)),
    
-    )
+#     )
 
