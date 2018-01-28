@@ -30,7 +30,7 @@ class StageViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_serializer_context(self):
-        return {'request': self.request}
+        return {'request': self.request, 'kwargs': self.kwargs,}
 
 
 class MainStageViewSet(viewsets.ModelViewSet):

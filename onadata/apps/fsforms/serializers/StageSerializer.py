@@ -60,38 +60,32 @@ class SubStageSerializer1(serializers.ModelSerializer):
         return None
 
     def get_responses_count(self, obj):
-        is_project = self.context.get('is_project', False)
-        if not is_project:
-            return 0
-
         try:
             fsxf = FieldSightXF.objects.get(stage=obj)
             
-            if is_project == "1":
+            if fsxf.fsform is None:
                 return fsxf.project_form_instances.count()
             else:
-                return fsxf.site_form_instances.count()
+                return fsxf.site_form_instances.filter(site_id=self.context.kwargs.get('pk')).count()
 
         except FieldSightXF.DoesNotExist:
             return 0
 
 
     def get_latest_submission(self, obj):
-        is_project = self.context.get('is_project', False)
-        if not is_project:
-            return 0
         try:
             fsxf = FieldSightXF.objects.get(stage=obj)
             
-            if is_project == "1":
+            if fsxf.fsform is None:
                 response = fsxf.project_form_instances.order_by('-id')[:1]
             else:
-                response = fsxf.site_form_instances.order_by('-id')[:1]
+                response = fsxf.site_form_instances.filter(site_id=self.context.kwargs.get('pk')).order_by('-id')[:1]
             serializer = FInstanceResponcesSerializer(instance=response, many=True)
             return serializer.data 
 
         except FieldSightXF.DoesNotExist:
             return 0
+
 class StageSerializer1(serializers.ModelSerializer):
     # parent = SubStageSerializer1(many=True, read_only=True)
     parent = SerializerMethodField('get_substages')
@@ -101,7 +95,7 @@ class StageSerializer1(serializers.ModelSerializer):
         exclude = ('shared_level', 'group', 'ready', 'stage',)
 
     def get_substages(self, stage):
-        stages = Stage.objects.filter(stage=stage, stage_forms__is_deleted=False)
+        stages = Stage.objects.filter(stage=stage,  context={'request':self.context['request'], 'kwargs':self.context['kwargs']}, stage_forms__is_deleted=False)
         serializer = SubStageSerializer1(instance=stages, many=True)
         return serializer.data
 
