@@ -439,9 +439,7 @@ class MyPrint:
         elif instance.form_status == 3:
             form_status = "Approved"
 
-        sub_count += 1
         elements.append(Spacer(0,10))
-        elements.append(Paragraph("Submision "+ str(sub_count), styles['Heading4']))
         elements.append(Paragraph("Status : "+form_status, styles['Normal']))
         elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, styles['Normal']))
         elements.append(Paragraph("Submitted Date:"+str(instance.date), styles['Normal']))
