@@ -2173,3 +2173,24 @@ class StageTemplateView(ProjectRoleMixin, View):
         obj = Project.objects.get(pk=pk)
         return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'obj':obj,})
             # return HttpResponse(table_head)\
+
+def response_export(request, pk):
+    
+    buffer = BytesIO()
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="Report.pdf"'
+    base_url = request.get_host()
+    report = MyPrint(buffer, 'Letter')
+    pdf = report.print_individual_response(pk, base_url)
+
+    buffer.seek(0)
+
+    #     with open('arquivo.pdf', 'wb') as f:
+    #         f.write()
+    response.write(buffer.read())
+
+    # Get the value of the BytesIO buffer and write it to the response.
+    pdf = buffer.getvalue()
+    buffer.close()
+
+    return response

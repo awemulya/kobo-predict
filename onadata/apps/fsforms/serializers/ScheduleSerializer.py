@@ -107,32 +107,26 @@ class ScheduleSerializer(serializers.ModelSerializer):
         return EMSerializer(em).data
 
     def get_responses_count(self, obj):
-        is_project = self.context.get('is_project', False)
-        if not is_project:
-            return 0
         try:
             fsxf = FieldSightXF.objects.get(schedule=obj)
             
-            if is_project == "1":
+            if fsxf.fsform is None:
                 return fsxf.project_form_instances.count()
             else:
-                return fsxf.site_form_instances.count()
+                return fsxf.site_form_instances.filter(site_id=self.context.get('pk')).count()
 
         except FieldSightXF.DoesNotExist:
             return 0
 
     
     def get_latest_submission(self, obj):
-        is_project = self.context.get('is_project', False)
-        if not is_project:
-            return 0
         try:
             fsxf = FieldSightXF.objects.get(schedule=obj)
             
-            if is_project == "1":
+            if fsxf.fsform is None:
                 response = fsxf.project_form_instances.order_by('-id')[:1]
             else:
-                response = fsxf.site_form_instances.order_by('-id')[:1]
+                response = fsxf.site_form_instances.filter(site_id=self.context.get('pk')).order_by('-id')[:1]
             serializer = FInstanceResponcesSerializer(instance=response, many=True)
             return serializer.data 
 

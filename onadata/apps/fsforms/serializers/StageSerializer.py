@@ -66,7 +66,7 @@ class SubStageSerializer1(serializers.ModelSerializer):
             if fsxf.fsform is None:
                 return fsxf.project_form_instances.count()
             else:
-                return fsxf.site_form_instances.filter(site_id=self.context.kwargs.get('pk')).count()
+                return fsxf.site_form_instances.count()
 
         except FieldSightXF.DoesNotExist:
             return 0
@@ -79,7 +79,7 @@ class SubStageSerializer1(serializers.ModelSerializer):
             if fsxf.fsform is None:
                 response = fsxf.project_form_instances.order_by('-id')[:1]
             else:
-                response = fsxf.site_form_instances.filter(site_id=self.context.kwargs.get('pk')).order_by('-id')[:1]
+                response = fsxf.site_form_instances.order_by('-id')[:1]
             serializer = FInstanceResponcesSerializer(instance=response, many=True)
             return serializer.data 
 
