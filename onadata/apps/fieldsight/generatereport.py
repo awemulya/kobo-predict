@@ -454,4 +454,4 @@ class MyPrint:
         t1.setStyle(ts1)
         elements.append(t1)
         elements.append(Spacer(0,10))
-        doc.multiBuild(elements, onFirstPage=self._header_footer, onLaterPages=self._header_footer)
+        doc.multiBuild(elements)
