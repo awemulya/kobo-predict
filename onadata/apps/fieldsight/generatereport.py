@@ -378,7 +378,7 @@ class MyPrint:
         # A large collection of style sheets pre-made for us
         elements.append(Paragraph('Responses', h2))
         instance = FInstance.objects.get(instance_id=pk)
-        form = response.site_fxf
+        form = instance.site_fxf
 
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
