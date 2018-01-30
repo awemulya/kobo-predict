@@ -383,8 +383,8 @@ class MyPrint:
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
         site = instance.site
-        # self.project_name = site.project.name
-        # self.project_logo = site.project.logo.url
+        self.project_name = site.project.name
+        self.project_logo = site.project.logo.url
         
         # elements.append(Paragraph(site.name, h1))
         # elements.append(Paragraph(site.identifier, styles['Normal']))
@@ -454,4 +454,4 @@ class MyPrint:
         t1.setStyle(ts1)
         elements.append(t1)
         elements.append(Spacer(0,10))
-        doc.multiBuild(elements)
+        doc.multiBuild(elements, onFirstPage=self._header_footer, onLaterPages=self._header_footer)
