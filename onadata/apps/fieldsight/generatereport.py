@@ -363,20 +363,7 @@ class MyPrint:
  
         # Our container for 'Flowable' objects
         elements = []
-        # toc = TableOfContents()
-        # toc.levelStyles = [
-        #     PS(fontName='Helvetica-Bold', fontSize=14, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
-        #     PS(fontName='Helvetica', fontSize=12, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
-        #     PS(fontName='Helvetica', ontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
-        # ]
-        # elements.append(Paragraph('Responses Report for Site', centered))
-        # elements.append(PageBreak())
-        # elements.append(Paragraph('Table of contents', centered))
-        # elements.append(toc)
-        # elements.append(PageBreak())
-        
-        # A large collection of style sheets pre-made for us
-        
+
         instance = FInstance.objects.get(instance_id=pk)
         form = instance.site_fxf
 
@@ -386,25 +373,7 @@ class MyPrint:
         self.project_name = site.project.name
         self.project_logo = site.project.logo.url
         
-        # elements.append(Paragraph(site.name, h1))
-        # elements.append(Paragraph(site.identifier, styles['Normal']))
-        # if site.address:
-        #     elements.append(Paragraph(site.address, styles['Normal']))
-        # if site.phone:
-        #     elements.append(Paragraph(site.phone, styles['Normal']))
-        # if site.region:
-        #     elements.append(Paragraph(site.region.name, styles['Normal']))
 
-        # elements.append(PageBreak())
-
-        # forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk, is_survey=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
-        
-        # if not forms:
-            # elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))
-        #a=FieldSightXF.objects.select_related('xf').filter(site_id=291).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')))
-
-       
-        
         ts1 = TableStyle([
                 ('ALIGN', (0,0), (-1,0), 'RIGHT'),
                 ('BACKGROUND', (0,0), (-1,0), colors.white),
@@ -426,8 +395,6 @@ class MyPrint:
         json_question = form.xf.json
         form_user_name = form.xf.user.username
         self.media_folder = form_user_name
-
-            #cursor = get_instaces_for_site_individual_form(form.id)
             
             
         if instance.form_status ==  0:
