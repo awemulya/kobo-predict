@@ -2186,7 +2186,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             else:
                 has_next = None
             if has_next:
-                next_page_url = request.build_absolute_uri(reverse('ProjectStageResponsesStatus', args=(pk, ))) + get_params + str(has_next)
+                next_page_url = request.build_absolute_uri(reverse('ProjectStageResponsesStatus', args=(pk))) + get_params + str(has_next)
             else:
                 next_page_url =  None
             content={'head_cols':table_head, 'sub_stages':substages, 'rows':data}
