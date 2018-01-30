@@ -2155,7 +2155,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             else:
                 site_list = project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))    
                 get_params = "?page="
-            paginator = Paginator(site_list, 5) # Show 25 contacts per page
+            paginator = Paginator(site_list, 15) # Show 25 contacts per page
             page = request.GET.get('page')
             try:
                 sites = paginator.page(page)
