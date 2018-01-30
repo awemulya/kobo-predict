@@ -376,7 +376,7 @@ class MyPrint:
         # elements.append(PageBreak())
         
         # A large collection of style sheets pre-made for us
-        elements.append(Paragraph('Responses', h2))
+        
         instance = FInstance.objects.get(instance_id=pk)
         form = instance.site_fxf
 
