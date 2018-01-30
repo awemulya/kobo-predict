@@ -363,17 +363,17 @@ class MyPrint:
  
         # Our container for 'Flowable' objects
         elements = []
-        toc = TableOfContents()
-        toc.levelStyles = [
-            PS(fontName='Helvetica-Bold', fontSize=14, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
-            PS(fontName='Helvetica', fontSize=12, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
-            PS(fontName='Helvetica', ontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
-        ]
-        elements.append(Paragraph('Responses Report for Site', centered))
-        elements.append(PageBreak())
-        elements.append(Paragraph('Table of contents', centered))
-        elements.append(toc)
-        elements.append(PageBreak())
+        # toc = TableOfContents()
+        # toc.levelStyles = [
+        #     PS(fontName='Helvetica-Bold', fontSize=14, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
+        #     PS(fontName='Helvetica', fontSize=12, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+        #     PS(fontName='Helvetica', ontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+        # ]
+        # elements.append(Paragraph('Responses Report for Site', centered))
+        # elements.append(PageBreak())
+        # elements.append(Paragraph('Table of contents', centered))
+        # elements.append(toc)
+        # elements.append(PageBreak())
         
         # A large collection of style sheets pre-made for us
         elements.append(Paragraph('Responses', h2))
