@@ -14,7 +14,7 @@
 		 ko.applyBindings(vm);
 	});
 </script>
-		<div id="main-content" class="padding">
+		<div id="main-content" class="padding"  data-bind="event: { scroll: scrolled }">
 			<nav aria-label="breadcrumb" role="navigation">
 				<ol class="breadcrumb">
 					{% block breadcrumbs %}
