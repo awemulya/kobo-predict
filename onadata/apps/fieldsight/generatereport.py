@@ -17,12 +17,16 @@ from reportlab.lib.enums import TA_RIGHT
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from  reportlab.lib.styles import ParagraphStyle as PS
 from  reportlab.platypus.tableofcontents import TableOfContents
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 styleSheet = getSampleStyleSheet()
+
 
 class MyDocTemplate(SimpleDocTemplate):
      def __init__(self, filename, **kw):
          self.allowSplitting = 0
          apply(SimpleDocTemplate.__init__, (self, filename), kw)
+         pdfmetrics.registerFont(TTFont('arialuni', 'ARIALUNI.TTF'))
 
 # Entries to the table of contents can be done either manually by
 # calling the addEntry method on the TableOfContents object or automatically
@@ -80,7 +84,7 @@ class MyPrint:
         # Save the state of our canvas so we can draw on it
         canvas.saveState()
         styles = getSampleStyleSheet()
-        style_right = ParagraphStyle(name='right', parent=styles['Normal'], fontName='Helvetica',
+        style_right = ParagraphStyle(name='right', parent=styles['Normal'], fontName='arialuni',
                 fontSize=10, alignment=TA_RIGHT)
         # Header
         
@@ -95,7 +99,7 @@ class MyPrint:
         # w1, h1 = headerleft.wrap(doc.width, doc.topMargin)
         w2, h2 = headerright.wrap(doc.width, doc.topMargin)
 
-        textWidth = stringWidth(self.project_name, fontName='Helvetica',
+        textWidth = stringWidth(self.project_name, fontName='arialuni',
                 fontSize=10) 
         
         fieldsight_logo.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin + 12)
@@ -195,24 +199,24 @@ class MyPrint:
         leading = 16,
         alignment = 1,
         spaceAfter = 20,
-        fontName = 'Helvetica-Bold')
+        fontName = 'arialuni')
 
         h1 = PS(
             name = 'Heading1',
             fontSize = 16,
             leading = 16,
-            fontName = 'Helvetica-Bold',
+            fontName = 'arialuni',
             spaceAfter = 20,)
 
         h2 = PS(name = 'Heading2',
             fontSize = 14,
             leading = 14,
-            fontName = 'Helvetica-Bold',
+            fontName = 'arialuni',
             spaceAfter = 20)
         h3 = PS(name = 'Heading3',
             fontSize = 12,
             leading = 12,
-            fontName = 'Helvetica-BoldOblique',
+            fontName = 'arialuni',
             spaceAfter = 20,)
         
         self.base_url = base_url
@@ -228,9 +232,9 @@ class MyPrint:
         elements = []
         toc = TableOfContents()
         toc.levelStyles = [
-            PS(fontName='Helvetica-Bold', fontSize=14, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
-            PS(fontName='Helvetica', fontSize=12, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
-            PS(fontName='Helvetica', ontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+            PS(fontName='arialuni', fontSize=14, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
+            PS(fontName='arialuni', fontSize=12, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+            PS(fontName='arialuni', ontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
         ]
         elements.append(Paragraph('Responses Report for Site', centered))
         elements.append(PageBreak())
@@ -332,24 +336,24 @@ class MyPrint:
         leading = 16,
         alignment = 1,
         spaceAfter = 20,
-        fontName = 'Helvetica-Bold')
+        fontName = 'arialuni')
 
         h1 = PS(
             name = 'Heading1',
             fontSize = 16,
             leading = 16,
-            fontName = 'Helvetica-Bold',
+            fontName = 'arialuni',
             spaceAfter = 20,)
 
         h2 = PS(name = 'Heading2',
             fontSize = 14,
             leading = 14,
-            fontName = 'Helvetica-Bold',
+            fontName = 'arialuni',
             spaceAfter = 20)
         h3 = PS(name = 'Heading3',
             fontSize = 12,
             leading = 12,
-            fontName = 'Helvetica-BoldOblique',
+            fontName = 'arialuni',
             spaceAfter = 20,)
         
         self.base_url = base_url
