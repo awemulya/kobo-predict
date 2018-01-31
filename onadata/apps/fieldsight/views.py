@@ -2223,11 +2223,18 @@ def response_export(request, pk):
 
 class FormlistAPI(ReviewerRoleMixin, View):
     def get(self, request, pk):
+        mainstage=[]
         schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title')
-        stage = Stage.objects.filter(site_id=pk).values('stage_forms__id','stage_forms__xf__title')
+        stages = Stage.objects.filter(site_id=pk).values('stage_forms__id','stage_forms__xf__title')
+        
+        for stage in stages:
+            substages=stage.get_sub_stage_list()
+            stagegroup = {'main_stage':list(stage), 'sub_stages':list(substages)}
+            mainstage.append(stagegroup)
+
         survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title')
         general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title')
-        content={'general':list(general), 'schedule':list(schedule), 'stage':list(stage), 'survey':list(survey)}
+        content={'general':list(general), 'schedule':list(schedule), 'stage':list(mainstage), 'survey':list(survey)}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
 
