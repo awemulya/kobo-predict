@@ -74,6 +74,44 @@ class MyPrint:
         self.project_name = ''
         self.project_logo = ''
 
+        self.centered = PS(name = 'centered',
+        fontSize = 14,
+        leading = 16,
+        alignment = 1,
+        spaceAfter = 20,
+        fontName = 'arialuni')
+
+        self.h1 = PS(
+            name = 'Heading1',
+            fontSize = 16,
+            leading = 16,
+            fontName = 'arialuni',
+            spaceAfter = 20,)
+
+        self.h2 = PS(name = 'Heading2',
+            fontSize = 14,
+            leading = 14,
+            fontName = 'arialuni',
+            spaceAfter = 20)
+        self.h3 = PS(name = 'Heading3',
+            fontSize = 12,
+            leading = 12,
+            fontName = 'arialuni',
+            spaceAfter = 20,)
+        self.ts1 = TableStyle([
+                ('ALIGN', (0,0), (-1,0), 'RIGHT'),
+                ('BACKGROUND', (0,0), (-1,0), colors.white),
+                ('VALIGN', (0,0), (-1,-1), 'TOP'),
+                ('GRID', (0,0), (-1,-1), 0.1, colors.lightgrey),
+                    ])
+        buffer = self.buffer
+        self.doc = MyDocTemplate(buffer,
+                                rightMargin=72,
+                                leftMargin=72,
+                                topMargin=72,
+                                bottomMargin=72,
+                                pagesize=self.pagesize)
+
 
     def create_logo(self, absolute_path):
         image = Image(absolute_path)
@@ -194,39 +232,8 @@ class MyPrint:
 
 
     def print_users(self, pk, base_url):
-        centered = PS(name = 'centered',
-        fontSize = 14,
-        leading = 16,
-        alignment = 1,
-        spaceAfter = 20,
-        fontName = 'arialuni')
-
-        h1 = PS(
-            name = 'Heading1',
-            fontSize = 16,
-            leading = 16,
-            fontName = 'arialuni',
-            spaceAfter = 20,)
-
-        h2 = PS(name = 'Heading2',
-            fontSize = 14,
-            leading = 14,
-            fontName = 'arialuni',
-            spaceAfter = 20)
-        h3 = PS(name = 'Heading3',
-            fontSize = 12,
-            leading = 12,
-            fontName = 'arialuni',
-            spaceAfter = 20,)
-        
         self.base_url = base_url
-        buffer = self.buffer
-        doc = MyDocTemplate(buffer,
-                                rightMargin=72,
-                                leftMargin=72,
-                                topMargin=72,
-                                bottomMargin=72,
-                                pagesize=self.pagesize)
+        
  
         # Our container for 'Flowable' objects
         elements = []
@@ -236,9 +243,9 @@ class MyPrint:
             PS(fontName='arialuni', fontSize=12, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
             PS(fontName='arialuni', ontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
         ]
-        elements.append(Paragraph('Responses Report for Site', centered))
+        elements.append(Paragraph('Responses Report for Site', self.centered))
         elements.append(PageBreak())
-        elements.append(Paragraph('Table of contents', centered))
+        elements.append(Paragraph('Table of contents', self.centered))
         elements.append(toc)
         elements.append(PageBreak())
         
@@ -249,7 +256,7 @@ class MyPrint:
         self.project_name = site.project.name
         self.project_logo = site.project.logo.url
         
-        elements.append(Paragraph(site.name, h1))
+        elements.append(Paragraph(site.name, self.h1))
         elements.append(Paragraph(site.identifier, styles['Normal']))
         if site.address:
             elements.append(Paragraph(site.address, styles['Normal']))
@@ -259,7 +266,7 @@ class MyPrint:
             elements.append(Paragraph(site.region.name, styles['Normal']))
 
         elements.append(PageBreak())
-        elements.append(Paragraph('Responses', h2))
+        elements.append(Paragraph('Responses', self.h2))
         
         forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk, is_survey=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
         
@@ -269,18 +276,13 @@ class MyPrint:
 
        
         
-        ts1 = TableStyle([
-                ('ALIGN', (0,0), (-1,0), 'RIGHT'),
-                ('BACKGROUND', (0,0), (-1,0), colors.white),
-                ('VALIGN', (0,0), (-1,-1), 'TOP'),
-                ('GRID', (0,0), (-1,-1), 0.1, colors.lightgrey),
-                    ])
+       
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
 
         for form in forms:
             elements.append(Spacer(0,10))
-            elements.append(Paragraph(form.xf.title, h3))
+            elements.append(Paragraph(form.xf.title, self.h3))
             elements.append(Paragraph(form.form_type() + " Form", styles['Heading4']))
             if form.stage:
                 if form.stage.stage:
@@ -321,49 +323,21 @@ class MyPrint:
                     
 
                     t1 = Table(self.data, colWidths=(60*mm, None))
-                    t1.setStyle(ts1)
+                    t1.setStyle(self.ts1)
                     elements.append(t1)
                     elements.append(Spacer(0,10))
 
             else:
                 elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
                 elements.append(Spacer(0,10))
-        doc.multiBuild(elements, onLaterPages=self._header_footer)
+        self.doc.multiBuild(elements, onLaterPages=self._header_footer)
 
     def print_individual_response(self, pk, base_url):
-        centered = PS(name = 'centered',
-        fontSize = 14,
-        leading = 16,
-        alignment = 1,
-        spaceAfter = 20,
-        fontName = 'arialuni')
 
-        h1 = PS(
-            name = 'Heading1',
-            fontSize = 16,
-            leading = 16,
-            fontName = 'arialuni',
-            spaceAfter = 20,)
-
-        h2 = PS(name = 'Heading2',
-            fontSize = 14,
-            leading = 14,
-            fontName = 'arialuni',
-            spaceAfter = 20)
-        h3 = PS(name = 'Heading3',
-            fontSize = 12,
-            leading = 12,
-            fontName = 'arialuni',
-            spaceAfter = 20,)
         
         self.base_url = base_url
-        buffer = self.buffer
-        doc = MyDocTemplate(buffer,
-                                rightMargin=72,
-                                leftMargin=72,
-                                topMargin=72,
-                                bottomMargin=72,
-                                pagesize=self.pagesize)
+       
+       
  
         # Our container for 'Flowable' objects
         elements = []
@@ -378,16 +352,11 @@ class MyPrint:
         self.project_logo = site.project.logo.url
         
 
-        ts1 = TableStyle([
-                ('ALIGN', (0,0), (-1,0), 'RIGHT'),
-                ('BACKGROUND', (0,0), (-1,0), colors.white),
-                ('VALIGN', (0,0), (-1,-1), 'TOP'),
-                ('GRID', (0,0), (-1,-1), 0.1, colors.lightgrey),
-                    ])
+        
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
 
-        elements.append(Paragraph(form.xf.title, h3))
+        elements.append(Paragraph(form.xf.title, self.h3))
         elements.append(Paragraph(form.form_type() + " Form", styles['Heading4']))
         if form.stage:
             if form.stage.stage:
@@ -422,7 +391,7 @@ class MyPrint:
         
 
         t1 = Table(self.data, colWidths=(60*mm, None))
-        t1.setStyle(ts1)
+        t1.setStyle(self.ts1)
         elements.append(t1)
         elements.append(Spacer(0,10))
-        doc.multiBuild(elements, onFirstPage=self._header_footer, onLaterPages=self._header_footer)
+        self.doc.multiBuild(elements, onFirstPage=self._header_footer, onLaterPages=self._header_footer)
