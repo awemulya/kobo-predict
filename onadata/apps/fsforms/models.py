@@ -99,6 +99,11 @@ class Stage(models.Model):
     def active_substages(self):
         return self.parent.filter(stage_forms__isnull=False)
 
+    def sub_stage_list(self):
+        if not self.stage:
+            return Stage.objects.filter(stage=self).values('stage_forms__id','stage_forms__xf__title')
+        return False
+
     @property
     def xf(self):
         return FieldSightXF.objects.filter(stage=self)[0].xf.pk if self.form_exists() else None
