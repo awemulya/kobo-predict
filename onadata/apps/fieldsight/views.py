@@ -2223,9 +2223,9 @@ def response_export(request, pk):
 
 class FormlistAPI(ReviewerRoleMixin, View):
     def get(self, request, pk):
-        schedule = FieldSightXF.objects.get(pk=pk, site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title','date_created')
-        stage = FieldSightXF.objects.get(pk=pk, site_id=pk, is_scheduled = False, is_staged=True, is_survey=False).values('id','xf__title','date_created')
-        survey = FieldSightXF.objects.get(pk=pk, site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title','date_created')
-        general = FieldSightXF.objects.get(pk=pk, site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title','date_created')
+        schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title','date_created')
+        stage = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=True, is_survey=False).values('id','xf__title','date_created')
+        survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title','date_created')
+        general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title','date_created')
         content={'general':json.dumps(list(general), cls=DjangoJSONEncoder), 'schedule':json.dumps(list(schedule), cls=DjangoJSONEncoder), 'stage':json.dumps(list(stage), cls=DjangoJSONEncoder), 'survey':json.dumps(list(survey), cls=DjangoJSONEncoder)}
         return HttpResponse(json.dumps(content), status=200)
