@@ -2226,7 +2226,6 @@ class FormlistAPI(ReviewerRoleMixin, View):
         mainstage=[]
         schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title')
         stages = Stage.objects.filter(site_id=pk)
-        .values('stage_forms__id','stage_forms__xf__title')
         for stage in stages:
             substages=stage.get_sub_stage_list()
             main_stage = {'id':substage.tage_forms.id, 'title':substage.stage_forms.xf.title}
