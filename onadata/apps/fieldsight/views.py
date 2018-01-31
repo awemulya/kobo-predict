@@ -65,7 +65,7 @@ from django.utils import translation
 from django.conf import settings
 from django.db.models import Prefetch
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.serializers.json import DjangoJSONEncoder
+
 
 @login_required
 def dashboard(request):
@@ -2227,5 +2227,5 @@ class FormlistAPI(ReviewerRoleMixin, View):
         stage = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=True, is_survey=False).values('id','xf__title','date_created')
         survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title','date_created')
         general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title','date_created')
-        content={'general':json.dumps(list(general), cls=DjangoJSONEncoder), 'schedule':json.dumps(list(schedule), cls=DjangoJSONEncoder), 'stage':json.dumps(list(stage), cls=DjangoJSONEncoder), 'survey':json.dumps(list(survey), cls=DjangoJSONEncoder)}
+        content={'general':json.dumpslist(general), 'schedule':list(schedule), 'stage':list(stage), 'survey':list(survey)}
         return HttpResponse(json.dumps(content), status=200)
