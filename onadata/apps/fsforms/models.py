@@ -360,7 +360,10 @@ class FInstance(models.Model):
 
     def save(self, *args, **kwargs):
         if self.form_status is None:
-            self.form_status = self.site_fxf.default_submission_status
+            if self.site_fxf:
+                self.form_status = self.site_fxf.default_submission_status
+            else:
+                self.form_status = self.project_fxf.default_submission_status                
         super(FInstance, self).save(*args, **kwargs)  # Call the "real" save() method.
         
     @property
