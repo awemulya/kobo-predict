@@ -123,9 +123,11 @@ var org = "{{obj.pk}}";
 									<h4>{% trans 'About ' %}</h4>
 								</div>
 								<div class="widget-body">
-									<p>
-									{{ obj.public_desc}}
-									</p>
+									<p>{{ obj.public_desc}}</p>
+									<br>
+									<h8><b>{% trans 'Additional Information' %}</b></h8>
+									<br><p>
+									{{ obj.additional_desc}}</p>
 								</div>
 							</div>
 						</div>
