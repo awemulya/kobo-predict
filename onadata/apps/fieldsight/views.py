@@ -65,6 +65,7 @@ from django.utils import translation
 from django.conf import settings
 from django.db.models import Prefetch
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.serializers.json import DjangoJSONEncoder
 
 @login_required
 def dashboard(request):
@@ -1946,7 +1947,7 @@ class OrganizationSearchView(ListView):
     template_name = 'fieldsight/organization_list.html'
 
     def get_queryset(self):
-        query = self.request.REQUEST.get("q")
+        query = self.request.GET.get("q")
         return self.model.objects.filter(name__icontains=query)
 
 
@@ -1961,7 +1962,7 @@ class ProjectSearchView(ListView):
         return context
 
     def get_queryset(self):
-        query = self.request.REQUEST.get("q")
+        query = self.request.GET.get("q")
         return self.model.objects.filter(name__icontains=query)
 
 class OrganizationUserSearchView(ListView):
@@ -1974,7 +1975,7 @@ class OrganizationUserSearchView(ListView):
         return context
 
     def get_queryset(self):
-        query = self.request.REQUEST.get("q")
+        query = self.request.GET.get("q")
         return self.model.objects.filter(user__username__icontains=query, organization_id=self.kwargs.get('pk'),project__isnull=True, site__isnull=True).distinct('user')
         return queryset
 
@@ -1991,7 +1992,7 @@ class ProjectUserSearchView(ListView):
         return context
 
     def get_queryset(self):
-        query = self.request.REQUEST.get("q")
+        query = self.request.GET.get("q")
         return self.model.objects.select_related('user').filter(user__username__icontains=query, project_id=self.kwargs.get('pk'),
                                                                   ended_at__isnull=True).distinct('user_id')
 
@@ -2013,7 +2014,7 @@ class SiteUserSearchView(ListView):
         return context
 
     def get_queryset(self):
-        query = self.request.REQUEST.get("q")
+        query = self.request.GET.get("q")
         return self.model.objects.select_related('user').filter(user__username__icontains=query, site_id=self.kwargs.get('pk'),
                                                                   ended_at__isnull=True).distinct('user_id')
 
@@ -2095,6 +2096,20 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
         wb.save(response)
         return response
 
+class ProjectSearchView(ListView):
+    model = Project
+    template_name = 'fieldsight/project_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectSearchView, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['type'] = "project"
+        return context
+
+    def get_queryset(self):
+        query = self.request.REQUEST.get("q")
+        return self.model.objects.filter(name__icontains=query)
+
 class ProjectStageResponsesStatus(ProjectRoleMixin, View): 
     def get(self, request, pk):
             data = []
@@ -2103,6 +2118,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             head_row = ["Site ID", "Name"]
             obj = get_object_or_404(Project, pk=pk)
             project = Project.objects.get(pk=pk)
+
             stages = project.stages.filter(stage__isnull=True)
             
             table_head = []
@@ -2133,8 +2149,14 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                 elif el is not None and el.form_status==2: return el.id
                 elif el is not None and el.form_status==1: return el.id
                 else: return 0
-            site_list = project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
-            paginator = Paginator(site_list, 25) # Show 25 contacts per page
+            keyword = self.request.GET.get("q", None)
+            if keyword is not None:
+                site_list = project.sites.filter(name__icontains=keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
+                get_params = "?q="+keyword +"&page="
+            else:
+                site_list = project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))    
+                get_params = "?page="
+            paginator = Paginator(site_list, 15) # Show 25 contacts per page
             page = request.GET.get('page')
             try:
                 sites = paginator.page(page)
@@ -2164,8 +2186,12 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                 has_next = sites.next_page_number()
             else:
                 has_next = None
+            if has_next:
+                next_page_url = request.build_absolute_uri(reverse('fieldsight:ProjectStageResponsesStatus', kwargs={'pk': pk})) + get_params + str(has_next)
+            else:
+                next_page_url =  None
             content={'head_cols':table_head, 'sub_stages':substages, 'rows':data}
-            main_body = {'next_page':has_next,'content':content}
+            main_body = {'next_page':next_page_url,'content':content}
             return HttpResponse(json.dumps(main_body), status=200)
 
 class StageTemplateView(ProjectRoleMixin, View):
@@ -2173,3 +2199,51 @@ class StageTemplateView(ProjectRoleMixin, View):
         obj = Project.objects.get(pk=pk)
         return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'obj':obj,})
             # return HttpResponse(table_head)\
+
+def response_export(request, pk):
+    
+    buffer = BytesIO()
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="Report.pdf"'
+    base_url = request.get_host()
+    report = MyPrint(buffer, 'Letter')
+    pdf = report.print_individual_response(pk, base_url)
+
+    buffer.seek(0)
+
+    #     with open('arquivo.pdf', 'wb') as f:
+    #         f.write()
+    response.write(buffer.read())
+
+    # Get the value of the BytesIO buffer and write it to the response.
+    pdf = buffer.getvalue()
+    buffer.close()
+
+    return response
+
+class FormlistAPI(ReviewerRoleMixin, View):
+    def get(self, request, pk):
+        mainstage=[]
+        schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title')
+        stages = Stage.objects.filter(site_id=pk)
+        for stage in stages:
+            if stage.stage_forms is not None:
+                substages=stage.get_sub_stage_list()
+                main_stage = {'id':stage.stage_forms.id, 'title':stage.stage_forms.xf.title}
+                stagegroup = {'main_stage':main_stage, 'sub_stages':list(substages)}
+                mainstage.append(stagegroup)
+
+        survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title')
+        general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title')
+        content={'general':list(general), 'schedule':list(schedule), 'stage':list(mainstage), 'survey':list(survey)}
+        return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+
+
+class GenerateCustomReport(ReviewerRoleMixin, View):
+    def get(self, request, pk):
+        schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title','date_created')
+        stage = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=True, is_survey=False).values('id','xf__title','date_created')
+        survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title','date_created')
+        general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title','date_created')
+        content={'general':list(general), 'schedule':list(schedule), 'stage':list(stage), 'survey':list(survey)}
+        return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)

@@ -13,6 +13,16 @@
 		vm=StageViewModel('/fieldsight/ProjectStageResponsesStatus/'+{{ obj.pk }}+'/');
 		 ko.applyBindings(vm);
 	});
+	var loading= false;
+	$(window).scroll(function() {
+    if (!loading && ($(window).scrollTop() >  $(document).height() - $(window).height() - 100)) {
+        loading= true;
+
+        // your content loading call goes here.
+
+        loading = false; // reset value of loading once content loaded
+    }
+});
 </script>
 		<div id="main-content" class="padding">
 			<nav aria-label="breadcrumb" role="navigation">
@@ -27,7 +37,7 @@
                     <header class="panel-heading clearfix">
                         <h3><i class="la la-tasks"></i>{% block page-title %}{% trans 'Projects' %} {% trans 'Response' %} {% trans 'Status' %}{% endblock %}</h3>
 						<div class="panel-heading-right">
-
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i>{% trans 'Search' %}</a>
 						</div>
                     </header>
 					<div class="panel-body">
@@ -59,7 +69,22 @@
 						
 							
 						</tbody>
-					</table> -->				
+					</table> -->	
+
+						<div class="collapse" id="searchOrganization">
+							
+								<div class="row">
+									<div class="col-md-6 ml-md-auto">
+										<div class="input-group">
+										  <input type="text" name="q" placeholder="Search for..." data-bind="value: searchKeyword"/>
+										  <span class="input-group-btn">
+											  <button class="btn btn-primary" data-bind="click: dbsearchallsites" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
+										  </span>
+										</div>
+									</div>
+									<div class="col-md-3"></div>
+								</div>
+						</div>			
 					
 
 						<table class="table table-bordered table-hover">
@@ -90,7 +115,8 @@
 							
 						</tbody>
 					</table>		
-					
+					<div data-bind="scroll: show_next_page, scrollOptions: { loadFunc: loadMoreDatas, offset: 10 }">loading</div>
+					<!-- <button type="button" data-bind="click:loadMoreDatas, visible: show_next_page, enable: show_next_page">Load More</button> -->
 
 					</div>
 
