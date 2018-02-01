@@ -276,28 +276,28 @@ assigntoken(csrf_token);
                                                       <div class="modal-dialog form-modal" role="document">
                                                         <div class="modal-content">
                                                           <div class="modal-header">
-                                                            <h5 class="modal-title">{% trans 'Education' %} {% trans 'Material' %}</h5>
+                                                            <h5 class="modal-title">{% trans 'Form' %} {% trans 'Guide' %}</h5>
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                                           </div>
                                                           <div class="modal-body">
-                                                                  <h5>{% trans 'Create' %} {% trans 'A' %} {% trans 'Education' %} {% trans 'Material' %}</h5>
+                                                                  <!--<h5>{% trans 'Create' %} {% trans 'A' %} {% trans 'Education' %} {% trans 'Material' %}</h5>-->
                                                               <form>
                                                                 <div class="form-group">
-                                                                  <label for="title" id="sizing-addon2">{% trans 'Title' %}</label>
-                                                                  <input type="text" data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></input>
+                                                                  <!--<label for="title" id="sizing-addon2">{% trans 'Title' %}</label>-->
+                                                                  <input type="text" data-bind="value:title" placeholder="Title" class="form-control" rows="1" id="title"></input>
                                                                 </div>
                                                                 <div class="form-group">
-                                                                  <label for="comment" id="sizing-addon2">{% trans 'Text' %}</label>
-                                                                  <textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="5" id="comment"></textarea>
+                                                                  <!--<label for="comment" id="sizing-addon2">{% trans 'Text' %}</label>-->
+                                                                  <textarea data-bind="value:text" placeholder="Description" class="form-control" rows="5" id="comment"></textarea>
                                                                 </div>
                                                                 <div class="form-group">
                                                                   <div data-bind="visible:em_images().length">
-                                                                      <p>{% trans 'Saved' %} {% trans 'Images' %}</p>
+                                                                      <p>{% trans 'Attached' %} {% trans 'images' %}</p>
                                                                       <div data-bind="foreach:em_images">
                                                                           <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
                                                                       </div>
                                                                   </div>
-                                                                  <h6>{% trans 'Multiple' %} {% trans 'Images' %} {% trans 'Uploads' %}</h6>
+                                                                  <h6>{% trans 'Attach' %} {% trans 'Images' %} </h6>
                                                                   <div class="well" data-bind="fileDrag: multiFileData">
                                                                             <div class="form-group row">
                                                                                 <div class="col-md-4">
@@ -318,13 +318,14 @@ assigntoken(csrf_token);
                                                                             </div>
                                                                         </div>
                                                                  </div>
-                                                               <h6> {% trans 'Upload' %} {% trans 'PDF' %} {% trans 'OF' %} {% trans 'Education' %} {% trans 'Material' %}</h6>
+                                                               <h6> {% trans 'Attach' %} {% trans 'PDF' %} {% trans 'file' %} </h6>
                                                                   <div class="form-group">
                                                                     <div class="well">
                                                                         <div class="form-group row">
                                                                             <div class="col-sm-12">
                                                                                 <div data-bind="visible:pdf">
                                                                                     {% trans 'Current' %} {% trans 'pdf' %}
+
                                                                                     <a data-bind="attr: {href: $root.base_url+pdf()}" target="_blank">{% trans 'View' %}</a>
 
                                                                                       <!--<button data-bind="click: addPdf">Load PDF</button>-->
