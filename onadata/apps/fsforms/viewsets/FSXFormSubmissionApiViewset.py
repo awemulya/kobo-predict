@@ -160,9 +160,10 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         else:
             error, instance = create_instance_from_xml(request, site_fsxf_id, siteid, fs_proj_xf.id, proj_id, xform)
 
-        if error:
-            return Response(status=status.HTTP_201_CREATED)
-            
+        
+        if error or not instance:
+            return self.error_response(error, False, request)
+
         noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Project level Submission",
                                        organization=fs_proj_xf.project.organization,
                                        project=fs_proj_xf.project,
@@ -180,8 +181,7 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
 
         # modify create instance
 
-        if error or not instance:
-            return self.error_response(error, False, request)
+        
 
         context = self.get_serializer_context()
         serializer = FieldSightSubmissionSerializer(instance, context=context)
