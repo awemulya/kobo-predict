@@ -160,13 +160,13 @@
 				  {% for instance in data %}
 				  <tr>
 					  <td style="width:60%;">
-						  {% if instance.site_fxf is None %}
+						  {% if instance.site_fxf %}
 						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
 							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
 						  </a>
 						  {% else %}
 						  <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
+							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
 						  </a>
 						  {% endif %}
 					  </td>
