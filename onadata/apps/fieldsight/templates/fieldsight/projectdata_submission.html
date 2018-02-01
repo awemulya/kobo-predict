@@ -77,10 +77,7 @@
 						  {% endif %}
 
 
-						<!-- <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							<h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
-						</a>
-						 -->
+						
 					</td>
 					<td>
 						<a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
@@ -119,9 +116,8 @@
 							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
 						  </a>
 						  {% endif %}
-<!-- 						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
-						  </a>
+<!-- 						
+
  -->					  </td>
 					  <td>
 						  <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
@@ -161,9 +157,7 @@
 							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
 						  </a>
 						  {% endif %}
-						  <!-- <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
-						  </a> -->
+
 					  </td>
 					  <td>
 						  <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
