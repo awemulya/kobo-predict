@@ -2229,7 +2229,7 @@ class FormlistAPI(ReviewerRoleMixin, View):
         for stage in stages:
             if stage.stage_id is None:
                 substages=stage.get_sub_stage_list()
-                main_stage = {'id':stage.stage_forms.id, 'title':stage.stage_forms.xf.title}
+                main_stage = {'id':stage.id, 'title':stage.name}
                 stagegroup = {'main_stage':main_stage, 'sub_stages':list(substages)}
                 mainstage.append(stagegroup)
 
