@@ -141,9 +141,9 @@
             <nav class="pagination justify-content-center" aria-label="page-navigation">
               <ul class="pagination">
               {% if page_obj.has_previous %}
-                <li class="page-item disabled"><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                <li class="page-item"><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
               {% else %}
-                <li class="disabled"><span>&laquo;</span></li>
+                <li class="page-item disabled"><span>&laquo;</span></li>
               {% endif %}
               {% for i in paginator.page_range %}
                 {% if page_obj.number == i %}
