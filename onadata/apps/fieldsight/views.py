@@ -2227,11 +2227,11 @@ class FormlistAPI(ReviewerRoleMixin, View):
         schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title')
         stages = Stage.objects.filter(site_id=pk)
         for stage in stages:
-            if stage.stage_forms is not None:
+            if stage.stage_id is None:
                 substages=stage.get_sub_stage_list()
-                main_stage = {'id':stage.stage_forms.id, 'title':stage.stage_forms.xf.title}
-                stagegroup = {'main_stage':main_stage, 'sub_stages':list(substages)}
-                mainstage.append(stagegroup)
+                main_stage = {'id':stage.id, 'title':stage.name, 'sub_stages':list(substages)}
+                # stagegroup = {'main_stage':main_stage,}
+                mainstage.append(main_stage)
 
         survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title')
         general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title')
