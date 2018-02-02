@@ -156,7 +156,8 @@ class CeleryTaskProgress(models.Model):
     Task_Type =(
         (0, 'Bulk Site Upload'),
         (1, 'Multi User Assign Project'),
-        (2, 'Multi User Assign Site')
+        (2, 'Multi User Assign Site'),
+        (3, 'Report Generation')
         )
     task_id = models.CharField(max_length=255, unique=True)
     date_added = models.DateTimeField(auto_now_add=True)
