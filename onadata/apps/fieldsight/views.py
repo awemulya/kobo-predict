@@ -2145,10 +2145,10 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                     if el.project_stage_id==value: yield el
 
             def getStatus(el):
-                if el is not None and el.form_status==3: return el.id
-                elif el is not None and el.form_status==2: return el.id
-                elif el is not None and el.form_status==1: return el.id
-                else: return 0
+                if el is not None and el.form_status==3: return "Approved"
+                elif el is not None and el.form_status==2: return "Flagged"
+                elif el is not None and el.form_status==1: return "Rejected"
+                else: return "Pending"
             keyword = self.request.GET.get("q", None)
             if keyword is not None:
                 site_list = project.sites.filter(name__icontains=keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
@@ -2176,9 +2176,9 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                              get_status = getStatus(substage1.stage_forms.site_form_instances.all()[0])
                              status = get_status
                         else:
-                            status = "No submissions."
+                            status = "No submission."
                     else:
-                         status = "No substage."
+                         status = "-"
                     site_row.append(status)
                 data.append(site_row)
 
