@@ -752,8 +752,8 @@ assigntoken(csrf_token);
                                               <div class="modal-dialog form-modal" role="document">
                                                 <div class="modal-content">
                                                   <div class="modal-header">
+                                                      <h6 class="modal-title">{% trans 'Form' %} {% trans 'Guide' %}</h6>
                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                    <h4 class="modal-title">{% trans 'Stage' %} {% trans 'Data' %}</h4>
                                                   </div>
                                                   <div class="modal-body">
                                                                 <form method="post" class="">
@@ -762,8 +762,8 @@ assigntoken(csrf_token);
                                                                  <div class="row">
                                                                     <div class="col-sm-12">
                                                                       <div class="form-group">
-                                                                          <label for="stagename"><span class="stage-label">{% trans 'Stage' %} {% trans 'Name:' %}</span></label>
-                                                                          <input class="form-control"  id="stagename" data-bind="value: name" placeholder="Name Of Stage" required="required">
+                                                                          <label for="stagename"><span class="stage-label"></span></label>
+                                                                          <input class="form-control"  id="stagename" data-bind="value: name" placeholder="Name" rows="1" required="required">
                                                                           </div>
 
                                                                           <div class="gap"></div>
@@ -771,8 +771,8 @@ assigntoken(csrf_token);
 
                                                                     <div class="col-sm-12">
                                                                     <div class="form-group">
-                                                                          <label for="description"><span class="stage-label"fstage data>{% trans 'Description:' %}</span></label>
-                                                                          <input class="form-control my-input" id="description" data-bind="value: description" placeholder="Description Of Stage">
+                                                                          <label for="description"><span class="stage-label"fstage data></span></label>
+                                                                        <textarea class="form-control my-input" id="description" data-bind="value: description" placeholder="Description" rows="5"></textarea>
                                                                     </div>
                                                                      </div>
                                                                    </div>
@@ -793,8 +793,8 @@ assigntoken(csrf_token);
                                                                             <div class="col-sm-10" data-bind="visible:editable">
                                                                             <div class="sub-stage-name-c">{% trans 'Sub' %} {% trans 'Stage' %}
                                                                                 <span data-bind='text: $index()+1'></span><br>
-                                                                                {% trans 'Name:' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Sub Stage Name"><br>
-                                                                                {% trans 'Description:' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Sub Stage Description"><br>
+                                                                                {% trans 'Name:' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name"><br>
+                                                                                {% trans 'Description:' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Description"><br>
                                                                                 {% trans 'Form' %} {% trans 'Assigned:' %}
                                                                                 <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
                                                                                     value: stage_forms().xf().id">
@@ -816,7 +816,7 @@ assigntoken(csrf_token);
                                                                       <div class="row" data-bind="with:newSubstage, visible:addSubStageMode()">
                                                                         <div class="each-sub-grp">
                                                                           <div class="col-sm-1"></div>
-                                                                          <div class="col-sm-8">
+                                                                          <div class="col-sm-12">
                                                                               <form method="post">
                                                                                       <h5 class="sub-stage-name-c">{% trans 'New' %} {% trans 'Sub' %} {% trans 'Stage' %} <span data-bind='text: $parent.parent().length+1'></span></h5>
                                                                                         {% csrf_token %}
@@ -825,8 +825,8 @@ assigntoken(csrf_token);
 
                                                                     <div class="col-sm-12">
                                                                       <div class="form-group">
-                                                                          <label for="stagename"><span class="stage-label">{% trans 'Name:' %}</span></label>
-                                                                         <input class="form-control"  data-bind="value: name" placeholder="Name of SUb Stage ">
+                                                                          <label for="stagename"><span class="stage-label"></span></label>
+                                                                         <input class="form-control"  data-bind="value: name" placeholder="Name">
 
                                                                           <div class="gap"></div>
                                                                     </div>
@@ -834,8 +834,8 @@ assigntoken(csrf_token);
 
                                                                     <div class="col-sm-12">
                                                                       <div class="form-group">
-                                                                          <label for="stagename"><span class="stage-label">{% trans 'Description:' %}</span></label>
-                                                                         <input class="form-control"  data-bind="value: description" placeholder="Sub Stage Description">
+                                                                          <label for="stagename"><span class="stage-label"></span></label>
+                                                                          <textarea class="form-control"  data-bind="value: description" placeholder="Description" rows="3"></textarea>
                                                                           <div class="gap"></div>
                                                                     </div>
                                                                     </div>
@@ -956,37 +956,29 @@ assigntoken(csrf_token);
                                                           <div class="modal-dialog form-modal" role="document">
                                                             <div class="modal-content">
                                                               <div class="modal-header">
+                                                                <h5 class="modal-title">{% trans 'Form' %} {% trans 'Guide' %}</h5>
                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                                <h5 class="modal-title">{% trans 'Education' %} {% trans 'Materials' %}</h5>
                                                               </div>
                                                               <div class="modal-body">
                                                                   <form>
-                                                                
-
                                                                     <div class="form-group">
-                                                                      <label for="title" id="sizing-addon2">{% trans 'Title' %}</label>
-                                                                      <textarea data-bind="value:title" placeholder="Title ....." class="form-control" rows="1" id="title"></textarea>
+                                                                      <!--<label for="title" id="sizing-addon2">{% trans 'Title' %}</label>-->
+                                                                      <textarea data-bind="value:title" placeholder="Title" class="form-control" rows="1" id="title"></textarea>
                                                                     </div>
-
-
-
-
-
                                                                     <div class="form-group">
-                                                                      <label for="comment" id="sizing-addon2">{% trans 'Text' %}</label>
-                                                                      <textarea data-bind="value:text" placeholder="Text ...." class="form-control" rows="3" id="comment"></textarea>
+                                                                      <!--<label for="comment" id="sizing-addon2">{% trans 'Text' %}</label>-->
+                                                                      <textarea data-bind="value:text" placeholder="Description" class="form-control" rows="5" id="comment"></textarea>
                                                                     </div>
-
 
 
                                                                   <div class="form-group">
                                                                           <div data-bind="visible:em_images().length">
-                                                                              <p>{% trans 'Saved' %} {% trans 'Images' %}</p>
+                                                                              <p>{% trans 'Attached' %} {% trans 'Images' %}</p>
                                                                               <div data-bind="foreach:em_images">
                                                                                   <img style="height: 100px; margin: 5px;" class="img-rounded  thumb" data-bind="attr: { src: image }, visible: image">
                                                                               </div>
                                                                           </div>
-                                                                        <h6>{% trans 'Multiple' %} {% trans 'Images' %} {% trans 'Uploads' %}</h6>
+                                                                        <h6>{% trans 'Attach' %} {% trans 'Images' %}</h6>
                                                                             <div class="well" data-bind="fileDrag: multiFileData">
                                                                                 <div class="form-group row">
                                                                                     <div class="col-md-4">
@@ -1009,8 +1001,8 @@ assigntoken(csrf_token);
                                                                             </div>
                                                                      </div>
 
-                                                                      <h6> {% trans 'Upload' %} {% trans 'PDF' %} {% trans 'OF' %} {% trans 'Education' %} {% trans 'Material' %}</h6>
-                                                                      <div>
+                                                                      <h6>{% trans 'Attach' %} {% trans 'PDF' %} {% trans 'file' %}</h6>
+                                                                      <div class="form-group">
                                                                         <div class="well">
                                                                             <div class="form-group row">
                                                                                 <div class="col-sm-12">
@@ -1054,32 +1046,32 @@ assigntoken(csrf_token);
                                                         <a href="javascript:void(0);"  class="badge badge-success" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> Materials</a>
 
                                                     </div>
-                                    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:edit_modal_visibility">
+                                                    <div class="modal" tabindex="-1" role="dialog" data-bind="modal:edit_modal_visibility">
                                                         <div>
                                                           <div class="modal-dialog form-modal" role="document">
                                                             <div class="modal-content">
                                                               <div class="modal-header">
+                                                                <h5 class="modal-title">{% trans 'Form' %} {% trans 'Guide' %}</h5>
                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                                <h4 class="modal-title">{% trans 'Edit' %} {% trans 'Substage' %}</h4>
                                                               </div>
                                                               <div class="modal-body">
                                                                   <div class="sub-stage-name-c">{% trans 'Sub' %} {% trans 'Stage' %}
-                                                            {% trans 'Name:' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name"><br>
-                                                            {% trans 'Description:' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description"><br>
-                                                            {% trans 'Form' %} {% trans 'Assigned:' %}
-                                                            <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id', value:stage_forms().xf().id">
-                                                            </select>
+                                                                    {% trans 'Name:' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Stage Name"><br>
+                                                                    {% trans 'Description:' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Stage Description"><br>
+                                                                    {% trans 'Form' %} {% trans 'Assigned:' %}
+                                                                    <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id', value:stage_forms().xf().id">
+                                                                        </select>
 
-                                                            <br>
+                                                                    <br>
 
-                                                            <button data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Close' %} </button>
-                                                            <button data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
-                                                        </div>
+                                                                    <button data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Close' %} </button>
+                                                                        <button data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>
+                                                                    </div>
                                                               </div>
                                                             </div>
                                                           </div>
                                                         </div>
-                                    </div>
+                                                    </div>
 
                                                 </li>
                                             </ul>
