@@ -422,24 +422,12 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
             query = {"fs_uuid": str(id)}
         force_xlsx = True
 
-        # export options
-        group_delimiter = request.POST.get("options[group_delimiter]", '/')
-        if group_delimiter not in ['.', '/']:
-            return HttpResponseBadRequest(
-                _("%s is not a valid delimiter" % group_delimiter))
-
-        # default is True, so when dont_.. is yes
-        # split_select_multiples becomes False
-        split_select_multiples = request.POST.get(
-            "options[dont_split_select_multiples]", "no") == "no"
-
         binary_select_multiples = getattr(settings, 'BINARY_SELECT_MULTIPLES',
                                           False)
         # external export option
-        meta = request.POST.get("meta")
         options = {
-            'binary_select_multiples': binary_select_multiples,
-            'meta': meta.replace(",", "") if meta else None
+            # 'binary_select_multiples': binary_select_multiples,
+            'meta': None
         }
 
         try:
