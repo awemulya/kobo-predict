@@ -101,7 +101,7 @@ class Stage(models.Model):
 
     def get_sub_stage_list(self):
         if not self.stage:
-            return Stage.objects.filter(stage=self).values('stage_forms__id','stage_forms__xf__title')
+            return Stage.objects.filter(stage=self).values('stage_forms__id','stage_forms__xf__title','stage_id')
         return []
 
     @property
