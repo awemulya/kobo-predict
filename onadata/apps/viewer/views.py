@@ -411,18 +411,35 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
     }
     if 1 == 1:
     # if should_create_new_export(xform, export_type):
+        # owner = get_object_or_404(User, username__iexact=username)
+        # xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
         
+
+        query = request.POST.get("query")
+        if is_project == 1 or is_project == '1':
+            query = {"fs_project_uuid" : str(id)}
+        else:
+            query = {"fs_uuid": str(id)}
+        force_xlsx = True
+
+
         try:
-            if is_project == 1:
-                query = {'fs_project_uuid':id}
-            else:
-                query = {'fs_uuid':id}
-            create_async_export(
-                xform, export_type, query=query, force_xlsx=True,
-                options=options,is_project=is_project, id=id)
+            create_async_export(xform, export_type, query, force_xlsx, options, is_project, id)
         except Export.ExportTypeError:
             return HttpResponseBadRequest(
                 _("%s is not a valid export type" % export_type))
+           
+        # try:
+        #     if is_project == 1:
+        #         query = {'fs_project_uuid':id}
+        #     else:
+        #         query = {'fs_uuid':id}
+        #     create_async_export(
+        #         xform, export_type, query=query, force_xlsx=True,
+        #         options=options,is_project=is_project, id=id)
+        # except Export.ExportTypeError:
+        #     return HttpResponseBadRequest(
+        #         _("%s is not a valid export type" % export_type))
 
     metadata = MetaData.objects.filter(xform=xform,
                                        data_type="external_export")\
