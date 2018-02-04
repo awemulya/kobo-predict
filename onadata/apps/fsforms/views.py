@@ -275,7 +275,7 @@ class Responses(ReviewerRoleMixin, View):
         obj = get_object_or_404(Site, pk=pk)
         schedules = Schedule.objects.filter(site_id=pk, project__isnull=True, schedule_forms__isnull=False)
         stages = Stage.objects.filter(stage__isnull=True, site_id=pk).order_by('order')
-        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,site_id=pk)
+        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,site_id=pk, is_survey=False)
         deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_scheduled=False,site_id=pk, is_deleted=True)
         return render(request, "fsforms/responses_list.html",
                       {'obj': obj, 'schedules': schedules, 'stages':stages,'generals':generals,
