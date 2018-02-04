@@ -413,21 +413,14 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
     # if should_create_new_export(xform, export_type):
         # owner = get_object_or_404(User, username__iexact=username)
         # xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
-        if not has_forms_permission(xform, owner, request):
-            return HttpResponseForbidden(_(u'Not shared.'))
-
-        if export_type == Export.EXTERNAL_EXPORT:
-            # check for template before trying to generate a report
-            if not MetaData.external_export(xform=xform):
-                return HttpResponseForbidden(_(u'No XLS Template set.'))
+        
 
         query = request.POST.get("query")
         if is_project == 1 or is_project == '1':
             query = {"fs_project_uuid" : str(id)}
         else:
             query = {"fs_uuid": str(id)}
-        force_xlsx = request.POST.get('xls') != 'true'
-
+        
         # export options
         group_delimiter = request.POST.get("options[group_delimiter]", '/')
         if group_delimiter not in ['.', '/']:
