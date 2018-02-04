@@ -438,8 +438,6 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
         # external export option
         meta = request.POST.get("meta")
         options = {
-            'group_delimiter': group_delimiter,
-            'split_select_multiples': split_select_multiples,
             'binary_select_multiples': binary_select_multiples,
             'meta': meta.replace(",", "") if meta else None
         }
