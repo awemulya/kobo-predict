@@ -390,7 +390,7 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
         token = _get_google_token(request, redirect_url)
         if isinstance(token, HttpResponse):
             return token
-    xform = get_object_or_404(XForm, id_string__exact=id_string)
+    xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
     # owner = xform.user
     # owner = get_object_or_404(User, username__iexact=username)
     # if not has_permission(xform, owner, request):
@@ -408,7 +408,8 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
         'meta': export_meta,
         'token': export_token,
     }
-    if should_create_new_export(xform, export_type):
+    if 1 == 1:
+    # if should_create_new_export(xform, export_type):
         try:
             if is_project == 1:
                 query = {'fs_project_uuid':id}
@@ -417,7 +418,6 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
             create_async_export(
                 xform, export_type, query=query, force_xlsx=True,
                 options=options,is_project=is_project, id=id)
-            create_async_export(xform, export_type, query, force_xlsx, options, is_project, id)
         except Export.ExportTypeError:
             return HttpResponseBadRequest(
                 _("%s is not a valid export type" % export_type))
