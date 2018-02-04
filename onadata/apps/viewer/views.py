@@ -408,7 +408,8 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
         'meta': export_meta,
         'token': export_token,
     }
-    if should_create_new_export(xform, export_type):
+    if 1 == 1:
+    # if should_create_new_export(xform, export_type):
         try:
             if is_project == 1:
                 query = {'fs_project_uuid':id}
