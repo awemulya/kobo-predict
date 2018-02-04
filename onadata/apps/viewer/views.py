@@ -390,7 +390,7 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
         token = _get_google_token(request, redirect_url)
         if isinstance(token, HttpResponse):
             return token
-    xform = get_object_or_404(XForm, id_string__exact=id_string)
+    xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
     # owner = xform.user
     # owner = get_object_or_404(User, username__iexact=username)
     # if not has_permission(xform, owner, request):
