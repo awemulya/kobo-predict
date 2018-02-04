@@ -411,17 +411,83 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
     }
     if 1 == 1:
     # if should_create_new_export(xform, export_type):
+        # owner = get_object_or_404(User, username__iexact=username)
+        # xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
+        if not has_forms_permission(xform, owner, request):
+            return HttpResponseForbidden(_(u'Not shared.'))
+
+        if export_type == Export.EXTERNAL_EXPORT:
+            # check for template before trying to generate a report
+            if not MetaData.external_export(xform=xform):
+                return HttpResponseForbidden(_(u'No XLS Template set.'))
+
+        query = request.POST.get("query")
+        if is_project == 1 or is_project == '1':
+            query = {"fs_project_uuid" : str(id)}
+        else:
+            query = {"fs_uuid": str(id)}
+        force_xlsx = request.POST.get('xls') != 'true'
+
+        # export options
+        group_delimiter = request.POST.get("options[group_delimiter]", '/')
+        if group_delimiter not in ['.', '/']:
+            return HttpResponseBadRequest(
+                _("%s is not a valid delimiter" % group_delimiter))
+
+        # default is True, so when dont_.. is yes
+        # split_select_multiples becomes False
+        split_select_multiples = request.POST.get(
+            "options[dont_split_select_multiples]", "no") == "no"
+
+        binary_select_multiples = getattr(settings, 'BINARY_SELECT_MULTIPLES',
+                                          False)
+        # external export option
+        meta = request.POST.get("meta")
+        options = {
+            'group_delimiter': group_delimiter,
+            'split_select_multiples': split_select_multiples,
+            'binary_select_multiples': binary_select_multiples,
+            'meta': meta.replace(",", "") if meta else None
+        }
+
         try:
-            if is_project == 1:
-                query = {'fs_project_uuid':id}
-            else:
-                query = {'fs_uuid':id}
-            create_async_export(
-                xform, export_type, query=query, force_xlsx=True,
-                options=options,is_project=is_project, id=id)
+            create_async_export(xform, export_type, query, force_xlsx, options, is_project, id)
         except Export.ExportTypeError:
             return HttpResponseBadRequest(
                 _("%s is not a valid export type" % export_type))
+        else:
+            audit = {
+                "xform": xform.id_string,
+                "export_type": export_type
+            }
+            audit_log(
+                Actions.EXPORT_CREATED, request.user, owner,
+                _("Created %(export_type)s export on '%(id_string)s'.") %
+                {
+                    'export_type': export_type.upper(),
+                    'id_string': xform.id_string,
+                }, audit, request)
+            # return HttpResponseRedirect(reverse(
+            #     export_list,
+            #     kwargs={
+            #         "username": username,
+            #         "id_string": id_string,
+            #         "export_type": export_type,
+            #         "is_project": is_project,
+            #         "id": id
+            #     })
+            # )
+        # try:
+        #     if is_project == 1:
+        #         query = {'fs_project_uuid':id}
+        #     else:
+        #         query = {'fs_uuid':id}
+        #     create_async_export(
+        #         xform, export_type, query=query, force_xlsx=True,
+        #         options=options,is_project=is_project, id=id)
+        # except Export.ExportTypeError:
+        #     return HttpResponseBadRequest(
+        #         _("%s is not a valid export type" % export_type))
 
     metadata = MetaData.objects.filter(xform=xform,
                                        data_type="external_export")\
