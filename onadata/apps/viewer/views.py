@@ -420,7 +420,8 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
             query = {"fs_project_uuid" : str(id)}
         else:
             query = {"fs_uuid": str(id)}
-        
+        force_xlsx = True
+
         # export options
         group_delimiter = request.POST.get("options[group_delimiter]", '/')
         if group_delimiter not in ['.', '/']:
