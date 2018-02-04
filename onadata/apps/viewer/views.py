@@ -422,41 +422,13 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
             query = {"fs_uuid": str(id)}
         force_xlsx = True
 
-        binary_select_multiples = getattr(settings, 'BINARY_SELECT_MULTIPLES',
-                                          False)
-        # external export option
-        options = {
-            # 'binary_select_multiples': binary_select_multiples,
-            'meta': None
-        }
 
         try:
             create_async_export(xform, export_type, query, force_xlsx, options, is_project, id)
         except Export.ExportTypeError:
             return HttpResponseBadRequest(
                 _("%s is not a valid export type" % export_type))
-        else:
-            audit = {
-                "xform": xform.id_string,
-                "export_type": export_type
-            }
-            audit_log(
-                Actions.EXPORT_CREATED, request.user, owner,
-                _("Created %(export_type)s export on '%(id_string)s'.") %
-                {
-                    'export_type': export_type.upper(),
-                    'id_string': xform.id_string,
-                }, audit, request)
-            # return HttpResponseRedirect(reverse(
-            #     export_list,
-            #     kwargs={
-            #         "username": username,
-            #         "id_string": id_string,
-            #         "export_type": export_type,
-            #         "is_project": is_project,
-            #         "id": id
-            #     })
-            # )
+           
         # try:
         #     if is_project == 1:
         #         query = {'fs_project_uuid':id}
