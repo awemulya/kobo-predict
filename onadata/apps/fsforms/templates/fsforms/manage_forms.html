@@ -940,7 +940,7 @@ assigntoken(csrf_token);
                                                 </div>
                                             </div>
                                             <a href="javascript:void(0);" title="Delete" data-bind="confirmClick: { message: ' Submissions data of this stage will be lost.\n Are you sure ?',
-                              click: delete_stage }" class="btn btn-sm btn-warning"><i class="la la-close"></i>{% trans ' Delete' %}</a>
+                              click: delete_stage }" class="btn btn-sm btn-danger"><i class="la la-close"></i>{% trans ' Delete' %}</a>
                                         </div>
                                     </div>
 
@@ -1077,7 +1077,7 @@ assigntoken(csrf_token);
                                                               </div>
                                                               <div class="modal-footer">
 															<button type="button" data-bind="click:edit_done" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-edit"></i>{% trans 'Close' %}</button>
-															<button type="button" data-bind="click:$parent.delete_substage" class="btn btn-primary"><i class="fa fa-trash-o"></i>{% trans 'Delete' %}</button>
+															<button type="button" data-bind="click:$parent.delete_substage" class="btn btn-danger"><i class="fa fa-trash-o"></i>{% trans 'Delete' %}</button>
 														    </div>
                                                                 <!--<button data-bind="click:edit_done" style="margin-left:33px;"><i class="fa fa-edit"></i>{% trans 'Close' %} </button>-->
                                                                 <!--<button data-bind="click:$parent.delete_substage" style="margin-left:33px;"><i class="fa fa-trash-o"></i>{% trans 'Delete' %} </button>-->
