@@ -76,7 +76,8 @@
 
 	<div id="page-wrap">
 		<br>
-		<img src="img/fieldsight.png" alt="fieldsight" class="responsive" width="400" height="200"> 
+
+		<img src="{% static 'images/email/fieldsightlogo.png' %}" alt="fieldsight" class="responsive" width="400" height="200"> 
 		<div class="title-right" ><h4>Remote Monitoring And Supervison Tool </h4> </div>
 		<hr style="color: #253f8e">
 
@@ -86,7 +87,7 @@
 
 
 			<div class="col-6"><div class="Welcome text-center" style="color: #253f8e;font-family: Ubuntu"><h2>Welcome to Fieldsight,<br>
-			{{ email }!} </h2> </div>
+			{{ email }} </h2> </div>
 			<div class="text text-center">
 You have been invited to join FieldSight by {{ invite.by_user.email }}{% if invite.group.name != "Unassigned" %} as {{ invite.group.name }}  Role {% endif %}{% if invite.site %} for {{ invite.site.name }}  in {{ invite.project.name }} of {{ invite.organization.name }} {% elif invite.project %} for {{ invite.project.name }} of {{ invite.organization.name }} {% elif invite.organization %} in {{ invite.organization.name }}{% endif %}.			</div>
 			<div class="btn"><a href="http://{{ domain }}{% url 'fieldsight:activate-role' invite_id token %}
@@ -105,7 +106,7 @@ You have been invited to join FieldSight by {{ invite.by_user.email }}{% if invi
 			</div>
 			<div class="sub text-center">
 				Download FieldSight App<br>
-				<img src="img/play.png" alt="playstore" class="response" width="40" height="20">
+				<img src="{% static 'images/email/play.png' %}" alt="playstore" class="response" width="40" height="20">
 			</div>
 			<div class="good">
 				Good day,<br>
@@ -114,7 +115,7 @@ You have been invited to join FieldSight by {{ invite.by_user.email }}{% if invi
 
 		</div>
 		<div class="col-6">
-			<img src="img/unnamed.jpg" alt="profile" class="profile" width="400" height="600">
+			<img src="{% static 'images/email/profile.jpg' %}" alt="profile" class="profile" width="400" height="600">
 		</div>
 	</div>
 
