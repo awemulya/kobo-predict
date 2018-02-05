@@ -1134,17 +1134,17 @@ def senduserinvite(request):
             invite.save()
         current_site = get_current_site(request)
         subject = 'Invitation for Role'
-        message ={
+        data ={
             'email': invite.email,
             'domain': current_site.domain,
             'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
             'token': invite.token,
             'invite': invite,
             }
-        messages = get_template('fieldsight/email_sample.html').render(Context(message))
+        message = get_template('fieldsight/email_sample.html').render(Context(data))
         email_to = (invite.email,)
         
-        msg = EmailMessage(subject, messages, 'Field Sight', email_to)
+        msg = EmailMessage(subject, message, 'Field Sight', email_to)
         msg.content_subtype = "html"
         msg.send()
         if group.name == "Unassigned":
@@ -1202,16 +1202,22 @@ def invitemultiregionalusers(request, emails, group, region_ids):
                     invite.save()
                 current_site = get_current_site(request)
                 subject = 'Invitation for Role'
-                message = render_to_string('fieldsight/email_sample.html',
-                {
+                data = {
                     'email': invite.email,
                     'domain': current_site.domain,
                     'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
                     'token': invite.token,
                     'invite': invite,
-                    })
+                    }
                 email_to = (invite.email,)
-                send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
+
+                message = get_template('fieldsight/email_sample.html').render(Context(data))
+                email_to = (invite.email,)
+                
+                msg = EmailMessage(subject, message, 'Field Sight', email_to)
+                msg.content_subtype = "html"
+                msg.send()
+
                 if group.name == "Unassigned":
                     response += "Sucessfully invited "+ email +" to join this organization.<br>"
                 else:    
@@ -1276,16 +1282,22 @@ def sendmultiroleuserinvite(request):
                         invite.save()
                     current_site = get_current_site(request)
                     subject = 'Invitation for Role'
-                    message = render_to_string('fieldsight/email_sample.html',
-                    {
+                    data ={
                         'email': invite.email,
                         'domain': current_site.domain,
                         'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
                         'token': invite.token,
                         'invite': invite,
-                        })
+                        }
                     email_to = (invite.email,)
-                    send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
+                    
+                    message = get_template('fieldsight/email_sample.html').render(Context(data))
+                    email_to = (invite.email,)
+                    
+                    msg = EmailMessage(subject, message, 'Field Sight', email_to)
+                    msg.content_subtype = "html"
+                    msg.send()
+
                     if group.name == "Unassigned":
                         response += "Sucessfully invited "+ email +" to join this organization.<br>"
                     else:    
@@ -1341,16 +1353,22 @@ def sendmultiroleuserinvite(request):
                 invite, created = UserInvite.objects.get_or_create(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
             current_site = get_current_site(request)
             subject = 'Invitation for Role'
-            message = render_to_string('fieldsight/email_sample.html',
-            {
+            data = {
                 'email': invite.email,
                 'domain': current_site.domain,
                 'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
                 'token': invite.token,
                 'invite': invite,
-                })
+                }
             email_to = (invite.email,)
-            send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
+            
+            message = get_template('fieldsight/email_sample.html').render(Context(data))
+            email_to = (invite.email,)
+            
+            msg = EmailMessage(subject, message, 'Field Sight', email_to)
+            msg.content_subtype = "html"
+            msg.send()
+
             response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
             continue
     return HttpResponse(response)
