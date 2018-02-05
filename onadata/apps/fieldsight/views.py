@@ -1073,6 +1073,7 @@ def RepresentsInt(s):
     except ValueError:
         return False
 
+
 @login_required()
 def senduserinvite(request):
 
@@ -1141,14 +1142,16 @@ def senduserinvite(request):
             'invite': invite,
             })
         email_to = (invite.email,)
-        send_mail(subject, message, 'Field Sight', email_to,fail_silently=False)
+        
+        msg = EmailMessage(subject, message, 'Field Sight', email_to,fail_silently=False)
+        msg.content_subtype = "html"
+        msg.send()
         if group.name == "Unassigned":
             response += "Sucessfully invited "+ email +" to join this organization.<br>"
         else:    
             response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
         continue
     return HttpResponse(response)
-
 
 def invitemultiregionalusers(request, emails, group, region_ids):
    
