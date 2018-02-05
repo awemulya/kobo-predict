@@ -49,7 +49,7 @@ from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, S
 from django.views.generic import TemplateView
 from django.core.mail import send_mail, EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
+from django.template.loader import render_to_string, get_template
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes, smart_str
 from django.utils.crypto import get_random_string
