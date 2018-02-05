@@ -66,6 +66,7 @@ from django.conf import settings
 from django.db.models import Prefetch
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.serializers.json import DjangoJSONEncoder
+from django.template import Context
 
 @login_required
 def dashboard(request):
