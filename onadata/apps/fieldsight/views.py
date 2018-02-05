@@ -1133,24 +1133,25 @@ def senduserinvite(request):
             invite.save()
         current_site = get_current_site(request)
         subject = 'Invitation for Role'
-        message = render_to_string('fieldsight/email_sample.html',
-        {
+        message ={
             'email': invite.email,
             'domain': current_site.domain,
             'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
             'token': invite.token,
             'invite': invite,
-            })
+            }
+        messages = get_template('fieldsight/email_sample.html').render(Context(message))
         email_to = (invite.email,)
         
-        msg = EmailMessage(subject, message, 'Field Sight', email_to,fail_silently=False)
+        msg = EmailMessage(subject, messages, 'Field Sight', email_to,fail_silently=False)
         msg.content_subtype = "html"
+        msg.send()
         if group.name == "Unassigned":
             response += "Sucessfully invited "+ email +" to join this organization.<br>"
         else:    
             response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
         continue
-    return msg.send()
+
     return HttpResponse(response)
 
 def invitemultiregionalusers(request, emails, group, region_ids):
