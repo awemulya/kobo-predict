@@ -2221,7 +2221,7 @@ def response_export(request, pk):
 
     return response
 
-class FormlistAPI(ReviewerRoleMixin, View):
+class FormlistAPI(View):
     def get(self, request, pk):
         mainstage=[]
         schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title')
