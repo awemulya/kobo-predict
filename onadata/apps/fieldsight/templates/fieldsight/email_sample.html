@@ -79,7 +79,7 @@
 	<div id="page-wrap">
 		<br>
 
-		<img src="{% static 'images/email/fieldsightlogo.png' %}" alt="fieldsight" class="responsive" width="400" height="200"> 
+		<img src="http://{{ domain }}{% static 'images/email/fieldsightlogo.png' %}" alt="fieldsight" class="responsive" width="400" height="200"> 
 		<div class="title-right" ><h4>Remote Monitoring And Supervison Tool </h4> </div>
 		<hr style="color: #253f8e">
 
@@ -108,7 +108,7 @@ You have been invited to join FieldSight by {{ invite.by_user.email }}{% if invi
 			</div>
 			<div class="sub text-center">
 				Download FieldSight App<br>
-				<img src="{% static 'images/email/play.png' %}" alt="playstore" class="response" width="40" height="20">
+				<img src="http://{{ domain }}{% static 'images/email/play.png' %}" alt="playstore" class="response" width="40" height="20">
 			</div>
 			<div class="good">
 				Good day,<br>
@@ -117,7 +117,7 @@ You have been invited to join FieldSight by {{ invite.by_user.email }}{% if invi
 
 		</div>
 		<div class="col-6">
-			<img src="{% static 'images/email/profile.jpg' %}" alt="profile" class="profile" width="400" height="600">
+			<img src="http://{{ domain }}{% static 'images/email/profile.jpg' %}" alt="profile" class="profile" width="400" height="600">
 		</div>
 	</div>
 
