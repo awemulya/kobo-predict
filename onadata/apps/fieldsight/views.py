@@ -1144,7 +1144,7 @@ def senduserinvite(request):
         messages = get_template('fieldsight/email_sample.html').render(Context(message))
         email_to = (invite.email,)
         
-        msg = EmailMessage(subject, messages, 'Field Sight', email_to,fail_silently=False)
+        msg = EmailMessage(subject, messages, 'Field Sight', email_to)
         msg.content_subtype = "html"
         msg.send()
         if group.name == "Unassigned":
