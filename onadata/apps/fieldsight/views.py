@@ -47,7 +47,7 @@ from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, Us
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm)
 from django.views.generic import TemplateView
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode
