@@ -1,0 +1,28 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block kocript %}
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/custom_report.js"></script>
+
+<script>
+var CSRF_TOKEN = '{{ csrf_token }}';
+$(document).ready(function() {
+
+var csrf_token = "{{ csrf_token }}";
+assigntoken(csrf_token);
+vm = new StageViewModel();
+ ko.applyBindings(vm);
+});
+
+</script>
+
+{% endblock %}
+{% block content %}
+{% csrf_token %}
+
+
+{% endblock %}
