@@ -227,7 +227,7 @@ class SiteSurveyListView(LoginRequiredMixin, ProjectMixin, TemplateView):
         return TemplateResponse(request, "fieldsight/site_survey_list.html", {'project':pk})
 
 
-class SiteDashboardView(ReviewerRoleMixin, TemplateView):
+class SiteDashboardView(TemplateView):
     template_name = 'fieldsight/site_dashboard.html'
 
     def get_context_data(self, **kwargs):
