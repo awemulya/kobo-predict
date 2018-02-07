@@ -31,6 +31,7 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}");
 {% endblock %}
 
 {% block content %}
+{% csrf_token %}
 {% load pagination_tags %}
     {% load filters %}
 

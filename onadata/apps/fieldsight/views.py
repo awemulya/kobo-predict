@@ -2266,7 +2266,7 @@ class FormlistAPI(View):
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="Report.pdf"'
         base_url = request.get_host()
-        report = MyPrint(buffer, 'custom_response')
+        report = MyPrint(buffer, 'Letter')
         pdf = report.print_individual_response(pk, base_url, self.request.POST.get('fx_ids'))
         buffer.seek(0)
         response.write(buffer.read())
