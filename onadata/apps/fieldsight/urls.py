@@ -204,6 +204,5 @@ urlpatterns = [
     url(r'^bulksitesample/(?P<pk>\d+)/$', ExcelBulkSiteSample.as_view(), name='excel_bulk_site_sample'),
     url(r'^ProjectStageResponsesStatus/(?P<pk>\d+)/$',ProjectStageResponsesStatus.as_view(), name='ProjectStageResponsesStatus'),
     url(r'^project/report/stage-table/(?P<pk>\d+)/$', StageTemplateView.as_view(), name='ProjectStageDetailtemplate'),
-    url(r'^site/report/custom-responses/(?P<pk>\d+)/$', FormlistAPI.as_view(), name='formlistAPI'),
-    url(r'^site/report/custom-report/$', GenerateCustomReport.as_view(), name='generate_custom_report'),
+    url(r'^site/report/custom-responses/(?P<pk>\d+)/$', FormlistAPI.as_view(), name='generate_custom_report'),
 ]

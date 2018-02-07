@@ -2261,16 +2261,6 @@ class FormlistAPI(View):
         content={'general':list(general), 'schedule':list(schedule), 'stage':list(mainstage), 'survey':list(survey)}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
-
-class GenerateCustomReport(ReviewerRoleMixin, View):
-    def get(self, request, pk):
-        schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title','date_created')
-        stage = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=True, is_survey=False).values('id','xf__title','date_created')
-        survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title','date_created')
-        general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title','date_created')
-        content={'general':list(general), 'schedule':list(schedule), 'stage':list(stage), 'survey':list(survey)}
-        return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
-
     def post(self, request, pk):
         buffer = BytesIO()
         response = HttpResponse(content_type='application/pdf')
@@ -2283,3 +2273,14 @@ class GenerateCustomReport(ReviewerRoleMixin, View):
         pdf = buffer.getvalue()
         buffer.close()
         return response
+
+class GenerateCustomReport(ReviewerRoleMixin, View):
+    def get(self, request, pk):
+        schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title','date_created')
+        stage = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=True, is_survey=False).values('id','xf__title','date_created')
+        survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title','date_created')
+        general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title','date_created')
+        content={'general':list(general), 'schedule':list(schedule), 'stage':list(stage), 'survey':list(survey)}
+        return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+
+    
