@@ -2261,13 +2261,13 @@ class FormlistAPI(View):
         content={'general':list(general), 'schedule':list(schedule), 'stage':list(mainstage), 'survey':list(survey)}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
-    def post(self, request, pk):
+    def post(self, request, pk, **kwargs):
         buffer = BytesIO()
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="Report.pdf"'
         base_url = request.get_host()
         report = MyPrint(buffer, 'Letter')
-        pdf = report.print_individual_response(pk, base_url, self.POST.get('fx_ids'))
+        pdf = report.print_individual_response(pk, base_url, self.kwargs.POST.get('fx_ids'))
         buffer.seek(0)
         response.write(buffer.read())
         pdf = buffer.getvalue()
