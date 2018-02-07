@@ -2271,6 +2271,15 @@ class GenerateCustomReport(ReviewerRoleMixin, View):
         content={'general':list(general), 'schedule':list(schedule), 'stage':list(stage), 'survey':list(survey)}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
-class CustomReportView(View):
-    def get(self, request):
-        return render(request, 'fieldsight/custom_report.html')
+    def post(self, request, pk):
+        buffer = BytesIO()
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="Report.pdf"'
+        base_url = request.get_host()
+        report = MyPrint(buffer, 'custom_response')
+        pdf = report.print_individual_response(pk, base_url, self.request.POST.get('fx_ids'))
+        buffer.seek(0)
+        response.write(buffer.read())
+        pdf = buffer.getvalue()
+        buffer.close()
+        return response

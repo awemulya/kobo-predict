@@ -395,3 +395,105 @@ class MyPrint:
         elements.append(t1)
         elements.append(Spacer(0,10))
         self.doc.multiBuild(elements, onFirstPage=self._header_footer, onLaterPages=self._header_footer)
+
+
+    def generateCustomSiteReport(self, pk, base_url, fs_ids):
+        self.base_url = base_url
+        
+ 
+        # Our container for 'Flowable' objects
+        elements = []
+        toc = TableOfContents()
+        toc.levelStyles = [
+            PS(fontName='arialuni', fontSize=14, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
+            PS(fontName='arialuni', fontSize=12, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+            PS(fontName='arialuni', ontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+        ]
+        elements.append(Paragraph('Custom Responses Report for Site', self.centered))
+        elements.append(PageBreak())
+        elements.append(Paragraph('Table of contents', self.centered))
+        elements.append(toc)
+        elements.append(PageBreak())
+        
+        # A large collection of style sheets pre-made for us
+        styles = getSampleStyleSheet()
+        styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
+        site = Site.objects.select_related('project').get(pk=pk)
+        self.project_name = site.project.name
+        self.project_logo = site.project.logo.url
+        
+        elements.append(Paragraph(site.name, self.h1))
+        elements.append(Paragraph(site.identifier, styles['Normal']))
+        if site.address:
+            elements.append(Paragraph(site.address, styles['Normal']))
+        if site.phone:
+            elements.append(Paragraph(site.phone, styles['Normal']))
+        if site.region:
+            elements.append(Paragraph(site.region.name, styles['Normal']))
+
+        elements.append(PageBreak())
+        elements.append(Paragraph('Responses', self.h2))
+        
+        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
+        
+        if not forms:
+            elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))
+        #a=FieldSightXF.objects.select_related('xf').filter(site_id=291).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')))
+
+       
+        
+       
+        styNormal = styleSheet['Normal']
+        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
+
+        for form in forms:
+            elements.append(Spacer(0,10))
+            elements.append(Paragraph(form.xf.title, self.h3))
+            elements.append(Paragraph(form.form_type() + " Form", styles['Heading4']))
+            if form.stage:
+                if form.stage.stage:
+                    elements.append(Paragraph("Stage Id: " + str(form.stage.stage.order), styles['Heading5']))
+                    elements.append(Paragraph("Sub Stage Id: " + str(form.stage.order), styles['Heading5']))    
+                else:
+                    elements.append(Paragraph("Stage Id: " + str(form.stage.order), styles['Heading5']))
+
+            json_question = form.xf.json
+            form_user_name = form.xf.user.username
+            self.media_folder = form_user_name
+
+            #cursor = get_instaces_for_site_individual_form(form.id)
+            
+            
+            sub_count = 0
+            if form.site_form_instances.all():
+                for instance in form.site_form_instances.all():
+                    if instance.form_status ==  0:
+                        form_status = "Pending"
+                    elif instance.form_status == 1:
+                        form_status = "Rejected"
+                    elif instance.form_status == 2:
+                        form_status = "Flagged"
+                    elif instance.form_status == 3:
+                        form_status = "Approved"
+                    sub_count += 1
+                    elements.append(Spacer(0,10))
+                    elements.append(Paragraph("Submision "+ str(sub_count), styles['Heading4']))
+                    elements.append(Paragraph("Status : "+form_status, styles['Normal']))
+                    elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, styles['Normal']))
+                    elements.append(Paragraph("Submitted Date:"+str(instance.date), styles['Normal']))
+                    elements.append(Spacer(0,10))
+                    self.data = []
+                    self.main_answer = instance.instance.json
+                    question = json.loads(json_question)
+                    self.parse_individual_questions(question['children'])
+                    
+
+                    t1 = Table(self.data, colWidths=(60*mm, None))
+                    t1.setStyle(self.ts1)
+                    elements.append(t1)
+                    elements.append(Spacer(0,10))
+
+            else:
+                elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
+                elements.append(Spacer(0,10))
+        self.doc.multiBuild(elements, onLaterPages=self._header_footer)
