@@ -21,7 +21,7 @@ var CSRF_TOKEN = '{{ csrf_token }}';
 $(document).ready(function() {
 
 var csrf_token = "{{ csrf_token }}";
-// assigntoken(csrf_token);
+assigntoken(csrf_token);
 vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}");
  ko.applyBindings(vm);
 });
