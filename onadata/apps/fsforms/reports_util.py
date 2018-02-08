@@ -8,7 +8,7 @@ from onadata.apps.viewer.models.parsed_instance import dict_for_mongo, _encode_f
 DEFAULT_LIMIT = 30000
 
 def get_images_for_site(site_id):
-    return settings.MONGO_DB.instances.find({"fs_site" : site_id},{"_attachments.mimetype": "image/jpeg", "_attachments.filename":1, fs_uuid:1}).sort({ _id: -1 }).limit(10)
+    return settings.MONGO_DB.instances.find({"fs_site": site_id, "_attachments.mimetype" : "image/jpeg"},{"_attachments" : { '$elemMatch': { mimetype: "image/jpeg"}}, "_attachments.filename":1, fs_uuid:1}).sort({ _id: -1 }).limit(10)
 
 def get_instaces_for_site_individual_form(fieldsightxf_id):
     query = {"fs_uuid":str(fieldsightxf_id)}
