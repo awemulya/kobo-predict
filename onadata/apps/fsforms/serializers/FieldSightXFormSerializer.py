@@ -331,7 +331,7 @@ class FSXFAllDetailSerializer(serializers.ModelSerializer):
             if obj.fsform is None:
                 response = obj.project_form_instances.order_by('-id')[:1]
             else:
-                response = obj.site_form_instances.filter(site_id=self.context.get('pk')).order_by('-id')[:1]
+                response = obj.site_form_instances.all().order_by('-id')[:1]
             serializer = FInstanceResponcesSerializer(instance=response, many=True)
             return serializer.data
 
