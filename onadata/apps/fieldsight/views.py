@@ -252,7 +252,7 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
         myanswers = mylist
         recent_resp_imgs = get_images_for_site(obj.id)
         outstanding, flagged, approved, rejected = obj.get_site_submission()
-        print recent_resp_imgs
+        print recent_resp_imgs.__dict__
         dashboard_data = {
             'obj': obj,
             'peoples_involved': peoples_involved,
