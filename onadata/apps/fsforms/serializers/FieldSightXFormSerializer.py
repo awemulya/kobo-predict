@@ -213,22 +213,7 @@ class ScheduleSerializerAllDetail(serializers.ModelSerializer):
     id_string = serializers.SerializerMethodField()
     is_deployed = serializers.SerializerMethodField('get_is_deployed_status', read_only=True)
     default_submission_status = serializers.SerializerMethodField()
-    responses_count = serializers.SerializerMethodField()
-    latest_submission = serializers.SerializerMethodField()
 
-    def validate(self, data):
-        """
-        Check that form is unique for general form.
-        """
-        if data.has_key('site'):
-            if FieldSightXF.objects.filter(
-                    xf__id=data['xf'], is_staged=False, is_scheduled=True, site=data['site']).exists():
-                raise serializers.ValidationError("Form Already Exists, Duplicate Forms Not Allowded")
-        elif data.has_key('project'):
-            if FieldSightXF.objects.filter(
-                    xf__id=data['xf'], is_staged=False, is_scheduled=True, project=data['project']).exists():
-                raise serializers.ValidationError("Form Already Exists, Duplicate Forms Not Allowded")
-        return data
 
     class Meta:
         model = Schedule
@@ -292,32 +277,7 @@ class ScheduleSerializerAllDetail(serializers.ModelSerializer):
         # em =  EducationMaterial.objects.first()
         return EMSerializer(em).data
 
-    def get_responses_count(self, obj):
-        try:
-            fsxf = FieldSightXF.objects.get(schedule=obj)
 
-            if fsxf.fsform is None:
-                return fsxf.project_form_instances.count()
-            else:
-                return fsxf.site_form_instances.filter(site_id=self.context.get('pk')).count()
-
-        except FieldSightXF.DoesNotExist:
-            return 0
-
-
-    def get_latest_submission(self, obj):
-        try:
-            fsxf = FieldSightXF.objects.get(schedule=obj)
-
-            if fsxf.fsform is None:
-                response = fsxf.project_form_instances.order_by('-id')[:1]
-            else:
-                response = fsxf.site_form_instances.filter(site_id=self.context.get('pk')).order_by('-id')[:1]
-            serializer = FInstanceResponcesSerializer(instance=response, many=True)
-            return serializer.data
-
-        except FieldSightXF.DoesNotExist:
-            return 0
 
 class MainStageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -328,8 +288,7 @@ class MainStageSerializer(serializers.ModelSerializer):
 class SubStageSerializerAllDetail(serializers.ModelSerializer):
     em = EMSerializer(read_only=True)
     main_stage = serializers.SerializerMethodField()
-    responses_count = serializers.SerializerMethodField()
-    latest_submission = serializers.SerializerMethodField()
+
     class Meta:
         model = Stage
         exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage', 'date_modified', 'date_created',)
@@ -340,34 +299,6 @@ class SubStageSerializerAllDetail(serializers.ModelSerializer):
         return MainStageSerializer(obj.stage).data
 
 
-    def get_responses_count(self, obj):
-        try:
-            fsxf = FieldSightXF.objects.get(stage=obj)
-
-            if fsxf.fsform is None:
-                return fsxf.project_form_instances.count()
-            else:
-                return fsxf.site_form_instances.count()
-
-        except FieldSightXF.DoesNotExist:
-            return 0
-
-
-    def get_latest_submission(self, obj):
-        try:
-            fsxf = FieldSightXF.objects.get(stage=obj)
-
-            if fsxf.fsform is None:
-                response = fsxf.project_form_instances.order_by('-id')[:1]
-            else:
-                response = fsxf.site_form_instances.order_by('-id')[:1]
-            serializer = FInstanceResponcesSerializer(instance=response, many=True)
-            return serializer.data
-
-        except FieldSightXF.DoesNotExist:
-            return 0
-
-
 
 class FSXFAllDetailSerializer(serializers.ModelSerializer):
     xf = XformSerializer()
@@ -376,6 +307,8 @@ class FSXFAllDetailSerializer(serializers.ModelSerializer):
 
     downloadUrl = serializers.SerializerMethodField('get_url', read_only=True)
     manifestUrl = serializers.SerializerMethodField('get_manifest_url')
+    latest_submission = serializers.SerializerMethodField()
+    responses_count = serializers.SerializerMethodField()
 
     @check_obj
     def get_url(self, obj):
@@ -391,6 +324,29 @@ class FSXFAllDetailSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
 
         return reverse('forms:manifest-url', kwargs=kwargs, request=request)
+
+    def get_latest_submission(self, obj):
+        try:
+
+            if obj.fsform is None:
+                response = obj.project_form_instances.order_by('-id')[:1]
+            else:
+                response = obj.site_form_instances.filter(site_id=self.context.get('pk')).order_by('-id')[:1]
+            serializer = FInstanceResponcesSerializer(instance=response, many=True)
+            return serializer.data
+
+        except FieldSightXF.DoesNotExist:
+            return 0
+
+    def get_responses_count(self, obj):
+        try:
+            if obj.fsform is None:
+                return obj.project_form_instances.count()
+            else:
+                return obj.site_form_instances.count()
+
+        except FieldSightXF.DoesNotExist:
+            return 0
 
     class Meta:
         model = FieldSightXF
