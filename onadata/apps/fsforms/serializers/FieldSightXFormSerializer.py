@@ -328,7 +328,7 @@ class FSXFAllDetailSerializer(serializers.ModelSerializer):
     def get_latest_submission(self, obj):
         try:
 
-            if obj.fsform is not None:
+            if obj.fsform is not None or obj.is_survey:
                 response = obj.project_form_instances.order_by('-id')[:1]
             else:
                 response = obj.site_form_instances.all().order_by('-id')[:1]
@@ -340,7 +340,7 @@ class FSXFAllDetailSerializer(serializers.ModelSerializer):
 
     def get_responses_count(self, obj):
         try:
-            if obj.fsform is not None:
+            if obj.fsform is not None or obj.is_survey:
                 return obj.project_form_instances.count()
             else:
                 return obj.site_form_instances.count()
