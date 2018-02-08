@@ -67,6 +67,8 @@ from django.db.models import Prefetch
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template import Context
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 @login_required
 def dashboard(request):
@@ -2271,8 +2273,10 @@ class FormlistAPI(View):
         fs_ids = data.get('fs_ids')
         pdf = report.generateCustomSiteReport(pk, base_url,fs_ids)
         buffer.seek(0)
-        response.write(buffer.read())
         pdf = buffer.getvalue()
+        # file = open("contract.pdf", "wb")
+        # file.write(pdf)
+        response.write(pdf)
         buffer.close()
         return response
 
