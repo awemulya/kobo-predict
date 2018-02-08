@@ -37,7 +37,7 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
     {% load filters %}
 
 <div style="display:none;">
-<ul data-bind="allImages">
+<ul data-bind="foreach: allImages">
 <li data-bind="text: fs_uuid"></li>
 <li data-bind="text: _attachments()[0].download_url"></li>
 </ul>
