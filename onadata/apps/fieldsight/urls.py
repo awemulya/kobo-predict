@@ -205,4 +205,5 @@ urlpatterns = [
     url(r'^ProjectStageResponsesStatus/(?P<pk>\d+)/$',ProjectStageResponsesStatus.as_view(), name='ProjectStageResponsesStatus'),
     url(r'^project/report/stage-table/(?P<pk>\d+)/$', StageTemplateView.as_view(), name='ProjectStageDetailtemplate'),
     url(r'^site/report/custom-responses/(?P<pk>\d+)/$', FormlistAPI.as_view(), name='generate_custom_report'),
-]   url(r'^site/recent-pictures/(?P<pk>\d+)/$', RecentResponseImages.as_view(), name='recent_response_image'),
+    url(r'^site/recent-pictures/(?P<pk>\d+)/$', RecentResponseImages.as_view(), name='recent_response_image'),
+    ]
