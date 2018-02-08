@@ -68,7 +68,9 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}");
 
 			<div id="main-content" class="padding" onload="change()">
 {% for data in resp_imgs %}
-	{{ data }}
+	
+	{{ data._attachments[0].filename }}
+	}
 {% endfor %}
 				<nav aria-label="breadcrumb" role="navigation">
 					{% block breadcrumbs %}
