@@ -2290,7 +2290,7 @@ class GenerateCustomReport(ReviewerRoleMixin, View):
         content={'general':list(general), 'schedule':list(schedule), 'stage':list(stage), 'survey':list(survey)}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
-class RecentResponseImages(SiteSupervisorRoleMixin, View):
+class RecentResponseImages(ReviewerRoleMixin, View):
     def get(self, request, pk):
         recent_resp_imgs = get_images_for_site(obj.id)
         return HttpResponse(recent_resp_imgs)
