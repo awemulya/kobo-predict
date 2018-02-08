@@ -22,8 +22,9 @@ $(document).ready(function() {
 
 var csrf_token = "{{ csrf_token }}";
 assigntoken(csrf_token);
-vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}");
+vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", "{% url 'fieldsight:recent_response_image' obj.pk %}");
  ko.applyBindings(vm);
+
 });
 
 </script>

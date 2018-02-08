@@ -262,7 +262,6 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
             'cumulative_data': line_chart_data.values(),
             'cumulative_labels': line_chart_data.keys(),
             'meta_data': myanswers,
-            'resp_imgs':recent_resp_imgs,
         }
         return dashboard_data
 
