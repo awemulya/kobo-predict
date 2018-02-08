@@ -36,6 +36,11 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 {% load pagination_tags %}
     {% load filters %}
 
+<div style="display:none;">
+<ul data-bind="allImages">
+<li data-bind="text: _attachments()[0].download_url"></li>
+</ul>
+</div>
    <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
     
