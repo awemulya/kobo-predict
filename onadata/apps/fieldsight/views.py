@@ -2292,5 +2292,5 @@ class GenerateCustomReport(ReviewerRoleMixin, View):
 
 class RecentResponseImages(ReviewerRoleMixin, View):
     def get(self, request, pk):
-        recent_resp_imgs = get_images_for_site(obj.id)
+        recent_resp_imgs = get_images_for_site(pk)
         return HttpResponse(recent_resp_imgs)
