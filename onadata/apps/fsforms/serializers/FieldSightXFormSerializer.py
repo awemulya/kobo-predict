@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
-from onadata.apps.fsforms.models import FieldSightXF, EducationalImages, EducationMaterial
+from onadata.apps.fsforms.models import FieldSightXF, EducationalImages, EducationMaterial, Schedule, Stage
 from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import FInstanceResponcesSerializer
 from onadata.apps.logger.models import XForm
 from onadata.libs.utils.decorators import check_obj
@@ -201,3 +201,154 @@ class FSXFSerializer(serializers.ModelSerializer):
     class Meta:
         model = FieldSightXF
         fields = ('xf','id', 'default_submission_status',)
+
+
+class ScheduleSerializerAllDetail(serializers.ModelSerializer):
+    em = serializers.SerializerMethodField('get_education_material', read_only=True)
+    days = serializers.SerializerMethodField('get_all_days', read_only=True)
+    form = serializers.SerializerMethodField('get_assigned_form', read_only=True)
+    project_form = serializers.SerializerMethodField('get_assigned_project_form', read_only=True)
+    xf = serializers.CharField()
+    form_name = serializers.SerializerMethodField('get_assigned_form_name', read_only=True)
+    id_string = serializers.SerializerMethodField()
+    is_deployed = serializers.SerializerMethodField('get_is_deployed_status', read_only=True)
+    default_submission_status = serializers.SerializerMethodField()
+
+
+    class Meta:
+        model = Schedule
+        exclude = ('date_created', 'shared_level')
+
+    def get_all_days(self, obj):
+        return u"%s" % (", ".join(day.day for day in obj.selected_days.all()))
+
+    def get_assigned_form(self, obj):
+        if not FieldSightXF.objects.filter(schedule=obj).exists():
+            return None
+        else:
+            fsxf = FieldSightXF.objects.get(schedule=obj)
+            if fsxf.xf:
+                return fsxf.id
+        return None
+
+    def get_assigned_form_name(self, obj):
+        if not FieldSightXF.objects.filter(schedule=obj).exists():
+            return None
+        else:
+            fsxf = FieldSightXF.objects.get(schedule=obj)
+            if fsxf.xf:
+                return fsxf.xf.title
+        return None
+
+    def get_id_string(self, obj):
+        if not FieldSightXF.objects.filter(schedule=obj).exists():
+            return None
+        else:
+            fsxf = FieldSightXF.objects.get(schedule=obj)
+            if fsxf.xf:
+                return fsxf.xf.id_string
+        return None
+
+    def get_assigned_project_form(self, obj):
+        if not FieldSightXF.objects.filter(schedule=obj, fsform__isnull=False).exists():
+            return None
+        else:
+            fsxf = FieldSightXF.objects.get(schedule=obj, fsform__isnull=False)
+            if fsxf.fsform:
+                return fsxf.fsform.id
+        return None
+
+    def get_is_deployed_status(self, obj):
+        if not FieldSightXF.objects.filter(schedule=obj).exists():
+            return False
+        else:
+            return FieldSightXF.objects.get(schedule=obj).is_deployed
+
+    def get_default_submission_status(self, obj):
+        if not FieldSightXF.objects.filter(schedule=obj).exists():
+            return False
+        else:
+            return FieldSightXF.objects.get(schedule=obj).default_submission_status
+
+    def get_education_material(self, obj):
+        if not EducationMaterial.objects.filter(fsxf=obj.schedule_forms).exists():
+            return {}
+        em =  EducationMaterial.objects.get(fsxf=obj.schedule_forms)
+        # em =  EducationMaterial.objects.first()
+        return EMSerializer(em).data
+
+
+
+class MainStageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stage
+        exclude = ('shared_level',)
+
+
+class SubStageSerializerAllDetail(serializers.ModelSerializer):
+    em = EMSerializer(read_only=True)
+    main_stage = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Stage
+        exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage', 'date_modified', 'date_created',)
+
+    def get_main_stage(self,obj):
+        if not obj.stage:
+            return {}
+        return MainStageSerializer(obj.stage).data
+
+
+
+class FSXFAllDetailSerializer(serializers.ModelSerializer):
+    xf = XformSerializer()
+    schedule = ScheduleSerializerAllDetail()
+    stage = SubStageSerializerAllDetail()
+
+    downloadUrl = serializers.SerializerMethodField('get_url', read_only=True)
+    manifestUrl = serializers.SerializerMethodField('get_manifest_url')
+    latest_submission = serializers.SerializerMethodField()
+    responses_count = serializers.SerializerMethodField()
+
+    @check_obj
+    def get_url(self, obj):
+        kwargs = {'pk': obj.pk}
+        request = self.context.get('request')
+
+        return reverse('forms:download_xform', kwargs=kwargs, request=request)
+
+    @check_obj
+    def get_manifest_url(self, obj):
+        site_id = obj.site.id if obj.site else 0
+        kwargs = {'pk': obj.pk, 'site_id': site_id}
+        request = self.context.get('request')
+
+        return reverse('forms:manifest-url', kwargs=kwargs, request=request)
+
+    def get_latest_submission(self, obj):
+        try:
+
+            if obj.fsform is not None or obj.is_survey:
+                response = obj.project_form_instances.order_by('-id')[:1]
+            else:
+                response = obj.site_form_instances.all().order_by('-id')[:1]
+            serializer = FInstanceResponcesSerializer(instance=response, many=True)
+            return serializer.data
+
+        except FieldSightXF.DoesNotExist:
+            return 0
+
+    def get_responses_count(self, obj):
+        try:
+            if obj.fsform is not None or obj.is_survey:
+                return obj.project_form_instances.count()
+            else:
+                return obj.site_form_instances.count()
+
+        except FieldSightXF.DoesNotExist:
+            return 0
+
+    class Meta:
+        model = FieldSightXF
+        exclude = ()
+
