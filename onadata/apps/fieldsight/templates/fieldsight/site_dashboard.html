@@ -11,7 +11,7 @@
 
 {% block kocript %}
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
-	<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
@@ -398,17 +398,6 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 											<h4>Recent Pictures</h4>
 										</div>
 										<div class="scrollingSlider">
-											<div>
-												<div class="photo-item">
-													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
-												</div>
-											</div>
-
-<div>
-												<div class="photo-item">
-													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
-												</div>
-											</div>
 											<!-- ko foreach: allImages  -->
 												<!-- ko foreach: _attachments()  -->
 													
