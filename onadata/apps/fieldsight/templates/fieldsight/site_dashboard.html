@@ -36,15 +36,7 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 {% load pagination_tags %}
     {% load filters %}
 
-<div style="display:none;">
-<ul data-bind="foreach: allImages">
-<li data-bind="text: fs_uuid"></li>
-<li data-bind="foreach: _attachments()">
-	<p data-bind="text: $data.download_url"></p>
-</li>
 
-</ul>
-</div>
    <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
     
@@ -384,6 +376,19 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 								</div>
 							</div>
 						</div>
+
+
+
+<!-- 						<div style="display:none;">
+<ul data-bind="foreach: allImages">
+<li data-bind="text: fs_uuid"></li>
+<li data-bind="foreach: _attachments()">
+	<p data-bind="text: $data.download_url"></p>
+</li>
+
+</ul>
+</div>
+ -->
 						<div class="col-md-6">
 							<div class="row">
 								<div class="col-md-12">
@@ -392,41 +397,20 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 											<h4>Recent Pictures</h4>
 										</div>
 										<div class="scrollingSlider">
-											<div>
-												<div class="photo-item">
-													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
-												</div>
-											</div>
-											<div>
-												<div class="photo-item">
-													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
-												</div>
-											</div>
-											<div>
-												<div class="photo-item">
-													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
-												</div>
-											</div>
-											<div>
-												<div class="photo-item">
-													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
-												</div>
-											</div>
-											<div>
-												<div class="photo-item">
-													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
-												</div>
-											</div>
-											<div>
-												<div class="photo-item">
-													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
-												</div>
-											</div>
-											<div>
-												<div class="photo-item">
-													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
-												</div>
-											</div>
+											
+
+											<!-- ko foreach: allImages  -->
+												<!-- ko foreach: _attachments()  -->
+													
+													<div>
+													
+														<div class="photo-item">
+															<img data-bind="attr:{src: $data.download_url}">
+														</div>
+													</div>
+												<!-- /ko-->
+											<!-- /ko-->
+											
 										</div>
 									</div>
 								</div>
