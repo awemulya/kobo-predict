@@ -408,6 +408,17 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 													<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">
 												</div>
 											</div>
+											<!-- ko foreach: allImages  -->
+												<!-- ko foreach: _attachments()  -->
+													
+													<div>
+													
+														<div class="photo-item">
+															<img data-bind="attr:{src: $data.download_url}">
+														</div>
+													</div>
+												<!-- /ko-->
+											<!-- /ko-->
 
 
 
