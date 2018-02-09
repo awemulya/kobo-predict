@@ -69,7 +69,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.template import Context
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-from onadata.apps.fsforms.reports_util import get_images_for_site
+from onadata.apps.fsforms.reports_util import get_images_for_site, get_site_responses_coords
 
 @login_required
 def dashboard(request):
@@ -2293,5 +2293,10 @@ class RecentResponseImages(ReviewerRoleMixin, View):
     def get(self, request, pk):
         recent_resp_imgs = get_images_for_site(pk)
         content={'images':list(recent_resp_imgs)}
-        
+        return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+
+class SiteResponseCoordinates(ReviewerRoleMixin, View):
+    def get(self, request, pk):
+        coord_datas = get_site_responses_coords(pk)
+        content={'coords-data':list(coord_datas)}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
