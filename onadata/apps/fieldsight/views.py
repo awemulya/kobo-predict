@@ -2274,8 +2274,8 @@ class FormlistAPI(View):
         pdf = report.generateCustomSiteReport(pk, base_url,fs_ids)
         buffer.seek(0)
         pdf = buffer.getvalue()
-        # file = open("contract.pdf", "wb")
-        # file.write(pdf)
+        file = open("media/contract.pdf", "wb")
+        file.write(pdf)
         response.write(pdf)
         buffer.close()
         return response
