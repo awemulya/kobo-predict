@@ -11,6 +11,7 @@
 
 {% block kocript %}
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+	<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
@@ -505,49 +506,11 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.ajax.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/textLabel.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.markercluster-src.js"></script>
-	<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+
 	<script src="{% static 'dummy/assets/js/vendor/jquery.matchHeight.js' %}"></script>
 	<script>
 				$(document).ready(function(){
-				$('.scrollingSlider').slick({
-				  slidesToShow: 4,
-				  arrows: false,
-				  autoplay : true,
-				  infinite: false,
-				  responsive: [
-					{
-					  breakpoint: 768,
-					  settings: {
-						arrows: false,
-						slidesToShow: 3
-					  }
-					},
-					{
-					  breakpoint: 480,
-					  settings: {
-						arrows: false,
-						centerMode: true,
-						slidesToShow: 1
-					  }
-					}
-				  ]
-				});
-				$('.photo-item img').on('click',function(){
-					var title = $(this).attr('img-title');
-					var src = $(this).attr('src');
-					var img = '<img src="' + src + '" class="img-responsive"/>';
-					var html = '';
-					html += img;
-					$('#myModalLabel').modal();
-					$('#myModalLabel').on('shown.bs.modal', function(){
-						$('#myModalLabel .modal-header .modal-title').html(title);
-						$('#myModalLabel .modal-body').html(html);
-					})
-					$('#myModalLabel').on('hidden.bs.modal', function(){
-						$('#myModalLabel .modal-header .modal-title').html('');
-						$('#myModalLabel .modal-body').html('');
-					});
-				});
+
 			});
 	</script>
 
