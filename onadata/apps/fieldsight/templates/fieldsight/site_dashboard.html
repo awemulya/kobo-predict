@@ -39,7 +39,9 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 <div style="display:none;">
 <ul data-bind="foreach: allImages">
 <li data-bind="text: fs_uuid"></li>
-<li data-bind="text: _attachments()[0].download_url"></li>
+<li data-bind="foreach: $data._attachments()">
+	<li data-bind="text: $data.download_url"></li>
+</li>
 </ul>
 </div>
    <div class="modal fade" id="myModal" role="dialog">
