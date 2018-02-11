@@ -403,7 +403,8 @@ assigntoken(csrf_token);
                                                         </div>
                                             </div> -->
                                               <span style="font-weight: bold;">{% trans 'Schedule' %}:</span>
-                                              <select data-bind="options: scheduleOptions, value: schedule_level"></select>
+                                              <select data-bind="options: scheduleOptions, optionsText: 'name',
+                                              optionsValue: 'id', value: schedule_level"></select>
                                             
                                             </div>
 
