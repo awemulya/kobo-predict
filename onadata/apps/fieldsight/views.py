@@ -2298,5 +2298,9 @@ class RecentResponseImages(ReviewerRoleMixin, View):
 class SiteResponseCoordinates(ReviewerRoleMixin, View):
     def get(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
+        return render(request, 'fieldsight/site_response_map_view.html', {'co_ords':list(coord_datas)})
+
+    def post(self, request, pk):
+        coord_datas = get_site_responses_coords(pk)
         content={'coords-data':list(coord_datas)}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
