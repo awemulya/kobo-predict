@@ -863,6 +863,19 @@ assigntoken(csrf_token);
                                                                           <select class="form-control" data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
                                                                                         value: stage_forms().xf().id">
                                                                                     </select>
+
+
+
+                                                                          <div class="gap"></div>
+                                                                    </div>
+                                                                    </div>
+
+                                                                     <div class="col-sm-12">
+                                                                      <div class="form-group">
+                                                                          <label for="stagename"><span class="stage-label"></span>{% trans 'Default Submission Status:' %}</label>
+                                                                          <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
+                                                                                    value: stage_forms().xf().id">
+                                                                                </select>
                                                                           <div class="gap"></div>
                                                                     </div>
                                                                     </div>
