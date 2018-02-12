@@ -2298,7 +2298,9 @@ class RecentResponseImages(ReviewerRoleMixin, View):
 class SiteResponseCoordinates(ReviewerRoleMixin, View):
     def get(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
-        return render(request, 'fieldsight/site_response_map_view.html', {'co_ords':list(coord_datas)})
+        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+
+        return render(request, 'fieldsight/site_response_map_view.html', {'co_ords':JSON.dumps(list(coord_datas)),'data':data})
 
     def post(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
