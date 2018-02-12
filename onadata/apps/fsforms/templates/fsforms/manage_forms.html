@@ -873,9 +873,7 @@ assigntoken(csrf_token);
                                                                      <div class="col-sm-12">
                                                                       <div class="form-group">
                                                                           <label for="stagename"><span class="stage-label"></span>{% trans 'Default Submission Status:' %}</label>
-                                                                          <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
-                                                                                    value: stage_forms().xf().id">
-                                                                                </select>
+                                                                         <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: stage_forms().default_submission_status"></select>
                                                                           <div class="gap"></div>
                                                                     </div>
                                                                     </div>
