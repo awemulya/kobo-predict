@@ -121,7 +121,7 @@ class GeneralForm(HTML5BootstrapModelForm, KOModelForm):
         self.fields['xf'].label = "Form"
 
     class Meta:
-        fields = ['xf']
+        fields = ['xf', 'default_submission_status']
         model = FieldSightXF
 
 

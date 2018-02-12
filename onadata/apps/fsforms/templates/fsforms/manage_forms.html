@@ -267,7 +267,8 @@ assigntoken(csrf_token);
                                             <td><span data-bind="text: name"></span><span class="pull-right" data-bind="text : ((fsform() == null) ? '':'Project level')">Project Level</span>
                                             <span class="col-sm-1" data-bind="text: default_submission_status_text"></span>
 
-                                             <select data-bind="options: availableoptions, value: default_submission_status_text"></select>
+                                             <select data-bind="options: availableoptions, optionsText: 'name',
+                                              optionsValue: 'id', value: default_submission_status"></select>
                                             </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text:responses_count"></td>
@@ -394,14 +395,18 @@ assigntoken(csrf_token);
                                                   <input data-bind="datePicker : date_range_end" type="date" id="End">
                                               </div>
                                            <div class="form-group">
-                                              <span style="font-weight: bold;">{% trans 'Days:' %}</span>
-                                                <div data-bind="foreach: $parent.days">
+                                              <!-- <span style="font-weight: bold;">{% trans 'Days:' %}</span> -->
+                                              <!--   <div data-bind="foreach: $parent.days">
                                                     <div class="col-sm-1" style="width: 14.28% !important">
                                                         <span data-bind="text:day"></span>
                                                     <input type="checkbox" class="day-schedule"
                                                            data-bind="checkedValue: id, checked: $parent.selected_days">
                                                         </div>
-                                            </div>
+                                            </div> -->
+                                              <span style="font-weight: bold;">{% trans 'Schedule' %}:</span>
+                                              <select data-bind="options: scheduleOptions, optionsText: 'name',
+                                              optionsValue: 'id', value: schedule_level"></select>
+                                            
                                             </div>
 
                                             <div class="gap-high"></div>
@@ -602,6 +607,7 @@ assigntoken(csrf_token);
 										<th>{% trans 'Assigned' %} {% trans 'Date' %}</th>
 										<th>{% trans 'End' %} {% trans 'Date' %}</th>
 										<th>{% trans 'Days' %}</th>
+                                        <th>{% trans 'Type' %}</th>
 										<th>{% trans 'Responses' %}</th>
 										<th>{% trans 'Edu..' %} {% trans 'Mat' %}</th>
 										<th>{% trans 'Actions' %}</th>
@@ -613,11 +619,13 @@ assigntoken(csrf_token);
 										<td data-bind="text: name"></td>
 										<td>
                                         <span data-bind="text: form_name"></span>
-										<select data-bind="options: availableoptions, value: default_submission_status_text"></select>
+										<select data-bind="options: availableoptions, optionsText: 'name',
+                                              optionsValue: 'id', value: default_submission_status"></select>
                                         </td>
                                         <td data-bind="text: date_range_start"></td>
 										<td data-bind="text: date_range_end"></td>
 										<td data-bind="text: days"></td>
+                                        <td data-bind="text: schedule_level_text"></td>
 										<td data-bind="text: responses_count"></td>
                                         <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
@@ -1040,7 +1048,7 @@ assigntoken(csrf_token);
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
                                                         <strong>{% trans 'Form' %} {% trans 'Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
-                                                         <select data-bind="options: availableoptions, value: default_submission_status_text"></select>
+                                                         <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select>
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
                                                         <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
@@ -1268,7 +1276,8 @@ assigntoken(csrf_token);
                                             <th scope="row" data-bind='text: $index()+1'></th>
                                             <td>
                                              <span data-bind="text: name"></span>
-                                             <select data-bind="options: availableoptions, value: default_submission_status_text"></select>
+                                             <select data-bind="options: availableoptions, optionsText: 'name',
+                                              optionsValue: 'id', value: default_submission_status"></select>
                                              </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text: responses_count"></td>
