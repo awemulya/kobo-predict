@@ -408,6 +408,11 @@ assigntoken(csrf_token);
                                               optionsValue: 'id', value: schedule_level"></select>
                                             
                                             </div>
+                                            <div class="form-group">
+                                                <select data-bind="options: availableoptions, optionsText: 'name',
+                                              optionsValue: 'id', value: default_submission_status"></select>
+                                            </td>
+                                            </div>
 
                                             <div class="gap-high"></div>
                                             <button class="btn g btn-primary registration__action" type="submit" data-bind="click:save">{% trans 'Create' %}</button>

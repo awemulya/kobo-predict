@@ -2300,7 +2300,7 @@ class SiteResponseCoordinates(ReviewerRoleMixin, View):
         coord_datas = get_site_responses_coords(pk)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
 
-        return render(request, 'fieldsight/site_response_map_view.html', {'co_ords':JSON.dumps(list(coord_datas)),'data':data})
+        return render(request, 'fieldsight/site_response_map_view.html', {'co_ords':json.dumps(list(coord_datas)),'data':data})
 
     def post(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
