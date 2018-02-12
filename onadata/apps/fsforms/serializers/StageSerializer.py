@@ -111,10 +111,10 @@ class StageSerializer1(serializers.ModelSerializer):
                     stage_forms_dict = ss.pop('stage_forms')
                     xf_id = stage_forms_dict['xf']['id']
                     ss.update({'stage':stage, 'order':order+1})
-
+                    default_submission_status = stage_forms_dict['default_submission_status']
                     sub_stage_obj = Stage.objects.create(**ss)
                     fxf = FieldSightXF(xf_id=xf_id, site=stage.site, project=stage.project, is_staged=True,
-                                       stage=sub_stage_obj)
+                                       stage=sub_stage_obj, default_submission_status=default_submission_status)
                     fxf.save()
                     if stage.project:
                         noti = fxf.logs.create(source=api_request.user, type=18, title="Stage",
@@ -175,7 +175,9 @@ class StageSerializer1(serializers.ModelSerializer):
                         old_xf = old_fsxf.xf
 
                         xf = fxf.get('xf')
+                        default_submission_status = fxf.get('default_submission_status')
                         xf_id = xf.get('id')
+
                         if old_xf.id  != xf_id:
                             # xform changed history and mew fsf
                             old_fsxf.is_deployed = False
@@ -185,10 +187,10 @@ class StageSerializer1(serializers.ModelSerializer):
                             #create new fieldsight form
                             if stage.project:
                                 FieldSightXF.objects.create(xf_id=xf_id, site=stage.site, project=stage.project,
-                                                            is_staged=True, stage=sub_stage)
+                                                            is_staged=True, stage=sub_stage, default_submission_status=default_submission_status)
                             else:
                                 FieldSightXF.objects.create(xf_id=xf_id, site=stage.site, project=stage.project,
-                                                            is_staged=True, stage=sub_stage,from_project=False)
+                                                            is_staged=True, stage=sub_stage,from_project=False, default_submission_status=default_submission_status)
 
                             # org = stage.project.organization if stage.project else stage.site.project.organization
                             # desc = "deleted form of stage {} substage {} by {}".format(stage.name, sub_stage.name,
@@ -207,6 +209,7 @@ class StageSerializer1(serializers.ModelSerializer):
                     else:
                         fxf = sub_stage_data.pop('stage_forms')
                         xf = fxf.get('xf')
+                        default_submission_status = fxf.get('default_submission_status')
                         xf_id = xf.get('id')
                         # fxf_id = fxf.get('id')
                         sub_stage_data.pop('id')
@@ -215,10 +218,10 @@ class StageSerializer1(serializers.ModelSerializer):
                         sub_stage_obj = Stage.objects.create(**sub_stage_data)
                         if stage.project:
                             FieldSightXF.objects.create(xf_id=xf_id,site=stage.site, project=stage.project,
-                                                        is_staged=True, stage=sub_stage_obj)
+                                                        is_staged=True, stage=sub_stage_obj, default_submission_status=default_submission_status)
                         else:
                             FieldSightXF.objects.create(xf_id=xf_id, site=stage.site, project=stage.project,
-                                                        is_staged=True, stage=sub_stage_obj,from_project=False)
+                                                        is_staged=True, stage=sub_stage_obj,from_project=False, default_submission_status=default_submission_status)
             return stage
 
 
