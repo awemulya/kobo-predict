@@ -57,7 +57,7 @@ class ScheduleViewset(viewsets.ModelViewSet):
 
 
         fxf = FieldSightXF(xf_id=data["xf"], is_scheduled=True, schedule=schedule, site=schedule.site,
-                                    project=schedule.project, default_submission_status=serializer.get('default_submission_status', 0))
+                                    project=schedule.project, default_submission_status=data.get('default_submission_status', 0))
         if data.has_key("site"):
             fxf.is_deployed = True
             fxf.from_project = False

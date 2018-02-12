@@ -1053,7 +1053,7 @@ assigntoken(csrf_token);
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
                                                         <strong>{% trans 'Form' %} {% trans 'Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
-                                                         <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select>
+                                                         <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: stage_forms().default_submission_status"></select>
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
                                                         <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
