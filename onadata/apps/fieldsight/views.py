@@ -2298,10 +2298,12 @@ class RecentResponseImages(ReviewerRoleMixin, View):
 class SiteResponseCoordinates(ReviewerRoleMixin, View):
     def get(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
-        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        # obj = Site.objects.get(pk=self.kwargs.get('pk'))
 
-        return render(request, 'fieldsight/site_response_map_view.html', {'co_ords':json.dumps(list(coord_datas))})
-
+        # return render(request, 'fieldsight/site_response_map_view.html', {'co_ords':json.dumps(list(coord_datas))})
+        data = serialize('custom_geojson', coord_datas, geometry_field='_geolocation',
+                         fields=('fs_uuid', 'id', '_submitted_by'))
+        return HttpResponse(data, status=200)
     def post(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
         # content={'coords-data':list(coord_datas)}
