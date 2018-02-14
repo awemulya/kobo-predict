@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from onadata.apps.fsforms.viewsets.FieldSightXformViewset import GeneralFormsViewSet, SurveyFormsViewSet
+from onadata.apps.fsforms.viewsets.FieldSightXformViewset import GeneralFormsViewSet, SurveyFormsViewSet, FormDetailViewset
 from onadata.apps.fsforms.viewsets.InstanceHistoryViewSet import SiteInstanceResponseViewSet, InstanceHistoryViewSet, InstanceResponseViewSet, InstanceHistoryDetailViewSet
 from onadata.apps.fsforms.viewsets.ScheduleViewset import ScheduleViewset, DayViewset
 from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXFormListApi
@@ -196,6 +196,7 @@ urlpatterns = urlpatterns + [
     url(r'^api/save_educational_material/$', save_educational_material),
     url(r'^api/responses/(?P<pk>\d+)/$', InstanceResponseViewSet.as_view({'get': 'list'})),
     url(r'^api/responses/(?P<form_pk>\d+)/(?P<site_pk>\d+)/$', SiteInstanceResponseViewSet.as_view({'get': 'list'})),
+    url(r'^api/form-detail/(?P<pk>\d+)/$', FormDetailViewset.as_view({'get': 'retrieve'})),
 
 ]
 

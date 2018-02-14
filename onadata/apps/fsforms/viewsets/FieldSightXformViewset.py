@@ -3,7 +3,7 @@ import json
 from rest_framework import viewsets
 
 from onadata.apps.fsforms.models import Stage, FieldSightXF
-from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormSerializer
+from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormSerializer, FSXFAllDetailSerializer
 from onadata.apps.fsforms.serializers.StageSerializer import StageSerializer
 from onadata.apps.fsforms.utils import send_message
 from channels import Group as ChannelGroup
@@ -114,3 +114,8 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
             result['url'] = noti.get_absolute_url()
             ChannelGroup("site-{}".format(fxf.site.id)).send({"text": json.dumps(result)})
             ChannelGroup("project-{}".format(fxf.site.project.id)).send({"text": json.dumps(result)})
+
+
+class FormDetailViewset(viewsets.ReadOnlyModelViewSet):
+    queryset = FieldSightXF.objects.all()
+    serializer_class = FSXFAllDetailSerializer
