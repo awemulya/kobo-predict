@@ -2301,7 +2301,7 @@ class SiteResponseCoordinates(ReviewerRoleMixin, View):
         # obj = Site.objects.get(pk=self.kwargs.get('pk'))
 
         # return render(request, 'fieldsight/site_response_map_view.html', {'co_ords':json.dumps(list(coord_datas))})
-        data = serialize('custom_geojson', coord_datas, geometry_field='_geolocation',
+        data = serialize('custom_geojson', list(coord_datas), geometry_field='_geolocation',
                          fields=('fs_uuid', 'id', '_submitted_by'))
         return HttpResponse(data, status=200)
     def post(self, request, pk):
