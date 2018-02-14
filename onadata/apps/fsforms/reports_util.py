@@ -11,7 +11,7 @@ def get_images_for_site(site_id):
     return settings.MONGO_DB.instances.find({"fs_site": str(site_id), "_attachments.mimetype" : "image/jpeg"},{"_attachments" : { '$elemMatch': { "mimetype": "image/jpeg"}}, "_attachments.filename":1, "fs_uuid":1}).sort([( "_id", -1 )]).limit(10)
 
 def get_site_responses_coords(site_id):
-    return settings.MONGO_DB.instances.find({"fs_site": str(site_id), "_geolocation":{"$not":{ "$elemMatch": { "$eq": None } }}},{"_geolocation":1, "fs_uuid":1, "_submitted_by":1})
+    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": str(site_id), "_geolocation":{"$not":{ "$elemMatch": { "$eq": None }}}}}, {"$project" : {"_id":0, "type": {"$literal": "Feature"}, "geometry":{ "type": {"$literal": "Point"}, "coordinates": "$_geolocation" }, "properties": {"id":"$_id", "fs_uuid":"$fs_uuid", "submitted_by":"$_submitted_by"}}}])
 
 def get_instaces_for_site_individual_form(fieldsightxf_id):
     query = {"fs_uuid":str(fieldsightxf_id)}
