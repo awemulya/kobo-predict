@@ -2299,10 +2299,9 @@ class SiteResponseCoordinates(ReviewerRoleMixin, View):
     def get(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
-        return HttpResponse(list(coord_datas))
-        return render(request, 'fieldsight/site_response_map_view.html', {'co_ords':json.dumps(list(coord_datas))})
+        return render(request, 'fieldsight/site_response_map_view.html', {'co_ords':json.dumps(list(coord_datas["result"]))})
 
     def post(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
-        content={'coords-data':list(coord_datas)}
+        content={'coords-data':list(coord_datas["result"])}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
