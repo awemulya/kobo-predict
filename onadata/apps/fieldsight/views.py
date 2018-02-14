@@ -2304,5 +2304,8 @@ class SiteResponseCoordinates(ReviewerRoleMixin, View):
 
     def post(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
-        content={'coords-data':list(coord_datas)}
-        return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+        # content={'coords-data':list(coord_datas)}
+        # return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+        data = serialize('custom_geojson', coord_datas, geometry_field='_geolocation',
+                         fields=('fs_uuid', 'id', '_submitted_by'))
+        return HttpResponse(data, status=200)
