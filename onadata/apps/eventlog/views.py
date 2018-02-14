@@ -51,7 +51,7 @@ class LogSerializer(serializers.ModelSerializer):
 
 
 
-class NotificationListView(OrganizationMixin, ListView):
+class NotificationListView(LoginRequiredMixin, ListView):
     model = FieldSightLog
     paginate_by = 100
 
