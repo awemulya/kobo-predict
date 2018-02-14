@@ -58,7 +58,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
         elif obj.schedule_level == 1:
             return "Weekly"
         else:
-            return "daily"
+            return "Daily"
 
     def get_assigned_form(self, obj):
         if not FieldSightXF.objects.filter(schedule=obj).exists():
