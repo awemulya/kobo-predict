@@ -1257,7 +1257,7 @@ def download_xform(request, pk):
 @group_required('KoboForms')
 def full_response_table(request, fsxf_id):
 
-    limit = int(request.REQUEST.get('limit', 20))
+    limit = int(request.GET.get('limit', 20))
     fsxf_id = int(fsxf_id)
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
@@ -1273,7 +1273,7 @@ def full_response_table(request, fsxf_id):
     paginator = Paginator(cursor, limit, request=request)
 
     try:
-        page = paginator.page(request.REQUEST.get('page', 1))
+        page = paginator.page(request.GET.get('page', 1))
     except (EmptyPage, PageNotAnInteger):
         try:
             page = paginator.page(1)
