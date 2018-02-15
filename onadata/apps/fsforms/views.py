@@ -1256,7 +1256,7 @@ def download_xform(request, pk):
 
 
 class FullResponseTable(FormMixin, View):
-    def get(request, fsxf_id):
+    def get(self, request, fsxf_id):
         limit = int(request.GET.get('limit', 1))
         fsxf_id = int(fsxf_id)
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
