@@ -84,7 +84,7 @@
                <tr onclick="redirectto(`{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
                  
                   <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
-                  <td>{{ sub.instance.uuid }}</td>
+                  <td>{{ sub.instance.id }}</td>
                   <td>{{ sub.site.name }}</td>
                   <td>{{ sub.site.identifier }}</td>
                   <td>{{ sub.submitted_by.username }}</td>
@@ -122,7 +122,7 @@
                <tr onclick="redirectto(`{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
                  
                   <td>{{ forloop.counter }}</td>
-                  <td>{{ sub.instance.uuid }}</td>
+                  <td>{{ sub.instance.id }}</td>
                   <td>{{ sub.site.name }}</td>
                   <td>{{ sub.site.identifier }}</td>
                   <td>{{ sub.submitted_by.username }}</td>
