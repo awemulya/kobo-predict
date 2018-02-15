@@ -535,7 +535,7 @@ def edit_schedule(request, id):
 # @group_required("Project")
 # @api_view(['POST', 'GET'])
 
-class Set_deploy_stages(SPFmixin, View):
+class Set_deploy_stages(FormMixin, View):
     def post(self, request, is_project, pk):
         try:
             if is_project == "1":
@@ -1255,7 +1255,7 @@ def download_xform(request, pk):
 
 
 
-class FullResponseTable(ReviewerRoleMixin, View):
+class FullResponseTable(FormMixin, View):
     def get(request, fsxf_id, is_project):
         limit = int(request.GET.get('limit', 1))
         fsxf_id = int(fsxf_id)
