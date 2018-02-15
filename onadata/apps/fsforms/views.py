@@ -1270,7 +1270,7 @@ def html_export(request, fsxf_id):
 
 class Html_export(FormMixin, ListView):
     model =   FInstance
-    paginate_by = 10
+    paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
 
     def get_context_data(self, **kwargs):
@@ -1291,7 +1291,7 @@ class Html_export(FormMixin, ListView):
 
 class Project_html_export(FormMixin, ListView):
     model =   FInstance
-    paginate_by = 10
+    paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
 
     def get_context_data(self, **kwargs):
