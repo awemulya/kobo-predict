@@ -25,7 +25,7 @@
 <div id="main-content" class="padding">
         <section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3><i class="la la-pencil-square-o"></i>{% trans 'Form' %} {% trans 'Submissions' %} | {{ form_name  }}</h3>
+                        <h3><i class="la la-pencil-square-o"></i>{% trans 'Form' %} {% trans 'Submissions' %} | {{ obj.xf.title  }}</h3>
             <div class="panel-heading-right">
               <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForms" aria-expanded="false" aria-controls="searchForms"><i class="la la-search"></i> Search</a>
             
@@ -49,11 +49,11 @@
               </form>
             </div>
          
-<div class="container">
+
     
    
 
-<table>
+<table class="table table-striped">
 
     <thead>
         <tr>
@@ -85,7 +85,7 @@
 
 
 
-</div>
+
           </div>
 
                 </section>
