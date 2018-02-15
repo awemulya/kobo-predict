@@ -1257,7 +1257,7 @@ def download_xform(request, pk):
 @group_required('KoboForms')
 def full_response_table(request, fsxf_id):
 
-    limit = int(request.GET.get('limit', 20))
+    limit = int(request.GET.get('limit', 1))
     fsxf_id = int(fsxf_id)
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
     xform = fsxf.xf
