@@ -65,7 +65,7 @@ class SubStageSerializer1(serializers.ModelSerializer):
             if fsxf.fsform is None:
                 return fsxf.project_form_instances.count()
             else:
-                print fsxf.project_form_instances.count()
+                print fsxf.site_form_instances.count()
                 return fsxf.site_form_instances.count()
 
         except FieldSightXF.DoesNotExist:
