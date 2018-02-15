@@ -1255,7 +1255,7 @@ def download_xform(request, pk):
 
 
 
-class FullResponseTable():
+class FullResponseTable(ReviewerRoleMixin, View):
     def get(request, fsxf_id, is_project):
         limit = int(request.GET.get('limit', 1))
         fsxf_id = int(fsxf_id)
