@@ -57,10 +57,9 @@
     <thead>
       <tr>
         <th>{% trans 'S.N' %}</th>
-        <th>{% trans 'Id' %}</th>
-
         <th>{% trans 'Site' %} {% trans 'Name' %}</th>
         <th>{% trans 'Site' %} {% trans 'Id' %}</th>
+        <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
       </tr>
@@ -84,9 +83,9 @@
                <tr onclick="redirectto(`{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
                  
                   <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
-                  <td>{{ sub.instance.id }}</td>
                   <td>{{ sub.site.name }}</td>
                   <td>{{ sub.site.identifier }}</td>
+                  <td>{{ sub.instance.id }}</td>
                   <td>{{ sub.submitted_by.username }}</td>
                   <td>{{ sub.date }}</td>
                   </tr>
@@ -108,9 +107,9 @@
     <thead>
       <tr>
         <th>{% trans 'S.N' %}</th>
-        <th>{% trans 'Id' %}</th>
         <th>{% trans 'Site' %} {% trans 'Name' %}</th>
         <th>{% trans 'Site' %} {% trans 'Id' %}</th>
+        <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
       </tr>
@@ -122,9 +121,9 @@
                <tr onclick="redirectto(`{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
                  
                   <td>{{ forloop.counter }}</td>
-                  <td>{{ sub.instance.id }}</td>
                   <td>{{ sub.site.name }}</td>
                   <td>{{ sub.site.identifier }}</td>
+                  <td>{{ sub.instance.id }}</td>
                   <td>{{ sub.submitted_by.username }}</td>
                   <td>{{ sub.date }}</td>
                   </tr>
