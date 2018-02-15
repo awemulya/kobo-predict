@@ -1,0 +1,106 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load fs_filters %}
+{% block page-title %}{% trans 'Form Data' %}{% endblock %}
+
+{%block extracss %}
+{% load pagination_tags %}
+
+
+    <style>
+      .pre-scrollable{
+        height:500px;
+  
+}
+
+.sortable tr {
+    cursor: pointer;
+}
+  
+  </style>
+    
+{% endblock %}
+{% block content %}
+
+<div id="main-content" class="padding">
+        <section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-pencil-square-o"></i>{% trans 'Form' %} {% trans 'Submissions' %} | {{ form_name  }}</h3>
+            <div class="panel-heading-right">
+              <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForms" aria-expanded="false" aria-controls="searchForms"><i class="la la-search"></i> Search</a>
+            
+            </div>
+                    </header>
+          <div class="panel-body">
+            <!--Search Organization-->
+            <div class="collapse margin-top" id="searchForms">
+              <form class="padding">
+                <div class="row">
+                  <div class="col-md-6 ml-md-auto">
+                    <div class="input-group">
+                      <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+                      <span class="input-group-btn">
+                      <button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-3"></div>
+                </div>
+              </form>
+            </div>
+         
+<div class="container">
+    
+   
+
+<table>
+
+    <thead>
+        <tr>
+            <th>{% trans "View or Edit" %}</th>
+            {% for label in labels %}
+            <th><span class="cell-content-wrap">{{ label }}</span></th>
+            {% endfor %}
+        </tr>
+
+    </thead>
+
+    <tbody>
+    {% for submission_id, row in data  %}
+        <tr>
+            <th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
+            {% for value in row %}
+            <td><span class="cell-content-wrap">{{ value }}</span></td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+
+
+  
+
+
+
+</div>
+          </div>
+
+                </section>
+        
+      </div>
+
+
+{% endblock %}
+
+
+{% block extrascript %}
+    <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
+    <script type="text/javascript">
+      function redirectto(url){
+        window.location.href = url
+      }
+    </script>
+{% endblock %}
