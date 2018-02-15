@@ -52,13 +52,13 @@ def build_formpack(id_string, xform):
 
 def build_export_context(request,xform, id_string):
 
-    hierarchy_in_labels = request.REQUEST.get('hierarchy_in_labels', None)
-    group_sep = request.REQUEST.get('group_sep', '/')
+    hierarchy_in_labels = request.GET.get('hierarchy_in_labels', None)
+    group_sep = request.GET.get('group_sep', '/')
 
     xform, formpack = build_formpack(id_string, xform)
 
     translations = formpack.available_translations
-    lang = request.REQUEST.get('lang', None) or next(iter(translations), None)
+    lang = request.GET.get('lang', None) or next(iter(translations), None)
 
     options = {'versions': 'v1',
                'group_sep': group_sep,
