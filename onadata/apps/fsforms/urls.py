@@ -134,7 +134,7 @@ urlpatterns = urlpatterns + [
         url(r'^forms/(?P<fsxf_id>\d+)$', instance_kobo, name='instance'),
         url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', Instance_detail.as_view(), name='instance_detail'),
         url(r'^forms/alter-answer-status/(?P<instance_id>\d+)/(?P<status>\d)/(?P<fsid>\d+)$', alter_answer_status, name='alter-answer-status'),
-        url(r'submissions/detailed/(?P<is_project>\d)/(?P<fsxf_id>\d+)$', FullResponseTable.as_view(), name='project_html_table_export'),
+        url(r'submissions/detailed/(?P<fsxf_id>\d+)$', FullResponseTable.as_view(), name='project_html_table_export'),
 ]
 
 urlpatterns = urlpatterns + [

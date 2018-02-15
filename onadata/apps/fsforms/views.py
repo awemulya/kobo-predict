@@ -1256,13 +1256,13 @@ def download_xform(request, pk):
 
 
 class FullResponseTable(FormMixin, View):
-    def get(request, fsxf_id, is_project):
+    def get(request, fsxf_id):
         limit = int(request.GET.get('limit', 1))
         fsxf_id = int(fsxf_id)
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         xform = fsxf.xf
         id_string = xform.id_string
-        if is_project:
+        if fsxf.fsform is None:
             cursor = get_instances_for_project_field_sight_form(fsxf_id)
         else:
             cursor = get_instances_for_field_sight_form(fsxf_id)
