@@ -213,11 +213,19 @@ class ScheduleSerializerAllDetail(serializers.ModelSerializer):
     id_string = serializers.SerializerMethodField()
     is_deployed = serializers.SerializerMethodField('get_is_deployed_status', read_only=True)
     default_submission_status = serializers.SerializerMethodField()
-
+    schedule_level = serializers.SerializerMethodField('get_schedule_level_type', read_only=True)
 
     class Meta:
         model = Schedule
         exclude = ('date_created', 'shared_level')
+
+    def get_schedule_level_type(self, obj):
+        if obj.schedule_level == 2:
+            return "Monthly"
+        elif obj.schedule_level == 1:
+            return "Weekly"
+        else:
+            return "Daily"
 
     def get_all_days(self, obj):
         return u"%s" % (", ".join(day.day for day in obj.selected_days.all()))
