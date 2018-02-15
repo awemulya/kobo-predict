@@ -42,7 +42,7 @@ from .views import (
     project_html_export, Deploy_survey, deploy_stages, Deploy_general, Set_deploy_stages, share_stages,
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms,
     instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
-    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, full_response_table)
+    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable)
 
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
@@ -134,7 +134,7 @@ urlpatterns = urlpatterns + [
         url(r'^forms/(?P<fsxf_id>\d+)$', instance_kobo, name='instance'),
         url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', Instance_detail.as_view(), name='instance_detail'),
         url(r'^forms/alter-answer-status/(?P<instance_id>\d+)/(?P<status>\d)/(?P<fsid>\d+)$', alter_answer_status, name='alter-answer-status'),
-        url(r'site/form/submissions/(?P<fsxf_id>\d+)$', full_response_table, name='project_html_table_export'),
+        url(r'/submissions/detailed/(?P<is_project>\d)/(?P<fsxf_id>\d+)$', FullResponseTable.as_view(), name='project_html_table_export'),
 ]
 
 urlpatterns = urlpatterns + [
