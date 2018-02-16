@@ -119,7 +119,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
         try:
             fsxf = FieldSightXF.objects.get(schedule=obj)
             
-            if fsxf.fsform is None:
+            if fsxf.site is None:
                 return fsxf.project_form_instances.count()
             else:
                 return fsxf.site_form_instances.filter(site_id=self.context.get('pk')).count()
@@ -132,7 +132,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
         try:
             fsxf = FieldSightXF.objects.get(schedule=obj)
             
-            if fsxf.fsform is None:
+            if fsxf.site is None:
                 response = fsxf.project_form_instances.order_by('-id')[:1]
             else:
                 response = fsxf.site_form_instances.filter(site_id=self.context.get('pk')).order_by('-id')[:1]

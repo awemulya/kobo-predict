@@ -1262,7 +1262,7 @@ class FullResponseTable(FormMixin, View):
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         xform = fsxf.xf
         id_string = xform.id_string
-        if fsxf.fsform is None:
+        if fsxf.site is None:
             cursor = get_instances_for_project_field_sight_form(fsxf_id)
         else:
             cursor = get_instances_for_field_sight_form(fsxf_id)

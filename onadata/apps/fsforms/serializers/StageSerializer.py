@@ -62,8 +62,7 @@ class SubStageSerializer1(serializers.ModelSerializer):
     def get_responses_count(self, obj):
         try:
             fsxf = FieldSightXF.objects.get(stage=obj)
-            print fsxf.fsform
-            if fsxf.fsform is None:
+            if fsxf.site is None:
                 return fsxf.project_form_instances.count()
             else:
                 return fsxf.site_form_instances.count()
@@ -76,7 +75,7 @@ class SubStageSerializer1(serializers.ModelSerializer):
         try:
             fsxf = FieldSightXF.objects.get(stage=obj)
             
-            if fsxf.fsform is None:
+            if fsxf.site is None:
                 response = fsxf.project_form_instances.order_by('-id')[:1]
             else:
                 response = fsxf.site_form_instances.order_by('-id')[:1]
