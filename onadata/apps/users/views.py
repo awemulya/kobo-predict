@@ -108,12 +108,12 @@ def current_user(request):
                                   'address':site.address, 'lat': repr(site.latitude), 'lon': repr(site.longitude),
                                   'identifier':site.identifier, 'progress': site.progress(), 'type_id':site.type.id,
                                   'type_label':site.type.name,
-                                  'add_desc': site.additional_desc, 'blueprints':bp},
+                                  'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans},
                          'project': {'name': project.name, 'id': project.id, 'description': project.public_desc,
                                      'address':project.address, 'type_id':project.type.id,
                                      'type_label':project.type.name,'phone':project.phone, 'organization_name':project.organization.name,
                                      'organization_url':project.organization.logo.url,
-                                     'lat': repr(project.latitude), 'lon': repr(project.longitude)},
+                                     'lat': repr(project.latitude), 'lon': repr(project.longitude), 'cluster_sites':cluster_sites, 'site_meta_attributes':project.site_meta_attributes},
                          }
             field_sight_info.append(site_info)
 
