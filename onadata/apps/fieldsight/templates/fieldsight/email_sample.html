@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html>
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
 
 <head>
 	<title>Email</title>
@@ -51,7 +52,7 @@ input {
 <body>
 	<div id="page-wrap">
   
-	<span><img src="invite-logo.png"> <font> <span class="head">Remote Monitoring And Supervision Tool </span> </font>
+	<span><img src="http://{{ domain }}{% static 'invite-logo.png' %}"> <font> <span class="head">Remote Monitoring And Supervision Tool </span> </font>
 	<hr>
 	<img src="http://{{ domain }}{% static 'images/email/invite-aa.jpg' %}" align="right">
 	<font class="title" color="#253f8e" size="40" >
@@ -81,8 +82,8 @@ input {
 	</font>
 
 	<font class="sub" size="3" color="#253f8e">
-		&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<b>Download FieldSight App</b><br>
-	&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="https://play.google.com/store/search?q=fieldsight&hl=en"><img src="http://{{ domain }}{% static 'images/email/invite-andro.png' %}" width="200"></a>
+		<b>Download FieldSight App</b><br>
+	<a href="https://play.google.com/store/search?q=fieldsight&hl=en"><img src="http://{{ domain }}{% static 'images/email/invite-andro.png' %}" width="200"></a>
 		 
 
 </p>
