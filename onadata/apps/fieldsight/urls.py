@@ -9,7 +9,7 @@ from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTyp
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet, ProjectRegionslistViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProjectViewSet
 from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionViewSet, RegionPagignatedViewSet, RegionSearchViewSet
-from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
+from onadata.apps.fieldsight.viewsets.SiteViewSet import RegionViewSet, SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
     SiteReviewViewSet, ProjectTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet, SiteUpdateViewSet, \
     ProjectUpdateViewSet, SiteUnderOrgViewSet, SiteUnderRegionViewSet, SitePagignatedViewSet, SiteSearchViewSet
 from .forms import RegistrationForm
@@ -59,7 +59,7 @@ from .views import (
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList,
     senduserinvite, ActivateRole, checkemailforinvite, ProjectSummaryReport, SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView,
     stages_status_download, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
-    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, RegionViewSet )
+    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates )
 
 
 urlpatterns = [
