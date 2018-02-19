@@ -113,7 +113,7 @@ def current_user(request):
                                      'address':project.address, 'type_id':project.type.id,
                                      'type_label':project.type.name,'phone':project.phone, 'organization_name':project.organization.name,
                                      'organization_url':project.organization.logo.url,
-                                     'lat': repr(project.latitude), 'lon': repr(project.longitude), 'cluster_sites':cluster_sites, 'site_meta_attributes':project.site_meta_attributes},
+                                     'lat': repr(project.latitude), 'lon': repr(project.longitude), 'cluster_sites':project.cluster_sites, 'site_meta_attributes':project.site_meta_attributes},
                          }
             field_sight_info.append(site_info)
 
