@@ -9,7 +9,7 @@ from channels import Group as ChannelGroup
 
 
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
-from onadata.apps.fieldsight.models import Site, ProjectType, Project
+from onadata.apps.fieldsight.models import Site, ProjectType, Project, Region
 from onadata.apps.fieldsight.serializers.SiteSerializer import MinimalSiteSerializer, SiteSerializer, SiteCreationSurveySerializer, \
     SiteReviewSerializer, ProjectTypeSerializer, SiteUpdateSerializer, ProjectUpdateSerializer, RegionSerializer
 from onadata.apps.userrole.models import UserRole
