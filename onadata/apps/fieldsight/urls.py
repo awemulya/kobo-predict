@@ -206,6 +206,6 @@ urlpatterns = [
     url(r'^project/report/stage-table/(?P<pk>\d+)/$', StageTemplateView.as_view(), name='ProjectStageDetailtemplate'),
     url(r'^site/report/custom-responses/(?P<pk>\d+)/$', FormlistAPI.as_view(), name='generate_custom_report'),
     url(r'^site/recent-pictures/(?P<pk>\d+)/$', RecentResponseImages.as_view(), name='recent_response_image'),
-    url(r'^project/region-list/(?P<pk>\d+)/$', RegionViewSet.as_view(), name='project_list'),
+    url(r'^project/region-list/(?P<pk>\d+)/$', RegionViewSet.as_view({'get': 'list'}), name='project_list'),
     
     ]
