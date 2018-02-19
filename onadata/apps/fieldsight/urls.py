@@ -59,7 +59,7 @@ from .views import (
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList,
     senduserinvite, ActivateRole, checkemailforinvite, ProjectSummaryReport, SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView,
     stages_status_download, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
-    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates )
+    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, RegionViewSet )
 
 
 urlpatterns = [
@@ -206,6 +206,6 @@ urlpatterns = [
     url(r'^project/report/stage-table/(?P<pk>\d+)/$', StageTemplateView.as_view(), name='ProjectStageDetailtemplate'),
     url(r'^site/report/custom-responses/(?P<pk>\d+)/$', FormlistAPI.as_view(), name='generate_custom_report'),
     url(r'^site/recent-pictures/(?P<pk>\d+)/$', RecentResponseImages.as_view(), name='recent_response_image'),
-    url(r'^site/response-coords/(?P<pk>\d+)/$', SiteResponseCoordinates.as_view(), name='site_response_cords'),
+    url(r'^project/region-list/(?P<pk>\d+)/$', RegionViewSet.as_view(), name='project_list'),
     
     ]
