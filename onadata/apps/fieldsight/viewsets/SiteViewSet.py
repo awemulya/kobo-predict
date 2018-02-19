@@ -109,7 +109,7 @@ class RegionViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing sites.
     """
-    queryset = Regions.objects.all()
+    queryset = Region.objects.all()
     serializer_class = RegionSerializer
     # permission_classes = (SiteViewPermission,)
 
