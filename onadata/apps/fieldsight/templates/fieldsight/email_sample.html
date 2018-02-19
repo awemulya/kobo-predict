@@ -2,131 +2,105 @@
 
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
-	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<title>Email</title>
+	<style type="text/css">
+	body{
+		font-family: Ubuntu;
+	}
+		#page-wrap {
+     width: 800px;
+     margin: 0 auto;
+}
+.head{
+	font-family:Ubuntu;
+	float: right;
+	margin-top: 85px;
+	font-size: 25px;
+	color:#253f8e;
+	font-weight: bold;
+}
+.title{
+	line-height: 1em;
+}
+.sub{
+	line-height: 1em;
+}
 
 
-	<style>
-	#page-wrap {
-		width: 800px;
-		margin: 0 auto;
-	}
-	.responsive {
-		width: 100%;
-		max-width: 250px;
-		height: auto;
-	}
-	.title-right{
-		float: right; 
-		font-family: Ubuntu;
-		color: #253f8e;
-		margin-top: 95px;
 
-	}
+input {
+    height: 60px;
+    width: 315px;
+    font-size: 32px;
+    background-color: #253f8e;
+    color: white;
+}
 
-	.text{
-		font-weight: bold;
-		margin-top: 20px;
-		font-size: 17px;
-		font-family: Ubuntu;
-	}
-	.btn-lg{
-		width: 300px;
-		background-color: #253f8e;
-		color: white;
-		margin-top: 25px;
-		margin-left: 30px;
-	}
-	.welcome{
-		font-family: Ubuntu;
-	}
-	.sub-text{
-		font-family: Ubuntu;
-		font-weight: bold;
-		margin-top: 25px;
-	}
-	.sub{
-		font-family: Ubuntu;
-		margin-top: 25px;
-		font-weight: bold;
-	}
-	.response {
-		width: 100%;
-		max-width: 150px;
-		height: auto;
-	}
-	.good{
-		font-family: Ubuntu;
-		margin-top: 25px;
-		font-weight: bold;
-		color: #253f8e;
-		font-size: 20px;
-	}
-	
-	.w3-container.w3-teal.text-center{
-		margin-top: 25px;
-		width: 816px;
-	}
 
-</style>
+.body{
+	font-family: Ubuntu;
+}
+	</style>
+
+
+
+
 </head>
 <body>
-
 	<div id="page-wrap">
-		<br>
+  
+	<span><img src="invite-logo.png"> <font> <span class="head">Remote Monitoring And Supervision Tool </span> </font>
+	<hr>
+	<img src="http://{{ domain }}{% static 'images/email/invite-aa.jpg' %}" align="right">
+	<font class="title" color="#253f8e" size="40" >
+		<p>Welcome to FieldSight, <br> 
+		<font size="5">{{ email }}!</p></font>
 
-		<img src="http://{{ domain }}{% static 'images/email/fieldsightlogo.png' %}" alt="fieldsight" class="responsive" width="400" height="200"> 
-		<div class="title-right" ><h4>Remote Monitoring And Supervison Tool </h4> </div>
-		<hr style="color: #253f8e">
+	</font>
+	<font class="sub" size="3">
+		<p>You have been invited to join FieldSight by {{ invite.by_user.email }}{% if invite.group.name != "Unassigned" %} as {{ invite.group.name }}  Role {% endif %}{% if invite.site %} for {{ invite.site.name }}  in {{ invite.project.name }} of {{ invite.organization.name }} {% elif invite.project %} for {{ invite.project.name }} of {{ invite.organization.name }} {% elif invite.organization %} in {{ invite.organization.name }}{% endif %}.</p>
+	</font>
 
-		<div class="row">
+	<a href="http://{{ domain }}{% url 'fieldsight:activate-role' invite_id token %}
+" target="_blank"><input type="button" name="join" value="JOIN NOW"></a>
 
+<font class="sub" size="3">
+		<p>Learn more about the services and features <br>
+			of the FieldSight platform through our <br>
+			User Manual.
+</p>
+	</font>
 
+	<font class="sub" size="3">
+		<p>Thank you for joining our platform.<br>
+		 We hope you enjoy using FieldSight.
 
+</p>
+	</font>
 
-			<div class="col-6"><div class="Welcome text-center" style="color: #253f8e;font-family: Ubuntu"><h2>Welcome to Fieldsight,<br>
-			{{ email }} </h2> </div>
-			<div class="text text-center">
-You have been invited to join FieldSight by {{ invite.by_user.email }}{% if invite.group.name != "Unassigned" %} as {{ invite.group.name }}  Role {% endif %}{% if invite.site %} for {{ invite.site.name }}  in {{ invite.project.name }} of {{ invite.organization.name }} {% elif invite.project %} for {{ invite.project.name }} of {{ invite.organization.name }} {% elif invite.organization %} in {{ invite.organization.name }}{% endif %}.			</div>
-			<div class="btn"><a href="http://{{ domain }}{% url 'fieldsight:activate-role' invite_id token %}
-" target="_blank"><button type="button" class="btn btn-default btn-lg center-block">JOIN NOW !</button></a></div>
+	<font class="sub" size="3" color="#253f8e">
+		&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<b>Download FieldSight App</b><br>
+	&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="https://play.google.com/store/search?q=fieldsight&hl=en"><img src="http://{{ domain }}{% static 'images/email/invite-andro.png' %}" width="200"></a>
+		 
 
+</p>
+	</font>
 
+	<font class="sub" size="4" color="#253f8e">
+		<b><p>Good Day,<br>
+		 The FieldSight Team. 
 
-<!-- 			<div class="sub-text text-center">
-				You have been invited by info@fieldsight.
-				org as Site Supervisor role for Amazon Test
-				Site in Amazon Test of FieldSight Organization. 
-			</div>
- -->			<div class="sub text-center">
-				Thank you for joining our platform. We hope
-				you enjoy using FieldSight.
-			</div>
-			<div class="sub text-center">
-			Download FieldSight App<br><br>
-				<a href="https://play.google.com/store/apps/details?id=org.bcss.collect.android"><img src="http://{{ domain }}{% static 'images/email/play.png' %}" alt="playstore" class="response" width="40" height="20">
-			</a>
-			</div>
-			<div class="good">
-				Good day,<br>
-				The FieldSight Team
-			</div>
-
-		</div>
-<!-- 		<div class="col-6">
-			<img src="http://{{ domain }}{% static 'images/email/profile.jpg' %}" alt="profile" class="profile" width="400" height="600">
-		</div> -->
-	</div>
-
-	<div class="w3-container w3-teal text-center">
-		<h5>Contact us if you have any questions or feedback</h5>
-		<p><i class="fa fa-envelope" style="font-size: 14px;"></i> info@fieldsight.org<br>
-		<i class="fa fa-globe" style="font-size: 14px;"></i> www.fieldsight.org</p>
-	</div>
+</p></b>
+	</font>
+	<table style="width:100%;background:lightgrey;">
+  <tr>
+    <th>Contact us if you have any questions or feedback <br>
+  <span><img src="http://{{ domain }}{% static 'images/email/invite-mail.png' %}" width="15">  info@fieldsight.org <br> </span>
+    <span> <img src="http://{{ domain }}{% static 'images/email/invite-www.png' %}" width="15"> www.fieldsight.org</th></span>
+  </tr>
+</table>
 </div>
 </body>
-</html>
+</html
