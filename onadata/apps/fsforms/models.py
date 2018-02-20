@@ -235,6 +235,13 @@ class FieldSightXF(models.Model):
     def getresponces(self):
         return get_instances_for_field_sight_form(self.pk)
 
+    def getlatestsubmittiondate(self):
+        if self.site is not None:
+            return self.site_form_instances.order_by('-pk').values('date')[:1]
+        else:
+            return self.project_form_instances.order_by('-pk').values('date')[:1]
+
+
     def get_absolute_url(self):
         if self.project:
             # return reverse('forms:project_html_export', kwargs={'fsxf_id': self.pk})

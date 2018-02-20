@@ -84,6 +84,7 @@
           <table class="table table-striped" id="dynamic-table3">
               <thead>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
+              <th></th>
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
               <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
               <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
@@ -94,6 +95,10 @@
                       <td>
                           {{ obj.xf.title }}
                       </td>
+                      <td>
+                          {{ obj.getlatestsubmittiondate.first.date }}
+                      </td>
+
                       <td>
                           {{ obj.date_created }}
                       </td>

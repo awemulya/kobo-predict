@@ -263,9 +263,9 @@ class ProjectResponses(ProjectRoleMixin, View):
         obj = get_object_or_404(Project, pk=pk)
         schedules = Schedule.objects.filter(project_id=pk, site__isnull=True, schedule_forms__isnull=False)
         stages = Stage.objects.filter(stage__isnull=True, project_id=pk, stage_forms__isnull=True).order_by('order')
-        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=pk, is_survey=False)
-        surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=pk, is_survey=True)
-        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_deleted=True,project_id=pk)
+        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, project_id=pk, is_survey=False)
+        surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, project_id=pk, is_survey=True)
+        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_deleted=True, project_id=pk)
         return render(request, "fsforms/project/project_responses_list.html",
                       {'obj': obj, 'schedules': schedules, 'stages':stages, 'generals':generals, 'surveys': surveys,
                        "deleted_forms":deleted_forms, 'project': pk})
@@ -275,8 +275,8 @@ class Responses(ReviewerRoleMixin, View):
         obj = get_object_or_404(Site, pk=pk)
         schedules = Schedule.objects.filter(site_id=pk, project__isnull=True, schedule_forms__isnull=False)
         stages = Stage.objects.filter(stage__isnull=True, site_id=pk).order_by('order')
-        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,site_id=pk, is_survey=False)
-        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_scheduled=False,site_id=pk, is_deleted=True)
+        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, site_id=pk, is_survey=False)
+        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_scheduled=False, site_id=pk, is_deleted=True)
         return render(request, "fsforms/responses_list.html",
                       {'obj': obj, 'schedules': schedules, 'stages':stages,'generals':generals,
                         "deleted_forms":deleted_forms,'site': pk})
