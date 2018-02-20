@@ -7,7 +7,7 @@ FIELDSIGHT_XFORM_ID = u"_fieldsight_xform_id"
 
 
 def send_message(fxf, status=None, comment=None, comment_url=None):
-    roles = UserRole.objects.filter(site=fxf.site, ended_at__isnull=True)
+    roles = UserRole.objects.filter(site=fxf.site, ended_at=None, group__name="Site Supervisor")
     emails = [r.user.email for r in roles]
     Device = get_device_model()
     is_delete = True if status is None and fxf.fsform is not None else False
@@ -25,7 +25,7 @@ def send_message(fxf, status=None, comment=None, comment_url=None):
 
 
 def send_message_stages(site):
-    roles = UserRole.objects.filter(site=site, ended_at__isnull=True)
+    roles = UserRole.objects.filter(site=site, ended_at=None, group__name="Site Supervisor")
     emails = [r.user.email for r in roles]
     Device = get_device_model()
     message = {'notify_type': 'Stages Ready',
@@ -35,7 +35,7 @@ def send_message_stages(site):
 
 
 def send_message_un_deploy(fxf):
-    roles = UserRole.objects.filter(site=fxf.site, ended_at__isnull=True)
+    roles = UserRole.objects.filter(site=fxf.site, ended_at=None, group__name="Site Supervisor")
     emails = [r.user.email for r in roles]
     Device = get_device_model()
     message = {'notify_type': 'Form Altered',
@@ -50,7 +50,7 @@ def send_message_un_deploy(fxf):
 
 
 def send_message_xf_changed(fxf=None, form_type=None, id=None):
-    roles = UserRole.objects.filter(site=fxf.site, ended_at__isnull=True)
+    roles = UserRole.objects.filter(site=fxf.site, ended_at=None, group__name="Site Supervisor")
     emails = [r.user.email for r in roles]
     Device = get_device_model()
     message = {'notify_type': 'Kobo Form Changed',
