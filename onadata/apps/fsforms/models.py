@@ -1,3 +1,4 @@
+
 from __future__ import unicode_literals
 import datetime
 import json
@@ -22,6 +23,7 @@ from onadata.apps.fsforms.fsxform_responses import get_instances_for_field_sight
 from django.contrib.sites.models import Site as DjangoSite
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
+SCHEDULED_LEVEL = [(0, 'Daily'), (1, 'Monthly'), (2, 'Weekly'),]
 FORM_STATUS = [(0, 'Pending'), (1, 'Rejected'), (2, 'Flagged'), (3, 'Approved'), ]
 
 
@@ -167,6 +169,7 @@ class Schedule(models.Model):
     date_range_end = models.DateField(default=datetime.date.today)
     selected_days = models.ManyToManyField(Days, related_name='days', blank=True,)
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
+    schedule_level = models.IntegerField(default=0, choices=SCHEDULED_LEVEL)
     date_created = models.DateTimeField(auto_now_add=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
@@ -231,6 +234,13 @@ class FieldSightXF(models.Model):
                                            self.xf.title,)
     def getresponces(self):
         return get_instances_for_field_sight_form(self.pk)
+
+    def getlatestsubmittiondate(self):
+        if self.site is not None:
+            return self.site_form_instances.order_by('-pk').values('date')[:1]
+        else:
+            return self.project_form_instances.order_by('-pk').values('date')[:1]
+
 
     def get_absolute_url(self):
         if self.project:

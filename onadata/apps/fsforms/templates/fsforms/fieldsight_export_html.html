@@ -26,10 +26,18 @@
         <section class="panel">
                     <header class="panel-heading clearfix">
                         <h3><i class="la la-pencil-square-o"></i>{% trans 'Form' %} {% trans 'Submissions' %} | {{ form_name  }}</h3>
+
+     
+
             <div class="panel-heading-right">
+            
+              <a class="btn btn-sm btn-primary" href="{% url 'forms:project_html_table_export' obj.id %}"><i class="la la-eye"></i> Detailed Responses List</a>
               <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForms" aria-expanded="false" aria-controls="searchForms"><i class="la la-search"></i> Search</a>
             
             </div>
+
+
+            
                     </header>
           <div class="panel-body">
             <!--Search Organization-->

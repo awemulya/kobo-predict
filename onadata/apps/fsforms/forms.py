@@ -121,7 +121,7 @@ class GeneralForm(HTML5BootstrapModelForm, KOModelForm):
         self.fields['xf'].label = "Form"
 
     class Meta:
-        fields = ['xf']
+        fields = ['xf', 'default_submission_status']
         model = FieldSightXF
 
 
@@ -268,7 +268,7 @@ class ScheduleForm(forms.ModelForm):
         self.fields['form'].empty_label = None
 
     class Meta:
-        fields = ['form', 'form_type', 'name', 'date_range_start', 'date_range_end', 'selected_days', 'shared_level']
+        fields = ['form', 'form_type', 'name', 'date_range_start', 'date_range_end', 'selected_days', 'shared_level', 'schedule_level']
         model = Schedule
         widgets = { 'selected_days': forms.CheckboxSelectMultiple,
                     'date_range_start': SelectDateWidget,

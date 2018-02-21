@@ -263,9 +263,9 @@ class ProjectResponses(ProjectRoleMixin, View):
         obj = get_object_or_404(Project, pk=pk)
         schedules = Schedule.objects.filter(project_id=pk, site__isnull=True, schedule_forms__isnull=False)
         stages = Stage.objects.filter(stage__isnull=True, project_id=pk, stage_forms__isnull=True).order_by('order')
-        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=pk, is_survey=False)
-        surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=pk, is_survey=True)
-        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_deleted=True,project_id=pk)
+        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, project_id=pk, is_survey=False)
+        surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, project_id=pk, is_survey=True)
+        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_deleted=True, project_id=pk)
         return render(request, "fsforms/project/project_responses_list.html",
                       {'obj': obj, 'schedules': schedules, 'stages':stages, 'generals':generals, 'surveys': surveys,
                        "deleted_forms":deleted_forms, 'project': pk})
@@ -275,8 +275,8 @@ class Responses(ReviewerRoleMixin, View):
         obj = get_object_or_404(Site, pk=pk)
         schedules = Schedule.objects.filter(site_id=pk, project__isnull=True, schedule_forms__isnull=False)
         stages = Stage.objects.filter(stage__isnull=True, site_id=pk).order_by('order')
-        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,site_id=pk, is_survey=False)
-        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_scheduled=False,site_id=pk, is_deleted=True)
+        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, site_id=pk, is_survey=False)
+        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_scheduled=False, site_id=pk, is_deleted=True)
         return render(request, "fsforms/responses_list.html",
                       {'obj': obj, 'schedules': schedules, 'stages':stages,'generals':generals,
                         "deleted_forms":deleted_forms,'site': pk})
@@ -534,8 +534,7 @@ def edit_schedule(request, id):
 
 # @group_required("Project")
 # @api_view(['POST', 'GET'])
-
-class Set_deploy_stages(SPFmixin, View):
+class SetDeployStages(SPFmixin, View):
     def post(self, request, is_project, pk):
         try:
             if is_project == "1":
@@ -1255,6 +1254,63 @@ def download_xform(request, pk):
 
 
 
+class FullResponseTable(FormMixin, View):
+    def get(self, request, fsxf_id):
+        limit = int(request.GET.get('limit', 100))
+        fsxf_id = int(fsxf_id)
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)
+        xform = fsxf.xf
+        id_string = xform.id_string
+        if fsxf.site is None:
+            cursor = get_instances_for_project_field_sight_form(fsxf_id)
+        else:
+            cursor = get_instances_for_field_sight_form(fsxf_id)
+        cursor = list(cursor)
+        for index, doc in enumerate(cursor):
+            medias = []
+            for media in cursor[index].get('_attachments', []):
+                if media:
+                    medias.append(media.get('download_url', ''))
+            cursor[index].update({'medias': medias})
+        paginator = Paginator(cursor, limit, request=request)
+
+        try:
+            page = paginator.page(request.GET.get('page', 1))
+        except (EmptyPage, PageNotAnInteger):
+            try:
+                page = paginator.page(1)
+            except (EmptyPage, PageNotAnInteger):
+                raise Http404('This report has no submissions')
+
+        data = [("v1", page.object_list)]
+        context = build_export_context(request, xform, id_string)
+
+        context.update({
+            'page': page,
+            'table': [],
+            'title': id,
+        })
+
+        export = context['export']
+        sections = list(export.labels.items())
+        section, labels = sections[0]
+        id_index = labels.index('_id')
+
+        # generator dublicating the "_id" to allow to make a link to each
+        # submission
+        def make_table(submissions):
+            for chunk in export.parse_submissions(submissions):
+                for section_name, rows in chunk.items():
+                    if section == section_name:
+                        for row in rows:
+                            yield row[id_index], row
+
+        context['labels'] = labels
+        context['data'] = make_table(data)
+        context['obj'] = fsxf
+        print context
+        # return JsonResponse({'data': cursor})
+        return render(request, 'fsforms/full_response_table.html', context)
 
 @group_required('KoboForms')
 def html_export(request, fsxf_id):

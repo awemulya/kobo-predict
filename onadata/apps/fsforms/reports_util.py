@@ -7,6 +7,11 @@ from .models import FieldSightXF
 from onadata.apps.viewer.models.parsed_instance import dict_for_mongo, _encode_for_mongo, xform_instances
 DEFAULT_LIMIT = 30000
 
+def get_images_for_site(site_id):
+    return settings.MONGO_DB.instances.find({"fs_site": str(site_id), "_attachments.mimetype" : "image/jpeg"},{"_attachments" : { '$elemMatch': { "mimetype": "image/jpeg"}}, "_attachments.filename":1, "fs_uuid":1}).sort([( "_id", -1 )]).limit(10)
+
+def get_site_responses_coords(site_id):
+    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": str(site_id), "_geolocation":{"$not":{ "$elemMatch": { "$eq": None }}}}}, {"$project" : {"_id":0, "type": {"$literal": "Feature"}, "geometry":{ "type": {"$literal": "Point"}, "coordinates": "$_geolocation" }, "properties": {"id":"$_id", "fs_uuid":"$fs_uuid", "submitted_by":"$_submitted_by"}}}])
 
 def get_instaces_for_site_individual_form(fieldsightxf_id):
     query = {"fs_uuid":str(fieldsightxf_id)}
@@ -47,13 +52,13 @@ def build_formpack(id_string, xform):
 
 def build_export_context(request,xform, id_string):
 
-    hierarchy_in_labels = request.REQUEST.get('hierarchy_in_labels', None)
-    group_sep = request.REQUEST.get('group_sep', '/')
+    hierarchy_in_labels = request.GET.get('hierarchy_in_labels', None)
+    group_sep = request.GET.get('group_sep', '/')
 
     xform, formpack = build_formpack(id_string, xform)
 
     translations = formpack.available_translations
-    lang = request.REQUEST.get('lang', None) or next(iter(translations), None)
+    lang = request.GET.get('lang', None) or next(iter(translations), None)
 
     options = {'versions': 'v1',
                'group_sep': group_sep,

@@ -69,6 +69,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.template import Context
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from onadata.apps.fsforms.reports_util import get_images_for_site, get_site_responses_coords
 
 @login_required
 def dashboard(request):
@@ -251,7 +252,6 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
             if question['question_name'] in meta_answers:
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
         myanswers = mylist
-        print myanswers
         outstanding, flagged, approved, rejected = obj.get_site_submission()
         dashboard_data = {
             'obj': obj,
@@ -2278,8 +2278,8 @@ class FormlistAPI(View):
         pdf = report.generateCustomSiteReport(pk, base_url,fs_ids)
         buffer.seek(0)
         pdf = buffer.getvalue()
-        # file = open("contract.pdf", "wb")
-        # file.write(pdf)
+        file = open("media/contract.pdf", "wb")
+        file.write(pdf)
         response.write(pdf)
         buffer.close()
         return response
@@ -2293,4 +2293,19 @@ class GenerateCustomReport(ReviewerRoleMixin, View):
         content={'general':list(general), 'schedule':list(schedule), 'stage':list(stage), 'survey':list(survey)}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
-    
+class RecentResponseImages(ReviewerRoleMixin, View):
+    def get(self, request, pk):
+        recent_resp_imgs = get_images_for_site(pk)
+        content={'images':list(recent_resp_imgs)}
+        return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+
+class SiteResponseCoordinates(ReviewerRoleMixin, View):
+    def get(self, request, pk):
+        coord_datas = get_site_responses_coords(pk)
+        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        return render(request, 'fieldsight/site_response_map_view.html', {'co_ords':json.dumps(list(coord_datas["result"]))})
+
+    def post(self, request, pk):
+        coord_datas = get_site_responses_coords(pk)
+        content={'coords-data':list(coord_datas["result"])}
+        return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
