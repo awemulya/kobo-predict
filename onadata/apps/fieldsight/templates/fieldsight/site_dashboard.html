@@ -528,7 +528,6 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 	$( document ).ready(function() {
 // Chart.defaults.global.defaultFontColor = '#FFF';
 height_max = Math.max.apply(Math, progress_data) || 10;
-height_max = Math.ceil(height_max / 10) * 10;
 
 var ctx1 = document.getElementById("progressChart");
 var myChart1 = new Chart(ctx1, {
