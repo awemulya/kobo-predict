@@ -34,7 +34,7 @@ from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from onadata.apps.fieldsight.bar_data_project import BarGenerator
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
-    LineChartGeneratorSite
+    LineChartGeneratorSite, ProgressGeneratorSite
 from onadata.apps.fsforms.models import FieldSightXF, Stage, FInstance
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
@@ -242,6 +242,8 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
 
         line_chart = LineChartGeneratorSite(obj)
         line_chart_data = line_chart.data()
+        progress_chart = ProgressGeneratorSite(obj)
+        progress_chart_data = progress_chart.data()
         meta_questions = obj.project.site_meta_attributes
         meta_answers = obj.site_meta_attributes_ans
         mylist =[]
@@ -261,6 +263,8 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
             'data': data,
             'cumulative_data': line_chart_data.values(),
             'cumulative_labels': line_chart_data.keys(),
+            'progress_chart_data_data': progress_chart_data.values(),
+            'progress_chart_data_labels': progress_chart_data.keys(),
             'meta_data': myanswers,
         }
         return dashboard_data
