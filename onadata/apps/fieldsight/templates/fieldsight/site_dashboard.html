@@ -536,10 +536,10 @@ var myChart = new Chart(ctx, {
     data: {
         // labels: chartdata.labels,
         // datasets: dataset
-        labels: cummulative_labels,
+        labels: progress_labels,
         datasets: [{
-            label: 'No of Submissions',
-            data: cummulative_data,
+            label: 'Stage',
+            data: progress_data,
             backgroundColor: 'rgba(41,128,185,0.5)',
             borderColor: 'rgba(0,99,132,0.2)',
             borderWidth: 1
@@ -562,7 +562,7 @@ var myChart = new Chart(ctx, {
                         },
                         scaleLabel:{
                             display: true,
-                            labelString: 'No of Submissions',
+                            labelString: 'Stages',
                             backgroundColor: 'rgba(0,0,0,0.2)',
                             fontColor: "#000"
                         }
