@@ -263,8 +263,8 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
             'data': data,
             'cumulative_data': line_chart_data.values(),
             'cumulative_labels': line_chart_data.keys(),
-            'progress_chart_data_data': progress_chart_data.values(),
-            'progress_chart_data_labels': progress_chart_data.keys(),
+            'progress_chart_data_data': progress_chart_data.keys(),
+            'progress_chart_data_labels': progress_chart_data.values(),
             'meta_data': myanswers,
         }
         return dashboard_data
