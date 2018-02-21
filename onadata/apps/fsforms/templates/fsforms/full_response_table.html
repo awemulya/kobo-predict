@@ -18,6 +18,91 @@
 }
   
   </style>
+
+  <style>
+.rtable {
+  /*!
+  // IE needs inline-block to position scrolling shadows otherwise use:
+  // display: block;
+  // max-width: min-content;
+  */
+  display: inline-block;
+  vertical-align: top;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+}
+
+.rtable,
+.rtable--flip tbody {
+  -webkit-overflow-scrolling: touch;
+  background: radial-gradient(left, ellipse, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 75%) 0 center, radial-gradient(right, ellipse, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 75%) 100% center;
+  background-size: 10px 100%, 10px 100%;
+  background-attachment: scroll, scroll;
+  background-repeat: no-repeat;
+}
+
+.rtable td:first-child,
+.rtable--flip tbody tr:first-child {
+  background-image: -webkit-gradient(linear, left top, right top, color-stop(50%, white), to(rgba(255, 255, 255, 0)));
+  background-image: linear-gradient(to right, white 50%, rgba(255, 255, 255, 0) 100%);
+  background-repeat: no-repeat;
+  background-size: 20px 100%;
+}
+
+.rtable td:last-child,
+.rtable--flip tbody tr:last-child {
+  background-image: -webkit-gradient(linear, right top, left top, color-stop(50%, white), to(rgba(255, 255, 255, 0)));
+  background-image: linear-gradient(to left, white 50%, rgba(255, 255, 255, 0) 100%);
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  background-size: 20px 100%;
+}
+
+.rtable th {
+  font-size: 11px;
+  text-align: left;
+  text-transform: uppercase;
+  background: #f2f0e6;
+}
+
+.rtable th,
+.rtable td {
+  padding: 6px 12px;
+  border: 1px solid #d9d7ce;
+}
+
+
+
+/*!
+// CodePen house keeping
+*/
+
+
+
+.table_titles{
+  /*max-width: 200px;*/
+  overflow: hidden;
+  text-overflow: hidden;
+  min-width: 100px;
+  white-space: nowrap;
+  text-align: center;
+}
+.bold_title{
+   font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+    font-size: 16px;
+    font-style: bold;
+    font-weight: 700;
+    letter-spacing: 1px;
+    word-spacing: inter-word;
+}
+body{
+  font-size: 12px !important; 
+}
+    </style>
     
 {% endblock %}
 {% block content %}
@@ -53,13 +138,23 @@
     
    
 
-<table class="table table-striped">
 
-    <thead>
+
+
+
+
+
+
+
+
+
+<table class="rtable table table-striped table-bordered table-hover">
+
+    <thead class="bold_title">
         <tr>
-            <th>{% trans "View or Edit" %}</th>
+            <th class="table_titles">{% trans "View or Edit" %}</th>
             {% for label in labels %}
-            <th><span class="cell-content-wrap">{{ label }}</span></th>
+            <th class="table_titles"><span class="cell-content-wrap">{{ label }}</span></th>
             {% endfor %}
         </tr>
 
@@ -78,6 +173,16 @@
     </tbody>
 
 </table>
+
+
+
+
+
+
+
+
+
+
 
 
 

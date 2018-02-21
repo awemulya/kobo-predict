@@ -49,6 +49,7 @@
           <table class="table table-striped" id="dynamic-table2">
               <thead>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
+               <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
               <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
               <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
@@ -58,6 +59,9 @@
                   <tr>
                       <td>
                           {{ obj.xf.title }}
+                      </td>
+                      <td>
+                          {{ obj.getlatestsubmittiondate.first.date }}
                       </td>
                       <td>
                           {{ obj.date_created }}
@@ -84,6 +88,7 @@
           <table class="table table-striped" id="dynamic-table3">
               <thead>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
+              <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
               <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
               <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
@@ -94,6 +99,10 @@
                       <td>
                           {{ obj.xf.title }}
                       </td>
+                      <td>
+                          {{ obj.getlatestsubmittiondate.first.date }}
+                      </td>
+
                       <td>
                           {{ obj.date_created }}
                       </td>
@@ -121,6 +130,7 @@
           <table class="table table-striped" id="dynamic-table1">
               <thead>
               <th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
+               <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
               <th>{% trans 'Submissions' %}</th>
@@ -131,6 +141,9 @@
                   <tr>
                       <td>
                           {{ obj.name}}</a>
+                      </td>
+                      <td>
+                          {{ obj.getlatestsubmittiondate.first.date }}
                       </td>
                       <td>
                           {{ obj.schedule_forms.xf.title }}</a>
@@ -177,6 +190,7 @@
                   <table class="table table-striped">
                       <thead>
                       <th>{% trans 'Sub' %} {% trans 'Stage' %} {% trans 'Name' %}</th>
+                      <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
                       <th>{% trans 'Order' %}</th>
                       <th>{% trans 'Form' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Submissions' %}</th>
@@ -187,6 +201,9 @@
                           <tr>
                               <td>
                                   {{ obj.name}}
+                              </td>
+                              <td>
+                                  {{ obj.getlatestsubmittiondate.first.date }}
                               </td>
                               <td>
                                   {{ obj.order }}

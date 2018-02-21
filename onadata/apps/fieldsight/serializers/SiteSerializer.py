@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
-from onadata.apps.fieldsight.models import Site, SiteCreateSurveyImages, ProjectType, Project
+from onadata.apps.fieldsight.models import Site, Region, SiteCreateSurveyImages, ProjectType, Project
 
 
 class SiteSerializer(serializers.ModelSerializer):
@@ -105,3 +105,8 @@ class MinimalSiteSerializer(serializers.ModelSerializer):
         model = Site
         fields = ('id','name', 'identifier','type','region', )
         read_only_fields = ('is_active',)
+
+class RegionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Region
+        fields = ('id','name', 'identifier')
