@@ -61,6 +61,15 @@ def bulkuploadsites(source_user, file, pk):
                 _site.additional_desc = site.get("additional_desc")
                 _site.location = location
                 _site.logo = "logo/default-org.jpg"
+
+                meta_ques = project.site_meta_attributes
+
+                myanswers = {}
+                for question in meta_ques:
+                    myanswers[question['question_name']]=site.get(question['question_name'], "")
+                    print site.get(question['question_name'])
+                
+                _site.site_meta_attributes_ans = myanswers
                 _site.save()
                 i += 1
                 interval = count/20
@@ -95,9 +104,10 @@ def bulkuploadsites(source_user, file, pk):
         task.status = 3
         task.save()
         print 'Site Upload Unsuccesfull. %s' % e
+        print e.__dict__
         noti = project.logs.create(source=source_user, type=412, title="Bulk Sites",
                                        content_object=project, recipient=source_user,
-                                       extra_message=str(count) + " Sites")
+                                       extra_message=str(count) + " Sites @error " + u'{}'.format(e.message))
         result={}
         result['id']= noti.id,
         result['source_uid']= source_user.id,
@@ -111,7 +121,7 @@ def bulkuploadsites(source_user, file, pk):
         result['get_absolute_url']= noti.get_absolute_url(),
         result['type']= 412,
         result['date']= str(noti.date),
-        result['extra_message']= str(count)+" Sites",
+        result['extra_message']= str(count) + " Sites @error " + u'{}'.format(e.message),
         result['seen_by']= [],
         ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
         return None
@@ -350,7 +360,7 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
         with transaction.atomic():
             roles_created = 0            
             for region_id in regions:
-                if region_id == "no_region":
+                if region_id == "0":
                     sites = Site.objects.filter(region__isnull=True, project_id=project_id).values('id')
                 else: 
                     sites = Site.objects.filter(region_id = region_id, project_id=project_id).values('id')

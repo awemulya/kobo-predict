@@ -2,22 +2,22 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Stages of' %}  {{site.name}}
+{% block page-title %}{% trans 'Stages' %} {% trans 'of' %}  {{site.name}}
 {% endblock %}
 
 {% block head %}
 <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
 
 <a class="btn btn-danger btn-raised" href="{% url 'forms:set-deploy-stages' site.pk %}">
-    {% trans 'Deploy All Stages' %}</a>
+    {% trans 'Deploy' %} {% trans 'All' %} {% trans 'Stages' %}</a>
 <a class="btn btn-danger btn-raised" href="{% url 'forms:share-stages' site.pk 0%}">
-    {% trans 'Share All Stages To Library' %}</a>
+    {% trans 'Share' %} {% trans 'All' %} {% trans 'Stages' %} {% trans 'To' %} {% trans 'Library' %}</a>
     <a class="btn btn-success btn-raised" href="{% url 'forms:stage-add' site.pk %}">
-                            {% trans 'Add New Stage' %}</a>
+                            {% trans 'Add' %} {% trans 'New' %} {% trans 'Stage' %}</a>
 {% endblock %}
 {% block breadcrumbs %}
-    <li><a href="{% url 'fieldsight:site-dashboard' site.pk %}">{% trans 'Site Dashboard' %}</a></li>
-    <li>{% trans 'Main Stages' %}</li>
+    <li><a href="{% url 'fieldsight:site-dashboard' site.pk %}">{% trans 'Site' %} {% trans 'Dashboard' %}</a></li>
+    <li>{% trans 'Main' %} {% trans 'Stages' %}</li>
 {% endblock %}
 {%block extracss %}
 <style>
@@ -184,7 +184,7 @@
             <h3><span>{% trans 'Stage:' %}</span> <b>{{stage.order}}</b></h3>
             <h4><span>{% trans 'Name:' %}</span> <b>{{stage.name}}</b></h4>
             <p><span>{% trans 'Description:' %}</span>{{stage.description}}</p>
-            <p class="text-center">{% trans 'List Sub Stages' %}({{stage.sub_stage_count}})</p>
+            <p class="text-center">{% trans 'List' %} {% trans 'Sub' %} {% trans 'Stages' %}({{stage.sub_stage_count}})</p>
           </div>
         </a>
     </div>

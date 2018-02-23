@@ -12,10 +12,12 @@ from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 
 from onadata.apps.fieldsight.models import Organization, Project, Site
+from onadata.apps.fsforms.models import FieldSightXF 
 from onadata.apps.users.models import UserProfile
 from .helpers import json_from_object
 from onadata.apps.userrole.models import UserRole
-
+from django.shortcuts import get_object_or_404
+from rest_framework.permissions import BasePermission
 
 class LoginRequiredMixin(object):
     @classmethod
@@ -39,7 +41,6 @@ class OrganizationRoleMixin(object):
 
 class ProjectRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
-
         if request.group.name == "Super Admin":
             return super(ProjectRoleMixin, self).dispatch(request, *args, **kwargs)
         
@@ -182,5 +183,88 @@ class ProjectRoleView(LoginRequiredMixin):
     def get_queryset(self):
         return super(ProjectRoleView, self).get_queryset()
 
+
+
+class SPFmixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if request.group.name == "Super Admin":
+                return super(SPFmixin, self).dispatch(request, *args, **kwargs)
+
+        user_id = request.user.id
+
+        if self.kwargs.get('is_project') == '0':
+            site_id = self.kwargs.get('pk')
+            user_role = request.roles.filter(user_id = user_id, site_id = site_id, group__name="Reviewer")
+            if user_role:
+                return super(SPFmixin, self).dispatch(request, *args, **kwargs)
+            project_id=Site.objects.get(pk=site_id).project.id
+        
+        else:
+            project_id = self.kwargs.get('pk')
+
+        user_role = request.roles.filter(user_id = user_id, project_id = project_id, group__name="Project Manager")
+        if user_role:
+            return super(SPFmixin, self).dispatch(request, *args, **kwargs)
+
+        organization_id = Project.objects.get(pk=project_id).organization.id
+        user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+        if user_role_asorgadmin:
+            return super(SPFmixin, self).dispatch(request, *args, **kwargs)
+
+        raise PermissionDenied()    
+
+
+class FormMixin(LoginRequiredMixin):
+    def dispatch(self, request, fsxf_id, *args, **kwargs):
+        if request.group.name == "Super Admin":
+                return super(FormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
+
+        user_id = request.user.id
+        form = get_object_or_404(FieldSightXF, pk=fsxf_id)
+
+        if form.site is not None:
+            site_id = form.site.id
+            user_role = request.roles.filter(user_id = user_id, site_id = site_id, group__name="Reviewer")
+            if user_role:
+                return super(FormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
+            project_id=Site.objects.get(pk=site_id).project.id
+        
+        else:
+            project_id = form.project.id
+
+        user_role = request.roles.filter(user_id = user_id, project_id = project_id, group__name="Project Manager")
+        if user_role:
+            return super(FormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
+
+        organization_id = Project.objects.get(pk=project_id).organization.id
+        user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+        if user_role_asorgadmin:
+            return super(FormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
+
+        raise PermissionDenied()   
+
+# for api mixins/permissions
+
+# class ProjectPermission(BasePermission):
+#     def has_permission(self, request, view):
+#         if request.group.name == "Super Admin":
+#             return super(ProjectRoleMixin, self).dispatch(request, *args, **kwargs)
+        
+#         project_id = self.kwargs.get('pk')
+#         user_id = request.user.id
+#         user_role = request.roles.filter(user_id = user_id, project_id = project_id, group__name="Project Manager")
+        
+#         if user_role:
+#             return True
+        
+#         organization_id = Project.objects.get(pk=project_id).organization.id
+#         user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+        
+#         if user_role_asorgadmin:
+#             return True
+
+#         return False
+                
+                    
 
 

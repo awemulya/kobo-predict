@@ -3,37 +3,39 @@
 {% load filters %}
 {% block content %}
 {% load filters %}
-
+<style type="text/css">
+    #removebutton{
+    margin-top:33px;  
+}
+</style>
  <script src="{% static 'js/reactjs/react.min.js' %}"></script>
  <script src="{% static 'js/reactjs/browser.min.js' %}"></script>
  <script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
 
 
             <div id="main-content" class="padding">
-                {% block breadcrumbs %}
-                <ul class="breadcrumbb">
-                    {% if form.instance.id %}
-                    <li><a href="{% url 'fieldsight:project-dashboard' form.instance.pk %}">{{ form.instance }}</a></li>
-                    {% endif %}
-                    {% if not form.instance.id %}
-                 
-                    {% endif %}
-                    <li>{{ scenario }}</li>
-                </ul>
-                {% endblock %}
+                <nav aria-label="breadcrumb" role="navigation">
+					{% block breadcrumbs %}
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</li>
+					 </ol>
+					{% endblock %}
+				</nav>
+
                 <section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3><i class="la la-building"></i>{% trans 'Site Meta Attributes' %}</h3>
+                        <h3><i class="la la-cogs"></i>{% trans 'Site' %} {% trans 'Meta' %} {% trans 'Attributes' %}</h3>
                     </header>
                     <div class="panel-body">
                       
                         <div id="newOrganization" class="margin-top">
-                           
+                           <div id="app"></div>
                         </div>
                     </div>
 
                 </section>
-                   <div id="app"></div>
+                   
                     <form id="theForm" action="{% url 'fieldsight:define-site-meta' obj.pk %}" method="post">
                     {% csrf_token %}
                       <input name="json_questions" id="json_questions" type="hidden" value="" />
@@ -83,15 +85,29 @@
             },
             renderForm:function(){
                 return(
-                    <div className="QuestionContainer">
-                        <textarea ref="newText"  onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></textarea>
-                        <select ref="questionType" onChange={this.save} defaultValue={this.props.question_type}>
-                          <option value="Text">Text</option>
-                          <option value="Number">Number</option>
-                          <option value="Date">Date</option>
-                        </select>
-                        <button onClick={this.remove} className="button-danger">Remove</button>
+                    <div className="QuestionContainer form-row">
+                        <div className="form-group col-md-4">
+                            <label for="input1" className="col-form-label">Input Label:</label>
+                            <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
+                        </div>
+                        <div className="form-group col-md-4">
+                            <label for="input2" className="col-form-label">Input Type:</label>
+                            <select className="form-control" ref="questionType" id="input2" onChange={this.save} defaultValue={this.props.question_type}>
+                              <option value="Text">Text</option>
+                             <option value="Number">Number</option>
+                              <option value="Date">Date</option>
+                            </select>
+                        </div>
+
                         
+
+                        <div className="form-group col-md-4">
+                            <label className="col-form-label"> &nbsp; </label>                     
+
+                            <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
+                            
+
+                        </div>
                     </div>
 
             );
@@ -170,14 +186,14 @@
       render: function () {
             return (
                 <div>
-                    <div className="Form">
+                    
                         {   
                             this.state.Questions.map(this.eachQuestion)
                         }
-                    </div>
-                    <button onClick={this.addQuestion.bind(null, 'New Question')} className="button-info create">Add New</button>
-                    <br />
-                    <button onClick={this.save.bind()} className="button-info create">Save Form</button>
+                    
+                    <button onClick={this.addQuestion.bind(null, 'New Question')} className="btn btn-primary"><i className="la la-plus"></i>Add New</button>
+                  
+                    <button onClick={this.save.bind()} className="btn btn-success pull-right"><i className="la la-save"></i>Save Form</button>
                     
 
                 </div>

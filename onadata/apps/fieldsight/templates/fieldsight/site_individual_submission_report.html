@@ -126,7 +126,7 @@ td, th {
                   <div class="col-lg-6 col-md-6 col-sm-12">
                   <div class="widget-info margin-top bg-white padding">
                    <div class="widget-head">
-                  <h4><u>{% trans 'Site Overview' %}</u></h4>
+                  <h4><u>{% trans 'Site' %} {% trans 'Overview' %}</u></h4>
                 </div>
                     <p><b>{% trans 'Address' %}</b>: {{ obj.address }}, {{ obj.get_country_display }}</p>
                     <p><b>{% trans 'Phone' %}</b>: {{ obj.phone }}</p>
@@ -146,8 +146,8 @@ td, th {
 
                    <div class="col-lg-12 col-md-12 col-sm-12">
                    <div class="widget-info bg-white padding">
-                  <p><b>{% trans 'Total Supervisors' %}</b>: {{ supervisor.count }}</p>
-                   <p><b>{% trans 'Total Reviewers' %}</b>: {{ reviewer.count }}</p>
+                  <p><b>{% trans 'Total' %} {% trans 'Supervisors' %}</b>: {{ supervisor.count }}</p>
+                   <p><b>{% trans 'Total' %} {% trans 'Reviewers' %}</b>: {{ reviewer.count }}</p>
                </div>
                </div>
                </div>
@@ -156,13 +156,13 @@ td, th {
                <div class="col-lg-12 col-md-12 col-sm-12">
                   <div class="widget-info margin-top bg-white padding">
                   <div class="widget-head">
-                   <h4><u>{% trans 'Submission Status' %}</u></h4>
+                   <h4><u>{% trans 'Submission' %} {% trans 'Status' %}</u></h4>
                    </div>
                     <ul>
-                    <li><b><p>{% trans 'Rejected Submissions' %}</b>: {{ rejected|length }}</p></li>
-                    <li><b><p>{% trans 'Flagged Submissions' %}</b>: {{ flagged|length }}</p></li>
-                     <li><b><p>{% trans 'Pending Submissions' %}</b>: {{ outstanding|length }}</p></li>
-                      <li><b><p>{% trans 'Approved Submissions' %}</b>: {{ approved|length }}</p></li>
+                    <li><b><p>{% trans 'Rejected' %} {% trans 'Submissions' %}</b>: {{ rejected|length }}</p></li>
+                    <li><b><p>{% trans 'Flagged' %} {% trans 'Submissions' %}</b>: {{ flagged|length }}</p></li>
+                     <li><b><p>{% trans 'Pending' %} {% trans 'Submissions' %}</b>: {{ outstanding|length }}</p></li>
+                      <li><b><p>{% trans 'Approved' %} {% trans 'Submissions' %}</b>: {{ approved|length }}</p></li>
                     </ul>
                   </div>
                   </div>
@@ -173,7 +173,7 @@ td, th {
             <div class="col-lg-12 col-sm-12">
               <div class="widget-info margin-top bg-white padding">
                 <div class="widget-head">
-                  <h4><u>{% trans 'Site Map' %}</u></h4>
+                  <h4><u>{% trans 'Site' %} {% trans 'Map' %}</u></h4>
                 </div>
                 <div class="widget-body">
                   <div id="map" class="full-map"></div>
@@ -221,11 +221,11 @@ td, th {
 
               <div class="widget-info margin-top bg-white padding">
                 <div class="widget-head">
-                  <h4><u>{% trans 'Form Submissions' %}</u></h4>
+                  <h4><u>{% trans 'Form' %} {% trans 'Submissions' %}</u></h4>
 
                 </div>
                 <div class="widget-body">
-                {% trans 'Total Submissions:' %}
+                {% trans 'Total' %} {% trans 'Submissions:' %}
                 {{ total_submissions }}
                   <div id="submission-chart">
                     <canvas id="myChart" width="500px" height="250"></canvas>
@@ -238,7 +238,7 @@ td, th {
             <div class="col-md-12">
               <div class="widget-info margin-top bg-white padding">
                 <div class="widget-head">
-                  <h4><u>{% trans 'Site Progress' %}</u></h4>
+                  <h4><u>{% trans 'Site' %} {% trans 'Progress' %}</u></h4>
                 </div>
                 <div class="widget-body">
                   <div id="siteprogress-chart">

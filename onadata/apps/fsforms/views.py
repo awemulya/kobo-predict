@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView, View
 from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpResponseBadRequest
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
@@ -45,6 +45,7 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
 from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
     EducationMaterial, EducationalImages, InstanceImages
 from django.db.models import Q
+from onadata.apps.fieldsight.rolemixins import SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -56,6 +57,7 @@ class UniqueXformMixin(object):
 
 class FSFormView(object):
     model = XForm
+    paginate_by = 50
     success_url = reverse_lazy('forms:library-forms-list')
     form_class = FSFormForm
 
@@ -256,28 +258,28 @@ def stage_add(request, site_id=None):
     form = StageForm(instance=instance)
     return render(request, "fsforms/stage_form.html", {'form': form, 'obj': site})
 
-@login_required()
-@group_required("Project")
-def project_responses(request, project_id=None):
-    schedules = Schedule.objects.filter(project_id=project_id, site__isnull=True, schedule_forms__isnull=False)
-    stages = Stage.objects.filter(stage__isnull=True, project_id=project_id, stage_forms__isnull=True).order_by('order')
-    generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=project_id)
-    surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=project_id, is_survey=True)
-    deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_deleted=True,project_id=project_id)
-    return render(request, "fsforms/project/project_responses_list.html",
-                  {'schedules': schedules, 'stages':stages, 'generals':generals, 'surveys': surveys,
-                   "deleted_forms":deleted_forms, 'project': project_id})
+class ProjectResponses(ProjectRoleMixin, View): 
+    def get(self,request, pk=None):
+        obj = get_object_or_404(Project, pk=pk)
+        schedules = Schedule.objects.filter(project_id=pk, site__isnull=True, schedule_forms__isnull=False)
+        stages = Stage.objects.filter(stage__isnull=True, project_id=pk, stage_forms__isnull=True).order_by('order')
+        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=pk, is_survey=False)
+        surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,project_id=pk, is_survey=True)
+        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_deleted=True,project_id=pk)
+        return render(request, "fsforms/project/project_responses_list.html",
+                      {'obj': obj, 'schedules': schedules, 'stages':stages, 'generals':generals, 'surveys': surveys,
+                       "deleted_forms":deleted_forms, 'project': pk})
 
-@login_required()
-@group_required("Reviewer")
-def responses(request, site_id=None):
-    schedules = Schedule.objects.filter(site_id=site_id, project__isnull=True, schedule_forms__isnull=False)
-    stages = Stage.objects.filter(stage__isnull=True, site_id=site_id).order_by('order')
-    generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,site_id=site_id)
-    deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_scheduled=False,site_id=site_id, is_deleted=True)
-    return render(request, "fsforms/responses_list.html",
-                  {'schedules': schedules, 'stages':stages,'generals':generals,
-                    "deleted_forms":deleted_forms,'site': site_id})
+class Responses(ReviewerRoleMixin, View):
+    def get(self, request, pk=None):
+        obj = get_object_or_404(Site, pk=pk)
+        schedules = Schedule.objects.filter(site_id=pk, project__isnull=True, schedule_forms__isnull=False)
+        stages = Stage.objects.filter(stage__isnull=True, site_id=pk).order_by('order')
+        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False,site_id=pk, is_survey=False)
+        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_scheduled=False,site_id=pk, is_deleted=True)
+        return render(request, "fsforms/responses_list.html",
+                      {'obj': obj, 'schedules': schedules, 'stages':stages,'generals':generals,
+                        "deleted_forms":deleted_forms,'site': pk})
 
 
 @group_required("Project")
@@ -530,71 +532,73 @@ def edit_schedule(request, id):
                   {'form': form, 'obj': schedule.site, 'is_project': False, 'is_general': False, 'is_edit': True})
 
 
-@group_required("Project")
-@api_view(['POST', 'GET'])
-def set_deploy_stages(request, is_project, pk):
-    try:
-        if is_project == "1":
-            project = Project.objects.get(pk=pk)
-            sites = project.sites.filter(is_active=True)
-            main_stages = project.stages.filter(stage__isnull=True)
+# @group_required("Project")
+# @api_view(['POST', 'GET'])
+
+class Set_deploy_stages(SPFmixin, View):
+    def post(self, request, is_project, pk):
+        try:
+            if is_project == "1":
+                project = Project.objects.get(pk=pk)
+                sites = project.sites.filter(is_active=True)
+                main_stages = project.stages.filter(stage__isnull=True)
+                with transaction.atomic():
+
+                    FieldSightXF.objects.filter(is_staged=True, site__project=project,stage__isnull=False).\
+                        update(stage=None, is_deployed=False, is_deleted=True)
+                    FieldSightXF.objects.filter(is_staged=True, project=project,is_deleted=False).update(is_deployed=True)
+                    Stage.objects.filter(site__project=project).delete()
+                    for main_stage in main_stages:
+                        for site in sites:
+                            send_message_stages(site)
+                            site_main_stage = Stage(name=main_stage.name, order=main_stage.order, site=site,
+                                               description=main_stage.description, project_stage_id=main_stage.id)
+                            site_main_stage.save()
+                            project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
+                            for project_sub_stage in project_sub_stages:
+                                site_sub_stage = Stage(name=project_sub_stage.name, order=project_sub_stage.order, site=site,
+                                               description=project_sub_stage.description, stage=site_main_stage, project_stage_id=project_sub_stage.id)
+                                site_sub_stage.save()
+                                if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
+                                    fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
+                                    site_fsxf, created = FieldSightXF.objects.get_or_create(is_staged=True, xf=fsxf.xf, site=site,
+                                                                       fsform=fsxf, stage=site_sub_stage)
+                                    site_fsxf.is_deleted = False
+                                    site_fsxf.is_deployed = True
+                                    site_fsxf.save()
+                # noti = project.logs.create(source=request.user, type=4, title="Project Stages Deployed",
+                # organization=project.organization, description="Project Stages Deployed to sites.")
+                # result = {}
+                # result['description'] = "Project Form Deployed to sites."
+                # result['url'] = noti.get_absolute_url()
+                # ChannelGroup("notify-{}".format(project.organization.id)).send({"text": json.dumps(result)})
+                # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+                return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+            else:
+                site = Site.objects.get(pk=pk)
+                site.site_forms.filter(is_staged=True, xf__isnull=False, is_deployed=False, is_deleted=False).update(is_deployed=True)
+                send_message_stages(site)
+                # noti = site.logs.create(source=request.user, type=4, title="Site Stages Deployed",
+                # organization=site.project.organization, description="Project Form Deployed to sites.")
+                # result = {}
+                # result['description'] = "Project Form Deployed to sites."
+                # result['url'] = noti.get_absolute_url()
+                # ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
+                # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+                return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+
+class Rearrange_stages(SPFmixin, View):
+    def post(self, request, is_project, pk):
+        try:
+            data = json.loads(self.request.body)
             with transaction.atomic():
-
-                FieldSightXF.objects.filter(is_staged=True, site__project=project,stage__isnull=False).\
-                    update(stage=None, is_deployed=False, is_deleted=True)
-                FieldSightXF.objects.filter(is_staged=True, project=project,is_deleted=False).update(is_deployed=True)
-                Stage.objects.filter(site__project=project).delete()
-                for main_stage in main_stages:
-                    for site in sites:
-                        send_message_stages(site)
-                        site_main_stage = Stage(name=main_stage.name, order=main_stage.order, site=site,
-                                           description=main_stage.description, project_stage_id=main_stage.id)
-                        site_main_stage.save()
-                        project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
-                        for project_sub_stage in project_sub_stages:
-                            site_sub_stage = Stage(name=project_sub_stage.name, order=project_sub_stage.order, site=site,
-                                           description=project_sub_stage.description, stage=site_main_stage, project_stage_id=project_sub_stage.id)
-                            site_sub_stage.save()
-                            if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
-                                fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
-                                site_fsxf, created = FieldSightXF.objects.get_or_create(is_staged=True, xf=fsxf.xf, site=site,
-                                                                   fsform=fsxf, stage=site_sub_stage)
-                                site_fsxf.is_deleted = False
-                                site_fsxf.is_deployed = True
-                                site_fsxf.save()
-            # noti = project.logs.create(source=request.user, type=4, title="Project Stages Deployed",
-            # organization=project.organization, description="Project Stages Deployed to sites.")
-            # result = {}
-            # result['description'] = "Project Form Deployed to sites."
-            # result['url'] = noti.get_absolute_url()
-            # ChannelGroup("notify-{}".format(project.organization.id)).send({"text": json.dumps(result)})
-            # ChannelGroup("notify-0").send({"text": json.dumps(result)})
-            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
-        else:
-            site = Site.objects.get(pk=pk)
-            site.site_forms.filter(is_staged=True, xf__isnull=False, is_deployed=False, is_deleted=False).update(is_deployed=True)
-            send_message_stages(site)
-            # noti = site.logs.create(source=request.user, type=4, title="Site Stages Deployed",
-            # organization=site.project.organization, description="Project Form Deployed to sites.")
-            # result = {}
-            # result['description'] = "Project Form Deployed to sites."
-            # result['url'] = noti.get_absolute_url()
-            # ChannelGroup("notify-{}".format(site.project.organization.id)).send({"text": json.dumps(result)})
-            # ChannelGroup("notify-0").send({"text": json.dumps(result)})
-            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
-
-@group_required("Project")
-@api_view(['POST', 'GET'])
-def rearrange_stages(request, is_project, pk):
-    try:
-        with transaction.atomic():
-            for order, stage in enumerate(request.data.get('orders')):
-                Stage.objects.filter(pk=stage.get('id')).update(order=order+1)
-        return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+                for order, stage in enumerate(data.get('orders')):
+                    Stage.objects.filter(pk=stage.get('id')).update(order=order+1)
+            return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -736,46 +740,47 @@ def deploy_stages(request, id):
     return HttpResponseRedirect(reverse("forms:setup-project-stages", kwargs={'id': id}))
 
 
-@group_required("Project")
-@api_view(['POST', 'GET'])
-def deploy_general(request, is_project, pk):
-    fxf_id = request.data.get('id')
-    fxf_status = request.data.get('is_deployed')
-    try:
-        if is_project == "1":
-            with transaction.atomic():
+class Deploy_general(SPFmixin, View):
+    def post(self, request, is_project, pk):
+        data = json.loads(self.request.body)
+        fxf_id = data.get('id')
+        fxf_status = data.get('is_deployed')
+        
+        try:
+            if is_project == "1":
+                with transaction.atomic():
+                    fxf = FieldSightXF.objects.get(pk=fxf_id)
+                    if fxf_status:
+                        fxf.is_deployed = False
+                        fxf.save()
+                        FieldSightXF.objects.filter(fsform=fxf, is_scheduled=False, is_staged=False).update(is_deployed=False, is_deleted=True)
+                    else:
+                        fxf.is_deployed = True
+                        fxf.save()
+                        for site in fxf.project.sites.filter(is_active=True):
+                            child, created = FieldSightXF.objects.get_or_create(is_staged=False,
+                                                                                is_scheduled=False,
+                                                                                is_survey=False,
+                                                                                xf=fxf.xf, site=site, fsform_id=fxf_id)
+                            child.is_deployed = True
+                            child.is_deleted = False
+                            child.from_project = True
+                            child.save()
+                return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+            else:
                 fxf = FieldSightXF.objects.get(pk=fxf_id)
                 if fxf_status:
                     fxf.is_deployed = False
                     fxf.save()
-                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=False, is_staged=False).update(is_deployed=False, is_deleted=True)
+                    send_message_un_deploy(fxf)
                 else:
                     fxf.is_deployed = True
+                    fxf.is_deleted = False
                     fxf.save()
-                    for site in fxf.project.sites.filter(is_active=True):
-                        child, created = FieldSightXF.objects.get_or_create(is_staged=False,
-                                                                            is_scheduled=False,
-                                                                            is_survey=False,
-                                                                            xf=fxf.xf, site=site, fsform_id=fxf_id)
-                        child.is_deployed = True
-                        child.is_deleted = False
-                        child.from_project = True
-                        child.save()
-            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
-        else:
-            fxf = FieldSightXF.objects.get(pk=fxf_id)
-            if fxf_status:
-                fxf.is_deployed = False
-                fxf.save()
-                send_message_un_deploy(fxf)
-            else:
-                fxf.is_deployed = True
-                fxf.is_deleted = False
-                fxf.save()
-                send_message_un_deploy(fxf)
-            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+                    send_message_un_deploy(fxf)
+                return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 @group_required("Project")
 @api_view(['POST', 'GET'])
@@ -842,46 +847,46 @@ def un_deploy_general(request, fxf_id):
     return HttpResponseRedirect(reverse("forms:site-general", kwargs={'site_id': fxf.site.pk}))
 
 
-@group_required("Project")
-@api_view(['GET', 'POST'])
-def deploy_survey(request, is_project, pk):
-    id = request.data.get('id')
-    fxf_status = request.data.get('is_deployed')
-    try:
-        schedule = Schedule.objects.get(pk=id)
-        if is_project == "1":
-            fxf = schedule.schedule_forms
-            selected_days = tuple(schedule.selected_days.all())
-            with transaction.atomic():
-                if not fxf_status:
-                    # deployed case
-                    fxf.is_deployed = True
-                    fxf.save()
-                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project__id=pk).update(is_deployed=True, is_deleted=False)
-                    for site in Site.objects.filter(project__id=pk,is_active=True):
-                        _schedule, created = Schedule.objects.get_or_create(name=schedule.name, site=site)
-                        if created:
-                            _schedule.selected_days.add(*selected_days)
-                            child = FieldSightXF(is_scheduled=True, xf=fxf.xf, site=site, fsform=fxf,
-                                             schedule=_schedule, is_deployed=True)
-                            child.save()
+class Deploy_survey(SPFmixin, View):
+    def post(self, request, is_project, pk):
+        data = json.loads(self.request.body)
+        id = data.get('id')
+        fxf_status = data.get('is_deployed')
+        try:
+            schedule = Schedule.objects.get(pk=id)
+            if is_project == "1":
+                fxf = schedule.schedule_forms
+                selected_days = tuple(schedule.selected_days.all())
+                with transaction.atomic():
+                    if not fxf_status:
+                        # deployed case
+                        fxf.is_deployed = True
+                        fxf.save()
+                        FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project__id=pk).update(is_deployed=True, is_deleted=False)
+                        for site in Site.objects.filter(project__id=pk,is_active=True):
+                            _schedule, created = Schedule.objects.get_or_create(name=schedule.name, site=site)
+                            if created:
+                                _schedule.selected_days.add(*selected_days)
+                                child = FieldSightXF(is_scheduled=True, xf=fxf.xf, site=site, fsform=fxf,
+                                                 schedule=_schedule, is_deployed=True)
+                                child.save()
 
-                else:
-                    # undeploy
-                    fxf.is_deployed = False
-                    fxf.save()
-                    FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project_id=pk).update(is_deployed=False, is_deleted=True)
+                    else:
+                        # undeploy
+                        fxf.is_deployed = False
+                        fxf.save()
+                        FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project_id=pk).update(is_deployed=False, is_deleted=True)
 
-            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
-        else:
-            flag = False if fxf_status else True
-            form = schedule.schedule_forms
-            form.is_deployed = flag
-            form.save()
-            send_message_un_deploy(form)
-            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+                return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+            else:
+                flag = False if fxf_status else True
+                form = schedule.schedule_forms
+                form.is_deployed = flag
+                form.save()
+                send_message_un_deploy(form)
+                return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @group_required("Project")
@@ -1088,11 +1093,22 @@ def project_survey(request, project_id):
         return HttpResponseRedirect(reverse("forms:project-schedule-add", kwargs={'id': project_id}))
     return render(request, "fsforms/project/schedule_list.html", {'object_list': objlist, 'project': Project(id=project_id)})
 
+class AssignFormDefaultStatus(FormMixin, View):
+    def post(self, request, fsxf_id, status_code):
+        fsform = FieldSightXF.objects.get(pk=fsxf_id)
+        if int(status_code) >= 0 and int(status_code) < 5: 
+            fsform.default_submission_status = status_code
+            fsform.save()
+        return HttpResponse({'responseJSON':'success'}, status=status.HTTP_200_OK)
 
-@group_required("Project")
-def setup_forms(request, is_project, pk):
-    return render(request, "fsforms/manage_forms.html",
-                  {'is_project': is_project, 'pk': pk, 'form': GeneralForm(request=request),
+class Setup_forms(SPFmixin, View):
+    def get(self, request, *args, **kwargs):
+        if self.kwargs.get('is_project') == '1':
+            obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        else:
+            obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        return render(request, "fsforms/manage_forms.html",
+                  {'obj': obj, 'is_project': self.kwargs.get('is_project'), 'pk': self.kwargs.get('pk'), 'form': GeneralForm(request=request),
                    'schedule_form': KoScheduleForm(request=request)})
 
 # kobo form related
@@ -1242,110 +1258,65 @@ def download_xform(request, pk):
 
 @group_required('KoboForms')
 def html_export(request, fsxf_id):
-
-    limit = int(request.REQUEST.get('limit', 20))
-    fsxf_id = int(fsxf_id)
-    fsxf = FieldSightXF.objects.get(pk=fsxf_id)
-    xform = fsxf.xf
-    id_string = xform.id_string
-    #cursor = get_instances_for_field_sight_form(fsxf_id)
+    
     cursor = FInstance.objects.filter(site_fxf=fsxf)
-    cursor = list(cursor)
-    # for index, doc in enumerate(cursor):
-    #     medias = []
-    #     for media in cursor[index].get('_attachments', []):
-    #         if media:
-    #             medias.append(media.get('download_url', ''))
-    #     cursor[index].update({'medias': medias})
-    paginator = Paginator(cursor, limit, request=request)
-
-    try:
-        page = paginator.page(request.REQUEST.get('page', 1))
-    except (EmptyPage, PageNotAnInteger):
-        try:
-            page = paginator.page(1)
-        except (EmptyPage, PageNotAnInteger):
-            raise Http404('This report has no submissions')
-
-    data = [("v1", page.object_list)]
-    context = build_export_context(request, xform, id_string)
-
-    context.update({
-        'page': page,
-        'table': [],
-        'title': id,
-    })
-
-    export = context['export']
-    sections = list(export.labels.items())
-    section, labels = sections[0]
-    id_index = labels.index('_id')
-
-    # generator dublicating the "_id" to allow to make a link to each
-    # submission
-    def make_table(submissions):
-        for chunk in export.parse_submissions(submissions):
-            for section_name, rows in chunk.items():
-                if section == section_name:
-                    for row in rows:
-                        yield row[id_index], row
-
-    context['labels'] = labels
-    # context['data'] = make_table(data)
+    context={}
     context['is_site_data'] = True
     context['site_data'] = cursor
     context['form_name'] = fsxf.xf.title
     context['fsxfid'] = fsxf_id
     context['obj'] = fsxf
-    # return JsonResponse({'data': cursor})
     return render(request, 'fsforms/fieldsight_export_html.html', context)
+
+class Html_export(FormMixin, ListView):
+    model =   FInstance
+    paginate_by = 10
+    template_name = "fsforms/fieldsight_export_html.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(Html_export, self).get_context_data(**kwargs)
+        fsxf_id = int(self.kwargs.get('fsxf_id'))
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)    
+        # context['pk'] = self.kwargs.get('pk')
+        context['is_site_data'] = True
+        context['form_name'] = fsxf.xf.title
+        context['fsxfid'] = fsxf_id
+        context['obj'] = fsxf
+        return context
+    
+    def get_queryset(self, **kwargs):
+        fsxf_id = int(self.kwargs.get('fsxf_id'))
+        queryset = FInstance.objects.filter(site_fxf=fsxf_id)
+        return queryset
+
+class Project_html_export(FormMixin, ListView):
+    model =   FInstance
+    paginate_by = 10
+    template_name = "fsforms/fieldsight_export_html.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(Project_html_export, self).get_context_data(**kwargs)
+        fsxf_id = int(self.kwargs.get('fsxf_id'))
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)    
+        # context['pk'] = self.kwargs.get('pk')
+        context['is_project_data'] = True
+        context['form_name'] = fsxf.xf.title
+        context['fsxfid'] = fsxf_id
+        context['obj'] = fsxf
+        return context
+    
+    def get_queryset(self, **kwargs):
+        fsxf_id = int(self.kwargs.get('fsxf_id'))
+        queryset = FInstance.objects.filter(project_fxf=fsxf_id)
+        return queryset
 
 
 @group_required('KoboForms')
 def project_html_export(request, fsxf_id):
-    limit = int(request.REQUEST.get('limit', 20))
     fsxf_id = int(fsxf_id)
     fsxf = FieldSightXF.objects.get(pk=fsxf_id)
-    xform = fsxf.xf
-    id_string = xform.id_string
-    # cursor = get_instances_for_project_field_sight_form(fsxf_id)
     cursor = FInstance.objects.filter(project_fxf=fsxf) 
-    cursor = list(cursor)
-    paginator = Paginator(cursor, limit, request=request)
-
-    try:
-        page = paginator.page(request.REQUEST.get('page', 1))
-    except (EmptyPage, PageNotAnInteger):
-        try:
-            page = paginator.page(1)
-        except (EmptyPage, PageNotAnInteger):
-            raise Http404('This report has no submissions')
-
-    data = [("v1", page.object_list)]
-    context = build_export_context(request, xform, id_string)
-
-    context.update({
-        'page': page,
-        'table': [],
-        'title': id,
-    })
-
-    export = context['export']
-    sections = list(export.labels.items())
-    section, labels = sections[0]
-    id_index = labels.index('_id')
-
-    # generator dublicating the "_id" to allow to make a link to each
-    # submission
-    def make_table(submissions):
-        for chunk in export.parse_submissions(submissions):
-            for section_name, rows in chunk.items():
-                if section == section_name:
-                    for row in rows:
-                        yield row[id_index], row
-
-    context['labels'] = labels
-    #context['data'] = make_table(data)
+    context={}
     context['project_data'] = cursor
     context['is_project_data'] = True
     context['form_name'] = fsxf.xf.title
@@ -1354,30 +1325,30 @@ def project_html_export(request, fsxf_id):
     # return JsonResponse({'data': cursor})
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
-
-def instance_detail(request, fsxf_id, instance_id):
-    fsxf = FieldSightXF.objects.get(pk=fsxf_id)
-    cursor = get_instance(instance_id)
-    cursor = list(cursor)
-    obj = cursor[0]
-    _keys = ['_notes', 'meta/instanceID', 'end', '_uuid', '_bamboo_dataset_id', '_tags', 'start',
-             '_geolocation', '_xform_id_string', '_userform_id', '_status', '__version__', 'formhub/uuid',
-             '_id', 'fs_uuid', 'fs_site', 'fs_project_uuid']
-    data = {}
-    medias = []
-    status = 0
-    for key in obj.keys():
-        if key not in _keys:
-            if key == "_attachments":
-                for media in obj[key]:
-                    if media:
-                        medias.append(media.get('download_url', ''))
-            elif key == "fs_status":
-                status = obj[key]
-            else:
-                data.update({str(key): str(obj[key])})
-    return render(request, 'fsforms/fieldsight_instance_export_html.html',
-                  {'obj': fsxf, 'answer': instance_id, 'status': status, 'data': data, 'medias': medias})
+class Instance_detail(FormMixin, View):
+    def get(self, request, fsxf_id, instance_id):
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)
+        cursor = get_instance(instance_id)
+        cursor = list(cursor)
+        obj = cursor[0]
+        _keys = ['_notes', 'meta/instanceID', 'end', '_uuid', '_bamboo_dataset_id', '_tags', 'start',
+                 '_geolocation', '_xform_id_string', '_userform_id', '_status', '__version__', 'formhub/uuid',
+                 '_id', 'fs_uuid', 'fs_site', 'fs_project_uuid']
+        data = {}
+        medias = []
+        status = 0
+        for key in obj.keys():
+            if key not in _keys:
+                if key == "_attachments":
+                    for media in obj[key]:
+                        if media:
+                            medias.append(media.get('download_url', ''))
+                elif key == "fs_status":
+                    status = obj[key]
+                else:
+                    data.update({str(key): str(obj[key])})
+        return render(request, 'fsforms/fieldsight_instance_export_html.html',
+                      {'obj': fsxf, 'answer': instance_id, 'status': status, 'data': data, 'medias': medias})
 
 
 @api_view(['GET'])

@@ -1,21 +1,22 @@
 import json
-
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import BasePermission
+
 from channels import Group as ChannelGroup
 
 
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
 from onadata.apps.fieldsight.models import Site, ProjectType, Project
-from onadata.apps.fieldsight.serializers.SiteSerializer import SiteSerializer, SiteCreationSurveySerializer, \
+from onadata.apps.fieldsight.serializers.SiteSerializer import MinimalSiteSerializer, SiteSerializer, SiteCreationSurveySerializer, \
     SiteReviewSerializer, ProjectTypeSerializer, SiteUpdateSerializer, ProjectUpdateSerializer
 from onadata.apps.userrole.models import UserRole
 from django.contrib.auth.models import Group
 from django.db import transaction
-
-
+from rest_framework.pagination import PageNumberPagination
+from django.db.models import Q
 class SiteSurveyPermission(BasePermission):
     def has_object_permission(self, request, view, obj):
         if not obj.is_survey:
@@ -161,6 +162,8 @@ class SiteCreationSurveyViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         with transaction.atomic():
             site = serializer.save()
+            site.is_active = True
+            site.save()
             group = Group.objects.get(name="Site Supervisor")
             UserRole.objects.get_or_create(user=self.request.user, site_id=site.id,
                                            project__id=site.project.id, group=group)
@@ -184,6 +187,8 @@ class SiteUnderRegionViewSet(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, FormParser,)
 
     def filter_queryset(self, queryset):
+        if self.kwargs.get('region_pk') == "0":
+            return queryset.filter(project_id = self.kwargs.get('pk'), region_id__isnull=True)
         return queryset.filter(project_id = self.kwargs.get('pk'), region_id=self.kwargs.get('region_pk'))
 
     def get_serializer_context(self):
@@ -251,6 +256,39 @@ class ProjectTypeViewset(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 10
+
+class SitePagignatedViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing Region.
+    """
+    queryset = Site.objects.filter(is_survey=False)
+    serializer_class = MinimalSiteSerializer
+    pagination_class = LargeResultsSetPagination
+
+    def filter_queryset(self, queryset):
+        project_id = self.kwargs.get('pk', None)
+        return queryset.filter(project__id=project_id)
+
+class SiteSearchViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing Region.
+    """
+    queryset = Site.objects.filter(is_survey=False)
+    serializer_class = MinimalSiteSerializer
+    pagination_class = LargeResultsSetPagination
+
+    def filter_queryset(self, queryset):
+        project_id = self.kwargs.get('pk', None)
+        return queryset.filter(project__id=project_id)
+
+    def get_queryset(self):
+
+        query = self.request.GET.get("q")
+        return self.queryset.filter(Q(name__icontains=query) | Q(identifier__icontains=query))
+
 
 
 def all_notification(user,  message):

@@ -2,69 +2,166 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
+
+
+
 {% block page-title %}{% trans 'Users' %}{% endblock %}
 
 
 {% block content %}
-{% load pagination_tags %}
+
+
+
+ <link href="{{ STATIC_URL }}css/jquery.tagit.css" rel="stylesheet" type="text/css">
+    <link href="{{ STATIC_URL }}css/tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/tag-it.js" type="text/javascript" charset="utf-8"></script>
+    <style type="text/css">
+        .invalid{
+            border: 1px solid red !important;
+        }
+    </style>
+    <script>
+    	var emails=[];
+    	var is_emails_valid = true;
+        $(function(){
+         
+
+            //-------------------------------
+            // Tag events
+            //-------------------------------
+            var emailTags = $('#emailTags');
+
+            var addEvent = function(text) {
+                $('#events_container').append(text + '<br>');
+            };
+
+            emailTags.tagit({
+              
+                beforeTagAdded: function(evt, ui) {
+                    if (!ui.duringInitialization) {
+                        addEvent('beforeTagAdded: ' + emailTags.tagit('tagLabel', ui.tag));
+                    }
+                },
+                afterTagAdded: function(evt, ui) {
+                    emails=emailTags.tagit('assignedTags')
+                    console.log(emails);
+                },
+                beforeTagRemoved: function(evt, ui) {
+                    
+                },
+                afterTagRemoved: function(evt, ui) {
+                    emails=emailTags.tagit('assignedTags')
+                    console.log(emails);
+                },
+                onTagClicked: function(evt, ui) {
+                    addEvent('onTagClicked: ' + emailTags.tagit('tagLabel', ui.tag));
+                },
+                onTagExists: function(evt, ui) {
+                    addEvent('onTagExists: ' + emailTags.tagit('tagLabel', ui.existingTag));
+                }
+            });
+
+
+         
+        });
+    </script>
+
+
+
     {% load sorting_tags %}
     {% load filters %}
 				<div id="main-content" class="padding">
+					<nav aria-label="breadcrumb" role="navigation">
 					{% block breadcrumbs %}
-					  <ul class="breadcrumbb">
+					<ol class="breadcrumb">
 						{% if type == "site" %}
-						<li><a href="{% url 'fieldsight:site-dashboard' pk %}">
-						 {% trans 'Site Dashboard' %}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{{ obj.name }}</a></li>
 						{% endif %}
 						{% if type == "project" %}
-						<li><a href="{% url 'fieldsight:project-dashboard' pk %}">
-						 {% trans 'Project Dashboard' %}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ obj.name }}</a></li>
 						{% endif %}
 						{% if type == "organization" %}
-						<li><a href="{% url 'fieldsight:organizations-dashboard' pk %}">
-						 {% trans 'Organization Dashboard' %}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{{ obj.name }}</a></li>
 						{% endif %}
-						<li>{% trans 'Manage People' %}</li>
-					  </ul>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage' %} {% trans 'People' %}</li>
+					 </ol>
 					{% endblock %}
+				</nav>
 				<section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3>Users</h3></i>
+                        <h3>{% trans 'Users' %}</h3></i>
                         <div class="panel-heading-right">
-							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i> Search</a>
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i>{% trans 'Search' %}</a>
 
-							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#addfriend" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-plus"></i> Add/Invite Users</a>
-
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#addfriend" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-plus"></i>{% trans 'Add/Invite Users' %}</a>
 
 						</div>
                     </header>
                     <div class="panel-body">
-
-								<div class="collapse margin-top" id="searchOrganization">
-							<form class="padding">
+						{% if type == "site" %}
+						<div class="collapse margin-top" id="searchOrganization">
+							<form method="GET" class="padding" action="{% url 'fieldsight:search-site-user'  pk%}">
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										  <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+										  <input type="text" name="q" placeholder="Search for..." value='{{ request.GET.q }}'/>
 										  <span class="input-group-btn">
-											<button class="btn btn-primary" type="button"><i class="fa fa-search"></i> Search</button>
+											  <button class="btn btn-primary" type="submit" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
 										  </span>
 										</div>
 									</div>
-
 									<div class="col-md-3"></div>
 								</div>
 							</form>
 						</div>
+						{% endif %}
+						{% if type == "project" %}
+						<div class="collapse margin-top" id="searchOrganization">
+							<form method="GET" class="padding" action="{% url 'fieldsight:search-proj-user'  pk%}">
+								<div class="row">
+									<div class="col-md-6 ml-md-auto">
+										<div class="input-group">
+										  <input type="text" name="q" placeholder="Search for..." value='{{ request.GET.q }}'/>
+										  <span class="input-group-btn">
+											  <button class="btn btn-primary" type="submit" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
+										  </span>
+										</div>
+									</div>
+									<div class="col-md-3"></div>
+								</div>
+							</form>
+						</div>
+						{% endif %}
+						{% if type == "organization" %}
+						<div class="collapse margin-top" id="searchOrganization">
+							<form method="GET" class="padding" action="{% url 'fieldsight:search-org-user'  pk%}">
+								<div class="row">
+									<div class="col-md-6 ml-md-auto">
+										<div class="input-group">
+										  <input type="text" name="q" placeholder="Search for..." value='{{ request.GET.q }}'/>
+										  <span class="input-group-btn">
+											  <button class="btn btn-primary" type="submit" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
+										  </span>
+										</div>
+									</div>
+									<div class="col-md-3"></div>
+								</div>
+							</form>
+						</div>
+						{% endif %}
+
 						 <div class="panel-body">
                              <div class="collapse margin-top" id="addfriend">
 							<form class="padding">
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										  <input type="text" class="form-control" id="invite_email" placeholder="Invite Users" aria-label="Invite">
+										   <ul id="emailTags">
+                   						   </ul>
 										  <span class="input-group-btn">
-											<button class="btn btn-primary" onclick="sendmultiplerequest()" type="button"><i class="fa fa-plus"></i> Invite</button>
+											<button class="btn btn-primary" onclick="sendmultiplerequest()" type="button"><i class="fa fa-plus"></i>{% trans 'Invite' %}</button>
 										  </span>
 										</div>
 									</div>
@@ -75,9 +172,7 @@
 						</div>
 						<!--Member Listing-->
 						<div class="row">
-							{% autosort object_list as sorted_objects %}
-                            {% autopaginate object_list 100 as paginated_objects %}
-                            {% for role in paginated_objects %}
+                            {% for role in object_list %}
 
 							<div class="col-md-4 col-sm-6">
 								<div class="organization-item-wrap margin-top clearfix">
@@ -95,10 +190,34 @@
 								</div>
 							</div>
 							{% empty %}
-							No Users are available 
+							{% trans 'No' %} {% trans 'matching' %} {% trans 'results' %}
                             {% endfor %}
-                            {% paginate %}
 						</div>
+							 <!--pagination-->
+						{% if is_paginated %}
+						<nav class="pagination justify-content-center" aria-label="page-navigation">
+						  <ul class="pagination">
+							{% if page_obj.has_previous %}
+							  <li class="page-item disabled"><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+							{% else %}
+							  <li class="disabled"><span>&laquo;</span></li>
+							{% endif %}
+							{% for i in paginator.page_range %}
+							  {% if page_obj.number == i %}
+							  <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+
+							  {% else %}
+								<li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+							  {% endif %}
+							{% endfor %}
+							{% if page_obj.has_next %}
+							  <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+							{% else %}
+							  <li class="disabled"><span>&raquo;</span></li>
+							{% endif %}
+						  </ul>
+						</nav>
+						{% endif %}
 					</div>
 
 					 <div class="modal fade" id="myinvitemodal" role="dialog" >
@@ -108,7 +227,7 @@
                         <div class="modal-content" style="margin-top: 15%;">
                           <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">{% trans 'Invite Status' %}</h4>
+                            <h4 class="modal-title">{% trans 'Invite' %} {% trans 'Status' %}</h4>
                           </div>
                           <div class="modal-body">
                           <center>
@@ -125,29 +244,34 @@
                         
                       </div>
                     </div>
+					</div>
+				</section>
+
 
 					<script type="text/javascript">
-					var status_email = true;
-					
-					console.log(typeof status_email);
-						function validateemail(email){
-							  var atherate = email.indexOf("@");
-							  var dot = email.indexOf(".", atherate);
-							    
-							      if(atherate != -1 && dot != -1){
-							        return {
-							        status1: true,
-							        email: email
-							        };
-							      }
-							      else{
-							        // alert("Enter valid email address.");
-							        return {
-							        status1: false,
-							        email: email
-							        };
-							      }
-							}
+
+
+							function validateEmail(email) {
+								  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+								  return re.test(email);
+								}
+
+								function validateemail(email) {
+								  if (validateEmail(email)) {
+								        return {
+								        status: true,
+								        email: email
+								        };
+
+								  } 
+								        return {
+								            status: false,
+								            email: email
+								            };
+								  
+								  
+								}
+
 							 function getNewInsertion(newValue) {
 							     if(newValue.indexOf(',') > -1){
 							        $("#retry").val('Invite Users');  
@@ -158,36 +282,32 @@
 							}
 
 
-							function sendmultiplerequest(group){
-							    var email = $("#invite_email").val();
-							    status_email=true;
-							    emails = email.split(",");
-							    emails.forEach(multiemailvalidate);
-							    console.log(status_email);
-							    console.log(typeof status_email);
-							    if(status_email == true ){ sendinvite(emails, group); }
-							    else{ alert('failed'); }
-							}
 
 							function multiemailvalidate(entry) {
-								if(status_email == false){
-									return false;
-								}
 							    email_res = validateemail(entry);
-							    if(email_res.status1 == false){
-							      
-							      var email_input = document.getElementById("invite_email");
-							      email = email_input.value;
-							      start = email.search(email_res.email);
-							      end = email.indexOf(",", start);
-							      // console.log(start +" "+ end);
-							      email_input.setSelectionRange(start, end);
-							      email_input.focus();
-							      status_email=false;
+							    if(!email_res.status){
+							      is_emails_valid=false;
 
 
 							      }
 							    }
+							function sendmultiplerequest(group){
+
+							    if(!emails[0]){
+							      alert("Please insert an email to invite.");
+							      return false;
+							    }
+
+							    is_emails_valid=true;
+							     emails.forEach(multiemailvalidate);
+							    
+							    if(is_emails_valid){ sendinvite(emails, group); }
+							    else{ alert('Contains Invalid Email.'); }
+							}
+
+				
+
+							
 
 							 function sendinvite(emails, group){ 
 							      $('#myinvitemodal').modal(); 

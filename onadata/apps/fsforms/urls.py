@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from onadata.apps.fsforms.viewsets.FieldSightXformViewset import GeneralFormsViewSet, SurveyFormsViewSet
-from onadata.apps.fsforms.viewsets.InstanceHistoryViewSet import InstanceHistoryViewSet, InstanceResponseViewSet, InstanceHistoryDetailViewSet
+from onadata.apps.fsforms.viewsets.InstanceHistoryViewSet import SiteInstanceResponseViewSet, InstanceHistoryViewSet, InstanceResponseViewSet, InstanceHistoryDetailViewSet
 from onadata.apps.fsforms.viewsets.ScheduleViewset import ScheduleViewset, DayViewset
 from onadata.apps.fsforms.viewsets.AssignedXFormListApiViewSet import AssignedXFormListApi
 from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSubmissionApi, ProjectFSXFormSubmissionApi
@@ -36,14 +36,13 @@ from .views import (
     stage_add,
     site_survey,
     create_schedule,
-    setup_project_stages, project_stage_add, instance_detail, alter_answer_status, project_survey,
-    project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, responses,
-    MyOwnFormsListView, share_level, site_general, edit_general, project_general, project_responses,
-    project_html_export, deploy_survey, deploy_stages, deploy_general, set_deploy_stages, share_stages,
-    edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, setup_forms,
-    instance_status, rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
-    save_educational_material, AlterStatusDetailView)
-
+    setup_project_stages, project_stage_add, Instance_detail, alter_answer_status, project_survey,
+    project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, Responses,
+    MyOwnFormsListView, share_level, site_general, edit_general, project_general, ProjectResponses,
+    project_html_export, Deploy_survey, deploy_stages, Deploy_general, Set_deploy_stages, share_stages,
+    edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms,
+    instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
+    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus)
 
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
@@ -57,8 +56,8 @@ urlpatterns = [
 
         url(r'^stage/$', StageListView.as_view(), name='stages-list'),
         url(r'^stage/add/(?P<site_id>\d+)/$', stage_add, name='stage-add'),
-        url(r'^responses/(?P<site_id>\d+)/$', responses, name='site-responses'),
-        url(r'^project-responses/(?P<project_id>\d+)/$', project_responses, name='project-responses'),
+        url(r'^responses/(?P<pk>\d+)/$', Responses.as_view(), name='site-responses'),
+        url(r'^project-responses/(?P<pk>\d+)/$', ProjectResponses.as_view(), name='project-responses'),
         url(r'^project-stage/add/(?P<id>\d+)/$', project_stage_add, name='project-stage-add'),
         url(r'^stage/(?P<pk>\d+)/$', StageUpdateView.as_view(), name='stage-edit'),
         url(r'^stage-add-sub-stage/(?P<pk>\d+)/$', add_sub_stage, name='stage-add-sub-stage'),
@@ -76,14 +75,14 @@ urlpatterns = [
         url(r'^change-share-stages/(?P<id>\d+)/$', edit_share_stages, name='edit-share-stages'),
         url(r'^share-stages/(?P<id>\d+)/(?P<is_project>\d)/$', share_stages, name='share-stages'),
 
-        url(r'^set-deploy-stages/(?P<is_project>\d)/(?P<pk>\d+)$', set_deploy_stages, name='set-deploy-stages'),
-        url(r'^deploy-general/(?P<is_project>\d)/(?P<pk>\d+)$', deploy_general, name='deploy-general'),
+        url(r'^set-deploy-stages/(?P<is_project>\d)/(?P<pk>\d+)$', Set_deploy_stages.as_view(), name='set-deploy-stages'),
+        url(r'^deploy-general/(?P<is_project>\d)/(?P<pk>\d+)$', Deploy_general.as_view(), name='deploy-general'),
         url(r'^deploy-general-remaining/(?P<is_project>\d)/(?P<pk>\d+)$'
             , deploy_general_remaining_sites
             , name='deploy-general-remaining'),
-        url(r'^deploy-survey/(?P<is_project>\d)/(?P<pk>\d+)$', deploy_survey, name='deploy-survey'),
+        url(r'^deploy-survey/(?P<is_project>\d)/(?P<pk>\d+)$', Deploy_survey.as_view(), name='deploy-survey'),
 
-        url(r'^api/stage-rearrange/(?P<is_project>\d)/(?P<pk>\d+)$', rearrange_stages),
+        url(r'^api/stage-rearrange/(?P<is_project>\d)/(?P<pk>\d+)$', Rearrange_stages.as_view()),
 
 
         url(r'^un_deploy-survey/(?P<id>\d+)/$', un_deploy_survey, name='undeploy-survey'),
@@ -104,7 +103,7 @@ urlpatterns = [
         url(r'^fill-details-stage/(?P<pk>\d+)/$', fill_details_stage, name='fill_details_stage'),
         url(r'^fill-details-schedule/(?P<pk>\d+)/$', fill_details_schedule, name='fill_details_schedule'),
         #setup forms UI urls
-        url(r'^setup-forms/(?P<is_project>\d)/(?P<pk>\d+)$', setup_forms, name='setup-forms'),
+        url(r'^setup-forms/(?P<is_project>\d)/(?P<pk>\d+)$', Setup_forms.as_view(), name='setup-forms'),
 
 ]
 
@@ -126,13 +125,14 @@ urlpatterns = urlpatterns + [
         url(r'^submission/project/(?P<pk>\d+)/(?P<site_id>\d+)$',
             ProjectFSXFormSubmissionApi.as_view({'post': 'create', 'head': 'create'}),
                                                         name='psubmissions'),
+        url(r'^assigndefaultformstatus/(?P<fsxf_id>\d+)/(?P<status_code>\d)$', AssignFormDefaultStatus.as_view(), name='assign_default_form_status'),
 ]
 
 urlpatterns = urlpatterns + [
-        url(r'reports/(?P<fsxf_id>\d+)$', html_export, name='formpack_html_export'),
-        url(r'project-submissions/(?P<fsxf_id>\d+)$', project_html_export, name='project_html_export'),
+        url(r'reports/(?P<fsxf_id>\d+)$', Html_export.as_view(), name='formpack_html_export'),
+        url(r'project-submissions/(?P<fsxf_id>\d+)$', Project_html_export.as_view(), name='project_html_export'),
         url(r'^forms/(?P<fsxf_id>\d+)$', instance_kobo, name='instance'),
-        url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', instance_detail, name='instance_detail'),
+        url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', Instance_detail.as_view(), name='instance_detail'),
         url(r'^forms/alter-answer-status/(?P<instance_id>\d+)/(?P<status>\d)/(?P<fsid>\d+)$', alter_answer_status, name='alter-answer-status'),
 ]
 
@@ -195,8 +195,11 @@ urlpatterns = urlpatterns + [
     url(r'^api/delete-mainstage/(?P<id>\d+)/$', delete_mainstage, name='delete_mainstage_api'),
     url(r'^api/save_educational_material/$', save_educational_material),
     url(r'^api/responses/(?P<pk>\d+)/$', InstanceResponseViewSet.as_view({'get': 'list'})),
+    url(r'^api/responses/(?P<form_pk>\d+)/(?P<site_pk>\d+)/$', SiteInstanceResponseViewSet.as_view({'get': 'list'})),
 
 ]
+
+
 
 # urlpatterns += router.urls
 

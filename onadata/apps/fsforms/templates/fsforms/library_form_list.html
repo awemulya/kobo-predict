@@ -2,7 +2,7 @@
 {% load i18n staticfiles %}
 {% load filters %}
 
-{% block page-title %}{% trans 'Forms Library' %}{% endblock %}
+{% block page-title %}{% trans 'Forms' %} {% trans 'Library' %}{% endblock %}
 
 {% block head %}
 {% endblock %}
@@ -25,7 +25,7 @@
         <table class="table table-striped" id="dynamic-table1">
             <thead>
             <th>{% anchor title _('Name') %}</th>
-            <th>Shared Date</th>
+            <th>{% trans 'Shared' %} {% trans 'Date' %}</th>
             </thead>
             <tbody>
             {% for obj in paginated_objects %}

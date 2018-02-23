@@ -1,12 +1,12 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n staticfiles %}
 {% load filters fs_filters%}
-{% block page-title %}{% trans 'Form Submission Detail' %}{% endblock %}
+{% block page-title %}{% trans 'Form' %} {% trans 'Submission' %} {% trans 'Detail' %}{% endblock %}
 
 {% block head %}
-<a class="btn btn-success btn-raised" href="{% url 'forms:formpack_html_export' obj.id %}">{% trans 'All Submissions' %}</a>
+<a class="btn btn-success btn-raised" href="{% url 'forms:formpack_html_export' obj.id %}">{% trans 'All' %} {% trans 'Submissions' %}</a>
 <!-- <span>{{status|status}}</span> -->
-    <a class="btn btn-success btn-raised" href="{% url 'forms:alter-answer-status' answer status obj.id %}">{% trans 'Alter Status' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'forms:alter-answer-status' answer status obj.id %}">{% trans 'Alter' %} {% trans 'Status' %}</a>
 {% endblock %}
 
 
@@ -21,7 +21,7 @@
   <div>
   </div>
 </div>
-<div class="col-sm-12">{% trans 'Form Details' %}</div>
+<div class="col-sm-12">{% trans 'Form' %} {% trans 'Details' %}</div>
 
 
     <div class="form-details-all">
@@ -29,8 +29,8 @@
             <div class="formmdetails">
                 <h2><span class="form-name">{% trans 'Name:' %}</span>{{ obj.xf.title }}</h2>
                 <p><span class="site-name">{% trans 'Site:' %}</span>{{ obj.site }}</p>
-                <p><span class="creeated-date">{% trans 'Created date:' %}</span>{{ obj.date_created }}</p>
-                <p><span class="form-type">{% trans 'Form type:' %}</span>{{obj.form_type}}</p>
+                <p><span class="creeated-date">{% trans 'Created' %} {% trans 'date:' %}</span>{{ obj.date_created }}</p>
+                <p><span class="form-type">{% trans 'Form' %} {% trans 'type:' %}</span>{{obj.form_type}}</p>
                 <p><span class="stage-schedule">{% trans 'Stage/Schedule:' %}</span>
                     {% if obj.is_staged %}
                          {{obj.stage_name }}
@@ -78,9 +78,9 @@
 </div>
 
 <div>
-<a class="btn btn-success btn-raised" href="{% url 'forms:formpack_html_export' obj.id %}">{% trans 'All Submissions' %}</a>
+<a class="btn btn-success btn-raised" href="{% url 'forms:formpack_html_export' obj.id %}">{% trans 'All' %} {% trans 'Submissions' %}</a>
 <!-- <span>{{status|status}}</span> -->
-    <a class="btn btn-success btn-raised" href="{% url 'forms:alter-answer-status' answer status obj.id %}">{% trans 'Alter Status' %}</a>
+    <a class="btn btn-success btn-raised" href="{% url 'forms:alter-answer-status' answer status obj.id %}">{% trans 'Alter' %} {% trans 'Status' %}</a>
 </div>
 
 {% endblock %}

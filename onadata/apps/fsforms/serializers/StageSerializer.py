@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import json
 
 from django.db import transaction
@@ -7,6 +8,7 @@ from rest_framework.fields import SerializerMethodField
 from onadata.apps.fsforms.models import Stage, FieldSightXF, EducationMaterial, EducationalImages
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFSerializer
 from channels import Group as ChannelGroup
+from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import FInstanceResponcesSerializer
 
 
 class EMImagesSerializer(serializers.ModelSerializer):
@@ -24,7 +26,8 @@ class EMSerializer(serializers.ModelSerializer):
 class SubStageSerializer1(serializers.ModelSerializer):
     stage_forms = FSXFSerializer()
     em = EMSerializer(read_only=True)
-
+    responses_count = serializers.SerializerMethodField()
+    latest_submission = serializers.SerializerMethodField()
     class Meta:
         model = Stage
         exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage', 'date_modified', 'date_created',)
@@ -56,6 +59,32 @@ class SubStageSerializer1(serializers.ModelSerializer):
                 return fsxf.id
         return None
 
+    def get_responses_count(self, obj):
+        try:
+            fsxf = FieldSightXF.objects.get(stage=obj)
+            
+            if fsxf.fsform is None:
+                return fsxf.project_form_instances.count()
+            else:
+                return fsxf.site_form_instances.count()
+
+        except FieldSightXF.DoesNotExist:
+            return 0
+
+
+    def get_latest_submission(self, obj):
+        try:
+            fsxf = FieldSightXF.objects.get(stage=obj)
+            
+            if fsxf.fsform is None:
+                response = fsxf.project_form_instances.order_by('-id')[:1]
+            else:
+                response = fsxf.site_form_instances.order_by('-id')[:1]
+            serializer = FInstanceResponcesSerializer(instance=response, many=True)
+            return serializer.data 
+
+        except FieldSightXF.DoesNotExist:
+            return 0
 
 class StageSerializer1(serializers.ModelSerializer):
     # parent = SubStageSerializer1(many=True, read_only=True)
@@ -67,7 +96,7 @@ class StageSerializer1(serializers.ModelSerializer):
 
     def get_substages(self, stage):
         stages = Stage.objects.filter(stage=stage, stage_forms__is_deleted=False)
-        serializer = SubStageSerializer1(instance=stages, many=True)
+        serializer = SubStageSerializer1(instance=stages, context={'request':self.context['request'], 'kwargs':self.context['kwargs']}, many=True)
         return serializer.data
 
     def create(self, validated_data):

@@ -12,8 +12,18 @@
 {% block content %}
 
     <div id="main-content" class="padding">
+				<nav aria-label="breadcrumb" role="navigation">
+					{% block breadcrumbs %}
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' project %}">{{ obj.name }}</a></li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</li>
+					 </ol>
+					{% endblock %}
+				</nav>
 				<section class="panel">
-
+					<header class="panel-heading clearfix">
+                        <h3><i class="la la-files-o"></i>{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</h3>
+                    </header>
 					<div class="panel-body">
 						<!-- Add New Organization-->
 						<div id="newOrganization" class="margin-top">
@@ -26,9 +36,10 @@
 
 									<div class="form-group col-sm-12">
 
-									  <div class="col-sm-3"><h3> {% trans 'Upload A File' %}</h3></div><br>
-                                      <div class="col-sm-0">      {{ field }}</div>
-                                      <div class="col-sm-6">      {{ field.errors }}</div>
+									<label class="col-form-label">{% trans 'Upload' %}{% trans 'File:' %}</label>
+									<div class="col-sm-3"><a href="{% url 'fieldsight:excel_bulk_site_sample' project %}" target="_blank">{% trans 'Download' %} {% trans 'Excel' %} {% trans 'Bulk' %} {% trans 'Upload' %} {% trans 'Form.' %}</a></div><br>
+                                    <label class="col-form-label">{{ field }}</label>
+                                    <label class="col-form-label">{{ field.errors }}</label>
 									</div>
 
                                     {% endfor %}

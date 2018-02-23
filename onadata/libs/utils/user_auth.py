@@ -67,6 +67,19 @@ def has_permission(xform, owner, request, shared=False):
         user.has_perm('logger.view_xform', xform) or\
         user.has_perm('logger.change_xform', xform)
 
+def has_forms_permission(xform, owner, request, shared=False):
+    current_user = request.user
+    if current_user.user_profile.organization and owner.user_profile.organization:
+        return current_user.user_profile.organization == owner.user_profile.organization
+    return True
+
+    # return shared or xform.shared_data or\
+    #     (hasattr(request, 'session') and
+    #      request.session.get('public_link') == xform.uuid) or\
+    #     owner == user or\
+    #     user.has_perm('logger.view_xform', xform) or\
+    #     user.has_perm('logger.change_xform', xform)
+
 
 def has_edit_permission(xform, owner, request, shared=False):
     user = request.user

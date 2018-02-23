@@ -1,8 +1,20 @@
+from __future__ import unicode_literals
 from rest_framework import serializers
 
-from onadata.apps.fsforms.models import InstanceStatusChanged, InstanceImages, FInstance
-from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFSerializer
+from onadata.apps.fsforms.models import InstanceStatusChanged, InstanceImages, FInstance, FieldSightXF
 from onadata.apps.logger.models.instance import Instance
+from onadata.apps.logger.models import XForm
+
+class XformSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = XForm
+        fields = ('title', 'id', 'id_string')
+
+class FSXFSerializer(serializers.ModelSerializer):
+    xf = XformSerializer()
+    class Meta:
+        model = FieldSightXF
+        fields = ('xf','id', 'default_submission_status',)
 
 class ImagesSerializer(serializers.ModelSerializer):
     class Meta:

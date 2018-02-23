@@ -41,7 +41,7 @@ from onadata.libs.utils.logger_tools import response_with_mimetype_and_name,\
 from onadata.libs.utils.viewer_tools import create_attachments_zipfile,\
     export_def_from_filename
 from onadata.libs.utils.user_auth import has_permission, get_xform_and_perms,\
-    helper_auth_helper, has_edit_permission
+    helper_auth_helper, has_edit_permission, has_forms_permission
 from xls_writer import XlsWriter
 from onadata.libs.utils.chart_tools import build_chart_data
 
@@ -223,7 +223,7 @@ def data_export(request, username, id_string, export_type):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
     helper_auth_helper(request)
-    if not has_permission(xform, owner, request):
+    if not has_forms_permission(xform, owner, request):
         return HttpResponseForbidden(_(u'Not shared.'))
     query = request.GET.get("query")
     extension = export_type
@@ -296,7 +296,7 @@ def data_export(request, username, id_string, export_type):
 def create_export(request, username, id_string, export_type, is_project=None, id=None):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
-    if not has_permission(xform, owner, request):
+    if not has_forms_permission(xform, owner, request):
         return HttpResponseForbidden(_(u'Not shared.'))
 
     if export_type == Export.EXTERNAL_EXPORT:
@@ -390,11 +390,8 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
         token = _get_google_token(request, redirect_url)
         if isinstance(token, HttpResponse):
             return token
-    xform = get_object_or_404(XForm, id_string__exact=id_string)
-    # owner = xform.user
-    # owner = get_object_or_404(User, username__iexact=username)
-    # if not has_permission(xform, owner, request):
-    #     return HttpResponseForbidden(_(u'Not shared.'))
+    owner = get_object_or_404(User, username__iexact=username)
+    xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
 
     if export_type == Export.EXTERNAL_EXPORT:
         return HttpResponseForbidden(_(u'Not shared.'))
@@ -408,15 +405,17 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
         'meta': export_meta,
         'token': export_token,
     }
-    if should_create_new_export(xform, export_type):
+    if should_create_new_export(xform, export_type):    
+
+        query = request.POST.get("query")
+        if is_project == 1 or is_project == '1':
+            query = {"fs_project_uuid" : str(id)}
+        else:
+            query = {"fs_uuid": str(id)}
+        force_xlsx = True
+
         try:
-            if is_project == 1:
-                query = {'fs_project_uuid':id}
-            else:
-                query = {'fs_uuid':id}
-            create_async_export(
-                xform, export_type, query=query, force_xlsx=True,
-                options=options,is_project=is_project, id=id)
+            create_async_export(xform, export_type, query, force_xlsx, options, is_project, id)
         except Export.ExportTypeError:
             return HttpResponseBadRequest(
                 _("%s is not a valid export type" % export_type))
@@ -445,7 +444,7 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
 def export_progress(request, username, id_string, export_type):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
-    if not has_permission(xform, owner, request):
+    if not has_forms_permission(xform, owner, request):
         return HttpResponseForbidden(_(u'Not shared.'))
 
     # find the export entry in the db
@@ -506,7 +505,7 @@ def export_download(request, username, id_string, export_type, filename):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
     helper_auth_helper(request)
-    if not has_permission(xform, owner, request):
+    if not has_forms_permission(xform, owner, request):
         return HttpResponseForbidden(_(u'Not shared.'))
 
     # find the export entry in the db
@@ -549,7 +548,7 @@ def export_download(request, username, id_string, export_type, filename):
 def delete_export(request, username, id_string, export_type, is_project=None, id=None):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
-    if not has_permission(xform, owner, request):
+    if not has_forms_permission(xform, owner, request):
         return HttpResponseForbidden(_(u'Not shared.'))
 
     export_id = request.POST.get('export_id')
@@ -712,7 +711,7 @@ def google_xls_export(request, username, id_string):
 def data_view(request, username, id_string):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
-    if not has_permission(xform, owner, request):
+    if not has_forms_permission(xform, owner, request):
         return HttpResponseForbidden(_(u'Not shared.'))
 
     data = {

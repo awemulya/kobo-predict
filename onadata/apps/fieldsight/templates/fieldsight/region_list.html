@@ -10,13 +10,28 @@
 {% load sorting_tags %}
 {% load fs_filters %}
 <div id="main-content" class="padding">
+                <nav aria-label="breadcrumb" role="navigation">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ project.name }}</a></li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Region' %} {% trans 'List' %}</li>
+					</ol>
+				</nav>
 				<section class="panel">
                     <header class="panel-heading clearfix">
-                        <h3><i class="la la-building"></i>{% trans 'Manage' %} {% trans 'Regions'%}</h3>
+                        <h3><i class="la la-globe"></i>{% trans 'Manage' %} {% trans 'Regions'%}</h3>
 						<div class="panel-heading-right">
 							<a href="{% url 'fieldsight:region-add' pk%}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Add' %} {% trans 'New'%} </a>
 						</div>
                     </header>
+                    {% if messages %}
+					<ul class="">
+						{% for message in messages %}
+						<li>
+							<div class="alert alert-success">{{ message }}</div>
+						</li>
+						{% endfor %}
+					</ul>
+					{% endif %}
 					<div class="container">
 
                       <div class="table-striped">
@@ -24,9 +39,9 @@
                       <table class="table">
                         <thead>
                           <tr>
-                            <th class="text-center">{% trans 'Region ID' %}</th>
-                            <th class="text-center">{% trans 'Region Name' %}</th>
-                            <th class="text-center"> {% trans 'Created Date' %}</th>
+                            <th class="text-center">{% trans 'Region' %} {% trans 'ID' %}</th>
+                            <th class="text-center">{% trans 'Region' %} {% trans 'Name' %}</th>
+                            <th class="text-center"> {% trans 'Created' %} {% trans 'Date' %}</th>
                             <th class="text-center">{% trans 'Actions' %}</th>
                           </tr>
                         </thead>

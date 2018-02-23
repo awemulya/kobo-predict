@@ -7,11 +7,11 @@
 {% block head %}
     <a class="btn btn-success btn-raised" href="{{ koboform_url }}#/forms/new">{% trans 'New' %} {% trans 'Form' %}</a>
 <a class="btn btn-success btn-raised" href="{% url 'forms:project-schedule-add' project.pk %}">{% trans 'New' %} {% trans 'Schedule' %}</a>
-<a class="btn btn-success btn-raised" href="{% url 'forms:project-general' project.pk %}">{% trans 'General Forms' %}</a>
+<a class="btn btn-success btn-raised" href="{% url 'forms:project-general' project.pk %}">{% trans 'General' %} {% trans 'Forms' %}</a>
 {% endblock %}
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'fieldsight:project-dashboard' project.pk %}">{% trans 'Project Dashboard' %}</a></li>
+    <li><a href="{% url 'fieldsight:project-dashboard' project.pk %}">{% trans 'Project' %} {% trans 'Dashboard' %}</a></li>
     <li>{% trans 'Schedules' %}</li>
 {% endblock %}
 {% block content %}
@@ -32,7 +32,7 @@
             <th>{% trans 'Range' %}</th>
             <th>{% trans 'Days' %}</th>
             <th>{% anchor date_created _('Date Created') %}</th>
-            <th>{% trans 'Assigned Form' %}</th>
+            <th>{% trans 'Assigned' %} {% trans 'Form' %}</th>
             <th colspan="2">{% trans 'Action' %}</th>
             </thead>
             <tbody>
@@ -59,13 +59,13 @@
                     <td><a href="{% url 'forms:project-schedule-edit' obj.pk %}">{% trans 'Edit' %}</a></td>
                     <td>{% if obj.form.xf %}
                           <a class="btn btn-danger btn-raised" href="{% url 'forms:deploy-survey' obj.pk %}">
-                            {% trans 'Deploy To Sites' %}</a>
+                            {% trans 'Deploy' %} {% trans 'To' %} {% trans 'Sites' %}</a>
                         {% endif %}
                     </td>
 
                 </tr>
             {% empty %}
-            <p>{% trans 'No Schedules' %}</p>
+            <p>{% trans 'No' %} {% trans 'Schedules' %}</p>
             {% endfor %}
 
             </tbody>

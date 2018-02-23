@@ -99,6 +99,11 @@ class Stage(models.Model):
     def active_substages(self):
         return self.parent.filter(stage_forms__isnull=False)
 
+    def get_sub_stage_list(self):
+        if not self.stage:
+            return Stage.objects.filter(stage=self).values('stage_forms__id','stage_forms__xf__title','stage_id')
+        return []
+
     @property
     def xf(self):
         return FieldSightXF.objects.filter(stage=self)[0].xf.pk if self.form_exists() else None
@@ -202,6 +207,7 @@ class FieldSightXF(models.Model):
     is_deleted = models.BooleanField(default=False)
     is_survey = models.BooleanField(default=False)
     from_project = models.BooleanField(default=True)
+    default_submission_status = models.IntegerField(default=0, choices=FORM_STATUS)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
@@ -347,11 +353,19 @@ class FInstance(models.Model):
     project = models.ForeignKey(Project, null=True, related_name='project_instances')
     site_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='site_form_instances')
     project_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='project_form_instances')
-    form_status = models.IntegerField(default=0, choices=FORM_STATUS)
+    form_status = models.IntegerField(null=True, blank=True, choices=FORM_STATUS)
     date = models.DateTimeField(auto_now=True)
     submitted_by = models.ForeignKey(User, related_name="supervisor")
     logs = GenericRelation('eventlog.FieldSightLog')
 
+    def save(self, *args, **kwargs):
+        if self.form_status is None:
+            if self.site_fxf:
+                self.form_status = self.site_fxf.default_submission_status
+            else:
+                self.form_status = self.project_fxf.default_submission_status                
+        super(FInstance, self).save(*args, **kwargs)  # Call the "real" save() method.
+        
     @property
     def fsxfid(self):
         if self.project_fxf:
@@ -366,10 +380,14 @@ class FInstance(models.Model):
 
     def getname(self):
         if self.site_fxf is None:
+        
             return '{0} form {1}'.format(self.project_fxf.form_type(), self.project_fxf.xf.title,)
+        
         return '{0} form {1}'.format(self.site_fxf.form_type(),
                                            self.site_fxf.xf.title,)
     def __unicode__(self):
+        if self.site_fxf is None:
+            return u"%s" % str(self.submitted_by) + "---" + self.project_fxf.xf.title
         return u"%s" % str(self.submitted_by) + "---" + self.site_fxf.xf.title
 
     def instance_json(self):
@@ -383,24 +401,37 @@ class FInstance(models.Model):
         media_folder = self.instance.xform.user.username
         def parse_repeat(r_object):
             r_question = r_object['name']
-            for gnr_answer in json_answer[r_question]:
+            data.append(r_question)
+
+            if r_question in json_answer:
+                for gnr_answer in json_answer[r_question]:
+                    for first_children in r_object['children']:
+                        question_type = first_children['type']
+                        question = first_children['name']
+                        group_answer = json_answer[r_question]
+                        answer = ''
+                        if r_question+"/"+question in gnr_answer:
+                            if first_children['type'] == 'note':
+                                answer= ''
+                            elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or first_children['type'] == 'video':
+                                answer = 'http://'+base_url+'/media/'+ media_folder +'/attachments/'+gnr_answer[r_question+"/"+question]
+                            else:
+                                answer = gnr_answer[r_question+"/"+question]
+                                
+                        if 'label' in first_children:
+                            question = first_children['label']
+                        row={'type':question_type, 'question':question, 'answer':answer}
+                        data.append(row)
+            else:
                 for first_children in r_object['children']:
-                    question_type = first_children['type']
-                    question = first_children['name']
-                    group_answer = json_answer[r_question]
-                    answer = ''
-                    if r_question+"/"+question in gnr_answer:
-                        if first_children['type'] == 'note':
-                            answer= ''
-                        elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or first_children['type'] == 'video':
-                            answer = 'http://'+base_url+'/media/'+ media_folder +'/attachments/'+gnr_answer[r_question+"/"+question]
-                        else:
-                            answer = gnr_answer[r_question+"/"+question]
-                            
-                    if 'label' in first_children:
-                        question = first_children['label']
-                    row={'type':question_type, 'question':question, 'answer':answer}
-                    data.append(row)
+                        question_type = first_children['type']
+                        question = first_children['name']
+                        answer = ''
+                        if 'label' in first_children:
+                            question = first_children['label']
+                        row={'type':question_type, 'question':question, 'answer':answer}
+                        data.append(row)
+
 
         def parse_group(g_object):
             g_question = g_object['name']

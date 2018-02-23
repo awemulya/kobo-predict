@@ -1,11 +1,11 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n staticfiles %}
 
-{% block page-title %}{{ scenario }} {% trans 'Organization Admin' %}{% endblock %}
+{% block page-title %}{{ scenario }} {% trans 'Organization' %} {% trans 'Admin' %}{% endblock %}
 
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'fieldsight:organizations-dashboard' obj.pk %}">{% trans 'Organization Dashboard' %}</a></li>
+    <li><a href="{% url 'fieldsight:organizations-dashboard' obj.pk %}">{% trans 'Organization' %} {% trans 'Dashboard' %}</a></li>
     <li>{{ scenario }}</li>
 {% endblock %}
 
@@ -42,7 +42,7 @@
     </form>
 </div>
 <div class="col-sm-6">
-      <h3>{% trans 'Current Users' %}</h3>
+      <h3>{% trans 'Current' %} {% trans 'Users' %}</h3>
       <div class="currentuser-block">
         <div class="search-current">
           <input type="text" class="current-input" placeholder="Search">

@@ -6,6 +6,10 @@ from rest_framework.response import Response
 from onadata.apps.fsforms.models import Schedule, Days, FieldSightXF
 from onadata.apps.fsforms.serializers.ScheduleSerializer import ScheduleSerializer, DaysSerializer
 from channels import Group as ChannelGroup
+from rest_framework.pagination import PageNumberPagination
+
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 10
 
 class ScheduleViewset(viewsets.ModelViewSet):
     """
@@ -13,6 +17,7 @@ class ScheduleViewset(viewsets.ModelViewSet):
     """
     queryset = Schedule.objects.filter(schedule_forms__isnull=False)
     serializer_class = ScheduleSerializer
+    # pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
         if self.request.user.is_anonymous():

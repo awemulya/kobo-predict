@@ -7,8 +7,8 @@
 {% block head %}
 {% endblock %}
 {% block breadcrumbs %}
-    <li><a href="{% url 'fieldsight:project-dashboard' project %}">{% trans 'Project Dashboard' %}</a></li>
-<li>{% trans 'Survey Sites' %}</li>
+    <li><a href="{% url 'fieldsight:project-dashboard' project %}">{% trans 'Project' %} {% trans 'Dashboard' %}</a></li>
+<li>{% trans 'Survey' %} {% trans 'Sites' %}</li>
 {% endblock %}
 
  {%block kocript %}
@@ -41,7 +41,7 @@ var project = "{{project}}";
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-bind="click:$parent.close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">{% trans 'Survey Detail' %}</h4>
+        <h4 class="modal-title">{% trans 'Survey' %} {% trans 'Detail' %}</h4>
       </div>
       <div class="modal-body">
           <form>
@@ -68,14 +68,14 @@ var project = "{{project}}";
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2 field-label"> {% trans 'Public Description' %}</div>
+                <div class="col-sm-2 field-label"> {% trans 'Public' %} {% trans 'Description' %}</div>
                  <div class="col-sm-5">
                  <input data-bind="value: public_desc" />
                  </div>
                  <div class="col-sm-6"></div>
                </div>
               <div class="col-sm-12 registration_field">
-                <div class="col-sm-2 field-label"> {% trans 'Additional Description' %}</div>
+                <div class="col-sm-2 field-label"> {% trans 'Additional' %} {% trans 'Description' %}</div>
                  <div class="col-sm-5">
                  <input data-bind="value: additional_desc" />
                  </div>
@@ -111,7 +111,7 @@ var project = "{{project}}";
 
               <div class="gap"></div>
               <div class="gap"></div>
-              <h3 data-bind="visible:create_surveys().length">{% trans 'Survey Images' %}</h3>
+              <h3 data-bind="visible:create_surveys().length">{% trans 'Survey' %} {% trans 'Images' %}</h3>
               <div class="review-images" data-bind="foreach: create_surveys">
                   <img width="400px" height="400px" data-bind="attr:{src: image}" />
 
@@ -122,14 +122,14 @@ var project = "{{project}}";
                     <input type="checkbox" data-bind="checked: is_survey" />
                   </div>
                   <div class="field-label" style="padding-left: 3px;">
-                    {% trans 'Verify This Survey' %}
+                    {% trans 'Verify' %} {% trans 'This' %} {% trans 'Survey' %}
                   </div>
                   
               </div>
                  <div class="col-sm-6"></div>
                </div>
         <button class="btn btn-primary registration__action" type="submit" data-bind="click:$parent.save_detail" >
-            {% trans 'Save Changes' %}</button>
+            {% trans 'Save' %} {% trans 'Changes' %}</button>
               <div class="gap"></div>
               <div class="gap"></div>
 

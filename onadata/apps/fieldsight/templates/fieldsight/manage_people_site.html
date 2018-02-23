@@ -2,6 +2,179 @@
 {% load i18n staticfiles %}
 {% load filters %}
 {% block kocript %}
+
+
+
+<!-- for tagging feature in email invite -->
+
+  <link href="{{ STATIC_URL }}css/jquery.tagit.css" rel="stylesheet" type="text/css">
+    <link href="{{ STATIC_URL }}css/tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/tag-it.js" type="text/javascript" charset="utf-8"></script>
+    <style type="text/css">
+        .invalid{
+            border: 1px solid red !important;
+        }
+    </style>
+    <script>
+        $(function(){
+         
+
+            //-------------------------------
+            // Tag events
+            //-------------------------------
+            var email1OrgTags = $('#email1OrgTags');
+
+            var addEvent = function(text) {
+                $('#events_container').append(text + '<br>');
+            };
+
+            email1OrgTags.tagit({
+              
+                beforeTagAdded: function(evt, ui) {
+                    if (!ui.duringInitialization) {
+                        addEvent('beforeTagAdded: ' + email1OrgTags.tagit('tagLabel', ui.tag));
+                    }
+                },
+                afterTagAdded: function(evt, ui) {
+                    emails1=email1OrgTags.tagit('assignedTags')
+                    console.log(emails1);
+                },
+                beforeTagRemoved: function(evt, ui) {
+                    
+                },
+                afterTagRemoved: function(evt, ui) {
+                    emails1=email1OrgTags.tagit('assignedTags')
+                    console.log(emails1);
+                },
+                onTagClicked: function(evt, ui) {
+                    addEvent('onTagClicked: ' + email1OrgTags.tagit('tagLabel', ui.tag));
+                },
+                onTagExists: function(evt, ui) {
+                    addEvent('onTagExists: ' + email1OrgTags.tagit('tagLabel', ui.existingTag));
+                }
+            });
+
+
+            var email2OrgTags = $('#email2OrgTags');
+
+            var addEvent = function(text) {
+                $('#events_container').append(text + '<br>');
+            };
+
+            email2OrgTags.tagit({
+             
+                afterTagAdded: function(evt, ui) {
+                    emails2=email2OrgTags.tagit('assignedTags')
+                    console.log(emails2);
+                },
+             
+                afterTagRemoved: function(evt, ui) {
+                    emails2=email2OrgTags.tagit('assignedTags')
+                    console.log(emails2);
+                },
+             
+            });
+          
+
+           var email1ProjectTags = $('#email1ProjectTags');
+
+            var addEvent = function(text) {
+                $('#events_container').append(text + '<br>');
+            };
+
+            email1ProjectTags.tagit({
+              
+                
+                afterTagAdded: function(evt, ui) {
+                    emails1=email1ProjectTags.tagit('assignedTags')
+                    console.log(emails1);
+                },
+                
+                afterTagRemoved: function(evt, ui) {
+                    emails1=email1ProjectTags.tagit('assignedTags')
+                    console.log(emails1);
+                },
+                
+            });
+
+
+            var email2ProjectTags = $('#email2ProjectTags');
+
+            var addEvent = function(text) {
+                $('#events_container').append(text + '<br>');
+            };
+
+            email2ProjectTags.tagit({
+              
+              
+                afterTagAdded: function(evt, ui) {
+                    emails2=email2ProjectTags.tagit('assignedTags')
+                    console.log(emails2);
+                },
+               
+                afterTagRemoved: function(evt, ui) {
+                    emails2=email2ProjectTags.tagit('assignedTags')
+                    console.log(emails2);
+                },
+               
+            });
+          
+
+          var email1SiteTags = $('#email1SiteTags');
+
+            var addEvent = function(text) {
+                $('#events_container').append(text + '<br>');
+            };
+
+            email1SiteTags.tagit({
+              
+                
+                afterTagAdded: function(evt, ui) {
+                    emails1=email1SiteTags.tagit('assignedTags')
+                    console.log(emails1);
+                },
+                
+                afterTagRemoved: function(evt, ui) {
+                    emails1=email1SiteTags.tagit('assignedTags')
+                    console.log(emails1);
+                },
+                
+            });
+
+
+            var email2SiteTags = $('#email2SiteTags');
+
+            var addEvent = function(text) {
+                $('#events_container').append(text + '<br>');
+            };
+
+            email2SiteTags.tagit({
+              
+              
+                afterTagAdded: function(evt, ui) {
+                    emails2=email2SiteTags.tagit('assignedTags')
+                    console.log(emails2);
+                },
+               
+                afterTagRemoved: function(evt, ui) {
+                    emails2=email2SiteTags.tagit('assignedTags')
+                    console.log(emails2);
+                },
+               
+            });
+            
+        });
+    </script>
+
+
+
+    <!-- end for taggit feature -->
+
+
+
+
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
@@ -9,6 +182,9 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/manage_people_site.js"></script>
 
 <script>
+var emails1=[];
+var emails2=[];
+
 var proj_site_url = "";
 var userurl = "";
 var speed=0;
@@ -19,14 +195,17 @@ var all_proj_site=[];
 var CSRF_TOKEN = '{{ csrf_token }}';
 
 {% if type == "project" %}
+
   {% if obj.cluster_sites %}
-  var proj_region_url = '{% url 'fieldsight:project_regions_list' pk %}';
-  assignurl = '{% url 'fieldsight:multi_user_region_assign' pk %}';
-  var type = "region";
+    var proj_region_url = '{% url 'fieldsight:project_regions_list' pk %}';
+    // assignurl = '{% url 'fieldsight:multi_user_region_assign' pk %}';
+    assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
+    
+    var type = "region";
   {% else %}
-  var proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
-  assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
-  var type = "site";
+    var proj_site_url = '{% url 'role:multi_ops_list' 0 pk %}';
+    assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
+    var type = "site";
   {% endif %}
   userurl = '{% url 'role:multi_user_list' 1 pk %}';
   
@@ -65,36 +244,31 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 {% endif %} -->
 
 
-			<div id="main-content" class="padding">
-              {% block breadcrumbs %}
-              <ul class="breadcrumbb">
-                {% if level == "0" %}
-                <li><a href="{% url 'fieldsight:site-dashboard' pk %}">
-                 {% trans 'Site Dashboard' %}</a></li>
-                {% endif %}
-                {% if level == "1" %}
-                <li><a href="{% url 'fieldsight:project-dashboard' pk %}">
-                 {% trans 'Project Dashboard' %}</a></li>
-                {% endif %}
-                {% if level == "2" %}
-                <li><a href="{% url 'fieldsight:organizations-dashboard' pk %}">
-                 {% trans 'Organization Dashboard' %}</a></li>
-                {% endif %}
-                <li>{% trans 'Manage People' %}</li>
-              </ul>
-              {% endblock %}
-				<div class="" data-bind="with:siteVm ,visible: currentVm() == 'site'" style="display:none;">
-
-
-
-
+      <div id="main-content" class="padding">
+              <nav aria-label="breadcrumb" role="navigation">
+                {% block breadcrumbs %}
+          <ol class="breadcrumb">
+                      {% if level == "0" %}
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{{ obj.name }}</a></li>
+                      {% endif %}
+                      {% if level == "1" %}
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ obj.name }}</a></li>
+                      {% endif %}
+                      {% if level == "2" %}
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' pk %}">{{ obj.name }}</a></li>
+                      {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{% trans 'Manage' %} {% trans 'People' %}</li>
+           </ol>
+                {% endblock %}
+              </nav>
+          <div class="" data-bind="with:siteVm ,visible: currentVm() == 'site'" style="display:none;">
           <div class="tabbing margin-top">
           <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">{% trans 'Assign Site Supervisors' %}</a>
+              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">{% trans 'Assign' %} {% trans 'Site' %} {% trans 'Supervisors' %}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">{% trans 'Assign Site Reviewers' %}</a>
+              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">{% trans 'Assign' %} {% trans 'Site' %} {% trans 'Reviewers' %}</a>
             </li>
           </ul>
           <!-- Tab panes -->
@@ -106,10 +280,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                       <div class="col-md-4">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>{% trans 'Current Supervisors' %}</h4>
+                <h4>{% trans 'Current' %} {% trans 'Supervisors' %}</h4>
               </div>
 
-              <div class="widget-body max-513-scolling" data-bind="foreach:allSupervisors">
+              <div class="widget-body" data-bind="foreach:allSupervisors">
                 <div class="project-item-wrap clearfix">
                   <div class="project-logo">
                     <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
@@ -126,14 +300,17 @@ vm = new ManagePeopleViewModel(pk, level, organization);
             <div class="col-md-8">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>{% trans 'Invite new Supervisors' %}</h4>
+                <h4>{% trans 'Invite' %} {% trans 'new' %} {% trans 'Supervisors' %}</h4>
               </div>
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
+
+                    <ul id="email1SiteTags">
+                        
+                    </ul>
                     <span class="input-group-btn">
-                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Site Supervisor')" type="button"><i class="la la-user-plus"></i> Invite</button>
+                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Site Supervisor', 1)" type="button"><i class="la la-user-plus"></i>{% trans 'Invite' %}</button>
                     </span>
                   </div>
                 </form>
@@ -144,7 +321,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <strong>{% trans 'OR' %}</strong>
                 </h4>
                 <div class="widget-head">
-                <h4>{% trans 'Select users to assign as supervisor' %}</h4>
+                <h4>{% trans 'Select' %} {% trans 'users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'supervisor' %}</h4>
                 </div>
                 <form class="margin-top">
                   <div class="input-group">
@@ -153,8 +330,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </form>
                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
-                  <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignsupervisors"><i class="la la-user-plus"></i> Assign selected as Supervisors</button>
-               
+                  <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignsupervisors"><i class="la la-user-plus"></i>{% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Supervisors' %}</button>
+
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
@@ -202,10 +379,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                       <div class="col-md-4">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>Current Reviewers</h4>
+                <h4>{% trans 'Current' %} {% trans 'Reviewers' %}</h4>
               </div>
 
-              <div class="widget-body max-513-scolling" data-bind="foreach:allReviewers">
+              <div class="widget-body" data-bind="foreach:allReviewers">
                 <div class="project-item-wrap clearfix">
                   <div class="project-logo">
                     <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
@@ -224,14 +401,16 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-8">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>{% trans 'Invite New Reviewers' %}</h4>
+                <h4>{% trans 'Invite' %} {% trans 'New' %} {% trans 'Reviewers' %}</h4>
               </div>
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
+
+                    <ul id="email2SiteTags">    
+                    </ul>
                     <span class="input-group-btn">
-                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Reviewer')" type="button"><i class="la la-user-plus"></i> Invite</button>
+                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Reviewer', 2)" type="button"><i class="la la-user-plus"></i>{% trans 'Invite' %}</button>
                     </span>
                   </div>
                 </form>
@@ -242,7 +421,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <strong>{% trans 'OR' %}</strong>
                 </h4>
                 <div class="widget-head">
-                <h4>{% trans 'Select users to assign as reviewer' %}</h4>
+                <h4>{% trans 'Select' %} {% trans 'users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'reviewer' %}</h4>
                 </div>
                 <form class="margin-top">
                   <div class="input-group">
@@ -251,7 +430,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </form>
                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
-                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignreviewers"><i class="la la-user-plus"></i> Assign seleeted as Reviewers</button>
+                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignreviewers"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Reviewers' %}</button>
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
@@ -303,7 +482,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
 
 
-			</div>
+      </div>
 
 
 
@@ -316,10 +495,15 @@ vm = new ManagePeopleViewModel(pk, level, organization);
       <div class="tabbing margin-top">
           <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">{% trans 'Assign Project Managers' %}</a>
+              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">{% trans 'Assign' %} {% trans 'Project' %} {% trans 'Managers' %}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">{% trans 'Assign Site Users' %}</a>
+              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">{% if obj.cluster_sites %}
+                {% trans 'Assign' %} {% trans 'Region' %} {% trans 'Users' %}
+                  {% else %}
+                {% trans 'Assign' %} {% trans 'Site' %} {% trans 'Users' %}
+                  {% endif %}</a>
+
             </li>
           </ul>
           <!-- Tab panes -->
@@ -332,14 +516,17 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <div class="col-md-8">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>{% trans 'Invite new project managers' %}</h4>
+                <h4>{% trans 'Invite' %} {% trans 'new' %} {% trans 'project' %} {% trans 'managers' %}</h4>
               </div>
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
+
+                   <ul id="email1ProjectTags">
+                        
+                    </ul>
                     <span class="input-group-btn">
-                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Project Manager')" type="button"><i class="la la-user-plus"></i> Invite</button>
+                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Project Manager', 1)" type="button"><i class="la la-user-plus"></i> {% trans 'Invite' %}</button>
                     </span>
                   </div>
                 </form>
@@ -350,7 +537,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <strong>{% trans 'OR' %}</strong>
                 </h4>
                 <div class="widget-head">
-                <h4>{% trans 'Select Users to assign as Project Managers' %}</h4>
+                <h4>{% trans 'Select' %} {% trans 'Users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Managers' %}</h4>
                 </div>
                
                 <form class="margin-top">
@@ -361,7 +548,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
 
-                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> Assign selected as Project Manager</button>
+                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Manager' %}</button>
                
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
@@ -395,10 +582,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-4">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>{% trans 'Current Project Managers' %}</h4>
+                <h4>{% trans 'Current' %} {% trans 'Project' %} {% trans 'Managers' %}</h4>
               </div>
 
-              <div class="widget-body max-513-scolling" data-bind="foreach:projectManagers">
+              <div class="widget-body" data-bind="foreach:projectManagers">
                 <div class="project-item-wrap clearfix">
                   <div class="project-logo">
                     <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
@@ -422,7 +609,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-6">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>{% trans 'Invite new users' %}</h4>
+                <h4>{% trans 'Invite' %} {% trans 'new' %} {% trans 'users' %}</h4>
               </div>
 
               <div class="widget-body">
@@ -437,7 +624,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                  
                 </ul> -->
                  <div class="input-group">
-                    <input type="text" id="multi_invite_email_ps" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
+                     <ul id="email2ProjectTags">
+                    </ul>
                     <span class="input-group-btn">
                       
                       <span class="dropdown">
@@ -445,9 +633,15 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                       <i class="la la-cogs"></i>{% trans 'Invite' %}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage" x-placement="bottom-end" style="background-color: #00628E; position: absolute; transform: translate3d(74px, 24px, 0px); top: 0px; left: 0px; will-change: transform;">
-                      <a class="dropdown-item" href="#" style="color:white;" data-bind="click:invitesupervisors"><i class="la la-user"></i>As Site Supervisor</a>
-                      <a class="dropdown-item" href="#" style="color:white;" data-bind="click:invitereviewers"><i class="la la-clipboard"></i>As Reviewer</a>
-                      
+
+                    {% if obj.cluster_sites %}
+                      <a class="dropdown-item" href="#" style="color:white;" data-bind="click:invitesupervisorsRegions"><i class="la la-user"></i>{% trans 'As' %} {% trans 'Site' %} {% trans 'Supervisor' %}</a>
+                      <a class="dropdown-item" href="#" style="color:white;" data-bind="click:invitereviewersRegions"><i class="la la-clipboard"></i>{% trans 'As' %} {% trans 'Reviewer' %}</a>
+
+                    {% else %}
+                      <a class="dropdown-item" href="#" style="color:white;" data-bind="click:invitesupervisorsSites"><i class="la la-user"></i>{% trans 'As' %} {% trans 'Site' %} {% trans 'Supervisor' %}</a>
+                      <a class="dropdown-item" href="#" style="color:white;" data-bind="click:invitereviewersSites"><i class="la la-clipboard"></i>{% trans 'As' %} {% trans 'Reviewer' %}</a>
+                    {% endif %}
 
 
                      
@@ -466,22 +660,22 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <div class="widget-head">
                 <h4>
                     {% if obj.cluster_sites %}
-                {% trans 'Select Users to assign to all sites in regions.' %}
+                {% trans 'Select' %} {% trans 'Users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'to' %} {% trans 'all' %} {% trans 'sites' %} {% trans 'in' %} {% trans 'regions.' %}
                   {% else %}
-                {% trans 'Select Users to assign to sites' %}
+                {% trans 'Select' %} {% trans 'Users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'to' %} {% trans 'sites' %}
                   {% endif %}
                 </h4>
                 </div>
-                  <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                  <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search users..." aria-label="Search...">
                   <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:$root.setAllUnSelected">
                  <span class="dropdown">
                             <a href="#" id="dropdownMenuButtonManage" class="btn btn-primary margin-top" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              <i class="la la-cogs"></i>{% trans 'Invite Selected Users' %}
+                              <i class="la la-cogs"></i>{% trans 'Invite' %} {% trans 'Selected' %} {% trans 'Users' %}
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage" x-placement="bottom-end" style="background-color: #00628E; position: absolute; transform: translate3d(74px, 24px, 0px); top: 0px; left: 0px; will-change: transform;">
-                              <a class="dropdown-item" href="#" style="color:white;" data-bind="click:assignselectedsupervisor"><i class="la la-user"></i>As Site Supervisor</a>
-                              <a class="dropdown-item" href="#" style="color:white;" data-bind="click:assignselectedreviewer"><i class="la la-clipboard"></i>As Reviewer</a>
+                              <a class="dropdown-item" href="#" style="color:white;" data-bind="click:assignselectedsupervisor"><i class="la la-user"></i>{% trans 'As' %} {% trans 'Site' %} {% trans 'Supervisor' %}</a>
+                              <a class="dropdown-item" href="#" style="color:white;" data-bind="click:assignselectedreviewer"><i class="la la-clipboard"></i>{% trans 'As' %} {% trans 'Reviewer' %}</a>
                               
                             </div>
                           </span>
@@ -520,9 +714,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               <div class="widget-head">
                 <h4>
                   {% if obj.cluster_sites %}
-                Select Regions
+                  {% trans 'Select' %} {% trans 'Regions' %}
                   {% else %}
-                Select Sites 
+                  {% trans 'Select' %} {% trans 'Sites' %}
                   {% endif %}
                 </h4>
 
@@ -534,39 +728,20 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
                 </ul>
                 <input style="display:none;" type="button" id="getnextproj_site_list" onclick="" value="load more"> -->
-               
-              {% if obj.cluster_sites %}
-              
-          <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
-                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:setAllAssignRegionAsSelected">
-                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllRegionUnSelected">
-                <ul class="row" data-bind="foreach:regions">
-                
-                  <li class="col-md-12">
-                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
-                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$parent.setRegionSelected">
-                      <span class="custom-control-indicator"></span>
-                      <span class="custom-control-description">
-                        <div class="project-item-wrap clearfix">
-                          <div class="project-logo">
-                            <!-- <img data-bind="attr:{src: logo()}" alt="" width="50" height="50"> -->
-                          </div>
-                          <div class="project-basic-info">
-                            <h4 data-bind="text:identifier()"></h4>
-                            <h6 data-bind="text:name()"></h6>
-                          </div>
-                        </div>
-                       
-                      </span>
-                    </label>
-                  </li>
-                  
-                  <li class="clearfix"></li>
-                </ul>              
 
-              {% else %}
-     
-                <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                {% if obj.cluster_sites %}
+
+                  <select class="form-control" data-bind="options: allRegions,
+                       optionsText: 'identifier',
+                       optionsValue: 'url',
+                       value: loadRegionalSites,
+                       optionsCaption: 'Choose Region ...', valueUpdate:'afterkeydown'"></select>
+                       <br>
+                <div data-bind="visible:showsites">
+                {% endif %}
+
+                
+                <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search Sites...">
                   <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:setAllAssignSiteAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllSiteUnSelected">
                 <ul class="row" data-bind="foreach:sites">
@@ -592,7 +767,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   
                   <li class="clearfix"></li>
                 </ul>
-              {% endif %}
+                {% if obj.cluster_sites %}
+                </div>
+                {% endif %}
+
               </div>
             </div>
           </div>
@@ -628,10 +806,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
       <div class="tabbing margin-top">
           <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">{% trans 'Assign Organization Admins' %}</a>
+              <a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">{% trans 'Assign' %} {% trans 'Organization' %} {% trans 'Admins' %}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">{% trans 'Assign Project Managers' %}</a>
+              <a class="nav-link" data-toggle="tab" href="#tab002" role="tab">{% trans 'Assign' %} {% trans 'Project' %} {% trans 'Managers' %}</a>
             </li>
           </ul>
           <!-- Tab panes -->
@@ -644,14 +822,17 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <div class="col-md-8">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>{% trans 'Invite new organization admins' %}</h4>
+                <h4>{% trans 'Invite' %} {% trans 'new' %} {% trans 'organization' %} {% trans 'admins' %}</h4>
               </div>
               <div class="widget-body">
                 <form>
                   <div class="input-group">
-                    <input type="text" id="invite_email" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
+
+                  <ul id="email1OrgTags">
+                        
+                    </ul>
                     <span class="input-group-btn">
-                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Organization Admin')" type="button"><i class="la la-user-plus"></i> Invite</button>
+                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Organization Admin', 1)" type="button"><i class="la la-user-plus"></i> {% trans 'Invite' %}</button>
                     </span>
                   </div>
                 </form>
@@ -662,7 +843,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <strong>{% trans 'OR' %}</strong>
                 </h4>
                  <div class="widget-head">
-                <h4>{% trans 'Select users to assign as organization admin' %}</h4>
+                <h4>{% trans 'Select' %} {% trans 'users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'organization' %} {% trans 'admin' %}</h4>
               </div>
                 <form class="margin-top">
                   <div class="input-group">
@@ -672,7 +853,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                  <input type="button" class="btn btn-primary margin-top" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
 
-                  <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignOadmin"><i class="la la-user-plus"></i> Assign Organization Admin</button>
+                  <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignOadmin"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'Organization' %} {% trans 'Admin' %}</button>
                 <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
@@ -707,10 +888,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-4">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>{% trans 'Current Organization Admins' %}</h4>
+                <h4>{% trans 'Current' %} {% trans 'Organization' %} {% trans 'Admins' %}</h4>
               </div>
 
-              <div class="widget-body max-513-scolling" data-bind="foreach:admins">
+              <div class="widget-body" data-bind="foreach:admins">
                 <div class="project-item-wrap clearfix">
                   <div class="project-logo">
                     <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
@@ -734,7 +915,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-6">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>{% trans 'Invite new project managers' %}</h4>
+                <h4>{% trans 'Invite' %} {% trans 'new' %} {% trans 'project' %} {% trans 'managers' %}</h4>
               </div>
               <div class="widget-body">
 
@@ -748,9 +929,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                  
                 </ul> -->
                  <div class="input-group">
-                    <input type="text" id="multi_invite_email_ps" name="email" class="form-control" placeholder="Enter email to invite .." aria-label="Invite to...">
+                     <ul id="email2OrgTags">
+                    </ul>
                     <span class="input-group-btn">
-                      <button class="btn btn-primary" id="retry" data-bind="click:inviteforemails" type="button"><i class="la la-user-plus"></i> Invite</button>
+                      <button class="btn btn-primary" id="retry" data-bind="click:inviteforemails" type="button"><i class="la la-user-plus"></i> {% trans 'Invite' %}</button>
                     </span>
                   </div>
                   <br>
@@ -758,7 +940,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <strong>{% trans 'OR' %}</strong>
                 </h4>
                   <div class="widget-head">
-                <h4>{% trans 'Select users to assign to projects' %}</h4>
+                <h4>{% trans 'Select' %} {% trans 'users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'to' %} {% trans 'projects' %}</h4>
               </div>
                   <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   <input type="button" value="Select All" class="btn btn-primary margin-top"  data-bind=" click:$root.setAllAssignAsSelected">
@@ -796,7 +978,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
           <div class="col-md-6">
             <div class="widget-info margin-top bg-white padding">
               <div class="widget-head">
-                <h4>{% trans 'Select Projects' %}</h4>
+                <h4>{% trans 'Select' %} {% trans 'Projects' %}</h4>
               </div>
               <div class="widget-body">
                 <!-- <ul class="row max-260-scroll" id="multi-ass-proj_site">
@@ -808,7 +990,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind="click:setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllUnSelected">
-                 <button type="submit" class="btn btn-primary margin-top" data-bind="click:doAssign"><i class="la la-user-plus"></i> Assign as Project Managers</button>
+                 <button type="submit" class="btn btn-primary margin-top" data-bind="click:doAssign"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Managers' %}</button>
   
 
                 <ul class="row" data-bind="foreach:projects">
@@ -880,7 +1062,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                         <div class="modal-content" style="margin-top: 15%;">
                           <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">{% trans 'Invite Status' %}</h4>
+                            <h4 class="modal-title">{% trans 'Invite' %} {% trans 'Status' %}</h4>
                           </div>
                           <div class="modal-body">
                           <center>
@@ -900,7 +1082,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
 <script>
 var ajax_call=false;
-var status = true;
+var is_emails_valid = true;
 // function refresh(group){
 //   var email = $("#invite_email").val();
   
@@ -923,24 +1105,48 @@ var status = true;
 //   // checkemail(email);
 //   // }   
 // }
-function validateemail(email){
-  var atherate = email.indexOf("@");
-  var dot = email.indexOf(".", atherate);
+// function validateemail(email){
+//   var atherate = email.indexOf("@");
+//   var dot = email.indexOf(".", atherate);
     
-      if(atherate != -1 && dot != -1){
-        return {
-        status: true,
-        email: email
-        };
-      }
-      else{
-        // alert("Enter valid email address.");
-        return {
-        status: false,
-        email: email
-        };
-      }
+//       if(atherate != -1 && dot != -1){
+//         return {
+//         status: true,
+//         email: email
+//         };
+//       }
+//       else{
+//         // alert("Enter valid email address.");
+//         return {
+//         status: false,
+//         email: email
+//         };
+//       }
+// }
+
+function validateEmail(email) {
+  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
 }
+
+function validateemail(email) {
+  if (validateEmail(email)) {
+        return {
+        is_emails_valid: true,
+        email: email
+        };
+
+  } 
+        return {
+
+            is_emails_valid: false,
+            email: email
+            };
+  
+  
+}
+
+
  function getNewInsertion(newValue) {
      if(newValue.indexOf(',') > -1){
         $("#retry").val('Invite Users');  
@@ -950,32 +1156,54 @@ function validateemail(email){
      }
 }
 
-
-function sendmultiplerequest(group){
-    var email = $("#invite_email").val();
-    status=true;
-    emails = email.split(",");
-    emails.forEach(multiemailvalidate);
-    if(status == "true" ){ sendinvite(emails, group); }
-    else{ alert('failed'); }
-}
-
 function multiemailvalidate(entry) {
     email_res = validateemail(entry);
-    if(email_res.status == false){
+    if(!email_res.is_emails_valid){
       
-      var email_input = document.getElementById("invite_email");
-      email = email_input.value;
-      start = email.search(email_res.email);
-      end = email.indexOf(",", start);
-      // console.log(start +" "+ end);
-      email_input.setSelectionRange(start, end);
-      email_input.focus();
-      status=false;
+      is_emails_valid=false;
 
 
       }
     }
+
+function sendmultiplerequest(group, emailbox){
+
+  if (emailbox == 2){
+    emails=emails2;
+ 
+  }else{
+    emails=emails1;
+  }
+
+    if(!emails[0]){
+      alert("Please insert an email to invite.");
+      return false;
+    }
+
+    is_emails_valid=true;
+     emails.forEach(multiemailvalidate);
+
+    if(is_emails_valid){ sendinvite(emails, group); }
+    else{ alert('Contains Invalid Email.'); }
+}
+
+
+// function multiemailvalidate(entry) {
+//     email_res = validateemail(entry);
+//     if(email_res.status == false){
+      
+//       var email_input = document.getElementById("invite_email");
+//       email = email_input.value;
+//       start = email.search(email_res.email);
+//       end = email.indexOf(",", start);
+//       // console.log(start +" "+ end);
+//       email_input.setSelectionRange(start, end);
+//       email_input.focus();
+//       status=false;
+
+
+//       }
+//     }
 
 $(function(){
 

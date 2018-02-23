@@ -25,8 +25,11 @@ class TimeZone(models.Model):
     country_code = models.CharField(max_length=255, blank=True, null=True)
     offset_time = models.CharField(max_length=255, blank=True, null=False)
 
-    def __str__(self):
-        return self.time_zone
+    class Meta:
+         ordering = ['time_zone']
+    
+    def __unicode__(self):
+        return self.time_zone + " - " + self.country
 
 class ExtraUserDetail(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='extra_details')
@@ -69,7 +72,7 @@ class Organization(models.Model):
     address = models.TextField(blank=True, null=True)
     public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
-    logo = models.ImageField(upload_to="logo", default="logo/default_image.png")
+    logo = models.ImageField(upload_to="logo", default="logo/default_org_image.jpg")
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True,)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
@@ -95,9 +98,6 @@ class Organization(models.Model):
             return self.location.x
 
     def getname(self):
-        return self.name
-
-    def __str__(self):
         return self.name
 
     @property
@@ -142,7 +142,7 @@ class Organization(models.Model):
     @property
     def get_staffs(self):
         staffs = self.organization_roles.filter(group__name="Organization Admin").values_list('id', 'user__username')
-        return staffs\
+        return staffs
 
     @property
     def get_staffs_org(self):
@@ -169,16 +169,13 @@ class Project(models.Model):
     public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
     organization = models.ForeignKey(Organization, related_name='projects')
-    logo = models.ImageField(upload_to="logo", default="logo/default_image.png")
+    logo = models.ImageField(upload_to="logo", default="logo/default_project_image.jpg")
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     cluster_sites = models.BooleanField(default=False)
     site_meta_attributes = JSONField(default=list)
     logs = GenericRelation('eventlog.FieldSightLog')
-
-
-
     objects = GeoManager()
 
     class Meta:
@@ -197,9 +194,8 @@ class Project(models.Model):
     def getname(self):
         return self.name
 
-    def __str__(self):
-        return self.name
-
+    def __unicode__(self):
+        return u'{}'.format(self.name)
     @property
     def get_staffs(self):
         staffs = self.project_roles.filter(group__name__in=["Reviewer", "Project Manager"])
@@ -281,7 +277,7 @@ class Site(models.Model):
     public_desc = models.TextField("Public Description", blank=True, null=True)
     additional_desc = models.TextField("Additional Description", blank=True, null=True)
     project = models.ForeignKey(Project, related_name='sites')
-    logo = models.ImageField(upload_to="logo", default="logo/default_image.png")
+    logo = models.ImageField(upload_to="logo", default="logo/default_site_image.png")
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     is_survey = models.BooleanField(default=False)
@@ -294,7 +290,7 @@ class Site(models.Model):
     objects = GeoManager()
 
     class Meta:
-         ordering = ['-is_active', 'name', ]
+         ordering = ['-is_active', '-id']
          unique_together = [('identifier', 'project'), ]
 
     @property
@@ -310,9 +306,8 @@ class Site(models.Model):
     def getname(self):
         return self.name
 
-    def __str__(self):
-        return self.name
-
+    def __unicode__(self):
+        return u'{}'.format(self.name)
     @property
     def get_supervisors(self):
         return self.site_roles.all()
@@ -335,7 +330,7 @@ class Site(models.Model):
         return self.type.name
 
     def progress(self):
-        stages = self.site_forms.filter(xf__isnull=False, is_staged=True).count()
+        stages = self.site_forms.filter(xf__isnull=False, is_staged=True, is_deleted=False).count()
         approved = self.site_instances.filter(form_status=3, site_fxf__is_staged=True).count()
         if not approved:
             return 0

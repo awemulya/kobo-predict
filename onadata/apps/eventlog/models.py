@@ -51,7 +51,7 @@ class FieldSightLog(models.Model):
     organization = models.ForeignKey(Organization, related_name="logs", null=True)
     project = models.ForeignKey(Project, related_name="logs", null=True)
     site = models.ForeignKey(Site, related_name="logs", null=True)
-    extra_message = models.CharField(max_length=255, blank=True, null=True)
+    extra_message = models.TextField(blank=True, null=True)
     
     recipient = models.ForeignKey(User, related_name='recipent_log', null=True)
 
@@ -80,7 +80,8 @@ class FieldSightLog(models.Model):
     def get_extraobj_url(self):
         if self.extra_object is None:
             return None
-        if self.extra_content_type.name == 'user':
+
+        if self.extra_content_type.model == "user":
             if self.extra_object.user_profile:
                 return self.extra_object.user_profile.get_absolute_url()
             return "#";
@@ -89,7 +90,7 @@ class FieldSightLog(models.Model):
     def get_extraobj_name(self):
         if self.extra_object is None:
             return None
-        if self.extra_content_type.name == 'user':
+        if self.extra_content_type.model == "user":
             if self.extra_object.user_profile:
                 return self.extra_object.user_profile.getname()
             return self.extra_object.email
@@ -155,7 +156,8 @@ class CeleryTaskProgress(models.Model):
     Task_Type =(
         (0, 'Bulk Site Upload'),
         (1, 'Multi User Assign Project'),
-        (2, 'Multi User Assign Site')
+        (2, 'Multi User Assign Site'),
+        (3, 'Report Generation')
         )
     task_id = models.CharField(max_length=255, unique=True)
     date_added = models.DateTimeField(auto_now_add=True)

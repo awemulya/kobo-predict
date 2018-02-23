@@ -1,4 +1,6 @@
+from __future__ import unicode_literals
 from django import forms
+
 from PIL import Image
 from django.core.files import File
 from django.contrib.auth.models import User, Group
@@ -225,6 +227,7 @@ class ProjectForm(forms.ModelForm):
         if not self.fields['location'].initial:
             self.fields['location'].initial = Point(85.3240, 27.7172,srid=4326)
         self.fields['type'].empty_label = None
+        self.fields['cluster_sites'].label = "Do you want to cluster sites in this Project?"
         #self.fields['organization'].empty_label = None
 
     class Meta:
@@ -280,6 +283,7 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
         if not self.fields['location'].initial:
             self.fields['location'].initial = Point(85.3240, 27.7172,srid=4326)
         self.fields['type'].empty_label = None
+        self.fields['logo'].label = "Image"
         self.fields['logo'].required = False
 
     class Meta:

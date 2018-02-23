@@ -2,7 +2,10 @@ from rest_framework import viewsets
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
 from onadata.apps.fsforms.models import Stage
 from onadata.apps.fsforms.serializers.StageSerializer import StageSerializer, SubStageSerializer, StageSerializer1
+from rest_framework.pagination import PageNumberPagination
 
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 5
 
 class StageViewSet(viewsets.ModelViewSet):
     """
@@ -10,6 +13,7 @@ class StageViewSet(viewsets.ModelViewSet):
     """
     queryset = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True)
     serializer_class = StageSerializer1
+    # pagination_class = LargeResultsSetPagination
 
     # authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
@@ -26,7 +30,7 @@ class StageViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_serializer_context(self):
-        return {'request': self.request}
+        return {'request': self.request, 'kwargs': self.kwargs,}
 
 
 class MainStageViewSet(viewsets.ModelViewSet):

@@ -1,7 +1,9 @@
+from __future__ import unicode_literals
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 from onadata.apps.fsforms.models import FieldSightXF, EducationalImages, EducationMaterial
+from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import FInstanceResponcesSerializer
 from onadata.apps.logger.models import XForm
 from onadata.libs.utils.decorators import check_obj
 
@@ -136,6 +138,7 @@ class FSXFormSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField('get_title', read_only=True)
     id_string = serializers.SerializerMethodField()
     responses_count = serializers.SerializerMethodField()
+    latest_submission =  serializers.SerializerMethodField()
 
     def validate(self, data):
         """
@@ -173,6 +176,19 @@ class FSXFormSerializer(serializers.ModelSerializer):
         else:
             return obj.site_form_instances.count()
 
+    def get_latest_submission(self, obj):
+        is_project = self.context.get('is_project', False)
+        if not is_project:
+            return 0
+        # pk = self.context['pk']
+        if obj.is_survey or is_project == "1":
+            response = obj.project_form_instances.order_by('-id')[:1] 
+        else:
+            response = obj.site_form_instances.order_by('-id')[:1]
+
+        serializer = FInstanceResponcesSerializer(instance=response, many=True)
+        return serializer.data 
+
 
 class XformSerializer(serializers.ModelSerializer):
     class Meta:
@@ -184,4 +200,4 @@ class FSXFSerializer(serializers.ModelSerializer):
     xf = XformSerializer()
     class Meta:
         model = FieldSightXF
-        fields = ('xf','id',)
+        fields = ('xf','id', 'default_submission_status',)

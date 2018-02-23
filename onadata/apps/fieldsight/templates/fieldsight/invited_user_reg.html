@@ -84,6 +84,15 @@
                   {% endif %}
 
 
+
+                  {% if status == "error-5" %}
+                    {% trans 'Password must be atleast 8 characters long.' %}
+                  {% endif %}
+
+                  {% if status == "error-6" %}
+                    {% trans 'Username must be atleast 6 characters long.' %}
+                  {% endif %}
+
                 </div></center>
 
                 
@@ -119,13 +128,17 @@
       if(username.length < 1 || firstname.length < 1 || lastname.length < 1){
         document.getElementById("alert").innerHTML = "* fields are mandatory.";
       }
+      else{
+        document.getElementById("user_reg_form").submit(); 
 
-      else if(username.length < 6){
-        document.getElementById("alert").innerHTML = "Username must be at least 6 characters long.";
       }
-      else if(pass1.length < 8){
-        document.getElementById("alert").innerHTML = "Password must be atleast 8 characters long.";
-      }
+
+      // else if(username.length < 6){
+      //   document.getElementById("alert").innerHTML = "Username must be at least 6 characters long.";
+      // }
+      // else if(pass1.length < 8){
+      //   document.getElementById("alert").innerHTML = "Password must be atleast 8 characters long.";
+      // }
       
       // else
       // {

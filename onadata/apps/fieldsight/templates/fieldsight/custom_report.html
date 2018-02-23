@@ -1,0 +1,57 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block kocript %}
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/custom_report.js"></script>
+
+<script>
+var CSRF_TOKEN = '{{ csrf_token }}';
+$(document).ready(function() {
+
+var csrf_token = "{{ csrf_token }}";
+// assigntoken(csrf_token);
+vm = new StageViewModel();
+ ko.applyBindings(vm);
+});
+
+</script>
+
+{% endblock %}
+{% block content %}
+{% csrf_token %}
+
+
+
+<ul data-bind="template: { name: 'itemTmpl', foreach: allformjson }"></ul>
+
+<script id="itemTmpl" type="text/html">
+    <li>
+        <span data-bind="text: xf_title"></span>
+        <input type='checkbox' data-bind="checked: selected"/>
+        <ul data-bind="template: { name: 'itemTmpl', foreach: $data.forms }, style: { 'opacity' : (selected() ? 1 : 0.5 ) }">
+        </ul>
+    </li>
+</script>
+
+<!-- <ul data-bind="foreach: { data: generalForm, as: 'category' }">
+  <li>
+    <input type="checkbox" name="level-1" 
+           data-bind="checked: selected, value: name">
+    <span data-bind="text: name"></span>
+    <ul data-bind="foreach: { data: forms, as: 'item' }">
+      <li>
+        <input type="checkbox" name="level-2" 
+               data-bind="checked: category.selectedItems, value: item, enable: category.selected">
+        <span data-bind="text: item, style: { 'opacity' : (category.selected() ? 1 : 0.5)}"></span>
+      </li>
+    </ul>
+  </li>
+</ul> -->
+
+
+
+{% endblock %}

@@ -28,6 +28,14 @@
 });
 </script>
 <div id="main-content" class="padding" style="display:none;">
+	<nav aria-label="breadcrumb" role="navigation">
+		<ol class="breadcrumb">
+            {% block breadcrumbs %}
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{% trans 'Project' %} {% trans 'Dashboard' %}</a></li>
+			<li class="breadcrumb-item active" aria-current="page">{% trans 'Submissions' %} {% trans 'Data' %}</li>
+		    {% endblock %}
+        </ol>
+    </nav>
 <div class="row">
 <div class="col-md-12">
     <div class="tabbing">
@@ -35,16 +43,16 @@
 
     	<ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
-              <a class="nav-link " id ="0" data-toggle="tab" href="#tab0" role="tab">{% trans 'Rejected Submissions' %}</a>
+              <a class="nav-link " id ="0" data-toggle="tab" href="#tab0" role="tab">{% trans 'Rejected' %} {% trans 'Submissions' %}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id ="1" data-toggle="tab" href="#tab1" role="tab">{% trans 'Flagged Submissions' %}</a>
+              <a class="nav-link" id ="1" data-toggle="tab" href="#tab1" role="tab">{% trans 'Flagged' %} {% trans 'Submissions' %}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id ="2" data-toggle="tab" href="#tab2" role="tab">{% trans 'Pending Submissions' %}</a>
+              <a class="nav-link" id ="2" data-toggle="tab" href="#tab2" role="tab">{% trans 'Pending' %} {% trans 'Submissions' %}</a>
             </li>
 			<li class="nav-item">
-              <a class="nav-link" id ="3" data-toggle="tab" href="#tab3" role="tab">{% trans 'Approved Submissions' %}</a>
+              <a class="nav-link" id ="3" data-toggle="tab" href="#tab3" role="tab">{% trans 'Approved' %} {% trans 'Submissions' %}</a>
             </li>
 		</ul>
 
@@ -57,9 +65,19 @@
 				{% for instance in data %}
 				<tr>
 					<td style="width:60%;">
-						<a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							<h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
-						</a>
+						
+						 {% if instance.site_fxf %}
+						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
+						  </a>
+						  {% else %}
+						  <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
+						  </a>
+						  {% endif %}
+
+
+						
 					</td>
 					<td>
 						<a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
@@ -75,7 +93,7 @@
 					</td>
 				</tr>
 				{% empty %}
-				No data
+				{% trans 'No' %} {% trans 'data' %}
 				{% endfor %}
 			</table>
 				{% paginate %}
@@ -88,10 +106,19 @@
 				  {% for instance in data %}
 				  <tr>
 					  <td style="width:60%;">
+
+ {% if instance.site_fxf %}
 						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
 							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
 						  </a>
-					  </td>
+						  {% else %}
+						  <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
+						  </a>
+						  {% endif %}
+<!-- 						
+
+ -->					  </td>
 					  <td>
 						  <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
 							  <div class="detail-person-time">
@@ -106,7 +133,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				  No data
+				  {% trans 'No' %} {% trans 'data' %}
 				  {% endfor %}
 			  </table>
 			  {% paginate %}
@@ -121,9 +148,16 @@
 				  {% for instance in data %}
 				  <tr>
 					  <td style="width:60%;">
+						   {% if instance.site_fxf %}
 						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
 							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
 						  </a>
+						  {% else %}
+						  <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
+						  </a>
+						  {% endif %}
+
 					  </td>
 					  <td>
 						  <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
@@ -139,7 +173,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				  No data
+				  {% trans 'No' %} {% trans 'data' %}
 				  {% endfor %}
 			  </table>
 			  {% paginate %}
@@ -152,9 +186,15 @@
 				  {% for instance in data %}
 				  <tr>
 					  <td style="width:60%;">
+						  {% if instance.site_fxf %}
 						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
 							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
 						  </a>
+						  {% else %}
+						  <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
+						  </a>
+						  {% endif %}
 					  </td>
 					  <td>
 						  <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
@@ -170,7 +210,7 @@
 					  </td>
 				  </tr>
 				  {% empty %}
-				  No data
+				  {% trans 'No' %} {% trans 'data' %}
 				  {% endfor %}
 			  </table>
 			  {% paginate %}
