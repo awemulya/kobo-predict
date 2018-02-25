@@ -9,12 +9,11 @@
     	height: 560px;
 		}
     </style>
+
 <script>
     
-    $(document).ready(function() {
-        var coordinates = {{ co_ords|safe }};
-        loaddataonmap(coordinates);
-    });
+           var coordinates = {{ co_ords|safe }};
+            console.log(coordinates);
 </script>
 {% endblock %}
 {% block content %}
