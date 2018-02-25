@@ -22,23 +22,21 @@
 	<link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
-    <script>
-    
-    	{% if request.user.user_profile.timezone.offset_time %}
-    	var offSetTime = "{{ request.user.user_profile.timezone.offset_time }}";
-    	
-    	{% else %}
-    	var offSetTime = "UTC +05:45";
-    	{% endif %}
-    	
-    </script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/notificationhandler.js"></script>
 	<style type="text/css">
     	.unread {
     		background-color: #e6ecff;
     	}
     </style>
-
+    <script>
+    
+    	{% if request.user.user_profile.timezone.offset_time %}
+    	var offSetTime = "{{ request.user.user_profile.timezone.offset_time }}";
+    	{% else %}
+    	var offSetTime = "UTC +05:45";
+    	{% endif %}
+    	
+    </script>
 	
 		
         <meta name="description" content="">
