@@ -11,9 +11,17 @@
     </style>
 <script type="text/javascript">
     var site_response = {{ co_ords|safe }};
+    $(document).ready(function() {
+        loaddataonmap(site_response);
+    });
 </script>
 {% endblock %}
 {% block content %}
+
+
+
+
+
 
 
 <div id="main-content" class="padding">
