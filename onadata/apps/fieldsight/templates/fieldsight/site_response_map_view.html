@@ -2,8 +2,9 @@
 {% load i18n staticfiles %}
 {% load filters %}
 {% block page-title %}{% trans 'Dashboard' %}{% endblock %}
+
+{% block extracss %}
 <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
-{%block extracss %}
     <style type="text/css">
         #map {
     	height: 560px;
