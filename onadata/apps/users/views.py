@@ -117,7 +117,7 @@ def current_user(request):
                                       'address':site.address, 'lat': repr(site.latitude), 'lon': repr(site.longitude),
                                       'identifier':site.identifier, 'progress': site.progress(), 'type_id':site.type.id,
                                       'type_label':site.type.name,
-                                      'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans}
+                                      'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans, 'region_id':site.region_id, 'region_identifier':site.region.identifier, 'region_name':site.region.name}
                              
                 project_detail['sites'].append(site_info)
             projects_dict.append(project_detail)
@@ -125,7 +125,7 @@ def current_user(request):
         users_payload = {'username': user.username,
                          'full_name': user.first_name,
                          'email': user.email,
-                         'my_sites': projects_dict,
+                         'my_projects': projects_dict,
                          'server_time': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                          'is_supervisor': site_supervisor,
                          'last_login': user.last_login,
