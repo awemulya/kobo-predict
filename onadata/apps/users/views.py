@@ -102,7 +102,7 @@ def current_user(request):
         projects_dict = []
         for p_role in project_roles:
             project = p_role.project
-            roles = UserRole.get_active_site_roles(user).filter(project_id=p_roles.project_id)
+            roles = UserRole.get_active_site_roles(user).filter(project_id=p_role.project_id)
             project_detail = {'name': project.name, 'id': project.id, 'description': project.public_desc,
                                          'address':project.address, 'type_id':project.type.id,
                                          'type_label':project.type.name,'phone':project.phone, 'organization_name':project.organization.name,
