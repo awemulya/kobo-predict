@@ -97,10 +97,11 @@ def current_user(request):
         site_supervisor = False
         field_sight_info = []
         project_roles = UserRole.get_active_site_roles(user).distinct('project')
-        # if project_roles.exists():
-        site_supervisor = True
+        if project_roles.exists():
+            site_supervisor = True
         projects_dict = []
-        for p_roles in project_roles:
+        for p_role in project_roles:
+            project = p_role.project
             roles = UserRole.get_active_site_roles(user).filter(project_id=p_roles.project_id)
             project_detail = {'name': project.name, 'id': project.id, 'description': project.public_desc,
                                          'address':project.address, 'type_id':project.type.id,
@@ -112,7 +113,6 @@ def current_user(request):
                 site = role.site
                 data = site.blueprints.all()
                 bp = [m.image.url for m in data]
-                project = role.project
                 site_info = {'id': site.id, 'phone': site.phone, 'name': site.name, 'description': site.public_desc,
                                       'address':site.address, 'lat': repr(site.latitude), 'lon': repr(site.longitude),
                                       'identifier':site.identifier, 'progress': site.progress(), 'type_id':site.type.id,
