@@ -119,7 +119,7 @@ def current_user(request):
                                       'type_label':site.type.name,
                                       'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans}
                              
-                project_detail.sites.append(site_info)
+                project_detail['sites'].append(site_info)
             projects_dict.append(project_detail)
 
         users_payload = {'username': user.username,
