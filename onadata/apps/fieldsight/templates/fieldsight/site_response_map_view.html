@@ -3,17 +3,14 @@
 {% load filters %}
 {% block page-title %}{% trans 'Dashboard' %}{% endblock %}
 
-{% block extracss %}
+
+{% block content %}
 <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <style type="text/css">
         #map {
-    	height: 560px;
-		}
+        height: 560px;
+        }
     </style>
-
-{% endblock %}
-{% block content %}
-
 
 <div id="main-content" class="padding">
 				<section class="panel">
