@@ -97,8 +97,8 @@ def current_user(request):
         site_supervisor = False
         field_sight_info = []
         project_roles = UserRole.get_active_site_roles(user).distinct('project')
-        if project_roles.exists():
-            site_supervisor = True
+        # if project_roles.exists():
+        site_supervisor = True
         projects_dict = []
         for p_roles in project_roles:
             roles = UserRole.get_active_site_roles(user).filter(project_id=p_roles.project_id)
