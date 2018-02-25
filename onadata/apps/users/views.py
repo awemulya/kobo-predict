@@ -113,14 +113,14 @@ def current_user(request):
                 data = site.blueprints.all()
                 bp = [m.image.url for m in data]
                 project = role.project
-                site_info = {'site': {'id': site.id, 'phone': site.phone, 'name': site.name, 'description': site.public_desc,
+                site_info = {'id': site.id, 'phone': site.phone, 'name': site.name, 'description': site.public_desc,
                                       'address':site.address, 'lat': repr(site.latitude), 'lon': repr(site.longitude),
                                       'identifier':site.identifier, 'progress': site.progress(), 'type_id':site.type.id,
                                       'type_label':site.type.name,
-                                      'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans},
+                                      'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans}
                              
-                projects_detail.sites.append(site_info)
-            projects_dict.append(site_info)
+                project_detail.sites.append(site_info)
+            projects_dict.append(project_detail)
 
         users_payload = {'username': user.username,
                          'full_name': user.first_name,
