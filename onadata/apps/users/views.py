@@ -117,9 +117,12 @@ def current_user(request):
                                       'address':site.address, 'lat': repr(site.latitude), 'lon': repr(site.longitude),
                                       'identifier':site.identifier, 'progress': site.progress(), 'type_id':site.type.id,
                                       'type_label':site.type.name,
-                                      'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans, 'region':{}}
-                if site.region is not None:
-                    site_info['region']={'region_id':site.region_id, 'region_identifier':site.region.identifier, 'region_name':site.region.name}          
+                                      'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans}
+                if project.cluster_sites:
+                    if site.region is not None:
+                        site_info['region']={'region_id':site.region_id, 'region_identifier':site.region.identifier, 'region_name':site.region.name}          
+                    else:
+                        site_info['region']={}
                 project_detail['sites'].append(site_info)
             projects_dict.append(project_detail)
 
