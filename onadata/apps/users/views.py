@@ -96,31 +96,36 @@ def current_user(request):
     else:
         site_supervisor = False
         field_sight_info = []
-        roles = UserRole.get_active_site_roles(user)
+        project_roles = UserRole.get_active_site_roles(user).distinct('project')
         if roles.exists():
             site_supervisor = True
-        for role in roles:
-            site = role.site
-            data = site.blueprints.all()
-            bp = [m.image.url for m in data]
-            project = role.project
-            site_info = {'site': {'id': site.id, 'phone': site.phone, 'name': site.name, 'description': site.public_desc,
-                                  'address':site.address, 'lat': repr(site.latitude), 'lon': repr(site.longitude),
-                                  'identifier':site.identifier, 'progress': site.progress(), 'type_id':site.type.id,
-                                  'type_label':site.type.name,
-                                  'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans},
-                         'project': {'name': project.name, 'id': project.id, 'description': project.public_desc,
-                                     'address':project.address, 'type_id':project.type.id,
-                                     'type_label':project.type.name,'phone':project.phone, 'organization_name':project.organization.name,
-                                     'organization_url':project.organization.logo.url,
-                                     'lat': repr(project.latitude), 'lon': repr(project.longitude), 'cluster_sites':project.cluster_sites, 'site_meta_attributes':project.site_meta_attributes},
-                         }
-            field_sight_info.append(site_info)
+        projects_dict = []
+        for p_roles in project_roles:
+            roles = UserRole.get_active_site_roles(user).filter(project_id=p_roles.project_id)
+            project_detail = {'name': project.name, 'id': project.id, 'description': project.public_desc,
+                                         'address':project.address, 'type_id':project.type.id,
+                                         'type_label':project.type.name,'phone':project.phone, 'organization_name':project.organization.name,
+                                         'organization_url':project.organization.logo.url,
+                                         'lat': repr(project.latitude), 'lon': repr(project.longitude), 'cluster_sites':project.cluster_sites, 'site_meta_attributes':project.site_meta_attributes, 'sites':[]}
+                             
+            for role in roles:
+                site = role.site
+                data = site.blueprints.all()
+                bp = [m.image.url for m in data]
+                project = role.project
+                site_info = {'site': {'id': site.id, 'phone': site.phone, 'name': site.name, 'description': site.public_desc,
+                                      'address':site.address, 'lat': repr(site.latitude), 'lon': repr(site.longitude),
+                                      'identifier':site.identifier, 'progress': site.progress(), 'type_id':site.type.id,
+                                      'type_label':site.type.name,
+                                      'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans},
+                             
+                projects_detail.sites.append(site_info)
+            projects_dict.append(site_info)
 
         users_payload = {'username': user.username,
                          'full_name': user.first_name,
                          'email': user.email,
-                         'my_sites': field_sight_info,
+                         'my_sites': projects_dict,
                          'server_time': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                          'is_supervisor': site_supervisor,
                          'last_login': user.last_login,
