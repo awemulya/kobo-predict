@@ -192,6 +192,14 @@ class FSXFormSerializer(serializers.ModelSerializer):
 
 class XformSerializer(serializers.ModelSerializer):
 
+
+    class Meta:
+        model = XForm
+        fields = ('title', 'id', 'id_string')
+
+
+class FSXFSerializer(serializers.ModelSerializer):
+    xf = XformSerializer()
     downloadUrl = serializers.SerializerMethodField('get_url', read_only=True)
     manifestUrl = serializers.SerializerMethodField('get_manifest_url')
 
@@ -209,16 +217,10 @@ class XformSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
 
         return reverse('forms:manifest-url', kwargs=kwargs, request=request)
-    class Meta:
-        model = XForm
-        fields = ('title', 'id', 'id_string', 'downloadUrl', 'manifestUrl')
 
-
-class FSXFSerializer(serializers.ModelSerializer):
-    xf = XformSerializer()
     class Meta:
         model = FieldSightXF
-        fields = ('xf','id', 'default_submission_status',)
+        fields = ('xf','id', 'default_submission_status','downloadUrl', 'manifestUrl')
 
 
 class ScheduleSerializerAllDetail(serializers.ModelSerializer):
