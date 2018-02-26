@@ -40,7 +40,7 @@ from .views import (
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, Responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, ProjectResponses,
     project_html_export, Deploy_survey, deploy_stages, Deploy_general, SetDeployStages, share_stages,
-    edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms,
+    edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms, Weight_forms,
     instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
     save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable)
 
@@ -104,6 +104,7 @@ urlpatterns = [
         url(r'^fill-details-schedule/(?P<pk>\d+)/$', fill_details_schedule, name='fill_details_schedule'),
         #setup forms UI urls
         url(r'^setup-forms/(?P<is_project>\d)/(?P<pk>\d+)$', Setup_forms.as_view(), name='setup-forms'),
+        url(r'^weight-forms/(?P<is_project>\d)/(?P<pk>\d+)$', Weight_forms.as_view(), name='weight-forms'),
 
 ]
 

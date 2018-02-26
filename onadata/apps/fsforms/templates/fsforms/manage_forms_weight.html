@@ -1,0 +1,60 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Manage' %} {% trans 'Forms Weight' %}{% endblock %}
+
+   {%block extracss %}
+    {% endblock %}
+
+{% block head %}
+{% endblock %}
+
+<!--{%block kocript %}-->
+ <!--<script src="https://cdn.jsdelivr.net/npm/vue"></script>-->
+<!--<script>-->
+<!--var app = new Vue({-->
+  <!--el: '#app',-->
+
+  <!--data: {-->
+    <!--message: 'Hello Vue!'-->
+  <!--}-->
+<!--});-->
+<!--</script>-->
+<!--{% endblock %}-->
+
+{% block content %}
+{% csrf_token %}
+
+<div id="main-content" class="padding">
+    <nav aria-label="breadcrumb" role="navigation">
+        <ol class="breadcrumb">
+            {% block breadcrumbs %}
+            {% if is_project == "0" %}
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{{ obj.name }}</a></li>
+            {% else %}
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ obj.name }}</a></li>
+            {% endif %}
+			<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage' %} {% trans 'Forms Weight' %}</li>
+		    {% endblock %}
+        </ol>
+    </nav>
+</div>
+{% verbatim %}
+<div id="app">
+  {{ message }}
+</div>
+{% endverbatim %}
+{% endblock %}
+
+	{%block extrascript %}
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+var app = new Vue({
+  el: '#app',
+  data: {
+    message: 'Hello Vue!'
+  }
+})
+</script>
+    {% endblock %}
