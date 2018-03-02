@@ -109,8 +109,8 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:site-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i>{% trans 'Site' %} {% trans 'Summary' %} {% trans 'Report' %}</a>
 								<a class="dropdown-item" target="_blank" href="{% url 'fieldsight:site-responses-report' obj.pk %}"><i class="la la-reply"></i>{% trans 'Site' %} {% trans 'Responses' %} {% trans 'Report' %}</a>
-								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#myModal"><i class="la la-reply"></i>{% trans 'Site' %} {% trans 'Custom' %} {% trans 'Report' %}</a>
-
+								<!-- <a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#myModal"><i class="la la-reply"></i>{% trans 'Site' %} {% trans 'Custom' %} {% trans 'Report' %}</a>
+ -->
 
 							</div>
 						</span>
