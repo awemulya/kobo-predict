@@ -23,7 +23,7 @@ from onadata.apps.fsforms.fsxform_responses import get_instances_for_field_sight
 from django.contrib.sites.models import Site as DjangoSite
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
-SCHEDULED_LEVEL = [(0, 'Daily'), (1, 'Monthly'), (2, 'Weekly'),]
+SCHEDULED_LEVEL = [(0, 'Daily'), (1, 'Weekly'), (2, 'Monthly'),]
 FORM_STATUS = [(0, 'Pending'), (1, 'Rejected'), (2, 'Flagged'), (3, 'Approved'), ]
 
 

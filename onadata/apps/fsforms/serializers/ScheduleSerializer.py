@@ -29,7 +29,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
     default_submission_status = serializers.SerializerMethodField()
     responses_count = serializers.SerializerMethodField()
     latest_submission = serializers.SerializerMethodField()
-    schedule_level = serializers.SerializerMethodField('get_schedule_level_type', read_only=True)
+    schedule_level = serializers.SerializerMethodField('get_schedule_level_type')
 
     def validate(self, data):
         """
