@@ -611,9 +611,9 @@ assigntoken(csrf_token);
 										<th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
 										<th>{% trans 'Form' %} {% trans 'Title' %}</th>
                                         <th>{% trans 'Default Submission Status' %}</th>
-										<th>{% trans 'Assigned' %} {% trans 'Date' %}</th>
+										<!-- <th>{% trans 'Assigned' %} {% trans 'Date' %}</th>
 										<th>{% trans 'End' %} {% trans 'Date' %}</th>
-										<th>{% trans 'Days' %}</th>
+										<th>{% trans 'Days' %}</th> -->
                                         <th>{% trans 'Type' %}</th>
 										<th>{% trans 'Responses' %}</th>
 										<th>{% trans 'Edu..' %} {% trans 'Mat' %}</th>
@@ -631,9 +631,9 @@ assigntoken(csrf_token);
 										<select data-bind="options: availableoptions, optionsText: 'name',
                                               optionsValue: 'id', value: default_submission_status"></select>
                                         </td>
-                                        <td data-bind="text: date_range_start"></td>
+                                        <!-- <td data-bind="text: date_range_start"></td>
 										<td data-bind="text: date_range_end"></td>
-										<td data-bind="text: days"></td>
+										<td data-bind="text: days"></td> -->
                                         <td data-bind="text: schedule_level"></td>
 										<td data-bind="text: responses_count"></td>
                                         <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
@@ -1068,7 +1068,7 @@ assigntoken(csrf_token);
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
                                                         <strong>{% trans 'Form' %} {% trans 'Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
-                                                        <span class="pull-right">{% trans 'Default Submission Status' %}:</span>
+                                                        <span>{% trans 'Default Submission Status' %}:</span>
                                                          <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: stage_forms().default_submission_status"></select>
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
