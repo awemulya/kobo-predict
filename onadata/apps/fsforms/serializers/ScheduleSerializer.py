@@ -29,7 +29,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
     default_submission_status = serializers.SerializerMethodField()
     responses_count = serializers.SerializerMethodField()
     latest_submission = serializers.SerializerMethodField()
-    schedule_level_name = serializers.SerializerMethodField('get_schedule_level_type')
+    schedule_level = serializers.SerializerMethodField('get_schedule_level_type', read_only=True)
 
     def validate(self, data):
         """
@@ -53,9 +53,9 @@ class ScheduleSerializer(serializers.ModelSerializer):
         return u"%s" % (", ".join(day.day for day in obj.selected_days.all()))
 
     def get_schedule_level_type(self, obj):
-        if obj.schedule_level == 2:
+        if obj.schedule_level_id == 2:
             return "Monthly"
-        elif obj.schedule_level == 1:
+        elif obj.schedule_level_id == 1:
             return "Weekly"
         else:
             return "Daily"

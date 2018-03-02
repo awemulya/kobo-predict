@@ -169,7 +169,7 @@ class Schedule(models.Model):
     date_range_end = models.DateField(default=datetime.date.today)
     selected_days = models.ManyToManyField(Days, related_name='days', blank=True,)
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
-    schedule_level = models.IntegerField(default=0, choices=SCHEDULED_LEVEL)
+    schedule_level_id = models.IntegerField(default=0, choices=SCHEDULED_LEVEL)
     date_created = models.DateTimeField(auto_now_add=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
