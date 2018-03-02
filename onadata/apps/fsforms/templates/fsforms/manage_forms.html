@@ -264,8 +264,8 @@ assigntoken(csrf_token);
                                     <tbody data-bind="foreach: forms">
                                         <tr>
                                             <th scope="row" data-bind="text: $index()+1"></th>
-                                            <td><span data-bind="text: name"></span><span class="pull-right" data-bind="text : ((fsform() == null) ? '':'Project level')">Project Level</span>
-                                            <span class="col-sm-1" data-bind="text: default_submission_status_text"></span>
+                                            <td><span data-bind="text: name"></span><span class="pull-right">{% trans 'Default Submission Status:' %}</span>
+                                           
 
                                              <select data-bind="options: availableoptions, optionsText: 'name',
                                               optionsValue: 'id', value: default_submission_status"></select>
@@ -624,6 +624,7 @@ assigntoken(csrf_token);
 										<td data-bind="text: name"></td>
 										<td>
                                         <span data-bind="text: form_name"></span>
+                                        <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
 										<select data-bind="options: availableoptions, optionsText: 'name',
                                               optionsValue: 'id', value: default_submission_status"></select>
                                         </td>
@@ -1064,6 +1065,7 @@ assigntoken(csrf_token);
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
                                                         <strong>{% trans 'Form' %} {% trans 'Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
+                                                        <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
                                                          <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: stage_forms().default_submission_status"></select>
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
@@ -1298,6 +1300,7 @@ assigntoken(csrf_token);
                                             <th scope="row" data-bind='text: $index()+1'></th>
                                             <td>
                                              <span data-bind="text: name"></span>
+                                             <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
                                              <select data-bind="options: availableoptions, optionsText: 'name',
                                               optionsValue: 'id', value: default_submission_status"></select>
                                              </td>
