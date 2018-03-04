@@ -20,7 +20,7 @@ from onadata.apps.userrole.viewsets.UserRoleViewsets import ManagePeoplePermissi
 from .forms import UserRoleForm, UserForm
 from .models import UserRole as Role, UserRole
 from django.views.decorators.csrf import csrf_exempt
-
+from onadata.apps.fieldsight.rolemixins import ProjectRoleMixin
 def set_role(request, pk):
     role = Role.objects.get(pk=pk, user=request.user)
     if role:
@@ -118,7 +118,11 @@ def remove_role(request):
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
-
+class DonerRole(ProjectRoleMixin):
+    def get(self, request, pk)
+        # id 7 is Donor
+        donors = UserRole.objects.filter(project_id=pk, group_id=7, ended_at=None)
+        return HttpResponse(json.dumps(donors, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 # class MultiUserAssignRoleViewSet(ListView):
     
   

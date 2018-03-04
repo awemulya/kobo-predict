@@ -58,6 +58,25 @@ class ProjectRoleMixin(LoginRequiredMixin):
 
         raise PermissionDenied()
 
+class DonerRoleMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if request.group.name == "Super Admin":
+            return super(DonerRoleMixin, self).dispatch(request, *args, **kwargs)
+        
+        project_id = self.kwargs.get('pk')
+        user_id = request.user.id
+        user_role = request.roles.filter(user_id = user_id, project_id = project_id, group_id__in=[2, 7])
+        
+        if user_role:
+            return super(DonerRoleMixin, self).dispatch(request, *args, **kwargs)
+        organization_id = Project.objects.get(pk=project_id).organization.id
+        user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+        
+        if user_role_asorgadmin:
+            return super(DonerRoleMixin, self).dispatch(request, *args, **kwargs)
+
+        raise PermissionDenied()
+
 class ReviewerRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
 

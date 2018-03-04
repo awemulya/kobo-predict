@@ -513,94 +513,94 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                  
 
 
-                  <div class="col-md-8">
-            <div class="widget-info margin-top bg-white padding">
-              <div class="widget-head">
-                <h4>{% trans 'Invite' %} {% trans 'new' %} {% trans 'project' %} {% trans 'managers' %}</h4>
-              </div>
-              <div class="widget-body">
-                <form>
-                  <div class="input-group">
+                    <div class="col-md-8">
+                <div class="widget-info margin-top bg-white padding">
+                  <div class="widget-head">
+                    <h4>{% trans 'Invite' %} {% trans 'new' %} {% trans 'project' %} {% trans 'managers' %}</h4>
+                  </div>
+                  <div class="widget-body">
+                    <form>
+                      <div class="input-group">
 
-                   <ul id="email1ProjectTags">
-                        
+                       <ul id="email1ProjectTags">
+                            
+                        </ul>
+                        <span class="input-group-btn">
+                          <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Project Manager', 1)" type="button"><i class="la la-user-plus"></i> {% trans 'Invite' %}</button>
+                        </span>
+                      </div>
+                    </form>
+
+
+                   
+                    <h4 class="text-center margin-top">
+                    <strong>{% trans 'OR' %}</strong>
+                    </h4>
+                    <div class="widget-head">
+                    <h4>{% trans 'Select' %} {% trans 'Users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Managers' %}</h4>
+                    </div>
+                   
+                    <form class="margin-top">
+                      <div class="input-group">
+                        <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                      </div>
+                    </form>
+                     <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
+                     <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+
+                    <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Manager' %}</button>
+                   
+                    <ul class="row" data-bind="foreach:$root.users">
+                      <li class="col-md-4">
+                        <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                          <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
+                          <span class="custom-control-indicator"></span>
+                          <span class="custom-control-description">
+                            <div class="project-item-wrap clearfix">
+                              <div class="project-logo">
+                                <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                              </div>
+                              <div class="project-basic-info">
+                                <h4 data-bind="text:user().full_name"></h4>
+                                <p data-bind="text:user().email"></p>
+                              </div>
+                            </div>
+                            <!-- <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a> -->
+                          </span>
+                        </label>
+                      </li>
+                      
+                      <li class="clearfix"></li>
                     </ul>
-                    <span class="input-group-btn">
-                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Project Manager', 1)" type="button"><i class="la la-user-plus"></i> {% trans 'Invite' %}</button>
-                    </span>
+                    <div class="margin-top">
+                    </div>
+
                   </div>
-                </form>
+                </div>
+            </div>
 
-
-               
-                <h4 class="text-center margin-top">
-                <strong>{% trans 'OR' %}</strong>
-                </h4>
+            <div class="col-md-4">
+              <div class="widget-info margin-top bg-white padding">
                 <div class="widget-head">
-                <h4>{% trans 'Select' %} {% trans 'Users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Managers' %}</h4>
-                </div>
-               
-                <form class="margin-top">
-                  <div class="input-group">
-                    <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
-                  </div>
-                </form>
-                 <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
-                 <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
-
-                <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Manager' %}</button>
-               
-                <ul class="row" data-bind="foreach:$root.users">
-                  <li class="col-md-4">
-                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
-                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
-                      <span class="custom-control-indicator"></span>
-                      <span class="custom-control-description">
-                        <div class="project-item-wrap clearfix">
-                          <div class="project-logo">
-                            <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
-                          </div>
-                          <div class="project-basic-info">
-                            <h4 data-bind="text:user().full_name"></h4>
-                            <p data-bind="text:user().email"></p>
-                          </div>
-                        </div>
-                        <!-- <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a> -->
-                      </span>
-                    </label>
-                  </li>
-                  
-                  <li class="clearfix"></li>
-                </ul>
-                <div class="margin-top">
+                  <h4>{% trans 'Current' %} {% trans 'Project' %} {% trans 'Managers' %}</h4>
                 </div>
 
+                <div class="widget-body" data-bind="foreach:projectManagers">
+                  <div class="project-item-wrap clearfix">
+                    <div class="project-logo">
+                      <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                    </div>
+                    <div class="project-basic-info">
+                      <h4 data-bind="text:user().full_name"></h4>
+                      <p data-bind="text:user().email"></p>
+                    </div>
+                    <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this Project Manager?', click:rmrole }"><i class="la la-close"></i></a>
+
+
+
+                    <li class="clearfix"></li>
+                  </ul>
               </div>
-            </div>
-          </div>
-
-          <div class="col-md-4">
-            <div class="widget-info margin-top bg-white padding">
-              <div class="widget-head">
-                <h4>{% trans 'Current' %} {% trans 'Project' %} {% trans 'Managers' %}</h4>
-              </div>
-
-              <div class="widget-body" data-bind="foreach:projectManagers">
-                <div class="project-item-wrap clearfix">
-                  <div class="project-logo">
-                    <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
-                  </div>
-                  <div class="project-basic-info">
-                    <h4 data-bind="text:user().full_name"></h4>
-                    <p data-bind="text:user().email"></p>
-                  </div>
-                  <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this Project Manager?', click:rmrole }"><i class="la la-close"></i></a>
-
-
-
-                  <li class="clearfix"></li>
-                </ul>
-            </div>
             <div class="tab-pane" id="tab002" role="tabpanel">
               <ul class="row">
                   
@@ -783,6 +783,104 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <li class="clearfix"></li>
                 </ul>
             </div>
+
+
+
+
+
+            <div class="tab-pane active" id="tab003" role="tabpanel">
+              <ul class="row">
+                 
+
+
+                    <div class="col-md-8">
+                <div class="widget-info margin-top bg-white padding">
+                  <div class="widget-head">
+                    <h4>{% trans 'Invite' %} {% trans 'new' %} {% trans 'project' %} {% trans 'donors' %}</h4>
+                  </div>
+                  <div class="widget-body">
+                    <form>
+                      <div class="input-group">
+
+                       <ul id="email1ProjectTags">
+                            
+                        </ul>
+                        <span class="input-group-btn">
+                          <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Project donor', 1)" type="button"><i class="la la-user-plus"></i> {% trans 'Invite' %}</button>
+                        </span>
+                      </div>
+                    </form>
+
+
+                   
+                    <h4 class="text-center margin-top">
+                    <strong>{% trans 'OR' %}</strong>
+                    </h4>
+                    <div class="widget-head">
+                    <h4>{% trans 'Select' %} {% trans 'Users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'donors' %}</h4>
+                    </div>
+                   
+                    <form class="margin-top">
+                      <div class="input-group">
+                        <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                      </div>
+                    </form>
+                     <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
+                     <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+
+                    <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'donors' %}</button>
+                   
+                    <ul class="row" data-bind="foreach:$root.users">
+                      <li class="col-md-4">
+                        <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                          <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
+                          <span class="custom-control-indicator"></span>
+                          <span class="custom-control-description">
+                            <div class="project-item-wrap clearfix">
+                              <div class="project-logo">
+                                <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                              </div>
+                              <div class="project-basic-info">
+                                <h4 data-bind="text:user().full_name"></h4>
+                                <p data-bind="text:user().email"></p>
+                              </div>
+                            </div>
+                            <!-- <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a> -->
+                          </span>
+                        </label>
+                      </li>
+                      
+                      <li class="clearfix"></li>
+                    </ul>
+                    <div class="margin-top">
+                    </div>
+
+                  </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="widget-info margin-top bg-white padding">
+                <div class="widget-head">
+                  <h4>{% trans 'Current' %} {% trans 'Project' %} {% trans 'donors' %}</h4>
+                </div>
+
+                <div class="widget-body" data-bind="foreach:projectManagers">
+                  <div class="project-item-wrap clearfix">
+                    <div class="project-logo">
+                      <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                    </div>
+                    <div class="project-basic-info">
+                      <h4 data-bind="text:user().full_name"></h4>
+                      <p data-bind="text:user().email"></p>
+                    </div>
+                    <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this Project Manager?', click:rmrole }"><i class="la la-close"></i></a>
+
+
+
+                    <li class="clearfix"></li>
+                  </ul>
+              </div>
           </div>
          <!--  <button type="submit" class="btn btn-primary btn-block"><i class="la la-user-plus"></i> Assign Users</button> -->
         </div>
