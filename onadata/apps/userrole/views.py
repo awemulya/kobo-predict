@@ -10,7 +10,7 @@ from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, View
 from rest_framework.response import Response
 
 from onadata.apps.fieldsight.mixins import (LoginRequiredMixin, SuperAdminMixin, CreateView, UpdateView, DeleteView,
@@ -118,7 +118,7 @@ def remove_role(request):
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
-class DonerRole(ProjectRoleMixin):
+class DonerRole(ProjectRoleMixin, View):
     def get(self, request, pk)
         # id 7 is Donor
         donors = UserRole.objects.filter(project_id=pk, group_id=7, ended_at=None)
