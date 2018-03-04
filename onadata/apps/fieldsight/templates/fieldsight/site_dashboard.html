@@ -81,7 +81,25 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 								  </div>
 								  <div class="modal-body">
 									<div class="form-item-wrapper checkbox-listing">
-										<ul>
+
+
+<ul data-bind="template: { name: 'itemTmpl', foreach: allformjson }"></ul>
+
+<script id="itemTmpl" type="text/html">
+    <li>
+
+    	<input type="checkbox" data-name="itemAll" data-bind="checked: selected, click: $root.setSelected"/> 
+		<label for="itemAll" data-bind="text: xf_title"></label>
+        
+
+        <ul data-bind="template: { name: 'itemTmpl', foreach: $data.forms }">
+        <!--  style: { 'opacity' : (selected() ? 1 : 0.5 ), 'pointer-events':(selected() ? '' : 'none' ) } -->
+        </ul>
+    </li>
+</script>
+
+
+<!-- 										<ul>
 											<li>
 												<input type="checkbox" id="itemAll" data-id="itemAll" data-name="itemAll" /> 
 												<label for="itemAll">Select All</label>
@@ -109,7 +127,7 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 													</li>
 												</ul>
 											</li>
-										</ul>
+										</ul> -->
 									</div>
 								  </div>
 								  <div class="modal-footer">
