@@ -70,6 +70,80 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
   </div>
 
 
+<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+								  <div class="modal-header">
+									<h5 class="modal-title" id="exportModalLabel">Export Report</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									  <span aria-hidden="true">&times;</span>
+									</button>
+								  </div>
+								  <div class="modal-body">
+									<div class="form-item-wrapper checkbox-listing">
+										<ul>
+											<li>
+												<input type="checkbox" id="itemAll" data-id="itemAll" data-name="itemAll" /> 
+												<label for="itemAll">Select All</label>
+												
+
+
+
+
+
+  <ul data-bind="template: { name: 'itemTmpl', foreach: allformjson }"></ul>
+
+<script id="itemTmpl" type="text/html">
+    <li>
+        <span data-bind="text: xf_title"></span>
+        <input type='checkbox' data-bind="checked: selected, click: $root.setSelected" />
+        <ul data-bind="template: { name: 'itemTmpl', foreach: $data.forms }">
+        <!--  style: { 'opacity' : (selected() ? 1 : 0.5 ), 'pointer-events':(selected() ? '' : 'none' ) } -->
+        </ul>
+    </li>
+</script>
+
+
+
+
+
+
+								<!-- 				<ul>
+													<li>
+														<input type="checkbox" data-id="item" data-name="Item" id="item" />
+														<label for="item">Stage 1</label>
+														<ul>
+															<li><input type="checkbox" id="subitem1" data-id="subitem1" data-name="Subitem 1" /> 
+															<label for="subitem1">Substage 1</label>
+															</li>
+														
+														</ul>
+													</li>
+													<li>
+														<input type="checkbox" data-id="item2" data-name="Item2" id="item2" />
+														<label for="item2">Stage 2</label>
+														<ul>
+															<li><input type="checkbox" id="subitem21" data-id="subitem21" data-name="Subitem 21" /> 
+															<label for="subitem21">Substage 21</label>									
+															</li>
+														</ul>
+													</li>
+												</ul> -->
+
+
+
+											</li>
+										</ul>
+									</div>
+								  </div>
+								  <div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-primary">Export</button>
+								  </div>
+								</div>
+							</div>
+						</div>
+
 			<div id="main-content" class="padding" onload="change()">
 
 				<nav aria-label="breadcrumb" role="navigation">
