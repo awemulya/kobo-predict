@@ -38,39 +38,9 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
     {% load filters %}
 
 
-   <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Modal Header</h4>
-        </div>
-        <div class="modal-body">
-         <ul data-bind="template: { name: 'itemTmpl', foreach: allformjson }"></ul>
-
-<script id="itemTmpl" type="text/html">
-    <li>
-        <span data-bind="text: xf_title"></span>
-        <input type='checkbox' data-bind="checked: selected, click: $root.setSelected" />
-        <ul data-bind="template: { name: 'itemTmpl', foreach: $data.forms }">
-        <!--  style: { 'opacity' : (selected() ? 1 : 0.5 ), 'pointer-events':(selected() ? '' : 'none' ) } -->
-        </ul>
-    </li>
-</script>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-bind="click: $root.generateReport">Generate Report</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
 
 
-<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 								  <div class="modal-header">
