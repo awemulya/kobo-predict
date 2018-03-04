@@ -59,8 +59,8 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 <script id="itemTmpl" type="text/html">
     <li>
 
-    	 <span data-bind="text: xf_title"></span>
-        <input type='checkbox' data-bind="checked: selected, click: $root.setSelected" />
+    	<input type="checkbox" data-bind="checked: selected, click: $root.setSelected"/> 
+		<label data-bind="text: xf_title"></label>
         
 
         <ul data-bind="template: { name: 'itemTmpl', foreach: $data.forms }">
