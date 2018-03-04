@@ -119,7 +119,7 @@ def remove_role(request):
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 class DonerRole(ProjectRoleMixin, View):
-    def get(self, request, pk)
+    def get(self, request, pk):
         # id 7 is Donor
         donors = UserRole.objects.filter(project_id=pk, group_id=7, ended_at=None)
         return HttpResponse(json.dumps(donors, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
