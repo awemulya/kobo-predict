@@ -39,7 +39,7 @@ from .views import (
     setup_project_stages, project_stage_add, Instance_detail, alter_answer_status, project_survey,
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, Responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, ProjectResponses,
-    project_html_export, Deploy_survey, deploy_stages, Deploy_general, SetDeployStages, share_stages,
+    project_html_export, Deploy_survey, deploy_stages, Deploy_general, set_deploy_stages, share_stages,
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms,
     instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
     save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable)
@@ -75,7 +75,7 @@ urlpatterns = [
         url(r'^change-share-stages/(?P<id>\d+)/$', edit_share_stages, name='edit-share-stages'),
         url(r'^share-stages/(?P<id>\d+)/(?P<is_project>\d)/$', share_stages, name='share-stages'),
 
-        url(r'^set-deploy-stages/(?P<is_project>\d)/(?P<pk>\d+)$', SetDeployStages.as_view(), name='set-deploy-stages'),
+        url(r'^set-deploy-stages/(?P<is_project>\d)/(?P<pk>\d+)$', set_deploy_stages, name='set-deploy-stages'),
         url(r'^deploy-general/(?P<is_project>\d)/(?P<pk>\d+)$', Deploy_general.as_view(), name='deploy-general'),
         url(r'^deploy-general-remaining/(?P<is_project>\d)/(?P<pk>\d+)$'
             , deploy_general_remaining_sites
