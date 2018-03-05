@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 import json
 import xlwt
 from io import BytesIO
-from django.http import HttpResponse
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User, Permission
@@ -53,7 +52,7 @@ from django.template.loader import render_to_string, get_template
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes, smart_str
 from django.utils.crypto import get_random_string
-from django.http import HttpResponse
+
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch

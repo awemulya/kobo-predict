@@ -831,7 +831,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                      <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                      <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
 
-                    <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'donors' %}</button>
+                    <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignDonor"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'donors' %}</button>
                    
                     <ul class="row" data-bind="foreach:$root.users">
                       <li class="col-md-4">
@@ -868,7 +868,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <h4>{% trans 'Current' %} {% trans 'Project' %} {% trans 'donors' %}</h4>
                 </div>
 
-                <div class="widget-body" data-bind="foreach:projectManagers">
+                <div class="widget-body" data-bind="foreach:projectDonors">
                   <div class="project-item-wrap clearfix">
                     <div class="project-logo">
                       <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
@@ -877,7 +877,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                       <h4 data-bind="text:user().full_name"></h4>
                       <p data-bind="text:user().email"></p>
                     </div>
-                    <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this Project Manager?', click:rmrole }"><i class="la la-close"></i></a>
+                    <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this Project Donor?', click:rmrole }"><i class="la la-close"></i></a>
 
 
 

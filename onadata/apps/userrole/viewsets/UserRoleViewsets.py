@@ -94,11 +94,11 @@ class UserRoleViewSet(viewsets.ModelViewSet):
 
                 elif level == "1":
                     project = Project.objects.get(pk=self.kwargs.get('pk'))
-                    role, created = UserRole.objects.get_or_create(user_id=user, project_id=self.kwargs.get('pk'),
-                                                                   organization__id=project.organization.id,
+                    role, created = UserRole.objects.get_or_create(user_id=user, organization__id=project.organization_id,
                                                                    project__id=project.id, site__id=None,
                                                                    group=group, ended_at=None)
                     if created:
+                        print role.__dict__
                         description = "{0} was assigned  as Project Manager in {1}".format(
                             role.user.get_full_name(), role.project)
                         noti = role.logs.create(source=role.user, type=6, title=description, organization=project.organization, project=project, description=description, content_object=project, extra_object=self.request.user)
