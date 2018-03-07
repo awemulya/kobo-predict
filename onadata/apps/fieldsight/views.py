@@ -1479,8 +1479,16 @@ class ActivateRole(TemplateView):
             noti_type = 4
             content = invite.site
         elif invite.group.name == "Unassigned":
-            noti_type = 4
-            content = invite.site
+            noti_type = 24
+            if invite.site:
+                content = invite.site
+            elif invite.project:
+                content = invite.project
+            else:   
+                content = invite.organization
+        elif invite.group.name == "Project Donor":
+            noti_type = 25
+            content = invite.project
         
         noti = invite.logs.create(source=user, type=noti_type, title="new Role",
                                        organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.by_user,
@@ -2316,7 +2324,7 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
     template_name = "fieldsight/donor_project_dashboard.html"
     
     def get_context_data(self, **kwargs):
-        dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
+        dashboard_data = super(DonorProjectDashboard, self).get_context_data(**kwargs)
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
 
         peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
@@ -2356,7 +2364,7 @@ class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
     template_name = 'fieldsight/donor_site_dashboard.html'
 
     def get_context_data(self, **kwargs):
-        dashboard_data = super(SiteDashboardView, self).get_context_data(**kwargs)
+        dashboard_data = super(DonorSiteDashboard, self).get_context_data(**kwargs)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
         peoples_involved = obj.site_roles.filter(ended_at__isnull=True).distinct('user')
         data = serialize('custom_geojson', [obj], geometry_field='location',

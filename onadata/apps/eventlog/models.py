@@ -39,6 +39,8 @@ class FieldSightLog(models.Model):
         (18, 'User assigned a new Form Type Form Name in Project Name.'),
         (19, 'User assigned a new Form Type Form Name to Site Name.'),
         (20, 'User edited Form Name form.'),
+        (24, 'User was added as unassigned.'),
+        (25, 'User was added as donor in project.'),
     )
     
     type = models.IntegerField(default=0, choices=ACTION_TYPES)
