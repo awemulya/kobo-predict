@@ -10,7 +10,7 @@ from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, View
 from rest_framework.response import Response
 
 from onadata.apps.fieldsight.mixins import (LoginRequiredMixin, SuperAdminMixin, CreateView, UpdateView, DeleteView,
@@ -20,7 +20,9 @@ from onadata.apps.userrole.viewsets.UserRoleViewsets import ManagePeoplePermissi
 from .forms import UserRoleForm, UserForm
 from .models import UserRole as Role, UserRole
 from django.views.decorators.csrf import csrf_exempt
-
+from onadata.apps.fieldsight.rolemixins import ProjectRoleMixin
+from django.http import HttpResponse
+from django.core.serializers.json import DjangoJSONEncoder
 def set_role(request, pk):
     role = Role.objects.get(pk=pk, user=request.user)
     if role:
@@ -118,7 +120,12 @@ def remove_role(request):
     except Exception as e:
         return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
-
+class DonerRole(ProjectRoleMixin, View):
+    def get(self, request, pk):
+        # id 7 is Donor
+        donors = UserRole.objects.filter(project_id=pk, group_id=7, ended_at=None)
+        data = list(donors)
+        return HttpResponse(json.dumps(donors, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 # class MultiUserAssignRoleViewSet(ListView):
     
   

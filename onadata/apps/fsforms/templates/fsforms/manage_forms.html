@@ -265,8 +265,13 @@ assigntoken(csrf_token);
                                     <tbody data-bind="foreach: forms">
                                         <tr>
                                             <th scope="row" data-bind="text: $index()+1"></th>
-                                            <td><span data-bind="text: name"></span></td>
+
+                                            <td><span data-bind="text: name"></span>
+                                            </td>
                                             <td>
+                                           
+
+
                                              <select data-bind="options: availableoptions, optionsText: 'name',
                                               optionsValue: 'id', value: default_submission_status"></select>
                                             </td>
@@ -628,6 +633,7 @@ assigntoken(csrf_token);
                                         <span data-bind="text: form_name"></span>
                                         </td>
                                         <td>
+
 										<select data-bind="options: availableoptions, optionsText: 'name',
                                               optionsValue: 'id', value: default_submission_status"></select>
                                         </td>
@@ -938,7 +944,7 @@ assigntoken(csrf_token);
                                     </div>
                                  </div>
                                 <div id="accordion" role="tablist" data-bind="foreach:stages">
-                                  <div class="card margin-bottom">
+                                  <div class="card margin-top">
                                     <div class="card-header clearfix" role="tab" data-bind="attr: { id: 'heading_' + $index() }" >
                                         <div class="stage-name" data-toggle="collapse"
                                              aria-expanded="true"
@@ -980,7 +986,7 @@ assigntoken(csrf_token);
                                             <ul data-bind="attr: { id: 'substages_' + $index() }, foreach:parent">
 
                                                 <li class="clearfix">
-                                                <br>
+                                                
                                                     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                                                         <div data-bind="with: em">
                                                           <div class="modal-dialog form-modal" role="document">
@@ -1068,7 +1074,9 @@ assigntoken(csrf_token);
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
                                                         <strong>{% trans 'Form' %} {% trans 'Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
-                                                        <span>{% trans 'Default Submission Status' %}:</span>
+
+                                                        <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
+
                                                          <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: stage_forms().default_submission_status"></select>
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
@@ -1305,8 +1313,10 @@ assigntoken(csrf_token);
                                             <th scope="row" data-bind='text: $index()+1'></th>
                                             <td>
                                              <span data-bind="text: name"></span>
+
                                              </td>
                                              <td>
+
                                              <select data-bind="options: availableoptions, optionsText: 'name',
                                               optionsValue: 'id', value: default_submission_status"></select>
                                              </td>

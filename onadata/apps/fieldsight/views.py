@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 import json
 import xlwt
 from io import BytesIO
-from django.http import HttpResponse
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User, Permission
@@ -42,7 +41,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
-from .rolemixins import SiteDeleteRoleMixin, SiteSupervisorRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
+from .rolemixins import Donor_Project_dashboard, SiteDeleteRoleMixin, SiteSupervisorRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm)
@@ -53,7 +52,7 @@ from django.template.loader import render_to_string, get_template
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes, smart_str
 from django.utils.crypto import get_random_string
-from django.http import HttpResponse
+
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
@@ -83,6 +82,8 @@ def dashboard(request):
             return HttpResponseRedirect(reverse("fieldsight:roles-dashboard"))
         if role_type == "Reviewer":
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
+        if role_type == "Project Donor":
+            return HttpResponseRedirect(reverse("fieldsight:donor_project_dashboard", kwargs={'pk': current_role.project.pk}))
         if role_type == "Project Manager":
             return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role.project.pk}))
         if role_type == "Organization Admin":
@@ -980,6 +981,7 @@ class RolesView(LoginRequiredMixin, TemplateView):
         context = super(RolesView, self).get_context_data(**kwargs)
         context['org_admin'] = self.request.roles.select_related('organization').filter(group__name="Organization Admin")
         context['proj_manager'] = self.request.roles.select_related('project').filter(group__name = "Project Manager")
+        context['proj_donor'] = self.request.roles.select_related('project').filter(group__name = "Project Donor")
         context['site_reviewer'] = self.request.roles.select_related('site').filter(group__name = "Reviewer")
         context['site_supervisor'] = self.request.roles.select_related('site').filter(group__name = "Site Supervisor")
         return context
@@ -2309,3 +2311,81 @@ class SiteResponseCoordinates(ReviewerRoleMixin, View):
         coord_datas = get_site_responses_coords(pk)
         content={'coords-data':list(coord_datas["result"])}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+
+class DonorProjectDashboard(DonorRoleMixin, TemplateView):
+    template_name = "fieldsight/donor_project_dashboard.html"
+    
+    def get_context_data(self, **kwargs):
+        dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
+        obj = Project.objects.get(pk=self.kwargs.get('pk'))
+
+        peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
+        total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
+        sites = obj.sites.filter(is_active=True, is_survey=False)
+        data = serialize('custom_geojson', sites, geometry_field='location',
+                         fields=('location', 'id',))
+
+        total_sites = sites.count()
+        total_survey_sites = obj.sites.filter(is_survey=True).count()
+        outstanding, flagged, approved, rejected = obj.get_submissions_count()
+        bar_graph = BarGenerator(sites)
+        line_chart = LineChartGenerator(obj)
+        line_chart_data = line_chart.data()
+        roles_project = UserRole.objects.filter(organization__isnull = False, project_id = self.kwargs.get('pk'), site__isnull = True, ended_at__isnull=True)
+
+        dashboard_data = {
+            'sites': sites,
+            'obj': obj,
+            'peoples_involved': peoples_involved,
+            'total_sites': total_sites,
+            'total_survey_sites': total_survey_sites,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+            'data': data,
+            'cumulative_data': line_chart_data.values(),
+            'cumulative_labels': line_chart_data.keys(),
+            'progress_data': bar_graph.data.values(),
+            'progress_labels': bar_graph.data.keys(),
+            'roles_project': roles_project,
+    }
+        return dashboard_data
+
+class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
+    template_name = 'fieldsight/donor_site_dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        dashboard_data = super(SiteDashboardView, self).get_context_data(**kwargs)
+        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        peoples_involved = obj.site_roles.filter(ended_at__isnull=True).distinct('user')
+        data = serialize('custom_geojson', [obj], geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+
+        line_chart = LineChartGeneratorSite(obj)
+        line_chart_data = line_chart.data()
+        progress_chart = ProgressGeneratorSite(obj)
+        progress_chart_data = progress_chart.data()
+        meta_questions = obj.project.site_meta_attributes
+        meta_answers = obj.site_meta_attributes_ans
+        mylist =[]
+        for question in meta_questions:
+            if question['question_name'] in meta_answers:
+                mylist.append({question['question_text'] : meta_answers[question['question_name']]})
+        myanswers = mylist
+        outstanding, flagged, approved, rejected = obj.get_site_submission()
+        dashboard_data = {
+            'obj': obj,
+            'peoples_involved': peoples_involved,
+            'outstanding': outstanding,
+            'flagged': flagged,
+            'approved': approved,
+            'rejected': rejected,
+            'data': data,
+            'cumulative_data': line_chart_data.values(),
+            'cumulative_labels': line_chart_data.keys(),
+            'progress_chart_data_data': progress_chart_data.keys(),
+            'progress_chart_data_labels': progress_chart_data.values(),
+            'meta_data': myanswers,
+        }
+        return dashboard_data
