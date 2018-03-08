@@ -343,14 +343,14 @@ class ReadonlyFormMixin(LoginRequiredMixin):
         form = get_object_or_404(FieldSightXF, pk=fsxf_id)
 
         if form.site is not None:
-            site_id = form.site.id
+            site_id = form.site_id
             user_role = request.roles.filter(user_id = user_id, site_id = site_id, group_id=3)
             if user_role:
                 return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
             project_id=Site.objects.get(pk=site_id).project.id
         
         else:
-            project_id = form.project.id
+            project_id = form.project_id
 
         user_role = request.roles.filter(user_id = user_id, project_id = project_id, group_id=2)
         if user_role:
@@ -361,7 +361,10 @@ class ReadonlyFormMixin(LoginRequiredMixin):
         if user_role_asorgadmin:
             return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
 
-        user_role = request.roles.filter(Q(user_id = user_id, site_id = site_id, group_id=4) | Q(user_id = user_id, project_id = project_id, group_id=7))
+        if form.site is not None:
+            user_role = request.roles.filter(user_id = user_id, site_id = form.site_id, group_id=4)
+        else:
+            user_role = request.roles.filter(user_id = user_id, project_id = form.project_id, group_id=7)
         if user_role:
             return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args,read_only=True, **kwargs)
 
