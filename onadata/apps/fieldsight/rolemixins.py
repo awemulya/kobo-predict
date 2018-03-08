@@ -362,8 +362,8 @@ class ReadonlyFormMixin(LoginRequiredMixin):
             return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
 
         user_role = request.roles.filter(Q(user_id = user_id, site_id = site_id, group_id=4) | Q(user_id = user_id, project_id = project_id, group_id=7))
-            if user_role:
-                return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args,read_only=True, **kwargs)
+        if user_role:
+            return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args,read_only=True, **kwargs)
 
         raise PermissionDenied()   
 
