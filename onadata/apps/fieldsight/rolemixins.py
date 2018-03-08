@@ -9,7 +9,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.views.generic import TemplateView
-from django.shortcuts import get_object_or_404
 
 from onadata.apps.fieldsight.models import Organization, Project, Site
 from onadata.apps.fsforms.models import FieldSightXF 
@@ -109,7 +108,7 @@ class DonorSiteViewRoleMixin(LoginRequiredMixin):
         if request.group.name == "Super Admin":
             return super(DonorSiteViewRoleMixin, self).dispatch(request, *args, **kwargs)
         
-        site = Site.get_object_or_404(pk=self.kwargs.get('pk'))
+        site = get_object_or_404(Site, pk=self.kwargs.get('pk'))
         user_id = request.user.id
         user_role = request.roles.filter(user_id = user_id, project_id = site.project_id, group_id=7)
         
