@@ -1778,7 +1778,7 @@ class OrganizationdataSubmissionView(TemplateView):
         return data
 
 
-class ProjectdataSubmissionView(ProjectRoleMixin, TemplateView):
+class ProjectdataSubmissionView(ReadonlyProjectLevelRoleMixin, TemplateView):
     template_name = "fieldsight/projectdata_submission.html"
 
     def get_context_data(self, **kwargs):
@@ -1793,7 +1793,7 @@ class ProjectdataSubmissionView(ProjectRoleMixin, TemplateView):
         return data
 
 
-class SitedataSubmissionView(TemplateView):
+class SitedataSubmissionView(ReadonlySiteLevelRoleMixin, TemplateView):
     template_name = "fieldsight/sitedata_submission.html"
 
     def get_context_data(self, **kwargs):
