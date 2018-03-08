@@ -17,6 +17,7 @@ from .helpers import json_from_object
 from onadata.apps.userrole.models import UserRole
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
+from django.db.models import Q
 
 class LoginRequiredMixin(object):
     @classmethod
@@ -343,7 +344,7 @@ class ReadonlyFormMixin(LoginRequiredMixin):
 
         if form.site is not None:
             site_id = form.site.id
-            user_role = request.roles.filter(user_id = user_id, site_id = site_id, group_id__in=[3,4])
+            user_role = request.roles.filter(user_id = user_id, site_id = site_id, group_id=3)
             if user_role:
                 return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
             project_id=Site.objects.get(pk=site_id).project.id
@@ -351,7 +352,7 @@ class ReadonlyFormMixin(LoginRequiredMixin):
         else:
             project_id = form.project.id
 
-        user_role = request.roles.filter(user_id = user_id, project_id = project_id, group_id__in=[2,7])
+        user_role = request.roles.filter(user_id = user_id, project_id = project_id, group_id=2)
         if user_role:
             return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
 
@@ -359,6 +360,10 @@ class ReadonlyFormMixin(LoginRequiredMixin):
         user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
         if user_role_asorgadmin:
             return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
+
+        user_role = request.roles.filter(Q(user_id = user_id, site_id = site_id, group_id=4) | Q(user_id = user_id, project_id = project_id, group_id=7))
+            if user_role:
+                return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args,read_only=True, **kwargs)
 
         raise PermissionDenied()   
 

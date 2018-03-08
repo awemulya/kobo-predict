@@ -1539,7 +1539,8 @@ def alter_answer_status(request, instance_id, status, fsid):
 
 # @group_required('KoboForms')
 class InstanceKobo(ReadonlyFormMixin, View):
-    def get(self, request, fsxf_id):
+    def get(self, request, fsxf_id, **kwargs):
+        print self.kwargs
 
         fxf = FieldSightXF.objects.get(pk=fsxf_id)
         xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
