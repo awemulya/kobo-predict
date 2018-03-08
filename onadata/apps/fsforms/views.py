@@ -1538,24 +1538,25 @@ def alter_answer_status(request, instance_id, status, fsid):
 
 
 # @group_required('KoboForms')
-def instance_kobo(request, fsxf_id):
+class InstanceKobo(ReadonlyFormMixin, View):
+    def get(self, request, fsxf_id):
 
-    fxf = FieldSightXF.objects.get(pk=fsxf_id)
-    xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
-    audit = {
-        "xform": xform.id_string,
-    }
-    audit_log(
-        Actions.FORM_DATA_VIEWED, request.user, xform.user,
-        _("Requested instance view for '%(id_string)s'.") %
-        {
-            'id_string': xform.id_string,
-        }, audit, request)
-    return render(request, 'fs_instance.html', {
-        'username': xform.user,
-        'fxf': fxf,
-        'can_edit': can_edit
-    })
+        fxf = FieldSightXF.objects.get(pk=fsxf_id)
+        xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
+        audit = {
+            "xform": xform.id_string,
+        }
+        audit_log(
+            Actions.FORM_DATA_VIEWED, request.user, xform.user,
+            _("Requested instance view for '%(id_string)s'.") %
+            {
+                'id_string': xform.id_string,
+            }, audit, request)
+        return render(request, 'fs_instance.html', {
+            'username': xform.user,
+            'fxf': fxf,
+            'can_edit': can_edit
+        })
 
 
 @require_http_methods(["GET", "OPTIONS"])
