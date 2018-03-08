@@ -1023,7 +1023,7 @@ class ProjSiteList(ProjectRoleMixin, ListView):
 class DonorProjSiteList(ReadonlyProjectLevelRoleMixin, ListView):
     template_name = "fieldsight/donor_site_list.html"
     def get_context_data(self, **kwargs):
-        context = super(ProjSiteList, self).get_context_data(**kwargs)
+        context = super(DonorProjSiteList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
         context['type'] = "project"
         context['is_form_proj'] = True
