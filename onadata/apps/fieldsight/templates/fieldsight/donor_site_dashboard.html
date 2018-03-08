@@ -80,7 +80,7 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' obj.project.organization.pk %}">{{obj.project.organization.name}}</a></li>
 						{% endrole %}
 						{% ifrole "Project" %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">{{obj.project.name}}</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:donor_project_dashboard' obj.project.pk %}">{{obj.project.name}}</a></li>
 						{% endrole %}
 						<li class="breadcrumb-item active" aria-current="page">{{obj.name}}</li>
 					 </ol>

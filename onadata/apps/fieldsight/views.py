@@ -1020,6 +1020,18 @@ class ProjSiteList(ProjectRoleMixin, ListView):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
         return queryset
 
+class DonorProjSiteList(ReadonlyProjectLevelRoleMixin, ListView):
+    template_name = "fieldsight/donor_site_list.html"
+    def get_context_data(self, **kwargs):
+        context = super(ProjSiteList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['type'] = "project"
+        context['is_form_proj'] = True
+        return context
+    def get_queryset(self):
+        queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
+        return queryset
+
 class OrgUserList(OrganizationRoleMixin, ListView):
     model = UserRole
     paginate_by = 51
@@ -2233,7 +2245,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             main_body = {'next_page':next_page_url,'content':content}
             return HttpResponse(json.dumps(main_body), status=200)
 
-class StageTemplateView(ProjectRoleMixin, View):
+class StageTemplateView(ReadonlyProjectLevelRoleMixin, View):
     def get(self, request, pk):
         obj = Project.objects.get(pk=pk)
         return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'obj':obj,})
