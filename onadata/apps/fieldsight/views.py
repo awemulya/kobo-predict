@@ -2333,7 +2333,7 @@ class SiteResponseCoordinates(ReviewerRoleMixin, View):
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
 class DonorProjectDashboard(DonorRoleMixin, TemplateView):
-    template_name = "fieldsight/donor_project_dashboard.html"
+    template_name = "fieldsight/project_dashboard_lite.html"
     
     def get_context_data(self, **kwargs):
         dashboard_data = super(DonorProjectDashboard, self).get_context_data(**kwargs)
@@ -2373,7 +2373,7 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
         return dashboard_data
 
 class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
-    template_name = 'fieldsight/donor_site_dashboard.html'
+    template_name = 'fieldsight/site_dashboard_lite.html'
 
     def get_context_data(self, **kwargs):
         dashboard_data = super(DonorSiteDashboard, self).get_context_data(**kwargs)

@@ -19,6 +19,13 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
 from django.db.models import Q
 
+
+# ConditionalFormMixin =  Returns whether the user has full acess or readonly access through "is_readonly" attribute which is either True or False for a specific form. The url parameter should have "fsxf_id" which is form id.
+# SPFMixin = Site, Project mixin needs two parameters in url "is_project" and "pk" which can be site_id or project_id. It checks permission for resppective pk depending upon "is_project" attribute from url.
+# Readonly site/project levelMixin = It checks if user has access to just view certain pages/view. 
+
+# Important , in near future roles should be cached or some similar alternatives should be added.
+
 class LoginRequiredMixin(object):
     @classmethod
     def as_view(cls, **kwargs):
@@ -315,7 +322,7 @@ class FormMixin(LoginRequiredMixin):
 
         if form.site is not None:
             site_id = form.site.id
-            user_role = request.roles.filter(user_id = user_id, site_id = site_id, group__name="Reviewer")
+            user_role = request.roles.filter(site_id = site_id, group__name="Reviewer")
             if user_role:
                 return super(FormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
             project_id=Site.objects.get(pk=site_id).project.id
@@ -323,50 +330,51 @@ class FormMixin(LoginRequiredMixin):
         else:
             project_id = form.project.id
 
-        user_role = request.roles.filter(user_id = user_id, project_id = project_id, group__name="Project Manager")
+        user_role = request.roles.filter(project_id = project_id, group__name="Project Manager")
         if user_role:
             return super(FormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
 
         organization_id = Project.objects.get(pk=project_id).organization.id
-        user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+        user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group__name="Organization Admin")
         if user_role_asorgadmin:
             return super(FormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
 
         raise PermissionDenied()   
 
-class ReadonlyFormMixin(LoginRequiredMixin):
+#whwerver only readonly permissions are required for urls which includes fsxf_id, this mixin can be used. The function
+#returns "is_readonly" attribute either True or False so make sure to use it to determine readonly features in view or template.
+class ConditionalFormMixin(LoginRequiredMixin):
     def dispatch(self, request, fsxf_id, *args, **kwargs):
         if request.group.name == "Super Admin":
-                return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
+                return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, is_read_only=False, *args, **kwargs)
 
         user_id = request.user.id
         form = get_object_or_404(FieldSightXF, pk=fsxf_id)
 
         if form.site is not None:
-            site_id = form.site_id
-            user_role = request.roles.filter(user_id = user_id, site_id = site_id, group_id=3)
+            site_id = form.site.id
+            user_role = request.roles.filter(site_id = site_id, group_id=3)
             if user_role:
-                return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
-            project_id=Site.objects.get(pk=site_id).project.id
+                return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, is_read_only=False, *args, **kwargs)
+            project_id=form.site.project_id
         
         else:
-            project_id = form.project_id
+            project_id = form.project.id
 
-        user_role = request.roles.filter(user_id = user_id, project_id = project_id, group_id=2)
+        user_role = request.roles.filter(project_id = project_id, group_id=2)
         if user_role:
-            return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
+            return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, is_read_only=False, *args, **kwargs)
 
         organization_id = Project.objects.get(pk=project_id).organization.id
-        user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+        user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group__name="Organization Admin")
         if user_role_asorgadmin:
-            return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
-
+            return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, is_read_only=False, *args, **kwargs)
         if form.site is not None:
-            user_role = request.roles.filter(user_id = user_id, site_id = form.site_id, group_id=4)
+            user_role = request.roles.filter(Q(site_id = form.site_id, group_id=4) | Q(project_id = form.site.project_id, group_id=7))
         else:
-            user_role = request.roles.filter(user_id = user_id, project_id = form.project_id, group_id=7)
+            user_role = request.roles.filter(project_id = form.project_id, group_id=7)
         if user_role:
-            return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args,read_only=True, **kwargs)
+            return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, is_read_only=True, *args, **kwargs)
 
         raise PermissionDenied()   
 

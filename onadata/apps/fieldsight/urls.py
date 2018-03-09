@@ -209,6 +209,6 @@ urlpatterns = [
     url(r'^site/recent-pictures/(?P<pk>\d+)/$', RecentResponseImages.as_view(), name='recent_response_image'),
     url(r'^site/response-coords/(?P<pk>\d+)/$', SiteResponseCoordinates.as_view(), name='site_response_cords'),
     url(r'^project/region-list/(?P<pk>\d+)/$', RegionViewSet.as_view({'get': 'list'}), name='project_list'),
-    url(r'^donor/project-dashboard/(?P<pk>[0-9]+)/$', DonorProjectDashboard.as_view(), name='donor_project_dashboard'),
-    url(r'^donor/site-dashboard/(?P<pk>[0-9]+)/$', DonorSiteDashboard.as_view(), name='donor_site_dashboard'),
+    url(r'^/project-dashboard/lite/(?P<pk>[0-9]+)/$', DonorProjectDashboard.as_view(), name='project_dashboard-lite'),
+    url(r'^/site-dashboard/lite/(?P<pk>[0-9]+)/$', DonorSiteDashboard.as_view(), name='site_dashboard-lite'),
     ]
