@@ -1539,7 +1539,7 @@ def alter_answer_status(request, instance_id, status, fsid):
 
 # @group_required('KoboForms')
 class InstanceKobo(ConditionalFormMixin, View):
-    def get(self, request, fsxf_id, is_readonly):
+    def get(self, request, fsxf_id, is_read_only):
         fxf = FieldSightXF.objects.get(pk=fsxf_id)
         xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
         audit = {
@@ -1555,7 +1555,7 @@ class InstanceKobo(ConditionalFormMixin, View):
             'username': xform.user,
             'fxf': fxf,
             'can_edit': can_edit,
-            'is_readonly': is_readonly
+            'is_readonly': is_read_only
         })
 
 
