@@ -341,6 +341,36 @@ class FormMixin(LoginRequiredMixin):
 
         raise PermissionDenied()   
 
+class ReadonlyFormMixin(LoginRequiredMixin):
+    def dispatch(self, request, fsxf_id, *args, **kwargs):
+        if request.group.name == "Super Admin":
+                return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
+
+        user_id = request.user.id
+        form = get_object_or_404(FieldSightXF, pk=fsxf_id)
+
+        if form.site is not None:
+            site_id = form.site.id
+            user_role = request.roles.filter(site_id = site_id, group_id__in=[3,4])
+            if user_role:
+                return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
+            project_id=Site.objects.get(pk=site_id).project.id
+        
+        else:
+            project_id = form.project.id
+
+        user_role = request.roles.filter(project_id = project_id, group_id__in=[2,7])
+        if user_role:
+            return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
+
+        organization_id = Project.objects.get(pk=project_id).organization.id
+        user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group_id = 1)
+        if user_role_asorgadmin:
+            return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
+
+        raise PermissionDenied()   
+
+
 #whwerver only readonly permissions are required for urls which includes fsxf_id, this mixin can be used. The function
 #returns "is_readonly" attribute either True or False so make sure to use it to determine readonly features in view or template.
 class ConditionalFormMixin(LoginRequiredMixin):
