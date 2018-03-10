@@ -61,6 +61,7 @@ class Stage(models.Model):
     project = models.ForeignKey(Project, related_name="stages", null=True, blank=True)
     ready = models.BooleanField(default=False)
     project_stage_id = models.IntegerField(default=0)
+    weight = models.IntegerField(default=0)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:

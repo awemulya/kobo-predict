@@ -8,7 +8,7 @@ from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSub
 from onadata.apps.fsforms.viewsets.SiteFormsViewset import SiteFormViewSet
 from onadata.apps.fsforms.viewsets.StageViewset import SiteMainStageViewSet, \
         SubStageViewSet, StageViewSet
-from onadata.apps.fsforms.viewsets.ConfigureStageViewset import StageListViewSet
+from onadata.apps.fsforms.viewsets.ConfigureStageViewset import StageListViewSet, SubStageListViewSet, SubStageDetailViewSet
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
 from .views import (
     LibraryFormsListView,
@@ -202,6 +202,8 @@ urlpatterns = urlpatterns + [
     url(r'^api/form-detail/(?P<pk>\d+)/$', FormDetailViewset.as_view({'get': 'retrieve'})),
 
     url(r'^api/stage-list/(?P<is_project>\d)/(?P<pk>\d+)/$', StageListViewSet.as_view({'post': 'create','get': 'list'})),
+    url(r'^api/sub-stage-list/(?P<stage_id>\d+)/$', SubStageListViewSet.as_view({'post': 'create','get': 'list'})),
+    url(r'^api/sub-stage-detail/(?P<pk>\d+)/$', SubStageDetailViewSet.as_view({'post': 'create', 'get': 'retrieve'}))
 
 
 ]
