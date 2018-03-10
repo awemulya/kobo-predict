@@ -1108,6 +1108,16 @@ class Setup_forms(SPFmixin, View):
                   {'obj': obj, 'is_project': self.kwargs.get('is_project'), 'pk': self.kwargs.get('pk'), 'form': GeneralForm(request=request),
                    'schedule_form': KoScheduleForm(request=request)})
 
+
+class Configure_forms(SPFmixin, View):
+    def get(self, request, *args, **kwargs):
+        if self.kwargs.get('is_project') == '1':
+            obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        else:
+            obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        return render(request, "fsforms/manage_forms.html",
+                  {'obj': obj, 'is_project': self.kwargs.get('is_project'), 'pk': self.kwargs.get('pk')})
+
 # kobo form related
 
 def download_xform(request, pk):
