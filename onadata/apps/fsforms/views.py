@@ -1115,7 +1115,7 @@ class Configure_forms(SPFmixin, View):
             obj = Project.objects.get(pk=self.kwargs.get('pk'))
         else:
             obj = Site.objects.get(pk=self.kwargs.get('pk'))
-        return render(request, "fsforms/manage_forms.html",
+        return render(request, "fsforms/configure_stages.html",
                   {'obj': obj, 'is_project': self.kwargs.get('is_project'), 'pk': self.kwargs.get('pk')})
 
 # kobo form related

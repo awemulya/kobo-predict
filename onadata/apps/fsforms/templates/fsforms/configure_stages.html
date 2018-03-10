@@ -1,0 +1,54 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block page-title %}{% trans 'Configure Stages' %} {% endblock %}
+
+   {%block extracss %}
+<link rel="stylesheet" href="{% static 'vendor/pnotify/pnotify.custom.min.css' %}" type="text/css" />
+    {% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{%block kocript %}
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+
+<div id="main-content" class="padding">
+    <nav aria-label="breadcrumb" role="navigation">
+        <ol class="breadcrumb">
+            {% block breadcrumbs %}
+            {% if is_project == "0" %}
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' pk %}">{{ obj.name }}</a></li>
+            {% else %}
+			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ obj.name }}</a></li>
+            {% endif %}
+			<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage' %} {% trans 'Forms Weight' %}</li>
+		    {% endblock %}
+        </ol>
+    </nav>
+</div>
+{% verbatim %}
+<div id="app">
+
+</div>
+{% endverbatim %}
+
+{% endblock %}
+
+{%block extrascript %}
+    <!--<script src="https://cdn.jsdelivr.net/npm/vue"></script>-->
+<script>
+      configure_settings =  {};
+      configure_settings.is_project = "{{is_project}}";
+      configure_settings.id = "{{pk}}";
+</script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+<script src="{% static 'vendor/pnotify/pnotify.custom.min.js' %}"></script>
+<script src="{% static 'js/forms/manage_forms.js' %}"></script>
+
+{% endblock %}
