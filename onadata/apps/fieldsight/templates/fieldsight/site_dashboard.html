@@ -38,37 +38,76 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
     {% load filters %}
 
 
-   <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Modal Header</h4>
-        </div>
-        <div class="modal-body" style="padding-right: 10px;">
-         <ul data-bind="template: { name: 'itemTmpl', foreach: allformjson }"></ul>
+
+
+
+<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+								  <div class="modal-header">
+									<h5 class="modal-title" id="exportModalLabel">Export Report</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									  <span aria-hidden="true">&times;</span>
+									</button>
+								  </div>
+								  <div class="modal-body">
+									<div class="form-item-wrapper checkbox-listing">
+
+
+<ul data-bind="template: { name: 'itemTmpl', foreach: allformjson }"></ul>
 
 <script id="itemTmpl" type="text/html">
     <li>
-        <span data-bind="text: xf_title"></span>
-        <input type='checkbox' data-bind="checked: selected, click: $root.setSelected" />
+
+    	<input style="left:0px !important; margin-top:3px !important;;" type='checkbox' data-bind="checked: selected, click: $root.setSelected" />
+         <span data-bind="text: xf_title"></span>
+        
+
         <ul data-bind="template: { name: 'itemTmpl', foreach: $data.forms }">
         <!--  style: { 'opacity' : (selected() ? 1 : 0.5 ), 'pointer-events':(selected() ? '' : 'none' ) } -->
         </ul>
     </li>
 </script>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-bind="click: $root.generateReport">Generate Report</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
 
+
+<!-- 										<ul>
+											<li>
+												<input type="checkbox" id="itemAll" data-id="itemAll" data-name="itemAll" /> 
+												<label for="itemAll">Select All</label>
+												
+
+												<ul>
+													<li>
+														<input type="checkbox" data-id="item" data-name="Item" id="item" />
+														<label for="item">Stage 1</label>
+														<ul>
+															<li><input type="checkbox" id="subitem1" data-id="subitem1" data-name="Subitem 1" /> 
+															<label for="subitem1">Substage 1</label>
+															</li>
+														
+														</ul>
+													</li>
+													<li>
+														<input type="checkbox" data-id="item2" data-name="Item2" id="item2" />
+														<label for="item2">Stage 2</label>
+														<ul>
+															<li><input type="checkbox" id="subitem21" data-id="subitem21" data-name="Subitem 21" /> 
+															<label for="subitem21">Substage 21</label>									
+															</li>
+														</ul>
+													</li>
+												</ul>
+											</li>
+										</ul> -->
+									</div>
+								  </div>
+								  <div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-primary" data-bind="click: $root.generateReport">Download</button>
+								  </div>
+								</div>
+							</div>
+						</div>
 
 			<div id="main-content" class="padding" onload="change()">
 
@@ -109,7 +148,9 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:site-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i>{% trans 'Site' %} {% trans 'Summary' %} {% trans 'Report' %}</a>
 								<a class="dropdown-item" target="_blank" href="{% url 'fieldsight:site-responses-report' obj.pk %}"><i class="la la-reply"></i>{% trans 'Site' %} {% trans 'Responses' %} {% trans 'Report' %}</a>
-								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#myModal"><i class="la la-reply"></i>{% trans 'Site' %} {% trans 'Custom' %} {% trans 'Report' %}</a>
+
+								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#exportModal"><i class="la la-reply"></i>{% trans 'Site' %} {% trans 'Custom' %} {% trans 'Report' %}</a>
+
 
 
 							</div>
