@@ -57,7 +57,7 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stage
-        fields = ('name', 'description', 'id', 'order', 'date_created', 'em', 'responses_count', 'stage_forms')
+        fields = ('weight', 'name', 'description', 'id', 'order', 'date_created', 'em', 'responses_count', 'stage_forms')
 
     def update(self,instance,  validated_data):
         stage = super(SubStageDetailSerializer, self).update(instance, validated_data)
