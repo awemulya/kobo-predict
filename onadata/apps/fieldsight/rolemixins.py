@@ -73,12 +73,12 @@ class ReadonlyProjectLevelRoleMixin(LoginRequiredMixin):
         
         project_id = self.kwargs.get('pk')
         user_id = request.user.id
-        user_role = request.roles.filter(user_id = user_id, project_id = project_id, group_id__in=[2,7])
+        user_role = request.roles.filter(project_id = project_id, group_id__in=[2,7])
         
         if user_role:
             return super(ReadonlyProjectLevelRoleMixin, self).dispatch(request, *args, **kwargs)
         organization_id = Project.objects.get(pk=project_id).organization.id
-        user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+        user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group_id=1)
         
         if user_role_asorgadmin:
             return super(ReadonlyProjectLevelRoleMixin, self).dispatch(request, *args, **kwargs)
