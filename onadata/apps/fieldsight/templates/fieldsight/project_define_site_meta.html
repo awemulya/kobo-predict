@@ -54,7 +54,7 @@
      var Question = React.createClass({
             
             getInitialState: function () {
-                return {editing: true}
+                return {editing: true, type: 'text'}
             },
             
             edit:function(){
@@ -63,6 +63,9 @@
 
             save: function () {
                 this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
+                if (this.refs.questionType.value == 'mcq'){
+                    this.setState({type: 'mcq', options: []})
+                }
                 console.log('save');
             },
             
@@ -72,19 +75,10 @@
             },
             
    
-            renderNormal:function(){
-                return(
-                    <div className="QuestionContainer">
-                        <div className="QuestionText">{this.props.question}</div>
-                        <div className="QuestionText">{this.props.question_type}</div>
-                        <button onClick={this.edit} className="button-primary">Edit</button>
-                        <button onClick={this.remove} className="button-danger">Remove</button>
-                    </div>
-
-            );
-            },
+           
             renderForm:function(){
                 return(
+                    <div>
                     <div className="QuestionContainer form-row">
                         <div className="form-group col-md-4">
                             <label for="input1" className="col-form-label">Input Label:</label>
@@ -109,16 +103,24 @@
 
                         </div>
                     </div>
+                    {
+                                    // console.log(text.mcq_options);
+                                    // text.mcq_options.map(this.eachOption)
+                                    // text.mcq_options.forEach(function (item, j, mapObj){
+                                    //      return(
+                                    //         <Option key={j} index={j} question={item.question_text} question_type={item.question_type}  />
+                                    //         );
+                                    //      })
+                                  text.mcq_options.map(this.eachOption.bind(this, i))
+                                
+                    }
+                    </div>
 
             );
             },
             render: function () {
-                if(this.state.editing){
                     return this.renderForm();
-                }
-                else{
-                    return this.renderNormal();
-                }
+               
             }
         });
 

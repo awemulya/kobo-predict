@@ -131,6 +131,7 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 					</div>
 					<div class="action-right">
 						<a href="{% url 'forms:site-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i>{% trans 'Responses' %}</a>
+						{% if not is_supervisor_only %}
 						<span class="dropdown">
 							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="la la-cogs"></i> {% trans 'Manage' %}
@@ -141,6 +142,7 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 								<a class="dropdown-item" href="{% url 'fieldsight:site-blue-prints' obj.pk %}"><i class="la la-pencil-square-o"></i>{% trans 'Site' %} {% trans 'Documents' %}</a>
 							</div>
 						</span>
+						{% endif %}
 						<span class="dropdown">
 							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="la la-clipboard"></i> {% trans 'Reports' %}
@@ -155,7 +157,9 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 
 							</div>
 						</span>
+						{% if not is_supervisor_only %}
 						<a href="{% url 'fieldsight:site-edit' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
+						{% endif %}
 					</div>
 				</div>
 				<section class="org-profile-body margin-top">
