@@ -731,7 +731,7 @@ assigntoken(csrf_token);
                                 <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:reorder_stage"><i class="la la-reorder" aria-hidden="true"></i> {% trans 'Reorder Stages' %}</a>
                                 <a href="javascript:void(0);" title="" class="btn btn-sm btn-success" data-bind="visible:stages().length > 0,
                                             click: deployStages"><i class="la la-rocket" aria-hidden="true"></i> {% trans 'Deploy' %} {% trans 'to' %} {% trans 'Mobile' %}</a>
-                                <a href="{% url 'forms:configure_stages' is_project pk %}" class="btn btn-sm btn-warning"><i class="la la-asterisk" aria-hidden="true"></i>  {% trans 'Configure' %}</a>
+                                <!--<a href="{% url 'forms:configure_stages' is_project pk %}" class="btn btn-sm btn-warning"><i class="la la-asterisk" aria-hidden="true"></i>  {% trans 'Configure' %}</a>-->
                                 {% csrf_token %}
 
 
