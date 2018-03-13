@@ -6,6 +6,7 @@
 
    {%block extracss %}
 <link rel="stylesheet" href="{% static 'vendor/pnotify/pnotify.custom.min.css' %}" type="text/css" />
+<link rel="stylesheet" href="{% static 'vendor/vue-multiselect/vue-multiselect.min.css' %}" type="text/css" />
     {% endblock %}
 
 {% block head %}
@@ -48,7 +49,9 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
 <script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'vendor/vue-multiselect/vue-multiselect.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'vendor/vue-multiselect/select2.v.component.js' %}?v=1.0"></script>
 <script src="{% static 'vendor/pnotify/pnotify.custom.min.js' %}"></script>
-<script src="{% static 'js/forms/manage_forms.js' %}?v=1.1"></script>
+<script src="{% static 'js/forms/manage_forms.js' %}?v=1.3"></script>
 
 {% endblock %}
