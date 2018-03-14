@@ -1,13 +1,13 @@
 from __future__ import unicode_literals
 import json
 
-from django.db import transaction
 from rest_framework import serializers
 
 from onadata.apps.fieldsight.models import Project, Site
 from onadata.apps.fsforms.models import Stage, FieldSightXF
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import EMSerializer
 from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import FSXFSerializer
+from onadata.apps.logger.models import XForm
 
 
 class StageSerializer(serializers.ModelSerializer):
@@ -32,17 +32,13 @@ class SubStageSerializer(serializers.ModelSerializer):
         model = Stage
         fields = ('name', 'description', 'id', 'order')
 
-    def create(self, validated_data):
-        stage_id = self.context['kwargs'].get('stage_id')
-        stage = super(SubStageSerializer, self).create(validated_data)
-        stage.parent = Stage.objects.get(pk=stage_id)
-        return stage
 
 
 class SubStageDetailSerializer(serializers.ModelSerializer):
-    stage_forms = FSXFSerializer()
+    stage_forms = FSXFSerializer(read_only=True)
     em = EMSerializer(read_only=True)
     responses_count = serializers.SerializerMethodField()
+    has_stage = serializers.SerializerMethodField()
 
     def get_responses_count(self, obj):
         try:
@@ -54,16 +50,61 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
 
         except FieldSightXF.DoesNotExist:
             return 0
-
+    def get_has_stage(self, obj):
+        try:
+            obj.stage_forms
+            return True
+        except:
+            return False
     class Meta:
         model = Stage
-        fields = ('weight', 'name', 'description', 'id', 'order', 'date_created', 'em', 'responses_count', 'stage_forms')
+        fields = ('weight', 'name', 'description', 'id', 'order', 'date_created', 'em', 'responses_count', 'stage_forms', 'has_stage')
 
-    def update(self,instance,  validated_data):
+    def create(self, validated_data):
+        stage_id = self.context['kwargs'].get('stage_id')
+        tags = self.context['request'].data.get('tags')
+        xf = self.context['request'].data.get('xf', {})
+        xform = False
+        if xf and xf != '':
+            xf_id = xf.get('id', False)
+            if xf_id:
+                xform = XForm.objects.get(pk=xf_id)
+
+
+        stage = super(SubStageDetailSerializer, self).create(validated_data)
+        main_stage = Stage.objects.get(pk=stage_id)
+        if xform:
+            FieldSightXF.objects.create(xf=xform, site=main_stage.site,
+                                                      project=main_stage.project, is_staged=True, stage=stage)
+        stage.stage = main_stage
+        stage.save()
+        # tags
+        return stage
+
+    def update(self,instance, validated_data):
+        xf = self.context['request'].data.get('xf', {})
+        xform = False
+        if xf and xf != '':
+            xf_id = xf.get('id', False)
+            if xf_id:
+                xform = XForm.objects.get(pk=xf_id)
         stage = super(SubStageDetailSerializer, self).update(instance, validated_data)
-        # stage.forms = Stage.objects.get(pk=stage_id)
-        # stage.educattionmateruil = Stage.objects.get(pk=stage_id)
-        # stage.weight and tag
+        if xform:
+            try:
+                old_form = stage.stage_forms
+                if old_form.xf.id == xform.id:
+                    pass
+                else:
+                    old_form.deleted = True
+                    old_form.stage = None
+                    old_form.save()
+                    FieldSightXF.objects.create(xf=xform, site=stage.site,
+                                                  project=stage.project, is_staged=True, stage=stage)
+            except:
+                if xform:
+                    FieldSightXF.objects.create(xf=xform, site=stage.site,
+                                                      project=stage.project, is_staged=True, stage=stage)
+        # tags
         return stage
 
 
