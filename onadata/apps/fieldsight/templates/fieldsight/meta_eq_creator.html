@@ -1,0 +1,135 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block content %}
+{% load filters %}
+<style type="text/css">
+    #removebutton{
+    margin-top:33px;  
+}
+</style>
+ <script src="{% static 'js/reactjs/react.min.js' %}"></script>
+ <script src="{% static 'js/reactjs/browser.min.js' %}"></script>
+ <script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
+
+
+            <div id="main-content" class="padding">
+                <nav aria-label="breadcrumb" role="navigation">
+					{% block breadcrumbs %}
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</li>
+					 </ol>
+					{% endblock %}
+				</nav>
+
+                <section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-cogs"></i>{% trans 'Create' %} {% trans 'Equations' %} {% trans 'E=mc^2' %}</h3>
+                    </header>
+                    <div class="panel-body">
+                      
+                        <div id="newOrganization" class="margin-top">
+                           <div id="app"></div>
+                        </div>
+                    </div>
+
+                </section>
+                   
+                    
+
+            </div>
+{% endblock %}
+
+{%block extrascript %}
+<script>
+
+</script>
+    <script type="text/babel">
+        var _json_question = JSON.parse("{{json_questions|escapejs}}");
+        console.log(_json_question);
+
+        var CustomSelect = React.createClass({
+        
+            getInitialState: function() {
+                return {
+                  selectValue: this.props.defaultValue || "Select Me"
+                }
+            },
+
+            _onChange: function(event, item) {
+                this.setState({
+                  selectValue: this.props.options[event.target.selectedIndex].label
+                });
+                this.props.onChange(event.target.value);
+            },
+            
+            render: function() {
+                var selectValue = this.state.selectValue;
+                var options = this.props.options.map(function(item) {
+                  if (selectValue === item.question_name) {
+                    return <option selected value = {
+                      item.question_name
+                    } > {
+                      item.question_text
+                    } </option>;
+                  } else {
+                    return <option value = {
+                      item.question_name
+                    } > {
+                      item.question_text
+                    } </option>;
+                  }
+
+                })
+                
+                return ( 
+                  <div className = "select">
+                    
+                    <select name={this.props.name || ''} id={this.props.id || (this.props.name || '')} onChange = {this._onChange}> 
+                      {options} 
+                    </select> 
+                  </div>
+                );
+            }
+        });
+
+
+
+var optionsArray = [{
+  label: 'red',
+  value: '#f00'
+}, {
+  label: 'blue',
+  value: '#00f'
+}, {
+  label: 'green',
+  value: '#0f0'
+}, {
+  label: 'white',
+  value: '#fff'
+}, {
+  label: 'dark gray',
+  value: '#333'
+}, {
+  label: 'gray',
+  value: '#ccc'
+}, {
+  label: 'black',
+  value: '#000'
+}];
+
+        
+        ReactDOM.render(<CustomSelect name="colorPicker" options={_json_question} /> , document.getElementById('app')
+            );
+    </script>
+
+
+
+
+
+
+  
+{% endblock %}
+
+

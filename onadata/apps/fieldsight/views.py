@@ -2410,3 +2410,16 @@ class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
             'meta_data': myanswers,
         }
         return dashboard_data
+
+
+class DefineProjectSiteCriteria(ProjectRoleMixin, TemplateView):
+    def get(self, request, pk):
+        project_obj = Project.objects.get(pk=pk)
+        json_questions = json.dumps(project_obj.site_meta_attributes)
+        return render(request, 'fieldsight/meta_eq_creator.html', {'obj': project_obj, 'json_questions': json_questions,})
+
+    def post(self, request, pk, *args, **kwargs):
+        project = Project.objects.get(pk=pk)
+        project.site_meta_attributes = request.POST.get('json_questions');
+        project.save()
+        return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
