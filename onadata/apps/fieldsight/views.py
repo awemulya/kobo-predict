@@ -1478,7 +1478,7 @@ class ActivateRole(TemplateView):
             content = invite.site
         elif invite.group.name == "Unassigned":
             noti_type = 4
-            content = invite.site
+            content = invite.organization
         
         noti = invite.logs.create(source=user, type=noti_type, title="new Role",
                                        organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.by_user,
