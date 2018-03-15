@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import time
 import json
+import datetime
 from django.db import transaction
 from django.contrib.gis.geos import Point
 from celery import shared_task
@@ -11,6 +12,7 @@ from django.contrib import messages
 from channels import Group as ChannelGroup
 from django.contrib.auth.models import Group
 from celery import task, current_task
+
 
 @shared_task()
 def printr():
@@ -78,6 +80,7 @@ def bulkuploadsites(source_user, file, pk):
                     interval = i+interval
                     bulkuploadsites.update_state(state='PROGRESS',meta={'current': i, 'total': count})
             task.status = 2
+            task.date_completed = datetime.datetime.now()
             task.save()
             noti = project.logs.create(source=source_user, type=12, title="Bulk Sites",
                                        organization=project.organization,
@@ -103,6 +106,7 @@ def bulkuploadsites(source_user, file, pk):
 
     except Exception as e:
         task.status = 3
+        task.date_completed = datetime.datetime.now()
         task.save()
         print 'Site Upload Unsuccesfull. %s' % e
         print e.__dict__
