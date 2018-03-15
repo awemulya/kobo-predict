@@ -62,11 +62,11 @@
                 if (this.refs.questionType.value == 'mcq'){
                     this.setState({type: 'mcq', options: []})
                 }
-                console.log('save');
+                // console.log('save');
             },
             
             remove:function(){
-                console.log('Delete pressed.')
+                // console.log('Delete pressed.')
                 this.props.deleteFromForm(this.props.index);
             },
 
@@ -117,17 +117,17 @@
 
             save: function () {
                 this.props.updateOption(this.refs.newOptionText.value, this.props.index);
-                console.log('save');
+                // console.log('save');
             },
             
             remove:function(){
-                console.log('Delete pressed.' + this.props.index)
+                // console.log('Delete pressed.' + this.props.index)
                 this.props.deleteOption(this.props.index);
             },
             
    
             renderNormal:function(){
-                console.log("----"+this.props.option_text);
+                // console.log("----"+this.props.option_text);
                 return(
                     <div className="QuestionContainer form-row">
                         <div className="form-group col-md-4">
@@ -164,18 +164,18 @@
             // console.log(i);
             
             var arr =this.state.options;
-            var new_option={"option_text":"", "is_deleted":"false"};
+            var new_option={"option_text":""};
             arr.push(new_option);
             
             this.setState({options: arr});
-            console.log(arr);
+            // console.log(arr);
             },
 
             save: function () {
-                // this.props.updateMCQOptions(this.state.options, this.props.index);
+                this.props.updateMCQOptions(this.state.options, this.props.index);
                 this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
                 
-                console.log('save');
+                // console.log('save');
                 
             },
             
@@ -186,7 +186,7 @@
                 var arr= this.state.options;
                 arr[i].option_text = newTextoption;
                 this.setState({options: arr});
-                console.log(this.state.options);
+                // console.log(this.state.options);
                 this.props.updateMCQOptions(this.state.options, this.props.index);
 
             },
@@ -194,18 +194,18 @@
             deleteOption: function(i){
                 // console.log('Removing Question:' + i);
                 var arr= this.state.options;
-                console.log(i);
+                // console.log(i);
                 // arr[i];
                 // arr.splice(i, 1);
-                arr[i].is_deleted="true";
-                console.log(this.state.options);
+                arr[i].is_deleted=true;
+                // console.log(this.state.options);
                 // this.setState({options:[]});
                 // this.setState({options:arr});
                 this.setState({options:arr})
-                console.log(this.state.options);
+                // console.log(this.state.options);
                
                 
-                // this.props.updateMCQOptions(this.state.options, this.props.index);
+                this.props.updateMCQOptions(this.state.options, this.props.index);
             },
 
             remove:function(){
@@ -216,7 +216,7 @@
 
             eachOption: function (obj, j){
                             // console.log(text);
-                            if(obj.is_deleted == "false"){
+                            if(!obj.hasOwnProperty('is_deleted')){
                             return(
                                 <Option key={j} index={j} option_text={obj.option_text} deleteOption={this.deleteOption} updateOption={this.updateOption}/>
                                 );
@@ -287,7 +287,6 @@
         var question = {
             "question_text": "",
             "question_type": "textual",
-            "is_deleted":false,
             "question_name": ""
         }
         arr.push(question);
@@ -298,13 +297,21 @@
     save: function () {
         if(this.state.Questions.length < 1){ return alert("No Any Questions Found."); } 
         var json_convertible = this.state.Questions.filter(function(item) {
-            return item.is_deleted == false;
-        });
+            // return item.is_deleted == false;
+
+            if (!item.hasOwnProperty('is_deleted')){
+                return item;
+            }
+            else if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
+                delete item.is_deleted;
+                // console.log(item);
+                return item;
+        }});
         for (var key in json_convertible) {
         json_convertible[key].question_name = json_convertible[key].question_text.replace(/\W/g,"_");
         }
 
-        console.log(json_convertible);
+        // console.log(json_convertible);
         var json_Question = JSON.stringify(json_convertible);
         
 
@@ -316,6 +323,17 @@
         // console.log('Removing Question:' + i);
         var arr= this.state.Questions;
         arr[i].is_deleted=true;
+        // var newArray = arr.filter(function (item) {
+        //     if (!item.hasOwnProperty('is_deleted')){
+        //    console.log(item);
+        //         return item;
+        //     }
+        //     else if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
+        //         delete item.is_deleted;
+        //         console.log(item);
+        //         return item;
+        // }
+        // });
         this.setState({Questions: arr});
     },
 
@@ -333,24 +351,35 @@
         }
         arr[i].question_text=newtext;
         arr[i].question_type=questionType;
+        // var newArray = arr.filter(function (item) {
+        //     if (!item.hasOwnProperty('is_deleted')){
+        //         return item;
+        //     }
+        //     else if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
+        //         delete item.is_deleted;
+        //         console.log(item);
+        //         return item;
+        // }
+        // });
         
         this.setState({Questions:arr});
-        console.log(arr);
+        console.log(newArray);
     },
 
     updateMCQOptions: function (options, i){
         var arr = this.state.Questions;
-        var newOptonsArray = options.filter(function (op) {
-        if (!op.hasOwnProperty('is_deleted') || (op.hasOwnProperty('is_deleted') && op.is_deleted == "false")){
+        var newOptionsArray = options.filter(function (op) {
+        if (!op.hasOwnProperty('is_deleted')){
             return op
         }
         
-});
-        console.log(newOptonsArray);
-        // arr[i].mcq_options=options;
+        });
+        // console.log(newOptionsArray);
+        arr[i].mcq_options=newOptionsArray;
 
-        // this.setState({Questions:arr});
-        // console.log("updatingmcqoptions")
+        this.setState({Questions:arr});
+        console.log("updatingmcqoptions");
+        console.log(arr[i]);
     },
 
     // updateMCQQuestion: function (newtext, questionType, mcq_options, i) {
@@ -370,8 +399,8 @@
     //         console.log(arr);
     //     },
      eachQuestion: function (question, i){
-        if(question.is_deleted == false){
-            if(question.question_type=="MCQ"){
+        if(!question.hasOwnProperty('is_deleted') || (question.hasOwnProperty('is_deleted') && question.is_deleted == false)){
+            if(question.question_type=="MCQ" ){
                 return(
                         <MCQQuestion key={i} index={i} options={question.mcq_options} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateMCQOptions={this.updateMCQOptions} deleteFromForm={this.removeQuestion} />
                     );
