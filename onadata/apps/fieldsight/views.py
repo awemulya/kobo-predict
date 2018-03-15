@@ -78,9 +78,9 @@ def dashboard(request):
         current_role = request.roles[0]
         role_type = request.roles[0].group.name
         if role_type == "Unassigned":
-            raise PermissionDenied()
-        if role_type == "Site Supervisor":
             return HttpResponseRedirect(reverse("fieldsight:roles-dashboard"))
+        if role_type == "Site Supervisor":
+            return HttpResponseRedirect(reverse("fieldsight:site-dashboard",  kwargs={'pk': current_role.site.pk}))
         if role_type == "Reviewer":
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
         if role_type == "Project Manager":
@@ -1478,7 +1478,7 @@ class ActivateRole(TemplateView):
             content = invite.site
         elif invite.group.name == "Unassigned":
             noti_type = 4
-            content = invite.site
+            content = invite.organization
         
         noti = invite.logs.create(source=user, type=noti_type, title="new Role",
                                        organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.by_user,
