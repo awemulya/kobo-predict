@@ -7,6 +7,22 @@
    {%block extracss %}
 <link rel="stylesheet" href="{% static 'vendor/pnotify/pnotify.custom.min.css' %}" type="text/css" />
 <link rel="stylesheet" href="{% static 'vendor/vue-multiselect/vue-multiselect.min.css' %}" type="text/css" />
+<style>
+
+.drag {
+    background-color: #808080;
+    width:500px;
+}
+.dragArea{
+     min-height: 10px;
+}
+.dragable-stage{
+    padding: 5px;
+    margin: 2px;
+    background: dimgray;
+    color: deepskyblue;
+    }
+</style>
     {% endblock %}
 
 {% block head %}
@@ -52,6 +68,9 @@
 <script type="text/javascript" src="{% static 'vendor/vue-multiselect/vue-multiselect.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'vendor/vue-multiselect/select2.v.component.js' %}?v=1.0"></script>
 <script src="{% static 'vendor/pnotify/pnotify.custom.min.js' %}"></script>
-<script src="{% static 'js/forms/manage_forms.js' %}?v=1.4"></script>
+<script src="//cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.16.0/vuedraggable.min.js"></script>
+
+<script src="{% static 'js/forms/manage_forms.js' %}?v=1.6"></script>
 
 {% endblock %}

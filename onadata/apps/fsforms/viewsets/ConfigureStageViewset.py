@@ -1,4 +1,7 @@
 from rest_framework import viewsets
+from rest_framework.response import Response
+import rest_framework.status
+
 from onadata.apps.fsforms.models import Stage
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer, \
     SubStageDetailSerializer
@@ -21,6 +24,23 @@ class StageListViewSet(viewsets.ModelViewSet):
         else:
             queryset = queryset.filter(site__id=pk)
         return queryset
+
+    def retrieve_by_id(self, request, *args, **kwargs):
+        instance = Stage.objects.get(pk=kwargs.get('pk'))
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        instance = Stage.objects.get(pk=kwargs.get('pk'))
+        name = self.request.data.get('name', False)
+        if not name:
+            return Response({'error':'No Stage Name Provided'}, status=status.HTTP_400_BAD_REQUEST)
+        desc = self.request.data.get('description', "")
+        instance.name = name
+        instance.description = desc
+        instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
     def get_serializer_context(self):
         return {'request': self.request, 'kwargs': self.kwargs,}
