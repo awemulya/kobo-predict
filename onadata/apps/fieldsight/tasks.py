@@ -37,6 +37,7 @@ def bulkuploadsites(source_user, file, pk):
         
         with transaction.atomic():
             i=0
+            interval = count/20
             for site in sites:
                 # time.sleep(0.7)
                 site = dict((k, v) for k, v in site.iteritems() if v is not '')
@@ -72,7 +73,7 @@ def bulkuploadsites(source_user, file, pk):
                 _site.site_meta_attributes_ans = myanswers
                 _site.save()
                 i += 1
-                interval = count/20
+                
                 if i > interval:
                     interval = i+interval
                     bulkuploadsites.update_state(state='PROGRESS',meta={'current': i, 'total': count})
