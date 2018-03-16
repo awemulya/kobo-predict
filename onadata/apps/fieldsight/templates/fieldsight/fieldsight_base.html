@@ -309,13 +309,16 @@
                                     '<div class="notification-avatar pull-left">' +
                                         '<i class="avatar-icon la la-info"></i>' +
                                     '</div>' +
+                                    '<div class="notification-highlight">'+
+										'<p class="notification-highlight-excerpt">'+
                                    content +
+                                   		'</p>'+
                       '<p class="notification-highlight-time">' + dateparser(data.date) + '</p>' +
+                                    '</div>'+
                                     '</div>' +
                                 '</div>' +
                             
 '</li>';
-
 
 
 			    // var div = document.getElementById('notifications');
@@ -342,9 +345,8 @@
                data.results.forEach(populatelist);
                request_isfirst = "false";
               
-               // for (i = 0; i < 6; i++) {
-               //      populatelist(data.results[i], i);
-               //  } 
+               
+               
                speed=0;
 
 

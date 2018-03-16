@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import json
+import datetime
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
@@ -161,7 +162,7 @@ class CeleryTaskProgress(models.Model):
         )
     task_id = models.CharField(max_length=255, unique=True)
     date_added = models.DateTimeField(auto_now_add=True)
-    date_completed = models.DateTimeField(blank=True, null=True)
+    date_updateded = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, related_name="task_owner")
     status = models.IntegerField(default=0, choices=Task_Status)
     description = models.CharField(max_length=755, blank=True)
@@ -169,6 +170,12 @@ class CeleryTaskProgress(models.Model):
     content_type = models.ForeignKey(ContentType, related_name='task_object', blank=True, null=True)
     object_id = models.CharField(max_length=255, blank=True, null=True)
     content_object = GenericForeignKey('content_type', 'object_id')
+
+    def save(self, *args, **kwargs):
+        if self.status == 3:
+            self.date_completed = datetime.datetime.now()
+            print date_completed
+        super(CeleryTaskProgress, self).save(*args, **kwargs)
 
     def get_progress(self):
         if self.status == 1:

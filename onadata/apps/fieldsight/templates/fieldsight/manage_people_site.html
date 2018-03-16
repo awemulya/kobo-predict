@@ -198,8 +198,8 @@ var CSRF_TOKEN = '{{ csrf_token }}';
 
   {% if obj.cluster_sites %}
     var proj_region_url = '{% url 'fieldsight:project_regions_list' pk %}';
-    // assignurl = '{% url 'fieldsight:multi_user_region_assign' pk %}';
-    assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
+    assignurl = '{% url 'fieldsight:multi_user_region_assign' pk %}';
+    // assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
     
     var type = "region";
   {% else %}
@@ -731,17 +731,38 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
                 {% if obj.cluster_sites %}
 
-                  <select class="form-control" data-bind="options: allRegions,
-                       optionsText: 'identifier',
-                       optionsValue: 'url',
-                       value: loadRegionalSites,
-                       optionsCaption: 'Choose Region ...', valueUpdate:'afterkeydown'"></select>
-                       <br>
-                <div data-bind="visible:showsites">
-                {% endif %}
-
+                <input type="text" class="form-control" data-bind="value:region_search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search Sites...">
+                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:setAllAssignSiteAsSelected">
+                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllSiteUnSelected">
+                <ul class="row" data-bind="foreach:regions">
                 
-                <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search Sites...">
+                  <li class="col-md-12">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$parent.setRegionSelected">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                         <!--  <div class="project-logo">
+                            <img data-bind="attr:{src: logo()}" alt="" width="50" height="50">
+                          </div> -->
+                          <div class="project-basic-info">
+                            <h4 data-bind="text:id()"></h4>
+                            <p data-bind="text:name()"></p>
+                          </div>
+                        </div>
+                       
+                      </span>
+                    </label>
+                  </li>
+                  
+                  <li class="clearfix"></li>
+                </ul>
+                
+
+   
+                {% else %}
+
+               <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search Sites...">
                   <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:setAllAssignSiteAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllSiteUnSelected">
                 <ul class="row" data-bind="foreach:sites">
@@ -767,8 +788,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   
                   <li class="clearfix"></li>
                 </ul>
-                {% if obj.cluster_sites %}
-                </div>
+
+                
+                
+               
                 {% endif %}
 
               </div>
@@ -844,17 +867,17 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </h4>
                  <div class="widget-head">
                 <h4>{% trans 'Select' %} {% trans 'users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'organization' %} {% trans 'admin' %}</h4>
-              </div>
-                <form class="margin-top">
-                  <div class="input-group">
-                    <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
-                  </div>
-                </form>
+                </div>
+                  <form class="margin-top">
+                    <div class="input-group">
+                      <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                    </div>
+                  </form>
                  <input type="button" class="btn btn-primary margin-top" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
 
                   <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignOadmin"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'Organization' %} {% trans 'Admin' %}</button>
-                <ul class="row" data-bind="foreach:$root.users">
+                  <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
                       <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
