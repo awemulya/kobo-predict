@@ -171,12 +171,6 @@ class CeleryTaskProgress(models.Model):
     object_id = models.CharField(max_length=255, blank=True, null=True)
     content_object = GenericForeignKey('content_type', 'object_id')
 
-    def save(self, *args, **kwargs):
-        if self.status == 3:
-            self.date_completed = datetime.datetime.now()
-            print date_completed
-        super(CeleryTaskProgress, self).save(*args, **kwargs)
-
     def get_progress(self):
         if self.status == 1:
             task = AsyncResult(self.task_id)
