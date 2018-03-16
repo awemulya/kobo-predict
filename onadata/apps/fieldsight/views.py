@@ -232,10 +232,10 @@ class SiteSurveyListView(LoginRequiredMixin, ProjectMixin, TemplateView):
         return TemplateResponse(request, "fieldsight/site_survey_list.html", {'project':pk})
 
 
-class SiteDashboardView(ReviewerRoleMixin, TemplateView):
+class SiteDashboardView(SiteSupervisorRoleMixin, TemplateView):
     template_name = 'fieldsight/site_dashboard.html'
 
-    def get_context_data(self, is_supervisor_only, **kwargs):
+    def get_context_data(self, **kwargs):
         dashboard_data = super(SiteDashboardView, self).get_context_data(**kwargs)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
         peoples_involved = obj.site_roles.filter(ended_at__isnull=True).distinct('user')
@@ -267,7 +267,7 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
             'progress_chart_data_data': progress_chart_data.keys(),
             'progress_chart_data_labels': progress_chart_data.values(),
             'meta_data': myanswers,
-            'is_supervisor_only': is_supervisor_only
+            # 'is_supervisor_only': is_supervisor_only
         }
         return dashboard_data
 

@@ -183,26 +183,27 @@ class SiteSupervisorRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
 
         if request.group.name == "Super Admin":
-            return super(ReviewerRoleMixin, self).dispatch(request, *args, **kwargs)
+            is_supervisor_only = False
+            return super(SiteSupervisorRoleMixin, self).dispatch(request, *args, **kwargs)
         
         site_id = self.kwargs.get('pk')
         user_id = request.user.id
         user_role = request.roles.filter(site_id = site_id, group_id=3)
         
         if user_role:
-            is_supervisor_only = True
+            is_supervisor_only = False
             return super(SiteSupervisorRoleMixin, self).dispatch(request, is_supervisor_only, *args, **kwargs)
         
         project = Site.objects.get(pk=site_id).project
         user_role_aspadmin = request.roles.filter(project_id = project.id, group_id=2)
         if user_role_aspadmin:
-            is_supervisor_only = True
+            is_supervisor_only = False
             return super(SiteSupervisorRoleMixin, self).dispatch(request, is_supervisor_only, *args, **kwargs)
 
         organization_id = project.organization.id
         user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group_id=1)
         if user_role_asorgadmin:
-            is_supervisor_only = True
+            is_supervisor_only = False
             return super(SiteSupervisorRoleMixin, self).dispatch(request, is_supervisor_only, *args, **kwargs)
 
         user_role = request.roles.filter(site_id = site_id, group_id=4)
