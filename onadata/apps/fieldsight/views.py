@@ -192,11 +192,13 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
-        obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        objs = Project.objects.filter(pk=self.kwargs.get('pk')).prefetch_related("project_roles")
+        [o for o in objs]
+        obj = objs[0]
 
         peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
         # total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
-        sites = obj.sites.filter(is_active=True, is_survey=False)[:100]
+        sites = obj.sites.filter(is_active=True, is_survey=False).prefetch_related('site_forms', "site_instances")
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('location', 'id',))
 
