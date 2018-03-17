@@ -148,21 +148,23 @@ def site_images(request, pk):
 class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
     template_name = "fieldsight/organization_dashboard.html"
     def get_context_data(self, **kwargs):
-        dashboard_data = super(Organization_dashboard, self).get_context_data(**kwargs)
+        # dashboard_data = super(Organization_dashboard, self).get_context_data(**kwargs)
         obj = Organization.objects.get(pk=self.kwargs.get('pk'))
         peoples_involved = obj.organization_roles.filter(ended_at__isnull=True).distinct('user_id')
-        sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)
+        sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)[:100]
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
         projects = Project.objects.filter(organization_id=obj.pk)
-        total_projects = projects.count()
-        total_sites = sites.count()
+        total_projects = len(projects)
+        total_sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True).count()
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
-        bar_graph = BarGenerator(sites)
-        line_chart = LineChartGeneratorOrganization(obj)
-        line_chart_data = line_chart.data()
-        user = User.objects.filter(pk=self.kwargs.get('pk'))
-        roles_org = UserRole.objects.filter(organization_id = self.kwargs.get('pk'), project__isnull = True, site__isnull = True, ended_at__isnull=True)
+        bar_graph = {} #BarGenerator(sites)
+        line_chart = [] #LineChartGeneratorOrganization(obj)
+        line_chart_data = {} #line_chart.data()
+        # user = User.objects.filter(pk=self.kwargs.get('pk'))
+        roles_org = UserRole.objects.filter(organization_id = self.kwargs.get('pk'), project__isnull=True,
+                                            site__isnull = True,
+                                            ended_at__isnull=True)
 
         dashboard_data = {
             'obj': obj,
@@ -176,10 +178,10 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
             'approved': approved,
             'rejected': rejected,
             'data': data,
-            'cumulative_data': line_chart_data.values(),
-            'cumulative_labels': line_chart_data.keys(),
-            'progress_data': bar_graph.data.values(),
-            'progress_labels': bar_graph.data.keys(),
+            'cumulative_data': [], #line_chart_data.values(),
+            'cumulative_labels': [], #line_chart_data.keys(),
+            'progress_data': [], #bar_graph.data.values(),
+            'progress_labels': [] , #bar_graph.data.keys(),
             'roles_org': roles_org,
 
         }
@@ -193,18 +195,20 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
 
         peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
-        total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
-        sites = obj.sites.filter(is_active=True, is_survey=False)
+        # total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
+        sites = obj.sites.filter(is_active=True, is_survey=False)[:100]
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('location', 'id',))
 
-        total_sites = sites.count()
-        total_survey_sites = obj.sites.filter(is_survey=True).count()
+        total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
+        total_survey_sites = 0
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
         bar_graph = BarGenerator(sites)
         line_chart = LineChartGenerator(obj)
         line_chart_data = line_chart.data()
-        roles_project = UserRole.objects.filter(organization__isnull = False, project_id = self.kwargs.get('pk'), site__isnull = True, ended_at__isnull=True)
+        roles_project = UserRole.objects.filter(organization__isnull=False,
+                                                project_id = self.kwargs.get('pk'),
+                                                site__isnull=True, ended_at__isnull=True)
 
         dashboard_data = {
             'sites': sites,
