@@ -353,14 +353,14 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
     sites_count = len(regions)
     users_count = len(users)
 
-    task_id = celery.current_task.task_id
-    
-    print task_id
-    task = CeleryTaskProgress.objects.get(task_id=task_id)
-    task.content_object = project
-    task.description = "Assign "+str(users_count)+" people in "+str(sites_count)+" regions."
-    task.status=1
-    task.save()
+    # task_id = multiuserassignregion.request.id
+    # print task_id
+    # task = CeleryTaskProgress.objects.get(task_id=task_id)
+    # print task
+    # task.content_object = project
+    # task.description = "Assign "+str(users_count)+" people in "+str(sites_count)+" regions."
+    # task.status=1
+    # task.save()
     try:
         with transaction.atomic():
             roles_created = 0            
@@ -400,8 +400,8 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
                                 # if Device.objects.filter(name=role.user.email).exists():
                                 #     message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
                                 #     Device.objects.filter(name=role.user.email).send_message(message)
-        task.status = 2
-        task.save()
+        # task.status = 2
+        # task.save()
         if roles_created == 0:
             noti = FieldSightLog.objects.create(source=source_user, type=23, title="Task Completed.",
                                        content_object=project, recipient=source_user, 
@@ -447,8 +447,8 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
 
     except Exception as e:
         print 'Site Upload Unsuccesfull. ------------------------------------------%s' % e
-        task.status = 3
-        task.save()
+        # task.status = 3
+        # task.save()
         noti = FieldSightLog.objects.create(source=source_user, type=422, title="Bulk Region User Assign",
                                        content_object=project, recipient=source_user,
                                        extra_message=group_name +" for "+str(users_count)+" people in "+str(sites_count)+" regions ")
