@@ -179,7 +179,7 @@ class CeleryTaskProgress(models.Model):
         return None
 
     def __str__(self):
-        return str(self.pk) + " (" + str(self.task_type) + ") " + "-->" + str(self.status) + "--->" + str(self.user)
+        return str(self.pk) + " (" + str(self.task_type) + ") " + "-->" + str(self.status) + "--->" + str(self.user) + " | Date_last_updated =" + str(self.date_updateded) + " | Added_On ="+str(self.date_added)
 
 
 
