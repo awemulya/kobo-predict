@@ -370,6 +370,8 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
                 else: 
                     sites = Site.objects.filter(region_id = region_id, project_id=project_id).values('id')
                 for site_id in sites:
+                    counter_main = counter_main + 1
+                    print "Assigning to site : " + str(site_id)
                     for user in users:
                         site = Site.objects.filter(pk=site_id['id']).first()
                         if site and site.project_id == project.id: 
