@@ -353,7 +353,7 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
     sites_count = len(regions)
     users_count = len(users)
 
-    task_id = multiuserassignregion.request.id
+    task_id = celery.current_task.task_id
     task = CeleryTaskProgress.objects.get(task_id=task_id)
     task.content_object = project
     task.description = "Assign "+str(users_count)+" people in "+str(sites_count)+" regions."
