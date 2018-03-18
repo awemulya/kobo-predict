@@ -162,7 +162,6 @@ class CeleryTaskProgress(models.Model):
         )
     task_id = models.CharField(max_length=255, unique=True)
     date_added = models.DateTimeField(auto_now_add=True)
-    date_updateded = models.DateTimeField(auto_now=True, blank=True, null=True)
     user = models.ForeignKey(User, related_name="task_owner")
     status = models.IntegerField(default=0, choices=Task_Status)
     description = models.CharField(max_length=755, blank=True)
@@ -177,6 +176,9 @@ class CeleryTaskProgress(models.Model):
             data = task.result or task.state
             return json.dumps(data)
         return None
+
+    def __str__(self):
+        return str(user) + str(pk)
 
 
 
