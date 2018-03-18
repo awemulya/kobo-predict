@@ -75,7 +75,9 @@ class SiteViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing sites.
     """
-    queryset = Site.objects.all()
+    queryset = Site.objects.all()\
+        .select_related("type__name", "project__organization")\
+        .prefetch_related("site_instances", "site_forms", "blueprints")
     serializer_class = SiteSerializer
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     permission_classes = (SiteViewPermission,)
@@ -83,7 +85,8 @@ class SiteViewSet(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         project = self.kwargs.get('pk', None)
-        return queryset.filter(project__id=project, is_active=True)
+        qs = queryset.filter(project__id=project, is_active=True)
+        return qs
 
     def get_serializer_context(self):
         return {'request': self.request}

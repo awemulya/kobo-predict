@@ -92,7 +92,8 @@ def current_user(request):
     if user.is_anonymous():
         return Response({'code': 401, 'message': 'Unauthorized User'})
     elif not user.user_profile.organization:
-        return Response({'code': 403, 'message': 'Not Assigned to Any Organizations Yet'})
+        return Response({'code': 403, 'message': 'Sorry, you are not assigned to any organization yet. '
+                                                 'Please contact your project manager.'})
     else:
         site_supervisor = False
         field_sight_info = []
@@ -181,6 +182,7 @@ def alter_status(request, pk):
         return Response({'msg': message}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': 'Failure caused by {0}'.format(e.message)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 def edit(request, pk):
     user = User.objects.get(pk=pk)

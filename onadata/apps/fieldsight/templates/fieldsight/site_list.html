@@ -118,7 +118,7 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 					{% if messages %}
 						<ul class="messages">
 						    {% for message in messages %}
-						    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						    <li>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
 						    {% endfor %}
 						</ul>
 						{% endif %}
@@ -156,27 +156,27 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 									<ul class="icon-listing clearfix margin-top">
 										<li>
 											<i class="la la-exclamation"></i>
-											<spam data-bind="text: get_site_submission_count().rejected">
+											<span data-bind="text: get_site_submission_count().rejected">
 
-											</spam>
+											</span>
 										</li>
 										<li>
 											<i class="la la-flag"></i>
-											<spam data-bind="text: get_site_submission_count().flagged">
+											<span data-bind="text: get_site_submission_count().flagged">
 
-											</spam>
+											</span>
 										</li>
 										<li>
 											<i class="la la-hourglass-half"></i>
-											<spam data-bind="text: get_site_submission_count().outstanding">
+											<span data-bind="text: get_site_submission_count().outstanding">
 
-											</spam>
+											</span>
 										</li>
 										<li>
 											<i class="la la-thumbs-up"></i>
-											<spam data-bind="text: get_site_submission_count().approved">
+											<span data-bind="text: get_site_submission_count().approved">
 
-											</spam>
+											</span>
 										</li>
 									</ul>
 
