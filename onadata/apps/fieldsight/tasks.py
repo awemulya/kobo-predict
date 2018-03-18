@@ -448,8 +448,9 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
 
     except Exception as e:
         print 'Bulk role assign Unsuccesfull. ------------------------------------------%s' % e
-        # task.status = 3
-        # task.save()
+        task.description = "Assign "+str(users_count)+" people in "+str(sites_count)+" regions. ERROR: " + str(e) 
+        task.status = 3
+        task.save()
         noti = FieldSightLog.objects.create(source=source_user, type=422, title="Bulk Region User Assign",
                                        content_object=project, recipient=source_user,
                                        extra_message=group_name +" for "+str(users_count)+" people in "+str(sites_count)+" regions ")
