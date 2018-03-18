@@ -170,7 +170,7 @@ class CeleryTaskProgress(models.Model):
     content_type = models.ForeignKey(ContentType, related_name='task_object', blank=True, null=True)
     object_id = models.CharField(max_length=255, blank=True, null=True)
     content_object = GenericForeignKey('content_type', 'object_id')
-    
+
     def get_progress(self):
         if self.status == 1:
             task = AsyncResult(self.task_id)
@@ -179,7 +179,7 @@ class CeleryTaskProgress(models.Model):
         return None
 
     def __str__(self):
-        return str(pk)
+        return str(self.pk) + "---" + str(self.user)
 
 
 
