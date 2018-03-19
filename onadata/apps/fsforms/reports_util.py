@@ -8,7 +8,7 @@ from onadata.apps.viewer.models.parsed_instance import dict_for_mongo, _encode_f
 DEFAULT_LIMIT = 30000
 
 def get_images_for_site(site_id):
-    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site":str(site_id)}}, {"$unwind":"$_attachments"},{"$match":{"_attachments.mimetype" : "image/jpeg"}}, { "$limit": 10 }])
+    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site":str(site_id)}}, {"$unwind":"$_attachments"},{"$match":{"_attachments.mimetype" : "image/jpeg"}}, { "$limit": 6 }])
 
 def get_site_responses_coords(site_id):
     return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": str(site_id), "_geolocation":{"$not":{ "$elemMatch": { "$eq": None }}}}}, {"$project" : {"_id":0, "type": {"$literal": "Feature"}, "geometry":{ "type": {"$literal": "Point"}, "coordinates": "$_geolocation" }, "properties": {"id":"$_id", "fs_uuid":"$fs_uuid", "submitted_by":"$_submitted_by"}}}])
