@@ -444,26 +444,26 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 										<div class="row">
 											<!-- ko foreach: allImages  -->
 												
-											<!-- ko if ($index < 9)-->
-													<div class="col-md-4">
-													
-														<div class="photo-holder photo-item margin-top">
-															<img data-bind="attr:{src: _attachments().download_url}" img-title="Image Title" alt="">
+												<!-- ko if: $index < 9 -->
+														<div class="col-md-4">
+														
+															<div class="photo-holder photo-item margin-top">
+																<img data-bind="attr:{src: _attachments().download_url}" img-title="Image Title" alt="">
+															</div>
 														</div>
-													</div>
-											<!-- } -->
-											<!-- else -->
-											<!-- { -->
+												
+												<!-- /ko -->
+												<!-- ko if: $index = 9 -->
 
-												<div class="col-md-4">
-												<div class="photo-holder margin-top">
-													<a href="#" title="" class="count-holder">
-														<span class="align-middle">+</span>
-													</a>
-													<img data-bind="attr:{src: _attachments().download_url}" img-title="Image Title" alt="">
+													<div class="col-md-4">
+													<div class="photo-holder margin-top">
+														<a href="#" title="" class="count-holder">
+															<span class="align-middle">+</span>
+														</a>
+														<img data-bind="attr:{src: _attachments().download_url}" img-title="Image Title" alt="">
+													</div>
 												</div>
-											</div>
-											<!-- } -->
+												<!-- /ko -->
 													
 											<!-- /ko-->
 
