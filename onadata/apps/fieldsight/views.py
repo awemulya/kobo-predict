@@ -259,7 +259,7 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
         myanswers = mylist
         result = get_images_for_sites_count(obj.id)
-        print list(result["result"])
+        total_count = list(result["result"])[0].count
         outstanding, flagged, approved, rejected = obj.get_site_submission()
         dashboard_data = {
             'obj': obj,
@@ -274,6 +274,8 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
             'progress_chart_data_data': progress_chart_data.keys(),
             'progress_chart_data_labels': progress_chart_data.values(),
             'meta_data': myanswers,
+            'next_photos_count':total_count - 5,
+            'total_photos': total_count
         }
         return dashboard_data
 
