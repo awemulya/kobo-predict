@@ -7,6 +7,9 @@ from .models import FieldSightXF
 from onadata.apps.viewer.models.parsed_instance import dict_for_mongo, _encode_for_mongo, xform_instances
 DEFAULT_LIMIT = 30000
 
+def get_images_for_sites_count(site_id):
+    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site":str(site_id)}}, {"$unwind":"$_attachments"},{"$match":{"_attachments.mimetype" : "image/jpeg"}}, { "$group":{"_id":"null", "count":{"$sum": 1} }}])
+
 def get_images_for_site(site_id):
     return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site":str(site_id)}}, {"$unwind":"$_attachments"},{"$match":{"_attachments.mimetype" : "image/jpeg"}}, { "$limit": 6 }])
 

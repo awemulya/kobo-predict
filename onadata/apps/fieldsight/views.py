@@ -69,7 +69,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.template import Context
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-from onadata.apps.fsforms.reports_util import get_images_for_site, get_site_responses_coords
+from onadata.apps.fsforms.reports_util import get_images_for_site, get_site_responses_coords, get_images_for_sites_count
 
 @login_required
 def dashboard(request):
@@ -258,6 +258,7 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
             if question['question_name'] in meta_answers:
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
         myanswers = mylist
+        print get_images_for_sites_count(obj_id)["result"].count
         outstanding, flagged, approved, rejected = obj.get_site_submission()
         dashboard_data = {
             'obj': obj,
