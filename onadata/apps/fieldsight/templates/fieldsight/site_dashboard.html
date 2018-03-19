@@ -448,7 +448,7 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 														<div class="col-md-4">
 														
 															<div class="photo-holder photo-item margin-top">
-																<img data-bind="attr:{src: _attachments().download_url, img-title: _submitted_by()}" img-title="Image Title" alt="">
+																<img data-bind="attr:{src: _attachments().download_url}, attr:{img-title: _submitted_by()}" alt="">
 															</div>
 														</div>
 												
@@ -460,7 +460,7 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 														<a href="#" title="" class="count-holder">
 															<span class="align-middle">{{ next_photos_count }} +</span>
 														</a>
-														<img data-bind="attr:{src: _attachments().download_url, img-title: _submitted_by()}" img-title="Image Title" alt="">
+														<img data-bind="attr:{src: _attachments().download_url}, attr:{img-title: _submitted_by()}" alt="">
 													</div>
 												</div>
 												<!-- /ko -->
