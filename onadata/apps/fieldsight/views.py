@@ -259,8 +259,12 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
         myanswers = mylist
         result = get_images_for_sites_count(obj.id)
-        countlist = list(result["result"])[0]
-        total_count = countlist['count']
+        
+        countlist = list(result["result"])
+        if countlist:
+            total_count = countlist[0]['count']
+        else:
+            total_count = 0
         outstanding, flagged, approved, rejected = obj.get_site_submission()
         dashboard_data = {
             'obj': obj,
