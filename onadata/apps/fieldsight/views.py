@@ -2302,7 +2302,7 @@ class GenerateCustomReport(ReviewerRoleMixin, View):
 class RecentResponseImages(ReviewerRoleMixin, View):
     def get(self, request, pk):
         recent_resp_imgs = get_images_for_site(pk)
-        content={'images':list(recent_resp_imgs)}
+        content={'images':list(recent_resp_imgs["result"])}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
 class SiteResponseCoordinates(ReviewerRoleMixin, View):
