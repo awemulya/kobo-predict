@@ -47,12 +47,13 @@
 		    {% endblock %}
         </ol>
     </nav>
-</div>
-{% verbatim %}
-<div id="app">
+    {% verbatim %}
+    <div id="app">
 
+    </div>
+    {% endverbatim %}
 </div>
-{% endverbatim %}
+
 
 {% endblock %}
 
@@ -71,6 +72,13 @@
 <script src="//cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.16.0/vuedraggable.min.js"></script>
 
-<script src="{% static 'js/forms/manage_forms.js' %}?v=1.6"></script>
-
+<script src="{% static 'js/forms/manage_forms.js' %}?v=1.8"></script>
+<script>
+    $(document).ready(function(){
+        var panelHeight = $(window).height() - $("#header").height() - 79;
+        $(".widget-info" ).each(function() {
+            $(this).css('min-height', panelHeight);
+        });
+    });
+</script>
 {% endblock %}
