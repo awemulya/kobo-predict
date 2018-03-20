@@ -669,6 +669,14 @@ var myChart1 = new Chart(ctx1, {
 });
 
 });
+
+	var height = 0;
+	$(".gh-col" ).each(function() {
+	    height += $(this).height();
+	});
+	height = height + 14;
+	$(".ah-col" ).height(height);
+			
 </script>
 
 
