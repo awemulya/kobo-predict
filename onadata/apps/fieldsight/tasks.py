@@ -354,7 +354,9 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
     users_count = len(users)
 
     task_id = multiuserassignregion.request.id
+    print task_id
     task = CeleryTaskProgress.objects.get(task_id=task_id)
+    print task
     task.content_object = project
     task.description = "Assign "+str(users_count)+" people in "+str(sites_count)+" regions."
     task.status=1
@@ -368,6 +370,7 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
                 else: 
                     sites = Site.objects.filter(region_id = region_id, project_id=project_id).values('id')
                 for site_id in sites:
+                    print "Assigning to site : " + str(site_id)
                     for user in users:
                         site = Site.objects.filter(pk=site_id['id']).first()
                         if site and site.project_id == project.id: 
@@ -444,7 +447,8 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
             ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
 
     except Exception as e:
-        print 'Site Upload Unsuccesfull. ------------------------------------------%s' % e
+        print 'Bulk role assign Unsuccesfull. ------------------------------------------%s' % e
+        task.description = "Assign "+str(users_count)+" people in "+str(sites_count)+" regions. ERROR: " + str(e) 
         task.status = 3
         task.save()
         noti = FieldSightLog.objects.create(source=source_user, type=422, title="Bulk Region User Assign",

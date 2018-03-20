@@ -69,7 +69,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.template import Context
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-from onadata.apps.fsforms.reports_util import get_images_for_site, get_site_responses_coords
+from onadata.apps.fsforms.reports_util import get_images_for_site, get_site_responses_coords, get_images_for_sites_count
 
 @login_required
 def dashboard(request):
@@ -258,6 +258,13 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
             if question['question_name'] in meta_answers:
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
         myanswers = mylist
+        result = get_images_for_sites_count(obj.id)
+        
+        countlist = list(result["result"])
+        if countlist:
+            total_count = countlist[0]['count']
+        else:
+            total_count = 0
         outstanding, flagged, approved, rejected = obj.get_site_submission()
         dashboard_data = {
             'obj': obj,
@@ -272,6 +279,8 @@ class SiteDashboardView(ReviewerRoleMixin, TemplateView):
             'progress_chart_data_data': progress_chart_data.keys(),
             'progress_chart_data_labels': progress_chart_data.values(),
             'meta_data': myanswers,
+            'next_photos_count':total_count - 5,
+            'total_photos': total_count
         }
         return dashboard_data
 
@@ -2302,7 +2311,7 @@ class GenerateCustomReport(ReviewerRoleMixin, View):
 class RecentResponseImages(ReviewerRoleMixin, View):
     def get(self, request, pk):
         recent_resp_imgs = get_images_for_site(pk)
-        content={'images':list(recent_resp_imgs)}
+        content={'images':list(recent_resp_imgs["result"])}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
 class SiteResponseCoordinates(ReviewerRoleMixin, View):

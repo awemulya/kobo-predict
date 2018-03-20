@@ -291,18 +291,18 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 						</div>
 					</div>
 					<div class="row">
-							<div class="col-md-6">
+							<div class="col-md-7">
 							<!-- Nav tabs -->
-							<div class="tabbing margin-top">
+							<div class="tabbing margin-top" data-mh="eqtd">
 								<ul class="nav nav-tabs" role="tablist">
 								  <li class="nav-item">
-									<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Pending ({{outstanding|length}})</a>
+									<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Pending <span class="badge badge-info">{{outstanding|length}}</span></a>
 								  </li>
 								  <li class="nav-item">
-									<a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Rejected ({{rejected|length}})</a>
+									<a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Rejected  <span class="badge badge-warning">{{rejected|length}}</span></a>
 								  </li>
 								  <li class="nav-item">
-									<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Flagged ({{flagged|length}})</a>
+									<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Flagged <span class="badge badge-danger">{{flagged|length}}</span></a>
 								  </li>
 								</ul>
 
@@ -432,34 +432,57 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 </ul>
 </div>
  -->
-						<div class="col-md-6">
+						<div class="col-md-5">
 							<div class="row">
 								<div class="col-md-12">
-									<div class="widget-info module-slick-slider margin-top bg-white padding">
+									<div class="widget-info module-slick-slider margin-top bg-white padding" data-mh="eqtd">
 										<div class="widget-head">
 											<h4>Recent Pictures</h4>
 										</div>
-										<div class="scrollingSlider">
+
+
+										<div class="row">
 											<!-- ko foreach: allImages  -->
-												<!-- ko foreach: _attachments()  -->
-													
-													<div>
-													
-														<div class="photo-item">
-															<img data-bind="attr:{src: $data.download_url}">
+												
+												<!-- ko if: $index() != 5 -->
+														<div class="col-md-4">
+														
+															<div class="photo-holder photo-item margin-top">
+																<img data-bind="attr:{src:_attachments().download_url}" img-title="" alt="">
+															</div>
 														</div>
+												
+												<!-- /ko -->
+												<!-- ko if: $index() == 5 -->
+
+													<div class="col-md-4">
+													<div class="photo-holder margin-top">
+														<a href="#" title="" class="count-holder">
+															<span class="align-middle">{{ next_photos_count }} +</span>
+														</a>
+														<img data-bind="attr:{src: _attachments().download_url}" img-title="" alt="">
 													</div>
-												<!-- /ko-->
+												</div>
+												<!-- /ko -->
+													
 											<!-- /ko-->
 
 
-
-
-
-
-											
-											
+																						
 										</div>
+
+
+										
+											
+
+
+
+
+
+
+											
+											
+										
 									</div>
 								</div>
 							</div>
