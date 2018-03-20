@@ -526,9 +526,41 @@ var project = "{{obj.pk}}";
     var cummulative_data = {{ cumulative_data|safe}};
     var progress_labels = {{ progress_labels|safe}};
     var progress_data = {{ progress_data|safe}};
+
+
+    $(document).ready(function(){ 
+    $(".widget-scolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+				
+				$('.scrollingSlider').slick({
+				  slidesToShow: 4,
+				  arrows: false,
+				  autoplay : true,
+				  infinite: false,
+				  responsive: [
+					{
+					  breakpoint: 768,
+					  settings: {
+						arrows: false,
+						slidesToShow: 3
+					  }
+					},
+					{
+					  breakpoint: 480,
+					  settings: {
+						arrows: false,
+						centerMode: true,
+						slidesToShow: 1
+					  }
+					}
+				  ]
+				});
+
+	});
     </script>
+
     <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/d3.tip.v0.6.3.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_bar-graph.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
+
 {% endblock %}
