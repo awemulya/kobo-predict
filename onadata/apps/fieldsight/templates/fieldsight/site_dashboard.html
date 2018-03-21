@@ -299,10 +299,10 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 									<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Pending <span class="badge badge-info">{{outstanding|length}}</span></a>
 								  </li>
 								  <li class="nav-item">
-									<a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Rejected  <span class="badge badge-warning">{{rejected|length}}</span></a>
+									<a class="nav-link" data-toggle="tab" href="#tab002" role="tab">Rejected  <span class="badge badge-danger">{{rejected|length}}</span></a>
 								  </li>
 								  <li class="nav-item">
-									<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Flagged <span class="badge badge-danger">{{flagged|length}}</span></a>
+									<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Flagged <span class="badge badge-warning">{{flagged|length}}</span></a>
 								  </li>
 								</ul>
 
@@ -316,29 +316,19 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 											  <table class="table table-striped table-hover" style="width:100%;">
 												  {% for instance in outstanding_data %}
 												  <tr>
-													  <td style="width:60%;">
-														  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-															<h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
-														  </a>
-													  </td>
-													  <td>
-														  <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
-														<div class="detail-person-time">
-															<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-user fa-fw"></i>{{ instance.submitted_by }}</span>
-														</div>
-														  </a>
-													  </td>
-													  <td>
-														<div class="detail-person-time">
-															<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i>{{ instance.date|timesince }}{% trans ' ago' %}</span>
-														</div>
-													  </td>
+													 	<td class="align-middle">
+															<a title="View submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}"><strong>{{ instance.site_fxf.xf.title}}</strong></a>
+															<br/>
+															<a href="{% url 'users:profile' instance.submitted_by.id %}" title="View details of user"><small><i class="la la-user"></i>{{ instance.submitted_by }}</small></a>
+															&nbsp;
+															<small class="site_icon_float" style=""><i class="la la-clock-o" aria-hidden="true"></i> {{ instance.date|timesince }}{% trans ' ago' %}</small>
+													</td>
 												  </tr>
 												  {% empty %}
 												   {% trans 'No' %} {% trans 'data' %}
 												  {% endfor %}
 											  </table>
-												{% paginate %}
+												<a href="{% url 'fieldsight:site-submission-data' obj.pk 2 %}">view all</a>
 											 </div>
 
 										</div>
@@ -352,29 +342,19 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 											  <table class="table table-striped table-hover" style="width:100%;">
 												  {% for instance in rejected_data %}
 												  <tr>
-													  <td style="width:60%;">
-														  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-															<h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
-														  </a>
-													  </td>
-													  <td>
-														  <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
-														<div class="detail-person-time">
-															<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-user fa-fw"></i>{{ instance.submitted_by }}</span>
-														</div>
-														  </a>
-													  </td>
-													  <td>
-														<div class="detail-person-time">
-															<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i>{{ instance.date|timesince }}{% trans ' ago' %}</span>
-														</div>
-													  </td>
+													  <td class="align-middle">
+															<a title="View submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}"><strong>{{ instance.site_fxf.xf.title}}</strong></a>
+															<br/>
+															<a href="{% url 'users:profile' instance.submitted_by.id %}" title="View details of user"><small><i class="la la-user"></i>{{ instance.submitted_by }}</small></a>
+															&nbsp;
+															<small class="site_icon_float" style=""><i class="la la-clock-o" aria-hidden="true"></i> {{ instance.date|timesince }}{% trans ' ago' %}</small>
+													</td>
 												  </tr>
 												  {% empty %}
 												   {% trans 'No' %} {% trans 'data' %}
 												  {% endfor %}
 											  </table>
-												{% paginate %}
+												<a href="{% url 'fieldsight:site-submission-data' obj.pk 0 %}">view all</a>
 											 </div>
 
 										</div>
@@ -388,29 +368,20 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 											  <table class="table table-striped table-hover" style="width:100%;">
 												  {% for instance in flagged_data %}
 												  <tr>
-													  <td style="width:60%;">
-														  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-															<h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
-														  </a>
-													  </td>
-													  <td>
-														  <a href="{% url 'users:profile' instance.submitted_by.id %}" title="view details of user">
-														<div class="detail-person-time">
-															<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-user fa-fw"></i>{{ instance.submitted_by }}</span>
-														</div>
-														  </a>
-													  </td>
-													  <td>
-														<div class="detail-person-time">
-															<span class="site_icon_float" style="font-size:16px;"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i>{{ instance.date|timesince }}{% trans ' ago' %}</span>
-														</div>
-													  </td>
+													  <td class="align-middle">
+															<a title="View submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}"><strong>{{ instance.site_fxf.xf.title}}</strong></a>
+															<br/>
+															<a href="{% url 'users:profile' instance.submitted_by.id %}" title="View details of user"><small><i class="la la-user"></i>{{ instance.submitted_by }}</small></a>
+															&nbsp;
+															<small class="site_icon_float" style=""><i class="la la-clock-o" aria-hidden="true"></i> {{ instance.date|timesince }}{% trans ' ago' %}</small>
+													</td>
 												  </tr>
 												  {% empty %}
 										  		   {% trans 'No' %} {% trans 'data' %}
 												  {% endfor %}
+												  
 											  </table>
-												{% paginate %}
+												<a href="{% url 'fieldsight:site-submission-data' obj.pk 1 %}">view all</a>
 											 </div>
 
 										</div>
