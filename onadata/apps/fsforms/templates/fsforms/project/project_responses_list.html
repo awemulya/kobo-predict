@@ -44,15 +44,20 @@
     <div class="tab-content">
       <div id="general1" class="tab-pane active">
         {% if generals %}
-          <h3><b> {% trans 'General' %} {% trans 'Forms' %} </b></h3>
-
-          <table class="table table-striped" id="dynamic-table2">
+        <div class="widget-info">
+          <div class="widget-head">
+            <h4>{% trans 'General' %} {% trans 'Forms' %}</h4>
+          </div>
+          <div class="widget-body">
+            <table class="table table-responsive table-hover table-striped" id="dynamic-table2">
               <thead>
-              <th>{% trans 'Form' %} {% trans 'Name' %}</th>
-               <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
-              <th>{% trans 'Created' %} {% trans 'Date' %}</th>
-              <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
-              <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
+                <tr>
+                  <th>{% trans 'Form' %} {% trans 'Name' %}</th>
+                  <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
+                  <th>{% trans 'Created' %} {% trans 'Date' %}</th>
+                  <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
+                  <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
+                </tr>
               </thead>
               <tbody>
               {% for obj in generals %}
@@ -83,13 +88,23 @@
               {% endfor %}
               </tbody>
           </table>
-        {% endif %}
+          </div>
+        </div>
+         {% endif %}
+
+
+          
+       
       </div>
         <div id="survey4" class="tab-pane fade">
         {% if surveys %}
-          <h3><b> {% trans 'Survey' %} {% trans 'Forms' %} </b></h3>
+          <div class="widget-info">
+          <div class="widget-head">
+          <h3> {% trans 'Survey' %} {% trans 'Forms' %}</h3>
+          </div>
+          <div class="widget-body">
 
-          <table class="table table-striped" id="dynamic-table3">
+          <table class="table table-responsive table-hover table-striped" id="dynamic-table2" id="dynamic-table3">
               <thead>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
               <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
@@ -127,15 +142,19 @@
               {% endfor %}
               </tbody>
           </table>
+          </div>
         {% endif %}
       </div>
 
 
       <div id="schedule2" class="tab-pane fade">
         {% if schedules %}
+         <div class="widget-info">
+          <div class="widget-head">
           <h3><b>{% trans 'Scheduled' %} {% trans 'Forms' %}</b></h3>
-
-          <table class="table table-striped" id="dynamic-table1">
+          </div>
+          <div class="widget-body">
+          <table class="table table-responsive table-hover table-striped" id="dynamic-table2" id="dynamic-table1">
               <thead>
               <th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
                <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
@@ -179,7 +198,7 @@
               {% endfor %}
               </tbody>
           </table>
-
+          </div>
         {% endif %}
       </div>
 
@@ -187,18 +206,16 @@
       <div id="stage3" class="tab-pane fade">
         {% if stages %}
          <div class="panel-group col-sm-8" id="accordion">
+          <div class="widget-info">
+          <div class="widget-head">
           {% for stage in stages %}
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href=""><b>{% trans 'Stage Name' %}:</b> {{stage.name }}</a>
-                </h4>
-              </div>
-              <div id="collapse{{stage.id}}">
-                <div class="panel-body">
+            {{stage.name }}
+                  </div>
+                  <div class="widget-body">
+               
                   {% if stage.active_substages %}
 
-                  <table class="table table-striped">
+                  <table class="table table-responsive table-hover table-striped" id="dynamic-table2">
                       <thead>
                       <th>{% trans 'Sub' %} {% trans 'Stage' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
@@ -242,9 +259,8 @@
                       {% endfor %}
                       </tbody>
                   </table>
-
-
-                  {% endif %}
+                 {% endif %}
+                  </div>
                 </div>
               </div>
             </div>
