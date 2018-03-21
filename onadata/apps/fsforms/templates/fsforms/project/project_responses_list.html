@@ -50,7 +50,7 @@
           </div>
           <div class="widget-body">
             <table class="table table-responsive table-hover table-striped" id="dynamic-table2">
-              <thead>
+              <thead class="thead-default">
                 <tr>
                   <th>{% trans 'Form' %} {% trans 'Name' %}</th>
                   <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
@@ -105,7 +105,7 @@
           <div class="widget-body">
 
           <table class="table table-responsive table-hover table-striped" id="dynamic-table2" id="dynamic-table3">
-              <thead>
+              <thead class="thead-default">
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
               <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
@@ -155,7 +155,7 @@
           </div>
           <div class="widget-body">
           <table class="table table-responsive table-hover table-striped" id="dynamic-table2" id="dynamic-table1">
-              <thead>
+              <thead class="thead-default">
               <th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
                <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
@@ -205,7 +205,7 @@
 
       <div id="stage3" class="tab-pane fade">
         {% if stages %}
-         <div class="panel-group col-sm-8" id="accordion">
+        
           
           {% for stage in stages %}
           <div class="widget-info">
@@ -217,7 +217,7 @@
                   {% if stage.active_substages %}
 
                   <table class="table table-responsive table-hover table-striped" id="dynamic-table2">
-                      <thead>
+                      <thead class="thead-default">
                       <th>{% trans 'Sub' %} {% trans 'Stage' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
                       <th>{% trans 'Order' %}</th>
@@ -277,7 +277,7 @@
                                {% trans ' Submissions ' %}</a>
             </div>
             {% endfor %}
-        </div>
+      
         {% endif %}
           </div>
       </div>
