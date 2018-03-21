@@ -206,9 +206,10 @@
       <div id="stage3" class="tab-pane fade">
         {% if stages %}
          <div class="panel-group col-sm-8" id="accordion">
+          
+          {% for stage in stages %}
           <div class="widget-info">
           <div class="widget-head">
-          {% for stage in stages %}
             {{stage.name }}
                   </div>
                   <div class="widget-body">
@@ -262,8 +263,8 @@
                  {% endif %}
                   </div>
                 </div>
-              </div>
-            </div>
+              
+            
           {% endfor %}
 
           </div>
