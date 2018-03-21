@@ -233,7 +233,7 @@ var project = "{{obj.pk}}";
 					</div>
 					<div class="row">
 						<div class="col-lg-6 col-sm-12">
-							<div class="widget-info margin-top bg-white padding">
+							<div class="widget-info margin-top bg-white padding" data-mh="eq111">
 								<div class="widget-head">
 									<a href="{% url 'fieldsight:proj-loc-map' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map" ></i>{% trans 'Full' %} {% trans 'Map' %}</a>
 									<h4>{% trans 'Site' %} {% trans 'Map' %}</h4>
@@ -256,7 +256,7 @@ var project = "{{obj.pk}}";
 								
 								{% if obj.cluster_sites %}
 								<div class="col-md-6 col-sm-12">
-									<div class="widget-info widget-scolling-list margin-top bg-white padding">
+									<div class="widget-info widget-scolling-list margin-top bg-white padding" data-mh="eq111">
 										<div class="widget-head">
 											<h4>{% trans 'Regions' %}</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:region-add' obj.pk %} "><i class="la la-plus"></i></a>
@@ -292,7 +292,7 @@ var project = "{{obj.pk}}";
 												</div>
 												<div class="project-basic-info">
 													<h4 data-bind="text:identifier()"></h4>
-                            						<h6 data-bind="text:name()"></h6>
+                            						<p data-bind="text:name()"></p>
 													
 												</div>
 											</a>
@@ -304,7 +304,7 @@ var project = "{{obj.pk}}";
 								{% else %}
 
 								<div class="col-md-6 col-sm-12">
-									<div class="widget-info widget-scolling-list margin-top bg-white padding">
+									<div class="widget-info widget-large-scolling-list margin-top bg-white padding" data-mh="eq111">
 										<div class="widget-head">
 											<h4>{% trans 'Sites' %}</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:site-add' obj.pk %} "><i class="la la-plus"></i></a>
@@ -331,7 +331,7 @@ var project = "{{obj.pk}}";
 												<div class="project-basic-info">
 												
 													<h4 data-bind="text:identifier()"></h4>
-                            						<h6 data-bind="text:name()"></h6>
+                            						<p data-bind="text:name()"></p>
 													
 
 												</div>
@@ -346,7 +346,7 @@ var project = "{{obj.pk}}";
 
 
 								<div class="col-md-6 col-sm-12">
-									<div class="widget-info widget-scolling-list margin-top bg-white padding">
+									<div class="widget-info widget-large-scolling-list margin-top bg-white padding" data-mh="eq111">
 										<div class="widget-head">
 											<h4>{% trans 'People' %}</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:manage-people-project' obj.pk %}"><i class="la la-plus"></i></a>
