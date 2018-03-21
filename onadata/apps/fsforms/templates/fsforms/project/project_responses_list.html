@@ -45,9 +45,7 @@
       <div id="general1" class="tab-pane active">
         {% if generals %}
         <div class="widget-info">
-          <div class="widget-head">
-            <h4>{% trans 'General' %} {% trans 'Forms' %}</h4>
-          </div>
+         
           <div class="widget-body">
             <table class="table table-responsive table-hover table-striped" id="dynamic-table2">
               <thead class="thead-default">
@@ -91,17 +89,12 @@
           </div>
         </div>
          {% endif %}
-
-
-          
-       
       </div>
-        <div id="survey4" class="tab-pane fade">
+
+      <div id="survey4" class="tab-pane fade">
         {% if surveys %}
           <div class="widget-info">
-          <div class="widget-head">
-          <h3> {% trans 'Survey' %} {% trans 'Forms' %}</h3>
-          </div>
+         
           <div class="widget-body">
 
           <table class="table table-responsive table-hover table-striped" id="dynamic-table2" id="dynamic-table3">
@@ -143,16 +136,14 @@
               </tbody>
           </table>
           </div>
+          </div>
         {% endif %}
       </div>
-
 
       <div id="schedule2" class="tab-pane fade">
         {% if schedules %}
          <div class="widget-info">
-          <div class="widget-head">
-          <h3><b>{% trans 'Scheduled' %} {% trans 'Forms' %}</b></h3>
-          </div>
+         
           <div class="widget-body">
           <table class="table table-responsive table-hover table-striped" id="dynamic-table2" id="dynamic-table1">
               <thead class="thead-default">
@@ -167,13 +158,13 @@
               {% for obj in schedules %}
                   <tr>
                       <td>
-                          {{ obj.name}}</a>
+                          {{ obj.name}}
                       </td>
                       <td>
                           {{ obj.getlatestsubmittiondate.first.date }}
                       </td>
                       <td>
-                          {{ obj.schedule_forms.xf.title }}</a>
+                          {{ obj.schedule_forms.xf.title }}
                       </td>
                       <td>
                           {{ obj.date_created }}
@@ -199,9 +190,9 @@
               </tbody>
           </table>
           </div>
+          </div>
         {% endif %}
       </div>
-
 
       <div id="stage3" class="tab-pane fade">
         {% if stages %}
@@ -266,9 +257,7 @@
               
             
           {% endfor %}
-
-          </div>
-             <div class="col-sm-4 card">
+           <div class="col-sm-4 card">
                  <div class="well well-sm notice-danger"><h4>{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}</h4></div>
             {% for obj in deleted_forms %}
             <div class="row card_inside">{{obj.xf.title}} {% trans 'with' %}
@@ -280,7 +269,9 @@
       
         {% endif %}
           </div>
-      </div>
+        </div>
+            
+    </div>
     </div>
 </div>
 {% endblock %}
