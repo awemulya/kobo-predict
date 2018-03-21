@@ -62,17 +62,10 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 				<section class="panel">
 
                     <header class="panel-heading clearfix">
-						<div class="container-fluid">
-						<div class="row">
-							<div class="col-md-5">
-                    <div class="panel-heading">
-                        <h3><i class="la la-map-marker"></i>{% trans 'Sites' %}</h3>
-					</div>
-							</div>
+                    <h3><i class="la la-map-marker"></i>{% trans 'Sites' %}</h3>
 
-						<div class="col-md-2 select-box">
-
-							<select name ="sortby" class="form-control no-btn-search" data-bind="value:sortby, valueUpdate:'afterkeydown'">
+                    <div class="panel-heading-right">
+                    		<select name ="sortby" class="form-control no-btn-search" data-bind="value:sortby, valueUpdate:'afterkeydown'">
 							<option class="dropdown-list" value="sitename" disabled selected>{% trans 'Select' %} {% trans 'your' %} {% trans 'option' %}</option>
 								<option value="rejected">{% trans 'Rejected' %}</option>
 								<option value="flagged">{% trans 'Flagged' %}</option>
@@ -85,13 +78,6 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 
 
 							</select>
-
-							<!--<select name ="orderbyasce" class="form-control no-btn-search" data-bind="value:orderbyasce, valueUpdate:'afterkeydown'">-->
-								<!--<option value="asce">Ascending</option>-->
-								<!--<option value="desc">Descending</option>-->
-							<!--</select>-->
-						</div>
-						<div class="col-md-5 ">
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i>{% trans 'Search' %}</a>
 
 							{% if type == "project" %}
@@ -110,9 +96,9 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 							btn-primary"><i class="la la-plus"></i>{% trans 'Add' %} {% trans 'New' %} {% trans 'Regional' %} {% trans 'Site' %}</a>
 							<a href="{% url 'fieldsight:define-site-meta' project_id %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i>{% trans 'Meta' %} {% trans 'Attributes' %}</a>
 							{% endif %}
-						</div>
-					</div>
-						</div>
+
+                    </div>
+						
                     </header>
 
 					{% if messages %}
