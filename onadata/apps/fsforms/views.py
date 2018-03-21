@@ -503,8 +503,7 @@ def project_edit_schedule(request, id):
 
 @group_required("Project")
 def edit_schedule(request, id):
-    schedule = get_object_or_404(
-        Schedule, pk=id)
+    schedule = get_object_or_404(Schedule, pk=id)
     if request.method == 'POST':
         form = ScheduleForm(data=request.POST, instance=schedule, request=request)
         if form.is_valid():

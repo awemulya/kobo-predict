@@ -41,7 +41,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
-from .rolemixins import ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteSupervisorRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
+from .rolemixins import ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm)
@@ -232,10 +232,10 @@ class SiteSurveyListView(LoginRequiredMixin, ProjectMixin, TemplateView):
         return TemplateResponse(request, "fieldsight/site_survey_list.html", {'project':pk})
 
 
-class SiteDashboardView(SiteSupervisorRoleMixin, TemplateView):
+class SiteDashboardView(SiteRoleMixin, TemplateView):
     template_name = 'fieldsight/site_dashboard.html'
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, is_supervisor_only, **kwargs):
         dashboard_data = super(SiteDashboardView, self).get_context_data(**kwargs)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
         peoples_involved = obj.site_roles.filter(ended_at__isnull=True).distinct('user')
@@ -267,36 +267,36 @@ class SiteDashboardView(SiteSupervisorRoleMixin, TemplateView):
             'progress_chart_data_data': progress_chart_data.keys(),
             'progress_chart_data_labels': progress_chart_data.values(),
             'meta_data': myanswers,
-            # 'is_supervisor_only': is_supervisor_only
+            'is_supervisor_only': is_supervisor_only
         }
         return dashboard_data
 
-class SiteSupervisorDashboardView(SiteSupervisorRoleMixin, TemplateView):
-    template_name = 'fieldsight/site_supervisor_dashboard.html'
+# class SiteSupervisorDashboardView(SiteSupervisorRoleMixin, TemplateView):
+#     template_name = 'fieldsight/site_supervisor_dashboard.html'
 
-    def get_context_data(self, **kwargs):
-        dashboard_data = super(SiteSupervisorDashboardView, self).get_context_data(**kwargs)
-        obj = Site.objects.get(pk=self.kwargs.get('pk'))
-        peoples_involved = obj.site_roles.all().order_by('user__first_name')
-        data = serialize('custom_geojson', [obj], geometry_field='location',
-                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+#     def get_context_data(self, **kwargs):
+#         dashboard_data = super(SiteSupervisorDashboardView, self).get_context_data(**kwargs)
+#         obj = Site.objects.get(pk=self.kwargs.get('pk'))
+#         peoples_involved = obj.site_roles.all().order_by('user__first_name')
+#         data = serialize('custom_geojson', [obj], geometry_field='location',
+#                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
 
-        line_chart = LineChartGeneratorSite(obj)
-        line_chart_data = line_chart.data()
+#         line_chart = LineChartGeneratorSite(obj)
+#         line_chart_data = line_chart.data()
 
-        outstanding, flagged, approved, rejected = obj.get_site_submission()
-        dashboard_data = {
-            'obj': obj,
-            'peoples_involved': peoples_involved,
-            'outstanding': outstanding,
-            'flagged': flagged,
-            'approved': approved,
-            'rejected': rejected,
-            'data': data,
-            'cumulative_data': line_chart_data.values(),
-            'cumulative_labels': line_chart_data.keys(),
-        }
-        return dashboard_data
+#         outstanding, flagged, approved, rejected = obj.get_site_submission()
+#         dashboard_data = {
+#             'obj': obj,
+#             'peoples_involved': peoples_involved,
+#             'outstanding': outstanding,
+#             'flagged': flagged,
+#             'approved': approved,
+#             'rejected': rejected,
+#             'data': data,
+#             'cumulative_data': line_chart_data.values(),
+#             'cumulative_labels': line_chart_data.keys(),
+#         }
+#         return dashboard_data
 
 class OrganizationView(object):
     model = Organization
