@@ -24,7 +24,7 @@ from rest_framework.response import Response
 from channels import Group as ChannelGroup
 
 from onadata.apps.fieldsight.models import Site, Project
-from onadata.apps.fsforms.reports_util import get_instances_for_field_sight_form, build_export_context, \
+from onadata.apps.fsforms.reports_util import get_images_for_site_all, get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
 from onadata.apps.fsforms.serializers.StageSerializer import EMSerializer
 from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed, \

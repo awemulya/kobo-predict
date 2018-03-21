@@ -60,7 +60,7 @@ def bulkuploadsites(source_user, file, pk):
                                                             project=project, type_id=type_id, region_id = region_id)
                 _site.phone = site.get("phone")
                 _site.address = site.get("address")
-                _site.public_desc = site.get("public_desc"),
+                _site.public_desc = site.get("public_desc")
                 _site.additional_desc = site.get("additional_desc")
                 _site.location = location
                 _site.logo = "logo/default-org.jpg"
