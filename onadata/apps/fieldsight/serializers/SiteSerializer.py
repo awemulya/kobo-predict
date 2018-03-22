@@ -139,6 +139,7 @@ class MinimalSiteSerializer(serializers.ModelSerializer):
         read_only_fields = ('is_active',)
 
 class RegionSerializer(serializers.ModelSerializer):
+    get_sites_count = serializers.ReadOnlyField()
     class Meta:
         model = Region
-        fields = ('id','name', 'identifier')
+        fields = ('id','name', 'identifier', 'get_sites_count')

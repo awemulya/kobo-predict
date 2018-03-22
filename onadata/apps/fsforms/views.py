@@ -26,6 +26,7 @@ from channels import Group as ChannelGroup
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_images_for_site_all, get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
+from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer
 from onadata.apps.fsforms.serializers.StageSerializer import EMSerializer
 from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed, \
     send_message_un_deploy
@@ -1748,7 +1749,7 @@ class XFormView(object):
 class XformDetailView(LoginRequiredMixin, SuperAdminMixin, XFormView, DetailView):
     pass
 
-@login_required()
+@login_required
 @api_view(['POST'])
 def save_educational_material(request):
     id = request.POST.get('id', False)
@@ -1767,3 +1768,38 @@ def save_educational_material(request):
         serializer = EMSerializer(em)
         return Response({'data': serializer.data}, status=status.HTTP_200_OK)
     return Response({'error': 'Invalid Educational Material Data'}, status=status.HTTP_400_BAD_REQUEST)
+
+@login_required
+@api_view(['POST'])
+def stages_reorder(request):
+    try:
+        stages = request.data.get("stages")
+        qs = []
+        for stage in stages:
+            obj = Stage.objects.get(pk=stage.get("id"))
+            obj.order = stage.get("order")
+            obj.save()
+            qs.append(obj)
+        serializer = StageSerializer(qs, many=True)
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@login_required
+@api_view(['POST'])
+def substages_reorder(request):
+    try:
+        stages = request.data.get("stages")
+        qs = []
+        for stage in stages:
+            obj = Stage.objects.get(pk=stage.get("id"))
+            obj.order = stage.get("order")
+            obj.save()
+            qs.append(obj)
+        serializer = SubStageSerializer(qs, many=True)
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+

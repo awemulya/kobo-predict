@@ -80,6 +80,8 @@
 							<span class="badge badge-warning"><span class="not_count"></span></span>
 						</a>
 					
+
+
 						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification" style="width:480px;">
 							<div class="dropdown-header">
 								<div class="row">
@@ -100,6 +102,7 @@
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="{% url 'eventlog:notification-list' %}">{% trans 'View' %} {% trans 'all' %}</a>
 						</div>
+
 					</li>
 					<li class="dropdown">
 						<a href="#" id="dropdownMenuButtonUser" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -269,7 +272,7 @@
                                     '</div>' +
                                     '<div class="notification-highlight">'+
 										'<p class="notification-highlight-excerpt">'+
-                                   content +
+                                   			content +
                                    		'</p>'+
                       '<p class="notification-highlight-time">' + dateparser(data.date) + '</p>' +
                                     '</div>'+
