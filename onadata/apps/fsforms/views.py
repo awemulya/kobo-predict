@@ -43,10 +43,10 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
     AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm, GeneralForm, KoScheduleForm, \
     EducationalmaterialForm
-from .models import FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
+from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
     EducationMaterial, EducationalImages, InstanceImages
 from django.db.models import Q
-from onadata.apps.fieldsight.rolemixins import SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin
+from onadata.apps.fieldsight.rolemixins import MyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -67,7 +67,7 @@ class OwnListView(ListView):
     def get_template_names(self):
         return ['fsforms/my_form_list.html']
     def get_queryset(self):
-        return XForm.objects.filter(user=self.request.user).order_by('-date_modified')
+        return XForm.objects.filter(user=self.request.user, deleted_xform=None).order_by('-date_modified')
 
 
 class LibraryFormView(object):
@@ -1801,5 +1801,11 @@ def substages_reorder(request):
         return Response({'data': serializer.data}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class DeleteMyForm(MyFormMixin, View):
+    def get(self, xf_id):
+        obj, created = DeletedXForm.objects.get_or_create(xf=xf_id)
+        return Response({'Result': 'Sucessfully Deleted.'+str(obj.title)}, status=status.HTTP_200_OK)
+
 
 

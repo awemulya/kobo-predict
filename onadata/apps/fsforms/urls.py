@@ -43,12 +43,13 @@ from .views import (
     project_html_export, Deploy_survey, deploy_stages, Deploy_general, set_deploy_stages, share_stages,
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms, Configure_forms,
     instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
-    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable)
+    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable, DeleteMyForm)
 
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
         url(r'^assigned/$', MyOwnFormsListView.as_view(), name='forms-list'),
         url(r'^xform/(?P<pk>\d+)/$', XformDetailView.as_view(), name='xform-detail'),
+        url(r'^xform/delete/(?P<xf_id>\d+)/$', DeleteMyForm.as_view(), name='xform-delete'),
         url(r'^assigned-form-list/$', AssignedFormsListView.as_view(), name='assigned-form-list'),
 
         url(r'^group/$', GroupListView.as_view(), name='group-list'),
