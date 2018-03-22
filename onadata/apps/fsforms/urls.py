@@ -36,7 +36,7 @@ from .views import (
     setup_site_stages,
     stage_add,
     site_survey,
-    create_schedule,
+    create_schedule, stages_reorder, substages_reorder,
     setup_project_stages, project_stage_add, Instance_detail, alter_answer_status, project_survey,
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, Responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, ProjectResponses,
@@ -207,6 +207,8 @@ urlpatterns = urlpatterns + [
     url(r'^api/sub-stage-detail/(?P<pk>\d+)/$', SubStageDetailViewSet.as_view({'get': 'retrieve', 'put': 'update'})),
     url(r'^api/sub-stage-detail-create/(?P<stage_id>\d+)/$', SubStageDetailViewSet.as_view({'post': 'create'})),
     url(r'^api/xforms/$', XFormViewSet.as_view({'get': 'list'})),
+    url(r'^api/stages-reorder/$', stages_reorder),
+    url(r'^api/substages-reorder/$', substages_reorder),
 
 
 
