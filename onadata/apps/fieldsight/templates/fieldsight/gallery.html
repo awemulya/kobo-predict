@@ -5,7 +5,7 @@
 {% block content %}
 
 {% for img in all_img %}
-	{% img|get="_attachments" as mydict %}
+	{% with img|get="_attachments" as mydict %}
 	{{ mydict.download_url }}
 {% endfor %}
 
