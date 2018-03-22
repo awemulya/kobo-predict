@@ -69,7 +69,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.template import Context
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-from onadata.apps.fsforms.reports_util import get_images_for_site, get_site_responses_coords, get_images_for_sites_count
+from onadata.apps.fsforms.reports_util import get_images_for_site, get_images_for_site_all, get_site_responses_coords, get_images_for_sites_count
 
 @login_required
 def dashboard(request):
@@ -2324,3 +2324,9 @@ class SiteResponseCoordinates(ReviewerRoleMixin, View):
         coord_datas = get_site_responses_coords(pk)
         content={'coords-data':list(coord_datas["result"])}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+
+class AllResponseImages(ReviewerRoleMixin, View):
+    def get(self, request, pk):
+        all_imgs = get_images_for_site_all(pk)
+        return render(request, 'fieldsight/gallery.html', {'all_imgs' : list(all_imgs["result"]) } )
+

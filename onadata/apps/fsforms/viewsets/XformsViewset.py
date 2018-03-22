@@ -9,7 +9,7 @@ class XFormViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A simple ViewSet for viewing xforms.
     """
-    queryset = XForm.objects.all()
+    queryset = XForm.objects.filter(deleted_xform=None)
     serializer_class = XFormListSerializer
 
     def get_queryset(self):
