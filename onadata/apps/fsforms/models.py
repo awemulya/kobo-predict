@@ -193,6 +193,8 @@ class Schedule(models.Model):
     def __unicode__(self):
         return getattr(self, "name", "")
 
+class DeletedXForm(models.Model):
+    xf = models.OneToOneField(XForm, related_name="deleted_xform")
 
 class FieldSightXF(models.Model):
     xf = models.ForeignKey(XForm, related_name="field_sight_form")
