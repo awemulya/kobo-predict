@@ -195,6 +195,7 @@ class Schedule(models.Model):
 
 class DeletedXForm(models.Model):
     xf = models.OneToOneField(XForm, related_name="deleted_xform")
+    date_created = models.DateTimeField(auto_now=True)
 
 class FieldSightXF(models.Model):
     xf = models.ForeignKey(XForm, related_name="field_sight_form")
