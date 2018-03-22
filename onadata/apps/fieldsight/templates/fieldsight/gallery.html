@@ -1,0 +1,37 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block page-title %} {% trans 'Profile '  %}{{obj.user }}{% endblock %}
+{% block content %}
+
+{% for img in all_img %}
+	{{ img._attachments.download_url }}
+{% endfor %}
+
+							<div class="row">
+								<div class="col-md-12">
+									<div class="widget-info module-slick-slider margin-top bg-white padding" data-mh="eqtd">
+										<div class="widget-head">
+											<h4>Recent Pictures</h4>
+										</div>
+
+
+										<div class="row">
+
+														<div class="col-md-4">
+
+															<div class="photo-holder photo-item margin-top">
+																<img src="" img-title="" alt="">
+															</div>
+														</div>
+
+
+										</div>
+
+									</div>
+								</div>
+							</div>
+
+
+            </div>
+{% endblock %}
