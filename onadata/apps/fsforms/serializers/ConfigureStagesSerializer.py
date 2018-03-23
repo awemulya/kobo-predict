@@ -4,7 +4,7 @@ import json
 from rest_framework import serializers
 
 from onadata.apps.fieldsight.models import Project, Site
-from onadata.apps.fsforms.models import Stage, FieldSightXF
+from onadata.apps.fsforms.models import Stage, FieldSightXF, EducationalImages, EducationMaterial
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import EMSerializer
 from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import FSXFSerializer
 from onadata.apps.logger.models import XForm
@@ -46,12 +46,12 @@ class SubStageSerializer(serializers.ModelSerializer):
         fields = ('name', 'description', 'id', 'order')
 
 
-
 class SubStageDetailSerializer(serializers.ModelSerializer):
     stage_forms = FSXFSerializer(read_only=True)
     em = EMSerializer(read_only=True)
     responses_count = serializers.SerializerMethodField()
     has_stage = serializers.SerializerMethodField()
+    has_em = serializers.SerializerMethodField()
 
     def get_responses_count(self, obj):
         try:
@@ -69,9 +69,17 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
             return True
         except:
             return False
+
+    def get_has_em(self, obj):
+        try:
+            obj.em
+            return True
+        except:
+            return False
     class Meta:
         model = Stage
-        fields = ('weight', 'name', 'description', 'id', 'order', 'date_created', 'em', 'responses_count', 'stage_forms', 'has_stage')
+        fields = ('weight', 'name', 'description', 'id', 'order', 'date_created', 'em', 'responses_count',
+                  'stage_forms', 'has_stage', 'has_em')
 
     def create(self, validated_data):
         stage_id = self.context['kwargs'].get('stage_id')
@@ -121,4 +129,15 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
         return stage
 
 
+class EMImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EducationalImages
+        exclude = ("educational_material",)
 
+
+class EMSerializer(serializers.ModelSerializer):
+    em_images = EMImagesSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = EducationMaterial
+        exclude = ()

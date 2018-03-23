@@ -8,7 +8,8 @@ from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSub
 from onadata.apps.fsforms.viewsets.SiteFormsViewset import SiteFormViewSet
 from onadata.apps.fsforms.viewsets.StageViewset import SiteMainStageViewSet, \
         SubStageViewSet, StageViewSet
-from onadata.apps.fsforms.viewsets.ConfigureStageViewset import StageListViewSet, SubStageListViewSet, SubStageDetailViewSet
+from onadata.apps.fsforms.viewsets.ConfigureStageViewset import StageListViewSet, SubStageListViewSet, \
+    SubStageDetailViewSet, EmViewSet
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
 from .views import (
     LibraryFormsListView,
@@ -208,6 +209,7 @@ urlpatterns = urlpatterns + [
     url(r'^api/sub-stage-detail/(?P<pk>\d+)/$', SubStageDetailViewSet.as_view({'get': 'retrieve', 'put': 'update'})),
     url(r'^api/sub-stage-detail-create/(?P<stage_id>\d+)/$', SubStageDetailViewSet.as_view({'post': 'create'})),
     url(r'^api/xforms/$', XFormViewSet.as_view({'get': 'list'})),
+    url(r'^api/get_em/(?P<pk>\d+).$', EmViewSet.as_view({'get': 'retrieve_by_id'})),
     url(r'^api/stages-reorder/$', stages_reorder),
     url(r'^api/substages-reorder/$', substages_reorder),
 

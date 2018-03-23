@@ -2,9 +2,9 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 import rest_framework.status
 
-from onadata.apps.fsforms.models import Stage
+from onadata.apps.fsforms.models import Stage, EducationMaterial
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer, \
-    SubStageDetailSerializer
+    SubStageDetailSerializer, EMSerializer
 
 
 class StageListViewSet(viewsets.ModelViewSet):
@@ -81,3 +81,34 @@ class SubStageDetailViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return {'request': self.request, 'kwargs': self.kwargs,}
 
+
+class EmViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing em of Stages.
+    """
+    queryset = EducationMaterial.objects.all()
+    serializer_class = EMSerializer
+
+    def retrieve_by_id(self, request, *args, **kwargs):
+        stage = Stage.objects.get(pk=kwargs.get('pk'))
+        try:
+            instance = stage.em
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except:
+            return Response({})
+
+    # def update(self, request, *args, **kwargs):
+    #     instance = Stage.objects.get(pk=kwargs.get('pk'))
+    #     name = self.request.data.get('name', False)
+    #     if not name:
+    #         return Response({'error':'No Stage Name Provided'}, status=status.HTTP_400_BAD_REQUEST)
+    #     desc = self.request.data.get('description', "")
+    #     instance.name = name
+    #     instance.description = desc
+    #     instance.save()
+    #     serializer = self.get_serializer(instance)
+    #     return Response(serializer.data)
+
+    def get_serializer_context(self):
+        return {'request': self.request, 'kwargs': self.kwargs,}
