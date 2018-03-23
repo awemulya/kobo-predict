@@ -10,13 +10,14 @@
 {% load sorting_tags %}
 {% load fs_filters %}
 <script type="text/javascript">
-	function deleteConfirm(url) {
+function deleteConfirm(url) {
     var r = confirm("Are you sure you want to delete?");
     if (r == true) {
         window.location.href = url;
     } else {
         return;
     }
+}
 
 </script>
 <div id="main-content" class="padding">
