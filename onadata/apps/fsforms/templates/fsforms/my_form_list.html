@@ -9,6 +9,16 @@
 {% load pagination_tags %}
 {% load sorting_tags %}
 {% load fs_filters %}
+<script type="text/javascript">
+	function deleteConfirm(url) {
+    var r = confirm("Are you sure you want to delete?");
+    if (r == true) {
+        window.location.href = url;
+    } else {
+        return;
+    }
+
+</script>
 <div id="main-content" class="padding">
 				<section class="panel">
                     <header class="panel-heading clearfix">
@@ -43,7 +53,7 @@
 								<a class="btn btn-primary btn-sm" href="{{ koboform_url }}#/forms/{{ obj.id_string }}/preview" style="height:27px"><i class="la la-eye"></i>{% trans 'Preview' %}</a>
 								
 
-							<a class="btn btn-danger btn-sm" target="_blank" href="{% url 'forms:xform-delete' obj.pk %}" style="height:27px"><i class="la la-pencil-square-o"></i>{% trans 'Delete' %}</a>
+							<a class="btn btn-danger btn-sm" href="#" onClick="deleteConfirm('{% url `forms:xform-delete` obj.pk %}')" style="height:27px"><i class="la la-pencil-square-o"></i>{% trans 'Delete' %}</a>
 							</td>
                             <!--<button type="button" class="btn btn-danger btn-sm" style="height:27px"><i class="la la-trash"></i>{% trans ' Delete' %}</button></td>-->
 
