@@ -2328,5 +2328,5 @@ class SiteResponseCoordinates(ReviewerRoleMixin, View):
 class AllResponseImages(ReviewerRoleMixin, View):
     def get(self, request, pk):
         all_imgs = get_images_for_site_all(pk)
-        return render(request, 'fieldsight/gallery.html', {'all_imgs' : list(all_imgs["result"]) } )
+        return render(request, 'fieldsight/gallery.html', {'all_imgs' : json.dumps(list(all_imgs["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8')})
 
