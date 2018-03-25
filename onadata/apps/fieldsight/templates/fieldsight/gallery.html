@@ -4,9 +4,9 @@
 {% block page-title %} {% trans 'Profile '  %}{{obj.user }}{% endblock %}
 {% block content %}
 
-{% for img in all_img %}
-	{{ img._attachments.download_url }}
-{% endfor %}
+
+
+
 
 							<div class="row">
 								<div class="col-md-12">
@@ -16,14 +16,9 @@
 										</div>
 
 
-										<div class="row">
+										<div id="galleryFrame" class="row">
 
-														<div class="col-md-4">
-
-															<div class="photo-holder photo-item margin-top">
-																<img src="" img-title="" alt="">
-															</div>
-														</div>
+														
 
 
 										</div>
@@ -34,4 +29,23 @@
 
 
             </div>
+<script type="text/javascript">
+        var images={{ all_imgs|safe }};
+        console.log(images);
+        var speed=0;
+        images.forEach(function(element) {
+          console.log(element["_attachments"].download_url);
+           var new_image = '<div class="col-md-2" id="'+ element["_id"] +' style="display:none;">'+
+							'<div class="photo-holder photo-item margin-top">'+
+							'<img src="'+ element["_attachments"].download_url +'" img-title="" alt="">'+
+							'</div></div>';
+                            	
+
+        	speed = speed+200;
+            $(new_image).prependTo("#galleryFrame");
+            $("#"+element["_id"]).fadeIn(speed);
+        });
+</script>
+
+
 {% endblock %}
