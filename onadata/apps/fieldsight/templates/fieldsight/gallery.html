@@ -59,7 +59,7 @@
 				html += img;  	
 				$('#myModalLabel').modal();
 				$('#myModalLabel').on('shown.bs.modal', function(){
-					$('#myModalLabel .modal-header .modal-title').html('By: <a href="'+ submission_url +'">'+ submitted_by +'</a>');
+					$('#myModalLabel .modal-header .modal-title').html('By: '+submitted_by +'<a href="'+ submission_url +'"> (View Submission) </a>');
 					$('#myModalLabel .modal-body').html(html);
 				})
 				$('#myModalLabel').on('hidden.bs.modal', function(){
