@@ -168,19 +168,19 @@ class MyPrint:
                 question_label = first_children['label']
                 if r_question+"/"+question in r_answer:
                     if first_children['type'] == 'note':
-                        answer= '' 
+                        answer=Paragraph('', styBackground)
                     elif first_children['type'] == 'photo':
                         #photo = '/media/user/attachments/'+ r_answer[r_question+"/"+question]
                         photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ r_answer[r_question+"/"+question]
                         answer = self.create_logo(photo)
                         # answer =''
                     else:
-                        answer = r_answer[r_question+"/"+question]
+                        answer = Paragraph(r_answer[r_question+"/"+question], styBackground)
                 else:
-                    answer = ''
+                    answer=Paragraph('', styBackground)
                 if 'label' in first_children:
                     question = first_children['label']
-                row=[Paragraph(question, styBackground), Paragraph(answer, styBackground)]
+                row=[Paragraph(question, styBackground), answer]
                 self.data.append(row)
 
     def parse_group(self, prev_groupname, g_object):
@@ -192,17 +192,17 @@ class MyPrint:
             question_type = first_children['type']
             if g_question+"/"+question in self.main_answer:
                 if first_children['type'] == 'note':
-                    answer= '' 
+                    answer=Paragraph('', styBackground)
                 elif first_children['type'] == 'photo':
                     photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[g_question+"/"+question]
                     answer = self.create_logo(photo)
                 else:
-                    answer = self.main_answer[g_question+"/"+question]
+                    answer = Paragraph(self.main_answer[g_question+"/"+question], styBackground)
             else:
-                answer = ''
+                answer=Paragraph('', styBackground)
             if 'label' in first_children:
                 question = first_children['label']
-            row=[Paragraph(question, styBackground), Paragraph(answer, styBackground)]
+            row=[Paragraph(question, styBackground), answer]
             self.data.append(row)
             # done at the end because wee want to print group name as well in report.
             if question_type == 'group':
@@ -220,20 +220,20 @@ class MyPrint:
                 question = first_children['name']
 
                 if first_children['type'] == 'note':
-                    answer= '' 
+                    answer=Paragraph('', styBackground)
 
                 elif first_children['type'] == 'photo':
                     photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[question]
                     answer = self.create_logo(photo)
                 else:
                     if question in self.main_answer:
-                        answer = self.main_answer[question]
+                        answer = Paragraph(self.main_answer[question], styBackground)
                     else:
-                        answer=''
+                        answer=Paragraph('', styBackground)
                 
                 if 'label' in first_children:
                     question = first_children['label']
-                row=(Paragraph(question, styBackground), Paragraph(answer, styBackground))
+                row=(Paragraph(question, styBackground), answer)
                 self.data.append(row)
 
 
