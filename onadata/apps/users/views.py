@@ -343,7 +343,7 @@ class MyProfile(LoginRequiredMixin, View):
 class EndUserRole(EndRoleMixin, View):
     def get(self, request, pk):
         userrole=UserRole.objects.get(pk=pk)
-        userrole.ended_at = datetime.now()
+        userrole.ended_at = datetime.datetime.now()
         userrole.save()
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
