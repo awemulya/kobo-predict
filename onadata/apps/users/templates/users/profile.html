@@ -80,6 +80,7 @@
 													<div class="project-basic-info">
 														<h4>{{ role.organization.name }}</h4>
 														<p>{{ role.organization.address }}</p>
+
 													</div>
 												</div>
 											</div>
@@ -142,7 +143,11 @@
 														<p>{{ role.site.identifier }}</p>
 														<p>{{ role.site.address }}</p>
 														<p><strong>{{ role.site.project.name }}</strong></p>
+														
 													</div>
+													{% if role.orgainizatio_id in own_orgs or role.project_id in own_projects %}
+														remove
+														{% endif %}
 												</div>
 											</div>
 											</a>
@@ -173,6 +178,9 @@
 														<p>{{ role.site.identifier }}</p>
 														<p>{{ role.site.address }}</p>
 														<p><strong>{{ role.site.project.name }}</strong></p></div>
+														{% if role.orgainizatio_id in own_orgs or role.project_id in own_projects %}
+														remove
+														{% endif %}
 												</div>
 											</div>
 											</a>
