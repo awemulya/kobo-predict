@@ -266,7 +266,7 @@ class EndRoleMixin(LoginRequiredMixin):
         if request.group.name == "Super Admin":
             return super(EndRoleMixin, self).dispatch(request, xf_id, *args, **kwargs)
         role_to_end = UserRole.objects.get(pk=pk)
-        if role_to_end.gorup_id == 2:
+        if role_to_end.group_id == 2:
             user_role = request.roles.filter(organization_id = role_to_end.organization_id, group_id=1)
             if user_role:
                 return super(EndRoleMixin, self).dispatch(request, *args, **kwargs)
