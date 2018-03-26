@@ -1806,4 +1806,5 @@ def substages_reorder(request):
 class DeleteMyForm(MyFormMixin, View):
     def get(self, request, xf_id):
         obj, created = DeletedXForm.objects.get_or_create(xf_id=xf_id)
+        messages.success(request, 'Form Sucessfully Deleted.')
         return HttpResponseRedirect(reverse("forms:forms-list"))

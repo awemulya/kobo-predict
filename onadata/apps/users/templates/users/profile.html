@@ -6,8 +6,15 @@
 
 	<div id="main-content" class="padding">
 				<section class="panel">
+				{% if messages %}
+						<ul class="messages">
+						    {% for message in messages %}
+						    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						    {% endfor %}
+						</ul>
+						{% endif %}
 					<header class="panel-heading clearfix">
-					<h3><i class="la la-user"></i>{% trans 'view' %}{% trans 'your' %}{% trans 'profile' %}</h3>
+					<h3><i class="la la-user"></i>{% trans 'View' %} {% trans 'Profile' %}</h3>
 						<div class="panel-heading-right">
 							{% ifequal request.user obj.user %}
 							<a href="{% url 'users:profile_update' obj.user.id|profile%}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Update' %} {% trans 'Profile'%} </a>
@@ -80,7 +87,11 @@
 													<div class="project-basic-info">
 														<h4>{{ role.organization.name }}</h4>
 														<p>{{ role.organization.address }}</p>
+
 													</div>
+													{% if is_super_admin %}
+														<a href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
+													{% endif %}
 												</div>
 											</div>
 										</a>
@@ -113,6 +124,9 @@
 														<p>{{ role.project.address }}</p>
 														<p><strong>{{ role.project.organization.name }}</strong></p>
 													</div>
+													{% if role.orgainizatio_id in own_orgs or is_super_admin %}
+														<a href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
+													{% endif %}
 												</div>
 											</div>
 											</a>
@@ -142,7 +156,11 @@
 														<p>{{ role.site.identifier }}</p>
 														<p>{{ role.site.address }}</p>
 														<p><strong>{{ role.site.project.name }}</strong></p>
+														
 													</div>
+													{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
+														<a href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
+														{% endif %}
 												</div>
 											</div>
 											</a>
@@ -173,6 +191,9 @@
 														<p>{{ role.site.identifier }}</p>
 														<p>{{ role.site.address }}</p>
 														<p><strong>{{ role.site.project.name }}</strong></p></div>
+														{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
+														<a href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
+														{% endif %}
 												</div>
 											</div>
 											</a>

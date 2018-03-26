@@ -18,6 +18,7 @@ from onadata.apps.userrole.models import UserRole
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
 from django.db.models import Q
+<<<<<<< HEAD
 
 
 # ConditionalFormMixin =  Returns whether the user has full acess or readonly access through "is_readonly" attribute which is either True or False for a specific form. The url parameter should have "fsxf_id" which is form id.
@@ -25,6 +26,8 @@ from django.db.models import Q
 # Readonly site/project levelMixin = It checks if user has access to just view certain pages/view. 
 
 # Important , in near future roles should be cached or some similar alternatives should be added.
+=======
+>>>>>>> kc_master
 
 class LoginRequiredMixin(object):
     @classmethod
@@ -428,7 +431,24 @@ class MyFormMixin(LoginRequiredMixin):
         if xform.user_id == user_id:
             return super(MyFormMixin, self).dispatch(request, xf_id, *args, **kwargs)
 
+        raise PermissionDenied()
+
+class EndRoleMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if request.group.name == "Super Admin":
+            return super(EndRoleMixin, self).dispatch(request, *args, **kwargs)
+        role_to_end = UserRole.objects.get(pk=self.kwargs.get('pk'))
+        if role_to_end.group_id == 2:
+            user_role = request.roles.filter(organization_id = role_to_end.organization_id, group_id=1)
+            if user_role:
+                return super(EndRoleMixin, self).dispatch(request, *args, **kwargs)
+        
+        elif role_to_end.group_id == 3 or role_to_end.group_id == 4:
+            user_role = request.roles.filter(Q(project_id = role_to_end.project_id, group_id=2) | Q(organization_id = role_to_end.organization_id, group_id=1))
+            if user_role:
+                return super(EndRoleMixin, self).dispatch(request, *args, **kwargs)     
         raise PermissionDenied() 
+
 
 # for api mixins/permissions
 
