@@ -189,6 +189,7 @@ class MyPrint:
         g_question = prev_groupname+g_object['name']
         for first_children in g_object['children']:
             question = first_children['name']
+            question_type = first_children['type']
             if g_question+"/"+question in self.main_answer:
                 if first_children['type'] == 'note':
                     answer= '' 
