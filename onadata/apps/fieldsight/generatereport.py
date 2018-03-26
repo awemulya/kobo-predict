@@ -206,7 +206,7 @@ class MyPrint:
             self.data.append(row)
             # done at the end because wee want to print group name as well in report.
             if question_type == 'group':
-                parse_group(g_question+"/",first_children)
+                self.parse_group(g_question+"/",first_children)
 
     def parse_individual_questions(self, parent_object):
         styNormal = styleSheet['Normal']
