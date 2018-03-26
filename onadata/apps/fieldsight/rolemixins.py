@@ -262,10 +262,10 @@ class MyFormMixin(LoginRequiredMixin):
         raise PermissionDenied()
 
 class EndRoleMixin(LoginRequiredMixin):
-    def dispatch(self, request, pk, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         if request.group.name == "Super Admin":
             return super(EndRoleMixin, self).dispatch(request, *args, **kwargs)
-        role_to_end = UserRole.objects.get(pk=pk)
+        role_to_end = UserRole.objects.get(pk=self.kwargs.get('pk'))
         if role_to_end.group_id == 2:
             user_role = request.roles.filter(organization_id = role_to_end.organization_id, group_id=1)
             if user_role:
