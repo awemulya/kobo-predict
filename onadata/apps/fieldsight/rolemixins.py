@@ -412,6 +412,24 @@ class ConditionalFormMixin(LoginRequiredMixin):
 
         raise PermissionDenied()   
 
+
+
+
+
+
+class MyFormMixin(LoginRequiredMixin):
+    def dispatch(self, request, xf_id, *args, **kwargs):
+        if request.group.name == "Super Admin":
+            return super(MyFormMixin, self).dispatch(request, xf_id, *args, **kwargs)
+
+        user_id = request.user.id
+        xform = get_object_or_404(Xform, pk=xf_id)
+
+        if xform.user_id == user_id:
+            return super(MyFormMixin, self).dispatch(request, xf_id, *args, **kwargs)
+
+        raise PermissionDenied() 
+
 # for api mixins/permissions
 
 # class ProjectPermission(BasePermission):

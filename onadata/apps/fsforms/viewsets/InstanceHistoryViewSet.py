@@ -36,7 +36,7 @@ class InstanceResponseViewSet(viewsets.ModelViewSet):
             raise Http404("No Responces matches the given query.")
         if fsform.site is None:
             return queryset.filter(project_fxf_id = self.kwargs.get('pk')).order_by('-date')     
-        return queryset.filter(site_fxf_id = self.kwargs.get('pk'), project_fxf__isnull=True).order_by('-date')
+        return queryset.filter(site_fxf_id = self.kwargs.get('pk')).order_by('-date')
 
 class SiteInstanceResponseViewSet(viewsets.ModelViewSet):
     queryset = FInstance.objects.all()
@@ -50,5 +50,5 @@ class SiteInstanceResponseViewSet(viewsets.ModelViewSet):
             raise Http404("No Responces matches the given query.")
         if fsform.site is None:
             return queryset.filter(site_id = self.kwargs.get('site_pk'), project_fxf_id = self.kwargs.get('form_pk')).order_by('-date')     
-        return queryset.filter(site_id = self.kwargs.get('site_pk'), site_fxf_id = self.kwargs.get('form_pk'), project_fxf__isnull=True).order_by('-date') 
+        return queryset.filter(site_id = self.kwargs.get('site_pk'), site_fxf_id = self.kwargs.get('form_pk')).order_by('-date') 
 

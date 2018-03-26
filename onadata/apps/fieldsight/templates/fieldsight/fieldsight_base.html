@@ -80,6 +80,8 @@
 							<span class="badge badge-warning"><span class="not_count"></span></span>
 						</a>
 					
+
+
 						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification" style="width:480px;">
 							<div class="dropdown-header">
 								<div class="row">
@@ -94,12 +96,13 @@
 
 							</div>
 							<ul class="menu" id="notification-ul" style="height:500px; overflow:hidden; overflow-y: scroll;">
-							{% trans 'Loading...' %}
+							<span style="margin-left:20px;">{% trans 'Loading...' %}</span>
 						
 							</ul>
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="{% url 'eventlog:notification-list' %}">{% trans 'View' %} {% trans 'all' %}</a>
 						</div>
+
 					</li>
 					<li class="dropdown">
 						<a href="#" id="dropdownMenuButtonUser" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -149,7 +152,7 @@
 								<!--<li><a href="#">New Project</a></li>-->
 							<!--</ul>-->
 						<!--</li>-->
-						{% ifrole "Site" %}
+						
 						<li class="sub-menu">
 							<a href="javascript:;">
 								<i class="la la-clipboard"></i>
@@ -180,7 +183,7 @@
 								<!--<li><a href="{% url 'forms:group-list' %}">{% trans 'Stages Library' %}</a></li>-->
 							<!--</ul>-->
 						<!--</li>-->
-						 {% endrole %}
+						
 
 					</ul>
 				</div>
@@ -218,7 +221,7 @@
 
 			$(document).ready(function(){
 
-				$(".widget-scolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+				$(".widget-scolling-large-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
 
 			});
 
@@ -269,7 +272,7 @@
                                     '</div>' +
                                     '<div class="notification-highlight">'+
 										'<p class="notification-highlight-excerpt">'+
-                                   content +
+                                   			content +
                                    		'</p>'+
                       '<p class="notification-highlight-time">' + dateparser(data.date) + '</p>' +
                                     '</div>'+
@@ -309,13 +312,16 @@
                                     '<div class="notification-avatar pull-left">' +
                                         '<i class="avatar-icon la la-info"></i>' +
                                     '</div>' +
+                                    '<div class="notification-highlight">'+
+										'<p class="notification-highlight-excerpt">'+
                                    content +
+                                   		'</p>'+
                       '<p class="notification-highlight-time">' + dateparser(data.date) + '</p>' +
+                                    '</div>'+
                                     '</div>' +
                                 '</div>' +
                             
 '</li>';
-
 
 
 			    // var div = document.getElementById('notifications');
@@ -342,9 +348,8 @@
                data.results.forEach(populatelist);
                request_isfirst = "false";
               
-               // for (i = 0; i < 6; i++) {
-               //      populatelist(data.results[i], i);
-               //  } 
+               
+               
                speed=0;
 
 

@@ -160,70 +160,76 @@ class MyPrint:
     def parse_repeat(self, r_object):
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
-        gnr_question = r_object['name']
-        for gnr_answer in self.main_answer[gnr_question]:
+        r_question = r_object['name']
+        for r_answer in self.main_answer[r_question]:
             for first_children in r_object['children']:
                 question = first_children['name']
-                group_answer = self.main_answer[gnr_question]
+                group_answer = self.main_answer[r_question]
                 question_label = first_children['label']
-                if gnr_question+"/"+question in gnr_answer:
+                if r_question+"/"+question in r_answer:
                     if first_children['type'] == 'note':
-                        answer= '' 
+                        answer=Paragraph('', styBackground)
                     elif first_children['type'] == 'photo':
-                        #photo = '/media/user/attachments/'+ gnr_answer[gnr_question+"/"+question]
-                        photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ gnr_answer[gnr_question+"/"+question]
+                        #photo = '/media/user/attachments/'+ r_answer[r_question+"/"+question]
+                        photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ r_answer[r_question+"/"+question]
                         answer = self.create_logo(photo)
                         # answer =''
                     else:
-                        answer = gnr_answer[gnr_question+"/"+question]
+                        answer = Paragraph(r_answer[r_question+"/"+question], styBackground)
                 else:
-                    answer = ''
+                    answer=Paragraph('', styBackground)
                 if 'label' in first_children:
                     question = first_children['label']
                 row=[Paragraph(question, styBackground), answer]
                 self.data.append(row)
 
-    def parse_group(self, g_object):
+    def parse_group(self, prev_groupname, g_object):
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
-        gnr_question = g_object['name']
+        g_question = prev_groupname+g_object['name']
         for first_children in g_object['children']:
             question = first_children['name']
-            if gnr_question+"/"+question in self.main_answer:
+            question_type = first_children['type']
+            if g_question+"/"+question in self.main_answer:
                 if first_children['type'] == 'note':
-                    answer= '' 
+                    answer=Paragraph('', styBackground)
                 elif first_children['type'] == 'photo':
-                    photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[gnr_question+"/"+question]
+                    photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[g_question+"/"+question]
                     answer = self.create_logo(photo)
                 else:
-                    answer = self.main_answer[gnr_question+"/"+question]
+                    answer = Paragraph(self.main_answer[g_question+"/"+question], styBackground)
             else:
-                answer = ''
+                answer=Paragraph('', styBackground)
             if 'label' in first_children:
                 question = first_children['label']
             row=[Paragraph(question, styBackground), answer]
             self.data.append(row)
+            # done at the end because wee want to print group name as well in report.
+            if question_type == 'group':
+                self.parse_group(g_question+"/",first_children)
 
     def parse_individual_questions(self, parent_object):
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
-        answer=self.main_answer
         for first_children in parent_object:
             if first_children['type'] == "repeat":
                 self.parse_repeat(first_children)
             elif first_children['type'] == 'group':
-                self.parse_group(first_children)
+                self.parse_group("", first_children)
             else:
                 question = first_children['name']
 
-                if first_children['type'] == 'note' or question not in self.main_answer:
-                    answer= Paragraph('', styBackground) 
+                if first_children['type'] == 'note':
+                    answer=Paragraph('', styBackground)
 
                 elif first_children['type'] == 'photo':
                     photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[question]
                     answer = self.create_logo(photo)
                 else:
-                    answer = Paragraph(self.main_answer[question], styBackground)
+                    if question in self.main_answer:
+                        answer = Paragraph(self.main_answer[question], styBackground)
+                    else:
+                        answer=Paragraph('', styBackground)
                 
                 if 'label' in first_children:
                     question = first_children['label']

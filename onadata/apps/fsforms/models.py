@@ -61,6 +61,7 @@ class Stage(models.Model):
     project = models.ForeignKey(Project, related_name="stages", null=True, blank=True)
     ready = models.BooleanField(default=False)
     project_stage_id = models.IntegerField(default=0)
+    weight = models.IntegerField(default=0)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
@@ -192,6 +193,9 @@ class Schedule(models.Model):
     def __unicode__(self):
         return getattr(self, "name", "")
 
+class DeletedXForm(models.Model):
+    xf = models.OneToOneField(XForm, related_name="deleted_xform")
+    date_created = models.DateTimeField(auto_now=True)
 
 class FieldSightXF(models.Model):
     xf = models.ForeignKey(XForm, related_name="field_sight_form")
@@ -443,11 +447,14 @@ class FInstance(models.Model):
                         data.append(row)
 
 
-        def parse_group(g_object):
-            g_question = g_object['name']
+        def parse_group(prev_groupname, g_object):
+            g_question = prev_groupname+g_object['name']
             for first_children in g_object['children']:
                 question = first_children['name']
                 question_type = first_children['type']
+                if question_type == 'group':
+                    parse_group(g_question+"/",first_children)
+                    continue
                 answer = ''
                 if g_question+"/"+question in json_answer:
                     if question_type == 'note':
@@ -461,13 +468,14 @@ class FInstance(models.Model):
                     question = first_children['label']
                 row={'type':question_type, 'question':question, 'answer':answer}
                 data.append(row)
+                
 
         def parse_individual_questions(parent_object):
             for first_children in parent_object:
                 if first_children['type'] == "repeat":
                     parse_repeat(first_children)
                 elif first_children['type'] == 'group':
-                    parse_group(first_children)
+                    parse_group("",first_children)
                 else:
                     question = first_children['name']
                     question_type = first_children['type']

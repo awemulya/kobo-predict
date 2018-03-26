@@ -48,6 +48,7 @@
     <script type="text/babel">
        
         var _json_question={{ json_questions|safe }};
+
         var CustomSelect = React.createClass({
         
             getInitialState: function() {
@@ -62,10 +63,12 @@
                 });
                 console.log(event.target.value);
                  this.props.onChange(event.target.value);
+
             },
             
             render: function() {
                 var selectValue = this.state.selectValue;
+
                 var attrib= this.props.attrib;
                 console.log(attrib);
                 var options = this.props.options.map(function(item, index) {
@@ -80,6 +83,7 @@
                       index
                     } > {
                       item[attrib]
+
                     } </option>;
                   }
 
@@ -264,6 +268,7 @@
 
         
         ReactDOM.render(<TinyEquation /> , document.getElementById('app')
+
             );
     </script>
 

@@ -44,15 +44,18 @@
     <div class="tab-content">
       <div id="general1" class="tab-pane active">
         {% if generals %}
-          <h3><b> {% trans 'General' %} {% trans 'Forms' %} </b></h3>
-
-          <table class="table table-striped" id="dynamic-table2">
-              <thead>
-              <th>{% trans 'Form' %} {% trans 'Name' %}</th>
-               <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
-              <th>{% trans 'Created' %} {% trans 'Date' %}</th>
-              <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
-              <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
+        <div class="widget-info">
+         
+          <div class="widget-body">
+            <table class="table table-responsive table-hover table-striped" id="dynamic-table2">
+              <thead class="thead-default">
+                <tr>
+                  <th>{% trans 'Form' %} {% trans 'Name' %}</th>
+                  <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
+                  <th>{% trans 'Created' %} {% trans 'Date' %}</th>
+                  <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
+                  <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
+                </tr>
               </thead>
               <tbody>
               {% for obj in generals %}
@@ -66,27 +69,36 @@
                       <td>
                           {{ obj.date_created }}
                       </td>
+                      
                       <td>
-                           <a href="{% url 'forms:project_html_export' obj.id %}">
-                               {{ obj.id|project_submissions }}
-                               {% trans ' View ' %}</a>
+                           <a class="badge badge-primary" href="{% url 'forms:project_html_export' obj.id %}">
+                           <i class="la la-eye"></i>  {{ obj.id|project_submissions }} {% trans 'Submission' %}</a>
                       </td>
+                     
+                      
                       <td>
-                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 1 obj.id %}">
-                          <i class="la la-download" aria-hidden="true"></i></a>
+                      <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 1 obj.id %}">
+                          <i class="la la-download" aria-hidden="true"></i> Download</a>
                       </td>
+
+
                   </tr>
               {% endfor %}
               </tbody>
           </table>
-        {% endif %}
+          </div>
+        </div>
+         {% endif %}
       </div>
-        <div id="survey4" class="tab-pane fade">
-        {% if surveys %}
-          <h3><b> {% trans 'Survey' %} {% trans 'Forms' %} </b></h3>
 
-          <table class="table table-striped" id="dynamic-table3">
-              <thead>
+      <div id="survey4" class="tab-pane fade">
+        {% if surveys %}
+          <div class="widget-info">
+         
+          <div class="widget-body">
+
+          <table class="table table-responsive table-hover table-striped" id="dynamic-table2" id="dynamic-table3">
+              <thead class="thead-default">
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
               <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
@@ -106,29 +118,35 @@
                       <td>
                           {{ obj.date_created }}
                       </td>
-                      <td>
-                           <a href="{% url 'forms:project_html_export' obj.id %}">
-                               {{ obj.id|project_submissions }}
-                               {% trans ' View ' %}</a>
+                     
+
+                       <td>
+                           <a class="badge badge-primary" href="{% url 'forms:project_html_export' obj.id %}">
+                           <i class="la la-eye"></i>  {{ obj.id|project_submissions }} {% trans 'Submission' %}</a>
                       </td>
+                     
+                      
                       <td>
-                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 1 obj.id %}">
-                          <i class="la la-download" aria-hidden="true"></i></a>
-                      </td>
+                      <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 1 obj.id %}">
+                          <i class="la la-download" aria-hidden="true"></i> Download</a>
+                      </td>               
+          
                   </tr>
               {% endfor %}
               </tbody>
           </table>
+          </div>
+          </div>
         {% endif %}
       </div>
 
-
       <div id="schedule2" class="tab-pane fade">
         {% if schedules %}
-          <h3><b>{% trans 'Scheduled' %} {% trans 'Forms' %}</b></h3>
-
-          <table class="table table-striped" id="dynamic-table1">
-              <thead>
+         <div class="widget-info">
+         
+          <div class="widget-body">
+          <table class="table table-responsive table-hover table-striped" id="dynamic-table2" id="dynamic-table1">
+              <thead class="thead-default">
               <th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
                <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
@@ -140,55 +158,57 @@
               {% for obj in schedules %}
                   <tr>
                       <td>
-                          {{ obj.name}}</a>
+                          {{ obj.name}}
                       </td>
                       <td>
                           {{ obj.getlatestsubmittiondate.first.date }}
                       </td>
                       <td>
-                          {{ obj.schedule_forms.xf.title }}</a>
+                          {{ obj.schedule_forms.xf.title }}
                       </td>
                       <td>
                           {{ obj.date_created }}
                       </td>
-                      <td>
-                            {% with obj.schedule_forms.pk|project_submissions as count %}
-                          {% if count %}
-                           <a href="{% url 'forms:project_html_export' obj.schedule_forms.pk %}">
-                               {{ count }}
-                               {% trans ' View ' %}</a>
-                          {% endif %}
-                          {% endwith %}
-                      </td>
-                      <td>
-                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.schedule_forms.xf.user.username obj.schedule_forms.xf.id_string 'xls' 1 obj.id %}">
-                          <i class="la la-download" aria-hidden="true"></i></a>
-                      </td>
+                         <td>
+                                {% with obj.schedule_forms.pk|project_submissions as count %}
+                                   {% if count %}
+                                   <a class="badge badge-primary" href="{% url 'forms:project_html_export'  obj.schedule_forms.pk %}">
+                                   <i class="la la-eye"></i>  {{ count }} {% trans 'Submission' %}</a>
+                                   {% endif %}
+                                {% endwith %}
+                              </td>
+                             
+                              
+                              <td>
+                              <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.schedule_forms.xf.user.username obj.schedule_forms.xf.id_string 'xls' 1 obj.id %}">
+                                  <i class="la la-download" aria-hidden="true"></i> Download</a>
+                              </td>
+
+
                   </tr>
               {% endfor %}
               </tbody>
           </table>
-
+          </div>
+          </div>
         {% endif %}
       </div>
 
-
       <div id="stage3" class="tab-pane fade">
         {% if stages %}
-         <div class="panel-group col-sm-8" id="accordion">
+        
+          
           {% for stage in stages %}
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href=""><b>{% trans 'Stage Name' %}:</b> {{stage.name }}</a>
-                </h4>
-              </div>
-              <div id="collapse{{stage.id}}">
-                <div class="panel-body">
+          <div class="widget-info">
+          <div class="widget-head">
+            <h3>{{stage.name }}</h3>
+                  </div>
+                  <div class="widget-body">
+               
                   {% if stage.active_substages %}
 
-                  <table class="table table-striped">
-                      <thead>
+                  <table class="table table-responsive table-hover table-striped" id="dynamic-table2">
+                      <thead class="thead-default">
                       <th>{% trans 'Sub' %} {% trans 'Stage' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
                       <th>{% trans 'Order' %}</th>
@@ -209,33 +229,35 @@
                                   {{ obj.order }}
                               </td>
                               <td>{{obj.stage_forms.xf.title}}</td>
-                              <td>
+                          
+                               <td>
                                 {% with obj.stage_forms.pk|project_submissions as count %}
-                          {% if count %}
-                           <a href="{% url 'forms:project_html_export' obj.stage_forms.pk %}">
-                               {{ count }}
-                               {% trans ' View ' %}</a>
-                          {% endif %}
-                          {% endwith %}
+                                   {% if count %}
+                                   <a class="badge badge-primary" href="{% url 'forms:project_html_export'  obj.stage_forms.pk %}">
+                                   <i class="la la-eye"></i>  {{ count }} {% trans 'Submission' %}</a>
+                                   {% endif %}
+                                {% endwith %}
                               </td>
+                             
+                              
                               <td>
-                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.stage_forms.xf.user.username obj.stage_forms.xf.id_string 'xls' 1 obj.stage_forms.id %}">
-                          <i class="la la-download" aria-hidden="true"></i></a>
-                      </td>
+                              <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.stage_forms.xf.user.username obj.stage_forms.xf.id_string 'xls' 1 obj.stage_forms.id %}">
+                                  <i class="la la-download" aria-hidden="true"></i> Download</a>
+                              </td>
+
+                            
+                  
                           </tr>
                       {% endfor %}
                       </tbody>
                   </table>
-
-
-                  {% endif %}
+                 {% endif %}
+                  </div>
                 </div>
-              </div>
-            </div>
+              
+            
           {% endfor %}
-
-          </div>
-             <div class="col-sm-4 card">
+           <div class="col-sm-4 card">
                  <div class="well well-sm notice-danger"><h4>{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}</h4></div>
             {% for obj in deleted_forms %}
             <div class="row card_inside">{{obj.xf.title}} {% trans 'with' %}
@@ -244,10 +266,12 @@
                                {% trans ' Submissions ' %}</a>
             </div>
             {% endfor %}
-        </div>
+      
         {% endif %}
           </div>
-      </div>
+        </div>
+            
+    </div>
     </div>
 </div>
 {% endblock %}

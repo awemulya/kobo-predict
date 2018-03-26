@@ -266,14 +266,15 @@ assigntoken(csrf_token);
                                         <tr>
                                             <th scope="row" data-bind="text: $index()+1"></th>
 
+
                                             <td><span data-bind="text: name"></span>
                                             </td>
                                             <td>
                                            
 
 
-                                             <select data-bind="options: availableoptions, optionsText: 'name',
-                                              optionsValue: 'id', value: default_submission_status"></select>
+                                             <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select>
+                                            <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
                                             </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text:responses_count"></td>
@@ -631,11 +632,11 @@ assigntoken(csrf_token);
 										<td data-bind="text: name"></td>
 										<td>
                                         <span data-bind="text: form_name"></span>
-                                        </td>
+                                       </td>
                                         <td>
 
-										<select data-bind="options: availableoptions, optionsText: 'name',
-                                              optionsValue: 'id', value: default_submission_status"></select>
+										<select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select>
+                                        <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
                                         </td>
                                         <!-- <td data-bind="text: date_range_start"></td>
 										<td data-bind="text: date_range_end"></td>
@@ -740,6 +741,7 @@ assigntoken(csrf_token);
                                 <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:reorder_stage"><i class="la la-reorder" aria-hidden="true"></i> {% trans 'Reorder Stages' %}</a>
                                 <a href="javascript:void(0);" title="" class="btn btn-sm btn-success" data-bind="visible:stages().length > 0,
                                             click: deployStages"><i class="la la-rocket" aria-hidden="true"></i> {% trans 'Deploy' %} {% trans 'to' %} {% trans 'Mobile' %}</a>
+                                <!--<a href="{% url 'forms:configure_stages' is_project pk %}" class="btn btn-sm btn-warning"><i class="la la-asterisk" aria-hidden="true"></i>  {% trans 'Configure' %}</a>-->
                                 {% csrf_token %}
 
 
@@ -1078,6 +1080,7 @@ assigntoken(csrf_token);
                                                         <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
 
                                                          <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: stage_forms().default_submission_status"></select>
+
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
                                                         <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
@@ -1317,8 +1320,8 @@ assigntoken(csrf_token);
                                              </td>
                                              <td>
 
-                                             <select data-bind="options: availableoptions, optionsText: 'name',
-                                              optionsValue: 'id', value: default_submission_status"></select>
+                                             <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select>
+                                             <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
                                              </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text: responses_count"></td>

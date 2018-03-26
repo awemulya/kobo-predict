@@ -8,6 +8,8 @@ from onadata.apps.fsforms.viewsets.FSXFormSubmissionApiViewset import FSXFormSub
 from onadata.apps.fsforms.viewsets.SiteFormsViewset import SiteFormViewSet
 from onadata.apps.fsforms.viewsets.StageViewset import SiteMainStageViewSet, \
         SubStageViewSet, StageViewSet
+from onadata.apps.fsforms.viewsets.ConfigureStageViewset import StageListViewSet, SubStageListViewSet, \
+    SubStageDetailViewSet, EmViewSet
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
 from .views import (
     LibraryFormsListView,
@@ -35,19 +37,20 @@ from .views import (
     setup_site_stages,
     stage_add,
     site_survey,
-    create_schedule,
+    create_schedule, stages_reorder, substages_reorder,
     setup_project_stages, project_stage_add, Instance_detail, alter_answer_status, project_survey,
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, Responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, ProjectResponses,
-    project_html_export, Deploy_survey, deploy_stages, Deploy_general, SetDeployStages, share_stages,
-    edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms,
+    project_html_export, Deploy_survey, deploy_stages, Deploy_general, set_deploy_stages, share_stages,
+    edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms, Configure_forms,
     instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
-    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable)
+    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable, DeleteMyForm)
 
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
         url(r'^assigned/$', MyOwnFormsListView.as_view(), name='forms-list'),
         url(r'^xform/(?P<pk>\d+)/$', XformDetailView.as_view(), name='xform-detail'),
+        url(r'^xform/delete/(?P<xf_id>\d+)/$', DeleteMyForm.as_view(), name='xform-delete'),
         url(r'^assigned-form-list/$', AssignedFormsListView.as_view(), name='assigned-form-list'),
 
         url(r'^group/$', GroupListView.as_view(), name='group-list'),
@@ -75,7 +78,7 @@ urlpatterns = [
         url(r'^change-share-stages/(?P<id>\d+)/$', edit_share_stages, name='edit-share-stages'),
         url(r'^share-stages/(?P<id>\d+)/(?P<is_project>\d)/$', share_stages, name='share-stages'),
 
-        url(r'^set-deploy-stages/(?P<is_project>\d)/(?P<pk>\d+)$', SetDeployStages.as_view(), name='set-deploy-stages'),
+        url(r'^set-deploy-stages/(?P<is_project>\d)/(?P<pk>\d+)$', set_deploy_stages, name='set-deploy-stages'),
         url(r'^deploy-general/(?P<is_project>\d)/(?P<pk>\d+)$', Deploy_general.as_view(), name='deploy-general'),
         url(r'^deploy-general-remaining/(?P<is_project>\d)/(?P<pk>\d+)$'
             , deploy_general_remaining_sites
@@ -104,6 +107,7 @@ urlpatterns = [
         url(r'^fill-details-schedule/(?P<pk>\d+)/$', fill_details_schedule, name='fill_details_schedule'),
         #setup forms UI urls
         url(r'^setup-forms/(?P<is_project>\d)/(?P<pk>\d+)$', Setup_forms.as_view(), name='setup-forms'),
+        url(r'^configure-stages/(?P<is_project>\d)/(?P<pk>\d+)$', Configure_forms.as_view(), name='configure_stages'),
 
 ]
 
@@ -198,6 +202,18 @@ urlpatterns = urlpatterns + [
     url(r'^api/responses/(?P<pk>\d+)/$', InstanceResponseViewSet.as_view({'get': 'list'})),
     url(r'^api/responses/(?P<form_pk>\d+)/(?P<site_pk>\d+)/$', SiteInstanceResponseViewSet.as_view({'get': 'list'})),
     url(r'^api/form-detail/(?P<pk>\d+)/$', FormDetailViewset.as_view({'get': 'retrieve'})),
+
+    url(r'^api/stage-list/(?P<is_project>\d)/(?P<pk>\d+)/$', StageListViewSet.as_view({'post': 'create','get': 'list'})),
+    url(r'^api/configure-stage-update/(?P<pk>\d+)/$', StageListViewSet.as_view({'put': 'update','get': 'retrieve_by_id'})),
+    url(r'^api/sub-stage-list/(?P<stage_id>\d+)/$', SubStageListViewSet.as_view({'get': 'list'})),
+    url(r'^api/sub-stage-detail/(?P<pk>\d+)/$', SubStageDetailViewSet.as_view({'get': 'retrieve', 'put': 'update'})),
+    url(r'^api/sub-stage-detail-create/(?P<stage_id>\d+)/$', SubStageDetailViewSet.as_view({'post': 'create'})),
+    url(r'^api/xforms/$', XFormViewSet.as_view({'get': 'list'})),
+    url(r'^api/get_em/(?P<pk>\d+).$', EmViewSet.as_view({'get': 'retrieve_by_id'})),
+    url(r'^api/stages-reorder/$', stages_reorder),
+    url(r'^api/substages-reorder/$', substages_reorder),
+
+
 
 ]
 

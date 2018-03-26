@@ -62,6 +62,7 @@ from .views import (
     SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria )
 
 
+
 urlpatterns = [
     url(r'^accounts/create/$', CreateUserView.as_view(
         form_class=RegistrationForm), name='user-create'),
@@ -208,9 +209,13 @@ urlpatterns = [
     url(r'^site/report/custom-responses/(?P<pk>\d+)/$', FormlistAPI.as_view(), name='generate_custom_report'),
     url(r'^site/recent-pictures/(?P<pk>\d+)/$', RecentResponseImages.as_view(), name='recent_response_image'),
     url(r'^site/response-coords/(?P<pk>\d+)/$', SiteResponseCoordinates.as_view(), name='site_response_cords'),
+    url(r'^site/all-pictures/(?P<pk>\d+)/$', AllResponseImages.as_view(), name='all_response_image'),
+
     url(r'^project/region-list/(?P<pk>\d+)/$', RegionViewSet.as_view({'get': 'list'}), name='project_list'),
+
     url(r'^project-dashboard/lite/(?P<pk>[0-9]+)/$', DonorProjectDashboard.as_view(), name='project_dashboard_lite'),
     url(r'^site-dashboard/lite/(?P<pk>[0-9]+)/$', DonorSiteDashboard.as_view(), name='site_dashboard_lite'),
     url(r'^project/(?P<pk>\d+)/define-criteria/$', DefineProjectSiteCriteria.as_view(), name='define-site-criteria'),
     
+
     ]
