@@ -215,7 +215,7 @@ class MyPrint:
             if first_children['type'] == "repeat":
                 self.parse_repeat(first_children)
             elif first_children['type'] == 'group':
-                self.parse_group(first_children)
+                self.parse_group("", first_children)
             else:
                 question = first_children['name']
 
