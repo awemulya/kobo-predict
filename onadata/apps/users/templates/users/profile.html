@@ -3,7 +3,7 @@
 {% load filters %}
 {% block page-title %} {% trans 'Profile '  %}{{obj.user }}{% endblock %}
 {% block content %}
-
+{{ is_super_admin }}
 	<div id="main-content" class="padding">
 				<section class="panel">
 				{% if messages %}
@@ -257,6 +257,8 @@
                 </section>
 				
 			</div>
+}
+}
 
 
 {% endblock %}
