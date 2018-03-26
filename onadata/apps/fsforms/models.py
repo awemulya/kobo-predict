@@ -447,13 +447,15 @@ class FInstance(models.Model):
                         data.append(row)
 
 
-        def parse_group(g_object):
-            g_question = g_object['name']
+        def parse_group(prev_groupname, g_object):
+            g_question = prev_groupname+g_object['name']
             for first_children in g_object['children']:
                 question = first_children['name']
                 question_type = first_children['type']
                 answer = ''
                 if g_question+"/"+question in json_answer:
+                    if question_type == 'group':
+                        parse_group(g_question+"/",first_children)
                     if question_type == 'note':
                         answer= '' 
                     elif question_type == 'photo' or question_type == 'audio' or question_type == 'video':
@@ -471,7 +473,7 @@ class FInstance(models.Model):
                 if first_children['type'] == "repeat":
                     parse_repeat(first_children)
                 elif first_children['type'] == 'group':
-                    parse_group(first_children)
+                    parse_group("",first_children)
                 else:
                     question = first_children['name']
                     question_type = first_children['type']
