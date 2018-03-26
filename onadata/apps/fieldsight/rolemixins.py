@@ -264,7 +264,7 @@ class MyFormMixin(LoginRequiredMixin):
 class EndRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, pk, *args, **kwargs):
         if request.group.name == "Super Admin":
-            return super(EndRoleMixin, self).dispatch(request, xf_id, *args, **kwargs)
+            return super(EndRoleMixin, self).dispatch(request, *args, **kwargs)
         role_to_end = UserRole.objects.get(pk=pk)
         if role_to_end.group_id == 2:
             user_role = request.roles.filter(organization_id = role_to_end.organization_id, group_id=1)

@@ -341,7 +341,7 @@ class MyProfile(LoginRequiredMixin, View):
 
 
 class EndUserRole(EndRoleMixin, View):
-    def get(self, pk):
+    def get(self, request, pk):
         userrole=UserRole.objects.get(pk=pk)
         userrole.ended_at = datetime.now()
         userrole.save()
