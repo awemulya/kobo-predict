@@ -345,9 +345,9 @@ class EndUserRole(EndRoleMixin, View):
         userrole=UserRole.objects.get(pk=pk)
         userrole.ended_at = datetime.datetime.now()
         userrole.save()
-        next = request.POST.get('next', '/')
-        return None
-        # return HttpResponseRedirect(next)
+        next_url = request.POST.get('next', '/')
+        # return None
+        return HttpResponseRedirect(next_url)
 
 class UsersListView(TemplateView, SuperAdminMixin):
     template_name = "users/list.html"
