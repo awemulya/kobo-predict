@@ -18,7 +18,7 @@ from onadata.apps.userrole.models import UserRole
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
 from django.db.models import Q
-<<<<<<< HEAD
+
 
 
 # ConditionalFormMixin =  Returns whether the user has full acess or readonly access through "is_readonly" attribute which is either True or False for a specific form. The url parameter should have "fsxf_id" which is form id.
@@ -26,8 +26,7 @@ from django.db.models import Q
 # Readonly site/project levelMixin = It checks if user has access to just view certain pages/view. 
 
 # Important , in near future roles should be cached or some similar alternatives should be added.
-=======
->>>>>>> kc_master
+
 
 class LoginRequiredMixin(object):
     @classmethod
