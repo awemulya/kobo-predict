@@ -280,12 +280,9 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             'progress_chart_data_data': progress_chart_data.keys(),
             'progress_chart_data_labels': progress_chart_data.values(),
             'meta_data': myanswers,
-<<<<<<< HEAD
-            'is_supervisor_only': is_supervisor_only
-=======
+            'is_supervisor_only': is_supervisor_only,
             'next_photos_count':total_count - 5,
             'total_photos': total_count
->>>>>>> kc_master
         }
         return dashboard_data
 
@@ -1510,7 +1507,6 @@ class ActivateRole(TemplateView):
             noti_type = 4
             content = invite.site
         elif invite.group.name == "Unassigned":
-<<<<<<< HEAD
             noti_type = 24
             if invite.site:
                 content = invite.site
@@ -1521,10 +1517,7 @@ class ActivateRole(TemplateView):
         elif invite.group.name == "Project Donor":
             noti_type = 25
             content = invite.project
-=======
-            noti_type = 4
-            content = invite.organization
->>>>>>> kc_master
+
         
         noti = invite.logs.create(source=user, type=noti_type, title="new Role",
                                        organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.by_user,
