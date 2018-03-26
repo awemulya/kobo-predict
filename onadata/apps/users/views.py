@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from onadata.apps.fieldsight.mixins import UpdateView, ProfileView, OwnerMixin, SuperAdminMixin, group_required
 from rest_framework import renderers
-
+from django.contrib import messages
 from channels import Group as ChannelGroup
 from onadata.apps.fieldsight.models import Organization
 from onadata.apps.userrole.models import UserRole
@@ -347,6 +347,7 @@ class EndUserRole(EndRoleMixin, View):
         userrole.save()
         next_url = request.GET.get('next', '/')
         # return None
+        messages.success(request, 'Role Sucessfully Unassigned.')
         return HttpResponseRedirect(next_url)
 
 class UsersListView(TemplateView, SuperAdminMixin):
