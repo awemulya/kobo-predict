@@ -321,7 +321,7 @@ def my_profile(request, pk=None):
         roles_reviewer = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Reviewer", ended_at__isnull=True)
         roles_SA = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Site Supervisor", ended_at__isnull=True)
         responses = FInstance.objects.filter(submitted_by = user).order_by('-date')[:10]
-                
+        
         if request.role is not None and request.role.group.name != "Super Admin":
             org_ids = request.user.user_roles.select_related('organization').filter(ended_at__isnull=True).distinct('organization_id').values('organization_id')
             roles_org = roles_org.filter(organization_id__in=org_ids)
@@ -330,9 +330,13 @@ def my_profile(request, pk=None):
             roles_SA = roles_SA.filter(organization_id__in=org_ids)
             responses = FInstance.objects.filter(Q(submitted_by = user) & (Q(site__project__organization_id__in=org_ids) | Q(project__organization_id__in=org_ids))).order_by('-date')[:10]
         
-        own_manager_roles=request.user.user_roles.filter(group_id=2, ended_at__isnull=True).values_list('project_id', flat=True)
-        own_org_admin=request.user.user_roles.filter(group_id=1, ended_at__isnull=True).values_list('organization_id', flat=True)
-
+            own_manager_roles=request.user.user_roles.filter(group_id=2, ended_at__isnull=True).values_list('project_id', flat=True)
+            own_org_admin=request.user.user_roles.filter(group_id=1, ended_at__isnull=True).values_list('organization_id', flat=True)
+            is_super_admin = False
+        else:
+            own_manager_roles =[]
+            own_org_admin=[]
+            is_super_admin = True
         return render(request, 'users/profile.html', {'obj': profile, 'own_orgs':own_org_admin,'own_projects':own_manager_roles,'roles_org': roles_org, 'roles_project': roles_project, 'roles_site': roles_reviewer, 'roles_SA': roles_SA, 'roles_reviewer': roles_reviewer, 'responses': responses })
 
 class UsersListView(TemplateView, SuperAdminMixin):

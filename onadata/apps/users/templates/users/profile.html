@@ -82,6 +82,9 @@
 														<p>{{ role.organization.address }}</p>
 
 													</div>
+													{% if is_super_admin %}
+														remove
+													{% endif %}
 												</div>
 											</div>
 										</a>
@@ -114,6 +117,9 @@
 														<p>{{ role.project.address }}</p>
 														<p><strong>{{ role.project.organization.name }}</strong></p>
 													</div>
+													{% if role.orgainizatio_id in own_orgs or is_super_admin %}
+														remove
+													{% endif %}
 												</div>
 											</div>
 											</a>
@@ -145,7 +151,7 @@
 														<p><strong>{{ role.site.project.name }}</strong></p>
 														
 													</div>
-													{% if role.organization_id in own_orgs or role.project_id in own_projects %}
+													{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
 														remove
 														{% endif %}
 												</div>
@@ -178,7 +184,7 @@
 														<p>{{ role.site.identifier }}</p>
 														<p>{{ role.site.address }}</p>
 														<p><strong>{{ role.site.project.name }}</strong></p></div>
-														{% if role.organization_id in own_orgs or role.project_id in own_projects %}
+														{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
 														remove
 														{% endif %}
 												</div>
