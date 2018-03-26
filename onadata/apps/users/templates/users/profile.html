@@ -145,7 +145,7 @@
 														<p><strong>{{ role.site.project.name }}</strong></p>
 														
 													</div>
-													{% if role.orgainizatio_id in own_orgs or role.project_id in own_projects %}
+													{% if role.organization_id in own_orgs or role.project_id in own_projects %}
 														remove
 														{% endif %}
 												</div>
@@ -178,7 +178,7 @@
 														<p>{{ role.site.identifier }}</p>
 														<p>{{ role.site.address }}</p>
 														<p><strong>{{ role.site.project.name }}</strong></p></div>
-														{% if role.orgainizatio_id in own_orgs or role.project_id in own_projects %}
+														{% if role.organization_id in own_orgs or role.project_id in own_projects %}
 														remove
 														{% endif %}
 												</div>
