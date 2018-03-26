@@ -35,15 +35,15 @@
         var speed=0;
         images.forEach(function(element) {
           console.log(element["_attachments"].download_url);
-           var new_image = '<div class="col-md-2" id="'+ element["_id"] +'" style="display:none;">'+
+           var new_image = '<div class="col-md-2" id="'+ element["_id"] +'">'+
 							'<div class="photo-holder photo-item margin-top">'+
 							'<img submission_by="'+element["_submitted_by"]+'" submission_url="/forms/forms/'+element["fs_uuid"]+'#/'+element["_id"]+'" src="'+ element["_attachments"].download_url +'" img-title="" alt="">'+
 							'</div></div>';
                             	
 
-        	speed = speed+200;
+        	// speed = speed+200;
             $(new_image).appendTo("#galleryFrame");
-            $("#"+element["_id"]).fadeIn(speed);
+            // $("#"+element["_id"]).fadeIn(speed);
         });
 
 
