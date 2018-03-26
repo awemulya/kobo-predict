@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from onadata.apps.users.views import ContactViewSet, UsersListView
+from onadata.apps.users.views import ContactViewSet, UsersListView, MyProfile, EndUserRole
 from onadata.apps.users.viewsets import UserViewSet, ProfileViewSet, UserListViewSet, SearchableUserListViewSet
 from . import views
 urlpatterns = [
@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^api/profile(?:/(?P<pk>[0-9]+))?/$',
         ProfileViewSet.as_view({'get':'retrieve'}), name='profile_get_api'),
 
-    url(r'^profile/(?P<pk>[0-9]+)/$', views.my_profile, name='profile'),
+    url(r'^profile/(?P<pk>[0-9]+)/$', MyProfile.as_view(), name='profile'),
+    url(r'^endrole/(?P<pk>[0-9]+)/$', EndUserRole.as_view(), name='end_user_role'),
     ]
 

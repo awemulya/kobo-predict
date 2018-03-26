@@ -18,6 +18,7 @@ from .helpers import json_from_object
 from onadata.apps.userrole.models import UserRole
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
+from django.db.models import Q
 
 class LoginRequiredMixin(object):
     @classmethod
@@ -258,7 +259,25 @@ class MyFormMixin(LoginRequiredMixin):
         if xform.user_id == user_id:
             return super(MyFormMixin, self).dispatch(request, xf_id, *args, **kwargs)
 
+        raise PermissionDenied()
+
+class EndRoleMixin(LoginRequiredMixin):
+    def dispatch(self, request, pk, *args, **kwargs):
+        if request.group.name == "Super Admin":
+            return super(EndRoleMixin, self).dispatch(request, xf_id, *args, **kwargs)
+        role_to_end = UserRole.objects.get(pk=pk)
+        if role_to_end.gorup_id == 2:
+            user_role = request.roles.filter(organization_id = role_to_end.organization_id, group_id=1)
+            if user_role:
+                return super(EndRoleMixin, self).dispatch(request, *args, **kwargs)
+        
+        elif role_to_end.group_id == 3 or role_to_end.group_id == 4:
+            user_role = request.roles.filter(Q(project_id = role_to_end.project_id, group_id=2) | Q(organization_id = role_to_end.organization_id, group_id=1))
+            if user_role:
+                return super(EndRoleMixin, self).dispatch(request, *args, **kwargs)     
         raise PermissionDenied() 
+
+
 # for api mixins/permissions
 
 # class ProjectPermission(BasePermission):

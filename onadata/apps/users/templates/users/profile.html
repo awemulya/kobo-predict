@@ -83,7 +83,7 @@
 
 													</div>
 													{% if is_super_admin %}
-														remove
+														<a href="{% url 'user:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
 													{% endif %}
 												</div>
 											</div>
@@ -118,7 +118,7 @@
 														<p><strong>{{ role.project.organization.name }}</strong></p>
 													</div>
 													{% if role.orgainizatio_id in own_orgs or is_super_admin %}
-														remove
+														<a href="{% url 'user:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
 													{% endif %}
 												</div>
 											</div>
@@ -152,7 +152,7 @@
 														
 													</div>
 													{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
-														remove
+														<a href="{% url 'user:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
 														{% endif %}
 												</div>
 											</div>
@@ -185,7 +185,7 @@
 														<p>{{ role.site.address }}</p>
 														<p><strong>{{ role.site.project.name }}</strong></p></div>
 														{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
-														remove
+														<a href="{% url 'user:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
 														{% endif %}
 												</div>
 											</div>
