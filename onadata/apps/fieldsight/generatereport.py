@@ -180,7 +180,7 @@ class MyPrint:
                     answer = ''
                 if 'label' in first_children:
                     question = first_children['label']
-                row=[Paragraph(question, styBackground), answer]
+                row=[Paragraph(question, styBackground), Paragraph(answer, styBackground)]
                 self.data.append(row)
 
     def parse_group(self, prev_groupname, g_object):
@@ -202,7 +202,7 @@ class MyPrint:
                 answer = ''
             if 'label' in first_children:
                 question = first_children['label']
-            row=[Paragraph(question, styBackground), answer]
+            row=[Paragraph(question, styBackground), Paragraph(answer, styBackground)]
             self.data.append(row)
             # done at the end because wee want to print group name as well in report.
             if question_type == 'group':
@@ -211,7 +211,6 @@ class MyPrint:
     def parse_individual_questions(self, parent_object):
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
-        answer=self.main_answer
         for first_children in parent_object:
             if first_children['type'] == "repeat":
                 self.parse_repeat(first_children)
@@ -220,18 +219,21 @@ class MyPrint:
             else:
                 question = first_children['name']
 
-                if first_children['type'] == 'note' or question not in self.main_answer:
-                    answer= Paragraph('', styBackground) 
+                if first_children['type'] == 'note':
+                    answer= '' 
 
                 elif first_children['type'] == 'photo':
                     photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[question]
                     answer = self.create_logo(photo)
                 else:
-                    answer = Paragraph(self.main_answer[question], styBackground)
+                    if question in self.main_answer:
+                        answer = self.main_answer[question]
+                    else:
+                        answer=''
                 
                 if 'label' in first_children:
                     question = first_children['label']
-                row=(Paragraph(question, styBackground), answer)
+                row=(Paragraph(question, styBackground), Paragraph(answer, styBackground))
                 self.data.append(row)
 
 
