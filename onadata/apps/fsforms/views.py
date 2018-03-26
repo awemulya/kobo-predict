@@ -1775,9 +1775,9 @@ def stages_reorder(request):
     try:
         stages = request.data.get("stages")
         qs = []
-        for stage in stages:
+        for i, stage in enumerate(stages):
             obj = Stage.objects.get(pk=stage.get("id"))
-            obj.order = stage.get("order")
+            obj.order = i+1
             obj.save()
             qs.append(obj)
         serializer = StageSerializer(qs, many=True)
@@ -1792,9 +1792,9 @@ def substages_reorder(request):
     try:
         stages = request.data.get("stages")
         qs = []
-        for stage in stages:
+        for i, stage in  enumerate(stages):
             obj = Stage.objects.get(pk=stage.get("id"))
-            obj.order = stage.get("order")
+            obj.order = i+1
             obj.save()
             qs.append(obj)
         serializer = SubStageSerializer(qs, many=True)
