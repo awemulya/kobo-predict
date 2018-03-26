@@ -452,7 +452,9 @@ class FInstance(models.Model):
             for first_children in g_object['children']:
                 question = first_children['name']
                 question_type = first_children['type']
-
+                if question_type == 'group':
+                    parse_group(g_question+"/",first_children)
+                    continue
                 answer = ''
                 if g_question+"/"+question in json_answer:
                     if question_type == 'note':
@@ -466,8 +468,7 @@ class FInstance(models.Model):
                     question = first_children['label']
                 row={'type':question_type, 'question':question, 'answer':answer}
                 data.append(row)
-                if question_type == 'group':
-                    parse_group(g_question+"/",first_children)
+                
 
         def parse_individual_questions(parent_object):
             for first_children in parent_object:
