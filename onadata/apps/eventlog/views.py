@@ -23,7 +23,7 @@ from celery.result import AsyncResult
 
 class LogSerializer(serializers.ModelSerializer):
     source_uid = serializers.ReadOnlyField(source='source_id', read_only=True)
-    source_name = serializers.SerializerMethodField('get_source_name', read_only=True)
+    source_name = serializers.SerializerMethodField(read_only=True)
     source_img = serializers.ReadOnlyField(source='source.user_profile.profile_picture.url', read_only=True)
     get_source_url = serializers.ReadOnlyField()
     
