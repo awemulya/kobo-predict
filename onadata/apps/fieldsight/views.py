@@ -1132,8 +1132,8 @@ def senduserinvite(request):
 
     for email in emails:
         email = email.strip()
-        user = User.objects.filter(email=email)
-        userinvite = UserInvite.objects.filter(email=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+        user = User.objects.filter(email__iexact=email)
+        userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
 
         if userinvite:
             if group.name == "Unassigned":
@@ -1151,23 +1151,9 @@ def senduserinvite(request):
                     else:
                         response += email + ' already has the role for '+group.name+'.<br>' 
                     continue
-            invite = UserInvite(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
-
-            invite.save()
-            # organization = Organization.objects.get(pk=1)
-            # noti = invite.logs.create(source=user[0], type=9, title="new Role",
-            #                                organization_id=request.POST.get('organization_id'),
-            #                                description="{0} sent you an invite to join {1} as the {2}.".
-            #                                format(request.user.username, organization.name, invite.group.name,))
-            # result = {}
-            # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
-            # result['url'] = noti.get_absolute_url()
-            # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-            # ChannelGroup("notify-0").send({"text": json.dumps(result)})
-
-        else:
-            invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
-            invite.save()
+           
+        invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+        invite.save()
         current_site = get_current_site(request)
         subject = 'Invitation for Role'
         data ={
@@ -1203,8 +1189,8 @@ def invitemultiregionalusers(request, emails, group, region_ids):
 
             for email in emails:
                 email = email.strip()
-                user = User.objects.filter(email=email)
-                userinvite = UserInvite.objects.filter(email=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+                user = User.objects.filter(email__iexact=email)
+                userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
 
                 if userinvite:
                     response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
@@ -1219,23 +1205,9 @@ def invitemultiregionalusers(request, emails, group, region_ids):
                             else:
                                 response += email + ' already has the role for '+group.name+'.<br>' 
                             continue
-                    invite = UserInvite(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
-
-                    invite.save()
-                    # organization = Organization.objects.get(pk=1)
-                    # noti = invite.logs.create(source=user[0], type=9, title="new Role",
-                    #                                organization_id=request.POST.get('organization_id'),
-                    #                                description="{0} sent you an invite to join {1} as the {2}.".
-                    #                                format(request.user.username, organization.name, invite.group.name,))
-                    # result = {}
-                    # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
-                    # result['url'] = noti.get_absolute_url()
-                    # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-                    # ChannelGroup("notify-0").send({"text": json.dumps(result)})
-
-                else:
-                    invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
-                    invite.save()
+                    
+                invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+                invite.save()
                 current_site = get_current_site(request)
                 subject = 'Invitation for Role'
                 data = {
@@ -1283,8 +1255,8 @@ def sendmultiroleuserinvite(request):
 
                 for email in emails:
                     email = email.strip()
-                    user = User.objects.filter(email=email)
-                    userinvite = UserInvite.objects.filter(email=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+                    user = User.objects.filter(email__iexact=email)
+                    userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
 
                     if userinvite:
                         response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
@@ -1299,23 +1271,9 @@ def sendmultiroleuserinvite(request):
                                 else:
                                     response += email + ' already has the role for '+group.name+'.<br>' 
                                 continue
-                        invite = UserInvite(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
-
-                        invite.save()
-                        # organization = Organization.objects.get(pk=1)
-                        # noti = invite.logs.create(source=user[0], type=9, title="new Role",
-                        #                                organization_id=request.POST.get('organization_id'),
-                        #                                description="{0} sent you an invite to join {1} as the {2}.".
-                        #                                format(request.user.username, organization.name, invite.group.name,))
-                        # result = {}
-                        # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
-                        # result['url'] = noti.get_absolute_url()
-                        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-                        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
-
-                    else:
-                        invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
-                        invite.save()
+                       
+                    invite = UserInvite(email__iexact=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+                    invite.save()
                     current_site = get_current_site(request)
                     subject = 'Invitation for Role'
                     data ={
@@ -1360,8 +1318,8 @@ def sendmultiroleuserinvite(request):
         
         for email in emails:
 
-            user = User.objects.filter(email=email)
-            userinvite = UserInvite.objects.filter(email=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+            user = User.objects.filter(email__iexact=email)
+            userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
             
             if userinvite:
                 response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
@@ -1373,20 +1331,8 @@ def sendmultiroleuserinvite(request):
                     if userrole[0].ended_at==None:
                         response += email + ' already has the role for '+group.name+'.<br>' 
                         continue
-                invite, created = UserInvite.objects.get_or_create(email=email, by_user_id=request.user.id ,group=group, token=get_random_string(length=32), organization_id=organization_id, project_id=project_id, site_id=site_id)
-
-                # noti = invite.logs.create(source=user[0], type=9, title="new Role",
-                #                                organization_id=request.POST.get('organization_id'),
-                #                                description="{0} sent you an invite to join {1} as the {2}.".
-                #                                format(request.user.username, organization.name, invite.group.name,))
-                # result = {}
-                # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
-                # result['url'] = noti.get_absolute_url()
-                # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-                # ChannelGroup("notify-0").send({"text": json.dumps(result)})
-
-            else:
-                invite, created = UserInvite.objects.get_or_create(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+               
+            invite, created = UserInvite.objects.get_or_create(email__iexact=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
             current_site = get_current_site(request)
             subject = 'Invitation for Role'
             data = {
@@ -1435,9 +1381,9 @@ class ActivateRole(TemplateView):
         return HttpResponseRedirect(reverse('login'))
 
     def get(self, request, invite, invite_idb64, token):
-        user = User.objects.filter(email=invite.email)
         if invite.is_used==True:
             return HttpResponseRedirect(reverse('login'))
+        user = User.objects.filter(email__iexact=invite.email)
         if user:
             return render(request, 'fieldsight/invite_action.html',{'invite':invite, 'is_used': False, 'status':'',})
         else:
@@ -1445,7 +1391,7 @@ class ActivateRole(TemplateView):
         
 
     def post(self, request, invite, *args, **kwargs):
-        user_exists = User.objects.filter(email=invite.email)
+        user_exists = User.objects.filter(email__iexact=invite.email)
         if user_exists:
             user = user_exists[0] 
             if request.POST.get('response') == "accept":
@@ -1469,7 +1415,7 @@ class ActivateRole(TemplateView):
             if request.POST.get('password1') != request.POST.get('password2'):
                 return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-4', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
 
-            if User.objects.filter(username=request.POST.get('username')).exists():
+            if User.objects.filter(username__iexact=request.POST.get('username')).exists():
                 return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-2', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
 
             if request.POST.get('password1') != request.POST.get('password2'):
