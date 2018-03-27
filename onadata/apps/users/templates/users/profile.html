@@ -78,8 +78,9 @@
 										<div class="row">
 
 										{% for role in roles_org %}
-										<a href="{% url 'fieldsight:organizations-dashboard' role.organization.pk %}" title="">
-											<div class="col-lg-12 col-md-12" style="margin-top:10px;">
+										
+											<div class="col-lg-12 col-md-12 margin-top">
+											<a href="{% url 'fieldsight:organizations-dashboard' role.organization.pk %}" title="">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{% if role.organization.logo %}{{ role.organization.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
@@ -93,8 +94,8 @@
 														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
 													{% endif %}
 												</div>
+												</a>
 											</div>
-										</a>
 										{% endfor %}
 
 							
@@ -113,8 +114,9 @@
 									<div class="max-260-scroll">
 										<div class="row">
 										{% for role in roles_project %}
-										<a href="{% url 'fieldsight:project-dashboard' role.project.pk %}" title="">
-											<div class="col-lg-12 col-md-12" style="margin-top:10px;">
+										
+											<div class="col-lg-12 col-md-12 margin-top">
+												<a href="{% url 'fieldsight:project-dashboard' role.project.pk %}" title="">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{% if role.project.logo %}{{ role.project.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
@@ -128,8 +130,9 @@
 														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
 													{% endif %}
 												</div>
+												</a>
 											</div>
-											</a>
+											
 										{% endfor %}
 										</div>
 									</div>
@@ -145,8 +148,9 @@
 									<div class="max-260-scroll">
 										<div class="row">
 											{% for role in roles_reviewer %}
-											<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
-											<div class="col-lg-12 col-md-12" style="margin-top:10px;">
+											
+											<div class="col-lg-12 col-md-12 margin-top">
+												<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{% if role.site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
@@ -162,8 +166,9 @@
 														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
 														{% endif %}
 												</div>
+												</a>
 											</div>
-											</a>
+											
 											{% endfor %}
 										</div>
 									</div>
@@ -180,8 +185,9 @@
 									<div class="max-260-scroll">
 										<div class="row">
 											{% for role in roles_SA %}
-											<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
-											<div class="col-lg-12 col-md-12" style="margin-top:10px;">
+											
+											<div class="col-lg-12 col-md-12 margin-top">
+												<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{% if role.site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
@@ -195,8 +201,9 @@
 														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
 														{% endif %}
 												</div>
+												</a>
 											</div>
-											</a>
+											
 											{% endfor %}
 										</div>
 									</div>
