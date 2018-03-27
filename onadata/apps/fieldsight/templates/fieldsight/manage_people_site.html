@@ -573,7 +573,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                      <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                      <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
 
-
+               
                 <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Manager' %}</button>
                
                 <ul class="row" data-bind="foreach:$root.users">
@@ -601,6 +601,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <div class="margin-top">
 
                 </div>
+            </div>
+            </div>
             </div>
 
             <div class="col-md-4">
@@ -888,7 +890,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                                 <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
                               </div>
                               <div class="project-basic-info">
-                                <h4 data-bind="text:user().full_name"></h4>
+                                <h4 data-bind="text:user().first_name+' '+user().last_name"></h4>
                                 <p data-bind="text:user().email"></p>
                               </div>
                             </div>
