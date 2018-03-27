@@ -74,7 +74,7 @@
 									<h4>{% trans 'Organization Admin At :' %}</h4>
 								</div>
 								<div class="widget-body">
-									<div class="" style="overflow-y: scroll;">
+									<div class="max-260-scroll">
 										<div class="row">
 
 										{% for role in roles_org %}
@@ -90,7 +90,7 @@
 
 													</div>
 													{% if is_super_admin %}
-														<a href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
+														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
 													{% endif %}
 												</div>
 											</div>
@@ -110,7 +110,7 @@
 									<h4>{% trans 'Project Manager At :' %}</h4>
 								</div>
 								<div class="widget-body">
-									<div class="" style="overflow-y: scroll;">
+									<div class="max-260-scroll">
 										<div class="row">
 										{% for role in roles_project %}
 										<a href="{% url 'fieldsight:project-dashboard' role.project.pk %}" title="">
@@ -125,7 +125,7 @@
 														<p><strong>{{ role.project.organization.name }}</strong></p>
 													</div>
 													{% if role.orgainizatio_id in own_orgs or is_super_admin %}
-														<a href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
+														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
 													{% endif %}
 												</div>
 											</div>
@@ -142,7 +142,7 @@
 									<h4>{% trans 'Site Reviewer At :' %}</h4>
 								</div>
 								<div class="widget-body">
-									<div class="" style="overflow-y: scroll;">
+									<div class="max-260-scroll">
 										<div class="row">
 											{% for role in roles_reviewer %}
 											<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
@@ -159,7 +159,7 @@
 														
 													</div>
 													{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
-														<a href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
+														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
 														{% endif %}
 												</div>
 											</div>
@@ -177,7 +177,7 @@
 									<h4>{% trans 'Site Supervisor At :' %}</h4>
 								</div>
 								<div class="widget-body">
-									<div class="">
+									<div class="max-260-scroll">
 										<div class="row">
 											{% for role in roles_SA %}
 											<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
@@ -192,7 +192,7 @@
 														<p>{{ role.site.address }}</p>
 														<p><strong>{{ role.site.project.name }}</strong></p></div>
 														{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
-														<a href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
+														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
 														{% endif %}
 												</div>
 											</div>
@@ -227,7 +227,7 @@
 									<h4>{% trans 'Latest Submission' %}</h4>
 								</div>
 								<div class="widget-body">
-									<div class="">
+									<div class="max-513-scolling">
 										{% for sub in responses %}
 										{% if sub.site %}
 										<a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}" title="">
@@ -257,8 +257,16 @@
                 </section>
 				
 			</div>
-}
-}
+		<script src="assets/js/vendor/slick.min.js"></script>
+		<script>
+			$(document).ready(function(){ 
+				$(".max-513-scolling").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+				$(".max-260-scroll").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+				
+				
+			});
+		</script>
+        <script src="assets/js/plugins.js"></script>
 
 
 {% endblock %}
