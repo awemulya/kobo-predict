@@ -48,7 +48,6 @@ class LogSerializer(serializers.ModelSerializer):
         model = FieldSightLog
         exclude = ('title', 'description', 'is_seen', 'content_type', 'organization', 'project', 'site', 'object_id', 'extra_object_id', 'source', 'extra_content_type',)
 
-    @check_obj
     def get_source_name(self, obj):
         return obj.source.first_name + " " + obj.source.last_name
 
