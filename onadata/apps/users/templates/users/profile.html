@@ -7,12 +7,13 @@
 	<div id="main-content" class="padding">
 				<section class="panel">
 				{% if messages %}
-						<ul class="messages">
-						    {% for message in messages %}
-						    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-						    {% endfor %}
-						</ul>
-						{% endif %}
+				{% for message in messages %}
+				<div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+				  <strong class="text-capitalize">{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}!</strong> {{ message }}
+				</div>
+				{% endfor %}
+				{% endif %}
+
 					<header class="panel-heading clearfix">
 					<h3><i class="la la-user"></i>{% trans 'View' %} {% trans 'Profile' %}</h3>
 						<div class="panel-heading-right">
@@ -58,7 +59,7 @@
 													{% endif %}
 													{% if obj.user.email %}
 													<li>
-														<i class="la la-envelope-o"></i>   {{ obj.user.email }}
+														<i class="la la-envelope-o"></i> {{ obj.user.email }}
 													</li>
 													{% endif %}
 												
@@ -92,6 +93,7 @@
 													</div>
 													{% if is_super_admin %}
 														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
+
 													{% endif %}
 												</div>
 												</a>
@@ -127,7 +129,8 @@
 														<p><strong>{{ role.project.organization.name }}</strong></p>
 													</div>
 													{% if role.orgainizatio_id in own_orgs or is_super_admin %}
-														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
+
+														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">Remove</a>
 													{% endif %}
 												</div>
 												</a>
@@ -163,7 +166,8 @@
 														
 													</div>
 													{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
-														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
+													<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">Remove</a>
+
 														{% endif %}
 												</div>
 												</a>
@@ -198,7 +202,9 @@
 														<p>{{ role.site.address }}</p>
 														<p><strong>{{ role.site.project.name }}</strong></p></div>
 														{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
-														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
+
+														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">Remove</a>
+
 														{% endif %}
 												</div>
 												</a>

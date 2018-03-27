@@ -60,7 +60,7 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 <script id="itemTmpl" type="text/html">
     <li>
 
-    	<input style="left:0px !important; margin-top:3px !important;;" type='checkbox' data-bind="checked: selected, click: $root.setSelected" />
+    	<input style="left:0px !important; margin-top:3px !important;" type='checkbox' data-bind="checked: selected, click: $root.setSelected" />
          <span data-bind="text: xf_title"></span>
         
 
@@ -309,6 +309,9 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 								  <li class="nav-item">
 									<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Flagged <span class="badge badge-warning">{{flagged|length}}</span></a>
 								  </li>
+								  <li class="nav-item">
+									<a class="nav-link" data-toggle="tab" href="#tab004" role="tab">Approved <span class="badge badge-success">{{Approved|length}}</span></a>
+								  </li>
 								</ul>
 
 								<!-- Tab panes -->
@@ -317,9 +320,9 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 									  <div class="org-site-list">
 										<div class="form-list">
 											<div class="panel panel-default">
-												{% autopaginate outstanding 4 as outstanding_data %}
+												{% autopaginate outstanding 4 as pending_data %}
 											  <table class="table table-striped table-hover" style="width:100%;">
-												  {% for instance in outstanding_data %}
+												  {% for instance in pending_data %}
 												  <tr>
 													 	<td class="align-middle">
 															<a title="View submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}"><strong>{{ instance.site_fxf.xf.title}}</strong></a>
@@ -333,8 +336,11 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 												   {% trans 'No' %} {% trans 'data' %}
 												  {% endfor %}
 											  </table>
+											  {% if pending_data %}
 												<a class="btn btn-sm btn-outline-primary text-capitalize" href="{% url 'fieldsight:site-submission-data' obj.pk 2 %}">view all</a>
+											  {% endif %}
 											 </div>
+											
 
 										</div>
 									</div>
@@ -359,8 +365,11 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 												   {% trans 'No' %} {% trans 'data' %}
 												  {% endfor %}
 											  </table>
+											  {% if rejected_data %}
 												<a class="btn btn-sm btn-outline-primary text-capitalize" href="{% url 'fieldsight:site-submission-data' obj.pk 0 %}">view all</a>
+											  {% endif %}
 											 </div>
+											
 
 										</div>
 									</div>
@@ -386,7 +395,39 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 												  {% endfor %}
 												  
 											  </table>
+											  {% if flagged_data %}
 												<a class="btn btn-sm btn-outline-primary text-capitalize" href="{% url 'fieldsight:site-submission-data' obj.pk 1 %}">view all</a>
+											  {% endif %}
+											 </div>
+											
+
+										</div>
+									</div>
+								  </div>
+								  <div class="tab-pane" id="tab004" role="tabpanel">
+									  <div class="org-site-list">
+										<div class="form-list">
+											<div class="panel panel-default">
+												{% autopaginate approved 4 as approved_data %}
+											  <table class="table table-striped table-hover" style="width:100%;">
+												  {% for instance in approved_data %}
+												  <tr>
+													  <td class="align-middle">
+															<a title="View submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}"><strong>{{ instance.site_fxf.xf.title}}</strong></a>
+															<br/>
+															<a href="{% url 'users:profile' instance.submitted_by.id %}" title="View details of user"><small><i class="la la-user"></i>{{ instance.submitted_by }}</small></a>
+															&nbsp;
+															<small class="site_icon_float" style=""><i class="la la-clock-o" aria-hidden="true"></i> {{ instance.date|timesince }}{% trans ' ago' %}</small>
+													</td>
+												  </tr>
+												  {% empty %}
+										  		   {% trans 'No' %} {% trans 'data' %}
+												  {% endfor %}
+												  
+											  </table>
+											  	{% if approved_data %}
+												<a class="btn btn-sm btn-outline-primary text-capitalize" href="{% url 'fieldsight:site-submission-data' obj.pk 3 %}">view all</a>
+											 	{% endif %}
 											 </div>
 
 										</div>

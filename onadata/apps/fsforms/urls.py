@@ -37,7 +37,7 @@ from .views import (
     setup_site_stages,
     stage_add,
     site_survey,
-    create_schedule, stages_reorder, substages_reorder,
+    create_schedule, stages_reorder, substages_reorder, save_edumaterial,
     setup_project_stages, project_stage_add, Instance_detail, alter_answer_status, project_survey,
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, Responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, ProjectResponses,
@@ -212,6 +212,8 @@ urlpatterns = urlpatterns + [
     url(r'^api/get_em/(?P<pk>\d+).$', EmViewSet.as_view({'get': 'retrieve_by_id'})),
     url(r'^api/stages-reorder/$', stages_reorder),
     url(r'^api/substages-reorder/$', substages_reorder),
+
+    url(r'^api/em/files/(?P<stageid>\d+).$', save_edumaterial),
 
 
 

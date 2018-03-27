@@ -41,6 +41,14 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 {% block content %}
 {% load filters %}
 <div id="main-content" class="padding">
+
+				{% if messages %}
+					{% for message in messages %}
+						<div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+						  <strong class="text-capitalize">{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}!</strong> {{ message }}
+						</div>
+					{% endfor %}
+				{% endif %}
 				<section class="panel">
 
                     <header class="panel-heading clearfix">
@@ -84,13 +92,7 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 						
                     </header>
 
-					{% if messages %}
-						<ul class="messages">
-						    {% for message in messages %}
-						    <li>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-						    {% endfor %}
-						</ul>
-						{% endif %}
+					
 					<div class="panel-body">
 
 						<!--Search Organization-->

@@ -2292,7 +2292,7 @@ def response_export(request, pk):
 class FormlistAPI(View):
     def get(self, request, pk):
         mainstage=[]
-        schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title')
+        schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','schedule__name')
         stages = Stage.objects.filter(site_id=pk)
         for stage in stages:
             if stage.stage_id is None:
