@@ -1775,9 +1775,9 @@ def stages_reorder(request):
     try:
         stages = request.data.get("stages")
         qs = []
-        for stage in stages:
+        for i, stage in enumerate(stages):
             obj = Stage.objects.get(pk=stage.get("id"))
-            obj.order = stage.get("order")
+            obj.order = i+1
             obj.save()
             qs.append(obj)
         serializer = StageSerializer(qs, many=True)
@@ -1792,9 +1792,9 @@ def substages_reorder(request):
     try:
         stages = request.data.get("stages")
         qs = []
-        for stage in stages:
+        for i, stage in  enumerate(stages):
             obj = Stage.objects.get(pk=stage.get("id"))
-            obj.order = stage.get("order")
+            obj.order = i+1
             obj.save()
             qs.append(obj)
         serializer = SubStageSerializer(qs, many=True)
@@ -1807,3 +1807,12 @@ class DeleteMyForm(MyFormMixin, View):
         obj, created = DeletedXForm.objects.get_or_create(xf_id=xf_id)
         messages.success(request, 'Form Sucessfully Deleted.')
         return HttpResponseRedirect(reverse("forms:forms-list"))
+
+
+@login_required
+@api_view(['POST', 'PUT'])
+def save_edumaterial(request, stageid):
+    import ipdb
+    ipdb.set_trace()
+
+    return Response({'error': 'Invalid Educational Material Data'}, status=status.HTTP_400_BAD_REQUEST)
