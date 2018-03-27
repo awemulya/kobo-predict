@@ -337,7 +337,7 @@ class MyProfile(LoginRequiredMixin, View):
                 own_manager_roles =[]
                 own_org_admin=[]
                 is_super_admin = True
-            return render(request, 'users/profile.html', {'obj': profile, 'own_orgs':own_org_admin,'own_projects':own_manager_roles,'roles_org': roles_org, 'roles_project': roles_project, 'roles_site': roles_reviewer, 'roles_SA': roles_SA, 'roles_reviewer': roles_reviewer, 'responses': responses })
+            return render(request, 'users/profile.html', {'obj': profile, 'is_super_admin':is_super_admin, 'own_orgs':own_org_admin,'own_projects':own_manager_roles,'roles_org': roles_org, 'roles_project': roles_project, 'roles_site': roles_reviewer, 'roles_SA': roles_SA, 'roles_reviewer': roles_reviewer, 'responses': responses })
 
 
 class EndUserRole(EndRoleMixin, View):
