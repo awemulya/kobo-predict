@@ -1807,3 +1807,12 @@ class DeleteMyForm(MyFormMixin, View):
         obj, created = DeletedXForm.objects.get_or_create(xf_id=xf_id)
         messages.success(request, 'Form Sucessfully Deleted.')
         return HttpResponseRedirect(reverse("forms:forms-list"))
+
+
+@login_required
+@api_view(['POST', 'PUT'])
+def save_edumaterial(request, stageid):
+    import ipdb
+    ipdb.set_trace()
+
+    return Response({'error': 'Invalid Educational Material Data'}, status=status.HTTP_400_BAD_REQUEST)
