@@ -528,7 +528,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
             </li>
             <li class="nav-item">
-              <a class="nav-link " data-toggle="tab" href="#tab003" role="tab">{% trans 'Assign' %} {% trans 'Project' %} {% trans 'Donors' %}</a>
+              <a class="nav-link " data-toggle="tab" href="#tab003" role="tab">{% trans 'Assign' %} {% trans 'Donors' %}</a>
             </li>
           </ul>
           <!-- Tab panes -->
@@ -845,7 +845,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                     <div class="col-md-8">
                 <div class="widget-info margin-top bg-white padding">
                   <div class="widget-head">
-                    <h4>{% trans 'Invite' %} {% trans 'new' %} {% trans 'project' %} {% trans 'donors' %}</h4>
+                    <h4>{% trans 'Invite' %} {% trans 'new' %} {% trans 'Donors' %}</h4>
                   </div>
                   <div class="widget-body">
                     <form>
@@ -866,7 +866,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                     <strong>{% trans 'OR' %}</strong>
                     </h4>
                     <div class="widget-head">
-                    <h4>{% trans 'Select' %} {% trans 'Users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'donors' %}</h4>
+                    <h4>{% trans 'Select' %} {% trans 'Users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'Donors' %}</h4>
                     </div>
                    
                     <form class="margin-top">
@@ -877,7 +877,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                      <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
                      <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
 
-                    <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignDonor"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'donors' %}</button>
+                    <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignDonor"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Donors' %}</button>
                    
                     <ul class="row" data-bind="foreach:$root.users">
                       <li class="col-md-4">
@@ -911,7 +911,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
             <div class="col-md-4">
               <div class="widget-info margin-top bg-white padding">
                 <div class="widget-head">
-                  <h4>{% trans 'Current' %} {% trans 'Project' %} {% trans 'donors' %}</h4>
+                  <h4>{% trans 'Current' %} {% trans 'Donors' %}</h4>
                 </div>
 
                 <div class="widget-body" data-bind="foreach:projectDonors">
@@ -923,7 +923,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                       <h4 data-bind="text:user().full_name"></h4>
                       <p data-bind="text:user().email"></p>
                     </div>
-                    <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this Project Donor?', click:rmrole }"><i class="la la-close"></i></a>
+                    <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this donor?', click:rmrole }"><i class="la la-close"></i></a>
 
 
 
