@@ -65,7 +65,7 @@ class UserRoleViewSet(viewsets.ModelViewSet):
             queryset = []
         return queryset
 
-    def custom_create(self, * args, **kwargs):
+    def custom_create(self, *args, **kwargs):
         data = self.request.data
         # print "======================================================="
         # print data
