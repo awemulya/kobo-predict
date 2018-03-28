@@ -115,7 +115,7 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                         print role.__dict__
                         description = "{0} was assigned  as {2} in {1}".format(
                             role.user.get_full_name(), role.project, role.group.name)
-                        noti = role.logs.create(source=role.user, type=6, title=description, organization=project.organization, project=project, description=description, content_object=project, extra_object=self.request.user)
+                        noti = role.logs.create(source=role.user, type=25, title=description, organization=project.organization, project=project, description=description, content_object=project, extra_object=self.request.user)
                         result = {}
                         result['description'] = description
                         result['url'] = noti.get_absolute_url()
