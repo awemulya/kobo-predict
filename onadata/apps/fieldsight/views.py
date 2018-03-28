@@ -1147,9 +1147,9 @@ def senduserinvite(request):
             userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id, ended_at__isnull=True).order_by('-id')    
             if userrole:
                 if group.name == "Unassigned":
-                    response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + '('+ email + ')' + ' has already joined this organization.<br>'
+                    response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' has already joined this organization.<br>'
                 else:
-                    response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + '('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
+                    response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
                 continue
            
         invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
@@ -1202,9 +1202,9 @@ def invitemultiregionalusers(request, emails, group, region_ids):
                     userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id, ended_at__isnull=True).order_by('-id')
                     if userrole:
                         if group.name == "Unassigned":
-                            response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + '('+ email + ')' + ' has already joined this organization.<br>'
+                            response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' has already joined this organization.<br>'
                         else:
-                            response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + '('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
+                            response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
                         continue
                     
                 invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
@@ -1269,9 +1269,9 @@ def sendmultiroleuserinvite(request):
                         
                         if userrole:
                             if group.name == "Unassigned":
-                                response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + '('+ email + ')' + ' has already joined this organization.<br>'
+                                response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' has already joined this organization.<br>'
                             else:
-                                response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + '('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
+                                response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
                             continue
                        
                     invite = UserInvite(email__iexact=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
@@ -1332,9 +1332,9 @@ def sendmultiroleuserinvite(request):
                 
                 if userrole:
                     if group.name == "Unassigned":
-                        response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + '('+ email + ')' + ' has already joined this organization.<br>'
+                        response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' has already joined this organization.<br>'
                     else:
-                        response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + '('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
+                        response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
                     continue
                     
             invite, created = UserInvite.objects.get_or_create(email__iexact=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
