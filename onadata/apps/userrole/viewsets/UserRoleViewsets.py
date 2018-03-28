@@ -105,12 +105,12 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                         Device.objects.filter(name=role.user.email).send_message(message)
 
                 elif level == "1":
-                   
+                    project = Project.objects.get(pk=self.kwargs.get('pk'))
                     role, created = UserRole.objects.get_or_create(user_id=user, organization_id=project.organization_id,
                                                                    project_id=self.kwargs.get('pk'), site_id=None,
                                                                    group=group, ended_at=None)
                     print role.__dict__
-                    project = Project.objects.get(pk=self.kwargs.get('pk'))
+                    
                     if created:
                         print role.__dict__
                         description = "{0} was assigned  as {2} in {1}".format(
