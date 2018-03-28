@@ -113,8 +113,8 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                     project = Project.objects.get(pk=self.kwargs.get('pk'))
                     if created:
                         print role.__dict__
-                        description = "{0} was assigned  as Project Manager in {1}".format(
-                            role.user.get_full_name(), role.project)
+                        description = "{0} was assigned  as {2} in {1}".format(
+                            role.user.get_full_name(), role.project, role.group.name)
                         noti = role.logs.create(source=role.user, type=6, title=description, organization=project.organization, project=project, description=description, content_object=project, extra_object=self.request.user)
                         result = {}
                         result['description'] = description
