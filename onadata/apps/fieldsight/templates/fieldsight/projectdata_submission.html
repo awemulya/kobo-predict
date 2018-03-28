@@ -35,6 +35,9 @@
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Submissions' %} {% trans 'Data' %}</li>
 		    {% endblock %}
         </ol>
+        <ol class="breadcrum pull-right">
+         <a href="{% url 'fsforms:project-responses' pk %}" class="btn btn-sm-primary">View by Forms</a>
+        </ol>
     </nav>
 <div class="row">
 <div class="col-md-12">

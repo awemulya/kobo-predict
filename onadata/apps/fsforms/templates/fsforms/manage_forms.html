@@ -76,7 +76,11 @@ assigntoken(csrf_token);
 		    {% endblock %}
         </ol>
     </nav>
-
+    {% if is_project == "0" %}
+    <div class="alert alert-danger">
+      <strong>Warning!</strong> You are managing forms for {{ obj.name }} only and will not be seen for other sites. 
+    </div>
+    {% endif %}
 				<!-- Nav tabs -->
 				<div class="tabbing">
 					<ul class="nav nav-tabs" role="tablist">

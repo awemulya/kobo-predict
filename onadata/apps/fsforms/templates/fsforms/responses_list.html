@@ -22,6 +22,9 @@
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Responses' %}</li>
 		    {% endblock %}
         </ol>
+      <ol class="breadcrum pull-right">
+         <a href="{% url 'fieldsight:site-submission-data' site '0' %}" class="btn btn-sm-primary">View by Status</a>
+        </ol>
     </nav>
 
     <div class="tabbing">
@@ -37,6 +40,9 @@
             <li class="nav-item">
               <a class="nav-link" data-toggle="tab" href="#stage3" role="tab">{% trans 'Staged' %} {% trans 'Form' %}</a>
             </li>
+            <ol class="breadcrum pull-right">
+         <a href="{% url 'forms:proj-submission-data' project %}" class="btn btn-sm-primary">Response Status</a>
+        </ol>
           </ul>
 
     <div class="tab-content">
