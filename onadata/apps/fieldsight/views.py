@@ -1132,7 +1132,7 @@ def senduserinvite(request):
 
     for email in emails:
         email = email.strip()
-        user = User.objects.filter(email__iexact=email)
+        
         userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
 
         if userinvite:
@@ -1141,16 +1141,16 @@ def senduserinvite(request):
             else:
                 response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
             continue
-        if user:
-            userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
             
+        user = User.objects.filter(email__iexact=email)
+        if user:
+            userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id, ended_at__isnull=True).order_by('-id')    
             if userrole:
-                if userrole[0].ended_at==None:
-                    if group.name == "Unassigned":
-                        response += email + ' has already joined this organization.<br>'
-                    else:
-                        response += email + ' already has the role for '+group.name+'.<br>' 
-                    continue
+                if group.name == "Unassigned":
+                    response += email + ' has already joined this organization.<br>'
+                else:
+                    response += email + ' already has the role for '+group.name+'.<br>' 
+                continue
            
         invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
         invite.save()
@@ -1189,22 +1189,22 @@ def invitemultiregionalusers(request, emails, group, region_ids):
 
             for email in emails:
                 email = email.strip()
-                user = User.objects.filter(email__iexact=email)
+                
                 userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
 
                 if userinvite:
                     response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
                     continue
+                
+                user = User.objects.filter(email__iexact=email)
                 if user:
-                    userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
-                    
+                    userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id, ended_at__isnull=True).order_by('-id')
                     if userrole:
-                        if userrole[0].ended_at==None:
-                            if group.name == "Unassigned":
-                                response += email + ' has already joined this organization.<br>'
-                            else:
-                                response += email + ' already has the role for '+group.name+'.<br>' 
-                            continue
+                        if group.name == "Unassigned":
+                            response += email + ' has already joined this organization.<br>'
+                        else:
+                            response += email + ' already has the role for '+group.name+'.<br>' 
+                        continue
                     
                 invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
                 invite.save()
@@ -1255,22 +1255,23 @@ def sendmultiroleuserinvite(request):
 
                 for email in emails:
                     email = email.strip()
-                    user = User.objects.filter(email__iexact=email)
+                    
                     userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
 
                     if userinvite:
                         response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
                         continue
+
+                    user = User.objects.filter(email__iexact=email)
                     if user:
-                        userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
+                        userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id, ended_at__isnull=True).order_by('-id')
                         
                         if userrole:
-                            if userrole[0].ended_at==None:
-                                if group.name == "Unassigned":
-                                    response += email + ' has already joined this organization.<br>'
-                                else:
-                                    response += email + ' already has the role for '+group.name+'.<br>' 
-                                continue
+                            if group.name == "Unassigned":
+                                response += email + ' has already joined this organization.<br>'
+                            else:
+                                response += email + ' already has the role for '+group.name+'.<br>' 
+                            continue
                        
                     invite = UserInvite(email__iexact=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
                     invite.save()
@@ -1318,20 +1319,23 @@ def sendmultiroleuserinvite(request):
         
         for email in emails:
 
-            user = User.objects.filter(email__iexact=email)
+            
             userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
             
             if userinvite:
                 response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
                 continue
+            user = User.objects.filter(email__iexact=email)
             if user:
-                userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id).order_by('-id')
+                userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id, ended_at__isnull=True).order_by('-id')
                 
                 if userrole:
-                    if userrole[0].ended_at==None:
+                    if group.name == "Unassigned":
+                        response += email + ' has already joined this organization.<br>'
+                    else:
                         response += email + ' already has the role for '+group.name+'.<br>' 
-                        continue
-               
+                    continue
+                    
             invite, created = UserInvite.objects.get_or_create(email__iexact=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
             current_site = get_current_site(request)
             subject = 'Invitation for Role'
