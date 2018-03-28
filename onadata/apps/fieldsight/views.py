@@ -83,7 +83,7 @@ def dashboard(request):
         if role_type == "Reviewer":
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
         if role_type == "Project Donor":
-            return HttpResponseRedirect(reverse("fieldsight:project_dashboard_lite", kwargs={'pk': current_role.project.pk}))
+            return HttpResponseRedirect(reverse("fieldsight:donor_project_dashboard_lite", kwargs={'pk': current_role.project.pk}))
         if role_type == "Project Manager":
             return HttpResponseRedirect(reverse("fieldsight:project-dashboard", kwargs={'pk': current_role.project.pk}))
         if role_type == "Organization Admin":
