@@ -70,6 +70,19 @@ class ProjectViewPermission(BasePermission):
             return obj.project.organization == request.organization
         return request.project == obj.project
 
+class ReviewerViewPermission(BasePermission):
+    def has_permission(self, request, view):
+        if request.group.name == "Super Admin":
+            return True
+        if request.group.name == "Organization Admin":
+            return True
+        if request.group.name == "Project Manager":
+            return True
+        if request.group.name == "Reviewer":
+            return True
+        return False
+
+
 
 class SiteViewSet(viewsets.ModelViewSet):
     """
