@@ -1,7 +1,7 @@
 from onadata.apps.userrole.models import UserRole as Role
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import logout
-
+from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404, render, redirect
 
 
@@ -44,12 +44,18 @@ class RoleMiddleware(object):
                 if roles:
                     role = roles[0]
                     request.session['role'] = role.id
+            
             if role:
                 request.__class__.role = role
                 request.__class__.organization = role.organization
                 request.__class__.project = role.project
                 request.__class__.site = role.site
-                request.__class__.group = role.group
+                
+
+                if "Super Admin" in request.user.groups.all().values_list('name', flat=True):
+                    request.__class__.group = Group.objects.get(pk=5)
+                else:
+                    request.__class__.group =role.group
                 # request.__class__.roles = Role.objects.filter(user=request.user, organization=role.organization)
                 request.__class__.roles = Role.get_active_roles(request.user)
                 request.__class__.is_super_admin = request.group.name in ('Super Admin')
