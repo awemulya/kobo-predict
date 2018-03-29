@@ -440,8 +440,8 @@ class UserInvite(models.Model):
     is_declied = models.BooleanField(default=False)
     token = models.CharField(max_length=255)
     group = models.ForeignKey(Group)
-    site = models.ForeignKey(Site, null=True, blank=True, related_name='invite_site_roles')
-    project = models.ForeignKey(Project, null=True, blank=True, related_name='invite_project_roles')
+    site = models.ManyToManyField(Site, null=True, blank=True, related_name='invite_site_roles')
+    project = models.ManyToManyField(Project, null=True, blank=True, related_name='invite_project_roles')
     organization = models.ForeignKey(Organization, related_name='invite_organization_roles')
     logs = GenericRelation('eventlog.FieldSightLog')
     
