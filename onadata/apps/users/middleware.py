@@ -50,12 +50,7 @@ class RoleMiddleware(object):
                 request.__class__.organization = role.organization
                 request.__class__.project = role.project
                 request.__class__.site = role.site
-                
-
-                if "Super Admin" in request.user.groups.all().values_list('name', flat=True):
-                    request.__class__.group = Group.objects.get(pk=5)
-                else:
-                    request.__class__.group =role.group
+                request.__class__.group =role.group
                 # request.__class__.roles = Role.objects.filter(user=request.user, organization=role.organization)
                 request.__class__.roles = Role.get_active_roles(request.user)
                 request.__class__.is_super_admin = request.group.name in ('Super Admin')
