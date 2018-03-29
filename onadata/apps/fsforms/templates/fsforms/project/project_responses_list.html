@@ -22,6 +22,9 @@
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Responses' %}</li>
 		    {% endblock %}
         </ol>
+        <ol class="breadcrum pull-right">
+         <a href="{% url 'fieldsight:proj-submission-data' project '1' %}" class="btn btn-sm-primary">View by Status</a>
+        </ol>
     </nav>
     <div class="tabbing">
 

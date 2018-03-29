@@ -76,7 +76,11 @@ assigntoken(csrf_token);
 		    {% endblock %}
         </ol>
     </nav>
-
+    {% if is_project == "0" %}
+    <div class="alert alert-danger">
+      <strong>Warning!</strong> You are managing forms for {{ obj.name }} only and will not be seen for other sites. 
+    </div>
+    {% endif %}
 				<!-- Nav tabs -->
 				<div class="tabbing">
 					<ul class="nav nav-tabs" role="tablist">
@@ -255,6 +259,7 @@ assigntoken(csrf_token);
                                         <tr>
                                             <th>{% trans 'S.N.' %}</th>
                                             <th>{% trans 'Form' %} {% trans 'Title' %}</th>
+                                             <th>{% trans 'Default Submission Status' %}</th>
                                             <th>{% trans 'Assigned' %} {% trans 'Date' %}</th>
                                             <th>{% trans 'Responses' %}</th>
                                             <th>{% trans 'Education' %} {% trans 'Material' %}</th>
@@ -264,11 +269,16 @@ assigntoken(csrf_token);
                                     <tbody data-bind="foreach: forms">
                                         <tr>
                                             <th scope="row" data-bind="text: $index()+1"></th>
+
+
                                             <td><span data-bind="text: name"></span>
-                                        
-                                             <select class="pull-right" data-bind="options: availableoptions, optionsText: 'name',
-                                              optionsValue: 'id', value: default_submission_status"></select>
-                                            <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
+                                            </td>
+                                            <td>
+                                           
+
+
+                                             <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select>
+                                            
                                             </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text:responses_count"></td>
@@ -386,14 +396,14 @@ assigntoken(csrf_token);
                                             {% csrf_token %}
 
                                               {{schedule_form.as_p}}
-                                              <div class="form-group date1">
+                                              <!-- <div class="form-group date1">
                                                   <label for="start">{% trans 'Start:' %}</label>
                                                   <input data-bind="datePicker : date_range_start" type="date" id="start">
                                               </div>
                                               <div class="form-group date2">
                                                   <label for="End"> {% trans 'End:' %}</label>
                                                   <input data-bind="datePicker : date_range_end" type="date" id="End">
-                                              </div>
+                                              </div> -->
                                            <div class="form-group">
                                               <!-- <span style="font-weight: bold;">{% trans 'Days:' %}</span> -->
                                               <!--   <div data-bind="foreach: $parent.days">
@@ -409,6 +419,7 @@ assigntoken(csrf_token);
                                             
                                             </div>
                                             <div class="form-group">
+                                            <span style="font-weight: bold;">{% trans 'Default Submission Status' %}:</span>
                                                 <select data-bind="options: availableoptions, optionsText: 'name',
                                               optionsValue: 'id', value: default_submission_status"></select>
                                             </td>
@@ -609,9 +620,10 @@ assigntoken(csrf_token);
 										<th>{% trans 'S.N.' %}</th>
 										<th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
 										<th>{% trans 'Form' %} {% trans 'Title' %}</th>
-										<th>{% trans 'Assigned' %} {% trans 'Date' %}</th>
+                                        <th>{% trans 'Default Submission Status' %}</th>
+										<!-- <th>{% trans 'Assigned' %} {% trans 'Date' %}</th>
 										<th>{% trans 'End' %} {% trans 'Date' %}</th>
-										<th>{% trans 'Days' %}</th>
+										<th>{% trans 'Days' %}</th> -->
                                         <th>{% trans 'Type' %}</th>
 										<th>{% trans 'Responses' %}</th>
 										<th>{% trans 'Edu..' %} {% trans 'Mat' %}</th>
@@ -624,14 +636,15 @@ assigntoken(csrf_token);
 										<td data-bind="text: name"></td>
 										<td>
                                         <span data-bind="text: form_name"></span>
+                                       </td>
+                                        <td>
+
+										<select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select>
                                         
-										<select class="pull-right" data-bind="options: availableoptions, optionsText: 'name',
-                                              optionsValue: 'id', value: default_submission_status"></select>
-                                        <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
                                         </td>
-                                        <td data-bind="text: date_range_start"></td>
+                                        <!-- <td data-bind="text: date_range_start"></td>
 										<td data-bind="text: date_range_end"></td>
-										<td data-bind="text: days"></td>
+										<td data-bind="text: days"></td> -->
                                         <td data-bind="text: schedule_level"></td>
 										<td data-bind="text: responses_count"></td>
                                         <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
@@ -813,7 +826,7 @@ assigntoken(csrf_token);
                                                                                 <span data-bind='text: $index()+1'></span><br>
                                                                                 {% trans 'Name:' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name"><br>
                                                                                 {% trans 'Description:' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Description"><br>
-                                                                                {% trans 'Form' %} {% trans 'Assigned:' %}
+                                                                                {% trans 'Default' %} {% trans 'Submission' %} {% trans 'status' %}
                                                                                 <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
                                                                                     value: stage_forms().xf().id">
                                                                                 </select>
@@ -875,7 +888,7 @@ assigntoken(csrf_token);
 
                                                                      <div class="col-sm-12">
                                                                       <div class="form-group">
-                                                                          <label for="stagename"><span class="stage-label"></span>{% trans 'Default Submission Status:' %}</label>
+                                                                          <label for="stagename"><span class="stage-label"></span>{% trans 'Default Submission Status' %}:</label>
                                                                          <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: stage_forms().default_submission_status"></select>
                                                                           <div class="gap"></div>
                                                                     </div>
@@ -937,7 +950,7 @@ assigntoken(csrf_token);
                                     </div>
                                  </div>
                                 <div id="accordion" role="tablist" data-bind="foreach:stages">
-                                  <div class="card margin-bottom">
+                                  <div class="card margin-top">
                                     <div class="card-header clearfix" role="tab" data-bind="attr: { id: 'heading_' + $index() }" >
                                         <div class="stage-name" data-toggle="collapse"
                                              aria-expanded="true"
@@ -979,7 +992,7 @@ assigntoken(csrf_token);
                                             <ul data-bind="attr: { id: 'substages_' + $index() }, foreach:parent">
 
                                                 <li class="clearfix">
-                                                <br>
+                                                
                                                     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                                                         <div data-bind="with: em">
                                                           <div class="modal-dialog form-modal" role="document">
@@ -1067,9 +1080,11 @@ assigntoken(csrf_token);
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
                                                         <strong>{% trans 'Form' %} {% trans 'Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
-                                                        
-                                                         <select class="pull-right" data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: stage_forms().default_submission_status"></select>
+
                                                         <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
+
+                                                         <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: stage_forms().default_submission_status"></select>
+
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
                                                         <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
@@ -1103,7 +1118,7 @@ assigntoken(csrf_token);
                                                                        </div>
 
                                                                        <div class="form-group">
-                                                                           <label for="inputEMText">{% trans 'Form' %} {% trans 'Assigned:' %}</label>
+                                                                           <label for="inputEMText">{% trans 'Default' %} {% trans 'Submission' %} {% trans 'Status' %}:</label>
                                                                            <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: stage_forms().default_submission_status"></select>
                                                                            
                                                                        </div>
@@ -1293,9 +1308,11 @@ assigntoken(csrf_token);
                                         <tr>
                                             <th>{% trans 'S.N.' %}</th>
                                             <th>{% trans 'Form' %} {% trans 'Title' %}</th>
+                                            <th>{% trans 'Default Submission Status' %}</th>
                                             <th>{% trans 'Assigned' %} {% trans 'Date' %}</th>
                                             <th>{% trans 'Responses' %}</th>
                                             <th>{% trans 'Education' %} {% trans 'Material' %}</th>
+
                                         </tr>
                                     </thead>
                                     <tbody data-bind="foreach: surveyForms">
@@ -1303,10 +1320,12 @@ assigntoken(csrf_token);
                                             <th scope="row" data-bind='text: $index()+1'></th>
                                             <td>
                                              <span data-bind="text: name"></span>
-                                             
-                                             <select class="pull-right" data-bind="options: availableoptions, optionsText: 'name',
-                                              optionsValue: 'id', value: default_submission_status"></select>
-                                             <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
+
+                                             </td>
+                                             <td>
+
+                                             <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select>
+                                            
                                              </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text: responses_count"></td>

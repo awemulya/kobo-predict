@@ -59,7 +59,8 @@ from .views import (
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList,
     senduserinvite, ActivateRole, checkemailforinvite, ProjectSummaryReport, SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView,
     stages_status_download, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
-    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, AllResponseImages , SiteResponseCoordinates )
+    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages )
+
 
 
 urlpatterns = [
@@ -92,6 +93,7 @@ urlpatterns = [
 
     url(r'^proj-users/(?P<pk>\d+)/$', ProjUserList.as_view(), name='proj-user-list'),
     url(r'^proj-sites/(?P<pk>\d+)/$', ProjSiteList.as_view(), name='proj-site-list'),
+    url(r'^donor-proj-sites/(?P<pk>\d+)/$', DonorProjSiteList.as_view(), name='donor-proj-site-list'),
     
     url(r'^site-users/(?P<pk>\d+)/$', SiteUserList.as_view(), name='site-user-list'),
 
@@ -210,5 +212,10 @@ urlpatterns = [
     url(r'^site/all-pictures/(?P<pk>\d+)/$', AllResponseImages.as_view(), name='all_response_image'),
 
     url(r'^project/region-list/(?P<pk>\d+)/$', RegionViewSet.as_view({'get': 'list'}), name='project_list'),
+
+    url(r'^project-dashboard/lite/(?P<pk>[0-9]+)/$', DonorProjectDashboard.as_view(), name='donor_project_dashboard_lite'),
+    url(r'^site-dashboard/lite/(?P<pk>[0-9]+)/$', DonorSiteDashboard.as_view(), name='site_dashboard_lite'),
+    url(r'^project/(?P<pk>\d+)/define-criteria/$', DefineProjectSiteCriteria.as_view(), name='define-site-criteria'),
+    
 
     ]

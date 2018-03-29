@@ -72,6 +72,10 @@ class UserRole(models.Model):
             self.site = None
             self.organization = self.project.organization
 
+        elif self.group.name == 'Project Doner':
+            self.site = None
+            self.organization = self.project.organization
+
         elif self.group.name in ['Site Supervisor', 'Reviewer']:
             self.project = self.site.project
             self.organization = self.site.project.organization

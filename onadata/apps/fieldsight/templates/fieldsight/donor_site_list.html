@@ -36,26 +36,43 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 });
 
     </script>
+<style>
 
+.select-box{
+	padding: 7px;
+}
+	select.form-control{
+		height: 70% !important;
+		margin-top:5px;
+		padding: 3px;
+	}
+	.form-control{
+	font-size: 12px !important;
+	font-weight: 100 !important;
+	font-family: inherit !important;
+	position: relative !important;
+	display:block !important;
+	}
+
+</style>
 {% endblock %}
 {% block content %}
 {% load filters %}
 <div id="main-content" class="padding">
-
-				{% if messages %}
-					{% for message in messages %}
-						<div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
-						  <strong class="text-capitalize">{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}!</strong> {{ message }}
-						</div>
-					{% endfor %}
-				{% endif %}
 				<section class="panel">
 
                     <header class="panel-heading clearfix">
-                    <h3><i class="la la-map-marker"></i>{% trans 'Sites' %}</h3>
+						<div class="container-fluid">
+						<div class="row">
+							<div class="col-md-5">
+                    <div class="panel-heading">
+                        <h3><i class="la la-map-marker"></i>{% trans 'Sites' %}</h3>
+					</div>
+							</div>
 
-                    <div class="panel-heading-right">
-                    		<select name ="sortby" class="form-control form-control-sm" data-bind="value:sortby, valueUpdate:'afterkeydown'">
+						<div class="col-md-2 select-box">
+
+							<select name ="sortby" class="form-control no-btn-search" data-bind="value:sortby, valueUpdate:'afterkeydown'">
 							<option class="dropdown-list" value="sitename" disabled selected>{% trans 'Select' %} {% trans 'your' %} {% trans 'option' %}</option>
 								<option value="rejected">{% trans 'Rejected' %}</option>
 								<option value="flagged">{% trans 'Flagged' %}</option>
@@ -68,28 +85,15 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 
 
 							</select>
-							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i> {% trans 'Search' %}</a>
 
-							{% if type == "project" %}
-							<a href="{% url 'fieldsight:site-add' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'New' %}</a>
-
-							<a href="{% url 'fieldsight:define-site-meta' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
-							<a href="{% url 'fieldsight:site-upload' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-files-o"></i> {% trans 'Bulk' %} {% trans 'Upload' %} {% trans 'Sites' %}</a>
-							{% endif %}
-							{% if type == "region" %}
-
-							<a href="{% url 'fieldsight:regional-site-add' obj.project.id pk %}" title="" class="btn btn-sm
-							btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'New' %} {% trans 'Regional' %} {% trans 'Site' %}</a>
-							<a href="{% url 'fieldsight:define-site-meta' obj.project.id %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
-							{% elif type == "Unregioned" %}
-							<a href="{% url 'fieldsight:site-add' project_id %}" title="" class="btn btn-sm
-
-							btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'New' %} {% trans 'Regional' %} {% trans 'Site' %}</a>
-							<a href="{% url 'fieldsight:define-site-meta' project_id %}" title="" class="btn btn-sm btn-primary"><i class="la la-files-o"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
-							{% endif %}
-
-                    </div>
-						
+							<!--<select name ="orderbyasce" class="form-control no-btn-search" data-bind="value:orderbyasce, valueUpdate:'afterkeydown'">-->
+								<!--<option value="asce">Ascending</option>-->
+								<!--<option value="desc">Descending</option>-->
+							<!--</select>-->
+						</div>
+					
+					</div>
+						</div>
                     </header>
 
 					
@@ -114,7 +118,7 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 						<!--Site Listing-->
 						<div class="row" data-bind="foreach: sites">
 							<div class="col-md-4 col-sm-6">
-								<a data-bind="attr: { href: url }" title="" class="site-item-wrap  margin-top clearfix">
+								<a data-bind="attr: { href: '/fieldsight/donor/site-dashboard/'+id()+'/' }" title="" class="site-item-wrap  margin-top clearfix">
 									<div class="logo">
 										<img data-bind="attr:{src: logo}" alt="" width="100" height="100">
 									</div>
@@ -127,27 +131,27 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 									<ul class="icon-listing clearfix margin-top">
 										<li>
 											<i class="la la-exclamation"></i>
-											<span data-bind="text: get_site_submission_count().rejected">
+											<spam data-bind="text: get_site_submission_count().rejected">
 
-											</span>
+											</spam>
 										</li>
 										<li>
 											<i class="la la-flag"></i>
-											<span data-bind="text: get_site_submission_count().flagged">
+											<spam data-bind="text: get_site_submission_count().flagged">
 
-											</span>
+											</spam>
 										</li>
 										<li>
 											<i class="la la-hourglass-half"></i>
-											<span data-bind="text: get_site_submission_count().outstanding">
+											<spam data-bind="text: get_site_submission_count().outstanding">
 
-											</span>
+											</spam>
 										</li>
 										<li>
 											<i class="la la-thumbs-up"></i>
-											<span data-bind="text: get_site_submission_count().approved">
+											<spam data-bind="text: get_site_submission_count().approved">
 
-											</span>
+											</spam>
 										</li>
 									</ul>
 

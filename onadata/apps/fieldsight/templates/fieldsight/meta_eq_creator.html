@@ -46,8 +46,8 @@
 
 </script>
     <script type="text/babel">
-        var _json_question = JSON.parse("{{json_questions|escapejs}}");
-        console.log(_json_question);
+       
+        var _json_question={{ json_questions|safe }};
 
         var CustomSelect = React.createClass({
         
@@ -61,23 +61,29 @@
                 this.setState({
                   selectValue: this.props.options[event.target.selectedIndex].label
                 });
-                this.props.onChange(event.target.value);
+                console.log(event.target.value);
+                 this.props.onChange(event.target.value);
+
             },
             
             render: function() {
                 var selectValue = this.state.selectValue;
-                var options = this.props.options.map(function(item) {
+
+                var attrib= this.props.attrib;
+                console.log(attrib);
+                var options = this.props.options.map(function(item, index) {
                   if (selectValue === item.question_name) {
-                    return <option selected value = {
-                      item.question_name
+                    return <option value = {
+                      index
                     } > {
-                      item.question_text
+                      item[attrib]
                     } </option>;
                   } else {
                     return <option value = {
-                      item.question_name
+                      index
                     } > {
-                      item.question_text
+                      item[attrib]
+
                     } </option>;
                   }
 
@@ -95,32 +101,174 @@
         });
 
 
+        var MetaOperator = React.createClass({
+            
+            getInitialState: function() {
+                return {
+                  selectValue: this.props.defaultValue || "Select Me",
+                  type: this.props.question_type
+                }
+            },
 
-var optionsArray = [{
-  label: 'red',
-  value: '#f00'
-}, {
-  label: 'blue',
-  value: '#00f'
-}, {
-  label: 'green',
-  value: '#0f0'
-}, {
-  label: 'white',
-  value: '#fff'
-}, {
-  label: 'dark gray',
-  value: '#333'
-}, {
-  label: 'gray',
-  value: '#ccc'
-}, {
-  label: 'black',
-  value: '#000'
-}];
+            _onChange: function(event, item) {
+                this.setState({
+                  selectValue: this.props.options[event.target.selectedIndex].label
+                });
+                // this.props.onChange(event.target.value);
+            },
+            
+            render: function() {
+                var options_default=['=', '!='];
+                var options_number=['=', '!=', '>', '<', '>=', '<='];
+                var options = options_default;
+                if (this.props.question_type === "Number"){
+                  options = options_number;
+                  console.log("sadasdsadsa");
+                }
+                var selectValue = this.state.selectValue;
+                var options = options.map(function(item) {
+                  if (selectValue === item.question_name) {
+                    return <option selected value = {
+                      item
+                    } > {
+                      item
+                    } </option>;
+                  } else {
+                    return <option value = {
+                      item
+                    } > {
+                      item
+                    } </option>;
+                  }
+
+                });
+                
+                return ( 
+                  <div className = "select">
+                    
+                    <select> 
+                      {options} 
+                    </select> 
+                  </div>
+                );
+            }
+        });
+
+        var MetaConditionAttribute = React.createClass({
+            
+            getInitialState: function() {
+                return {
+                  
+                }
+            },
+
+            save: function () {
+
+                // this.props.updateOption(this.refs.conditionAttribute.value);
+                // console.log('save');
+            },
+            
+            renderText:function(){
+                // console.log("----"+this.props.option_text);
+                return(
+                    <input type="text" ref="conditionAttribute" className="form-control" onChange={this.save} defaultValue={this.props.defaultValue} placeholder= "Condition"></input>
+
+            );
+            },
+            renderNumber:function(){
+                // console.log("----"+this.props.option_text);
+                return(
+                    <input type="number" ref="conditionAttribute" className="form-control" onChange={this.save} defaultValue={this.props.defaultValue} placeholder= "Condition"></input>
+
+            );
+            },
+
+            render: function() {
+                if (this.props.question_type === "Text"){
+                  return this.renderText();
+                 
+                }
+                else if (this.props.question_type === "Number"){
+                  return this.renderNumber();
+          
+                }
+                else{
+                  return false;
+                }
+              }
+                     
+        });
+
+        var TinyEquation = React.createClass({
+        
+            getInitialState: function() {
+                return {
+                 data:{index:'',
+                  operator:'',
+                  meta_operator:'',
+                  meta_question_name:'',
+                  meta_question_type:'',
+                  meta_condition_attribute:''    
+                  }
+                }
+            },
+
+            update_meta_condition_attribute: function(index){
+              var state = this.state.data;
+              state.meta_condition_attribute = meta_question_options[index].option_text;
+              this.setState({data:state});
+              console.log(this.state.data);
+              
+            },
+
+            update_meta_question: function(index){
+              var state = this.state.data;
+              state.meta_question_name = _json_question[index].question_name;
+              state.meta_question_type = _json_question[index].question_type;
+              if (state.meta_question_type === "MCQ"){
+                state['meta_question_options'] = _json_question[index].mcq_options;
+              }else{
+                delete state.meta_question_options;
+              }
+              this.setState({data:state});
+              console.log(this.state.data);
+            },
+
+            render: function() {
+                if (this.state.data.meta_question_type === "MCQ"){
+                return ( 
+                    <div>
+                      
+                      <CustomSelect name="tss" attrib={"question_text"} options={_json_question} defaultValue={this.state.data.meta_question_name} onChange={this.update_meta_question}/>
+                      
+                      <MetaOperator question_type={this.state.data.meta_question_type} defaultValue={this.state.data.meta_operator}/>
+                       
+                       <CustomSelect name="test" options={this.state.data.meta_question_options} defaultValue={this.props.defaultValue} onChange={this.update_meta_condition_attribute} attrib={"option_text"}/>
+                   
+                    
+                    </div>
+                  );
+                }else{
+                return ( 
+                  <div>
+                    
+                    <CustomSelect attrib={"question_text"} options={_json_question} defaultValue={this.state.data.meta_question_name} onChange={this.update_meta_question}/>
+                    <MetaOperator question_type={this.state.data.meta_question_type} defaultValue={this.state.data.meta_operator}/>
+                    <MetaConditionAttribute question_type={this.state.data.meta_question_type} defaultValue={this.state.data.meta_condition_attribute}/>
+                  
+                  </div>
+                );
+              }
+            }
+        });
+
+
+
+
 
         
-        ReactDOM.render(<CustomSelect name="colorPicker" options={_json_question} /> , document.getElementById('app')
+        ReactDOM.render(<TinyEquation /> , document.getElementById('app')
+
             );
     </script>
 

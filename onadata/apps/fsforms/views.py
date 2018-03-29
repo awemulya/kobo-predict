@@ -46,7 +46,8 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
 from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
     EducationMaterial, EducationalImages, InstanceImages
 from django.db.models import Q
-from onadata.apps.fieldsight.rolemixins import MyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin
+from onadata.apps.fieldsight.rolemixins import MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
+
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -259,7 +260,7 @@ def stage_add(request, site_id=None):
     form = StageForm(instance=instance)
     return render(request, "fsforms/stage_form.html", {'form': form, 'obj': site})
 
-class ProjectResponses(ProjectRoleMixin, View): 
+class ProjectResponses(ReadonlyProjectLevelRoleMixin, View): 
     def get(self,request, pk=None):
         obj = get_object_or_404(Project, pk=pk)
         schedules = Schedule.objects.filter(project_id=pk, site__isnull=True, schedule_forms__isnull=False)
@@ -271,7 +272,7 @@ class ProjectResponses(ProjectRoleMixin, View):
                       {'obj': obj, 'schedules': schedules, 'stages':stages, 'generals':generals, 'surveys': surveys,
                        "deleted_forms":deleted_forms, 'project': pk})
 
-class Responses(ReviewerRoleMixin, View):
+class Responses(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk=None):
         obj = get_object_or_404(Site, pk=pk)
         schedules = Schedule.objects.filter(site_id=pk, project__isnull=True, schedule_forms__isnull=False)
@@ -504,8 +505,7 @@ def project_edit_schedule(request, id):
 
 @group_required("Project")
 def edit_schedule(request, id):
-    schedule = get_object_or_404(
-        Schedule, pk=id)
+    schedule = get_object_or_404(Schedule, pk=id)
     if request.method == 'POST':
         form = ScheduleForm(data=request.POST, instance=schedule, request=request)
         if form.is_valid():
@@ -1263,7 +1263,7 @@ def download_xform(request, pk):
 
 
 
-class FullResponseTable(FormMixin, View):
+class FullResponseTable(ReadonlyFormMixin, View):
     def get(self, request, fsxf_id):
         limit = int(request.GET.get('limit', 100))
         fsxf_id = int(fsxf_id)
@@ -1333,7 +1333,7 @@ def html_export(request, fsxf_id):
     context['obj'] = fsxf
     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
-class Html_export(FormMixin, ListView):
+class Html_export(ReadonlyFormMixin, ListView):
     model =   FInstance
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
@@ -1354,7 +1354,7 @@ class Html_export(FormMixin, ListView):
         queryset = FInstance.objects.filter(site_fxf=fsxf_id)
         return queryset
 
-class Project_html_export(FormMixin, ListView):
+class Project_html_export(ReadonlyFormMixin, ListView):
     model =   FInstance
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
@@ -1547,24 +1547,25 @@ def alter_answer_status(request, instance_id, status, fsid):
 
 
 # @group_required('KoboForms')
-def instance_kobo(request, fsxf_id):
-
-    fxf = FieldSightXF.objects.get(pk=fsxf_id)
-    xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
-    audit = {
-        "xform": xform.id_string,
-    }
-    audit_log(
-        Actions.FORM_DATA_VIEWED, request.user, xform.user,
-        _("Requested instance view for '%(id_string)s'.") %
-        {
-            'id_string': xform.id_string,
-        }, audit, request)
-    return render(request, 'fs_instance.html', {
-        'username': xform.user,
-        'fxf': fxf,
-        'can_edit': can_edit
-    })
+class InstanceKobo(ConditionalFormMixin, View):
+    def get(self, request, fsxf_id, is_read_only):
+        fxf = FieldSightXF.objects.get(pk=fsxf_id)
+        xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
+        audit = {
+            "xform": xform.id_string,
+        }
+        audit_log(
+            Actions.FORM_DATA_VIEWED, request.user, xform.user,
+            _("Requested instance view for '%(id_string)s'.") %
+            {
+                'id_string': xform.id_string,
+            }, audit, request)
+        return render(request, 'fs_instance.html', {
+            'username': xform.user,
+            'fxf': fxf,
+            'can_edit': can_edit,
+            'is_readonly': is_read_only
+        })
 
 
 @require_http_methods(["GET", "OPTIONS"])

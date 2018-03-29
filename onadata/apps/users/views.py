@@ -296,6 +296,7 @@ class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
     #
     #     return HttpResponseRedirect(self.success_url)
 
+
 class MyProfile(LoginRequiredMixin, View):
     def get(self, request, pk=None):
         if not pk or pk =='0':
@@ -341,6 +342,7 @@ class EndUserRole(EndRoleMixin, View):
         # return None
         messages.success(request, 'Role Sucessfully Unassigned.')
         return HttpResponseRedirect(next_url)
+
 
 class UsersListView(TemplateView, SuperAdminMixin):
     template_name = "users/list.html"
