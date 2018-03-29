@@ -23,7 +23,7 @@ from celery.result import AsyncResult
 
 class LogSerializer(serializers.ModelSerializer):
     source_uid = serializers.ReadOnlyField(source='source_id', read_only=True)
-    source_name = serializers.ReadOnlyField(source='source.username', read_only=True)
+    source_name = serializers.SerializerMethodField(read_only=True)
     source_img = serializers.ReadOnlyField(source='source.user_profile.profile_picture.url', read_only=True)
     get_source_url = serializers.ReadOnlyField()
     
@@ -48,10 +48,12 @@ class LogSerializer(serializers.ModelSerializer):
         model = FieldSightLog
         exclude = ('title', 'description', 'is_seen', 'content_type', 'organization', 'project', 'site', 'object_id', 'extra_object_id', 'source', 'extra_content_type',)
 
+    def get_source_name(self, obj):
+        return obj.source.first_name + " " + obj.source.last_name
 
 
 
-class NotificationListView(OrganizationMixin, ListView):
+class NotificationListView(LoginRequiredMixin, ListView):
     model = FieldSightLog
     paginate_by = 100
 

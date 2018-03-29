@@ -1,3 +1,4 @@
+
 from __future__ import unicode_literals
 import datetime
 import json
@@ -22,6 +23,7 @@ from onadata.apps.fsforms.fsxform_responses import get_instances_for_field_sight
 from django.contrib.sites.models import Site as DjangoSite
 
 SHARED_LEVEL = [(0, 'Global'), (1, 'Organization'), (2, 'Project'),]
+SCHEDULED_LEVEL = [(0, 'Daily'), (1, 'Weekly'), (2, 'Monthly'),]
 FORM_STATUS = [(0, 'Pending'), (1, 'Rejected'), (2, 'Flagged'), (3, 'Approved'), ]
 
 
@@ -59,6 +61,7 @@ class Stage(models.Model):
     project = models.ForeignKey(Project, related_name="stages", null=True, blank=True)
     ready = models.BooleanField(default=False)
     project_stage_id = models.IntegerField(default=0)
+    weight = models.IntegerField(default=0)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
@@ -101,7 +104,7 @@ class Stage(models.Model):
 
     def get_sub_stage_list(self):
         if not self.stage:
-            return Stage.objects.filter(stage=self).values('stage_forms__id','stage_forms__xf__title','stage_id')
+            return Stage.objects.filter(stage=self).values('stage_forms__id','name','stage_id')
         return []
 
     @property
@@ -167,6 +170,7 @@ class Schedule(models.Model):
     date_range_end = models.DateField(default=datetime.date.today)
     selected_days = models.ManyToManyField(Days, related_name='days', blank=True,)
     shared_level = models.IntegerField(default=2, choices=SHARED_LEVEL)
+    schedule_level_id = models.IntegerField(default=0, choices=SCHEDULED_LEVEL)
     date_created = models.DateTimeField(auto_now_add=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
@@ -189,6 +193,9 @@ class Schedule(models.Model):
     def __unicode__(self):
         return getattr(self, "name", "")
 
+class DeletedXForm(models.Model):
+    xf = models.OneToOneField(XForm, related_name="deleted_xform")
+    date_created = models.DateTimeField(auto_now=True)
 
 class FieldSightXF(models.Model):
     xf = models.ForeignKey(XForm, related_name="field_sight_form")
@@ -231,6 +238,13 @@ class FieldSightXF(models.Model):
                                            self.xf.title,)
     def getresponces(self):
         return get_instances_for_field_sight_form(self.pk)
+
+    def getlatestsubmittiondate(self):
+        if self.site is not None:
+            return self.site_form_instances.order_by('-pk').values('date')[:1]
+        else:
+            return self.project_form_instances.order_by('-pk').values('date')[:1]
+
 
     def get_absolute_url(self):
         if self.project:
@@ -433,11 +447,14 @@ class FInstance(models.Model):
                         data.append(row)
 
 
-        def parse_group(g_object):
-            g_question = g_object['name']
+        def parse_group(prev_groupname, g_object):
+            g_question = prev_groupname+g_object['name']
             for first_children in g_object['children']:
                 question = first_children['name']
                 question_type = first_children['type']
+                if question_type == 'group':
+                    parse_group(g_question+"/",first_children)
+                    continue
                 answer = ''
                 if g_question+"/"+question in json_answer:
                     if question_type == 'note':
@@ -451,13 +468,14 @@ class FInstance(models.Model):
                     question = first_children['label']
                 row={'type':question_type, 'question':question, 'answer':answer}
                 data.append(row)
+                
 
         def parse_individual_questions(parent_object):
             for first_children in parent_object:
                 if first_children['type'] == "repeat":
                     parse_repeat(first_children)
                 elif first_children['type'] == 'group':
-                    parse_group(first_children)
+                    parse_group("",first_children)
                 else:
                     question = first_children['name']
                     question_type = first_children['type']

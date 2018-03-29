@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import time
 import json
+import datetime
 from django.db import transaction
 from django.contrib.gis.geos import Point
 from celery import shared_task
@@ -11,6 +12,7 @@ from django.contrib import messages
 from channels import Group as ChannelGroup
 from django.contrib.auth.models import Group
 from celery import task, current_task
+
 
 @shared_task()
 def printr():
@@ -37,6 +39,7 @@ def bulkuploadsites(source_user, file, pk):
         
         with transaction.atomic():
             i=0
+            interval = count/20
             for site in sites:
                 # time.sleep(0.7)
                 site = dict((k, v) for k, v in site.iteritems() if v is not '')
@@ -57,10 +60,10 @@ def bulkuploadsites(source_user, file, pk):
                                                             project=project, type_id=type_id, region_id = region_id)
                 _site.phone = site.get("phone")
                 _site.address = site.get("address")
-                _site.public_desc = site.get("public_desc"),
+                _site.public_desc = site.get("public_desc")
                 _site.additional_desc = site.get("additional_desc")
                 _site.location = location
-                _site.logo = "logo/default-org.jpg"
+                _site.logo = "logo/default_site_image.png"
 
                 meta_ques = project.site_meta_attributes
 
@@ -72,7 +75,7 @@ def bulkuploadsites(source_user, file, pk):
                 _site.site_meta_attributes_ans = myanswers
                 _site.save()
                 i += 1
-                interval = count/20
+                
                 if i > interval:
                     interval = i+interval
                     bulkuploadsites.update_state(state='PROGRESS',meta={'current': i, 'total': count})
@@ -351,7 +354,9 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
     users_count = len(users)
 
     task_id = multiuserassignregion.request.id
+    print task_id
     task = CeleryTaskProgress.objects.get(task_id=task_id)
+    print task
     task.content_object = project
     task.description = "Assign "+str(users_count)+" people in "+str(sites_count)+" regions."
     task.status=1
@@ -365,6 +370,7 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
                 else: 
                     sites = Site.objects.filter(region_id = region_id, project_id=project_id).values('id')
                 for site_id in sites:
+                    print "Assigning to site : " + str(site_id)
                     for user in users:
                         site = Site.objects.filter(pk=site_id['id']).first()
                         if site and site.project_id == project.id: 
@@ -441,7 +447,8 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
             ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
 
     except Exception as e:
-        print 'Site Upload Unsuccesfull. ------------------------------------------%s' % e
+        print 'Bulk role assign Unsuccesfull. ------------------------------------------%s' % e
+        task.description = "Assign "+str(users_count)+" people in "+str(sites_count)+" regions. ERROR: " + str(e) 
         task.status = 3
         task.save()
         noti = FieldSightLog.objects.create(source=source_user, type=422, title="Bulk Region User Assign",

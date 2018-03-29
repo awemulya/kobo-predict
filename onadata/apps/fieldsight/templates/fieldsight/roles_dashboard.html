@@ -87,6 +87,47 @@
                     </div>
 
 
+
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                           
+                            {% if proj_donor %}
+                            <div class="widget-info margin-top bg-white padding">
+                                <div class="widget-head">
+                                    <h4>{% trans 'Donor Roles' %}</h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="max-260-scroll" style="overflow-y: scroll;">
+                                        <div class="row">
+
+                                        {% for role in proj_donor %}
+                                            <div class="col-lg-3 col-md-12" style="padding:10px;">
+                                                <a href="{% url 'fieldsight:donor_project_dashboard_lite' role.project.pk %}" title="">
+                                                <div class="project-item-wrap clearfix">
+                                                    <div class="project-logo">
+                                                        <img src="{% if role.project.logo %}{{ role.project.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
+                                                    </div>
+                                                    <div class="project-basic-info">
+                                                        <h4>{{ role.project.name }}</h4>
+                                                        <p>{{ role.project.address }}</p>
+                                                    </div>
+                                                </div>
+                                                </a>
+                                            </div>
+                                        {% endfor %}
+                                            
+                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                           
+                    </div>
+                    </div>
+
+
                     <div class="row">
                         <div class="col-md-12 col-lg-12">
                            

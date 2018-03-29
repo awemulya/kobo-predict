@@ -29,6 +29,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
     default_submission_status = serializers.SerializerMethodField()
     responses_count = serializers.SerializerMethodField()
     latest_submission = serializers.SerializerMethodField()
+    schedule_level = serializers.SerializerMethodField('get_schedule_level_type', read_only=True)
 
     def validate(self, data):
         """
@@ -37,11 +38,11 @@ class ScheduleSerializer(serializers.ModelSerializer):
         if data.has_key('site'):
             if FieldSightXF.objects.filter(
                     xf__id=data['xf'], is_staged=False, is_scheduled=True, site=data['site']).exists():
-                raise serializers.ValidationError("Form Already Exists, Duplicate Forms Not Allowded")
+                raise serializers.ValidationError("Form Already Exists, Duplicate Forms Not Allowed")
         elif data.has_key('project'):
             if FieldSightXF.objects.filter(
                     xf__id=data['xf'], is_staged=False, is_scheduled=True, project=data['project']).exists():
-                raise serializers.ValidationError("Form Already Exists, Duplicate Forms Not Allowded")
+                raise serializers.ValidationError("Form Already Exists, Duplicate Forms Not Allowed")
         return data
 
     class Meta:
@@ -50,6 +51,14 @@ class ScheduleSerializer(serializers.ModelSerializer):
 
     def get_all_days(self, obj):
         return u"%s" % (", ".join(day.day for day in obj.selected_days.all()))
+
+    def get_schedule_level_type(self, obj):
+        if obj.schedule_level_id == 2:
+            return "Monthly"
+        elif obj.schedule_level_id == 1:
+            return "Weekly"
+        else:
+            return "Daily"
 
     def get_assigned_form(self, obj):
         if not FieldSightXF.objects.filter(schedule=obj).exists():
@@ -110,7 +119,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
         try:
             fsxf = FieldSightXF.objects.get(schedule=obj)
             
-            if fsxf.fsform is None:
+            if fsxf.site is None:
                 return fsxf.project_form_instances.count()
             else:
                 return fsxf.site_form_instances.filter(site_id=self.context.get('pk')).count()
@@ -123,7 +132,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
         try:
             fsxf = FieldSightXF.objects.get(schedule=obj)
             
-            if fsxf.fsform is None:
+            if fsxf.site is None:
                 response = fsxf.project_form_instances.order_by('-id')[:1]
             else:
                 response = fsxf.site_form_instances.filter(site_id=self.context.get('pk')).order_by('-id')[:1]

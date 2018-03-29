@@ -49,5 +49,5 @@ class UserProfile(models.Model):
         return reverse('users:profile', kwargs={'pk': self.user_id})
 
     def getname(self):
-        return self.user.username
+        return self.user.first_name + " " + self.user.last_name
 

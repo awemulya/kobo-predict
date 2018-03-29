@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
-from onadata.apps.fieldsight.models import Site, SiteCreateSurveyImages, ProjectType, Project
+from onadata.apps.fieldsight.models import Site, Region, SiteCreateSurveyImages, ProjectType, Project
 
 
 class SiteSerializer(serializers.ModelSerializer):
@@ -10,6 +10,7 @@ class SiteSerializer(serializers.ModelSerializer):
     blueprints = serializers.SerializerMethodField('get_blue_prints', read_only=True)
     organization_label = serializers.ReadOnlyField(source='project.organization.name', read_only=True)
     get_site_submission_count = serializers.ReadOnlyField()
+    # submission_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Site
@@ -17,11 +18,42 @@ class SiteSerializer(serializers.ModelSerializer):
         read_only_fields = ('is_active',)
 
     def get_progress(self, obj):
-        return obj.progress()
+        stages = obj.site_forms.filter(xf__isnull=False, is_staged=True, is_deleted=False).count()
+        approved = obj.site_instances.filter(form_status=3, site_fxf__is_staged=True).count()
+        if not approved:
+            return 0
+        if not stages:
+            return 0
+        p = ("%.0f" % (approved/(stages*0.01)))
+        p = int(p)
+        if p > 99:
+            return 100
+        return p
+        # return obj.progress()
 
     def get_blue_prints(self, obj):
         data = obj.blueprints.all()
         return [m.image.url for m in data]
+
+    def get_submission_count(self, obj):
+        instances = obj.site_instances.all()
+        outstanding, flagged, approved, rejected = 0, 0, 0, 0
+        for submission in instances:
+            if submission.form_status == 0:
+                outstanding += 1
+            elif submission.form_status == 1:
+                rejected += 1
+            elif submission.form_status == 2:
+                flagged += 1
+            elif submission.form_status == 3:
+                approved += 1
+        response = {}
+        response['outstanding'] = outstanding
+        response['rejected'] = rejected
+        response['flagged'] = flagged
+        response['approved'] = approved
+        return response
+
 
 
 class SiteUpdateSerializer(serializers.ModelSerializer):
@@ -105,3 +137,9 @@ class MinimalSiteSerializer(serializers.ModelSerializer):
         model = Site
         fields = ('id','name', 'identifier','type','region', )
         read_only_fields = ('is_active',)
+
+class RegionSerializer(serializers.ModelSerializer):
+    get_sites_count = serializers.ReadOnlyField()
+    class Meta:
+        model = Region
+        fields = ('id','name', 'identifier', 'get_sites_count')

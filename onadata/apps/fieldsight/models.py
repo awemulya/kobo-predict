@@ -266,6 +266,8 @@ class Region(models.Model):
     class Meta:
         unique_together = [('identifier', 'project'),]
 
+    def get_sites_count(self):
+        return self.regions.all().count()
 
 
 class Site(models.Model):

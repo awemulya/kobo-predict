@@ -26,10 +26,18 @@
         <section class="panel">
                     <header class="panel-heading clearfix">
                         <h3><i class="la la-pencil-square-o"></i>{% trans 'Form' %} {% trans 'Submissions' %} | {{ form_name  }}</h3>
+
+     
+
             <div class="panel-heading-right">
+            
+              <a class="btn btn-sm btn-primary" href="{% url 'forms:project_html_table_export' obj.id %}"><i class="la la-eye"></i> Detailed Responses List</a>
               <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForms" aria-expanded="false" aria-controls="searchForms"><i class="la la-search"></i> Search</a>
             
             </div>
+
+
+            
                     </header>
           <div class="panel-body">
             <!--Search Organization-->
@@ -57,9 +65,9 @@
     <thead>
       <tr>
         <th>{% trans 'S.N' %}</th>
-
         <th>{% trans 'Site' %} {% trans 'Name' %}</th>
         <th>{% trans 'Site' %} {% trans 'Id' %}</th>
+        <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
       </tr>
@@ -85,6 +93,7 @@
                   <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
                   <td>{{ sub.site.name }}</td>
                   <td>{{ sub.site.identifier }}</td>
+                  <td>{{ sub.instance.id }}</td>
                   <td>{{ sub.submitted_by.username }}</td>
                   <td>{{ sub.date }}</td>
                   </tr>
@@ -106,9 +115,9 @@
     <thead>
       <tr>
         <th>{% trans 'S.N' %}</th>
-
         <th>{% trans 'Site' %} {% trans 'Name' %}</th>
         <th>{% trans 'Site' %} {% trans 'Id' %}</th>
+        <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
       </tr>
@@ -122,6 +131,7 @@
                   <td>{{ forloop.counter }}</td>
                   <td>{{ sub.site.name }}</td>
                   <td>{{ sub.site.identifier }}</td>
+                  <td>{{ sub.instance.id }}</td>
                   <td>{{ sub.submitted_by.username }}</td>
                   <td>{{ sub.date }}</td>
                   </tr>

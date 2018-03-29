@@ -9,9 +9,9 @@ from channels import Group as ChannelGroup
 
 
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
-from onadata.apps.fieldsight.models import Site, ProjectType, Project
+from onadata.apps.fieldsight.models import Site, ProjectType, Project, Region
 from onadata.apps.fieldsight.serializers.SiteSerializer import MinimalSiteSerializer, SiteSerializer, SiteCreationSurveySerializer, \
-    SiteReviewSerializer, ProjectTypeSerializer, SiteUpdateSerializer, ProjectUpdateSerializer
+    SiteReviewSerializer, ProjectTypeSerializer, SiteUpdateSerializer, ProjectUpdateSerializer, RegionSerializer
 from onadata.apps.userrole.models import UserRole
 from django.contrib.auth.models import Group
 from django.db import transaction
@@ -75,7 +75,9 @@ class SiteViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing sites.
     """
-    queryset = Site.objects.all()
+    queryset = Site.objects.all()\
+        .select_related("type__name", "project__organization")\
+        .prefetch_related("site_instances", "site_forms", "blueprints")
     serializer_class = SiteSerializer
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     permission_classes = (SiteViewPermission,)
@@ -83,7 +85,8 @@ class SiteViewSet(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         project = self.kwargs.get('pk', None)
-        return queryset.filter(project__id=project, is_active=True)
+        qs = queryset.filter(project__id=project, is_active=True)
+        return qs
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -105,6 +108,17 @@ class SiteUpdateViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return {'request': self.request}
 
+class RegionViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing sites.
+    """
+    queryset = Region.objects.all()
+    serializer_class = RegionSerializer
+    # permission_classes = (SiteViewPermission,)
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(project_id=self.kwargs.get('pk', None))
+
 
 class ProjectUpdateViewSet(viewsets.ModelViewSet):
     """
@@ -121,6 +135,9 @@ class ProjectUpdateViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+
+
 
 
 class AllSiteViewSet(viewsets.ModelViewSet):

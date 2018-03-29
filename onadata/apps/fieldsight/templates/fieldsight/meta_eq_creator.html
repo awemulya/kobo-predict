@@ -1,0 +1,283 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block content %}
+{% load filters %}
+<style type="text/css">
+    #removebutton{
+    margin-top:33px;  
+}
+</style>
+ <script src="{% static 'js/reactjs/react.min.js' %}"></script>
+ <script src="{% static 'js/reactjs/browser.min.js' %}"></script>
+ <script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
+
+
+            <div id="main-content" class="padding">
+                <nav aria-label="breadcrumb" role="navigation">
+					{% block breadcrumbs %}
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</li>
+					 </ol>
+					{% endblock %}
+				</nav>
+
+                <section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-cogs"></i>{% trans 'Create' %} {% trans 'Equations' %} {% trans 'E=mc^2' %}</h3>
+                    </header>
+                    <div class="panel-body">
+                      
+                        <div id="newOrganization" class="margin-top">
+                           <div id="app"></div>
+                        </div>
+                    </div>
+
+                </section>
+                   
+                    
+
+            </div>
+{% endblock %}
+
+{%block extrascript %}
+<script>
+
+</script>
+    <script type="text/babel">
+       
+        var _json_question={{ json_questions|safe }};
+
+        var CustomSelect = React.createClass({
+        
+            getInitialState: function() {
+                return {
+                  selectValue: this.props.defaultValue || "Select Me"
+                }
+            },
+
+            _onChange: function(event, item) {
+                this.setState({
+                  selectValue: this.props.options[event.target.selectedIndex].label
+                });
+                console.log(event.target.value);
+                 this.props.onChange(event.target.value);
+
+            },
+            
+            render: function() {
+                var selectValue = this.state.selectValue;
+
+                var attrib= this.props.attrib;
+                console.log(attrib);
+                var options = this.props.options.map(function(item, index) {
+                  if (selectValue === item.question_name) {
+                    return <option value = {
+                      index
+                    } > {
+                      item[attrib]
+                    } </option>;
+                  } else {
+                    return <option value = {
+                      index
+                    } > {
+                      item[attrib]
+
+                    } </option>;
+                  }
+
+                })
+                
+                return ( 
+                  <div className = "select">
+                    
+                    <select name={this.props.name || ''} id={this.props.id || (this.props.name || '')} onChange = {this._onChange}> 
+                      {options} 
+                    </select> 
+                  </div>
+                );
+            }
+        });
+
+
+        var MetaOperator = React.createClass({
+            
+            getInitialState: function() {
+                return {
+                  selectValue: this.props.defaultValue || "Select Me",
+                  type: this.props.question_type
+                }
+            },
+
+            _onChange: function(event, item) {
+                this.setState({
+                  selectValue: this.props.options[event.target.selectedIndex].label
+                });
+                // this.props.onChange(event.target.value);
+            },
+            
+            render: function() {
+                var options_default=['=', '!='];
+                var options_number=['=', '!=', '>', '<', '>=', '<='];
+                var options = options_default;
+                if (this.props.question_type === "Number"){
+                  options = options_number;
+                  console.log("sadasdsadsa");
+                }
+                var selectValue = this.state.selectValue;
+                var options = options.map(function(item) {
+                  if (selectValue === item.question_name) {
+                    return <option selected value = {
+                      item
+                    } > {
+                      item
+                    } </option>;
+                  } else {
+                    return <option value = {
+                      item
+                    } > {
+                      item
+                    } </option>;
+                  }
+
+                });
+                
+                return ( 
+                  <div className = "select">
+                    
+                    <select> 
+                      {options} 
+                    </select> 
+                  </div>
+                );
+            }
+        });
+
+        var MetaConditionAttribute = React.createClass({
+            
+            getInitialState: function() {
+                return {
+                  
+                }
+            },
+
+            save: function () {
+
+                // this.props.updateOption(this.refs.conditionAttribute.value);
+                // console.log('save');
+            },
+            
+            renderText:function(){
+                // console.log("----"+this.props.option_text);
+                return(
+                    <input type="text" ref="conditionAttribute" className="form-control" onChange={this.save} defaultValue={this.props.defaultValue} placeholder= "Condition"></input>
+
+            );
+            },
+            renderNumber:function(){
+                // console.log("----"+this.props.option_text);
+                return(
+                    <input type="number" ref="conditionAttribute" className="form-control" onChange={this.save} defaultValue={this.props.defaultValue} placeholder= "Condition"></input>
+
+            );
+            },
+
+            render: function() {
+                if (this.props.question_type === "Text"){
+                  return this.renderText();
+                 
+                }
+                else if (this.props.question_type === "Number"){
+                  return this.renderNumber();
+          
+                }
+                else{
+                  return false;
+                }
+              }
+                     
+        });
+
+        var TinyEquation = React.createClass({
+        
+            getInitialState: function() {
+                return {
+                 data:{index:'',
+                  operator:'',
+                  meta_operator:'',
+                  meta_question_name:'',
+                  meta_question_type:'',
+                  meta_condition_attribute:''    
+                  }
+                }
+            },
+
+            update_meta_condition_attribute: function(index){
+              var state = this.state.data;
+              state.meta_condition_attribute = meta_question_options[index].option_text;
+              this.setState({data:state});
+              console.log(this.state.data);
+              
+            },
+
+            update_meta_question: function(index){
+              var state = this.state.data;
+              state.meta_question_name = _json_question[index].question_name;
+              state.meta_question_type = _json_question[index].question_type;
+              if (state.meta_question_type === "MCQ"){
+                state['meta_question_options'] = _json_question[index].mcq_options;
+              }else{
+                delete state.meta_question_options;
+              }
+              this.setState({data:state});
+              console.log(this.state.data);
+            },
+
+            render: function() {
+                if (this.state.data.meta_question_type === "MCQ"){
+                return ( 
+                    <div>
+                      
+                      <CustomSelect name="tss" attrib={"question_text"} options={_json_question} defaultValue={this.state.data.meta_question_name} onChange={this.update_meta_question}/>
+                      
+                      <MetaOperator question_type={this.state.data.meta_question_type} defaultValue={this.state.data.meta_operator}/>
+                       
+                       <CustomSelect name="test" options={this.state.data.meta_question_options} defaultValue={this.props.defaultValue} onChange={this.update_meta_condition_attribute} attrib={"option_text"}/>
+                   
+                    
+                    </div>
+                  );
+                }else{
+                return ( 
+                  <div>
+                    
+                    <CustomSelect attrib={"question_text"} options={_json_question} defaultValue={this.state.data.meta_question_name} onChange={this.update_meta_question}/>
+                    <MetaOperator question_type={this.state.data.meta_question_type} defaultValue={this.state.data.meta_operator}/>
+                    <MetaConditionAttribute question_type={this.state.data.meta_question_type} defaultValue={this.state.data.meta_condition_attribute}/>
+                  
+                  </div>
+                );
+              }
+            }
+        });
+
+
+
+
+
+        
+        ReactDOM.render(<TinyEquation /> , document.getElementById('app')
+
+            );
+    </script>
+
+
+
+
+
+
+  
+{% endblock %}
+
+

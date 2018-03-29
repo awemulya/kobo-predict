@@ -120,6 +120,27 @@
                 },
                
             });
+
+            var email3ProjectTags = $('#email3ProjectTags');
+
+            var addEvent = function(text) {
+                $('#events_container').append(text + '<br>');
+            };
+
+            email3ProjectTags.tagit({
+              
+              
+                afterTagAdded: function(evt, ui) {
+                    emails3=email3ProjectTags.tagit('assignedTags')
+                    console.log(emails3);
+                },
+               
+                afterTagRemoved: function(evt, ui) {
+                    emails3=email3ProjectTags.tagit('assignedTags')
+                    console.log(emails3);
+                },
+               
+            });
           
 
           var email1SiteTags = $('#email1SiteTags');
@@ -179,11 +200,12 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/manage_people_site.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/manage_people_site.js?v=1.1"></script>
 
 <script>
 var emails1=[];
 var emails2=[];
+var emails3=[];
 
 var proj_site_url = "";
 var userurl = "";
@@ -198,8 +220,8 @@ var CSRF_TOKEN = '{{ csrf_token }}';
 
   {% if obj.cluster_sites %}
     var proj_region_url = '{% url 'fieldsight:project_regions_list' pk %}';
-    // assignurl = '{% url 'fieldsight:multi_user_region_assign' pk %}';
-    assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
+    assignurl = '{% url 'fieldsight:multi_user_region_assign' pk %}';
+    // assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
     
     var type = "region";
   {% else %}
@@ -343,7 +365,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
                           </div>
                           <div class="project-basic-info">
-                            <h4 data-bind="text:user().full_name"></h4>
+                            <h4 data-bind="text:user().first_name+' '+user().last_name"></h4>
                             <p data-bind="text:user().email"></p>
                           </div>
                         </div>
@@ -442,7 +464,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
                           </div>
                           <div class="project-basic-info">
-                            <h4 data-bind="text:user().full_name"></h4>
+                            <h4 data-bind="text:user().first_name+' '+user().last_name"></h4>
                             <p data-bind="text:user().email"></p>
                           </div>
                         </div>
@@ -505,6 +527,9 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   {% endif %}</a>
 
             </li>
+            <li class="nav-item">
+              <a class="nav-link " data-toggle="tab" href="#tab003" role="tab">{% trans 'Assign' %} {% trans 'Donors' %}</a>
+            </li>
           </ul>
           <!-- Tab panes -->
           <div class="tab-content">
@@ -513,41 +538,42 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                  
 
 
-                  <div class="col-md-8">
-            <div class="widget-info margin-top bg-white padding">
-              <div class="widget-head">
-                <h4>{% trans 'Invite' %} {% trans 'new' %} {% trans 'project' %} {% trans 'managers' %}</h4>
-              </div>
-              <div class="widget-body">
-                <form>
-                  <div class="input-group">
-
-                   <ul id="email1ProjectTags">
-                        
-                    </ul>
-                    <span class="input-group-btn">
-                      <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Project Manager', 1)" type="button"><i class="la la-user-plus"></i> {% trans 'Invite' %}</button>
-                    </span>
+                    <div class="col-md-8">
+                <div class="widget-info margin-top bg-white padding">
+                  <div class="widget-head">
+                    <h4>{% trans 'Invite' %} {% trans 'new' %} {% trans 'project' %} {% trans 'managers' %}</h4>
                   </div>
-                </form>
+                  <div class="widget-body">
+                    <form>
+                      <div class="input-group">
 
+                       <ul id="email1ProjectTags">
+                            
+                        </ul>
+                        <span class="input-group-btn">
+                          <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Project Manager', 1)" type="button"><i class="la la-user-plus"></i> {% trans 'Invite' %}</button>
+                        </span>
+                      </div>
+                    </form>
+
+
+                   
+                    <h4 class="text-center margin-top">
+                    <strong>{% trans 'OR' %}</strong>
+                    </h4>
+                    <div class="widget-head">
+                    <h4>{% trans 'Select' %} {% trans 'Users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Managers' %}</h4>
+                    </div>
+                   
+                    <form class="margin-top">
+                      <div class="input-group">
+                        <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                      </div>
+                    </form>
+                     <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
+                     <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
 
                
-                <h4 class="text-center margin-top">
-                <strong>{% trans 'OR' %}</strong>
-                </h4>
-                <div class="widget-head">
-                <h4>{% trans 'Select' %} {% trans 'Users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Managers' %}</h4>
-                </div>
-               
-                <form class="margin-top">
-                  <div class="input-group">
-                    <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
-                  </div>
-                </form>
-                 <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
-                 <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
-
                 <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Manager' %}</button>
                
                 <ul class="row" data-bind="foreach:$root.users">
@@ -561,7 +587,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
                           </div>
                           <div class="project-basic-info">
-                            <h4 data-bind="text:user().full_name"></h4>
+                            <h4 data-bind="text:user().first_name+' '+user().last_name"></h4>
                             <p data-bind="text:user().email"></p>
                           </div>
                         </div>
@@ -573,34 +599,34 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <li class="clearfix"></li>
                 </ul>
                 <div class="margin-top">
+
+                </div>
+            </div>
+            </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="widget-info margin-top bg-white padding">
+                <div class="widget-head">
+                  <h4>{% trans 'Current' %} {% trans 'Project' %} {% trans 'Managers' %}</h4>
                 </div>
 
+                <div class="widget-body" data-bind="foreach:projectManagers">
+                  <div class="project-item-wrap clearfix">
+                    <div class="project-logo">
+                      <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                    </div>
+                    <div class="project-basic-info">
+                      <h4 data-bind="text:user().full_name"></h4>
+                      <p data-bind="text:user().email"></p>
+                    </div>
+                    <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this Project Manager?', click:rmrole }"><i class="la la-close"></i></a>
+
+
+
+                    <li class="clearfix"></li>
+                  </ul>
               </div>
-            </div>
-          </div>
-
-          <div class="col-md-4">
-            <div class="widget-info margin-top bg-white padding">
-              <div class="widget-head">
-                <h4>{% trans 'Current' %} {% trans 'Project' %} {% trans 'Managers' %}</h4>
-              </div>
-
-              <div class="widget-body" data-bind="foreach:projectManagers">
-                <div class="project-item-wrap clearfix">
-                  <div class="project-logo">
-                    <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
-                  </div>
-                  <div class="project-basic-info">
-                    <h4 data-bind="text:user().full_name"></h4>
-                    <p data-bind="text:user().email"></p>
-                  </div>
-                  <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this Project Manager?', click:rmrole }"><i class="la la-close"></i></a>
-
-
-
-                  <li class="clearfix"></li>
-                </ul>
-            </div>
             <div class="tab-pane" id="tab002" role="tabpanel">
               <ul class="row">
                   
@@ -690,7 +716,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
                           </div>
                           <div class="project-basic-info">
-                            <h4 data-bind="text:user().full_name"></h4>
+                            <h4 data-bind="text:user().first_name+' '+user().last_name"></h4>
                             <p data-bind="text:user().email"></p>
                           </div>
                         </div>
@@ -731,17 +757,38 @@ vm = new ManagePeopleViewModel(pk, level, organization);
 
                 {% if obj.cluster_sites %}
 
-                  <select class="form-control" data-bind="options: allRegions,
-                       optionsText: 'identifier',
-                       optionsValue: 'url',
-                       value: loadRegionalSites,
-                       optionsCaption: 'Choose Region ...', valueUpdate:'afterkeydown'"></select>
-                       <br>
-                <div data-bind="visible:showsites">
-                {% endif %}
-
+                <input type="text" class="form-control" data-bind="value:region_search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search Sites...">
+                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:setAllAssignSiteAsSelected">
+                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllSiteUnSelected">
+                <ul class="row" data-bind="foreach:regions">
                 
-                <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search Sites...">
+                  <li class="col-md-12">
+                    <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                      <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$parent.setRegionSelected">
+                      <span class="custom-control-indicator"></span>
+                      <span class="custom-control-description">
+                        <div class="project-item-wrap clearfix">
+                         <!--  <div class="project-logo">
+                            <img data-bind="attr:{src: logo()}" alt="" width="50" height="50">
+                          </div> -->
+                          <div class="project-basic-info">
+                            <h4 data-bind="text:identifier()"></h4>
+                            <p data-bind="text:name()"></p>
+                          </div>
+                        </div>
+                       
+                      </span>
+                    </label>
+                  </li>
+                  
+                  <li class="clearfix"></li>
+                </ul>
+                
+
+   
+                {% else %}
+
+               <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search Sites...">
                   <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:setAllAssignSiteAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllSiteUnSelected">
                 <ul class="row" data-bind="foreach:sites">
@@ -767,8 +814,10 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   
                   <li class="clearfix"></li>
                 </ul>
-                {% if obj.cluster_sites %}
-                </div>
+
+                
+                
+               
                 {% endif %}
 
               </div>
@@ -783,6 +832,104 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                   <li class="clearfix"></li>
                 </ul>
             </div>
+
+
+
+
+
+            <div class="tab-pane" id="tab003" role="tabpanel">
+              <ul class="row">
+                 
+
+
+                    <div class="col-md-8">
+                <div class="widget-info margin-top bg-white padding">
+                  <div class="widget-head">
+                    <h4>{% trans 'Invite' %} {% trans 'new' %} {% trans 'Donors' %}</h4>
+                  </div>
+                  <div class="widget-body">
+                    <form>
+                      <div class="input-group">
+
+                       <ul id="email3ProjectTags">
+                            
+                        </ul>
+                        <span class="input-group-btn">
+                          <button class="btn btn-primary" id="retry" onclick="sendmultiplerequest('Project Donor', 3)" type="button"><i class="la la-user-plus"></i> {% trans 'Invite' %}</button>
+                        </span>
+                      </div>
+                    </form>
+
+
+                   
+                    <h4 class="text-center margin-top">
+                    <strong>{% trans 'OR' %}</strong>
+                    </h4>
+                    <div class="widget-head">
+                    <h4>{% trans 'Select' %} {% trans 'Users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'Donors' %}</h4>
+                    </div>
+                   
+                    <form class="margin-top">
+                      <div class="input-group">
+                        <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                      </div>
+                    </form>
+                     <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:$root.setAllAssignAsSelected">
+                     <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
+
+                    <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignDonor"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'selected' %} {% trans 'as' %} {% trans 'Donors' %}</button>
+                   
+                    <ul class="row" data-bind="foreach:$root.users">
+                      <li class="col-md-4">
+                        <label class="custom-control margin-top user-checkbox custom-checkbox" >
+                          <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
+                          <span class="custom-control-indicator"></span>
+                          <span class="custom-control-description">
+                            <div class="project-item-wrap clearfix">
+                              <div class="project-logo">
+                                <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                              </div>
+                              <div class="project-basic-info">
+                                <h4 data-bind="text:user().first_name+' '+user().last_name"></h4>
+                                <p data-bind="text:user().email"></p>
+                              </div>
+                            </div>
+                            <!-- <a href="#" title="" class="btn btn-xs btn-block btn-primary">Details</a> -->
+                          </span>
+                        </label>
+                      </li>
+                      
+                      <li class="clearfix"></li>
+                    </ul>
+                    <div class="margin-top">
+                    </div>
+
+                  </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="widget-info margin-top bg-white padding">
+                <div class="widget-head">
+                  <h4>{% trans 'Current' %} {% trans 'Donors' %}</h4>
+                </div>
+
+                <div class="widget-body" data-bind="foreach:projectDonors">
+                  <div class="project-item-wrap clearfix">
+                    <div class="project-logo">
+                      <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
+                    </div>
+                    <div class="project-basic-info">
+                      <h4 data-bind="text:user().full_name"></h4>
+                      <p data-bind="text:user().email"></p>
+                    </div>
+                    <a href="#" title="" class="btn btn-danger btn-sm project-action" data-bind="confirmClick: { message: 'Are you sure to remove this donor?', click:rmrole }"><i class="la la-close"></i></a>
+
+
+
+                    <li class="clearfix"></li>
+                  </ul>
+              </div>
           </div>
          <!--  <button type="submit" class="btn btn-primary btn-block"><i class="la la-user-plus"></i> Assign Users</button> -->
         </div>
@@ -844,17 +991,17 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 </h4>
                  <div class="widget-head">
                 <h4>{% trans 'Select' %} {% trans 'users' %} {% trans 'to' %} {% trans 'assign' %} {% trans 'as' %} {% trans 'organization' %} {% trans 'admin' %}</h4>
-              </div>
-                <form class="margin-top">
-                  <div class="input-group">
-                    <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
-                  </div>
-                </form>
+                </div>
+                  <form class="margin-top">
+                    <div class="input-group">
+                      <input type="text" class="form-control" data-bind="value:$root.search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
+                    </div>
+                  </form>
                  <input type="button" class="btn btn-primary margin-top" value="Select All" data-bind=" click:$root.setAllAssignAsSelected">
                  <input type="button" class="btn btn-primary margin-top" value="Unselect All" data-bind="click:$root.setAllUnSelected">
 
                   <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignOadmin"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'Organization' %} {% trans 'Admin' %}</button>
-                <ul class="row" data-bind="foreach:$root.users">
+                  <ul class="row" data-bind="foreach:$root.users">
                   <li class="col-md-4">
                     <label class="custom-control margin-top user-checkbox custom-checkbox" >
                       <input type="checkbox" class="custom-control-input" data-bind="checked: selected, click:$root.setSelected">
@@ -865,7 +1012,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
                           </div>
                           <div class="project-basic-info">
-                            <h4 data-bind="text:user().full_name"></h4>
+                            <h4 data-bind="text:user().first_name+' '+user().last_name"></h4>
                             <p data-bind="text:user().email"></p>
                           </div>
                         </div>
@@ -956,7 +1103,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <img data-bind="attr:{src: user().profile_picture}" alt="" width="50" height="50">
                           </div>
                           <div class="project-basic-info">
-                            <h4 data-bind="text:user().full_name"></h4>
+                            <h4 data-bind="text:user().first_name+' '+user().last_name"></h4>
                             <p data-bind="text:user().email"></p>
                           </div>
                         </div>
@@ -990,7 +1137,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind="click:setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllUnSelected">
-                 <button type="submit" class="btn btn-primary margin-top" data-bind="click:doAssign"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Managers' %}</button>
+                 <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Managers' %}</button>
   
 
                 <ul class="row" data-bind="foreach:projects">
@@ -1171,7 +1318,11 @@ function sendmultiplerequest(group, emailbox){
   if (emailbox == 2){
     emails=emails2;
  
-  }else{
+  }
+  else if(emailbox == 3){
+    emails=emails3;
+  }
+    else{
     emails=emails1;
   }
 

@@ -1,0 +1,76 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block page-title %} {% trans 'Profile '  %}{{obj.user }}{% endblock %}
+{% block content %}
+
+
+
+
+
+							<div class="row">
+								<div class="col-md-12">
+									<div class="widget-info module-slick-slider margin-top bg-white padding" data-mh="eqtd">
+										<div class="widget-head">
+											<h4>Recent Pictures</h4>
+										</div>
+
+
+										<div id="galleryFrame" class="row">
+
+														
+
+
+										</div>
+
+									</div>
+								</div>
+							</div>
+
+
+            </div>
+<script type="text/javascript">
+        var images={{ all_imgs|safe }};
+        console.log(images);
+        var speed=0;
+        images.forEach(function(element) {
+          console.log(element["_attachments"].download_url);
+           var new_image = '<div class="col-md-2" id="'+ element["_id"] +'">'+
+							'<div class="photo-holder photo-item margin-top">'+
+							'<img submission_by="'+element["_submitted_by"]+'" submission_url="/forms/forms/'+element["fs_uuid"]+'#/'+element["_id"]+'" src="'+ element["_attachments"].download_url +'" img-title="" alt="">'+
+							'</div></div>';
+                            	
+
+        	// speed = speed+200;
+            $(new_image).appendTo("#galleryFrame");
+            // $("#"+element["_id"]).fadeIn(speed);
+        });
+
+
+
+        $(document).ready(function(){ 
+			$('.photo-item img').on('click',function(){
+				var title = $(this).attr('img-title');
+				var submitted_by = $(this).attr('submission_by');
+				var submission_url = $(this).attr('submission_url');
+				var src = $(this).attr('src');
+				var img = '<img src="' + src + '" class="img-responsive"/>';
+				var html = '';
+				html += img;  	
+				$('#myModalLabel').modal();
+				$('#myModalLabel').on('shown.bs.modal', function(){
+					$('#myModalLabel .modal-header .modal-title').html('By: '+submitted_by +'<a href="'+ submission_url +'"> (View Submission) </a>');
+					$('#myModalLabel .modal-body').html(html);
+				})
+				$('#myModalLabel').on('hidden.bs.modal', function(){
+					$('#myModalLabel .modal-header .modal-title').html('');
+					$('#myModalLabel .modal-body').html('');
+				});
+			});	
+		});
+
+				
+</script>
+
+
+{% endblock %}

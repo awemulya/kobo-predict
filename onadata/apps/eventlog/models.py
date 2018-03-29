@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import json
+import datetime
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
@@ -39,6 +40,8 @@ class FieldSightLog(models.Model):
         (18, 'User assigned a new Form Type Form Name in Project Name.'),
         (19, 'User assigned a new Form Type Form Name to Site Name.'),
         (20, 'User edited Form Name form.'),
+        (24, 'User was added as unassigned.'),
+        (25, 'User was added as donor in project.'),
     )
     
     type = models.IntegerField(default=0, choices=ACTION_TYPES)
@@ -161,7 +164,7 @@ class CeleryTaskProgress(models.Model):
         )
     task_id = models.CharField(max_length=255, unique=True)
     date_added = models.DateTimeField(auto_now_add=True)
-    date_completed = models.DateTimeField(blank=True, null=True)
+    date_updateded = models.DateTimeField(auto_now=True, blank=True, null=True)
     user = models.ForeignKey(User, related_name="task_owner")
     status = models.IntegerField(default=0, choices=Task_Status)
     description = models.CharField(max_length=755, blank=True)
@@ -176,6 +179,9 @@ class CeleryTaskProgress(models.Model):
             data = task.result or task.state
             return json.dumps(data)
         return None
+
+    def __str__(self):
+        return str(self.pk) + " (" + str(self.task_type) + ") " + "-->" + str(self.status) + "--->" + str(self.user) + " | Date_last_updated =" + str(self.date_updateded) + " | Added_On ="+str(self.date_added)
 
 
 

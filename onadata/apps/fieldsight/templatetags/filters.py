@@ -581,3 +581,7 @@ def divend(value):
         return (int(value) % 6 == 0) and (int(value) > 5)
     except (ValueError, ZeroDivisionError):
         return True
+
+@register.filter(name='get')
+def get(d, k):
+    return d.get(k, None)

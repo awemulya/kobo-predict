@@ -1,0 +1,237 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load fs_filters %}
+{% block page-title %}{% trans 'Form Data' %}{% endblock %}
+
+{%block extracss %}
+{% load pagination_tags %}
+
+
+    <style>
+      .pre-scrollable{
+        height:500px;
+  
+}
+
+.sortable tr {
+    cursor: pointer;
+}
+  
+  </style>
+
+  <style>
+.rtable {
+  /*!
+  // IE needs inline-block to position scrolling shadows otherwise use:
+  // display: block;
+  // max-width: min-content;
+  */
+  display: inline-block;
+  vertical-align: top;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+}
+
+.rtable,
+.rtable--flip tbody {
+  -webkit-overflow-scrolling: touch;
+  background: radial-gradient(left, ellipse, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 75%) 0 center, radial-gradient(right, ellipse, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 75%) 100% center;
+  background-size: 10px 100%, 10px 100%;
+  background-attachment: scroll, scroll;
+  background-repeat: no-repeat;
+}
+
+.rtable td:first-child,
+.rtable--flip tbody tr:first-child {
+  background-image: -webkit-gradient(linear, left top, right top, color-stop(50%, white), to(rgba(255, 255, 255, 0)));
+  background-image: linear-gradient(to right, white 50%, rgba(255, 255, 255, 0) 100%);
+  background-repeat: no-repeat;
+  background-size: 20px 100%;
+}
+
+.rtable td:last-child,
+.rtable--flip tbody tr:last-child {
+  background-image: -webkit-gradient(linear, right top, left top, color-stop(50%, white), to(rgba(255, 255, 255, 0)));
+  background-image: linear-gradient(to left, white 50%, rgba(255, 255, 255, 0) 100%);
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  background-size: 20px 100%;
+}
+
+.rtable th {
+  font-size: 11px;
+  text-align: left;
+  text-transform: uppercase;
+  background: #f2f0e6;
+}
+
+.rtable th,
+.rtable td {
+  padding: 6px 12px;
+  border: 1px solid #d9d7ce;
+}
+
+
+
+/*!
+// CodePen house keeping
+*/
+
+
+
+.table_titles{
+  /*max-width: 200px;*/
+  overflow: hidden;
+  text-overflow: hidden;
+  min-width: 100px;
+  white-space: nowrap;
+  text-align: center;
+}
+.bold_title{
+   font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+    font-size: 16px;
+    font-style: bold;
+    font-weight: 700;
+    letter-spacing: 1px;
+    word-spacing: inter-word;
+}
+body{
+  font-size: 12px !important; 
+}
+    </style>
+    
+{% endblock %}
+{% block content %}
+
+<div id="main-content" class="padding">
+        <section class="panel">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-pencil-square-o"></i>{% trans 'Form' %} {% trans 'Submissions' %} | {{ obj.xf.title  }}</h3>
+            <div class="panel-heading-right">
+              <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForms" aria-expanded="false" aria-controls="searchForms"><i class="la la-search"></i> Search</a>
+            
+            </div>
+                    </header>
+          <div class="panel-body">
+            <!--Search Organization-->
+            <div class="collapse margin-top" id="searchForms">
+              <form class="padding">
+                <div class="row">
+                  <div class="col-md-6 ml-md-auto">
+                    <div class="input-group">
+                      <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+                      <span class="input-group-btn">
+                      <button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-3"></div>
+                </div>
+              </form>
+            </div>
+         
+
+    
+   
+
+
+
+
+
+
+
+
+
+
+
+<table class="rtable table table-striped table-bordered table-hover">
+
+    <thead class="bold_title">
+        <tr>
+            <th class="table_titles">{% trans "View or Edit" %}</th>
+            {% for label in labels %}
+            <th class="table_titles"><span class="cell-content-wrap">{{ label }}</span></th>
+            {% endfor %}
+        </tr>
+
+    </thead>
+
+    <tbody>
+    {% for submission_id, row in data  %}
+        <tr>
+            <th><a href="{% url 'forms:instance' obj.id %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
+            {% for value in row %}
+            <td><span class="cell-content-wrap">{{ value }}</span></td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+          </div>
+
+
+       
+            <nav class="pagination justify-content-center" aria-label="page-navigation">
+              <ul class="pagination">
+              {% if page.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">&laquo;</a></li>
+              {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+              {% endif %}
+              {% for i in page.paginator.page_range %}
+                {% if page.number == i %}
+                <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+              {% endfor %}
+              {% if page.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">&raquo;</a></li>
+              {% else %}
+                <li class="disabled"><a class="page-link" href="#">&raquo;</a>
+              {% endif %}
+              </ul>
+            </nav>
+           
+
+                </section>
+        
+      </div>
+
+
+{% endblock %}
+
+
+{% block extrascript %}
+    <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
+    <script type="text/javascript">
+      function redirectto(url){
+        window.location.href = url
+      }
+    </script>
+{% endblock %}

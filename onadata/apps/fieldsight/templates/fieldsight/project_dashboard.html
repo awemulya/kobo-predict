@@ -142,7 +142,7 @@ var project = "{{obj.pk}}";
 						<div class="col-lg-8 col-md-12">
 							<div class="widget-info margin-top bg-white padding" data-mh="row-1">
 								<div class="widget-head">
-									<h4>{% trans 'About ' %}{% trans 'Us ' %}</h4>
+									<h4><a href="#">{% trans 'About ' %}{% trans 'Us ' %}</a></h4>
 								</div>
 								<div class="widget-body">
 									<p>
@@ -159,7 +159,7 @@ var project = "{{obj.pk}}";
 						<div class="col-lg-4 col-md-12">
 							<div class="widget-info margin-top bg-white padding" data-mh="row-1">
 								<div class="widget-head">
-									<h4>{% trans 'Contact' %} {% trans 'Info' %}</h4>
+									<h4><a href="#">{% trans 'Contact' %} {% trans 'Info' %}</a></h4>
 								</div>
 								<div class="widget-body">
 									<ul class="contact-info-list">
@@ -233,7 +233,7 @@ var project = "{{obj.pk}}";
 					</div>
 					<div class="row">
 						<div class="col-lg-6 col-sm-12">
-							<div class="widget-info margin-top bg-white padding">
+							<div class="widget-info margin-top bg-white padding" data-mh="eq111">
 								<div class="widget-head">
 									<a href="{% url 'fieldsight:proj-loc-map' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map" ></i>{% trans 'Full' %} {% trans 'Map' %}</a>
 									<h4>{% trans 'Site' %} {% trans 'Map' %}</h4>
@@ -256,7 +256,7 @@ var project = "{{obj.pk}}";
 								
 								{% if obj.cluster_sites %}
 								<div class="col-md-6 col-sm-12">
-									<div class="widget-info widget-scolling-list margin-top bg-white padding">
+									<div class="widget-info widget-scolling-large-list margin-top bg-white padding" data-mh="eq111">
 										<div class="widget-head">
 											<h4>{% trans 'Regions' %}</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:region-add' obj.pk %} "><i class="la la-plus"></i></a>
@@ -275,16 +275,7 @@ var project = "{{obj.pk}}";
 													</div>
 												</form>
 											</div>
-											<a href="{% url 'fieldsight:regional-sites' obj.pk 0 %}" class="project-item-wrap margin-top clearfix " style="width: 100%;">
-												<div class="project-logo">
-													<!-- <img data-bind="attr:{src: logo}" width="50" height="50"/> -->
-												</div>
-												<div class="project-basic-info">
-													<h4>{% trans 'Un' %} {% trans 'Assigned' %} {% trans 'Sites' %}</h4>
-                            						
-													
-												</div>
-											</a>
+											
 											<!-- ko foreach: regions  -->
 											<a data-bind="attr:{ href: url }" class="project-item-wrap margin-top clearfix " style="width: 100%;">
 												<div class="project-logo">
@@ -292,11 +283,21 @@ var project = "{{obj.pk}}";
 												</div>
 												<div class="project-basic-info">
 													<h4 data-bind="text:identifier()"></h4>
-                            						<h6 data-bind="text:name()"></h6>
-													
+                            						<p data-bind="text:name()"></p>
+													<p data-bind="text:'Total Sites: '+get_sites_count()"></p>
 												</div>
 											</a>
 											<!-- /ko-->
+											<a href="{% url 'fieldsight:regional-sites' obj.pk 0 %}" class="project-item-wrap margin-top clearfix " style="width: 100%;">
+												<div class="project-logo">
+													<!-- <img data-bind="attr:{src: logo}" width="50" height="50"/> -->
+												</div>
+												<div class="project-basic-info">
+													<h4>{% trans 'Unassigned' %} {% trans 'Sites' %}</h4>
+                            						
+													
+												</div>
+											</a>
 										</div>
 									</div>
 								</div>
@@ -304,7 +305,7 @@ var project = "{{obj.pk}}";
 								{% else %}
 
 								<div class="col-md-6 col-sm-12">
-									<div class="widget-info widget-scolling-list margin-top bg-white padding">
+									<div class="widget-info widget-scolling-large-list margin-top bg-white padding" data-mh="eq111">
 										<div class="widget-head">
 											<h4>{% trans 'Sites' %}</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:site-add' obj.pk %} "><i class="la la-plus"></i></a>
@@ -331,7 +332,7 @@ var project = "{{obj.pk}}";
 												<div class="project-basic-info">
 												
 													<h4 data-bind="text:identifier()"></h4>
-                            						<h6 data-bind="text:name()"></h6>
+                            						<p data-bind="text:name()"></p>
 													
 
 												</div>
@@ -346,7 +347,7 @@ var project = "{{obj.pk}}";
 
 
 								<div class="col-md-6 col-sm-12">
-									<div class="widget-info widget-scolling-list margin-top bg-white padding">
+									<div class="widget-info widget-scolling-large-list margin-top bg-white padding" data-mh="eq111">
 										<div class="widget-head">
 											<h4>{% trans 'People' %}</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:manage-people-project' obj.pk %}"><i class="la la-plus"></i></a>
@@ -526,9 +527,41 @@ var project = "{{obj.pk}}";
     var cummulative_data = {{ cumulative_data|safe}};
     var progress_labels = {{ progress_labels|safe}};
     var progress_data = {{ progress_data|safe}};
+
+
+    $(document).ready(function(){ 
+    $(".widget-scolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+				
+				$('.scrollingSlider').slick({
+				  slidesToShow: 4,
+				  arrows: false,
+				  autoplay : true,
+				  infinite: false,
+				  responsive: [
+					{
+					  breakpoint: 768,
+					  settings: {
+						arrows: false,
+						slidesToShow: 3
+					  }
+					},
+					{
+					  breakpoint: 480,
+					  settings: {
+						arrows: false,
+						centerMode: true,
+						slidesToShow: 1
+					  }
+					}
+				  ]
+				});
+
+	});
     </script>
+
     <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/d3.tip.v0.6.3.js"></script>
+<!--     <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/d3.tip.v0.6.3.js"></script> -->
     <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_bar-graph.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
+
 {% endblock %}

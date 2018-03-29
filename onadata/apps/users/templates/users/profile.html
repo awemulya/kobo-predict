@@ -6,8 +6,16 @@
 
 	<div id="main-content" class="padding">
 				<section class="panel">
+				{% if messages %}
+				{% for message in messages %}
+				<div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+				  <strong class="text-capitalize">{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}!</strong> {{ message }}
+				</div>
+				{% endfor %}
+				{% endif %}
+
 					<header class="panel-heading clearfix">
-					<h3><i class="la la-user"></i>{% trans 'view' %}{% trans 'your' %}{% trans 'profile' %}</h3>
+					<h3><i class="la la-user"></i>{% trans 'View' %} {% trans 'Profile' %}</h3>
 						<div class="panel-heading-right">
 							{% ifequal request.user obj.user %}
 							<a href="{% url 'users:profile_update' obj.user.id|profile%}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i>{% trans 'Update' %} {% trans 'Profile'%} </a>
@@ -51,7 +59,7 @@
 													{% endif %}
 													{% if obj.user.email %}
 													<li>
-														<i class="la la-envelope-o"></i>   {{ obj.user.email }}
+														<i class="la la-envelope-o"></i> {{ obj.user.email }}
 													</li>
 													{% endif %}
 												
@@ -67,12 +75,13 @@
 									<h4>{% trans 'Organization Admin At :' %}</h4>
 								</div>
 								<div class="widget-body">
-									<div class="" style="overflow-y: scroll;">
+									<div class="max-260-scroll">
 										<div class="row">
 
 										{% for role in roles_org %}
-										<a href="{% url 'fieldsight:organizations-dashboard' role.organization.pk %}" title="">
-											<div class="col-lg-12 col-md-12" style="margin-top:10px;">
+										
+											<div class="col-lg-12 col-md-12 margin-top">
+											<a href="{% url 'fieldsight:organizations-dashboard' role.organization.pk %}" title="">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{% if role.organization.logo %}{{ role.organization.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
@@ -80,10 +89,15 @@
 													<div class="project-basic-info">
 														<h4>{{ role.organization.name }}</h4>
 														<p>{{ role.organization.address }}</p>
+
 													</div>
+													{% if is_super_admin %}
+														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">remove</a>
+
+													{% endif %}
 												</div>
+												</a>
 											</div>
-										</a>
 										{% endfor %}
 
 							
@@ -99,11 +113,12 @@
 									<h4>{% trans 'Project Manager At :' %}</h4>
 								</div>
 								<div class="widget-body">
-									<div class="" style="overflow-y: scroll;">
+									<div class="max-260-scroll">
 										<div class="row">
 										{% for role in roles_project %}
-										<a href="{% url 'fieldsight:project-dashboard' role.project.pk %}" title="">
-											<div class="col-lg-12 col-md-12" style="margin-top:10px;">
+										
+											<div class="col-lg-12 col-md-12 margin-top">
+												<a href="{% url 'fieldsight:project-dashboard' role.project.pk %}" title="">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{% if role.project.logo %}{{ role.project.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
@@ -113,9 +128,14 @@
 														<p>{{ role.project.address }}</p>
 														<p><strong>{{ role.project.organization.name }}</strong></p>
 													</div>
+													{% if role.orgainizatio_id in own_orgs or is_super_admin %}
+
+														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">Remove</a>
+													{% endif %}
 												</div>
+												</a>
 											</div>
-											</a>
+											
 										{% endfor %}
 										</div>
 									</div>
@@ -128,11 +148,12 @@
 									<h4>{% trans 'Site Reviewer At :' %}</h4>
 								</div>
 								<div class="widget-body">
-									<div class="" style="overflow-y: scroll;">
+									<div class="max-260-scroll">
 										<div class="row">
 											{% for role in roles_reviewer %}
-											<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
-											<div class="col-lg-12 col-md-12" style="margin-top:10px;">
+											
+											<div class="col-lg-12 col-md-12 margin-top">
+												<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{% if role.site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
@@ -142,10 +163,16 @@
 														<p>{{ role.site.identifier }}</p>
 														<p>{{ role.site.address }}</p>
 														<p><strong>{{ role.site.project.name }}</strong></p>
+														
 													</div>
+													{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
+													<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">Remove</a>
+
+														{% endif %}
 												</div>
+												</a>
 											</div>
-											</a>
+											
 											{% endfor %}
 										</div>
 									</div>
@@ -159,11 +186,12 @@
 									<h4>{% trans 'Site Supervisor At :' %}</h4>
 								</div>
 								<div class="widget-body">
-									<div class="">
+									<div class="max-260-scroll">
 										<div class="row">
 											{% for role in roles_SA %}
-											<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
-											<div class="col-lg-12 col-md-12" style="margin-top:10px;">
+											
+											<div class="col-lg-12 col-md-12 margin-top">
+												<a href="{% url 'fieldsight:site-dashboard' role.site.pk %}" title="">
 												<div class="project-item-wrap clearfix">
 													<div class="project-logo">
 														<img src="{% if role.site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
@@ -173,9 +201,15 @@
 														<p>{{ role.site.identifier }}</p>
 														<p>{{ role.site.address }}</p>
 														<p><strong>{{ role.site.project.name }}</strong></p></div>
+														{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
+
+														<a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">Remove</a>
+
+														{% endif %}
 												</div>
+												</a>
 											</div>
-											</a>
+											
 											{% endfor %}
 										</div>
 									</div>
@@ -206,7 +240,7 @@
 									<h4>{% trans 'Latest Submission' %}</h4>
 								</div>
 								<div class="widget-body">
-									<div class="">
+									<div class="max-513-scolling">
 										{% for sub in responses %}
 										{% if sub.site %}
 										<a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}" title="">
@@ -236,6 +270,16 @@
                 </section>
 				
 			</div>
+		<script src="assets/js/vendor/slick.min.js"></script>
+		<script>
+			$(document).ready(function(){ 
+				$(".max-513-scolling").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+				$(".max-260-scroll").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+				
+				
+			});
+		</script>
+        <script src="assets/js/plugins.js"></script>
 
 
 {% endblock %}

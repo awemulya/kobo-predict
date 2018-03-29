@@ -107,9 +107,9 @@ if CSRF_COOKIE_DOMAIN:
 SESSION_SERIALIZER='django.contrib.sessions.serializers.JSONSerializer'
 
 # for debugging
-# print "KOBOFORM_URL=%s" % KOBOFORM_URL
-# print "SECRET_KEY=%s" % SECRET_KEY
-# print "CSRF_COOKIE_DOMAIN=%s " % CSRF_COOKIE_DOMAIN
+print "KOBOFORM_URL=%s" % KOBOFORM_URL
+print "SECRET_KEY=%s" % SECRET_KEY
+print "CSRF_COOKIE_DOMAIN=%s " % CSRF_COOKIE_DOMAIN
 
 # MongoDB - moved here from common.py
 if MONGO_DATABASE.get('USER') and MONGO_DATABASE.get('PASSWORD'):

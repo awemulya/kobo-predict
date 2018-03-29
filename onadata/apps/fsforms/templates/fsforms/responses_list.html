@@ -22,6 +22,9 @@
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Responses' %}</li>
 		    {% endblock %}
         </ol>
+      <ol class="breadcrum pull-right">
+         <a href="{% url 'fieldsight:site-submission-data' site '0' %}" class="btn btn-sm-primary">View by Status</a>
+        </ol>
     </nav>
 
     <div class="tabbing">
@@ -37,6 +40,7 @@
             <li class="nav-item">
               <a class="nav-link" data-toggle="tab" href="#stage3" role="tab">{% trans 'Staged' %} {% trans 'Form' %}</a>
             </li>
+          
           </ul>
 
     <div class="tab-content">
@@ -47,6 +51,7 @@
           <table class="table table-striped" id="dynamic-table2">
               <thead>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
+              <th>{% trans 'Last' %} {% trans 'Submission' %} {% trans 'On' %}</th>
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
               <th>{% trans 'Submissions' %}</th>
               <th>{% trans 'Download' %}</th>
@@ -59,6 +64,9 @@
                           {% if obj.fsform %}
                             <span class="pull-right">{% trans 'Project' %} {% trans 'Level' %}</span>
                           {% endif %}
+                      </td>
+                      <td>
+                                  {{ obj.getlatestsubmittiondate.first.date }}
                       </td>
                       <td>
                           {{ obj.date_created }}
@@ -92,6 +100,7 @@
           <table class="table table-striped" id="dynamic-table1">
               <thead>
               <th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
+              <th>{% trans 'Last' %} {% trans 'Submission' %} {% trans 'On' %}</th>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
               <th>{% trans 'Submissions' %}</th>
@@ -106,6 +115,9 @@
                             <span class="pull-right">Project' %} {% trans 'Level' %}</span>
                           {% endif %}
                       </td>
+                      <td>
+                                  {{ obj.getlatestsubmittiondate.first.date }}
+                              </td>
                       <td>
                           {{ obj.schedule_forms.xf.title }}
                       </td>
@@ -151,6 +163,7 @@
                   <table class="table table-striped">
                       <thead>
                       <th>{% trans 'Sub' %} {% trans 'Stage' %} {% trans 'Name' %}</th>
+                      <th>{% trans 'Last' %} {% trans 'Submission' %} {% trans 'On' %}</th>
                       <th>{% trans 'Order' %}</th>
                       <th>{% trans 'Form' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Submissions' %}</th>
@@ -164,6 +177,9 @@
                                   {% if obj.fsform %}
                                     <span class="pull-right">{% trans 'Project' %} {% trans 'Level</span>
                                   {% endif %}
+                              </td>
+                              <td>
+                                  {{ obj.getlatestsubmittiondate.first.date }}
                               </td>
                               <td>
                                   {{ obj.order }}

@@ -71,3 +71,24 @@ class LineChartGeneratorSite(object):
         return d
 
 
+class ProgressGeneratorSite(object):
+
+    def __init__(self, site):
+        self.site = site
+
+    def data(self):
+        d = OrderedDict()
+        main_stages = self.site.stages.filter(stage__isnull=True)
+        for ms in main_stages:
+            sub_stages = ms.parent.filter(stage_forms__isnull=False)
+            for sub_stage in sub_stages:
+                fsform = sub_stage.stage_forms
+                approved_submission = fsform.site_form_instances.filter(form_status=3)
+                try:
+                    date = approved_submission[0].date
+                    d[ms.order +sub_stage.order*0.1] = date.strftime('%Y-%m-%d')
+                except:
+                    pass
+        return d
+
+

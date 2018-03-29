@@ -9,8 +9,26 @@
 {% load pagination_tags %}
 {% load sorting_tags %}
 {% load fs_filters %}
+<script type="text/javascript">
+function deleteConfirm(url) {
+    var r = confirm("Are you sure you want to delete?");
+    if (r == true) {
+        window.location.href = url;
+    } else {
+        return;
+    }
+}
+
+</script>
 <div id="main-content" class="padding">
 				<section class="panel">
+				{% if messages %}
+					{% for message in messages %}
+						<div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+						  <strong class="text-capitalize">{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}!</strong> {{ message }}
+						</div>
+					{% endfor %}
+				{% endif %}
                     <header class="panel-heading clearfix">
                         <h3><i class="fa fa-wpforms "></i>{% trans 'My' %} {% trans 'Forms' %}</h3>
 						<!--<div class="panel-heading-right">-->
@@ -38,10 +56,13 @@
                             <td class="text-center">{{ forloop.counter }}</td>
                             <td class="text-center">{{ obj.title }}</td>
                             <td class="text-center">{{ obj.date_created }}</td>
-                            <td class="text-center"><a class="btn btn-primary btn-sm" href="{{ koboform_url }}#/forms/{{ obj.id_string }}/edit" style="height:27px"><i class="la la-pencil-square-o"></i>{% trans ' Edit' %}</a>
-								<a class="btn btn-primary btn-sm" href="{{ koboform_url }}#/forms/{{ obj.id_string }}/preview" style="height:27px"><i class="la la-eye"></i>{% trans ' Preview' %}</a>
-								</td>
+                            <td class="text-center"><a class="btn btn-primary btn-sm" href="{{ koboform_url }}#/forms/{{ obj.id_string }}/edit" style="height:27px"><i class="la la-pencil-square-o"></i>{% trans 'Edit' %}</a>
 
+							<!-- <a class="btn btn-primary btn-sm" href="{{ koboform_url }}#/forms/{{ obj.id_string }}/preview" style="height:27px"><i class="la la-eye"></i>{% trans 'Preview' %}</a>
+							 -->	
+
+							<a class="btn btn-danger btn-sm" href="#" onClick="deleteConfirm(`{% url 'forms:xform-delete' obj.pk %}`)" style="height:27px"><i class="la la-pencil-square-o"></i>{% trans 'Delete' %}</a>
+							</td>
                             <!--<button type="button" class="btn btn-danger btn-sm" style="height:27px"><i class="la la-trash"></i>{% trans ' Delete' %}</button></td>-->
 
                           </tr>
@@ -51,33 +72,38 @@
                         </tbody>
                       </table>
                         <!--pagination-->
-						{% if is_paginated %}
-						<nav class="pagination justify-content-center" aria-label="page-navigation">
-						  <ul class="pagination">
-							{% if page_obj.has_previous %}
-							  <li class="page-item disabled"><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
-							{% else %}
-							  <li class="disabled"><span>&laquo;</span></li>
-							{% endif %}
-							{% for i in paginator.page_range %}
-							  {% if page_obj.number == i %}
-							  <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
 
-							  {% else %}
-								<li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-							  {% endif %}
-							{% endfor %}
-							{% if page_obj.has_next %}
-							  <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
-							{% else %}
-							  <li class="disabled"><span>&raquo;</span></li>
-							{% endif %}
-						  </ul>
-						</nav>
-						{% endif %}
+					{% if is_paginated %}
+			            <nav class="pagination justify-content-center" aria-label="page-navigation">
+			              <ul class="pagination">
+			              {% if page_obj.has_previous %}
+			                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+			              {% else %}
+			                <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+			              {% endif %}
+			              {% for i in paginator.page_range %}
+			                {% if page_obj.number == i %}
+			                <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+
+			                {% else %}
+			                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+			                {% endif %}
+			              {% endfor %}
+			              {% if page_obj.has_next %}
+			                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+			              {% else %}
+			                <li class="disabled"><a class="page-link" href="#">&raquo;</a>
+			              {% endif %}
+			              </ul>
+			            </nav>
+			            {% endif %}
+
+						<!--Pagination-->
+
+
+
                       </div>
                     </div>
-					<!--Pagination-->
 
 
 

@@ -33,6 +33,18 @@ class ManagePeoplePermission(permissions.BasePermission):
             return False
         return request.role.organization == obj.organization
 
+class DonorRoleViewSet(viewsets.ModelViewSet):
+    queryset = UserRole.objects.filter(organization__isnull=False, ended_at__isnull=True)
+    serializer_class = UserRoleSerializer
+    permission_classes = (IsAuthenticated, ManagePeoplePermission)
+
+    def filter_queryset(self, queryset):
+        try:
+            pk = self.kwargs.get('pk', None)   
+            queryset = queryset.filter(project__id=pk, group_id=7)
+        except:
+            queryset = []
+        return queryset
 
 class UserRoleViewSet(viewsets.ModelViewSet):
     queryset = UserRole.objects.filter(organization__isnull=False, ended_at__isnull=True)
@@ -53,7 +65,7 @@ class UserRoleViewSet(viewsets.ModelViewSet):
             queryset = []
         return queryset
 
-    def custom_create(self, * args, **kwargs):
+    def custom_create(self, *args, **kwargs):
         data = self.request.data
         # print "======================================================="
         # print data
@@ -94,14 +106,16 @@ class UserRoleViewSet(viewsets.ModelViewSet):
 
                 elif level == "1":
                     project = Project.objects.get(pk=self.kwargs.get('pk'))
-                    role, created = UserRole.objects.get_or_create(user_id=user, project_id=self.kwargs.get('pk'),
-                                                                   organization__id=project.organization.id,
-                                                                   project__id=project.id, site__id=None,
+                    role, created = UserRole.objects.get_or_create(user_id=user, organization_id=project.organization_id,
+                                                                   project_id=self.kwargs.get('pk'), site_id=None,
                                                                    group=group, ended_at=None)
+                    print role.__dict__
+                    
                     if created:
-                        description = "{0} was assigned  as Project Manager in {1}".format(
-                            role.user.get_full_name(), role.project)
-                        noti = role.logs.create(source=role.user, type=6, title=description, organization=project.organization, project=project, description=description, content_object=project, extra_object=self.request.user)
+                        print role.__dict__
+                        description = "{0} was assigned  as {2} in {1}".format(
+                            role.user.get_full_name(), role.project, role.group.name)
+                        noti = role.logs.create(source=role.user, type=25, title=description, organization=project.organization, project=project, description=description, content_object=project, extra_object=self.request.user)
                         result = {}
                         result['description'] = description
                         result['url'] = noti.get_absolute_url()

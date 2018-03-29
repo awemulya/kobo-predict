@@ -112,16 +112,16 @@ class GeneralForm(HTML5BootstrapModelForm, KOModelForm):
         if hasattr(self.request, "organization") and self.request.organization is not None:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) |
-                Q(user__user_profile__organization=self.request.organization))
+                Q(user__user_profile__organization=self.request.organization), deleted_xform=None)
         else:
             xform = XForm.objects.filter(
-                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True), deleted_xform=None)
         self.fields['xf'].choices = [(obj.id, obj.title) for obj in xform]
         self.fields['xf'].empty_label = None
         self.fields['xf'].label = "Form"
 
     class Meta:
-        fields = ['xf']
+        fields = ['xf', 'default_submission_status']
         model = FieldSightXF
 
 
@@ -151,16 +151,16 @@ class SubStageEditForm(forms.ModelForm):
             xform = XForm.objects.filter(
                 Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
                 Q(fieldsightformlibrary__project=self.request.project) |
-                Q(fieldsightformlibrary__organization=self.request.organization))
+                Q(fieldsightformlibrary__organization=self.request.organization), deleted_xform=None)
 
         elif hasattr(self.request, "organization") and self.request.organization is not None:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) |
                 Q(fieldsightformlibrary__is_global=True) |
-                Q(fieldsightformlibrary__organization=self.request.organization))
+                Q(fieldsightformlibrary__organization=self.request.organization), deleted_xform=None)
         else:
             xform = XForm.objects.filter(
-                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True), deleted_xform=None)
         self.fields['form'].choices = [(obj.id, obj.title) for obj in xform]
         self.fields['form'].empty_label = None
 
@@ -180,16 +180,16 @@ class AddSubSTageForm(forms.ModelForm):
             xform = XForm.objects.filter(
                 Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
                 Q(fieldsightformlibrary__project=self.request.project) |
-                Q(fieldsightformlibrary__organization=self.request.organization))
+                Q(fieldsightformlibrary__organization=self.request.organization), deleted_xform=None)
 
         elif hasattr(self.request, "organization") and self.request.organization is not None:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) |
                 Q(fieldsightformlibrary__is_global=True) |
-                Q(fieldsightformlibrary__organization=self.request.organization))
+                Q(fieldsightformlibrary__organization=self.request.organization), deleted_xform=None)
         else:
             xform = XForm.objects.filter(
-                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True), deleted_xform=None)
         self.fields['form'].choices = [(obj.id, obj.title) for obj in xform]
         self.fields['form'].empty_label = None
 
@@ -253,22 +253,22 @@ class ScheduleForm(forms.ModelForm):
             xform = XForm.objects.filter(
                 Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
                 Q(fieldsightformlibrary__project=self.request.project) |
-                Q(fieldsightformlibrary__organization=self.request.organization))
+                Q(fieldsightformlibrary__organization=self.request.organization), deleted_xform=None)
 
         elif hasattr(self.request, "organization") and self.request.organization is not None:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) |
                 Q(fieldsightformlibrary__is_global=True) |
-                Q(fieldsightformlibrary__organization=self.request.organization))
+                Q(fieldsightformlibrary__organization=self.request.organization), deleted_xform=None)
         else:
             xform = XForm.objects.filter(
-                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True), deleted_xform=None)
         self.fields['form'].choices = [(obj.id, obj.title) for obj in xform]
         self.fields['form_type'].choices = [(0, "General"),(1, "Scheduled")]
         self.fields['form'].empty_label = None
 
     class Meta:
-        fields = ['form', 'form_type', 'name', 'date_range_start', 'date_range_end', 'selected_days', 'shared_level']
+        fields = ['form', 'form_type', 'name', 'date_range_start', 'date_range_end', 'selected_days', 'shared_level', 'schedule_level_id']
         model = Schedule
         widgets = { 'selected_days': forms.CheckboxSelectMultiple,
                     'date_range_start': SelectDateWidget,
@@ -291,10 +291,10 @@ class KoScheduleForm(HTML5BootstrapModelForm, KOModelForm):
         if hasattr(self.request, "organization") and self.request.organization is not None:
             xform = XForm.objects.filter(
                 Q(user=self.request.user) |
-                Q(user__user_profile__organization=self.request.organization))
+                Q(user__user_profile__organization=self.request.organization), deleted_xform=None)
         else:
             xform = XForm.objects.filter(
-                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True))
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True), deleted_xform=None)
         self.fields['form'].choices = [(obj.id, obj.title) for obj in xform]
         self.fields['form'].empty_label = None
         self.fields['form'].label = "Select Form"
