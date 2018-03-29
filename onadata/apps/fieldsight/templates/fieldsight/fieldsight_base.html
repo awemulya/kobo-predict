@@ -130,7 +130,7 @@
 								<span>{% trans 'Dashboard' %}</span>
 							</a>
 						</li>
-						{% ifrole "admin" %}
+						{% if request.group.name == "Super Admin" %}
 						<li class="sub-menu">
 							<a href="{% url 'fieldsight:organizations-list' %}">
 								<i class="la la-building"></i>
@@ -141,7 +141,7 @@
 								<!--<li><a href="new-organization.php">New Organization</a></li>-->
 							<!--</ul>-->
 						</li>
-						{% endrole %}
+						{% endif %}
 						<!--<li class="sub-menu">-->
 							<!--<a href="javascript:;">-->
 								<!--<i class="la la-tasks"></i>-->
