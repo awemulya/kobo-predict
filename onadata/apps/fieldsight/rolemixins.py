@@ -38,6 +38,8 @@ class LoginRequiredMixin(object):
 class OrganizationRoleMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():
+            print "-----------------------"
+            print request.role.group.name
             if request.role.group.name == "Super Admin":
                 return super(OrganizationRoleMixin, self).dispatch(request, *args, **kwargs)
             organization_id = self.kwargs.get('pk')
