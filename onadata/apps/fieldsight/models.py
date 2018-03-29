@@ -453,20 +453,15 @@ class UserInvite(models.Model):
 
     def save(self, *args, **kwargs):
         if self.group.name == 'Super Admin':
-            self.organization = None
-            self.project = None
-            self.site = None
+            self.organization = []
+            self.project = []
+            self.site = []
         elif self.group.name == 'Organization Admin':
-            self.project = None
-            self.site = None
+            self.project = []
+            self.site = []
         elif self.group.name == 'Project Manager':
-            self.site = None
-            self.organization = self.project.organization
-
-        elif self.group.name in ['Site Supervisor', 'Reviewer']:
-            self.project = self.site.project
-            self.organization = self.site.project.organization
-
+            self.site = []
+            
         super(UserInvite, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
