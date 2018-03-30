@@ -215,7 +215,7 @@
              {% with obj.id|project_submissions as count %}
              <a class="badge badge-primary" href="{% url 'forms:project_html_export' obj.id%}">
                                
-                              {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
+                              {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}
 
                                </a>
 
