@@ -4,7 +4,7 @@ from collections import OrderedDict
 class BarGenerator(object):
     def __init__(self, sites):
         self.data = OrderedDict()
-        self.data['Not Started'] = 0
+        self.data['Unstarted'] = 0
         self.data['< 20'] = 0
         self.data['20 - 40'] = 0
         self.data['40 - 60'] = 0
