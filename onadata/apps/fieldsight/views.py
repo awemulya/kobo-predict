@@ -286,7 +286,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             'is_supervisor_only': is_supervisor_only,
             'next_photos_count':total_count - 5,
             'total_photos': total_count,
-            'total_submissions': response['flagged'] + response['approved'] + response['rejected'] + response['outstanding']
+            'total_submissions': response.flagged + response.approved + response.rejected + response.outstanding
         }
         return dashboard_data
 
