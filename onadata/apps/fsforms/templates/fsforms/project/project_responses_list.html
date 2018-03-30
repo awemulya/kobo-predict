@@ -267,9 +267,11 @@
                  <div class="well well-sm notice-danger"><h4>{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}</h4></div>
             {% for obj in deleted_forms %}
             <div class="row card_inside">{{obj.xf.title}} {% trans 'with' %}
-             <a href="{% url 'forms:project_html_export' obj.id %}">
-                               {{ obj.id|project_submissions }}
-                               {% trans ' Submissions ' %}</a>
+            {% with  obj.id|project_submissions as count %}
+             <a obj.id|project_submissions href="{% url 'forms:project_html_export' obj.id %}">
+                      <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}         
+                               </a>
+            {% endwith %}
             </div>
             {% endfor %}
       
