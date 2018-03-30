@@ -1245,7 +1245,7 @@ def sendmultiroleuserinvite(request):
     response=""
 
     if leveltype == "region":
-        region = Region.objects.get(id=region_id);
+        region = Region.objects.get(id=levels[0]);
         project_ids = region.project_id
         organization_id = region.project.organization_id  
         site_ids = Site.objects.filter(region_id__in=levels).values_list('id', flat=True)  
@@ -1263,37 +1263,37 @@ def sendmultiroleuserinvite(request):
         project_ids = site.project_id
         organization_id = site.project.organization_id
 
-        for email in emails:
-
-            userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id__in=project_ids,  site_id__in=site_ids, is_used=False).exists()
-            
-            if userinvite:
-                response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
-                continue
-
-            invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_ids, organization_id=organization_id,  site_id=site_ids)
-            invite.save()
-            current_site = get_current_site(request)
-            subject = 'Invitation for Role'
-            data = {
-                'email': invite.email,
-                'domain': current_site.domain,
-                'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
-                'token': invite.token,
-                'invite': invite,
-                }
-            email_to = (invite.email,)
-            message = get_template('fieldsight/email_sample.html').render(Context(data))
-            email_to = (invite.email,)
-            msg = EmailMessage(subject, message, 'Field Sight', email_to)
-            msg.content_subtype = "html"
-            msg.send()
-            
-            if group.name == "Unassigned":
-                response += "Sucessfully invited "+ email +" to join this organization.<br>"
-            else:    
-                response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
+    for email in emails:
+        # import pdb; pdb.set_trace()
+        userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project=project_ids,  site=site_ids, is_used=False).exists()
+        
+        if userinvite:
+            response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
             continue
+
+        invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project=project_ids, organization_id=organization_id,  site=site_ids)
+        invite.save()
+        current_site = get_current_site(request)
+        subject = 'Invitation for Role'
+        data = {
+            'email': invite.email,
+            'domain': current_site.domain,
+            'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
+            'token': invite.token,
+            'invite': invite,
+            }
+        email_to = (invite.email,)
+        message = get_template('fieldsight/email_sample.html').render(Context(data))
+        email_to = (invite.email,)
+        msg = EmailMessage(subject, message, 'Field Sight', email_to)
+        msg.content_subtype = "html"
+        msg.send()
+        
+        if group.name == "Unassigned":
+            response += "Sucessfully invited "+ email +" to join this organization.<br>"
+        else:    
+            response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
+        continue
 
     return HttpResponse(response)
 
