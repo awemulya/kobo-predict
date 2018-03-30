@@ -5,11 +5,11 @@ class BarGenerator(object):
     def __init__(self, sites):
         self.data = OrderedDict()
         self.data['Not Started'] = 0
-        self.data['< 20%'] = 0
-        self.data['20% to 40%'] = 0
-        self.data['40% to 60%'] = 0
-        self.data['60% to 80%'] = 0
-        self.data['> 80%'] = 0
+        self.data['< 20'] = 0
+        self.data['20 - 40'] = 0
+        self.data['40 - 60'] = 0
+        self.data['60 - 80'] = 0
+        self.data['80 <'] = 0
         self.data['Completed'] = 0
 
         for site in sites:
@@ -23,4 +23,4 @@ class BarGenerator(object):
         if progress in range(40,59): return self.data.keys()[3]
         if progress in range(60,79): return self.data.keys()[4]
         if progress in range(80,99): return self.data.keys()[5]
-        if progress == 100: return self.data.keys()[6]        
+        if progress == 100: return self.data.keys()[6]
