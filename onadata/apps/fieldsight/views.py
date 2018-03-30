@@ -184,6 +184,7 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
             'progress_data': [], #bar_graph.data.values(),
             'progress_labels': [] , #bar_graph.data.keys(),
             'roles_org': roles_org,
+            'total_submissions': flagged + approved + rejected + outstanding
 
         }
         return dashboard_data
@@ -229,6 +230,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'progress_data': bar_graph.data.values(),
             'progress_labels': bar_graph.data.keys(),
             'roles_project': roles_project,
+            'total_submissions': flagged + approved + rejected + outstanding
     }
         return dashboard_data
 
@@ -282,7 +284,8 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             'meta_data': myanswers,
             'is_supervisor_only': is_supervisor_only,
             'next_photos_count':total_count - 5,
-            'total_photos': total_count
+            'total_photos': total_count,
+            'total_submissions': flagged + approved + rejected + outstanding
         }
         return dashboard_data
 
