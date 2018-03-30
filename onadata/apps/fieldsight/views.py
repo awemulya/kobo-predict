@@ -269,7 +269,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
         else:
             total_count = 0
         outstanding, flagged, approved, rejected = obj.get_site_submission()
-        outstanding1, flagged1, approved1, rejected1 = obj.get_site_submission_count()
+        response = obj.get_site_submission_count()
         dashboard_data = {
             'obj': obj,
             'peoples_involved': peoples_involved,
@@ -286,7 +286,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             'is_supervisor_only': is_supervisor_only,
             'next_photos_count':total_count - 5,
             'total_photos': total_count,
-            'total_submissions': flagged1 + approved1 + rejected1 + outstanding1
+            'total_submissions': response['flagged'] + response['approved'] + response['rejected'] + response['outstanding']
         }
         return dashboard_data
 
