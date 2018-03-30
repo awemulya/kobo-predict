@@ -74,7 +74,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
-        if self.request.role.group.name == "Super Admin":
+        if self.request.group.name == "Super Admin":
             return queryset 
         org_ids = self.request.roles.filter(group__name='Organization Admin').values('organization_id')
         project_ids = self.request.roles.filter(group__name='Project Manager').values('project_id')
@@ -84,7 +84,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
 class NotificationCountnSeen(View):
     def get(self, request):
         queryset = FieldSightLog.objects.filter(date__gt=request.user.user_profile.notification_seen_date).prefetch_related('seen_by')
-        if request.role.group.name == "Super Admin":
+        if request.group.name == "Super Admin":
             count = queryset.filter().exclude(seen_by__id=request.user.id).count()       
         else:
             org_ids = request.roles.filter(group__name='Organization Admin').values('organization_id')
