@@ -74,8 +74,10 @@
                       </td>
                       
                       <td>
+                         {% with obj.pk|project_submissions as count %}
                            <a class="badge badge-primary" href="{% url 'forms:project_html_export' obj.id %}">
-                           <i class="la la-eye"></i>  {{ obj.id|project_submissions }} {% trans 'Submission' %}</a>
+                           <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
+                          {% endwith %}
                       </td>
                      
                       
@@ -124,8 +126,10 @@
                      
 
                        <td>
+                       {% with obj.pk|project_submissions as count %}
                            <a class="badge badge-primary" href="{% url 'forms:project_html_export' obj.id %}">
-                           <i class="la la-eye"></i>  {{ obj.id|project_submissions }} {% trans 'Submission' %}</a>
+                           <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
+                      {% endwith %}
                       </td>
                      
                       
@@ -174,10 +178,9 @@
                       </td>
                          <td>
                                 {% with obj.schedule_forms.pk|project_submissions as count %}
-                                   {% if count %}
+                                  
                                    <a class="badge badge-primary" href="{% url 'forms:project_html_export'  obj.schedule_forms.pk %}">
-                                   <i class="la la-eye"></i>  {{ count }} {% trans 'Submission' %}</a>
-                                   {% endif %}
+                                   <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
                                 {% endwith %}
                               </td>
                              
@@ -235,10 +238,10 @@
                           
                                <td>
                                 {% with obj.stage_forms.pk|project_submissions as count %}
-                                   {% if count %}
+                                   
                                    <a class="badge badge-primary" href="{% url 'forms:project_html_export'  obj.stage_forms.pk %}">
-                                   <i class="la la-eye"></i>  {{ count }} {% trans 'Submission' %}</a>
-                                   {% endif %}
+                                   <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
+                                   
                                 {% endwith %}
                               </td>
                              
