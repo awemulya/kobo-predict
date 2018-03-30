@@ -175,7 +175,7 @@
                             {% for role in object_list %}
 
 							<div class="col-md-4 col-sm-6">
-								<div class="organization-item-wrap margin-top clearfix">
+								<div class="organization-item-wrap margin-top clearfix" style="min-height:0px !important;">
 
                                     <img  style="float:left" src="{% if role.user.user_profile  %}{{role.user.user_profile.profile_picture.url}}{% endif %}" alt="" width="60" height="60">
 
