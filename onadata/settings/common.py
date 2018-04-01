@@ -238,6 +238,7 @@ INSTALLED_APPS = (
     'onadata.apps.userrole',
     'onadata.apps.fsforms',
     'onadata.apps.eventlog',
+    'onadata.apps.staff',
     'guardian',
     'djcelery',
     'onadata.apps.stats',

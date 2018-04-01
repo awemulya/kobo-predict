@@ -1,0 +1,35 @@
+from django.db import models
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericRelation
+# Create your models here.
+
+STAFF_TYPES = (
+        (1, 'Laborer'),
+        (2, 'Worker'),
+        (3, 'Transporter'),
+    )
+
+class Staffs(models.Model):
+    full_name = models.CharField(max_length=255,blank=True, null=True)
+    type = models.IntegerField(default=0, choices=STAFF_TYPES)
+    team_leader = models.ForeignKey(User, related_name="staff_teamleader")
+    created_by = models.ForeignKey(User, related_name="staff_created_by")
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now_add=True)
+
+    logs = GenericRelation('eventlog.FieldSightLog')
+
+    def __unicode__(self):
+        return self.full_name
+
+
+class Attendance(models.Model):
+    attendance_date = models.DateTimeField()
+    staffs = models.ForeignKey(User, null=True, blank=True)
+    submitted_by = models.ForeignKey(User, related_name="attendance_submitted_by")
+    created_date = models.DateTimeField()
+    updated_date = models.DateTimeField(auto_now_add=True)
+    logs = GenericRelation('eventlog.FieldSightLog')
+
+    def __unicode__(self):
+        return self.attendance_date
