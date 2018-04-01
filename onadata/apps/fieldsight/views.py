@@ -41,7 +41,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
-from .rolemixins import ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
+from .rolemixins import SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm)
@@ -184,6 +184,7 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
             'progress_data': [], #bar_graph.data.values(),
             'progress_labels': [] , #bar_graph.data.keys(),
             'roles_org': roles_org,
+            'total_submissions': flagged + approved + rejected + outstanding
 
         }
         return dashboard_data
@@ -229,6 +230,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'progress_data': bar_graph.data.values(),
             'progress_labels': bar_graph.data.keys(),
             'roles_project': roles_project,
+            'total_submissions': flagged + approved + rejected + outstanding
     }
         return dashboard_data
 
@@ -267,6 +269,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
         else:
             total_count = 0
         outstanding, flagged, approved, rejected = obj.get_site_submission()
+        response = json.loads(obj.get_site_submission_count())
         dashboard_data = {
             'obj': obj,
             'peoples_involved': peoples_involved,
@@ -282,7 +285,8 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             'meta_data': myanswers,
             'is_supervisor_only': is_supervisor_only,
             'next_photos_count':total_count - 5,
-            'total_photos': total_count
+            'total_photos': total_count,
+            'total_submissions': response['flagged'] + response['approved'] + response['rejected'] + response['outstanding']
         }
         return dashboard_data
 
@@ -328,10 +332,10 @@ class UserDetailView(object):
     form_class = RegistrationForm
 
 
-class OrganizationListView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, ListView):
+class OrganizationListView(OrganizationView, SuperUserRoleMixin, ListView):
     pass
 
-class OrganizationCreateView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, CreateView):
+class OrganizationCreateView(OrganizationView, SuperUserRoleMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save()
         noti = self.object.logs.create(source=self.request.user, type=9, title="new Organization",
@@ -367,7 +371,7 @@ class OrganizationUpdateView(OrganizationView, OrganizationRoleMixin, UpdateView
 
 
 
-class OrganizationDeleteView(OrganizationView, LoginRequiredMixin, SuperAdminMixin, DeleteView):
+class OrganizationDeleteView(OrganizationView, SuperUserRoleMixin, DeleteView):
     pass
 
 @login_required

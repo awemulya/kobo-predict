@@ -106,7 +106,7 @@
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										  <input type="text" name="q" placeholder="Search for..." value='{{ request.GET.q }}'/>
+										  <input type="text" name="q" placeholder="Search for..." autofocus value='{{ request.GET.q }}'/>
 										  <span class="input-group-btn">
 											  <button class="btn btn-primary" type="submit" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
 										  </span>
@@ -123,7 +123,7 @@
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										  <input type="text" name="q" placeholder="Search for..." value='{{ request.GET.q }}'/>
+										  <input type="text" name="q" placeholder="Search for..." autofocus value='{{ request.GET.q }}'/>
 										  <span class="input-group-btn">
 											  <button class="btn btn-primary" type="submit" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
 										  </span>
@@ -140,7 +140,7 @@
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										  <input type="text" name="q" placeholder="Search for..." value='{{ request.GET.q }}'/>
+										  <input type="text" name="q" placeholder="Search for..." autofocus value='{{ request.GET.q }}'/>
 										  <span class="input-group-btn">
 											  <button class="btn btn-primary" type="submit" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
 										  </span>
@@ -175,7 +175,7 @@
                             {% for role in object_list %}
 
 							<div class="col-md-4 col-sm-6">
-								<div class="organization-item-wrap margin-top clearfix">
+								<div class="organization-item-wrap margin-top clearfix" style="min-height:0px !important;">
 
                                     <img  style="float:left" src="{% if role.user.user_profile  %}{{role.user.user_profile.profile_picture.url}}{% endif %}" alt="" width="60" height="60">
 

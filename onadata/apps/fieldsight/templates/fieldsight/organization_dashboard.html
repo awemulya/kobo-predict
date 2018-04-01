@@ -86,6 +86,15 @@ var org = "{{obj.pk}}";
 							<div class="col-lg-6 col-sm-12">
 								<ul class="org-profile-stat-list clearfix margin-top">
 									<li>
+										<a href="#" class="org-profile-stat-item" title="">
+											<i class="la la-files-o"></i>
+											<div class="org-mini-stat-info">
+												<span>{{total_submissions}}</span>
+												{% trans 'Submissions ' %}
+											</div>
+										</a>
+									</li>
+									<li>
 										<a href="{% url 'fieldsight:org-user-list' obj.pk %}" class="org-profile-stat-item" title="">
 											<i class="la la-users"></i>
 											<div class="org-mini-stat-info">
@@ -173,24 +182,6 @@ var org = "{{obj.pk}}";
 					<div class="row">
 						<div class="col-lg-3 col-md-6 col-sm-12">
 							<a href="#" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
-								<div class="mini-stat-info">
-									<span>{{rejected}}</span>
-									{% trans 'Rejected' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="#" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
-								<div class="mini-stat-info">
-									<span>{{flagged}}</span>
-									{% trans 'flagged' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="#" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
 								<div class="mini-stat-info">
 									<span>{{outstanding}}</span>
@@ -204,6 +195,25 @@ var org = "{{obj.pk}}";
 								<div class="mini-stat-info">
 									<span>{{approved}}</span>
 									{% trans 'Approved' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="#" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
+								<div class="mini-stat-info">
+									<span>{{flagged}}</span>
+									{% trans 'Flagged' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="#" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
+								<div class="mini-stat-info">
+									<span>{{rejected}}</span>
+									{% trans 'Rejected' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>

@@ -89,7 +89,7 @@ var project = "{{obj.pk}}";
 								<a class="dropdown-item" href="{% url 'forms:setup-forms' 1 obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Forms' %}</a>
 
 								{% if obj.cluster_sites %}
-								<a class="dropdown-item" href="{% url 'fieldsight:multi_site_region_assign' obj.id%}"><i class="la la-map-marker"></i>{% trans 'Assign' %} {% trans 'Site' %} {% trans 'Regions' %}</a>
+								<a class="dropdown-item" href="{% url 'fieldsight:multi_site_region_assign' obj.id%}"><i class="la la-map-marker"></i>{% trans 'Assign' %} {% trans 'sites' %} {% trans 'to' %} {% trans 'regions' %}</a>
 								{% else %}
 								<a class="dropdown-item" href="{% url 'fieldsight:proj-site-list' obj.id%}"><i class="la la-map-marker"></i>{% trans ' Sites' %}</a>
 								{% endif %}
@@ -109,13 +109,22 @@ var project = "{{obj.pk}}";
 									</div>
 									<div class="org-profile-basic-info">
 										<h2>{{ obj.name }}</h2>
-										<p>{{ obj.address }}, {{ obj.get_country_display }}</p>
+										<p>{{ obj.address }}{% if obj.get_country == "" %}, {{ obj.get_country_display }}{% endif %}</p>
                                         <p>{{ obj.phone }}</p>
 									</div>
 								</div>
 							</div>
 							<div class="col-lg-6 col-sm-12">
 								<ul class="org-profile-stat-list clearfix margin-top">
+									<li>
+										<a href="{% url 'fieldsight:proj-submission-data' obj.pk 2 %}" class="org-profile-stat-item" title="">
+											<i class="la la-files-o"></i>
+											<div class="org-mini-stat-info">
+												<span>{{ total_submissions }}</span>
+												{% trans 'Submissions' %}
+											</div>
+										</a>
+									</li>
 									<li>
 										<a href="{% url 'fieldsight:proj-user-list' obj.pk %}" class="org-profile-stat-item" title="">
 											<i class="la la-users"></i>
@@ -195,24 +204,6 @@ var project = "{{obj.pk}}";
 					</div>
 					<div class="row">
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 0 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
-								<div class="mini-stat-info">
-									<span>{{rejected}}</span>
-									{% trans 'Rejected' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 1 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
-								<div class="mini-stat-info">
-									<span>{{flagged}}</span>
-									{% trans 'flagged' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
 							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 2 %}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
 								<div class="mini-stat-info">
@@ -230,6 +221,26 @@ var project = "{{obj.pk}}";
 								</div>
 							</a>
 						</div>
+
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 1 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
+								<div class="mini-stat-info">
+									<span>{{flagged}}</span>
+									{% trans 'Flagged' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 0 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
+								<div class="mini-stat-info">
+									<span>{{rejected}}</span>
+									{% trans 'Rejected' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						
 					</div>
 					<div class="row">
 						<div class="col-lg-6 col-sm-12">

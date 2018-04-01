@@ -56,15 +56,16 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 
                     <div class="panel-heading-right">
                     		<select name ="sortby" class="form-control form-control-sm" data-bind="value:sortby, valueUpdate:'afterkeydown'">
-							<option class="dropdown-list" value="sitename" disabled selected>{% trans 'Select' %} {% trans 'your' %} {% trans 'option' %}</option>
-								<option value="rejected">{% trans 'Rejected' %}</option>
-								<option value="flagged">{% trans 'Flagged' %}</option>
-								<option value="pending">{% trans 'Pending' %}</option>
-								<option value="approved">{% trans 'Approved' %}</option>
-								<option value="progress">{% trans 'Progress' %}</option>
-								<option value="identifier">{% trans 'Identifier' %}</option>
-								<option value="sitename">{% trans 'Name' %}</option>
-
+							<option class="dropdown-list" value="sitename" disabled selected>{% trans 'Sort' %} {% trans 'By' %}</option>
+								<option value="progress">{% trans 'Site Progress' %}</option>
+								<option value="identifier">{% trans 'Site Identifier' %}</option>
+								<option value="sitename">{% trans 'Site Name' %}</option>
+								<option value="pending">{% trans 'Number of  Pending Submissions' %}</option>
+								<option value="approved">{% trans 'Number of  Approved Submissions' %}</option>
+								<option value="flagged">{% trans 'Number of  Flagged Submissions' %}</option>
+								<option value="rejected">{% trans 'Number of Rejected Submissions' %}</option>
+								
+								
 
 
 							</select>

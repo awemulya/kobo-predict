@@ -73,11 +73,9 @@
                       </td>
                       <td>
                           {% with obj.id|site_submissions as count %}
-                          {% if count %}
-                           <a href="{% url 'forms:formpack_html_export' obj.id %}">
-                               {{ count }}
-                               {% trans ' View ' %}</a>
-                          {% endif %}
+                          
+                           <a class="badge badge-primary" href="{% url 'forms:formpack_html_export' obj.id %}">
+                               <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
                           {% endwith %}
 
                       </td>
@@ -126,11 +124,10 @@
                       </td>
                       <td>
                            {% with obj.schedule_forms.pk|site_submissions as count %}
-                          {% if count %}
-                           <a href="{% url 'forms:formpack_html_export' obj.schedule_forms.pk %}">
-                               {{ count }}
-                               {% trans ' View ' %}</a>
-                          {% endif %}
+                          
+                           <a class="badge badge-primary" href="{% url 'forms:formpack_html_export' obj.schedule_forms.pk %}">
+                              <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
+                              </a>
                           {% endwith %}
                       </td>
                       <td>
@@ -187,11 +184,10 @@
                               <td>{{obj.stage_forms.xf.title}}</td>
                               <td>
                                 {% with obj.stage_forms.pk|site_submissions as count %}
-                          {% if count %}
-                           <a href="{% url 'forms:formpack_html_export' obj.stage_forms.pk %}">
-                               {{ count }}
-                               {% trans ' View ' %}</a>
-                          {% endif %}
+                          
+                           <a class="badge badge-primary" href="{% url 'forms:formpack_html_export' obj.stage_forms.pk %}">
+                               <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
+                               </a>
                           {% endwith %}
                               </td>
                               <td>
@@ -216,9 +212,14 @@
                            <div class="well well-sm notice-danger"><h4>{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}</h4></div>
             {% for obj in deleted_forms %}
             <div class="row card_inside">{{obj.xf.title}} {% trans 'with' %}
-             <a href="{% url 'forms:project_html_export' obj.id%}">
-                               {{ obj.id|project_submissions }}
-                               {% trans ' Submissions ' %}</a>
+             {% with obj.id|project_submissions as count %}
+             <a class="badge badge-primary" href="{% url 'forms:project_html_export' obj.id%}">
+                               
+                              {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}
+
+                               </a>
+
+             {% endwith %}
             </div>
             {% endfor %}
         </div>

@@ -185,6 +185,15 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 									<div class="col-lg-6 col-sm-12">
 										<ul class="org-profile-stat-list clearfix margin-top">
 											<li>
+												<a href="{% url 'fieldsight:site-submission-data' obj.pk 2 %}" class="org-profile-stat-item" title="">
+													<i class="la la-files-o"></i>
+													<div class="org-mini-stat-info">
+														<span>{{ total_submissions }}</span>
+														{% trans 'Submissions' %}
+													</div>
+												</a>
+											</li>
+											<li>
 												<a href="{% url 'fieldsight:site-user-list' obj.pk %}" class="org-profile-stat-item" title="">
 													<i class="la la-users"></i>
 													<div class="org-mini-stat-info">
@@ -259,24 +268,6 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 					</div>
 					<div class="row">
 						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:site-submission-data' obj.pk 0 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
-								<div class="mini-stat-info">
-									<span>{{rejected|length}}</span>
-									{% trans 'Rejected' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:site-submission-data' obj.pk 1 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
-								<div class="mini-stat-info">
-									<span>{{flagged|length}}</span>
-									{% trans 'Flagged' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
 							<a href="{% url 'fieldsight:site-submission-data' obj.pk 2 %}" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
 								<div class="mini-stat-info">
@@ -294,6 +285,26 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 								</div>
 							</a>
 						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:site-submission-data' obj.pk 1 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
+								<div class="mini-stat-info">
+									<span>{{flagged|length}}</span>
+									{% trans 'Flagged' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:site-submission-data' obj.pk 0 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
+								<div class="mini-stat-info">
+									<span>{{rejected|length}}</span>
+									{% trans 'Rejected' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						
+						
 					</div>
 					<div class="row">
 							<div class="col-md-7">
@@ -304,7 +315,7 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 									<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">Pending <span class="badge badge-info">{{outstanding|length}}</span></a>
 								  </li>
 								 <li class="nav-item">
-									<a class="nav-link" data-toggle="tab" href="#tab004" role="tab">Approved <span class="badge badge-success">{{Approved|length}}</span></a>
+									<a class="nav-link" data-toggle="tab" href="#tab004" role="tab">Approved <span class="badge badge-success">{{approved|length}}</span></a>
 								  </li>
 								  <li class="nav-item">
 									<a class="nav-link" data-toggle="tab" href="#tab003" role="tab">Flagged <span class="badge badge-warning">{{flagged|length}}</span></a>
