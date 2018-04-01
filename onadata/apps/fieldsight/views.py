@@ -254,6 +254,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
         line_chart_data = line_chart.data()
         progress_chart = ProgressGeneratorSite(obj)
         progress_chart_data = progress_chart.data()
+        has_progress_chart = True if len(progress_chart_data.keys()) > 0 else False
         meta_questions = obj.project.site_meta_attributes
         meta_answers = obj.site_meta_attributes_ans
         mylist =[]
@@ -282,6 +283,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             'cumulative_labels': line_chart_data.keys(),
             'progress_chart_data_data': progress_chart_data.keys(),
             'progress_chart_data_labels': progress_chart_data.values(),
+            'has_progress_chart': has_progress_chart,
             'meta_data': myanswers,
             'is_supervisor_only': is_supervisor_only,
             'next_photos_count':total_count - 5,

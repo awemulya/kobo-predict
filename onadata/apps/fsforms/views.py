@@ -2,6 +2,7 @@ import json
 import uuid
 from base64 import b64decode
 
+import datetime
 from bson import json_util
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -1489,6 +1490,7 @@ def instance_status(request, instance):
                         obj = InstanceImages(image=img, instance_status=status_changed)
                         obj.save()
                 fi.form_status = int(submission_status)
+                fi.date = datetime.date.today()
                 fi.save()
                 comment_url = reverse("forms:instance_status_change_detail",
                                                 kwargs={'pk': status_changed.id})
