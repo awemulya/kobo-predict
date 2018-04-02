@@ -9,7 +9,8 @@ STAFF_TYPES = (
         (3, 'Transporter'),
     )
 
-class Staffs(models.Model):
+
+class Staff(models.Model):
     full_name = models.CharField(max_length=255,blank=True, null=True)
     type = models.IntegerField(default=0, choices=STAFF_TYPES)
     team_leader = models.ForeignKey(User, related_name="staff_teamleader")
@@ -25,7 +26,7 @@ class Staffs(models.Model):
 
 class Attendance(models.Model):
     attendance_date = models.DateTimeField()
-    staffs = models.ForeignKey(User, null=True, blank=True)
+    staffs = models.ManyToManyField(Staff, null=True, blank=True)
     submitted_by = models.ForeignKey(User, related_name="attendance_submitted_by")
     created_date = models.DateTimeField()
     updated_date = models.DateTimeField(auto_now_add=True)

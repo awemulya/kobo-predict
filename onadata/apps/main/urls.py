@@ -17,6 +17,7 @@ handler500 = Error_404.as_view()
 urlpatterns = patterns(
     '',
     # fieldsight
+    url(r'^staff/', include('onadata.apps.staff.urls', namespace='staff')),
     url(r'^users/', include('onadata.apps.users.urls', namespace='users')),
     url(r'^fieldsight/', include('onadata.apps.fieldsight.urls', namespace='fieldsight')),
     url(r'^userrole/', include('onadata.apps.userrole.urls', namespace='role')),
