@@ -567,13 +567,22 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 									<h4>{% trans 'Site' %} {% trans 'Progress' %}</h4>
 								</div>
 								<div class="widget-body">
-									<div id="siteprogress-chart">
-										<canvas id="progressChart" width="500" height="300"></canvas>
-									</div>
+									{% if has_progress_chart %}
+										<div id="siteprogress-chart">
+											<canvas id="progressChart" width="500" height="300"></canvas>
+										</div>
+									{% else %}
+										<div>
+											<h3>No Progress Data</h3>
+
+										</div>
+									{% endif %}
 								</div>
 							</div>
 						</div>
 					</div>
+				</div>
+						</div>
 					</section>
 						</div>
 					<!--</div>-->
@@ -615,11 +624,11 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 	<script type = "text/javascript">
 		$('.legend').css('display','none');
 	</script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/d3.tip.v0.6.3.js"></script>
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/d3.tip.v0.6.3.js"></script>-->
     <!--<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_bar-graph.js"></script>-->
+{% if has_progress_chart %}
 <script>
 	$( document ).ready(function() {
-// Chart.defaults.global.defaultFontColor = '#FFF';
 height_max = Math.max.apply(Math, progress_data) || 10;
 
 var ctx1 = document.getElementById("progressChart");
@@ -707,6 +716,8 @@ var myChart1 = new Chart(ctx1, {
 	$(".ah-col" ).height(height);
 			
 </script>
+
+{% endif %}
 
 
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
