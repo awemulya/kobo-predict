@@ -528,7 +528,7 @@ var project = "{{obj.pk}}";
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.markercluster-src.js"></script>
 	<script src="{% static 'dummy/assets/js/vendor/jquery.matchHeight.js' %}"></script>
 
-<!--script for slider pravin-slick-->
+
     <!--<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>-->
     <script src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
   	<script type="text/javascript">
@@ -539,35 +539,6 @@ var project = "{{obj.pk}}";
     var progress_labels = {{ progress_labels|safe}};
     var progress_data = {{ progress_data|safe}};
 
-
-    $(document).ready(function(){ 
-    $(".widget-scolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
-				
-				$('.scrollingSlider').slick({
-				  slidesToShow: 4,
-				  arrows: false,
-				  autoplay : true,
-				  infinite: false,
-				  responsive: [
-					{
-					  breakpoint: 768,
-					  settings: {
-						arrows: false,
-						slidesToShow: 3
-					  }
-					},
-					{
-					  breakpoint: 480,
-					  settings: {
-						arrows: false,
-						centerMode: true,
-						slidesToShow: 1
-					  }
-					}
-				  ]
-				});
-
-	});
     </script>
 
     <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
