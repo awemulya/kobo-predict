@@ -450,20 +450,7 @@ class UserInvite(models.Model):
 
     def getname(self):
         return str("invited")
-
-    def save(self, *args, **kwargs):
-        if self.group.name == 'Super Admin':
-            self.organization = []
-            self.project = []
-            self.site = []
-        elif self.group.name == 'Organization Admin':
-            self.project = []
-            self.site = []
-        elif self.group.name == 'Project Manager':
-            self.site = []
-            
-        super(UserInvite, self).save(*args, **kwargs)
-
+        
     def get_absolute_url(self):
         return reverse('fieldsight:activate-role', kwargs={'invite_idb64': urlsafe_base64_encode(force_bytes(self.pk)), 'token':self.token,})
 

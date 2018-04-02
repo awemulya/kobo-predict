@@ -1255,7 +1255,7 @@ def sendmultiroleuserinvite(request):
 
     elif leveltype == "project":
         project_ids = levels
-        organization_id = Project.objects.get(pk=level).organization_id
+        organization_id = Project.objects.get(pk=project_ids[0]).organization_id
         site_ids = []
         print organization_id
 
@@ -1398,37 +1398,62 @@ class ActivateRole(TemplateView):
         
         invite.is_used = True
         invite.save()
-
+        extra_msg = ""
+        site=None
+        project=None
         if invite.group.name == "Organization Admin":
             noti_type = 1
             content = invite.organization
 
         elif invite.group.name == "Project Manager":
-            noti_type = 2
-            content = invite.project
+            if invite.project.all().count() == 1:
+                noti_type = 2
+                content = invite.project.all()[1]
+            else:
+                noti_type = 26
+                extra_msg = invite.project.all().count()
+                content = invite.organization
+            project = invite.project.all()[1]
         
         elif invite.group.name == "Reviewer":
-            noti_type = 3
-            content = invite.site
+            if invite.site.all().count == 1:
+                noti_type = 3
+                content = invite.site.all()[0]
+            else:
+                noti_type = 27
+                extra_msg = invite.site.all().count()
+                content = invite.project.all()[0]
+            project=invite.project.all()[0]
         
         elif invite.group.name == "Site Supervisor":
-            noti_type = 4
-            content = invite.site
-        
+            if invite.site.all().count == 1:
+                noti_type = 4
+                content = invite.site.all()[0]
+            else:
+                noti_type = 28
+                extra_msg = invite.site.all().count()
+                content = invite.project.all()[0]
+            project=invite.project.all()[0]
+
         elif invite.group.name == "Unassigned":
             noti_type = 24
-            if invite.site:
-                content = invite.site
+            if invite.site.all():
+                content = invite.site.all()[0]
+                project = invite.project.all()[0]
+                site = invite,project.all()[0]
             elif invite.project:
-                content = invite.project
+                content = invite.project.all()[0]
+                project = invite.project.all()[0]
             else:   
                 content = invite.organization
+
         elif invite.group.name == "Project Donor":
             noti_type = 25
-            content = invite.project
+            content = invite.project.all()[0]
+
 
         
-        noti = invite.logs.create(source=user, type=noti_type, title="new Role", organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.by_user,
+        noti = invite.logs.create(source=user, type=noti_type, title="new Role", organization=invite.organization, extra_message=extra_msg, project=project, site=site, content_object=content, extra_object=invite.by_user,
                                        description="{0} was added as the {1} of {2} by {3}.".
                                        format(user.username, invite.group.name, content.name, invite.by_user ))
         # result = {}

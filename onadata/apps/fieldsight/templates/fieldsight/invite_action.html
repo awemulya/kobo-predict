@@ -26,26 +26,30 @@
   
 <font face="ubuntu" size="3">You have been invited to join FieldSight by {{ invite.by_user.email }} as {{ invite.group.name }} Role for 
 {% with invite.site.all as sites %}
-  {% if sites %}
-  {% for site in sites %}
-    
-    {{ site.name }} 
+ {% if sites %} 
+  {% if sites|length == 1%}
+  {{ sites.first.name }}
   
-  {% endfor %}
-   in {{ invite.project.all.0.name }} of {{ invite.organization.name }}
-
+  {% else %}
+  {{ sites|length }} sites
   {% endif %}
-{% endwith %}
+   in {{ invite.project.all.0.name }} of {{ invite.organization.name }}
+  
+
   
 {% elif invite.project.all %}
-  {% for project in invite.project.all %}
-    {{ project.name }}
-  {% endfor %}
-   of {{ organization.name }}
+  {% if invite.project.all|length == 1%}
+  {{ invite.project.all.first.name }}
+  
+  {% else %}
+  {{ invite.project.all|length }} projects
+  {% endif %}
+   of {{ invite.organization.name }}
 
 {% elif invite.organization %}
   {{ invite.organization.name }}
-{% endif %}.</font>
+{% endif %}
+{% endwith %}.</font>
 	<input type="hidden" name="response" id="response">
 	          <div class="form-group">        
       <div class="col-sm-offset-3 col-sm-7">
