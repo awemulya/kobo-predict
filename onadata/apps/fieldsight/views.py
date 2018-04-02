@@ -1118,22 +1118,22 @@ def senduserinvite(request):
     group = Group.objects.get(name=request.POST.get('group'))
 
     organization_id = None
-    project_id =None
-    site_id =None
+    project_id =[]
+    site_id =[]
 
     if RepresentsInt(request.POST.get('organization_id')):
         organization_id = request.POST.get('organization_id')
     if RepresentsInt(request.POST.get('project_id')):
-        project_id = request.POST.get('project_id')
+        project_id = [request.POST.get('project_id')]
     if RepresentsInt(request.POST.get('site_id')):
-        site_id = request.POST.get('site_id')
+        site_id = [request.POST.get('site_id')]
 
     response=""
 
     for email in emails:
         email = email.strip()
         
-        userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+        userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project__in=project_id,  site__in=site_id, is_used=False)
 
         if userinvite:
             if group.name == "Unassigned":
@@ -1144,7 +1144,8 @@ def senduserinvite(request):
 
         user = User.objects.filter(email__iexact=email)
         if user:
-            userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id, ended_at__isnull=True).order_by('-id')    
+            userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project__in=project_id, site__in=site_id, ended_at__isnull=True).order_by('-id') 
+
             if userrole:
                 if group.name == "Unassigned":
                     response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' has already joined this organization.<br>'
@@ -1152,8 +1153,10 @@ def senduserinvite(request):
                     response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
                 continue
            
-        invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+        invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, organization_id=organization_id)
         invite.save()
+        invite.project = project_id
+        invite.site = site_id
         current_site = get_current_site(request)
         subject = 'Invitation for Role'
         data ={
@@ -1246,33 +1249,36 @@ def sendmultiroleuserinvite(request):
 
     if leveltype == "region":
         region = Region.objects.get(id=levels[0]);
-        project_ids = region.project_id
+        project_ids = [region.project_id]
         organization_id = region.project.organization_id  
         site_ids = Site.objects.filter(region_id__in=levels).values_list('id', flat=True)  
 
     elif leveltype == "project":
         project_ids = levels
         organization_id = Project.objects.get(pk=level).organization_id
-        site_ids =None
+        site_ids = []
         print organization_id
 
     elif leveltype == "site":
         site_ids = levels
         site = Site.objects.get(pk=site_id)
 
-        project_ids = site.project_id
+        project_ids = [site.project_id]
         organization_id = site.project.organization_id
 
     for email in emails:
         # import pdb; pdb.set_trace()
-        userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project=project_ids,  site=site_ids, is_used=False).exists()
+        userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project__in=project_ids,  site__in=site_ids, is_used=False).exists()
         
         if userinvite:
             response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
             continue
 
-        invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project=project_ids, organization_id=organization_id,  site=site_ids)
+        invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, organization_id=organization_id)
         invite.save()
+        invite.project = project_ids
+        invite.site = site_ids
+
         current_site = get_current_site(request)
         subject = 'Invitation for Role'
         data = {
@@ -1334,14 +1340,13 @@ class ActivateRole(TemplateView):
 
     def post(self, request, invite, *args, **kwargs):
         user_exists = User.objects.filter(email__iexact=invite.email)
-        if user_exists:
-            user = user_exists[0] 
-            if request.POST.get('response') == "accept":
-                userrole = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
-            else:
+        if user_exists: 
+            if request.POST.get('response') != "accept":
                 invite.is_declined = True
-            invite.is_used = True
-            invite.save()
+                invite.is_used = True
+                invite.save()
+                return HttpResponseRedirect(reverse('login'))
+            user = user_exists[0]
         else:
             username = request.POST.get('username')
             if len(request.POST.get('username')) < 6:
@@ -1354,6 +1359,7 @@ class ActivateRole(TemplateView):
                 if not i.isalnum():
                     return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-1', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
                     break
+            
             if request.POST.get('password1') != request.POST.get('password2'):
                 return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-4', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
 
@@ -1371,29 +1377,44 @@ class ActivateRole(TemplateView):
             user.set_password(request.POST.get('password1'))
             user.save()
             
-## Needs completion
             codenames=['add_asset', 'change_asset','delete_asset', 'view_asset', 'share_asset']
             permissions = Permission.objects.filter(codename__in=codenames)
             user.user_permissions.add(permissions[0], permissions[1], permissions[2], permissions[3], permissions[4])
 
 
             profile, created = UserProfile.objects.get_or_create(user=user, organization=invite.organization)
-            userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
-            invite.is_used = True
-            invite.save()
+
+        site_ids = invite.site.all().values_list('pk', flat=True)
+        project_ids = invite.project.all().values_list('pk', flat=True)
+
+        for project_id in project_ids:
+            for site_id in site_ids:
+                userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project_id=project_id, site_id=site_id)
+            if not site_ids:
+                userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project_id=project_id, site=None)
+        if not project_ids:
+            userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=None, site=None)
+
+        
+        invite.is_used = True
+        invite.save()
 
         if invite.group.name == "Organization Admin":
             noti_type = 1
             content = invite.organization
+
         elif invite.group.name == "Project Manager":
             noti_type = 2
             content = invite.project
+        
         elif invite.group.name == "Reviewer":
             noti_type = 3
             content = invite.site
+        
         elif invite.group.name == "Site Supervisor":
             noti_type = 4
             content = invite.site
+        
         elif invite.group.name == "Unassigned":
             noti_type = 24
             if invite.site:
@@ -1407,8 +1428,7 @@ class ActivateRole(TemplateView):
             content = invite.project
 
         
-        noti = invite.logs.create(source=user, type=noti_type, title="new Role",
-                                       organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.by_user,
+        noti = invite.logs.create(source=user, type=noti_type, title="new Role", organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.by_user,
                                        description="{0} was added as the {1} of {2} by {3}.".
                                        format(user.username, invite.group.name, content.name, invite.by_user ))
         # result = {}

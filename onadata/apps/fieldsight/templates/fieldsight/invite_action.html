@@ -25,10 +25,24 @@
 {% csrf_token %}
   
 <font face="ubuntu" size="3">You have been invited to join FieldSight by {{ invite.by_user.email }} as {{ invite.group.name }} Role for 
-{% if invite.site %}
-  {{ invite.site.name }}  in {{ invite.project.name }} of {{ invite.organization.name }}
-{% elif invite.project %}
-  {{ invite.project.name }} of {{ invite.organization.name }}
+{% with invite.site.all as sites %}
+  {% if sites %}
+  {% for site in sites %}
+    
+    {{ site.name }} 
+  
+  {% endfor %}
+   in {{ invite.project.all.0.name }} of {{ invite.organization.name }}
+
+  {% endif %}
+{% endwith %}
+  
+{% elif invite.project.all %}
+  {% for project in invite.project.all %}
+    {{ project.name }}
+  {% endfor %}
+   of {{ organization.name }}
+
 {% elif invite.organization %}
   {{ invite.organization.name }}
 {% endif %}.</font>

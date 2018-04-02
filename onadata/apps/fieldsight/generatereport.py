@@ -339,11 +339,7 @@ class MyPrint:
         self.doc.multiBuild(elements, onLaterPages=self._header_footer)
 
     def print_individual_response(self, pk, base_url):
-
-        
         self.base_url = base_url
-       
-       
  
         # Our container for 'Flowable' objects
         elements = []
