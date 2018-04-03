@@ -332,8 +332,10 @@ class Site(models.Model):
         return self.type.name
 
     def progress(self):
-        stages = self.site_forms.filter(xf__isnull=False, is_staged=True, is_deleted=False).count()
-        approved = self.site_instances.filter(form_status=3, site_fxf__is_staged=True).count()
+        stages = self.site_forms.filter(xf__isnull=False, is_staged=True, is_deleted=False, is_deployed=True).count()
+        approved_forms = self.site_instances.filter(form_status=3, site_fxf__is_staged=True).values_list('site_fxf', flat=True)
+        unique_forms = set(approved_forms)
+        approved = len(unique_forms)
         if not approved:
             return 0
         if not stages:

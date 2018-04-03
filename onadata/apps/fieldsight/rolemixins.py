@@ -35,18 +35,23 @@ class LoginRequiredMixin(object):
         return login_required(view)
 
 
-class OrganizationRoleMixin(object):
+class OrganizationRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            if request.role.group.name == "Super Admin":
-                return super(OrganizationRoleMixin, self).dispatch(request, *args, **kwargs)
-            organization_id = self.kwargs.get('pk')
-            user_id = request.user.id
-            user_role = request.roles.filter(organization_id = organization_id, group__name="Organization Admin")
-            if user_role:
-                return super(OrganizationRoleMixin, self).dispatch(request, *args, **kwargs)
+        if request.group.name == "Super Admin":
+            return super(OrganizationRoleMixin, self).dispatch(request, *args, **kwargs)
+        organization_id = self.kwargs.get('pk')
+        user_id = request.user.id
+        user_role = request.roles.filter(organization_id = organization_id, group__name="Organization Admin")
+        if user_role:
+            return super(OrganizationRoleMixin, self).dispatch(request, *args, **kwargs)
         raise PermissionDenied()
 
+
+class SuperUserRoleMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if request.group.name == "Super Admin":
+            return super(SuperUserRoleMixin, self).dispatch(request, *args, **kwargs)    
+        raise PermissionDenied()
 
 
 class ProjectRoleMixin(LoginRequiredMixin):
