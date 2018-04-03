@@ -62,7 +62,7 @@ input {
 	</font>
 	<font class="sub" size="3" color="black" style="text-decoration: none!important;">
 
-		<p>You have been invited to join FieldSight by {{ invite.by_user.email }}{% if invite.group.name != "Unassigned" %} as {{ invite.group.name }} Role {% endif %}{% if invite.site.all %}{% if invite.site.all|length == 1 %} for {{ invite.site.name }} {% else %} {{ invite.site.all|length }} sites {% endif %} in {{ invite.project.all.0.name }} of {{ invite.organization.name }} {% elif invite.project.all|length %} {% if invite.project.all|length == 1%} for {{ invite.project.all.0.name }}{% else %}{{ invite.project.all|length }} projects {% endif %} of {{ invite.organization.name }}{% elif invite.organization %} in {{ invite.organization.name }}{% endif %}.</p>
+		<p>You have been invited to join FieldSight by {{ invite.by_user.first_name }} {{ invite.by_user.last_name }} {% if invite.group.name != "Unassigned" %} as {{ invite.group.name }} {% endif %}{% if invite.site.all %}{% if invite.site.all|length == 1 %} for {{ invite.site.all.0.name }} {% else %} {{ invite.site.all|length }} sites {% endif %} in {{ invite.project.all.0.name }} of {{ invite.organization.name }} {% elif invite.project.all|length %} {% if invite.project.all|length == 1%} for {{ invite.project.all.0.name }}{% else %}{{ invite.project.all|length }} projects {% endif %} of {{ invite.organization.name }}{% elif invite.organization %} in {{ invite.organization.name }}{% endif %}.</p>
 	</font>
 
 	<a href="http://{{ domain }}{% url 'fieldsight:activate-role' invite_id token %}
