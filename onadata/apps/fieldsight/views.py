@@ -1175,7 +1175,7 @@ def senduserinvite(request):
         message = get_template('fieldsight/email_sample.html').render(Context(data))
         email_to = (invite.email,)
         
-        msg = EmailMessage(subject, message, 'Field Sight', email_to)
+        msg = EmailMessage(subject, message, 'FieldSight', email_to)
         msg.content_subtype = "html"
         msg.send()
         if group.name == "Unassigned":
@@ -1296,7 +1296,7 @@ def sendmultiroleuserinvite(request):
         email_to = (invite.email,)
         message = get_template('fieldsight/email_sample.html').render(Context(data))
         email_to = (invite.email,)
-        msg = EmailMessage(subject, message, 'Field Sight', email_to)
+        msg = EmailMessage(subject, message, 'FieldSight', email_to)
         msg.content_subtype = "html"
         msg.send()
         
