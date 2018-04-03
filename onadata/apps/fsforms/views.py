@@ -1098,6 +1098,10 @@ class AssignFormDefaultStatus(FormMixin, View):
         if int(status_code) >= 0 and int(status_code) < 5: 
             fsform.default_submission_status = status_code
             fsform.save()
+            
+            for childform in fsform.parent.all():
+                childform.default_submission_status = status_code
+                childform.save()
         return HttpResponse({'responseJSON':'success'}, status=status.HTTP_200_OK)
 
 class Setup_forms(SPFmixin, View):
