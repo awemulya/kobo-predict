@@ -1261,8 +1261,7 @@ def sendmultiroleuserinvite(request):
 
     elif leveltype == "site":
         site_ids = levels
-        site = Site.objects.get(pk=site_id)
-
+        site = Site.objects.get(pk=site_ids[0])
         project_ids = [site.project_id]
         organization_id = site.project.organization_id
 
@@ -1408,15 +1407,15 @@ class ActivateRole(TemplateView):
         elif invite.group.name == "Project Manager":
             if invite.project.all().count() == 1:
                 noti_type = 2
-                content = invite.project.all()[1]
+                content = invite.project.all()[0]
             else:
                 noti_type = 26
                 extra_msg = invite.project.all().count()
                 content = invite.organization
-            project = invite.project.all()[1]
+            project = invite.project.all()[0]
         
         elif invite.group.name == "Reviewer":
-            if invite.site.all().count == 1:
+            if invite.site.all().count() == 1:
                 noti_type = 3
                 content = invite.site.all()[0]
             else:
@@ -1426,7 +1425,7 @@ class ActivateRole(TemplateView):
             project=invite.project.all()[0]
         
         elif invite.group.name == "Site Supervisor":
-            if invite.site.all().count == 1:
+            if invite.site.all().count() == 1:
                 noti_type = 4
                 content = invite.site.all()[0]
             else:
@@ -1437,15 +1436,15 @@ class ActivateRole(TemplateView):
 
         elif invite.group.name == "Unassigned":
             noti_type = 24
-            if invite.site.all():
-                content = invite.site.all()[0]
-                project = invite.project.all()[0]
-                site = invite,project.all()[0]
-            elif invite.project:
-                content = invite.project.all()[0]
-                project = invite.project.all()[0]
-            else:   
-                content = invite.organization
+            # if invite.site.all():
+            #     content = invite.site.all()[0]
+            #     project = invite.project.all()[0]
+            #     site = invite,project.all()[0]
+            # elif invite.project.all().count():
+            #     content = invite.project.all()[0]
+            #     project = invite.project.all()[0]
+            # else:   
+            content = invite.organization
 
         elif invite.group.name == "Project Donor":
             noti_type = 25
