@@ -24,7 +24,7 @@
 <form class="panel-body text-center" id="action-form" method="POST">
 {% csrf_token %}
   
-<font face="ubuntu" size="3">You have been invited to join FieldSight by {{ invite.by_user.email }} as {{ invite.group.name }}  for 
+<font face="ubuntu" size="3">You have been invited to join FieldSight by {{ invite.by_user.email }} as {{ invite.group.name }}  for  
 {% with invite.site.all as sites %}
  {% if sites %} 
   {% if sites|length == 1%}
