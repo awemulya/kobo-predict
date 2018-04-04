@@ -20,7 +20,8 @@ from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpRespon
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, parser_classes
+from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
 from rest_framework.response import Response
 from channels import Group as ChannelGroup
 
@@ -560,7 +561,7 @@ def set_deploy_stages(request, is_project, pk):
                             site_sub_stage.save()
                             if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
                                 fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
-                                site_fsxf, created = FieldSightXF.objects.get_or_create(is_staged=True, xf=fsxf.xf, site=site,
+                                site_fsxf, created = FieldSightXF.objects.get_or_create(is_staged=True, default_submission_status=fsxf.default_submission_status, xf=fsxf.xf, site=site,
                                                                    fsform=fsxf, stage=site_sub_stage)
                                 site_fsxf.is_deleted = False
                                 site_fsxf.is_deployed = True
@@ -866,7 +867,7 @@ class Deploy_survey(SPFmixin, View):
                             _schedule, created = Schedule.objects.get_or_create(name=schedule.name, site=site)
                             if created:
                                 _schedule.selected_days.add(*selected_days)
-                                child = FieldSightXF(is_scheduled=True, xf=fxf.xf, site=site, fsform=fxf,
+                                child = FieldSightXF(is_scheduled=True, default_submission_status=xf.default_submission_status, xf=fxf.xf, site=site, fsform=fxf,
                                                  schedule=_schedule, is_deployed=True)
                                 child.save()
 
@@ -1817,9 +1818,29 @@ class DeleteMyForm(MyFormMixin, View):
 
 
 @login_required
-@api_view(['POST', 'PUT'])
+@api_view(['POST'])
+@parser_classes([FormParser, MultiPartParser])
 def save_edumaterial(request, stageid):
-    import ipdb
-    ipdb.set_trace()
-
-    return Response({'error': 'Invalid Educational Material Data'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        data = request.data
+        is_pdf = data.get("is_pdf", False)
+        stage = Stage.objects.get(pk=stageid)
+        try:
+            em = stage.em
+        except:
+            em = EducationMaterial(stage=stage)
+        if is_pdf:
+            em.pdf = data.get('pdf')
+            em.is_pdf = True
+            em.save()
+        else:
+            em.save()
+            for key in data.keys():
+                if "new_images_" in key:
+                    img = data.get(key)
+                    ei = EducationalImages(image=img, educational_material=em)
+                    ei.save()
+        response_data = EMSerializer(em).data
+        return Response({"em":response_data}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
