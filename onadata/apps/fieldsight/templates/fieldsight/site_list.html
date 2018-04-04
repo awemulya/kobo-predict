@@ -140,7 +140,7 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 						{% for site in all_sites %}
 						<div class="row" >
 							<div class="col-md-4 col-sm-6">
-								<a href= {% url 'fieldsight:site-survey-list' pk %} title="" class="site-item-wrap  margin-top clearfix">
+								<a href= {% url 'fieldsight:site-dashboard' site.pk %} title="" class="site-item-wrap  margin-top clearfix">
 									<div class="logo">
 										<img data-bind="attr:{src: logo}" alt="" width="100" height="100">
 									</div>

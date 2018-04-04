@@ -1907,7 +1907,7 @@ class RegionalSitelist(ProjectRoleMixin, TemplateView):
             return render(request, 'fieldsight/site_list.html',{'project_id':self.kwargs.get('pk'),'type':"Unregioned",'pk':self.kwargs.get('region_pk'),})
 
         obj = get_object_or_404(Region, id=self.kwargs.get('region_pk'))
-        return render(request, 'fieldsight/site_list.html',{'obj':obj, 'type':"region",'pk':self.kwargs.get('region_pk'),})
+        return render(request, 'fieldsight/site_list.html',{'sites':obj, 'type':"region",'pk':self.kwargs.get('region_pk'),})
 
 
 class RegionalSiteCreateView(SiteView, ProjectRoleMixin, CreateView):
