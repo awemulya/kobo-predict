@@ -246,7 +246,6 @@ class ObtainAuthToken(APIView):
         content = {
             'token': unicode(token.key),
         }
-
         return Response(content)
 
 
