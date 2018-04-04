@@ -255,10 +255,10 @@ class FieldSightXF(models.Model):
             return reverse('forms:setup-forms', kwargs={'is_project':0, 'pk':self.site_id})
             
     def form_type(self):
-        if self.is_scheduled: return "Scheduled"
-        if self.is_staged: return "Staged"
-        if self.is_survey: return "Surveyed"
-        if not self.is_scheduled and not self.is_staged: return "General"
+        if self.is_scheduled: return "scheduled"
+        if self.is_staged: return "staged"
+        if self.is_survey: return "survey"
+        if not self.is_scheduled and not self.is_staged: return "general"
 
     def form_type_id(self):
         if self.is_scheduled and self.schedule: return self.schedule.id
