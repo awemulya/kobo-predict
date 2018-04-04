@@ -867,7 +867,7 @@ class Deploy_survey(SPFmixin, View):
                             _schedule, created = Schedule.objects.get_or_create(name=schedule.name, site=site)
                             if created:
                                 _schedule.selected_days.add(*selected_days)
-                                child = FieldSightXF(is_scheduled=True, default_submission_status=xf.default_submission_status, xf=fxf.xf, site=site, fsform=fxf,
+                                child = FieldSightXF(is_scheduled=True, default_submission_status=fxf.default_submission_status, xf=fxf.xf, site=site, fsform=fxf,
                                                  schedule=_schedule, is_deployed=True)
                                 child.save()
 
