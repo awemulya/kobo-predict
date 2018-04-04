@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import json
 from django.conf import settings
 from django.shortcuts import get_object_or_404
@@ -164,10 +165,18 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         if error or not instance:
             return self.error_response(error, False, request)
 
-        noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Project level Submission",
+        if fs_proj_xf.is_survey:
+            noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Project level Submission",
                                        organization=fs_proj_xf.project.organization,
                                        project=fs_proj_xf.project,
                                                         extra_object=fs_proj_xf.project,
+                                                        content_object=instance.fieldsight_instance)
+        else:
+            site=Site.objects.get(pk=siteid)
+            noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Site level Submission",
+                                       organization=fs_proj_xf.project.organization,
+                                       project=fs_proj_xf.project, site=site,
+                                                        extra_object=site,
                                                         content_object=instance.fieldsight_instance)
         result = {}
         result['description'] = noti.description
