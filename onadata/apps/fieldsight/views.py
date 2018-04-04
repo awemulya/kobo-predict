@@ -1022,8 +1022,26 @@ class OrgProjectList(OrganizationRoleMixin, ListView):
 
 
 class OrgSiteList(OrganizationRoleMixin, ListView):
+    model = Site
+    template_name = 'fieldsight/site_list.html'
+    paginate_by = 10
+
     def get_context_data(self, **kwargs):
         context = super(OrgSiteList, self).get_context_data(**kwargs)
+
+        all_sites = Site.objects.all()
+        paginator = Paginator(all_sites, self.paginate_by)
+
+        page = self.request.GET.get('page')
+
+        try:
+            pagig_sites = paginator.page(page)
+        except PageNotAnInteger:
+            pagig_sites = paginator.page(1)
+        except EmptyPage:
+            pagig_sites = paginator.page(paginator.num_pages)
+
+        context['all_sites'] = pagig_sites
         context['pk'] = self.kwargs.get('pk')
         context['type'] = "org"
         return context
