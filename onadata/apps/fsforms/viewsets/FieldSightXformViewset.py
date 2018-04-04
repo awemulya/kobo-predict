@@ -76,7 +76,7 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
             if not fxf.is_survey:    
                 org = fxf.project.organization
                 for site in fxf.project.sites.filter(is_active=True):
-                    child, created = FieldSightXF.objects.get_or_create(is_staged=False, is_scheduled=False, xf=fxf.xf, site=site, fsform=fxf)
+                    child, created = FieldSightXF.objects.get_or_create(is_staged=False, is_scheduled=False, default_submission_status=fxf.default_submission_status, xf=fxf.xf, site=site, fsform=fxf)
                     child.is_deployed = True
                     child.save()
                 noti = fxf.logs.create(source=self.request.user, type=18, title="General",
