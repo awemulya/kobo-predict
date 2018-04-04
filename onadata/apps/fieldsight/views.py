@@ -1426,6 +1426,7 @@ class ActivateRole(TemplateView):
             if request.POST.get('password1') != request.POST.get('password2'):
                 return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-4', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
 
+
             if request.POST.get('password1') == request.POST.get('password2') and len(request.POST.get('password1')) < 8:
                 return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-5', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
             
