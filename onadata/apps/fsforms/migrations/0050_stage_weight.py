@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('fsforms', '0049_schedule_schedule_level'),
+        ('fsforms', '0050_auto_20180309_1406'),
     ]
 
     operations = [
