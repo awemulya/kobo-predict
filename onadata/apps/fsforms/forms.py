@@ -119,6 +119,7 @@ class GeneralForm(HTML5BootstrapModelForm, KOModelForm):
         self.fields['xf'].choices = [(obj.id, obj.title) for obj in xform]
         self.fields['xf'].empty_label = None
         self.fields['xf'].label = "Form"
+        self.fields['default_submission_status'].choices = [(0, 'Pending'), (3, 'Approved'), ]
 
     class Meta:
         fields = ['xf', 'default_submission_status']
