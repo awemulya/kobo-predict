@@ -89,10 +89,11 @@
                     <header class="panel-heading clearfix">
 						{% if form.instance.id %}
                         <h3><i class="la la-building"></i>{% trans 'Edit' %} {% trans 'Project' %}</h3>
+                        <button type="button" class="btn btn-danger pull-right" data-toggle="modal" data-target="#myModal"><i class="la la-trash"></i> {% trans 'Delete' %}</button>
 						{% else %}
 						<h3><i class="la la-building"></i>{% trans 'New' %} {% trans 'Project' %}</h3>
 						{% endif %}
-						<button type="button" class="btn btn-danger pull-right" data-toggle="modal" data-target="#myModal"><i class="la la-trash"></i> {% trans 'Delete' %}</button>
+						
                     </header>
 					<div class="panel-body">
 						<!-- Add New Organization-->

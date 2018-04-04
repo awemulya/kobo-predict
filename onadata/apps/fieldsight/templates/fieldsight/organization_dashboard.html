@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
     <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
         <!-- SLider css external pravin -slick  -->
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
 
 
 {% endblock %}
@@ -85,6 +85,15 @@ var org = "{{obj.pk}}";
 							</div>
 							<div class="col-lg-6 col-sm-12">
 								<ul class="org-profile-stat-list clearfix margin-top">
+									<li>
+										<a href="#" class="org-profile-stat-item" title="">
+											<i class="la la-files-o"></i>
+											<div class="org-mini-stat-info">
+												<span>{{total_submissions}}</span>
+												{% trans 'Submissions ' %}
+											</div>
+										</a>
+									</li>
 									<li>
 										<a href="{% url 'fieldsight:org-user-list' obj.pk %}" class="org-profile-stat-item" title="">
 											<i class="la la-users"></i>
@@ -173,24 +182,6 @@ var org = "{{obj.pk}}";
 					<div class="row">
 						<div class="col-lg-3 col-md-6 col-sm-12">
 							<a href="#" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
-								<div class="mini-stat-info">
-									<span>{{rejected}}</span>
-									{% trans 'Rejected' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="#" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
-								<div class="mini-stat-info">
-									<span>{{flagged}}</span>
-									{% trans 'flagged' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="#" class="mini-stat padding-large margin-top clearfix">
 								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
 								<div class="mini-stat-info">
 									<span>{{outstanding}}</span>
@@ -204,6 +195,25 @@ var org = "{{obj.pk}}";
 								<div class="mini-stat-info">
 									<span>{{approved}}</span>
 									{% trans 'Approved' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="#" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
+								<div class="mini-stat-info">
+									<span>{{flagged}}</span>
+									{% trans 'Flagged' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="#" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
+								<div class="mini-stat-info">
+									<span>{{rejected}}</span>
+									{% trans 'Rejected' %} {% trans 'Submissions' %}
 								</div>
 							</a>
 						</div>
@@ -416,7 +426,7 @@ var org = "{{obj.pk}}";
 
 
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
 
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.ajax.min.js"></script>
@@ -426,7 +436,7 @@ var org = "{{obj.pk}}";
 	<script src="{% static 'dummy/assets/js/vendor/jquery.matchHeight.js' %}"></script>
 
 
-    <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
+    <script src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
   <script type="text/javascript">
      var static_url ="{{ STATIC_URL }}";
     var data = {{ data|safe}};

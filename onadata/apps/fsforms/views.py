@@ -2,6 +2,7 @@ import json
 import uuid
 from base64 import b64decode
 
+import datetime
 from bson import json_util
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -19,7 +20,8 @@ from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpRespon
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, parser_classes
+from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
 from rest_framework.response import Response
 from channels import Group as ChannelGroup
 
@@ -1097,6 +1099,10 @@ class AssignFormDefaultStatus(FormMixin, View):
         if int(status_code) >= 0 and int(status_code) < 5: 
             fsform.default_submission_status = status_code
             fsform.save()
+            
+            for childform in fsform.parent.all():
+                childform.default_submission_status = status_code
+                childform.save()
         return HttpResponse({'responseJSON':'success'}, status=status.HTTP_200_OK)
 
 class Setup_forms(SPFmixin, View):
@@ -1489,6 +1495,7 @@ def instance_status(request, instance):
                         obj = InstanceImages(image=img, instance_status=status_changed)
                         obj.save()
                 fi.form_status = int(submission_status)
+                fi.date = datetime.date.today()
                 fi.save()
                 comment_url = reverse("forms:instance_status_change_detail",
                                                 kwargs={'pk': status_changed.id})
@@ -1811,9 +1818,29 @@ class DeleteMyForm(MyFormMixin, View):
 
 
 @login_required
-@api_view(['POST', 'PUT'])
+@api_view(['POST'])
+@parser_classes([FormParser, MultiPartParser])
 def save_edumaterial(request, stageid):
-    import ipdb
-    ipdb.set_trace()
-
-    return Response({'error': 'Invalid Educational Material Data'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        data = request.data
+        is_pdf = data.get("is_pdf", False)
+        stage = Stage.objects.get(pk=stageid)
+        try:
+            em = stage.em
+        except:
+            em = EducationMaterial(stage=stage)
+        if is_pdf:
+            em.pdf = data.get('pdf')
+            em.is_pdf = True
+            em.save()
+        else:
+            em.save()
+            for key in data.keys():
+                if "new_images_" in key:
+                    img = data.get(key)
+                    ei = EducationalImages(image=img, educational_material=em)
+                    ei.save()
+        response_data = EMSerializer(em).data
+        return Response({"em":response_data}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
