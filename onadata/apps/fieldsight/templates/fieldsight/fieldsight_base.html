@@ -84,15 +84,7 @@
 
 						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonNotification" style="width:480px;">
 							<div class="dropdown-header">
-								<div class="row">
-									<div class="col text-left">
-									{% trans 'New' %} {% trans 'Notifications' %}(<span id="noticount" class="not_count"></span>)
-									</div>
-									<div class="col text-right">
-										<a href="#" onclick="updateseen()">{% trans 'Mark' %} {% trans 'All' %} {% trans 'As' %} {% trans 'Seen' %}</a>
-									</div>
-								</div>
-
+								{% trans 'New' %} {% trans 'Notifications' %}(<span id="noticount" class="not_count"></span>)
 
 							</div>
 							<ul class="menu" id="notification-ul" style="height:500px; overflow:hidden; overflow-y: scroll;">
@@ -100,7 +92,18 @@
 						
 							</ul>
 							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="{% url 'eventlog:notification-list' %}">{% trans 'View' %} {% trans 'all' %}</a>
+							<div class="dropdown-header">
+								<div class="row">
+									<div class=""col text-left">
+										<a href="{% url 'eventlog:notification-list' %}">{% trans 'View' %} {% trans 'all' %}</a>
+									</div>
+									<div class="col text-right">
+										<a href="#" onclick="updateseen()">{% trans 'Mark' %} {% trans 'All' %} {% trans 'As' %} {% trans 'Seen' %}</a>
+									</div>
+								</div>
+							</div>
+
+
 						</div>
 
 					</li>
@@ -215,13 +218,14 @@
 		<script src="{% static 'dummy/assets/js/vendor/jquery.dcjqaccordion.2.7.min.js' %}"></script>
 		<script src="{% static 'dummy/assets/js/vendor/jquery.slimscroll.min.js' %}"></script>
 		<script src="{% static 'dummy/assets/js/vendor/jquery.nicescroll.min.js' %}"></script>
+		<script src="{% static 'dummy/assets/js/vendor/jquery.matchHeight.js' %}"></script>
 
 		<!--<script src="{% static 'dummy/assets/js/vendor/leaflet.js' %}"></script>-->
 		<script>
 
 			$(document).ready(function(){
 
-				$(".widget-scolling-large-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+				$(".widget-scrolling-large-list > .widget-body, .widget-scrolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
 
 			});
 
