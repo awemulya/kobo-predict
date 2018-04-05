@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import json
 import uuid
 from base64 import b64decode
@@ -561,7 +562,7 @@ def set_deploy_stages(request, is_project, pk):
                             site_sub_stage.save()
                             if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
                                 fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
-                                site_fsxf, created = FieldSightXF.objects.get_or_create(is_staged=True, xf=fsxf.xf, site=site,
+                                site_fsxf, created = FieldSightXF.objects.get_or_create(is_staged=True, default_submission_status=fsxf.default_submission_status, xf=fsxf.xf, site=site,
                                                                    fsform=fsxf, stage=site_sub_stage)
                                 site_fsxf.is_deleted = False
                                 site_fsxf.is_deployed = True
@@ -867,7 +868,7 @@ class Deploy_survey(SPFmixin, View):
                             _schedule, created = Schedule.objects.get_or_create(name=schedule.name, site=site)
                             if created:
                                 _schedule.selected_days.add(*selected_days)
-                                child = FieldSightXF(is_scheduled=True, xf=fxf.xf, site=site, fsform=fxf,
+                                child = FieldSightXF(is_scheduled=True, default_submission_status=fxf.default_submission_status, xf=fxf.xf, site=site, fsform=fxf,
                                                  schedule=_schedule, is_deployed=True)
                                 child.save()
 

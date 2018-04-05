@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django.db.models import Q
 from rest_framework import viewsets
 

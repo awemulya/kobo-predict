@@ -255,10 +255,10 @@ class FieldSightXF(models.Model):
             return reverse('forms:setup-forms', kwargs={'is_project':0, 'pk':self.site_id})
             
     def form_type(self):
-        if self.is_scheduled: return "Scheduled"
-        if self.is_staged: return "Staged"
-        if self.is_survey: return "Surveyed"
-        if not self.is_scheduled and not self.is_staged: return "General"
+        if self.is_scheduled: return "scheduled"
+        if self.is_staged: return "staged"
+        if self.is_survey: return "survey"
+        if not self.is_scheduled and not self.is_staged: return "general"
 
     def form_type_id(self):
         if self.is_scheduled and self.schedule: return self.schedule.id
@@ -569,11 +569,11 @@ def copy_stages_from_project(sender, **kwargs):
                 site_sub_stage.save()
                 if FieldSightXF.objects.filter(stage=pss).exists():
                     fsxf = pss.stage_forms
-                    site_form = FieldSightXF(is_staged=True, xf=fsxf.xf, site=site,fsform=fsxf, stage=site_sub_stage, is_deployed=True)
+                    site_form = FieldSightXF(is_staged=True, default_submission_status=fsxf.default_submission_status, xf=fsxf.xf, site=site,fsform=fsxf, stage=site_sub_stage, is_deployed=True)
                     site_form.save()
         general_forms = project.project_forms.filter(is_staged=False, is_scheduled=False, is_deployed=True, is_deleted=False)
         for general_form in general_forms:
-            FieldSightXF.objects.create(is_staged=False, is_scheduled=False, is_deployed=True, site=site,
+            FieldSightXF.objects.create(is_staged=False, default_submission_status=general_form.default_submission_status, is_scheduled=False, is_deployed=True, site=site,
                                         xf=general_form.xf, fsform=general_form)
 
         schedule_forms = project.project_forms.filter(is_scheduled=True, is_deployed=True, is_deleted=False)
@@ -584,5 +584,5 @@ def copy_stages_from_project(sender, **kwargs):
                                         date_range_end=schedule.date_range_end)
             s.selected_days.add(*selected_days)
             s.save()
-            FieldSightXF.objects.create(is_scheduled=True, xf=schedule_form.xf, site=site, fsform=schedule_form,
+            FieldSightXF.objects.create(is_scheduled=True, default_submission_status=schedule_form.default_submission_status, xf=schedule_form.xf, site=site, fsform=schedule_form,
                                              schedule=s, is_deployed=True)
