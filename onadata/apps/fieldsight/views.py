@@ -1901,13 +1901,16 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
 
 
 
-class RegionalSitelist(ProjectRoleMixin, TemplateView):
+class RegionalSitelist(ProjectRoleMixin, ListView):
+    paginate_by = 10
     def get(self, request, *args, **kwargs):
         if self.kwargs.get('region_pk') == "0":
-            return render(request, 'fieldsight/site_list.html',{'project_id':self.kwargs.get('pk'),'type':"Unregioned",'pk':self.kwargs.get('region_pk'),})
+            sites = Site.objects.filter(region=None)
+            return render(request, 'fieldsight/site_list.html' ,{'all_sites':sites, 'project_id':self.kwargs.get('pk'),'type':"Unregioned",'pk':self.kwargs.get('region_pk'),})
 
         obj = get_object_or_404(Region, id=self.kwargs.get('region_pk'))
-        return render(request, 'fieldsight/site_list.html',{'sites':obj, 'type':"region",'pk':self.kwargs.get('region_pk'),})
+        sites = Site.objects.filter(region_id=self.kwargs.get('region_pk'))
+        return render(request, 'fieldsight/site_list.html',{'all_sites':sites, 'obj':obj, 'type':"region",'pk':self.kwargs.get('region_pk'),})
 
 
 class RegionalSiteCreateView(SiteView, ProjectRoleMixin, CreateView):
