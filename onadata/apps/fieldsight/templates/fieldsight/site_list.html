@@ -10,29 +10,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/sites.js"></script>
 
-    <script>
-$(document).ready(function() {
-var type="{{ type }}"
-var id="{{ pk }}"
-if (type == "org"){
-var url = '/fieldsight/api/org-sites/'+id+'/';
- }
- else if (type == "region"){
-var region_proj_id = "{{ obj.project.id }}"
-var url = '/fieldsight/api/project/'+ region_proj_id +'/regional-sites/'+ id +'/';
- }
- else if (type == "Unregioned"){
-var region_proj_id = "{{ project_id }}"
-var url = '/fieldsight/api/project/'+ region_proj_id +'/regional-sites/0/';
- }
- else{
-var url = '/fieldsight/api/project-sites/'+id+'/';
- }
- assignsite_id(url);
- vm = new SitesViewModel();
- ko.applyBindings(vm);
-});
-    </script>
 <style>
 .select-box{
 	padding: 7px;
@@ -81,10 +58,6 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 
 							</select>
 
-							<!--<select name ="orderbyasce" class="form-control no-btn-search" data-bind="value:orderbyasce, valueUpdate:'afterkeydown'">-->
-								<!--<option value="asce">Ascending</option>-->
-								<!--<option value="desc">Descending</option>-->
-							<!--</select>-->
 						</div>
 						<div class="col-md-5 ">
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i>{% trans 'Search' %}</a>
@@ -135,8 +108,7 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 								</div>
 							</form>
 						</div>
-				{{obj}}
-						<!--Site Listing-->
+				
 						{% for site in all_sites %}
 						<div class="row" >
 							<div class="col-md-4 col-sm-6">
@@ -150,38 +122,40 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
                                  		<p class="address"><i class="fa fa-map-marker" aria-hidden="true"></i> <span  class="detail-text1">{{ site.address }}</span></p>
                                  		<p class="phone"><i class="fa fa-phone" aria-hidden="true"></i> <span  class="detail-text1">{{ site.phone }}</span></p>
 									</div>
+									{% with site.get_site_submission_count as count %}
 									<ul class="icon-listing clearfix margin-top">
 										<li>
 											<i class="la la-exclamation"></i>
-											<spam data-bind="text: get_site_submission_count().rejected">
-											</spam>
+											<span>{{ count.approved }}
+											</span>
 										</li>
 										<li>
 											<i class="la la-flag"></i>
-											<spam data-bind="text: get_site_submission_count().flagged">
-
-											</spam>
+											<span>
+											{{ count.flagged }}
+											</span>
 										</li>
 										<li>
 											<i class="la la-hourglass-half"></i>
-											<spam data-bind="text: get_site_submission_count().outstanding">
-
-											</spam>
+											<span>
+												{{ count.outstanding }}
+											</span>
 										</li>
 										<li>
 											<i class="la la-thumbs-up"></i>
-											<spam data-bind="text: get_site_submission_count().approved">
-
-											</spam>
+											<span>
+											{{ count.rejected }}
+											</span>
 										</li>
 									</ul>
+									{% endwith %}
 
 
 							<div class="progress margin-top">
 							<div class="progress progress-striped active progress-sm" style="width:100%;">
 
-							<div class="progress-bar progress-bar-success" role="progressbar" style="" data-bind="style: { width: prog() + '%'}">
-							<span class="progress-bar-value" style="color:grey;" data-bind="text: prog() + '% Complete'"> </span>
+							<div class="progress-bar progress-bar-success" role="progressbar" style="width:{{ site.site_progress }}%;}">
+							<span class="progress-bar-value" style="color:grey;">{{ site.site_progress }}% Complete'"</span>
 
 
 							</div>
