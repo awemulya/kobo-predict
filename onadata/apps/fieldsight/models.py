@@ -270,6 +270,15 @@ class Region(models.Model):
         return self.regions.all().count()
 
 
+class SiteType(models.Model):
+    name = models.CharField("Type", max_length=256)
+    project = models.ForeignKey(Project, related_name="types")
+
+    def __unicode__(self):
+        return u'{}'.format(self.name)
+
+
+
 class Site(models.Model):
     identifier = models.CharField("ID", max_length=255)
     name = models.CharField(max_length=255)
