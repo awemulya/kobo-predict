@@ -281,8 +281,6 @@ class MyPrint:
         #a=FieldSightXF.objects.select_related('xf').filter(site_id=291).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')))
 
        
-        
-       
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
 
