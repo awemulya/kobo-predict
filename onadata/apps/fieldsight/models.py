@@ -405,7 +405,7 @@ class Site(models.Model):
         response['flagged'] = flagged
         response['approved'] = approved
 
-        return json.dumps(response)
+        return response
 
     def get_absolute_url(self):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.pk})
