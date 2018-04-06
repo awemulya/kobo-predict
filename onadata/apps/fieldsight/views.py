@@ -1044,6 +1044,7 @@ class ProjSiteList(ProjectRoleMixin, ListView):
         context = super(ProjSiteList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
         context['region_id'] = None
+        context['type'] = "project"
         return context
     def get_queryset(self):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
@@ -1898,6 +1899,7 @@ class RegionalSitelist(ProjectRoleMixin, ListView):
         context = super(RegionalSitelist, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
         context['region_id'] = self.kwargs.get('region_id')
+        context['type'] = "region"
         return context
     def get_queryset(self, **kwargs):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
