@@ -12,15 +12,15 @@ STAFF_TYPES = (
 class Team(models.Model):
     leader = models.ForeignKey(User, related_name="team_leader")
     name = models.CharField(max_length=255, blank=True, null=True)
-    created_by = models.ForeignKey(User, related_name="staff_created_by")
+    created_by = models.ForeignKey(User, related_name="team_created_by")
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now_add=True)
 
 
 class Staff(models.Model):
-    full_name = models.CharField(max_length=255,blank=True, null=True)
+    full_name = models.CharField(max_length=255, blank=True, null=True)
     type = models.IntegerField(default=0, choices=STAFF_TYPES)
-    team = models.ForeignKey(Team, related_name="staff_team")
+    team = models.ForeignKey(Team, blank=True, null=True, related_name="staff_team")
     created_by = models.ForeignKey(User, related_name="staff_created_by")
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now_add=True)
