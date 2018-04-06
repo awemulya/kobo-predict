@@ -61,13 +61,13 @@
 
 						<!--Search Organization-->
 						<div class="collapse margin-top" id="searchSite">
-							<form class="padding">
+							<form class="padding" action="{% if region_id %}{% url 'fieldsight:search-regional-site-list' pk region_id %}{% else %}{% url 'fieldsight:search-site-list' pk %}{% endif %}" method="GET">
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										<input type="text" class="form-control no-btn-search" placeholder="Search . . . . . "  data-bind="value:search_key, valueUpdate:'afterkeydown'">
+										<input type="text" name="q" placeholder="Search for..." required value='{{ request.GET.q }}'/>
 										  <span class="input-group-btn">
-											<button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
+											<button class="btn btn-primary" type="submit"><i class="la la-search"></i>{% trans 'Search' %}</button>
 										  </span>
 										</div>
 									</div>
@@ -77,7 +77,7 @@
 						</div>
 						<div class="row" >
 
-						{% for site in all_sites %}
+						{% for site in object_list %}
 						
 							<div class="col-md-4 col-sm-6">
 								<a href= {% url 'fieldsight:site-dashboard' site.pk %} title="" class="site-item-wrap  margin-top clearfix">
@@ -132,28 +132,36 @@
 
 							</a>
 							</div>
-
+						{% empty %}
+							<div class="col-md-4 col-sm-6">
+								
+							<h3>No Site</h3>
+							
+							</div>
+						
 						{% endfor %}
 						</div>
 <br>
+
+
 						{% if is_paginated %}
 						            <nav class="pagination justify-content-center" aria-label="page-navigation">
 						              <ul class="pagination">
 						              {% if page_obj.has_previous %}
-						                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+						                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&laquo;</a></li>
 						              {% else %}
 						                <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
 						              {% endif %}
 						              {% for i in paginator.page_range %}
 						                {% if page_obj.number == i %}
-						                <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+						                <li class="page-item active"><a class="page-link" href="?page={{ i }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ i }}</a></li>
 
 						                {% else %}
-						                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+						                <li class="page-item"><a class="page-link" href="?page={{ i }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ i }}</a></li>
 						                {% endif %}
 						              {% endfor %}
 						              {% if page_obj.has_next %}
-						                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+						                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&raquo;</a></li>
 						              {% else %}
 						                <li class="disabled"><a class="page-link" href="#">&raquo;</a>
 						              {% endif %}

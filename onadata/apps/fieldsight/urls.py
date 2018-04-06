@@ -59,7 +59,7 @@ from .views import (
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList,
     senduserinvite, ActivateRole, checkemailforinvite, ProjectSummaryReport, SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView,
     stages_status_download, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
-    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages )
+    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages, SiteSearchView )
 
 
 
@@ -187,7 +187,7 @@ urlpatterns = [
 
     url(r'^api/search-sites/(?P<pk>\d+)/$', SiteSearchViewSet.as_view({'get': 'list'}),name='search_sites_api'),
 
-    url(r'^project/(?P<pk>\d+)/regional-sites/(?P<region_pk>\d+)/$', RegionalSitelist.as_view(), name='regional-sites'),
+    url(r'^project/(?P<pk>\d+)/regional-sites/(?P<region_id>\d+)/$', RegionalSitelist.as_view(), name='regional-sites'),
     url(r'^api/project/(?P<pk>\d+)/regional-sites/(?P<region_pk>\d+)/$', SiteUnderRegionViewSet.as_view({'get': 'list'}), name='region-sites-list'),
     url(r'^site/add/(?P<pk>[0-9]+)/(?P<region_pk>[0-9]+)/', RegionalSiteCreateView.as_view(), name='regional-site-add'),
 
@@ -199,6 +199,10 @@ urlpatterns = [
 
     url(r'^search-org/$', OrganizationSearchView.as_view(), name='search-org-list'),
     url(r'^search-proj/(?P<pk>\d+)/$', ProjectSearchView.as_view(), name='search-proj-list'),
+
+    url(r'^search-site/(?P<pk>\d+)/regional/(?P<region_id>\d+)/$', SiteSearchView.as_view(), name='search-regional-site-list'),
+    url(r'^search-site/(?P<pk>\d+)/$', SiteSearchView.as_view(), name='search-site-list'),
+
 
     url(r'^project/(?P<pk>\d+)/define-site-meta/$', DefineProjectSiteMeta.as_view(), name='define-site-meta'),
     url(r'^site/(?P<pk>\d+)/site-meta-form/$', SiteMetaForm.as_view(), name='site-meta-form'),

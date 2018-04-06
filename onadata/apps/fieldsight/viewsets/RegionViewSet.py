@@ -30,7 +30,7 @@ class RegionViewSet(viewsets.ModelViewSet):
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-    permission_classes = (RegionAccessPermission,)
+    # permission_classes = (RegionAccessPermission,)
 
     def filter_queryset(self, queryset):
         project_id = self.kwargs.get('pk', None)

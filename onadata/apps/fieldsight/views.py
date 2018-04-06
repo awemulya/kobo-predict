@@ -1028,33 +1028,22 @@ class OrgSiteList(OrganizationRoleMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(OrgSiteList, self).get_context_data(**kwargs)
-
-        all_sites = Site.objects.all()
-        paginator = Paginator(all_sites, self.paginate_by)
-
-        page = self.request.GET.get('page')
-
-        try:
-            pagig_sites = paginator.page(page)
-        except PageNotAnInteger:
-            pagig_sites = paginator.page(1)
-        except EmptyPage:
-            pagig_sites = paginator.page(paginator.num_pages)
-
-        context['all_sites'] = pagig_sites
         context['pk'] = self.kwargs.get('pk')
         context['type'] = "org"
         return context
     def get_queryset(self):
-        queryset = Site.objects.filter(project__organization_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
+        queryset = Site.objects.filter(project__organization_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
         return queryset
 
 class ProjSiteList(ProjectRoleMixin, ListView):
+    model = Site
+    template_name = 'fieldsight/site_list.html'
+    paginate_by = 10
+
     def get_context_data(self, **kwargs):
         context = super(ProjSiteList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
-        context['type'] = "project"
-        context['is_form_proj'] = True
+        context['region_id'] = None
         return context
     def get_queryset(self):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
@@ -1900,17 +1889,36 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
 
 
 
-
 class RegionalSitelist(ProjectRoleMixin, ListView):
+    model = Site
+    template_name = 'fieldsight/site_list.html'
     paginate_by = 10
-    def get(self, request, *args, **kwargs):
-        if self.kwargs.get('region_pk') == "0":
-            sites = Site.objects.filter(region=None)
-            return render(request, 'fieldsight/site_list.html' ,{'all_sites':sites, 'project_id':self.kwargs.get('pk'),'type':"Unregioned",'pk':self.kwargs.get('region_pk'),})
 
-        obj = get_object_or_404(Region, id=self.kwargs.get('region_pk'))
-        sites = Site.objects.filter(region_id=self.kwargs.get('region_pk'))
-        return render(request, 'fieldsight/site_list.html',{'all_sites':sites, 'obj':obj, 'type':"region",'pk':self.kwargs.get('region_pk'),})
+    def get_context_data(self, **kwargs):
+        context = super(RegionalSitelist, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['region_id'] = self.kwargs.get('region_id')
+        return context
+    def get_queryset(self, **kwargs):
+        queryset = Site.objects.filter(project_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
+        # print self.kwargs.get('region_id')
+        # print "------------------------------------>>>>>>>>>>"
+        if self.kwargs.get('region_id') == "0":
+            object_list = queryset.filter(region=None)
+        else:    
+            object_list = queryset.filter(region_id=self.kwargs.get('region_id'))
+        return object_list
+
+# class RegionalSitelist(ProjectRoleMixin, ListView):
+#     paginate_by = 10
+#     def get(self, request, *args, **kwargs):
+#         if self.kwargs.get('region_pk') == "0":
+#             sites = Site.objects.filter(region=None)
+#             return render(request, 'fieldsight/site_list.html' ,{'all_sites':sites, 'project_id':self.kwargs.get('pk'),'type':"Unregioned",'pk':self.kwargs.get('region_pk'),})
+
+#         obj = get_object_or_404(Region, id=self.kwargs.get('region_pk'))
+#         sites = Site.objects.filter(region_id=self.kwargs.get('region_pk'))
+#         return render(request, 'fieldsight/site_list.html',{'all_sites':sites, 'obj':obj, 'type':"region",'pk':self.kwargs.get('region_pk'),})
 
 
 class RegionalSiteCreateView(SiteView, ProjectRoleMixin, CreateView):
@@ -2143,19 +2151,32 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
         wb.save(response)
         return response
 
-class ProjectSearchView(ListView):
-    model = Project
-    template_name = 'fieldsight/project_list.html'
+class SiteSearchView(ListView):
+    model = Site
+    template_name = 'fieldsight/site_list.html'
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
-        context = super(ProjectSearchView, self).get_context_data(**kwargs)
+        context = super(SiteSearchView, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
-        context['type'] = "project"
+        context['region_id'] = self.kwargs.get('region_id', None)
         return context
 
-    def get_queryset(self):
-        query = self.request.REQUEST.get("q")
-        return self.model.objects.filter(name__icontains=query)
+    def get_queryset(self, **kwargs):
+        region_id = self.kwargs.get('region_id', None)
+        # import pdb; pdb.set_trace()
+        query = self.request.GET.get('q')
+
+        if region_id:
+            if region_id == "0":
+                filtered_objects = self.model.objects.filter(region=None, project_id=self.kwargs.get('pk'))
+
+            else:
+                filtered_objects = self.model.objects.filter(region_id=region_id, project_id=self.kwargs.get('pk'))    
+        else:
+            filtered_objects = self.model.objects.filter(project_id=self.kwargs.get('pk'))
+        # import pdb; pdb.set_trace()
+        return filtered_objects.filter(Q(name__icontains=query) | Q(identifier__icontains=query))
 
 class ProjectStageResponsesStatus(ProjectRoleMixin, View): 
     def get(self, request, pk):
