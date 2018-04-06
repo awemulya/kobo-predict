@@ -42,7 +42,7 @@
 							{% endif %}
 							{% if type == "region" %}
 
-							<a href="{% url 'fieldsight:regional-site-add'pk region_id %}" title="" class="btn btn-sm
+							<a href="{% url 'fieldsight:regional-site-add' pk region_id %}" title="" class="btn btn-sm
 							btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'New' %} {% trans 'Regional' %} {% trans 'Site' %}</a>
 							<a href="{% url 'fieldsight:define-site-meta' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
 							{% elif type == "Unregioned" %}
