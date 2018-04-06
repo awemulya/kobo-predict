@@ -15,7 +15,7 @@
 				<section class="panel">
 
                     <header class="panel-heading clearfix">
-                    <h3><i class="la la-map-marker"></i>{% trans 'Sites' %}</h3>
+                    <h3><i class="la la-map-marker"></i>{% if request.GET.q %}{% trans 'Search' %} {% trans 'result' %} {% trans 'for' %} "{{request.GET.q}}"{% else %}{% trans 'Sites' %}{% endif %}</h3>
 
                     <div class="panel-heading-right">
                     		<!-- <select name ="sortby" class="form-control form-control-sm" data-bind="value:sortby, valueUpdate:'afterkeydown'">
