@@ -1024,7 +1024,7 @@ class OrgProjectList(OrganizationRoleMixin, ListView):
 class OrgSiteList(OrganizationRoleMixin, ListView):
     model = Site
     template_name = 'fieldsight/site_list.html'
-    paginate_by = 10
+    paginate_by = 50
 
     def get_context_data(self, **kwargs):
         context = super(OrgSiteList, self).get_context_data(**kwargs)
@@ -1038,7 +1038,7 @@ class OrgSiteList(OrganizationRoleMixin, ListView):
 class ProjSiteList(ProjectRoleMixin, ListView):
     model = Site
     template_name = 'fieldsight/site_list.html'
-    paginate_by = 10
+    paginate_by = 30
 
     def get_context_data(self, **kwargs):
         context = super(ProjSiteList, self).get_context_data(**kwargs)
@@ -1063,7 +1063,7 @@ class DonorProjSiteList(ReadonlyProjectLevelRoleMixin, ListView):
 
 class OrgUserList(OrganizationRoleMixin, ListView):
     model = UserRole
-    paginate_by = 51
+    paginate_by = 30
     template_name = "fieldsight/user_list_updated.html"
     def get_context_data(self, **kwargs):
         context = super(OrgUserList, self).get_context_data(**kwargs)
@@ -1081,7 +1081,7 @@ class OrgUserList(OrganizationRoleMixin, ListView):
 
 class ProjUserList(ProjectRoleMixin, ListView):
     model = UserRole
-    paginate_by = 51
+    paginate_by = 30
     template_name = "fieldsight/user_list_updated.html"
     def get_context_data(self, **kwargs):
         context = super(ProjUserList, self).get_context_data(**kwargs)
@@ -1096,7 +1096,7 @@ class ProjUserList(ProjectRoleMixin, ListView):
 
 class SiteUserList(ReviewerRoleMixin, ListView):
     model = UserRole
-    paginate_by = 51
+    paginate_by = 50
     template_name = "fieldsight/user_list_updated.html"
     def get_context_data(self, **kwargs):
         context = super(SiteUserList, self).get_context_data(**kwargs)
@@ -1892,7 +1892,7 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
 class RegionalSitelist(ProjectRoleMixin, ListView):
     model = Site
     template_name = 'fieldsight/site_list.html'
-    paginate_by = 10
+    paginate_by = 30
 
     def get_context_data(self, **kwargs):
         context = super(RegionalSitelist, self).get_context_data(**kwargs)
@@ -2154,7 +2154,7 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
 class SiteSearchView(ListView):
     model = Site
     template_name = 'fieldsight/site_list.html'
-    paginate_by = 10
+    paginate_by = 30
 
     def get_context_data(self, **kwargs):
         context = super(SiteSearchView, self).get_context_data(**kwargs)
