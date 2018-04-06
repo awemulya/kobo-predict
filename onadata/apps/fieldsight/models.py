@@ -451,8 +451,8 @@ class UserInvite(models.Model):
     is_declied = models.BooleanField(default=False)
     token = models.CharField(max_length=255)
     group = models.ForeignKey(Group)
-    site = models.ForeignKey(Site, null=True, blank=True, related_name='invite_site_roles')
-    project = models.ForeignKey(Project, null=True, blank=True, related_name='invite_project_roles')
+    site = models.ManyToManyField(Site, null=True, blank=True, related_name='invite_site_roles')
+    project = models.ManyToManyField(Project, null=True, blank=True, related_name='invite_project_roles')
     organization = models.ForeignKey(Organization, related_name='invite_organization_roles')
     logs = GenericRelation('eventlog.FieldSightLog')
     
@@ -461,25 +461,7 @@ class UserInvite(models.Model):
 
     def getname(self):
         return str("invited")
-
-    def save(self, *args, **kwargs):
-        if self.group.name == 'Super Admin':
-            self.organization = None
-            self.project = None
-            self.site = None
-        elif self.group.name == 'Organization Admin':
-            self.project = None
-            self.site = None
-        elif self.group.name == 'Project Manager':
-            self.site = None
-            self.organization = self.project.organization
-
-        elif self.group.name in ['Site Supervisor', 'Reviewer']:
-            self.project = self.site.project
-            self.organization = self.site.project.organization
-
-        super(UserInvite, self).save(*args, **kwargs)
-
+        
     def get_absolute_url(self):
         return reverse('fieldsight:activate-role', kwargs={'invite_idb64': urlsafe_base64_encode(force_bytes(self.pk)), 'token':self.token,})
 
