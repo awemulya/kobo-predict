@@ -282,7 +282,7 @@ class SiteType(models.Model):
 class Site(models.Model):
     identifier = models.CharField("ID", max_length=255)
     name = models.CharField(max_length=255)
-    type = models.ForeignKey(ProjectType, verbose_name='Type of Site')
+    type = models.ForeignKey(SiteType, verbose_name='Type of Site', related_name="sites", null=True, blank=True)
     phone = models.CharField(max_length=255, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     public_desc = models.TextField("Public Description", blank=True, null=True)
