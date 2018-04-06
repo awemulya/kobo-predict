@@ -2432,3 +2432,14 @@ class AllResponseImages(ReviewerRoleMixin, View):
         return render(request, 'fieldsight/gallery.html', {'all_imgs' : json.dumps(list(all_imgs["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8')})
 
 
+
+class SitesTypeView(ProjectRoleMixin, TemplateView):
+    template_name = "fieldsight/project_site_types.html"
+
+    def get_context_data(self, **kwargs):
+        data = super(SitesTypeView, self).get_context_data(**kwargs)
+        project = Project.objects.get(pk=kwargs.get('pk'))
+        types = project.types.all()
+        data['types'] = types
+        data['obj'] = project
+        return data
