@@ -3,10 +3,25 @@ from django.db.models import Q
 
 from onadata.apps.fieldsight.models import Region
 from onadata.apps.fieldsight.serializers.RegionSerializer import RegionSerializer
+from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
 from onadata.apps.fieldsight.rolemixins import ProjectRoleMixin
 from rest_framework.permissions import BasePermission
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.permissions import BasePermission
+
 from django.db.models import Q
+
+class RegionAccessPermission(BasePermission):
+    def has_permission(self, request, view):
+        if request.group.name == "Super Admin":
+            return True
+        if request.group.name == "Organization Admin":
+            return True
+        if request.group.name == "Project Manager":
+            return True
+        return False
+
 
 class RegionViewSet(viewsets.ModelViewSet):
     """
@@ -14,6 +29,8 @@ class RegionViewSet(viewsets.ModelViewSet):
     """
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    # permission_classes = (RegionAccessPermission,)
 
     def filter_queryset(self, queryset):
         project_id = self.kwargs.get('pk', None)
