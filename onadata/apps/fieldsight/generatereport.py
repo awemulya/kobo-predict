@@ -218,18 +218,17 @@ class MyPrint:
                 self.parse_group("", first_children)
             else:
                 question = first_children['name']
-
-                if first_children['type'] == 'note':
-                    answer=Paragraph('', styBackground)
-
-                elif first_children['type'] == 'photo':
-                    photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[question]
-                    answer = self.create_logo(photo)
-                else:
-                    if question in self.main_answer:
-                        answer = Paragraph(self.main_answer[question], styBackground)
-                    else:
+                if question in self.main_answer:
+                    if first_children['type'] == 'note':
                         answer=Paragraph('', styBackground)
+
+                    elif first_children['type'] == 'photo':
+                        photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[question]
+                        answer = self.create_logo(photo)
+                    else:
+                        answer = Paragraph(self.main_answer[question], styBackground)
+                else:    
+                    answer=Paragraph('', styBackground)
                 
                 if 'label' in first_children:
                     question = first_children['label']
