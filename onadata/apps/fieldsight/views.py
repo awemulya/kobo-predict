@@ -42,9 +42,10 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
 from .rolemixins import SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
-from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region
+from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region, SiteType
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
-                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm)
+                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm,
+                    SiteTypeForm)
 from django.views.generic import TemplateView
 from django.core.mail import send_mail, EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
@@ -270,7 +271,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
         else:
             total_count = 0
         outstanding, flagged, approved, rejected = obj.get_site_submission()
-        response = json.loads(obj.get_site_submission_count())
+        response = obj.get_site_submission_count()
         dashboard_data = {
             'obj': obj,
             'peoples_involved': peoples_involved,
@@ -785,7 +786,7 @@ def ajax_upload_sites(request, pk):
                     lat = site.get("longitude", 85.3240)
                     long = site.get("latitude", 27.7172)
                     location = Point(lat, long, srid=4326)
-                    type_id = int(site.get("type", "1"))
+                    type_id = int(site.get("type", "0"))
                     _site, created = Site.objects.get_or_create(identifier=str(site.get("id")), name=site.get("name"),
                                                                 project=project, type_id=type_id)
                     _site.phone = site.get("phone")
@@ -793,6 +794,8 @@ def ajax_upload_sites(request, pk):
                     _site.public_desc = site.get("public_desc"),
                     _site.additional_desc = site.get("additional_desc")
                     _site.location=location
+                    if type_id:
+                        _site.type = SiteType.objects.get(pk=type_id)
                     _site.save()
             if count:
                 noti = project.logs.create(source=request.user, type=12, title="Bulk Sites",
@@ -1024,37 +1027,27 @@ class OrgProjectList(OrganizationRoleMixin, ListView):
 class OrgSiteList(OrganizationRoleMixin, ListView):
     model = Site
     template_name = 'fieldsight/site_list.html'
-    paginate_by = 10
+    paginate_by = 50
 
     def get_context_data(self, **kwargs):
         context = super(OrgSiteList, self).get_context_data(**kwargs)
-
-        all_sites = Site.objects.all()
-        paginator = Paginator(all_sites, self.paginate_by)
-
-        page = self.request.GET.get('page')
-
-        try:
-            pagig_sites = paginator.page(page)
-        except PageNotAnInteger:
-            pagig_sites = paginator.page(1)
-        except EmptyPage:
-            pagig_sites = paginator.page(paginator.num_pages)
-
-        context['all_sites'] = pagig_sites
         context['pk'] = self.kwargs.get('pk')
         context['type'] = "org"
         return context
     def get_queryset(self):
-        queryset = Site.objects.filter(project__organization_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
+        queryset = Site.objects.filter(project__organization_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
         return queryset
 
 class ProjSiteList(ProjectRoleMixin, ListView):
+    model = Site
+    template_name = 'fieldsight/site_list.html'
+    paginate_by = 180
+
     def get_context_data(self, **kwargs):
         context = super(ProjSiteList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['region_id'] = None
         context['type'] = "project"
-        context['is_form_proj'] = True
         return context
     def get_queryset(self):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
@@ -1074,7 +1067,7 @@ class DonorProjSiteList(ReadonlyProjectLevelRoleMixin, ListView):
 
 class OrgUserList(OrganizationRoleMixin, ListView):
     model = UserRole
-    paginate_by = 51
+    paginate_by = 180
     template_name = "fieldsight/user_list_updated.html"
     def get_context_data(self, **kwargs):
         context = super(OrgUserList, self).get_context_data(**kwargs)
@@ -1092,7 +1085,7 @@ class OrgUserList(OrganizationRoleMixin, ListView):
 
 class ProjUserList(ProjectRoleMixin, ListView):
     model = UserRole
-    paginate_by = 51
+    paginate_by = 180
     template_name = "fieldsight/user_list_updated.html"
     def get_context_data(self, **kwargs):
         context = super(ProjUserList, self).get_context_data(**kwargs)
@@ -1107,7 +1100,7 @@ class ProjUserList(ProjectRoleMixin, ListView):
 
 class SiteUserList(ReviewerRoleMixin, ListView):
     model = UserRole
-    paginate_by = 51
+    paginate_by = 50
     template_name = "fieldsight/user_list_updated.html"
     def get_context_data(self, **kwargs):
         context = super(SiteUserList, self).get_context_data(**kwargs)
@@ -1142,22 +1135,22 @@ def senduserinvite(request):
     group = Group.objects.get(name=request.POST.get('group'))
 
     organization_id = None
-    project_id =None
-    site_id =None
+    project_id =[]
+    site_id =[]
 
     if RepresentsInt(request.POST.get('organization_id')):
         organization_id = request.POST.get('organization_id')
     if RepresentsInt(request.POST.get('project_id')):
-        project_id = request.POST.get('project_id')
+        project_id = [request.POST.get('project_id')]
     if RepresentsInt(request.POST.get('site_id')):
-        site_id = request.POST.get('site_id')
+        site_id = [request.POST.get('site_id')]
 
     response=""
 
     for email in emails:
         email = email.strip()
         
-        userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+        userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project__in=project_id,  site__in=site_id, is_used=False)
 
         if userinvite:
             if group.name == "Unassigned":
@@ -1168,7 +1161,8 @@ def senduserinvite(request):
 
         user = User.objects.filter(email__iexact=email)
         if user:
-            userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id, ended_at__isnull=True).order_by('-id')    
+            userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project__in=project_id, site__in=site_id, ended_at__isnull=True).order_by('-id') 
+
             if userrole:
                 if group.name == "Unassigned":
                     response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' has already joined this organization.<br>'
@@ -1176,8 +1170,10 @@ def senduserinvite(request):
                     response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
                 continue
            
-        invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+        invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, organization_id=organization_id)
         invite.save()
+        invite.project = project_id
+        invite.site = site_id
         current_site = get_current_site(request)
         subject = 'Invitation for Role'
         data ={
@@ -1190,7 +1186,7 @@ def senduserinvite(request):
         message = get_template('fieldsight/email_sample.html').render(Context(data))
         email_to = (invite.email,)
         
-        msg = EmailMessage(subject, message, 'Field Sight', email_to)
+        msg = EmailMessage(subject, message, 'FieldSight', email_to)
         msg.content_subtype = "html"
         msg.send()
         if group.name == "Unassigned":
@@ -1201,62 +1197,62 @@ def senduserinvite(request):
 
     return HttpResponse(response)
 
-@login_required()
-def invitemultiregionalusers(request, emails, group, region_ids):
+# @login_required()
+# def invitemultiregionalusers(request, emails, group, region_ids):
    
-    response=""
-    for region_id in region_ids:
-        region = Region.objects.get(id=region_id);
-        project_id = region.project_id
-        organization_id = region.project.organization_id  
-        sites = Site.objects.filter(region_id=region_id)  
-        for site in sites:
+#     response=""
+#     for region_id in region_ids:
+#         region = Region.objects.get(id=region_id);
+#         project_id = region.project_id
+#         organization_id = region.project.organization_id  
+#         sites = Site.objects.filter(region_id=region_id)  
+#         for site in sites:
 
-            for email in emails:
-                email = email.strip()
+#             for email in emails:
+#                 email = email.strip()
                 
-                userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+#                 userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
 
-                if userinvite:
-                    response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
-                    continue
+#                 if userinvite:
+#                     response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
+#                     continue
                 
-                user = User.objects.filter(email__iexact=email)
-                if user:
-                    userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id, ended_at__isnull=True).order_by('-id')
-                    if userrole:
-                        if group.name == "Unassigned":
-                            response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' has already joined this organization.<br>'
-                        else:
-                            response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
-                        continue
+#                 user = User.objects.filter(email__iexact=email)
+#                 if user:
+#                     userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id, ended_at__isnull=True).order_by('-id')
+#                     if userrole:
+#                         if group.name == "Unassigned":
+#                             response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' has already joined this organization.<br>'
+#                         else:
+#                             response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
+#                         continue
                     
-                invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
-                invite.save()
-                current_site = get_current_site(request)
-                subject = 'Invitation for Role'
-                data = {
-                    'email': invite.email,
-                    'domain': current_site.domain,
-                    'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
-                    'token': invite.token,
-                    'invite': invite,
-                    }
-                email_to = (invite.email,)
+#                 invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
+#                 invite.save()
+#                 current_site = get_current_site(request)
+#                 subject = 'Invitation for Role'
+#                 data = {
+#                     'email': invite.email,
+#                     'domain': current_site.domain,
+#                     'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
+#                     'token': invite.token,
+#                     'invite': invite,
+#                     }
+#                 email_to = (invite.email,)
 
-                message = get_template('fieldsight/email_sample.html').render(Context(data))
-                email_to = (invite.email,)
+#                 message = get_template('fieldsight/email_sample.html').render(Context(data))
+#                 email_to = (invite.email,)
                 
-                msg = EmailMessage(subject, message, 'Field Sight', email_to)
-                msg.content_subtype = "html"
-                msg.send()
+#                 msg = EmailMessage(subject, message, 'Field Sight', email_to)
+#                 msg.content_subtype = "html"
+#                 msg.send()
 
-                if group.name == "Unassigned":
-                    response += "Sucessfully invited "+ email +" to join this organization.<br>"
-                else:    
-                    response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
-                continue
-    return HttpResponse(response)
+#                 if group.name == "Unassigned":
+#                     response += "Sucessfully invited "+ email +" to join this organization.<br>"
+#                 else:    
+#                     response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
+#                 continue
+#     return HttpResponse(response)
 
 @login_required()
 def sendmultiroleuserinvite(request):
@@ -1267,121 +1263,60 @@ def sendmultiroleuserinvite(request):
     group = Group.objects.get(name=data.get('group'))
 
     response=""
-    print levels
-    print group
+
     if leveltype == "region":
-        for region_id in levels:
-            region = Region.objects.get(id=region_id);
-            project_id = region.project_id
-            organization_id = region.project.organization_id  
-            sites = Site.objects.filter(region_id=region_id)  
-            for site in sites:
-                site_id=site.id
+        region = Region.objects.get(id=levels[0]);
+        project_ids = [region.project_id]
+        organization_id = region.project.organization_id  
+        site_ids = Site.objects.filter(region_id__in=levels).values_list('id', flat=True)  
 
-                for email in emails:
-                    email = email.strip()
-                    
-                    userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
+    elif leveltype == "project":
+        project_ids = levels
+        organization_id = Project.objects.get(pk=project_ids[0]).organization_id
+        site_ids = []
+        print organization_id
 
-                    if userinvite:
-                        response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
-                        continue
+    elif leveltype == "site":
+        site_ids = levels
+        site = Site.objects.get(pk=site_ids[0])
+        project_ids = [site.project_id]
+        organization_id = site.project.organization_id
 
-                    user = User.objects.filter(email__iexact=email)
-                    if user:
-                        userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id, ended_at__isnull=True).order_by('-id')
-                        
-                        if userrole:
-                            if group.name == "Unassigned":
-                                response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' has already joined this organization.<br>'
-                            else:
-                                response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
-                            continue
-                       
-                    invite = UserInvite(email__iexact=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
-                    invite.save()
-                    current_site = get_current_site(request)
-                    subject = 'Invitation for Role'
-                    data ={
-                        'email': invite.email,
-                        'domain': current_site.domain,
-                        'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
-                        'token': invite.token,
-                        'invite': invite,
-                        }
-                    email_to = (invite.email,)
-                    
-                    message = get_template('fieldsight/email_sample.html').render(Context(data))
-                    email_to = (invite.email,)
-                    
-                    msg = EmailMessage(subject, message, 'Field Sight', email_to)
-                    msg.content_subtype = "html"
-                    msg.send()
-
-                    if group.name == "Unassigned":
-                        response += "Sucessfully invited "+ email +" to join this organization.<br>"
-                    else:    
-                        response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
-                    continue
-        return HttpResponse(response)
-    for level in levels:
-        organization_id = None
-        project_id =None
-        site_id =None
-
-        if leveltype == "project":
-            project_id = level
-            organization_id = Project.objects.get(pk=level).organization_id
-            print organization_id
-
-        elif leveltype == "site":
-            site_id = level
-            site = Site.objects.get(pk=site_id)
-
-            project_id = site.project_id
-            organization_id = site.project.organization_id
-
+    for email in emails:
+        # import pdb; pdb.set_trace()
+        userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project__in=project_ids,  site__in=site_ids, is_used=False).exists()
         
-        for email in emails:
-
-            
-            userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project_id=project_id,  site_id=site_id, is_used=False)
-            
-            if userinvite:
-                response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
-                continue
-            user = User.objects.filter(email__iexact=email)
-            if user:
-                userrole = UserRole.objects.filter(user=user[0], group=group, organization_id=organization_id, project_id=project_id, site_id=site_id, ended_at__isnull=True).order_by('-id')
-                
-                if userrole:
-                    if group.name == "Unassigned":
-                        response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' has already joined this organization.<br>'
-                    else:
-                        response += userrole[0].user.first_name + ' ' + userrole[0].user.last_name + ' ('+ email + ')' + ' already has the role for '+group.name+'.<br>' 
-                    continue
-                    
-            invite, created = UserInvite.objects.get_or_create(email__iexact=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, project_id=project_id, organization_id=organization_id,  site_id=site_id)
-            current_site = get_current_site(request)
-            subject = 'Invitation for Role'
-            data = {
-                'email': invite.email,
-                'domain': current_site.domain,
-                'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
-                'token': invite.token,
-                'invite': invite,
-                }
-            email_to = (invite.email,)
-            
-            message = get_template('fieldsight/email_sample.html').render(Context(data))
-            email_to = (invite.email,)
-            
-            msg = EmailMessage(subject, message, 'Field Sight', email_to)
-            msg.content_subtype = "html"
-            msg.send()
-
-            response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
+        if userinvite:
+            response += 'Invite for '+ email + ' in ' + group.name +' role has already been sent.<br>'
             continue
+
+        invite = UserInvite(email=email, by_user_id=request.user.id, token=get_random_string(length=32), group=group, organization_id=organization_id)
+        invite.save()
+        invite.project = project_ids
+        invite.site = site_ids
+
+        current_site = get_current_site(request)
+        subject = 'Invitation for Role'
+        data = {
+            'email': invite.email,
+            'domain': current_site.domain,
+            'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
+            'token': invite.token,
+            'invite': invite,
+            }
+        email_to = (invite.email,)
+        message = get_template('fieldsight/email_sample.html').render(Context(data))
+        email_to = (invite.email,)
+        msg = EmailMessage(subject, message, 'FieldSight', email_to)
+        msg.content_subtype = "html"
+        msg.send()
+        
+        if group.name == "Unassigned":
+            response += "Sucessfully invited "+ email +" to join this organization.<br>"
+        else:    
+            response += "Sucessfully invited "+ email +" for "+ group.name +" role.<br>"
+        continue
+
     return HttpResponse(response)
 
 
@@ -1421,14 +1356,13 @@ class ActivateRole(TemplateView):
 
     def post(self, request, invite, *args, **kwargs):
         user_exists = User.objects.filter(email__iexact=invite.email)
-        if user_exists:
-            user = user_exists[0] 
-            if request.POST.get('response') == "accept":
-                userrole = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
-            else:
+        if user_exists: 
+            if request.POST.get('response') != "accept":
                 invite.is_declined = True
-            invite.is_used = True
-            invite.save()
+                invite.is_used = True
+                invite.save()
+                return HttpResponseRedirect(reverse('login'))
+            user = user_exists[0]
         else:
             username = request.POST.get('username')
             if len(request.POST.get('username')) < 6:
@@ -1441,6 +1375,7 @@ class ActivateRole(TemplateView):
                 if not i.isalnum():
                     return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-1', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
                     break
+            
             if request.POST.get('password1') != request.POST.get('password2'):
                 return render(request, 'fieldsight/invited_user_reg.html',{'invite':invite, 'is_used': False, 'status':'error-4', 'username':request.POST.get('username'), 'firstname':request.POST.get('firstname'), 'lastname':request.POST.get('lastname')})
 
@@ -1459,44 +1394,83 @@ class ActivateRole(TemplateView):
             user.set_password(request.POST.get('password1'))
             user.save()
             
-## Needs completion
             codenames=['add_asset', 'change_asset','delete_asset', 'view_asset', 'share_asset']
             permissions = Permission.objects.filter(codename__in=codenames)
             user.user_permissions.add(permissions[0], permissions[1], permissions[2], permissions[3], permissions[4])
 
 
             profile, created = UserProfile.objects.get_or_create(user=user, organization=invite.organization)
-            userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=invite.project, site=invite.site)
-            invite.is_used = True
-            invite.save()
 
+        site_ids = invite.site.all().values_list('pk', flat=True)
+        project_ids = invite.project.all().values_list('pk', flat=True)
+
+        for project_id in project_ids:
+            for site_id in site_ids:
+                userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project_id=project_id, site_id=site_id)
+            if not site_ids:
+                userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project_id=project_id, site=None)
+        if not project_ids:
+            userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=None, site=None)
+
+        
+        invite.is_used = True
+        invite.save()
+        extra_msg = ""
+        site=None
+        project=None
         if invite.group.name == "Organization Admin":
             noti_type = 1
             content = invite.organization
+
         elif invite.group.name == "Project Manager":
-            noti_type = 2
-            content = invite.project
+            if invite.project.all().count() == 1:
+                noti_type = 2
+                content = invite.project.all()[0]
+            else:
+                noti_type = 26
+                extra_msg = invite.project.all().count()
+                content = invite.organization
+            project = invite.project.all()[0]
+        
         elif invite.group.name == "Reviewer":
-            noti_type = 3
-            content = invite.site
+            if invite.site.all().count() == 1:
+                noti_type = 3
+                content = invite.site.all()[0]
+            else:
+                noti_type = 27
+                extra_msg = invite.site.all().count()
+                content = invite.project.all()[0]
+            project=invite.project.all()[0]
+        
         elif invite.group.name == "Site Supervisor":
-            noti_type = 4
-            content = invite.site
+            if invite.site.all().count() == 1:
+                noti_type = 4
+                content = invite.site.all()[0]
+            else:
+                noti_type = 28
+                extra_msg = invite.site.all().count()
+                content = invite.project.all()[0]
+            project=invite.project.all()[0]
+
         elif invite.group.name == "Unassigned":
             noti_type = 24
-            if invite.site:
-                content = invite.site
-            elif invite.project:
-                content = invite.project
-            else:   
-                content = invite.organization
+            # if invite.site.all():
+            #     content = invite.site.all()[0]
+            #     project = invite.project.all()[0]
+            #     site = invite,project.all()[0]
+            # elif invite.project.all().count():
+            #     content = invite.project.all()[0]
+            #     project = invite.project.all()[0]
+            # else:   
+            content = invite.organization
+
         elif invite.group.name == "Project Donor":
             noti_type = 25
-            content = invite.project
+            content = invite.project.all()[0]
+
 
         
-        noti = invite.logs.create(source=user, type=noti_type, title="new Role",
-                                       organization=invite.organization, project=invite.project, site=invite.site, content_object=content, extra_object=invite.by_user,
+        noti = invite.logs.create(source=user, type=noti_type, title="new Role", organization=invite.organization, extra_message=extra_msg, project=project, site=site, content_object=content, extra_object=invite.by_user,
                                        description="{0} was added as the {1} of {2} by {3}.".
                                        format(user.username, invite.group.name, content.name, invite.by_user ))
         # result = {}
@@ -1900,17 +1874,37 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
 
 
 
-
 class RegionalSitelist(ProjectRoleMixin, ListView):
-    paginate_by = 10
-    def get(self, request, *args, **kwargs):
-        if self.kwargs.get('region_pk') == "0":
-            sites = Site.objects.filter(region=None)
-            return render(request, 'fieldsight/site_list.html' ,{'all_sites':sites, 'project_id':self.kwargs.get('pk'),'type':"Unregioned",'pk':self.kwargs.get('region_pk'),})
+    model = Site
+    template_name = 'fieldsight/site_list.html'
+    paginate_by = 180
 
-        obj = get_object_or_404(Region, id=self.kwargs.get('region_pk'))
-        sites = Site.objects.filter(region_id=self.kwargs.get('region_pk'))
-        return render(request, 'fieldsight/site_list.html',{'all_sites':sites, 'obj':obj, 'type':"region",'pk':self.kwargs.get('region_pk'),})
+    def get_context_data(self, **kwargs):
+        context = super(RegionalSitelist, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['region_id'] = self.kwargs.get('region_id')
+        context['type'] = "region"
+        return context
+    def get_queryset(self, **kwargs):
+        queryset = Site.objects.filter(project_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
+        # print self.kwargs.get('region_id')
+        # print "------------------------------------>>>>>>>>>>"
+        if self.kwargs.get('region_id') == "0":
+            object_list = queryset.filter(region=None)
+        else:    
+            object_list = queryset.filter(region_id=self.kwargs.get('region_id'))
+        return object_list
+
+# class RegionalSitelist(ProjectRoleMixin, ListView):
+#     paginate_by = 10
+#     def get(self, request, *args, **kwargs):
+#         if self.kwargs.get('region_pk') == "0":
+#             sites = Site.objects.filter(region=None)
+#             return render(request, 'fieldsight/site_list.html' ,{'all_sites':sites, 'project_id':self.kwargs.get('pk'),'type':"Unregioned",'pk':self.kwargs.get('region_pk'),})
+
+#         obj = get_object_or_404(Region, id=self.kwargs.get('region_pk'))
+#         sites = Site.objects.filter(region_id=self.kwargs.get('region_pk'))
+#         return render(request, 'fieldsight/site_list.html',{'all_sites':sites, 'obj':obj, 'type':"region",'pk':self.kwargs.get('region_pk'),})
 
 
 class RegionalSiteCreateView(SiteView, ProjectRoleMixin, CreateView):
@@ -2143,19 +2137,32 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
         wb.save(response)
         return response
 
-class ProjectSearchView(ListView):
-    model = Project
-    template_name = 'fieldsight/project_list.html'
+class SiteSearchView(ListView):
+    model = Site
+    template_name = 'fieldsight/site_list.html'
+    paginate_by = 180
 
     def get_context_data(self, **kwargs):
-        context = super(ProjectSearchView, self).get_context_data(**kwargs)
+        context = super(SiteSearchView, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
-        context['type'] = "project"
+        context['region_id'] = self.kwargs.get('region_id', None)
         return context
 
-    def get_queryset(self):
-        query = self.request.REQUEST.get("q")
-        return self.model.objects.filter(name__icontains=query)
+    def get_queryset(self, **kwargs):
+        region_id = self.kwargs.get('region_id', None)
+        # import pdb; pdb.set_trace()
+        query = self.request.GET.get('q')
+
+        if region_id:
+            if region_id == "0":
+                filtered_objects = self.model.objects.filter(region=None, project_id=self.kwargs.get('pk'))
+
+            else:
+                filtered_objects = self.model.objects.filter(region_id=region_id, project_id=self.kwargs.get('pk'))    
+        else:
+            filtered_objects = self.model.objects.filter(project_id=self.kwargs.get('pk'))
+        # import pdb; pdb.set_trace()
+        return filtered_objects.filter(Q(name__icontains=query) | Q(identifier__icontains=query))
 
 class ProjectStageResponsesStatus(ProjectRoleMixin, View): 
     def get(self, request, pk):
@@ -2426,3 +2433,34 @@ class AllResponseImages(ReviewerRoleMixin, View):
         return render(request, 'fieldsight/gallery.html', {'all_imgs' : json.dumps(list(all_imgs["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8')})
 
 
+
+class SitesTypeView(ProjectRoleMixin, TemplateView):
+    template_name = "fieldsight/project_site_types.html"
+
+    def get_context_data(self, **kwargs):
+        data = super(SitesTypeView, self).get_context_data(**kwargs)
+        project = Project.objects.get(pk=kwargs.get('pk'))
+        types = project.types.all()
+        data['types'] = types
+        data['obj'] = project
+        return data
+
+
+class AddSitesTypeView(ProjectRoleMixin, CreateView):
+    model = SiteType
+    form_class = SiteTypeForm
+
+    def get_context_data(self, **kwargs):
+        data = super(AddSitesTypeView, self).get_context_data(**kwargs)
+        project = Project.objects.get(pk=self.kwargs.get('pk'))
+        data['obj'] = project
+        return data
+
+    def get_success_url(self):
+        return reverse('fieldsight:site-types', kwargs={'pk': self.kwargs['pk']})
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.project = Project.objects.get(pk=self.kwargs.get('pk'))
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())

@@ -1,0 +1,41 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block extracss %}
+{% endblock %}
+
+{%block kocript %}
+{% endblock %}
+
+{% block content %}
+{% load filters %}
+    <div id="main-content" class="padding">
+        <nav aria-label="breadcrumb" role="navigation">
+            {% block breadcrumbs %}
+            <ol class="breadcrumb">
+                {% ifrole "Organization" %}
+                <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization' %} {% trans 'List' %}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' obj.organization.pk %}">{{obj.organization.name}}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{obj.name}}</a></li>
+                {% endrole %}
+                <li class="breadcrumb-item active" aria-current="page">Site Types</li>
+            </ol>
+            {% endblock %}
+        </nav>
+
+        <div class="col-sm-12">
+            <legend>New Type Name</legend>
+            <form method="post">
+            {% csrf_token %}
+                {{form.as_p}}
+                <button type="submit">Save</button>
+            </form>
+        </div>
+
+
+    </div>
+{% endblock %}
+{%block extrascript %}
+
+{% endblock %}

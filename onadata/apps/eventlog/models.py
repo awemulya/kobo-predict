@@ -42,6 +42,9 @@ class FieldSightLog(models.Model):
         (20, 'User edited Form Name form.'),
         (24, 'User was added as unassigned.'),
         (25, 'User was added as donor in project.'),
+        (26, 'User was added as the Project Manager in count project of org by Invitor Full Name.'),
+        (27, 'User was added as Reviewer in count site of project by Invitor Full Name.'),
+        (28, 'User was added as Site Supervisor in count site of project by Invitor Full Name.'),
     )
     
     type = models.IntegerField(default=0, choices=ACTION_TYPES)

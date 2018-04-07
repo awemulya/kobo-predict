@@ -218,18 +218,18 @@ class MyPrint:
                 self.parse_group("", first_children)
             else:
                 question = first_children['name']
-
-                if first_children['type'] == 'note':
-                    answer=Paragraph('', styBackground)
-
-                elif first_children['type'] == 'photo':
-                    photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[question]
-                    answer = self.create_logo(photo)
-                else:
-                    if question in self.main_answer:
-                        answer = Paragraph(self.main_answer[question], styBackground)
-                    else:
+                answe = self.main_answer
+                if question in self.main_answer:
+                    if first_children['type'] == 'note':
                         answer=Paragraph('', styBackground)
+
+                    elif first_children['type'] == 'photo':
+                        photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[question]
+                        answer = self.create_logo(photo)
+                    else:
+                        answer = Paragraph(self.main_answer[question], styBackground)
+                else:    
+                    answer=Paragraph('', styBackground)
                 
                 if 'label' in first_children:
                     question = first_children['label']
@@ -280,8 +280,6 @@ class MyPrint:
             elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))
         #a=FieldSightXF.objects.select_related('xf').filter(site_id=291).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')))
 
-       
-        
        
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
@@ -339,11 +337,7 @@ class MyPrint:
         self.doc.multiBuild(elements, onLaterPages=self._header_footer)
 
     def print_individual_response(self, pk, base_url):
-
-        
         self.base_url = base_url
-       
-       
  
         # Our container for 'Flowable' objects
         elements = []
