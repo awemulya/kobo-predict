@@ -282,7 +282,6 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
         super(SiteForm, self).__init__(*args, **kwargs)
         if not self.fields['location'].initial:
             self.fields['location'].initial = Point(85.3240, 27.7172,srid=4326)
-        self.fields['type'].empty_label = None
         self.fields['logo'].label = "Image"
         self.fields['logo'].required = False
 
@@ -290,7 +289,7 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
         model = Site
         exclude = ('project', 'is_survey', 'is_active', 'region',)
        
-        # project_filters = ['project']
+        project_filters = ['type']
         widgets = {
         'address': forms.TextInput(),
         # 'location': gform.OSMWidget(attrs={'map_width': 400, 'map_height': 400}),
