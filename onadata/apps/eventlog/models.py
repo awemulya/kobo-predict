@@ -15,7 +15,7 @@ from onadata.apps.users.models import UserProfile
 from django.http import JsonResponse
 from celery.result import AsyncResult
 
-user_type = ContentType.objects.get(app_label="users", model="userprofile")
+# user_type = ContentType.objects.get(app_label="users", model="userprofile")
 
 
 class FieldSightLog(models.Model):
