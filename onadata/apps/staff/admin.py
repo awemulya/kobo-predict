@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import Staff, Attendance, Team
 
-# Register your models here.
+admin.site.register(Staff)
+admin.site.register(Attendance)
+admin.site.register(Team)
+

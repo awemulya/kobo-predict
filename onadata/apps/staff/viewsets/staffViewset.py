@@ -9,21 +9,57 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from django.db.models import Q
 from django.views.generic import View
 from django.http import HttpResponse
-from onadata.apps.staff.models import Staff, Attendance
-from onadata.apps.staff.serializers.staffSerializer import StaffSerializer, AttendanceSerializer
+from onadata.apps.staff.models import Staff, Attendance, Team
+from onadata.apps.staff.serializers.staffSerializer import StaffSerializer, AttendanceSerializer, TeamSerializer
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.parsers import MultiPartParser, FormParser
+from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
 
 SAFE_METHODS = ('GET', 'POST')
+
+
+class TeamAccessPermission(BasePermission):
+    def has_permission(self, request, view):
+        if request.group.name == "Super Admin":
+            return True
+        
+        team_leader = Team.objects.filter(pk=self.kwargs.get('team_id'), leader_id = request.user.id)
+        
+        if team_leader:
+            return True
+
+        return False
+
+
+class TeamViewSet(viewsets.ModelViewSet):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+    # authentication_classes = (BasicAuthentication,)
+    def filter_queryset(self, queryset):
+        try:
+            queryset = queryset.filter(leader_id=self.request.user.pk)
+        except:
+            queryset = []
+        return queryset
+
 
 class StaffViewSet(viewsets.ModelViewSet):
     queryset = Staff.objects.all()
     serializer_class = StaffSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    permission_classes = (TeamAccessPermission,)
+    # parser_classes = (MultiPartParser, FormParser,)
 
     def filter_queryset(self, queryset):
         try:
-            queryset = queryset.filter(team_leader_id=self.request.user.pk)
+            queryset = queryset.filter(team_id=self.kwargs.get('team_id'))
         except:
             queryset = []
         return queryset
+
+    def perform_create(self, serializer, **kwargs):
+        serializer.save(created_by=self.request.user, team_id=self.kwargs.get('team_id'))
+        return serializer
 
 class AttendanceViewSet(viewsets.ModelViewSet):
     queryset = Attendance.objects.all()
@@ -35,3 +71,8 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         except:
             queryset = []
         return queryset
+
+    def perform_create(self, serializer, **kwargs):
+        data = serializer.validated_data
+        data.save(submitted_by=self.request.user, team_id=self.kwargs.get('team_id'))
+        return data

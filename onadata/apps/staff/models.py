@@ -14,8 +14,10 @@ class Team(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
     created_by = models.ForeignKey(User, related_name="team_created_by")
     created_date = models.DateTimeField(auto_now_add=True)
-    updated_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
 
+    def __unicode__(self):
+       return self.name +" C="+ str(self.created_date) +" U="+ str(self.updated_date)
 
 class Staff(models.Model):
     full_name = models.CharField(max_length=255, blank=True, null=True)
@@ -23,7 +25,7 @@ class Staff(models.Model):
     team = models.ForeignKey(Team, blank=True, null=True, related_name="staff_team")
     created_by = models.ForeignKey(User, related_name="staff_created_by")
     created_date = models.DateTimeField(auto_now_add=True)
-    updated_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
 
     logs = GenericRelation('eventlog.FieldSightLog')
 
@@ -34,9 +36,10 @@ class Staff(models.Model):
 class Attendance(models.Model):
     attendance_date = models.DateTimeField()
     staffs = models.ManyToManyField(Staff, null=True, blank=True)
+    team = models.ForeignKey(Team, blank=True, null=True, related_name="attandence_team")
     submitted_by = models.ForeignKey(User, related_name="attendance_submitted_by")
-    created_date = models.DateTimeField()
-    updated_date = models.DateTimeField(auto_now_add=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     def __unicode__(self):
