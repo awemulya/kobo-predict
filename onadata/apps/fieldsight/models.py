@@ -279,7 +279,8 @@ class SiteType(models.Model):
         return u'{}'.format(self.name)
 
     class Meta:
-         ordering = ['-identifier']
+        ordering = ['-identifier']
+        unique_together = [('identifier', 'project'), ]
 
 
 
