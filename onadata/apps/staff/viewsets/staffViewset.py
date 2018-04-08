@@ -19,7 +19,7 @@ SAFE_METHODS = ('GET', 'POST')
 
 
 class TeamAccessPermission(BasePermission):
-    def has_permission(self, request, view):
+    def has_permission(self, request, view, **kwargs):
         if request.group.name == "Super Admin":
             return True
         
@@ -47,7 +47,7 @@ class StaffViewSet(viewsets.ModelViewSet):
     queryset = Staff.objects.all()
     serializer_class = StaffSerializer
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-    permission_classes = (TeamAccessPermission,)
+    # permission_classes = (TeamAccessPermission,)
     # parser_classes = (MultiPartParser, FormParser,)
 
     def filter_queryset(self, queryset):
