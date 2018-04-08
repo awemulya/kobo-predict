@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
-from onadata.apps.fieldsight.models import Site, Region, SiteCreateSurveyImages, ProjectType, Project
+from onadata.apps.fieldsight.models import Site, Region, SiteCreateSurveyImages, ProjectType, Project, SiteType
 
 
 class SiteSerializer(serializers.ModelSerializer):
@@ -79,6 +79,12 @@ class ProjectTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProjectType
+        read_only_fields = ("id",)
+
+class SiteTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SiteType
         read_only_fields = ("id",)
 
 
