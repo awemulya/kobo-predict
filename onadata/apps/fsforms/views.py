@@ -1845,3 +1845,26 @@ def save_edumaterial(request, stageid):
         return Response({"em":response_data}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@login_required
+@api_view(['POST'])
+def save_edumaterial_details(request, stageid):
+    try:
+        data = request.data
+        stage = Stage.objects.get(pk=stageid)
+        try:
+            em = stage.em
+        except:
+            em = EducationMaterial(stage=stage)
+        title = data.get('title', False)
+        text = data.get('text', False)
+        if title:
+            em.title = title
+        if text:
+            em.text = text
+        em.save()
+        response_data = EMSerializer(em).data
+        return Response({"em":response_data}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

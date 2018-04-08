@@ -37,7 +37,7 @@ from .views import (
     setup_site_stages,
     stage_add,
     site_survey,
-    create_schedule, stages_reorder, substages_reorder, save_edumaterial,
+    create_schedule, stages_reorder, substages_reorder, save_edumaterial, save_edumaterial_details,
     setup_project_stages, project_stage_add, Instance_detail, alter_answer_status, project_survey,
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, Responses,
     MyOwnFormsListView, share_level, site_general, edit_general, project_general, ProjectResponses,
@@ -214,6 +214,7 @@ urlpatterns = urlpatterns + [
     url(r'^api/substages-reorder/$', substages_reorder),
 
     url(r'^api/em/files/(?P<stageid>\d+).$', save_edumaterial),
+    url(r'^api/em/(?P<stageid>\d+).$', save_edumaterial_details),
 
 
 

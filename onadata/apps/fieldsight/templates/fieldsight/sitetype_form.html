@@ -23,31 +23,14 @@
             </ol>
             {% endblock %}
         </nav>
-        <div class="col-sm-12">
-        <a href="{% url 'fieldsight:project-type-add' obj.pk %}">Add Types</a>
-        </div>
 
         <div class="col-sm-12">
-            {% if types %}
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Type</th>
-                </tr>
-                </thead>
-            {% for type in types %}
-                <tr>
-                    <td>{{type.identifier}}</td>
-                    <td>{{type.name}}</td>
-                </tr>
-
-
-            {% endfor %}
-            </table>
-            {% else %}
-            <h1>No Site Types In this Project</h1>
-            {% endif %}
+            <legend>New Type Name</legend>
+            <form method="post">
+            {% csrf_token %}
+                {{form.as_p}}
+                <button type="submit">Save</button>
+            </form>
         </div>
 
 

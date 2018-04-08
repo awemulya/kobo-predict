@@ -44,7 +44,8 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
 from .rolemixins import SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region, SiteType
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
-                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm)
+                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm,
+                    SiteTypeForm)
 from django.views.generic import TemplateView
 from django.core.mail import send_mail, EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
@@ -2443,3 +2444,23 @@ class SitesTypeView(ProjectRoleMixin, TemplateView):
         data['types'] = types
         data['obj'] = project
         return data
+
+
+class AddSitesTypeView(ProjectRoleMixin, CreateView):
+    model = SiteType
+    form_class = SiteTypeForm
+
+    def get_context_data(self, **kwargs):
+        data = super(AddSitesTypeView, self).get_context_data(**kwargs)
+        project = Project.objects.get(pk=self.kwargs.get('pk'))
+        data['obj'] = project
+        return data
+
+    def get_success_url(self):
+        return reverse('fieldsight:site-types', kwargs={'pk': self.kwargs['pk']})
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.project = Project.objects.get(pk=self.kwargs.get('pk'))
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
