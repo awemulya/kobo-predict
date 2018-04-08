@@ -67,12 +67,11 @@ class AttendanceViewSet(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         try:
-            queryset = queryset.filter(team_leader_id=self.request.user.pk)
+            queryset = queryset.filter(team_id=self.request.user.pk)
         except:
             queryset = []
         return queryset
 
     def perform_create(self, serializer, **kwargs):
-        data = serializer.validated_data
-        data.save(submitted_by=self.request.user, team_id=self.kwargs.get('team_id'))
+        data = serializer.save(submitted_by=self.request.user, team_id=self.kwargs.get('team_id'))
         return data
