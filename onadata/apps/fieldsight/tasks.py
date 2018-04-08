@@ -5,7 +5,7 @@ import datetime
 from django.db import transaction
 from django.contrib.gis.geos import Point
 from celery import shared_task
-from onadata.apps.fieldsight.models import Organization, Project, Site, Region
+from onadata.apps.fieldsight.models import Organization, Project, Site, Region, SiteType
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from django.contrib import messages
@@ -46,7 +46,7 @@ def bulkuploadsites(source_user, file, pk):
                 lat = site.get("longitude", 85.3240)
                 long = site.get("latitude", 27.7172)
                 location = Point(lat, long, srid=4326)
-                type_id = int(site.get("type", "1"))
+
                 
                 region_idf = site.get("region_id", None)
                 region_id = None
@@ -54,10 +54,21 @@ def bulkuploadsites(source_user, file, pk):
                 if region_idf is not None:
                     region, created  = Region.objects.get_or_create(identifier=str(region_idf), project = project)
                     region_id = region.id
-                
-                _site, created = Site.objects.get_or_create(identifier=str(site.get("id")),
-                                                            name=site.get("name"),
-                                                            project=project, type_id=type_id, region_id = region_id)
+
+                type_identifier = int(site.get("type" "0"))
+                if type_identifier == 0:
+                    _site, created = Site.objects.get_or_create(identifier=str(site.get("id")),
+                                                                name=site.get("name"),
+                                                                project=project,
+                                                                region_id = region_id)
+                else:
+
+                    site_type = SiteType.objects.get(identifier=type_identifier, project=project)
+
+                    _site, created = Site.objects.get_or_create(identifier=str(site.get("id")),
+                                                                name=site.get("name"),
+                                                                project=project,
+                                                                type=site_type, region_id = region_id)
                 _site.phone = site.get("phone")
                 _site.address = site.get("address")
                 _site.public_desc = site.get("public_desc")
