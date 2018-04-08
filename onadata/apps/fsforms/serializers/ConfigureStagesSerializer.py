@@ -12,7 +12,7 @@ from onadata.apps.logger.models import XForm
 class StageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stage
-        fields = ('name', 'description', 'id', 'order')
+        fields = ('name', 'description', 'id', 'order', 'tags')
 
     def create(self, validated_data):
         pk = self.context['kwargs'].get('pk')
@@ -26,23 +26,18 @@ class StageSerializer(serializers.ModelSerializer):
         return stage
 
     # def update(self, instance, validated_data):
+    #     tags = self.context['request'].data.get('tags', [])
+    #     stage = super(StageSerializer, self).update(instance, validated_data)
     #     import ipdb
     #     ipdb.set_trace()
-        # pk = self.context['kwargs'].get('pk')
-        # is_project = self.context['kwargs'].get('is_project')
-        # stage = super(StageSerializer, self).create(validated_data)
-        # if is_project:
-        #     stage.project = Project.objects.get(pk=pk)
-        # else:
-        #     stage.site = Site.objects.get(pk=pk)
-        # stage.save()
-        # return stage
+    #
+    #     return stage
 
 
 class SubStageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stage
-        fields = ('name', 'description', 'id', 'order')
+        fields = ('name', 'description', 'id', 'order', 'tags')
 
 
 class SubStageDetailSerializer(serializers.ModelSerializer):
@@ -78,11 +73,11 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stage
         fields = ('weight', 'name', 'description', 'id', 'order', 'date_created', 'em', 'responses_count',
-                  'stage_forms', 'has_stage', 'has_em')
+                  'stage_forms', 'has_stage', 'has_em', 'tags')
 
     def create(self, validated_data):
         stage_id = self.context['kwargs'].get('stage_id')
-        tags = self.context['request'].data.get('tags')
+        # tags = self.context['request'].data.get('tags')
         xf = self.context['request'].data.get('xf', {})
         xform = False
         if xf and xf != '':

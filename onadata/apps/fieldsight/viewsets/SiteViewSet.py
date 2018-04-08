@@ -298,10 +298,14 @@ class SiteTypeViewset(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, FormParser,)
 
     def get_queryset(self):
-        user = self.request.user
-        projects = UserRole.objects.filter(project__isnull=False,user=user, ended_at=None, group__name="Site Supervisor").\
-            values_list('project', flat=True)
-        return self.queryset.filter(project__id__in=projects)
+        project = self.kwargs.get('pk', False)
+        if project:
+            return self.queryset.filter(project__id=project)
+        else:
+            user = self.request.user
+            projects = UserRole.objects.filter(project__isnull=False,user=user, ended_at=None, group__name="Site Supervisor").\
+                values_list('project', flat=True)
+            return self.queryset.filter(project__id__in=projects)
 
     def get_serializer_context(self):
         return {'request': self.request}

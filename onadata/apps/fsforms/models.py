@@ -3,6 +3,7 @@ import datetime
 import json
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -61,6 +62,7 @@ class Stage(models.Model):
     ready = models.BooleanField(default=False)
     project_stage_id = models.IntegerField(default=0)
     weight = models.IntegerField(default=0)
+    tags = ArrayField(models.IntegerField(), null=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
