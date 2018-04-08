@@ -269,6 +269,9 @@ class SiteView(SiteRequiredMixin):
         if hasattr(form.Meta, 'site_filters'):
             for field in form.Meta.site_filters:
                 form.fields[field].queryset = form.fields[field].queryset.filter(site=form.site)
+        if hasattr(form.Meta, 'project_filters'):
+            for field in form.Meta.project_filters:
+                form.fields[field].queryset = form.fields[field].queryset.filter(project=form.site.project)
         return form
 
 

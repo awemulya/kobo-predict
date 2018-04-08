@@ -718,6 +718,15 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
         return HttpResponseRedirect(self.get_success_url())
 
+    def get_form(self, *args, **kwargs):
+
+        form = super(SiteCreateView, self).get_form(*args, **kwargs)
+        form.project = Project.objects.get(pk=self.kwargs.get('pk'))
+        if hasattr(form.Meta, 'project_filters'):
+            for field in form.Meta.project_filters:
+                form.fields[field].queryset = form.fields[field].queryset.filter(project=form.project)
+        return form
+
 
 
 class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
@@ -748,6 +757,15 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
         # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
+
+    def get_form(self, *args, **kwargs):
+
+        form = super(SiteUpdateView, self).get_form(*args, **kwargs)
+        project = form.instance.project
+        if hasattr(form.Meta, 'project_filters'):
+            for field in form.Meta.project_filters:
+                form.fields[field].queryset = form.fields[field].queryset.filter(project=project)
+        return form
 
 
 class SiteDeleteView(SiteView, SiteDeleteRoleMixin, DeleteView):
