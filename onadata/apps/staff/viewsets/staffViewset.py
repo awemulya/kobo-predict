@@ -19,7 +19,7 @@ SAFE_METHODS = ('GET', 'POST')
 
 
 class TeamAccessPermission(BasePermission):
-    def has_permission(self, request, view):
+    def has_permission(self, request, view, **kwargs):
         if request.group.name == "Super Admin":
             return True
         
