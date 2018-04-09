@@ -116,7 +116,10 @@ urlpatterns = [
     url(r'^survey-sites/(?P<pk>\d+)$', SiteSurveyListView.as_view(), name='site-survey-list'),
     url(r'^api/sites/$', AllSiteViewSet.as_view({'get': 'list'}), name='sites-list'),
     url(r'^api/project-types/$', ProjectTypeViewset.as_view({'get': 'list'})),
+
+    url(r'^api/site-types/(?P<pk>\d+)/$', SiteTypeViewset.as_view({'get': 'list'})),
     url(r'^api/site-types/$', SiteTypeViewset.as_view({'get': 'list'})),
+
     url(r'^api/survey-sites/(?P<pk>\d+)/$', SiteCreationSurveyViewSet.as_view({'get': 'list'}), name='sites-list'),
     url(r'^api/survey-sites-review/(?P<pk>\d+)/$', SiteReviewViewSet.as_view({'get': 'list'}), name='sites-list-review'),
     url(r'^api/project-sites/(?P<pk>\d+)/$', SiteUnderProjectViewSet.as_view({'get': 'list'}), name='project-sites-list'),
