@@ -24,7 +24,7 @@ def printr():
 
 @task()
 def bulkuploadsites(source_user, file, pk):
-    time.sleep(5)
+    time.sleep(2)
     project = Project.objects.get(pk=pk)
     task_id = bulkuploadsites.request.id
     task = CeleryTaskProgress.objects.get(task_id=task_id)
