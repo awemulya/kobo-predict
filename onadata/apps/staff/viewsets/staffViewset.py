@@ -35,6 +35,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
     # authentication_classes = (BasicAuthentication,)
+    permission_classes = (TeamAccessPermission,)
     def filter_queryset(self, queryset):
         try:
             queryset = queryset.filter(leader_id=self.request.user.pk)
@@ -47,7 +48,7 @@ class StaffViewSet(viewsets.ModelViewSet):
     queryset = Staff.objects.all()
     serializer_class = StaffSerializer
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-    # permission_classes = (TeamAccessPermission,)
+    permission_classes = (TeamAccessPermission,)
     # parser_classes = (MultiPartParser, FormParser,)
 
     def filter_queryset(self, queryset):
@@ -73,11 +74,11 @@ class StaffUpdateViewSet(viewsets.ModelViewSet):
     def filter_queryset(self, queryset):
 
         return queryset.filter(pk=self.kwargs.get('pk', None), team_id=self.kwargs.get('team_id', None))
-        
+
 class AttendanceViewSet(viewsets.ModelViewSet):
     queryset = Attendance.objects.all()
     serializer_class = AttendanceSerializer
-    # permission_classes = (TeamAccessPermission,)
+    permission_classes = (TeamAccessPermission,)
 
     def filter_queryset(self, queryset):
         try:
