@@ -16,7 +16,7 @@ class StaffSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Staff
-        exclude = ('created_by', 'team', 'created_date', 'updated_date',)
+        exclude = ('created_by', 'team', 'created_date', 'updated_date', 'is_deleted',)
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
@@ -26,10 +26,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
         exclude = ('created_date', 'updated_date', 'submitted_by', 'team')
 
     def create(self, validated_data):
-        # Remove nested and M2m relationships from validated_data
         staffs = validated_data.pop('staffs') if 'staffs' in validated_data else []
-
-        # Create project model
         instance = Attendance.objects.create(**validated_data)
         instance.save()
         instance.staffs = staffs

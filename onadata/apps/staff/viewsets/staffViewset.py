@@ -19,11 +19,11 @@ SAFE_METHODS = ('GET', 'POST')
 
 
 class TeamAccessPermission(BasePermission):
-    def has_permission(self, request, view, **kwargs):
+    def has_permission(self, request, view):
         if request.group.name == "Super Admin":
             return True
-        
-        team_leader = Team.objects.filter(pk=self.kwargs.get('team_id'), leader_id = request.user.id)
+
+        team_leader = Team.objects.filter(pk=view.kwargs.get('team_id'), leader_id = request.user.id)
         
         if team_leader:
             return True
@@ -47,7 +47,7 @@ class StaffViewSet(viewsets.ModelViewSet):
     queryset = Staff.objects.all()
     serializer_class = StaffSerializer
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-    # permission_classes = (TeamAccessPermission,)
+    permission_classes = (TeamAccessPermission,)
     # parser_classes = (MultiPartParser, FormParser,)
 
     def filter_queryset(self, queryset):
@@ -61,9 +61,23 @@ class StaffViewSet(viewsets.ModelViewSet):
         serializer.save(created_by=self.request.user, team_id=self.kwargs.get('team_id'))
         return serializer
 
+class StaffUpdateViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing sites.
+    """
+    queryset = Staff.objects.all()
+    serializer_class = StaffSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    permission_classes = (TeamAccessPermission,)
+
+    def filter_queryset(self, queryset):
+
+        return queryset.filter(pk=self.kwargs.get('pk', None), team_id=self.kwargs.get('team_id', None))
+        
 class AttendanceViewSet(viewsets.ModelViewSet):
     queryset = Attendance.objects.all()
     serializer_class = AttendanceSerializer
+    permission_classes = (TeamAccessPermission,)
 
     def filter_queryset(self, queryset):
         try:
