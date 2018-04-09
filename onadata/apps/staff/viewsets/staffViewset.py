@@ -47,7 +47,7 @@ class StaffViewSet(viewsets.ModelViewSet):
     queryset = Staff.objects.all()
     serializer_class = StaffSerializer
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-    permission_classes = (TeamAccessPermission,)
+    # permission_classes = (TeamAccessPermission,)
     # parser_classes = (MultiPartParser, FormParser,)
 
     def filter_queryset(self, queryset):
@@ -77,7 +77,7 @@ class StaffUpdateViewSet(viewsets.ModelViewSet):
 class AttendanceViewSet(viewsets.ModelViewSet):
     queryset = Attendance.objects.all()
     serializer_class = AttendanceSerializer
-    permission_classes = (TeamAccessPermission,)
+    # permission_classes = (TeamAccessPermission,)
 
     def filter_queryset(self, queryset):
         try:
