@@ -46,15 +46,16 @@ def bulkuploadsites(source_user, file, pk):
                 lat = site.get("longitude", 85.3240)
                 long = site.get("latitude", 27.7172)
                 location = Point(lat, long, srid=4326)
-
-                
+            
                 region_idf = site.get("region_id", None)
                 region_id = None
-                print "hererererer"
+            
                 if region_idf is not None:
                     region, created  = Region.objects.get_or_create(identifier=str(region_idf), project = project)
                     region_id = region.id
+            
                 type_identifier = int(site.get("type", "0"))
+            
                 if type_identifier == 0:
                     _site, created = Site.objects.get_or_create(identifier=str(site.get("id")),
                                                                 name=site.get("name"),
