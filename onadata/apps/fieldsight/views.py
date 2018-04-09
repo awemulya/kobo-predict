@@ -1839,7 +1839,7 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
         # print form.cleaned_data['identifier']
         self.object = form.save(commit=False)
         self.object.project_id=self.kwargs.get('pk')
-        existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'))
+        existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'), project_id=self.kwargs.get('pk'))
         if existing_identifier:
             messages.add_message(self.request, messages.INFO, 'Your identifier conflict with existing region please use different identifier to create region')
             return HttpResponseRedirect(reverse('fieldsight:region-add', kwargs={'pk': self.kwargs.get('pk')}))
