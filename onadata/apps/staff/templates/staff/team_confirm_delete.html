@@ -1,0 +1,17 @@
+{% extends "staff/base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+
+
+<form action="" method="post">
+	{% csrf_token %}
+
+    <p>Are you sure you want to delete "{{ object }}"?</p>
+
+    <input type="submit" class="btn btn-primary" value="{% trans 'Confirm deletion' %}" name="confirm_delete" />
+    <input type="submit" class="btn btn-primary" value="{% trans 'Cancel' %}" name="cancel"/>
+</form>
+
+{% endblock %}
