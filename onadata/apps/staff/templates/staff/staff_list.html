@@ -3,14 +3,14 @@
 
 
 {% block content %}
-<h1>All teams:</h1>
+<h1>All staffs:</h1>
 
 {% for object in staff_list %}
 
 
 <br>
 
-	<a href="{% url 'staff:team-detail' object.pk %}"><h2>{{ object.first_name }}  {{ object.last_name }}</h2></a>
+	<a href="{% url 'staff:staff-detail' object.pk %}"><h2>{{ object.first_name }}  {{ object.last_name }}</h2></a>
 
 
 {% endfor %}

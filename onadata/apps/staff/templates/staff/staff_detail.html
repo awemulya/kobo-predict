@@ -1,0 +1,22 @@
+{% extends "staff/base.html" %}
+bank_name account_number team photo
+
+{% block content %}
+<h1>Staff Name  - {{ staff.first_name}}  {{staff.last_name }}</h1>
+{{ staff.photo }}
+<h3> Staff Address - {{ staff.address }} </h3>
+<h3>Team - {{ staff.team }}</h3>
+<h3>Contact No. - {{ staff.phone_number }}</h3>
+<h3>Bank  - {{ staff.bank_name }}</h3>
+<h3>Account No. - {{ staff.account_number }}</h3>
+<h3>Contact No. - {{ staff.phone_number }}</h3>
+
+
+<h3> Created {{ team.created_date|timesince }} ago </h3>
+
+<br>
+    <a href="{% url 'staff:staff-update' object.pk  %}" ><button class="btn btn-success" >Edit</button></a> &nbsp
+    <a href="{% url 'staff:staff-delete' object.pk  %}" ><button class="btn btn-danger">Delete</button></a>
+<br>
+
+{% endblock %}

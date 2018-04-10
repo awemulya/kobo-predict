@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Team, Staff
 from django.core.urlresolvers import reverse_lazy
+from django.http import HttpResponseRedirect
 
 
 # Team views:
@@ -35,15 +36,18 @@ class TeamUpdate(UpdateView):
     success_url = reverse_lazy('staff:team-list')
 
 
-# class TeamDelete(DeleteView):
-#     model = Team
-#     success_url = reverse_lazy('staff:team-list')
+class TeamDelete(DeleteView):
+    model = Team
+    success_url = reverse_lazy('staff:team-list')
 
-class TeamDelete(View):
-    def get(self, request, pk):
-        instance = get_object_or_404(Team, pk= self.pk)
-        instance.is_deleted = True
-        return reverse_lazy("staff:team-list")
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        team_id = self.kwargs['pk']
+        team = Team.objects.get(id = team_id)
+        team.is_deleted = True
+        team.save()
+        return HttpResponseRedirect(self.get_success_url())
+
 
 
 # Staff views:
@@ -79,4 +83,10 @@ class StaffDelete(DeleteView):
     model = Staff
     success_url = reverse_lazy('staff:staff-list')
 
-
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        staff_id = self.kwargs['pk']
+        staff = Staff.objects.get(id = staff_id)
+        staff.is_deleted = True
+        staff.save()
+        return HttpResponseRedirect(self.get_success_url())
