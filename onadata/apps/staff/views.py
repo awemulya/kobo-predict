@@ -65,13 +65,13 @@ class StaffDetail(DetailView):
 
 class StaffCreate(CreateView):
     model = Staff
-    fields = ['leader','name','created_by']
+    fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation','created_by']
     success_url = reverse_lazy('staff:team-list')
 
 
 class StaffUpdate(UpdateView):
     model = Staff
-    fields = ['leader','name','created_by']
+    fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation','created_by']
     success_url = reverse_lazy('staff:team-list')
 
 

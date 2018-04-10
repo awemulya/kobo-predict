@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1>All teams:</h1>
-{% for object in team_list %}
+{% for object in staff_list %}
 
 
 <br>
@@ -14,7 +14,7 @@
 
 {% endfor %}
 
-<a href="{% url 'staff:team-create' %}" ><button class="btn btn-success" >Create a new team</button></a> &nbsp
+<a href="{% url 'staff:team-create' %}" ><button class="btn btn-success" >Add staff</button></a> &nbsp
 
 
 {% endblock %}
