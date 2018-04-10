@@ -31,7 +31,7 @@ from onadata.apps.fsforms.reports_util import get_images_for_site_all, get_insta
     get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer
 from onadata.apps.fsforms.serializers.StageSerializer import EMSerializer
-from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed, \
+from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed, send_bulk_message_stages, \
     send_message_un_deploy
 from onadata.apps.logger.models import XForm
 from onadata.apps.main.models import MetaData
@@ -550,8 +550,10 @@ def set_deploy_stages(request, is_project, pk):
                 FieldSightXF.objects.filter(is_staged=True, project=project,is_deleted=False).update(is_deployed=True)
                 Stage.objects.filter(site__project=project).delete()
                 for main_stage in main_stages:
+                    sites = []
                     for site in sites:
-                        send_message_stages(site)
+                        sites.append(site.id)
+                        # send_message_stages(site)
                         site_main_stage = Stage(name=main_stage.name, order=main_stage.order, site=site,
                                            description=main_stage.description, project_stage_id=main_stage.id)
                         site_main_stage.save()
@@ -567,6 +569,7 @@ def set_deploy_stages(request, is_project, pk):
                                 site_fsxf.is_deleted = False
                                 site_fsxf.is_deployed = True
                                 site_fsxf.save()
+                    send_bulk_message_stages(site_ids)
             # noti = project.logs.create(source=request.user, type=4, title="Project Stages Deployed",
             # organization=project.organization, description="Project Stages Deployed to sites.")
             # result = {}
@@ -793,12 +796,14 @@ def deploy_general_remaining_sites(request, is_project, pk):
             with transaction.atomic():
                 fxf = FieldSightXF.objects.get(pk=fxf_id)
                 if fxf_status:
+                    site_ids=[]
                     for site in fxf.project.sites.filter(is_active=True):
                         child, created = FieldSightXF.objects.get_or_create(is_staged=False, is_scheduled=False, xf=fxf.xf, site=site, fsform_id=fxf_id)
                         child.is_deployed = True
                         child.save()
                         if created:
-                            send_message_stages(site)
+                            site_ids.append(site.id)
+                    send_bulk_message_stages(site_ids)
                 else:
                     return Response({'error':"Deploy Form First and deploy to remaining.."}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
