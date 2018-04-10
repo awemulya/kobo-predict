@@ -54,7 +54,7 @@ class StaffList(ListView):
     def get_context_data(self, **kwargs):
         context = super(StaffList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
-        context['staff_list.html'] = Team.objects.filter(is_deleted= False)
+        context['staff_list.html'] = Staff.objects.filter(is_deleted= False)
         return context
 
 
@@ -66,17 +66,17 @@ class StaffDetail(DetailView):
 class StaffCreate(CreateView):
     model = Staff
     fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation','created_by']
-    success_url = reverse_lazy('staff:team-list')
+    success_url = reverse_lazy('staff:staff-list')
 
 
 class StaffUpdate(UpdateView):
     model = Staff
     fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation','created_by']
-    success_url = reverse_lazy('staff:team-list')
+    success_url = reverse_lazy('staff:staff-list')
 
 
 class StaffDelete(DeleteView):
     model = Staff
-    success_url = reverse_lazy('staff:team-list')
+    success_url = reverse_lazy('staff:staff-list')
 
 

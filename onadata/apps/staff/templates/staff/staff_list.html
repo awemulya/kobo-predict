@@ -4,17 +4,18 @@
 
 {% block content %}
 <h1>All teams:</h1>
+
 {% for object in staff_list %}
 
 
 <br>
 
-	<a href="{% url 'staff:team-detail' object.pk %}"><h2>{{ object.name }}</h2></a>
+	<a href="{% url 'staff:team-detail' object.pk %}"><h2>{{ object.first_name }}  {{ object.last_name }}</h2></a>
 
 
 {% endfor %}
 
-<a href="{% url 'staff:team-create' %}" ><button class="btn btn-success" >Create a new team</button></a> &nbsp
+<a href="{% url 'staff:staff-create' %}" ><button class="btn btn-success" >Add Staff</button></a> &nbsp
 
 
 {% endblock %}
