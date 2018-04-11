@@ -53,7 +53,6 @@ class TeamViewSet(viewsets.ModelViewSet):
     
     def filter_queryset(self, queryset):
         
-        queryset = queryset.filter(leader_id=self.request.user.id)
         return queryset
 
 
