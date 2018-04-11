@@ -49,13 +49,14 @@ class Staff(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     bank = models.ForeignKey(Bank, blank=True, null=True)
+    date_of_birth = models.DateField(blank=True, null=True)
     contract_start = models.DateField(blank=True, null=True)
     contract_end = models.DateField(blank=True, null=True)
     logs = GenericRelation('eventlog.FieldSightLog')
     is_deleted = models.BooleanField(default=False)
     
     def __unicode__(self):
-        return self.full_name
+        return self.first_name + " " + self.last_name
 
 
 class Attendance(models.Model):
