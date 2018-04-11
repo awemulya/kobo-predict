@@ -1983,8 +1983,9 @@ def project_html_export(request, pk):
     # #     data['form_responces'] = get_instances_for_project_field_sight_form(fsxf_id)
     # forms = Organization.objects.all()
     buffer = BytesIO()
+    site = Site.objects.get(pk=pk)
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="My Users.pdf"'
+    response['Content-Disposition'] = 'attachment; filename='+ site.name +'summary'
     base_url = request.get_host()
     report = MyPrint(buffer, 'Letter')
     pdf = report.print_users(pk, base_url)
