@@ -119,7 +119,7 @@ class MyPrint:
             image._restrictSize(2.5 * inch, 2.5 * inch)
         except:
             image = Image('http://' + self.base_url +'/static/images/img-404.jpg')
-            image._restrictSize(2.5 * inch, 2.5 * inch)
+            image._restrictSize(1.5 * inch, 1.5 * inch)
         return image
 
     def _header_footer(self, canvas, doc):

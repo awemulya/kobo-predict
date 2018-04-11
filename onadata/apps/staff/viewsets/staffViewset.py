@@ -51,11 +51,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     serializer_class = TeamSerializer
     authentication_classes = (BasicAuthentication,)
     def filter_queryset(self, queryset):
-        try:
-            queryset = queryset.filter(leader_id=self.request.user.pk)
-            print queryset
-        except:
-            queryset = []
+        queryset = queryset.filter(leader_id=self.request.user.id)
         return queryset
 
 
