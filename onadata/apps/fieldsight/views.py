@@ -2280,7 +2280,7 @@ def response_export(request, pk):
     response = HttpResponse(content_type='application/pdf')
     instance = FInstance.objects.get(instance_id=pk)
     form = instance.site_fxf
-    file_name=+ form.xf.title +"_response.pdf"
+    file_name= form.xf.title +"_response.pdf"
     response['Content-Disposition'] = 'attachment; filename="'+ file_name +'"'
     base_url = request.get_host()
     report = MyPrint(buffer, 'Letter')
