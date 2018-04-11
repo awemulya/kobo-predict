@@ -1,0 +1,18 @@
+{% extends "staff/base.html" %}
+
+
+{% block content %}
+
+
+<div class="container">
+	<form action="" class="form-horizontal" method="post" enctype="form-data" >
+        {% csrf_token %}
+        {{ form.as_p }}
+   <input type="submit" value="Add" class="btn btn-default">
+
+	</form>
+</div>
+
+
+
+{% endblock %}

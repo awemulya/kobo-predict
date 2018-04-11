@@ -1,0 +1,21 @@
+{% extends "staff/base.html" %}
+
+
+
+{% block content %}
+<h1>All staffs:</h1>
+
+{% for object in staff_list %}
+
+
+<br>
+
+	<a href="{% url 'staff:staff-detail' object.pk %}"><h2>{{ object.first_name }}  {{ object.last_name }}</h2></a>
+
+
+{% endfor %}
+
+<a href="{% url 'staff:staff-create' %}" ><button class="btn btn-success" >Add Staff</button></a> &nbsp
+
+
+{% endblock %}

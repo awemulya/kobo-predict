@@ -37,7 +37,7 @@ class Staff(models.Model):
     first_name = models.CharField(max_length=255, blank=True, null=True)
     last_name = models.CharField(max_length=255, blank=True, null=True)
     gender = models.IntegerField(default=1, choices=GENDER_TYPES)
-    ethnicity = models.CharField(max_length=255, blank=True, null=True) 
+    ethnicity = models.CharField(max_length=255, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
     phone_number = models.CharField(max_length=255, blank=True, null=True)
     bank_name = models.CharField(max_length=255, blank=True, null=True)
@@ -54,10 +54,9 @@ class Staff(models.Model):
     contract_end = models.DateField(blank=True, null=True)
     logs = GenericRelation('eventlog.FieldSightLog')
     is_deleted = models.BooleanField(default=False)
-    
-    def __unicode__(self):
-        return self.first_name + " " + self.last_name
 
+    def __unicode__(self):
+        return self.first_name +" "+  self.last_name
 
 class Attendance(models.Model):
     attendance_date = models.DateTimeField()

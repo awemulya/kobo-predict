@@ -1,0 +1,16 @@
+{% extends "staff/base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+
+<h1>Lauda lassan</h1>
+<form action="" method="post">
+	{% csrf_token %}
+
+    <p>Are you sure you want to delete "{{ staff.first_name }}"?</p>
+
+    <input type="submit" class="btn btn-primary" value="{% trans 'Confirm deletion' %}" name="confirm_delete" />
+</form>
+
+{% endblock %}
