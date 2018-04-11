@@ -49,8 +49,8 @@ class BankViewSet(viewsets.ModelViewSet):
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.filter(is_deleted=False)
     serializer_class = TeamSerializer
-    # authentication_classes = (BasicAuthentication,)
-    
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+        
     def filter_queryset(self, queryset):
         queryset = queryset.filter(leader_id=self.request.user.id)
         return queryset
