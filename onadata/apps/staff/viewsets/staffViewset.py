@@ -52,6 +52,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     authentication_classes = (BasicAuthentication,)
     
     def filter_queryset(self, queryset):
+        
         queryset = queryset.filter(leader_id=self.request.user.id)
         return queryset
 
