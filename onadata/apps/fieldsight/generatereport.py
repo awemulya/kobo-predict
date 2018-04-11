@@ -114,8 +114,12 @@ class MyPrint:
 
 
     def create_logo(self, absolute_path):
-        image = Image(absolute_path)
-        image._restrictSize(2.5 * inch, 2.5 * inch)
+        try:
+            image = Image(absolute_path)
+            image._restrictSize(2.5 * inch, 2.5 * inch)
+        except:
+            image = Image('http://' + self.base_url +'/static/images/img-404.jpg')
+            image._restrictSize(1.5 * inch, 1.5 * inch)
         return image
 
     def _header_footer(self, canvas, doc):
@@ -124,8 +128,6 @@ class MyPrint:
         styles = getSampleStyleSheet()
         style_right = ParagraphStyle(name='right', parent=styles['Normal'], fontName='arialuni',
                 fontSize=10, alignment=TA_RIGHT)
-        # Header
-        
         
         fieldsight_logo = Image('http://' + self.base_url +'/static/images/fs1.jpg')
         fieldsight_logo._restrictSize(1.5 * inch, 1.5 * inch)

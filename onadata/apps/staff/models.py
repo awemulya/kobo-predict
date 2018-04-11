@@ -21,9 +21,19 @@ GENDER_TYPES = (
 class Bank(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
+class StaffProject(models.Model):
+    name = models.CharField(max_length=255, blank=True, null=True)
+    created_by = models.ForeignKey(User, related_name="staff_project_created_by")
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    is_deleted = models.BooleanField(default=False)
+
+    def __unicode__(self):
+       return self.name +" C="+ str(self.created_date) +" U="+ str(self.updated_date)
 
 class Team(models.Model):
     leader = models.ForeignKey(User, related_name="team_leader")
+    staffproject = models.ForeignKey(StaffProject, related_name="team_project", blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, null=True)
     created_by = models.ForeignKey(User, related_name="team_created_by")
     created_date = models.DateTimeField(auto_now_add=True)
@@ -49,6 +59,7 @@ class Staff(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     bank = models.ForeignKey(Bank, blank=True, null=True)
+    date_of_birth = models.DateField(blank=True, null=True)
     contract_start = models.DateField(blank=True, null=True)
     contract_end = models.DateField(blank=True, null=True)
     logs = GenericRelation('eventlog.FieldSightLog')
@@ -56,7 +67,6 @@ class Staff(models.Model):
 
     def __unicode__(self):
         return self.first_name +" "+  self.last_name
-
 
 class Attendance(models.Model):
     attendance_date = models.DateTimeField()

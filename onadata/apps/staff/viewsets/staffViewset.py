@@ -49,13 +49,10 @@ class BankViewSet(viewsets.ModelViewSet):
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.filter(is_deleted=False)
     serializer_class = TeamSerializer
-    authentication_classes = (BasicAuthentication,)
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+        
     def filter_queryset(self, queryset):
-        try:
-            queryset = queryset.filter(leader_id=self.request.user.pk)
-            print queryset
-        except:
-            queryset = []
+        queryset = queryset.filter(leader_id=self.request.user.id)
         return queryset
 
 
@@ -63,8 +60,7 @@ class StaffViewSet(viewsets.ModelViewSet):
     queryset = Staff.objects.filter(is_deleted=False)
     serializer_class = StaffSerializer
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-
-    # permission_classes = (TeamAccessPermission,)
+    permission_classes = (TeamAccessPermission,)
     # parser_classes = (MultiPartParser, FormParser,)
 
     def filter_queryset(self, queryset):
