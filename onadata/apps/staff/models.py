@@ -21,9 +21,19 @@ GENDER_TYPES = (
 class Bank(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
+class StaffProject(models.Model):
+    name = models.CharField(max_length=255, blank=True, null=True)
+    created_by = models.ForeignKey(User, related_name="staff_project_created_by")
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    is_deleted = models.BooleanField(default=False)
+
+    def __unicode__(self):
+       return self.name +" C="+ str(self.created_date) +" U="+ str(self.updated_date)
 
 class Team(models.Model):
     leader = models.ForeignKey(User, related_name="team_leader")
+    staffproject = models.ForeignKey(StaffProject, related_name="team_project")
     name = models.CharField(max_length=255, blank=True, null=True)
     created_by = models.ForeignKey(User, related_name="team_created_by")
     created_date = models.DateTimeField(auto_now_add=True)
