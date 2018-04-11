@@ -1985,7 +1985,7 @@ def project_html_export(request, pk):
     buffer = BytesIO()
     site = Site.objects.get(pk=pk)
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename='+ site.name +'summary'
+    response['Content-Disposition'] = 'attachment; filename='+ site.name +'"summary.pdf"'
     base_url = request.get_host()
     report = MyPrint(buffer, 'Letter')
     pdf = report.print_users(pk, base_url)
@@ -2277,7 +2277,9 @@ def response_export(request, pk):
     
     buffer = BytesIO()
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="Report.pdf"'
+    instance = FInstance.objects.get(instance_id=pk)
+    form = instance.site_fxf
+    response['Content-Disposition'] = 'attachment; filename='+ form.xf.title +'"_response.pdf"'
     base_url = request.get_host()
     report = MyPrint(buffer, 'Letter')
     pdf = report.print_individual_response(pk, base_url)
@@ -2314,7 +2316,8 @@ class FormlistAPI(View):
     def post(self, request, pk, **kwargs):
         buffer = BytesIO()
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="Report.pdf"'
+        site=Site.objects.get(pk=pk)
+        response['Content-Disposition'] = 'attachment; filename='+ site.name +'"_custom_report.pdf"'
         base_url = request.get_host()
         report = MyPrint(buffer, 'Letter')
         data = json.loads(self.request.body)
