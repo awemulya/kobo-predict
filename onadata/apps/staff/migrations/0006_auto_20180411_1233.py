@@ -27,7 +27,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='team',
             name='staffproject',
-            field=models.ForeignKey(related_name='team_project', default=1, to='staff.StaffProject'),
-            preserve_default=False,
+            field=models.ForeignKey(related_name='team_project', blank=True, to='staff.StaffProject', null=True),
         ),
     ]
