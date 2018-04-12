@@ -77,7 +77,6 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         stage_id = self.context['kwargs'].get('stage_id')
-        # tags = self.context['request'].data.get('tags')
         xf = self.context['request'].data.get('xf', {})
         xform = False
         if xf and xf != '':

@@ -12,7 +12,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 from onadata.apps.fieldsight.models import Site, Project, Organization
-from onadata.apps.staff_project import StaffProject
+from onadata.apps.staff.models import StaffProject
+
 
 
 class UserRole(models.Model):

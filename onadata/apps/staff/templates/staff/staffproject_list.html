@@ -1,0 +1,35 @@
+{% extends "staff/base.html" %}
+{% load i18n staticfiles %}
+
+
+{% block content %}
+                    <div id="main-content" class="padding">
+                    <section class="panel">
+                        <header class="panel-heading clearfix">
+
+                            <div class="panel-heading-right">
+                                <a href="{% url 'staff:staff-create' %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'Project' %}</a>
+                            </div>
+                        </header>
+						<div class="row" >
+						{% for object in staff_project_list %}
+
+							<div class="col-md-4 col-sm-6">
+								<a href= "{% url 'staff:staff-project-update' object.pk %}" title="" class="site-item-wrap  margin-top clearfix">
+
+									<div class="basic-info clearfix">
+										<h4 class="detail-text1" >{{ object.name }} </h4>
+                                 		<p class="address"><i class="fa fa-map-marker" aria-hidden="true"></i> <span  class="detail-text1">{% trans 'Created By: '%} {{ object.created_by }}</span></p>
+									</div>
+
+
+							</a>
+							</div>
+
+						{% endfor %}
+						</div>
+                        </section>
+                        </div>
+
+
+{% endblock %}

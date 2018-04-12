@@ -68,10 +68,10 @@ class Staff(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return self.first_name +" "+  self.last_name
+        return str(self.first_name) +" "+  str(self.last_name)
 
 class Attendance(models.Model):
-    attendance_date = models.DateTimeField()
+    attendance_date = models.DateField()
     staffs = models.ManyToManyField(Staff, null=True, blank=True)
     team = models.ForeignKey(Team, blank=True, null=True, related_name="attandence_team")
     submitted_by = models.ForeignKey(User, related_name="attendance_submitted_by")

@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import datetime
 import json
 from rest_framework.response import Response
 from rest_framework import status
@@ -29,8 +30,9 @@ class TeamAccessPermission(BasePermission):
         if not request.user.is_authenticated():
             return False
         
-        if request.group.name == "Super Admin":
-            return True
+        if request.group:
+            if request.group.name == "Super Admin":
+                return True
 
         team_leader = Team.objects.filter(is_deleted=False, pk=view.kwargs.get('team_id'), leader_id = request.user.id)
         
@@ -91,13 +93,13 @@ class AttendanceViewSet(viewsets.ModelViewSet):
     queryset = Attendance.objects.filter(is_deleted=False)
     serializer_class = AttendanceSerializer
     permission_classes = (TeamAccessPermission,)
-    authentication_classes = (BasicAuthentication,)
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def filter_queryset(self, queryset):
-        try:
-            queryset = queryset.filter(team_id=self.request.user.pk)
-        except:
-            queryset = []
+        enddate = datetime.date.today()
+
+        startdate = enddate - datetime.timedelta(days=7)
+        queryset = queryset.filter(team_id=self.kwargs.get('team_id'), attendance_date__range=[startdate, enddate])
         return queryset
 
     def perform_create(self, serializer, **kwargs):
