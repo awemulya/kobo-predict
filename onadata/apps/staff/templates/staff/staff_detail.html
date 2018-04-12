@@ -28,7 +28,7 @@ bank_name account_number team photo
 								<div class="media">
 									<img class="d-flex align-self-start mr-3"  src="{{ staff.photo.url }}" width="200" height="200" alt="Generic placeholder image">
 									<div class="media-body">
-										<h2 class="margin-top">Bikrant Giri</h2>
+										<h2 class="margin-top">{{ staff.first_name }} {{ staff.last_name }}</h2>
 										<div class="row">
 											<div class="col-lg-4">
 												<div class="contact-info-item margin-top" data-mh="eq-item">
@@ -151,8 +151,8 @@ bank_name account_number team photo
                 </section>
 
 			</div>
-		<?php include 'footer.php';?>
-		 <div class="modal fade" id="events-modal" tabindex="-1" role="dialog" aria-labelledby="events-modal" aria-hidden="true">
+
+			<div class="modal fade" id="events-modal" tabindex="-1" role="dialog" aria-labelledby="events-modal" aria-hidden="true">
 	        <div class="modal-dialog">
 	            <div class="modal-content modal-lg">
 	                <div class="modal-header">
@@ -170,13 +170,17 @@ bank_name account_number team photo
 	        </div>
 	    </div>
 
-        <?
+
         {% endblock %}
+
+{% block extrascript %}
 
 
 		<script src="assets/js/vendor/jquery.matchHeight.js"></script>
 		<script src="assets/js/vendor/underscore-min.js"></script>
 		<script src="assets/js/vendor/calendar.min.js"></script>
+        <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+        <script src="assets/js/plugins.js"></script>
 		<script>
 			(function($) {
 				"use strict";
@@ -279,5 +283,6 @@ bank_name account_number team photo
 				});
 			}(jQuery));
 		</script>
-        <script src="assets/js/plugins.js"></script>
-</html>
+
+
+{% endblock %}
