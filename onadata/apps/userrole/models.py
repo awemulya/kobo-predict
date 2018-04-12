@@ -23,7 +23,6 @@ class UserRole(models.Model):
     site = models.ForeignKey(Site, null=True, blank=True, related_name='site_roles')
     project = models.ForeignKey(Project, null=True, blank=True, related_name='project_roles')
     organization = models.ForeignKey(Organization, null=True, blank=True, related_name='organization_roles')
-    staff_project = models.ForeignKey(StaffProject, null=True, blank=True, related_name='staff_project_roles')
     logs = GenericRelation('eventlog.FieldSightLog')
 
     def __unicode__(self):
@@ -81,11 +80,6 @@ class UserRole(models.Model):
         elif self.group.name in ['Site Supervisor', 'Reviewer']:
             self.project = self.site.project
             self.organization = self.site.project.organization
-
-        elif self.group.name == 'Staff Project Manager':
-            self.organization = None
-            self.project = None
-            self.site = None
 
         super(UserRole, self).save(*args, **kwargs)
 
