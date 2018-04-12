@@ -109,13 +109,18 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                     role, created = UserRole.objects.get_or_create(user_id=user, organization_id=project.organization_id,
                                                                    project_id=self.kwargs.get('pk'), site_id=None,
                                                                    group=group, ended_at=None)
-                    print role.__dict__
                     
+
                     if created:
-                        print role.__dict__
+                        
                         description = "{0} was assigned  as {2} in {1}".format(
                             role.user.get_full_name(), role.project, role.group.name)
-                        noti = role.logs.create(source=role.user, type=25, title=description, organization=project.organization, project=project, description=description, content_object=project, extra_object=self.request.user)
+                        
+                        noti_type = 6
+                        if data.get('group') == "Project Donor":
+                            noti_type =25
+
+                        noti = role.logs.create(source=role.user, type=noti_type, title=description, organization=project.organization, project=project, description=description, content_object=project, extra_object=self.request.user)
                         result = {}
                         result['description'] = description
                         result['url'] = noti.get_absolute_url()
