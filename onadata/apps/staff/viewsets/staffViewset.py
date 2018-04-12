@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import datetime
 import json
 from rest_framework.response import Response
 from rest_framework import status
@@ -95,7 +96,10 @@ class AttendanceViewSet(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def filter_queryset(self, queryset):
-        queryset = queryset.filter(team_id=self.kwargs.get('team_id'))
+        enddate = datetime.date.today()
+
+        startdate = enddate - datetime.timedelta(days=7)
+        queryset = queryset.filter(team_id=self.kwargs.get('team_id'), attendance_date__range=[startdate, enddate])
         return queryset
 
     def perform_create(self, serializer, **kwargs):
