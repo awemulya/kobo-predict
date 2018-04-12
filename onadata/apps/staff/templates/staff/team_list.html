@@ -1,20 +1,44 @@
 {% extends "staff/base.html" %}
+{% load i18n staticfiles %}
+
 
 
 
 {% block content %}
-<h1>All teams:</h1>
-{% for object in team_list %}
+						<div id="main-content" class="padding">
+						<section class="panel">
+	                        <header class="panel-heading clearfix">
+
+	                    <div class="panel-heading-right">
+							<a href="{% url 'staff:team-create' %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'team' %}</a>
+						</div>
+							</header>
+						<div class="row" >
+						{% for object in team_list %}
+
+							<div class="col-md-4 col-sm-6">
+								<a href= "{% url 'staff:team-detail' object.pk %}" title="" class="site-item-wrap  margin-top clearfix">
+									<div class="logo">
+									</div>
+									<div class="basic-info clearfix">
+										<h4 class="detail-text1" >{{ object.name }} </h4>
+                                 		<p class="address"><i class="fa fa-map-marker" aria-hidden="true"></i> <span  class="detail-text1">{% trans 'Leader - '%}{{ object.leader }}</span></p>
+									</div>
 
 
-<br>
+							</a>
+							</div>
+						{% empty %}
+							<div class="col-md-4 col-sm-6">
 
-	<a href="{% url 'staff:team-detail' object.pk %}"><h2>{{ object.name }}</h2></a>
+							<h3>No Site</h3>
 
+							</div>
 
-{% endfor %}
-
-<a href="{% url 'staff:team-create' %}" ><button class="btn btn-success" >Add staff</button></a> &nbsp
+						{% endfor %}
+						</div>
+</section>
+</div>
 
 
 {% endblock %}
