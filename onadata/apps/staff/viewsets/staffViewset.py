@@ -92,10 +92,10 @@ class AttendanceViewSet(viewsets.ModelViewSet):
     queryset = Attendance.objects.filter(is_deleted=False)
     serializer_class = AttendanceSerializer
     permission_classes = (TeamAccessPermission,)
-    # authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def filter_queryset(self, queryset):
-        queryset = queryset.filter(team_id=self.request.user.id)
+        queryset = queryset.filter(team_id=self.kwargs.get('team_id'))
         return queryset
 
     def perform_create(self, serializer, **kwargs):
