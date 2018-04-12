@@ -68,7 +68,7 @@ class Staff(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return self.first_name +" "+  self.last_name
+        return str(self.first_name) +" "+  str(self.last_name)
 
 class Attendance(models.Model):
     attendance_date = models.DateField()
