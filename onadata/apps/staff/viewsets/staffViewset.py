@@ -29,7 +29,7 @@ class TeamAccessPermission(BasePermission):
         if not request.user.is_authenticated():
             return False
         
-        if request.group.name == "Super Admin":
+        if request.user.group.name == "Super Admin":
             return True
 
         team_leader = Team.objects.filter(is_deleted=False, pk=view.kwargs.get('team_id'), leader_id = request.user.id)
@@ -95,7 +95,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         try:
-            queryset = queryset.filter(team_id=self.request.user.pk)
+            queryset = queryset.filter(team_id=self.request.user.id)
         except:
             queryset = []
         return queryset
