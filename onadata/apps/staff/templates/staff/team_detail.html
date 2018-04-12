@@ -1,13 +1,72 @@
 {% extends "staff/base.html" %}
+{% load i18n staticfiles filters %}
 
 {% block content %}
-<h1>Team Name  - {{ team.name }}</h1>
-<h3> Team Leader - {{ team.leader }} </h3>
-<h3> Created {{ team.created_date|timesince }} ago </h3>
 
-<br>
-    <a href="{% url 'staff:team-update' object.pk  %}" ><button class="btn btn-success" >Edit</button></a> &nbsp
-    <a href="{% url 'staff:team-delete' object.pk  %}" ><button class="btn btn-danger">Delete</button></a>
-<br>
+ <section class="panel">
+            <header class="panel-heading clearfix">
+                <div class="panel-heading-right">
+
+                <br>
+                    <div class="panel-heading-right">
+                                <a href="{% url 'staff:team-update' object.pk  %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Edit' %} {% trans 'Team' %}</a>
+                                <a href="{% url 'staff:team-delete' object.pk  %}" title="" class="btn btn-sm btn-primary"><i class="la la-minus"></i> {% trans 'Delete' %} {% trans 'Team' %}</a>
+
+                    </div>
+                <br>
+                </div>
+            </header>
+ </section>
+
+
+			<div id="main-content" class="padding">
+				<section>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="margin-top user-profile-basic-info padding bg-white clearfix ">
+								<div class="media">
+									<div class="media-body">
+										<h2 class="margin-top">{{ team.name }} </h2>
+										<div class="row">
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-building"></i> <strong>Leader</strong><br/>
+													{{ team.leader }}
+												</div>
+											</div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-envelope-o"></i> <strong>Staff Project</strong><br/>{{ team.staffproject}}
+												</div>
+											</div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-phone"></i> <strong>Created By</strong><br/>
+													{{ staff.created_by }}
+												</div>
+											</div>
+											<div class="clearfix"></div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-intersex"></i> <strong>Created Date</strong><br/>
+													{{ staff.created_date }}
+												</div>
+											</div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-certificate"></i> <strong>Updated Date</strong><br/>{{ staff.updated_date }}
+												</div>
+											</div>
+
+
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+                </section>
+
+			</div>
 
 {% endblock %}
