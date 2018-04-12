@@ -33,7 +33,8 @@ class StaffProject(models.Model):
 
 class Team(models.Model):
     leader = models.ForeignKey(User, related_name="team_leader")
-    staffproject = models.ForeignKey(StaffProject, related_name="team_project", blank=True, null=True)
+    staffproject = models.ForeignKey(StaffProject, related_name="team_project",
+     blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, null=True)
     created_by = models.ForeignKey(User, related_name="team_created_by")
     created_date = models.DateTimeField(auto_now_add=True)
@@ -46,6 +47,7 @@ class Team(models.Model):
 class Staff(models.Model):
     first_name = models.CharField(max_length=255, blank=True, null=True)
     last_name = models.CharField(max_length=255, blank=True, null=True)
+    email = models.CharField(max_length=255, blank=True, null=True)
     gender = models.IntegerField(default=1, choices=GENDER_TYPES)
     ethnicity = models.CharField(max_length=255, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
