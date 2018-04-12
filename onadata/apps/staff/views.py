@@ -11,7 +11,6 @@ class TeamList(ListView):
     template_name = 'staff/team_list.html'
 
     def get_context_data(self, **kwargs):
-        # pass
         context = super(TeamList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
         context['team_list'] = Team.objects.filter(is_deleted= False)
@@ -102,3 +101,13 @@ class StaffProjectUpdate(UpdateView):
     model = StaffProject
     fields = ['name','created_by']
     success_url = reverse_lazy('staff:staff-list')
+
+class StaffProjectList(ListView):
+    model = StaffProject
+    template_name = 'staff/staffproject_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(StaffProjectList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['staff_project_list'] = Team.objects.filter(is_deleted= False)
+        return context
