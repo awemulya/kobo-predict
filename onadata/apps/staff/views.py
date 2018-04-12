@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Team, Staff
+from .models import Team, Staff, StaffProject
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect
 
@@ -90,3 +90,15 @@ class StaffDelete(DeleteView):
         staff.is_deleted = True
         staff.save()
         return HttpResponseRedirect(self.get_success_url())
+
+#StaffProject Views
+
+class StaffProjectCreate(CreateView):
+    model = StaffProject
+    fields = ['name','created_by']
+    success_url = reverse_lazy('staff:staff-list')
+
+class StaffProjectUpdate(UpdateView):
+    model = StaffProject
+    fields = ['name','created_by']
+    success_url = reverse_lazy('staff:staff-list')
