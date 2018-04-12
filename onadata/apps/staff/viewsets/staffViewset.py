@@ -95,10 +95,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def filter_queryset(self, queryset):
-        try:
-            queryset = queryset.filter(team_id=self.request.user.id)
-        except:
-            queryset = []
+        queryset = queryset.filter(team_id=self.request.user.id)
         return queryset
 
     def perform_create(self, serializer, **kwargs):
