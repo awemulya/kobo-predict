@@ -29,8 +29,9 @@ class TeamAccessPermission(BasePermission):
         if not request.user.is_authenticated():
             return False
         
-        if request.user.group.name == "Super Admin":
-            return True
+        if request.group:
+            if request.group.name == "Super Admin":
+                return True
 
         team_leader = Team.objects.filter(is_deleted=False, pk=view.kwargs.get('team_id'), leader_id = request.user.id)
         
