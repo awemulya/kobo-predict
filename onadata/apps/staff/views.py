@@ -19,15 +19,19 @@ class TeamList(StaffProjectRoleMixin, ListView):
         queryset = Team.objects.filter(is_deleted=False, staffproject_id=self.kwargs.get('pk'))
         return queryset
 
-class TeamDetail(StaffTeamRoleMixin, DetailView):
+class TeamDelete(StaffProjectRoleMixin, DeleteView):
     model = Team
-    template_name = 'staff/team_detail.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(TeamDetail, self).get_context_data(**kwargs)
-        context['pk'] = self.kwargs.get('pk')
-        context['staff_list'] = Staff.objects.filter(team_id = self.kwargs.get('pk'))
-        return context
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        team_id = self.kwargs['pk']
+        team = Team.objects.get(id = team_id)
+        team.is_deleted = True
+        team.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
 
 
 
@@ -44,6 +48,21 @@ class TeamCreate(StaffProjectRoleMixin, CreateView):
         return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
 
 
+
+
+
+
+
+class TeamDetail(StaffTeamRoleMixin, DetailView):
+    model = Team
+    template_name = 'staff/team_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TeamDetail, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['staff_list'] = Staff.objects.filter(team_id = self.kwargs.get('pk'))
+        return context
+
 class TeamUpdate(StaffTeamRoleMixin, UpdateView):
     model = Team
     fields = ['leader','name']
@@ -51,19 +70,10 @@ class TeamUpdate(StaffTeamRoleMixin, UpdateView):
     def get_success_url(self):
         return reverse('staff:team-detail', kwargs={'pk': self.kwargs.get('pk')})
 
-class TeamDelete(StaffProjectRoleMixin, DeleteView):
-    model = Team
 
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        team_id = self.kwargs['pk']
-        team = Team.objects.get(id = team_id)
-        team.is_deleted = True
-        team.save()
-        return HttpResponseRedirect(self.get_success_url())
 
-    def get_success_url(self):
-        return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
+
+
 
 
 # Staff views:
@@ -79,12 +89,12 @@ class StaffList(StaffTeamRoleMixin, ListView):
         queryset =  Staff.objects.filter(team_id=self.kwargs.get('pk'), is_deleted= False)
         return queryset
 
-class StaffDetail(StaffRoleMixin, DetailView):
-    model = Staff
-    template_name = 'staff/staff_detail.html'
 
 
-class StaffCreate(CreateView):
+
+
+
+class StaffCreate(StaffTeamRoleMixin, CreateView):
     model = Staff
     fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation']
     success_url = reverse_lazy('staff:staff-list')
@@ -96,6 +106,10 @@ class StaffCreate(CreateView):
 
     def get_success_url(self):
         return reverse('staff:team-detail', kwargs={'pk': self.kwargs.get('pk')})
+
+class StaffDetail(StaffRoleMixin, DetailView):
+    model = Staff
+    template_name = 'staff/staff_detail.html'
 
 
 
@@ -110,7 +124,7 @@ class StaffUpdate(StaffRoleMixin, UpdateView):
 
 
 
-class StaffDelete(DeleteView):
+class StaffDelete(StaffRoleMixin, DeleteView):
     model = Staff
     success_url = reverse_lazy('staff:staff-list')
 
@@ -124,7 +138,13 @@ class StaffDelete(DeleteView):
 
 #StaffProject Views
 
-class StaffProjectCreate(CreateView):
+
+
+
+
+
+
+class StaffProjectCreate(HasStaffRoleMixin, CreateView):
     model = StaffProject
     fields = ['name',]
 
@@ -134,13 +154,6 @@ class StaffProjectCreate(CreateView):
 
     def get_success_url(self):
         return reverse('staff:staff-project-list')
-
-class StaffProjectUpdate(StaffProjectRoleMixin, UpdateView):
-    model = StaffProject
-    fields = ['name',]
-
-    def get_success_url(self):
-        return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
 
 class StaffProjectList(HasStaffRoleMixin, ListView):
     model = StaffProject
@@ -154,7 +167,18 @@ class StaffProjectList(HasStaffRoleMixin, ListView):
         queryset = StaffProject.objects.filter(is_deleted=False)
         return queryset
 
-class StaffProjectDetail(DetailView):
+
+
+
+class StaffProjectUpdate(StaffProjectRoleMixin, UpdateView):
+    model = StaffProject
+    fields = ['name',]
+
+    def get_success_url(self):
+        return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
+
+
+class StaffProjectDetail(StaffProjectRoleMixin, DetailView):
     model = StaffProject
     template_name = 'staff/staffproject_detail.html'
 

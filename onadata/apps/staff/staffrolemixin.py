@@ -29,10 +29,10 @@ class HasStaffRoleMixin(LoginRequiredMixin):
         if request.group.name == "Super Admin":
             return super(HasStaffRoleMixin, self).dispatch(request, *args, **kwargs)
         
-        user_role = request.roles.filter(group_id=8)
-        if user_role:
-            return super(HasStaffRoleMixin, self).dispatch(request, *args, **kwargs)
-        raise PermissionDenied()
+        # user_role = request.roles.filter(group_id=8)
+        # if user_role:
+        #     return super(HasStaffRoleMixin, self).dispatch(request, *args, **kwargs)
+        # raise PermissionDenied()
 
 
 class StaffProjectRoleMixin(LoginRequiredMixin):

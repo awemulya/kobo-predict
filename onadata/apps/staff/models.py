@@ -21,6 +21,9 @@ GENDER_TYPES = (
 class Bank(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
+    def __unicode__(self):
+       return self.name
+
 class StaffProject(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
     created_by = models.ForeignKey(User, related_name="staff_project_created_by")
