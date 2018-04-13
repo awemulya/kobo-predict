@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.views.generic import TemplateView
 
-from onadata.apps.staff.models import Staff, Team, Project
+from onadata.apps.staff.models import Staff, Team, StaffProject
 from onadata.apps.userrole.models import UserRole
 from django.shortcuts import get_object_or_404
 

@@ -70,7 +70,7 @@ from django.template import Context
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from onadata.apps.fsforms.reports_util import get_images_for_site, get_images_for_site_all, get_site_responses_coords, get_images_for_sites_count
-
+from onadata.apps.staff.models import Team
 @login_required
 def dashboard(request):
     current_role_count = request.roles.count()
@@ -1029,7 +1029,7 @@ class RolesView(LoginRequiredMixin, TemplateView):
         context['proj_donor'] = self.request.roles.select_related('project').filter(group__name = "Project Donor")
         context['site_reviewer'] = self.request.roles.select_related('site').filter(group__name = "Reviewer")
         context['site_supervisor'] = self.request.roles.select_related('site').filter(group__name = "Site Supervisor")
-        context['staff_project_manager'] = self.request.roles.select_related('StaffProject').filter(group__name = "Staff Project Manager")
+        context['staff_project_manager'] = self.request.roles.select_related('staff_project').filter(group__name = "Staff Project Manager")
         context['staff_teams'] = Team.objects.filter(leader_id = self.request.user.id)
         return context
 

@@ -25,7 +25,7 @@ urlpatterns = [
     url(r'^staff/update/(?P<pk>[0-9]+)/$', StaffUpdate.as_view(), name="staff-update"),
     url(r'^staff/delete/(?P<pk>[0-9]+)/$', StaffDelete.as_view(), name="staff-delete"),
     url(r'^staff-project-list/$', StaffProjectList.as_view(), name="staff-project-list"),
-    #gurl(r'^staff-project/create/(?P<pk>[0-9]+)/$', StaffProjectCreate.as_view(), name="staff-project-create"),
+    url(r'^staff-project/create/$', StaffProjectCreate.as_view(), name="staff-project-create"),
 
     url(r'^staff-project/(?P<pk>[0-9]+)/$$', StaffProjectDetail.as_view(), name="staff-project-detail"),
 

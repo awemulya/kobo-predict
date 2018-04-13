@@ -3,7 +3,7 @@ from django.views.generic import View, ListView, DetailView, CreateView, UpdateV
 from .models import Team, Staff, StaffProject
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect
-from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectRoleMixin
+from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectRoleMixin, StaffTeamRoleMixin, StaffRoleMixin
 
 # Team views:
 class TeamList(StaffProjectRoleMixin, ListView):
