@@ -7,7 +7,13 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 
 
-   ["Nepal Rastra Bank",
+   
+
+class Command(BaseCommand):
+    help = 'Create default groups'
+
+    def handle(self, *args, **options):
+        bank_list = ["Nepal Rastra Bank",
     "Nepal Bank Limited",
     "Rastriya Banijya Bank Limited",
     "Agriculture Development Bank Limited",
@@ -36,28 +42,9 @@ from django.conf import settings
     "Sanima Bank Limited",
     "Janata Bank Nepal Limited",
     "Prabhu Bank Limited"]
-
-class Command(BaseCommand):
-    help = 'Create superuser'
-
-    def add_arguments(self, parser):
-        parser.add_argument('email_address', type=str)
-
-    def handle(self, *args, **options):
-        email_address = options['email_address']
-        self.stdout.write(email_address)
-        super_admin = Group.objects.get(name="Super Admin")
-
-        if User.objects.filter(email=email_address).count():
-            user = User.objects.get(email=email_address)
-            UserProfile.objects.get_or_create(user=user)
-            self.stdout.write('email found')
-            new_group, created = UserRole.objects.get_or_create(user=user, group=super_admin)
-            self.stdout.write('new super admin role created for email')
-
-        else:
-            self.stdout.write('email not found.. "%s"',email_address),
-
+        for bank in bank_list:
+            new_group, created = Bank.objects.get_or_create(name=group)
+            self.stdout.write('Successfully created bank .. "%s"' % group)
 
 
  
