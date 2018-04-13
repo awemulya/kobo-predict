@@ -1,10 +1,7 @@
-{% extends "staff/base.html" %}
-s
+{% load i18n staticfiles filters %}
 
 
-
-{% block content %}
-						<div id="main-content" class="padding">
+				<div id="main-content" class="padding">
 						<section class="panel">
 	                        <header class="panel-heading clearfix">
 
@@ -12,8 +9,14 @@ s
 							<a href="{% url 'staff:team-create' %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'team' %}</a>
 						</div>
 							</header>
+							<br>
+							<div class="col-md-4 col-sm-6">
+
+							<h3>Teams:</h3>
+
+							</div>
 						<div class="row" >
-						{% for object in object_list %}
+						{% for object in team_list %}
 
 							<div class="col-md-4 col-sm-6">
 								<a href= "{% url 'staff:team-detail' object.pk %}" title="" class="site-item-wrap  margin-top clearfix">
@@ -23,19 +26,19 @@ s
 										<h4 class="detail-text1" >{{ object.name }} </h4>
                                  		<p class="address"><i class="fa fa-map-marker" aria-hidden="true"></i> <span  class="detail-text1">{% trans 'Leader - '%}{{ object.leader }}</span></p>
 									</div>
-
-
 							</a>
 							</div>
-						{% empty %}
+							{% empty %}
+
 							<div class="col-md-4 col-sm-6">
 
-							<h3>No Site</h3>
+							<h2>Teams not available</h2>
 
 							</div>
 
+						{% endfor %}
+						</div>
 
-{% include "staff/get_team_list.html" %}
 
-
-{% endblock %}
+</section>
+</div>

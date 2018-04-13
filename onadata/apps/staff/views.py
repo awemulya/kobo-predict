@@ -22,17 +22,27 @@ class TeamDetail(StaffTeamRoleMixin, DetailView):
     model = Team
     template_name = 'staff/team_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(TeamDetail, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['staff_list'] = Staff.objects.filter(team_id = self.kwargs.get('pk'))
+        return context
+
 
 
 class TeamCreate(StaffProjectRoleMixin, CreateView):
     model = Team
-    fields = ['leader','name','created_by']
+    fields = ['leader','name','created_by', 'staffproject']
     success_url = reverse_lazy('staff:team-list')
+
+    def form_valid(self, form):
+        form.instance.staffproject = self.kwargs.get('pk')
+        return super(CustomCreateView, self).form_valid(form)
 
 
 class TeamUpdate(StaffTeamRoleMixin, UpdateView):
     model = Team
-    fields = ['leader','name','created_by']
+    fields = ['leader','name','created_by', 'staffproject']
     success_url = reverse_lazy('staff:team-list')
 
 
@@ -70,13 +80,13 @@ class StaffDetail(StaffRoleMixin, DetailView):
 
 class StaffCreate(CreateView):
     model = Staff
-    fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation','created_by']
+    fields = ['first_name','last_name', 'team', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation','created_by']
     success_url = reverse_lazy('staff:staff-list')
 
 
 class StaffUpdate(StaffRoleMixin, UpdateView):
     model = Staff
-    fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation','created_by']
+    fields = ['first_name','last_name', 'gender', 'team', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation','created_by']
     success_url = reverse_lazy('staff:staff-list')
 
 
@@ -97,12 +107,12 @@ class StaffDelete(DeleteView):
 class StaffProjectCreate(CreateView):
     model = StaffProject
     fields = ['name','created_by']
-    success_url = reverse_lazy('staff:staff-list')
+    success_url = reverse_lazy('staff:staff-project-list')
 
 class StaffProjectUpdate(StaffProjectRoleMixin, UpdateView):
     model = StaffProject
     fields = ['name','created_by']
-    success_url = reverse_lazy('staff:staff-list')
+    success_url = reverse_lazy('staff:staff-project-list')
 
 class StaffProjectList(HasStaffRoleMixin, ListView):
     model = StaffProject
@@ -115,3 +125,13 @@ class StaffProjectList(HasStaffRoleMixin, ListView):
     def get_queryset(self, request, queryset):
         queryset = request.roles.filter(group_id=8, ended_at=None)
         return queryset
+
+class StaffProjectDetail(DetailView):
+    model = StaffProject
+    template_name = 'staff/staffproject_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(StaffProjectDetail, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['team_list'] = Team.objects.filter(staffproject_id = self.kwargs.get('pk'))
+        return context

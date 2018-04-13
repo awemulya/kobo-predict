@@ -3,6 +3,7 @@
 
 {% block content %}
 
+
  <section class="panel">
             <header class="panel-heading clearfix">
                 <div class="panel-heading-right">
@@ -17,6 +18,13 @@
                 </div>
             </header>
  </section>
+<br>
+              <div class="col-md-4 col-sm-6">
+
+							<h2>Team Detail</h2>
+
+							</div>
+
 
 
 			<div id="main-content" class="padding">
@@ -26,7 +34,7 @@
 							<div class="margin-top user-profile-basic-info padding bg-white clearfix ">
 								<div class="media">
 									<div class="media-body">
-										<h2 class="margin-top">{{ team.name }} </h2>
+										<h2 class="margin-top col-md-4 col-sm-6">{{ team.name }} </h2>
 										<div class="row">
 											<div class="col-lg-4">
 												<div class="contact-info-item margin-top" data-mh="eq-item">
@@ -42,19 +50,19 @@
 											<div class="col-lg-4">
 												<div class="contact-info-item margin-top" data-mh="eq-item">
 													<i class="la la-phone"></i> <strong>Created By</strong><br/>
-													{{ staff.created_by }}
+													{{ team.created_by }}
 												</div>
 											</div>
 											<div class="clearfix"></div>
 											<div class="col-lg-4">
 												<div class="contact-info-item margin-top" data-mh="eq-item">
 													<i class="la la-intersex"></i> <strong>Created Date</strong><br/>
-													{{ staff.created_date }}
+													{{ team.created_date }}
 												</div>
 											</div>
 											<div class="col-lg-4">
 												<div class="contact-info-item margin-top" data-mh="eq-item">
-													<i class="la la-certificate"></i> <strong>Updated Date</strong><br/>{{ staff.updated_date }}
+													<i class="la la-certificate"></i> <strong>Updated Date</strong><br/>{{ team.updated_date }}
 												</div>
 											</div>
 
@@ -68,5 +76,8 @@
                 </section>
 
 			</div>
+
+			{% include "staff/get_staff_list.html" %}
+
 
 {% endblock %}

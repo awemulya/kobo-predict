@@ -1,0 +1,12 @@
+{% extends "staff/base.html" %}
+{% load i18n staticfiles filters %}
+
+{% block content %}
+<br>
+<div class="col-md-4 col-sm-6" >
+<h3>   {{ staffproject.name }}</h3>
+</div>
+
+{% include "staff/get_team_list.html" %}
+
+{% endblock %}
