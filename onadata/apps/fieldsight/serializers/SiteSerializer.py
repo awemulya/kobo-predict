@@ -62,6 +62,21 @@ class SiteUpdateSerializer(serializers.ModelSerializer):
         exclude = ('project',)
         read_only_fields = ('is_active',)
 
+    def update(self, instance, validated_data):
+        lat = self.context['request'].data.get('latitude', False)
+        long = self.context['request'].data.get('longitude', False)
+        type_id = self.context['request'].data.get('type', False)
+        site = super(SiteUpdateSerializer, self).update(instance, validated_data)
+        if lat and long:
+            lat = float(lat)
+            long = float(long)
+            location = Point(lat, long, srid=4326)
+            site.location = location
+        if type_id:
+            site.type = SiteType.objects.get(pk=type_id)
+        site.save()
+        return site
+
 
 class ProjectUpdateSerializer(serializers.ModelSerializer):
     class Meta:
