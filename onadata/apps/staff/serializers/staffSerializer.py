@@ -30,6 +30,7 @@ class StaffSerializer(serializers.ModelSerializer):
         try:
             if bank_id:
                 instance.bank_name = ''
+                instance.bank_id = bank_id
            
             else:
                 if instance.bank_name == "":

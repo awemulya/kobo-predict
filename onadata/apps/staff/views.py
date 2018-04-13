@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Team, Staff, StaffProject
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectRoleMixin, StaffTeamRoleMixin, StaffRoleMixin
 
@@ -12,9 +12,10 @@ class TeamList(StaffProjectRoleMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(TeamList, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
         return context
 
-    def get_queryset(self, queryset):
+    def get_queryset(self):
         queryset = Team.objects.filter(is_deleted=False, staffproject_id=self.kwargs.get('pk'))
         return queryset
 
@@ -32,23 +33,27 @@ class TeamDetail(StaffTeamRoleMixin, DetailView):
 
 class TeamCreate(StaffProjectRoleMixin, CreateView):
     model = Team
-    fields = ['leader','name','created_by', 'staffproject']
-    success_url = reverse_lazy('staff:team-list')
+    fields = ['leader','name']
 
     def form_valid(self, form):
-        form.instance.staffproject = self.kwargs.get('pk')
-        return super(CustomCreateView, self).form_valid(form)
+        form.instance.staffproject_id = self.kwargs.get('pk')
+        form.instance.created_by = self.request.user
+        return super(TeamCreate, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
 
 
 class TeamUpdate(StaffTeamRoleMixin, UpdateView):
     model = Team
-    fields = ['leader','name','created_by', 'staffproject']
-    success_url = reverse_lazy('staff:team-list')
+    fields = ['leader','name']
 
+    def get_success_url(self):
+        return reverse('staff:team-detail', kwargs={'pk': self.kwargs.get('pk')})
 
 class TeamDelete(StaffProjectRoleMixin, DeleteView):
     model = Team
-    success_url = reverse_lazy('staff:team-list')
+    
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -58,6 +63,8 @@ class TeamDelete(StaffProjectRoleMixin, DeleteView):
         team.save()
         return HttpResponseRedirect(self.get_success_url())
 
+    def get_success_url(self):
+        return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
 
 
 # Staff views:
@@ -80,14 +87,28 @@ class StaffDetail(StaffRoleMixin, DetailView):
 
 class StaffCreate(CreateView):
     model = Staff
-    fields = ['first_name','last_name', 'team', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation','created_by']
+    fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation']
     success_url = reverse_lazy('staff:staff-list')
+
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        form.instance.team_id = self.kwargs.get('pk')
+        return super(StaffCreate, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('staff:team-detail', kwargs={'pk': self.kwargs.get('pk')})
+
 
 
 class StaffUpdate(StaffRoleMixin, UpdateView):
     model = Staff
-    fields = ['first_name','last_name', 'gender', 'team', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation','created_by']
+    fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation']
     success_url = reverse_lazy('staff:staff-list')
+
+
+    def get_success_url(self):
+        return reverse('staff:staff-detail', kwargs={'pk': self.kwargs.get('pk')})
+
 
 
 class StaffDelete(DeleteView):
@@ -106,13 +127,21 @@ class StaffDelete(DeleteView):
 
 class StaffProjectCreate(CreateView):
     model = StaffProject
-    fields = ['name','created_by']
-    success_url = reverse_lazy('staff:staff-project-list')
+    fields = ['name',]
+
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        return super(StaffProjectCreate, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('staff:staff-project-list')
 
 class StaffProjectUpdate(StaffProjectRoleMixin, UpdateView):
     model = StaffProject
-    fields = ['name','created_by']
-    success_url = reverse_lazy('staff:staff-project-list')
+    fields = ['name',]
+
+    def get_success_url(self):
+        return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
 
 class StaffProjectList(HasStaffRoleMixin, ListView):
     model = StaffProject
@@ -122,8 +151,8 @@ class StaffProjectList(HasStaffRoleMixin, ListView):
         context = super(StaffProjectList, self).get_context_data(**kwargs)
         return context
 
-    def get_queryset(self, request, queryset):
-        queryset = request.roles.filter(group_id=8, ended_at=None)
+    def get_queryset(self):
+        queryset = StaffProject.objects.filter(is_deleted=False)
         return queryset
 
 class StaffProjectDetail(DetailView):

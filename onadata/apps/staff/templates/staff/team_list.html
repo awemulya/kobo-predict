@@ -1,7 +1,6 @@
 {% extends "staff/base.html" %}
-s
 
-
+{% load i18n staticfiles %}
 
 {% block content %}
 						<div id="main-content" class="padding">
@@ -9,7 +8,7 @@ s
 	                        <header class="panel-heading clearfix">
 
 	                    <div class="panel-heading-right">
-							<a href="{% url 'staff:team-create' %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'team' %}</a>
+							<a href="{% url 'staff:team-create' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'team' %}</a>
 						</div>
 							</header>
 						<div class="row" >
@@ -30,12 +29,12 @@ s
 						{% empty %}
 							<div class="col-md-4 col-sm-6">
 
-							<h3>No Site</h3>
+							<h3>No team</h3>
 
 							</div>
 
-
-{% include "staff/get_team_list.html" %}
+						{% endfor %}
 
 
 {% endblock %}
+{% include "staff/get_team_list.html" %}
