@@ -53,7 +53,6 @@ class TeamUpdate(StaffTeamRoleMixin, UpdateView):
 
 class TeamDelete(StaffProjectRoleMixin, DeleteView):
     model = Team
-    
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
