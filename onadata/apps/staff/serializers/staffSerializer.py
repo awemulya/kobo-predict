@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import json
 from rest_framework import serializers
 from onadata.apps.staff.models import Staff, Attendance, Team, Bank
 from onadata.apps.users.serializers import UserSerializer
@@ -19,7 +20,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
 
 class StaffSerializer(serializers.ModelSerializer):
-
+    
     class Meta:
         model = Staff
         exclude = ('created_by', 'team', 'created_date', 'updated_date', 'is_deleted',)
@@ -29,15 +30,16 @@ class StaffSerializer(serializers.ModelSerializer):
         instance = Staff.objects.create(**validated_data)
         try:
             if bank_id:
-                instance.bank_id = bank_id
+                instance.bank = bank_id
                 instance.bank_name = ''
-           
             else:
                 if instance.bank_name == "":
                     raise ValidationError("Got empty bank name. Provide either bank id or bank name.")     
             instance.save()
+        
         except Exception as e:
             raise ValidationError("Got error on: {}".format(e))
+
         return instance
 
 class AttendanceSerializer(serializers.ModelSerializer):
