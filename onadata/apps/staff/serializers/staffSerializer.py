@@ -9,13 +9,13 @@ class BankSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bank
-        fields = ('id', 'name',)
+        fields = ('id', 'name', )
 
 class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ('id', 'name',)
+        fields = ('id', 'name', )
 
 
 class StaffSerializer(serializers.ModelSerializer):
@@ -29,6 +29,7 @@ class StaffSerializer(serializers.ModelSerializer):
         instance = Staff.objects.create(**validated_data)
         try:
             if bank_id:
+                instance.bank_id = bank_id
                 instance.bank_name = ''
            
             else:
