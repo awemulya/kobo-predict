@@ -35,10 +35,12 @@ class StaffSerializer(serializers.ModelSerializer):
                 instance.bank_id = bank_id
                 instance.bank_name = ''
            
-            else:
+            elif bank_id == 0:
                 if instance.bank_name == "":
                     raise ValidationError("Got empty bank name. Provide either bank id or bank name.")
                 instance.bank = None 
+            else:
+                raise ValidationError("Got empty bank name. Provide either bank id or bank name.")    
             instance.save()
         except Exception as e:
             raise ValidationError("Got error on: {}".format(e))
