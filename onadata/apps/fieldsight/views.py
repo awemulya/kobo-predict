@@ -77,6 +77,8 @@ def dashboard(request):
     if current_role_count == 1:
         current_role = request.roles[0]
         role_type = request.roles[0].group.name
+        if role_type == "Staff Project Manager":
+            return HttpResponseRedirect(reverse("fieldsight:StaffProjectList"))
         if role_type == "Unassigned":
             return HttpResponseRedirect(reverse("fieldsight:roles-dashboard"))
         if role_type == "Site Supervisor":
@@ -1027,6 +1029,8 @@ class RolesView(LoginRequiredMixin, TemplateView):
         context['proj_donor'] = self.request.roles.select_related('project').filter(group__name = "Project Donor")
         context['site_reviewer'] = self.request.roles.select_related('site').filter(group__name = "Reviewer")
         context['site_supervisor'] = self.request.roles.select_related('site').filter(group__name = "Site Supervisor")
+        context['staff_project_manager'] = self.request.roles.select_related('StaffProject').filter(group__name = "Staff Project Manager")
+        context['staff_teams'] = Team.objects.filter(leader_id = self.request.user.id)
         return context
 
 

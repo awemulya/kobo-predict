@@ -24,6 +24,16 @@ class LoginRequiredMixin(object):
         view = super(LoginRequiredMixin, cls).as_view(**kwargs)
         return login_required(view)
 
+class HasStaffRoleMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if request.group.name == "Super Admin":
+            return super(HasStaffRoleMixin, self).dispatch(request, *args, **kwargs)
+        
+        user_role = request.roles.filter(group_id=8)
+        if user_role:
+            return super(HasStaffRoleMixin, self).dispatch(request, *args, **kwargs)
+        raise PermissionDenied()
+
 
 class StaffProjectRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
@@ -45,7 +55,7 @@ class StaffTeamRoleMixin(LoginRequiredMixin):
             return super(StaffTeamRoleMixin, self).dispatch(request, *args, **kwargs)
         
         team = Team.objects.get(pk=team_id)
-        user_role = request.roles.filter(group_id=8, staff_project_id=team.staffproject)
+        user_role = request.roles.filter(group_id=8, staff_project_id=team.staffproject.id)
         if user_role:
             return super(StaffTeamRoleMixin, self).dispatch(request, *args, **kwargs)
         
@@ -62,7 +72,7 @@ class StaffRoleMixin(LoginRequiredMixin):
         if staff.team.leader_id == request.user.id:
             return super(StaffRoleMixin, self).dispatch(request, *args, **kwargs)
         
-        user_role = request.roles.filter(group_id=8, staff_project_id=staff.team.staffproject)
+        user_role = request.roles.filter(group_id=8, staff_project_id=staff.team.staffproject.id)
         if user_role:
             return super(StaffRoleMixin, self).dispatch(request, *args, **kwargs)
         

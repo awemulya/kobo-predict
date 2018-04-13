@@ -206,6 +206,88 @@
                            
                     </div>
                     </div>
+
+                    {% if staff_project_manager %}
+                    
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                           
+                            <div class="widget-info margin-top bg-white padding">
+                                <div class="widget-head">
+                                    <h4>{% trans 'Staff' %} {% trans 'Projects' %}</h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="max-260-scroll" style="overflow-y: scroll;">
+                                        <div class="row">
+
+                                        {% for role in staff_project_manager %}
+                                            <div class="col-lg-3 col-md-12"  style="padding:10px;">
+                                                <a href="{% url 'staff:team-list' role.staff_project.id %}" title=""> 
+                                                <div class="project-item-wrap clearfix">
+                                                    <!-- <div class="project-logo">
+                                                        <img src="{% if role.site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
+                                                    </div> -->
+                                                    <div class="project-basic-info">
+                                                        <h4>{{ role.staff_project.name }}</h4>
+                                                        <p>Created on {{ role.staff_project.created_date }}</p>
+                                                    </div>
+                                                </div>
+                                                </a>
+                                            </div>
+                                        {% endfor %}
+                                            
+                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                           
+                    </div>
+                    </div>
+                    {% endif %}
+
+                    {% if staff_teams %}
+                    
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                           
+                            <div class="widget-info margin-top bg-white padding">
+                                <div class="widget-head">
+                                    <h4>{% trans 'Staff' %} {% trans 'Projects' %}</h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="max-260-scroll" style="overflow-y: scroll;">
+                                        <div class="row">
+
+                                        {% for role in staff_teams %}
+                                            <div class="col-lg-3 col-md-12"  style="padding:10px;">
+                                                <a href="{% url 'staff:staff-list' role.id %}" title=""> 
+                                                <div class="project-item-wrap clearfix">
+                                                    <!-- <div class="project-logo">
+                                                        <img src="{% if role.site.logo %}{{ role.site.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" alt="" width="50" height="50">
+                                                    </div> -->
+                                                    <div class="project-basic-info">
+                                                        <h4>{{ role.name }}</h4>
+                                                        <p>Created on {{ role.created_date }}</p>
+                                                    </div>
+                                                </div>
+                                                </a>
+                                            </div>
+                                        {% endfor %}
+                                            
+                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                           
+                    </div>
+                    </div>
+                    {% endif %}
+                    
+
                 </section>
                 
             </div>

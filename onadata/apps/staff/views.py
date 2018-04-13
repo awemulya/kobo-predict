@@ -3,39 +3,40 @@ from django.views.generic import View, ListView, DetailView, CreateView, UpdateV
 from .models import Team, Staff, StaffProject
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect
-
+from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectRoleMixin
 
 # Team views:
-class TeamList(ListView):
+class TeamList(StaffProjectRoleMixin, ListView):
     model = Team
     template_name = 'staff/team_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(TeamList, self).get_context_data(**kwargs)
-        context['pk'] = self.kwargs.get('pk')
-        context['team_list'] = Team.objects.filter(is_deleted= False)
         return context
 
+    def get_queryset(self, queryset):
+        queryset = Team.objects.filter(is_deleted=False, staffproject_id=self.kwargs.get('pk'))
+        return queryset
 
-class TeamDetail(DetailView):
+class TeamDetail(StaffTeamRoleMixin, DetailView):
     model = Team
     template_name = 'staff/team_detail.html'
 
 
 
-class TeamCreate(CreateView):
+class TeamCreate(StaffProjectRoleMixin, CreateView):
     model = Team
     fields = ['leader','name','created_by']
     success_url = reverse_lazy('staff:team-list')
 
 
-class TeamUpdate(UpdateView):
+class TeamUpdate(StaffTeamRoleMixin, UpdateView):
     model = Team
     fields = ['leader','name','created_by']
     success_url = reverse_lazy('staff:team-list')
 
 
-class TeamDelete(DeleteView):
+class TeamDelete(StaffProjectRoleMixin, DeleteView):
     model = Team
     success_url = reverse_lazy('staff:team-list')
 
@@ -50,18 +51,19 @@ class TeamDelete(DeleteView):
 
 
 # Staff views:
-class StaffList(ListView):
+class StaffList(StaffTeamRoleMixin, ListView):
     model = Staff
     template_name = 'staff/staff_list.html.html'
 
     def get_context_data(self, **kwargs):
         context = super(StaffList, self).get_context_data(**kwargs)
-        context['pk'] = self.kwargs.get('pk')
-        context['staff_list.html'] = Staff.objects.filter(is_deleted= False)
         return context
 
+    def get_queryset(self, request, queryset):
+        queryset =  Staff.objects.filter(team_id=self.kwargs.get('pk'), is_deleted= False)
+        return queryset
 
-class StaffDetail(DetailView):
+class StaffDetail(StaffRoleMixin, DetailView):
     model = Staff
     template_name = 'staff/staff_detail.html'
 
@@ -72,7 +74,7 @@ class StaffCreate(CreateView):
     success_url = reverse_lazy('staff:staff-list')
 
 
-class StaffUpdate(UpdateView):
+class StaffUpdate(StaffRoleMixin, UpdateView):
     model = Staff
     fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation','created_by']
     success_url = reverse_lazy('staff:staff-list')
@@ -97,17 +99,19 @@ class StaffProjectCreate(CreateView):
     fields = ['name','created_by']
     success_url = reverse_lazy('staff:staff-list')
 
-class StaffProjectUpdate(UpdateView):
+class StaffProjectUpdate(StaffProjectRoleMixin, UpdateView):
     model = StaffProject
     fields = ['name','created_by']
     success_url = reverse_lazy('staff:staff-list')
 
-class StaffProjectList(ListView):
+class StaffProjectList(HasStaffRoleMixin, ListView):
     model = StaffProject
     template_name = 'staff/staffproject_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(StaffProjectList, self).get_context_data(**kwargs)
-        context['pk'] = self.kwargs.get('pk')
-        context['staff_project_list'] = Team.objects.filter(is_deleted= False)
         return context
+
+    def get_queryset(self, request, queryset):
+        queryset = request.roles.filter(group_id=8, ended_at=None)
+        return queryset
