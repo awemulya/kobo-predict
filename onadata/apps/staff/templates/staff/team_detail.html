@@ -10,7 +10,7 @@
 
                 <br>
                     <div class="panel-heading-right">
-                                <a href="{% url 'staff:team-update' object.pk  %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Edit' %} {% trans 'Team' %}</a>
+                                <a href="{% url 'staff:team-update' object.pk  %}?next={% url 'team-detail' object.pk %} " title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Edit' %} {% trans 'Team' %}</a>
                                 <a href="{% url 'staff:team-delete' object.pk  %}" title="" class="btn btn-sm btn-primary"><i class="la la-minus"></i> {% trans 'Delete' %} {% trans 'Team' %}</a>
 
                     </div>

@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Team, Staff, StaffProject
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 
 
@@ -27,19 +27,19 @@ class TeamDetail(DetailView):
         context['staff_list'] = Staff.objects.filter(team_id = self.kwargs.get('pk'))
         return context
 
-
-
 class TeamCreate(CreateView):
     model = Team
     fields = ['leader','name','created_by', 'staffproject']
     success_url = reverse_lazy('staff:team-list')
 
-
 class TeamUpdate(UpdateView):
     model = Team
     fields = ['leader','name','created_by', 'staffproject']
-    success_url = reverse_lazy('staff:team-list')
 
+    def get_success_url(self):
+        next = self.request.POST.get('next')
+        return reverse(next)
+        # return reverse_lazy(self.request.META['HTTP_REFERER'])
 
 class TeamDelete(DeleteView):
     model = Team
@@ -52,8 +52,6 @@ class TeamDelete(DeleteView):
         team.is_deleted = True
         team.save()
         return HttpResponseRedirect(self.get_success_url())
-
-
 
 # Staff views:
 class StaffList(ListView):
