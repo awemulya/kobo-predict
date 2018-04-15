@@ -31,14 +31,16 @@ class TeamDetail(DetailView):
 class TeamCreate(CreateView):
     model = Team
     fields = ['leader','name','created_by', 'staffproject']
-    success_url = reverse_lazy('staff:team-list')
+
+    def get_success_url(self):
+        next = self.request.POST.get('next', '/')
+        return next
 
 class TeamUpdate(UpdateView):
     model = Team
     fields = ['leader','name','created_by', 'staffproject']
 
     def get_success_url(self):
-        # Redirect to previous url
         next = self.request.POST.get('next', '/')
         return next
 
@@ -77,7 +79,10 @@ class StaffDetail(DetailView):
 class StaffCreate(CreateView):
     model = Staff
     fields = ['first_name','last_name', 'team', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation','created_by']
-    success_url = reverse_lazy('staff:staff-list')
+
+    def get_success_url(self):
+        next = self.request.POST.get('next', '/')
+        return next
 
 
 class StaffUpdate(UpdateView):
@@ -86,7 +91,6 @@ class StaffUpdate(UpdateView):
     success_url = reverse_lazy('staff:staff-list')
 
     def get_success_url(self):
-        # Redirect to previous url
         next = self.request.POST.get('next', '/')
         return next
 
