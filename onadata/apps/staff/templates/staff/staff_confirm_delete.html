@@ -10,7 +10,9 @@
 
     <p>Are you sure you want to delete "{{ staff.first_name }}"?</p>
 
-    <input type="submit" class="btn btn-primary" value="{% trans 'Confirm deletion' %}" name="confirm_delete" />
+	<!--<input type="hidden" name="next" value="{% url 'staff:team-detail' object.pk %}">-->
+    <!--<input type="submit" class="btn btn-primary" value="{% trans 'Confirm deletion' %}" name="confirm_delete" />-->
+    <input type="submit" class="btn btn-primary" value=name="next" value="{% url 'staff:team-detail' object.pk %}" name="next" />
 </form>
 
 {% endblock %}
