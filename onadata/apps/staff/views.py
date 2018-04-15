@@ -3,6 +3,7 @@ from django.views.generic import View, ListView, DetailView, CreateView, UpdateV
 from .models import Team, Staff, StaffProject
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 
 
 # Team views:
@@ -37,9 +38,11 @@ class TeamUpdate(UpdateView):
     fields = ['leader','name','created_by', 'staffproject']
 
     def get_success_url(self):
-        next = self.request.POST.get('next')
-        return reverse(next)
-        # return reverse_lazy(self.request.META['HTTP_REFERER'])
+        # Redirect to previous url
+        next = self.request.POST.get('next', '/')
+        return next
+
+
 
 class TeamDelete(DeleteView):
     model = Team
@@ -52,6 +55,7 @@ class TeamDelete(DeleteView):
         team.is_deleted = True
         team.save()
         return HttpResponseRedirect(self.get_success_url())
+
 
 # Staff views:
 class StaffList(ListView):
@@ -80,6 +84,12 @@ class StaffUpdate(UpdateView):
     model = Staff
     fields = ['first_name','last_name', 'gender', 'team', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation','created_by']
     success_url = reverse_lazy('staff:staff-list')
+
+    def get_success_url(self):
+        # Redirect to previous url
+        next = self.request.POST.get('next', '/')
+        return next
+
 
 
 class StaffDelete(DeleteView):
