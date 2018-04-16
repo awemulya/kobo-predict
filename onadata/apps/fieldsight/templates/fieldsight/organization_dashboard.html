@@ -440,6 +440,7 @@ var org = "{{obj.pk}}";
   <script type="text/javascript">
      var static_url ="{{ STATIC_URL }}";
     var data = {{ data|safe}};
+    console.log(data);
     var cummulative_labels = {{ cumulative_labels|safe}};
     var cummulative_data = {{ cumulative_data|safe}};
     var progress_labels = {{ progress_labels|safe}};
