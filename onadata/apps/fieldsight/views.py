@@ -70,13 +70,15 @@ from django.template import Context
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from onadata.apps.fsforms.reports_util import get_images_for_site, get_images_for_site_all, get_site_responses_coords, get_images_for_sites_count
-
+from onadata.apps.staff.models import Team
 @login_required
 def dashboard(request):
     current_role_count = request.roles.count()
     if current_role_count == 1:
         current_role = request.roles[0]
         role_type = request.roles[0].group.name
+        if role_type == "Staff Project Manager":
+            return HttpResponseRedirect(reverse("fieldsight:StaffProjectList"))
         if role_type == "Unassigned":
             return HttpResponseRedirect(reverse("fieldsight:roles-dashboard"))
         if role_type == "Site Supervisor":
@@ -1035,6 +1037,11 @@ class RolesView(LoginRequiredMixin, TemplateView):
         context['proj_donor'] = self.request.roles.select_related('project').filter(group__name = "Project Donor")
         context['site_reviewer'] = self.request.roles.select_related('site').filter(group__name = "Reviewer")
         context['site_supervisor'] = self.request.roles.select_related('site').filter(group__name = "Site Supervisor")
+        context['staff_project_manager'] = self.request.roles.select_related('staff_project').filter(group__name = "Staff Project Manager")
+        if Team.objects.filter(leader_id = self.request.user.id).exists():
+            context['staff_teams'] = Team.objects.filter(leader_id = self.request.user.id)
+        else:
+            context['staff_teams'] = []
         return context
 
 

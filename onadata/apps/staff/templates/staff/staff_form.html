@@ -4,8 +4,9 @@
 
 {% block content %}
 
-
-<div class="panel-body">
+<div id="main-content" class="padding">
+	<section class="panel">
+					<div class="panel-body">
 						<div class="margin-top">
 							<form enctype="multipart/form-data" method="post">
 
@@ -25,14 +26,14 @@
 
 								</div>
 
-								<input type="hidden" name="next" value="{% url 'staff:staff-detail' object.pk %}">
                                 <button class="btn btn-primary registration__action" type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans ' Save' %}</button>
 
 							</form>
 
 						</div>
 					</div>
-
+	</section>
+</div>
 
 
 {% endblock %}
