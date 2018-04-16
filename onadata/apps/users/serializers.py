@@ -34,7 +34,7 @@ class AuthCustomTokenSerializer(serializers.Serializer):
             if validateEmail(email_or_username):
                 user_request = get_object_or_404(
                     User,
-                    email=email_or_username,
+                    email__iexact=email_or_username,
                 )
 
                 email_or_username = user_request.username
