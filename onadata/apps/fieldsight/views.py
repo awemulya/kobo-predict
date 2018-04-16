@@ -206,19 +206,17 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
         total_survey_sites = 0
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
-        sites = obj.sites.filter(is_active=True, is_survey=False).prefetch_related('site_forms', "site_instances")
-        data = serialize('custom_geojson', sites, geometry_field='location', fields=('location', 'id',))
         if obj.id == 137:
             progress_data = []
             progress_labels = []
             cumulative_labels = []
             cumulative_data = []
-            # data = []
-            # sites = []
+            data = []
+            sites = []
         else:
-            # sites = obj.sites.filter(is_active=True, is_survey=False).prefetch_related('site_forms', "site_instances")
-            # data = serialize('custom_geojson', sites, geometry_field='location',
-            #              fields=('location', 'id',))
+            sites = obj.sites.filter(is_active=True, is_survey=False).prefetch_related('site_forms', "site_instances")
+            data = serialize('custom_geojson', sites, geometry_field='location',
+                         fields=('location', 'id',))
             bar_graph = BarGenerator(sites)
             progress_data = bar_graph.data.values()
             progress_labels = bar_graph.data.keys()
