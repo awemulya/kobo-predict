@@ -65,7 +65,7 @@ from django.utils import translation
 from django.conf import settings
 from django.db.models import Prefetch
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.serializers.json import DjangoJSONEncoder
+from django.core.serializers.json import DjangoJSONEncoder, Serializer
 from django.template import Context
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
@@ -2505,7 +2505,7 @@ def project_dashboard_peoples(request, pk):
     new_people_url = reverse('fieldsight:manage-people-project', kwargs={'pk': pk})
     if name:
         roles = UserRole.objects.filter(organization__isnull=False, project_id=pk,
-                                    site__isnull=True, ended_at__isnull=True, user__first_name__contains=name).\
+                                    site__isnull=True, ended_at__isnull=True, user__first_name__icontains=name).\
             select_related("user", "user__user_profile")
     else:
         roles = UserRole.objects.filter(organization__isnull=False, project_id=pk,
@@ -2525,3 +2525,10 @@ def project_dashboard_peoples(request, pk):
 
 
     return Response({'peoples':user_data, 'new_people_url':new_people_url})
+
+
+@api_view(["GET"])
+def project_dashboard_map(request, pk):
+    sites = Site.objects.filter(project__id=pk)
+    data = serialize('custom_geojson', sites, geometry_field='location', fields=('location', 'id',))
+    return Response(data)

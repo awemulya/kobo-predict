@@ -25,14 +25,16 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
 {% if obj.cluster_sites %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_regions.js"></script>
- <script>
+
+<script>
 
 $(document).ready(function() {
 var project = "{{obj.pk}}";
  vm = new RegionViewModel(project);
  ko.applyBindings(vm);
 });
-    </script>
+</script>
+
 {% else %}
 	<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_sites.js"></script>
 	 <script>
@@ -413,15 +415,16 @@ var project = "{{obj.pk}}";
 
     <!--<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>-->
     <script src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
+
   	<script type="text/javascript">
     var static_url ="{{ STATIC_URL }}";
-    var data = {};
     configure_settings =  {};
   configure_settings.project_id = {{obj.pk}};
 
     </script>
 
-    <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/ajax_map.js?v=1.1"></script>
+<!--<script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>-->
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
 <script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
