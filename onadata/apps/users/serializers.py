@@ -22,7 +22,7 @@ def validateEmail( email ):
 
 
 class AuthCustomTokenSerializer(serializers.Serializer):
-    email_or_username = serializers.EmailField()
+    email_or_username = serializers.CharField()
     password = serializers.CharField()
 
     def validate(self, attrs):
