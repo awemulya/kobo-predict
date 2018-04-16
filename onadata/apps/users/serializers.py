@@ -22,7 +22,7 @@ def validateEmail( email ):
 
 
 class AuthCustomTokenSerializer(serializers.Serializer):
-    email_or_username = serializers.EmailField()
+    email_or_username = serializers.CharField()
     password = serializers.CharField()
 
     def validate(self, attrs):
@@ -34,7 +34,7 @@ class AuthCustomTokenSerializer(serializers.Serializer):
             if validateEmail(email_or_username):
                 user_request = get_object_or_404(
                     User,
-                    email=email_or_username,
+                    email__iexact=email_or_username,
                 )
 
                 email_or_username = user_request.username

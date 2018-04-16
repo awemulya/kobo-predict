@@ -63,6 +63,7 @@ class TeamDetail(StaffTeamRoleMixin, DetailView):
         context['staff_list'] = Staff.objects.filter(team_id = self.kwargs.get('pk'))
         return context
 
+
 class TeamUpdate(StaffTeamRoleMixin, UpdateView):
     model = Team
     fields = ['leader','name']
@@ -75,15 +76,14 @@ class TeamUpdate(StaffTeamRoleMixin, UpdateView):
 
 
 
-
 # Staff views:
 class StaffList(StaffTeamRoleMixin, ListView):
     model = Staff
     template_name = 'staff/staff_list.html.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(StaffList, self).get_context_data(**kwargs)
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super(StaffList, self).get_context_data(**kwargs)
+    #     return context
 
     def get_queryset(self, request, queryset):
         queryset =  Staff.objects.filter(team_id=self.kwargs.get('pk'), is_deleted= False)
@@ -117,6 +117,12 @@ class StaffUpdate(StaffRoleMixin, UpdateView):
     model = Staff
     fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation']
     success_url = reverse_lazy('staff:staff-list')
+
+    def get_success_url(self):
+        # Redirect to previous url
+        next = self.request.POST.get('next', '/')
+        return next
+
 
 
     def get_success_url(self):

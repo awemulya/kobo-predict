@@ -1,8 +1,6 @@
 {% extends "staff/base.html" %}
 {% load i18n staticfiles %}
 
-bank_name account_number team photo
-
 {% block content %}
  <section class="panel">
             <header class="panel-heading clearfix">
@@ -144,6 +142,7 @@ bank_name account_number team photo
 										<h4></h4>
 									</div>
 									<div id="calendar" class="margin-top"></div>
+
 								</div>
 							</div>
 						</div>
@@ -175,30 +174,28 @@ bank_name account_number team photo
 
 {% block extrascript %}
 
+<script src="{% static 'dummy/assets/js/vendor/jquery.matchHeight.js' %}"></script>
+		<script src="{% static 'dummy/assets/js/vendor/underscore-min.js' %} "></script>
+		<script src="{% static 'dummy/assets/js/vendor/calendar.min.js' %}"></script>
 
-		<script src="assets/js/vendor/jquery.matchHeight.js"></script>
-		<script src="assets/js/vendor/underscore-min.js"></script>
-		<script src="assets/js/vendor/calendar.min.js"></script>
-        <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-        <script src="assets/js/plugins.js"></script>
 		<script>
 			(function($) {
 				"use strict";
 
 				var options = {
 					 events_source: [
-			            {
-			                 "id": 293,
-			               "title": "Event 1",
-			  //               "url": "http://example.com",
-			  //               "class": "event-important",
-			  //               "start": 12039485678000, // Milliseconds
-			  //               "end": 1234576967000 // Milliseconds
-			  //           }
-		   //      	],
-		        	events_source: 'events.json.php',
+					 {
+			            "id": "1",
+						"title": "pscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+						"class": "event-absent",
+						"start": "1362900000000",
+						"end":   "1362900000000"
+						}
+
+		         	],
+		        	//events_source: 'events.json.php',
 					view: 'month',
-					tmpl_path: "assets/tmpls/",
+					tmpl_path: "{% static 'dummy/assets/tmpls/' %}",
 					tmpl_cache: false,
 					views: {
 				      year:  {
@@ -215,9 +212,9 @@ bank_name account_number team photo
 				      }
 				    },
 					modal : "#events-modal",
-		            //modal_type : "ajax",
+		            modal_type : "ajax",
 		            modal_title : function (e) { return e.title },
-					day: '2013-03-12',
+					day: '2013-03-19',
 					onAfterViewLoad: function(view) {
 						$('.calendar-header h4').text(this.getTitle());
 						$('.btn-group button').removeClass('active');
@@ -246,41 +243,6 @@ bank_name account_number team photo
 					});
 				});
 
-				// $('#first_day').change(function(){
-				// 	var value = $(this).val();
-				// 	value = value.length ? parseInt(value) : null;
-				// 	calendar.setOptions({first_day: value});
-				// 	calendar.view();
-				// });
-
-				// $('#language').change(function(){
-				// 	calendar.setLanguage($(this).val());
-				// 	calendar.view();
-				// });
-
-				// $('#events-in-modal').change(function(){
-				// 	var val = $(this).is(':checked') ? $(this).val() : null;
-				// 	calendar.setOptions({modal: val});
-				// });
-				// $('#format-12-hours').change(function(){
-				// 	var val = $(this).is(':checked') ? true : false;
-				// 	calendar.setOptions({format12: val});
-				// 	calendar.view();
-				// });
-				// $('#show_wbn').change(function(){
-				// 	var val = $(this).is(':checked') ? true : false;
-				// 	calendar.setOptions({display_week_numbers: val});
-				// 	calendar.view();
-				// });
-				// $('#show_wb').change(function(){
-				// 	var val = $(this).is(':checked') ? true : false;
-				// 	calendar.setOptions({weekbox: val});
-				// 	calendar.view();
-				// });
-				$('#events-modal .modal-header, #events-modal .modal-footer').click(function(e){
-					//e.preventDefault();
-					//e.stopPropagation();
-				});
 			}(jQuery));
 		</script>
 
