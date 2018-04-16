@@ -358,165 +358,45 @@ var project = "{{obj.pk}}";
 
 								{% endif %}
 
+								{% verbatim %}
+								<div class="col-md-6 col-sm-12" id="peoples">
 
-								<div class="col-md-6 col-sm-12">
-									<div class="widget-info widget-scolling-large-list margin-top bg-white padding" data-mh="eq111">
-										<div class="widget-head">
-											<h4>{% trans 'People' %}</h4>
-											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:manage-people-project' obj.pk %}"><i class="la la-plus"></i></a>
-											
-											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchProjectManager" aria-expanded="false" aria-controls="searchProjectManager"><i class="la la-search"></i></a>
-										</div>
-										<div class="widget-body">
-											<!--Search Projects-->
-											<div class="collapse margin-bottom" id="searchProjectManager">
-												<form>
-													<div class="input-group input-group-sm">
-														<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
-														<span class="input-group-btn">
-															<button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
-														</span>
-													</div>
-												</form>
-											</div>
-											{% if roles_project %}
-											{% for role in roles_project %}
-											{% if roles_project.count == 1%}
-											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap clearfix">
-												<div class="project-logo">
-													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
-												</div>
-												<div class="project-basic-info">
-													<h4>{{role.user.get_full_name}}</h4>
-													<p>{{ role.user.email }}</p>
-                                                    <p>{{ role.user.phone }}</p>
-												</div>
-											</a>
-											{% else %}
-											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap margin-top clearfix">
-												<div class="project-logo">
-													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
-												</div>
-												<div class="project-basic-info">
-													<h4>{{role.user.get_full_name}}</h4>
-													<p>{{ role.user.email }}</p>
-                                                    <p>{{ role.user.phone }}</p>
-												</div>
-											</a>
-											{% endif %}
-											{% endfor %}
-											{% endif %}
-											{% if role.has_multiple_project_roles %}
-                                            {% for r in role.both_project_roles %}
-                                            {{ r.group }}
-                                            {% endfor %}
-                                            {% else %}
-                                            {{role.group }}
-                                            {% endif %}
-										</div>
-									</div>
 								</div>
-								<!--<div class="col-md-12">-->
-									<!--<div class="widget-info module-slick-slider margin-top bg-white padding">-->
-										<!--<div class="widget-head">-->
-											<!--<h4>Recent Pictures</h4>-->
-										<!--</div>-->
-										<!--<div class="scrollingSlider">-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}" img-title="test Title1">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
-												<!--</div>-->
-											<!--</div>-->
-										<!--</div>-->
-									<!--</div>-->
-								<!--</div>-->
+								{% endverbatim %}
+
 							</div>
 
 						</div>
 						
 
 					</div>
-					<!--<div class="row">-->
-						<!--<div class="col-md-12">-->
-							<!--&lt;!&ndash; Nav tabs &ndash;&gt;-->
-							<!--<div class="tabbing margin-top">-->
-								<!--<ul class="nav nav-tabs" role="tablist">-->
-								  <!--<li class="nav-item">-->
-									<!--<a class="nav-link active" data-toggle="tab" href="#tab1" role="tab">Scheduled</a>-->
-								  <!--</li>-->
-								  <!--<li class="nav-item">-->
-									<!--<a class="nav-link" data-toggle="tab" href="#tab2" role="tab">Staged</a>-->
-								  <!--</li>-->
-								  <!--<li class="nav-item">-->
-									<!--<a class="nav-link" data-toggle="tab" href="#tab3" role="tab">General</a>-->
-								  <!--</li>-->
-								<!--</ul>-->
 
-								<!--&lt;!&ndash; Tab panes &ndash;&gt;-->
-								<!--<div class="tab-content">-->
-								  <!--<div class="tab-pane active" id="tab1" role="tabpanel">...</div>-->
-								  <!--<div class="tab-pane" id="tab2" role="tabpanel">...</div>-->
-								  <!--<div class="tab-pane" id="tab3" role="tabpanel">...</div>-->
+					<!--<div class="row">-->
+						<!--<div class="col-md-6">-->
+							<!--<div class="widget-info margin-top bg-white padding">-->
+								<!--<div class="widget-head">-->
+									<!--<h4>{% trans 'Form' %} {% trans 'Submissions' %}</h4>-->
+								<!--</div>-->
+								<!--<div class="widget-body">-->
+									<!--<div id="submission-chart">-->
+										<!--<canvas id="myChart" width="500" height="388"></canvas>-->
+									<!--</div>-->
+								<!--</div>-->
+							<!--</div>-->
+						<!--</div>-->
+						<!--<div class="col-md-6">-->
+							<!--<div class="widget-info margin-top bg-white padding">-->
+								<!--<div class="widget-head">-->
+									<!--<h4>{% trans 'Site' %} {% trans 'Progress' %}</h4>-->
+								<!--</div>-->
+								<!--<div class="widget-body">-->
+									<!--<div id="siteprogress-chart">-->
+										 <!--<canvas id="myBar" width="500" height="388"></canvas>-->
+									<!--</div>-->
 								<!--</div>-->
 							<!--</div>-->
 						<!--</div>-->
 					<!--</div>-->
-					<div class="row">
-						<div class="col-md-6">
-							<div class="widget-info margin-top bg-white padding">
-								<div class="widget-head">
-									<h4>{% trans 'Form' %} {% trans 'Submissions' %}</h4>
-								</div>
-								<div class="widget-body">
-									<div id="submission-chart">
-										<canvas id="myChart" width="500" height="388"></canvas>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="widget-info margin-top bg-white padding">
-								<div class="widget-head">
-									<h4>{% trans 'Site' %} {% trans 'Progress' %}</h4>
-								</div>
-								<div class="widget-body">
-									<div id="siteprogress-chart">
-										 <canvas id="myBar" width="500" height="388"></canvas>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
                 </section>
 
 			</div>
@@ -535,17 +415,16 @@ var project = "{{obj.pk}}";
     <script src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
   	<script type="text/javascript">
     var static_url ="{{ STATIC_URL }}";
-    var data = {{ data|safe}};
-    var cummulative_labels = {{ cumulative_labels|safe}};
-    var cummulative_data = {{ cumulative_data|safe}};
-    var progress_labels = {{ progress_labels|safe}};
-    var progress_data = {{ progress_data|safe}};
+    var data = {};
+    configure_settings =  {};
+  configure_settings.project_id = {{obj.pk}};
 
     </script>
 
     <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
-<!--     <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/d3.tip.v0.6.3.js"></script> -->
-    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_bar-graph.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+
+<script src="{% static 'js/fieldsight/manage_project_dashboard.js' %}?v=0.1"></script>
 {% endblock %}

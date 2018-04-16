@@ -2496,3 +2496,32 @@ class AddSitesTypeView(ProjectRoleMixin, CreateView):
         self.object.project = Project.objects.get(pk=self.kwargs.get('pk'))
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
+
+
+@api_view(["GET"])
+def project_dashboard_peoples(request, pk):
+    name = request.query_params.get('name', False)
+
+    new_people_url = reverse('fieldsight:manage-people-project', kwargs={'pk': pk})
+    if name:
+        roles = UserRole.objects.filter(organization__isnull=False, project_id=pk,
+                                    site__isnull=True, ended_at__isnull=True, user__first_name__contains=name).\
+            select_related("user", "user__user_profile")
+    else:
+        roles = UserRole.objects.filter(organization__isnull=False, project_id=pk,
+                                    site__isnull=True, ended_at__isnull=True).\
+            select_related("user", "user__user_profile")
+
+    users = []
+    user_data = []
+    for role in roles:
+        if role.user.username not in users:
+            user_data.append(dict(roles=[role.group.name],
+                                  name=role.user.get_full_name(),
+                                  email=role.user.email,
+                                  phone=role.user.user_profile.phone,
+                                  image=role.user.user_profile.profile_picture.url))
+            users.append(role.user.username)
+
+
+    return Response({'peoples':user_data, 'new_people_url':new_people_url})
