@@ -244,6 +244,7 @@ class Project(models.Model):
 
 
     def get_submissions_count(self):
+        #Todo annotate
         outstanding = self.project_instances.filter(form_status=0).count()
         rejected = self.project_instances.filter(form_status=1).count()
         flagged = self.project_instances.filter(form_status=2).count()
