@@ -50,11 +50,14 @@ class StaffTeamRoleMixin(LoginRequiredMixin):
         if request.group.name == "Super Admin":
             return super(StaffTeamRoleMixin, self).dispatch(request, *args, **kwargs)
 
-        team_id = self.kwargs.get('pk')
-        if Team.objects.filter(pk=team_id, leader_id=request.user.id):
+        team = get_object_or_404(Team, pk=self.kwargs.get('pk'))        
+        
+        if team.is_deleted:
+            raise PermissionDenied()
+
+        if int(team.leader_id) == int(request.user.id):
             return super(StaffTeamRoleMixin, self).dispatch(request, *args, **kwargs)
         
-        team = Team.objects.get(pk=team_id)
         user_role = request.roles.filter(group_id=8, staff_project_id=team.staffproject.id)
         if user_role:
             return super(StaffTeamRoleMixin, self).dispatch(request, *args, **kwargs)
@@ -67,8 +70,11 @@ class StaffRoleMixin(LoginRequiredMixin):
         if request.group.name == "Super Admin":
             return super(StaffRoleMixin, self).dispatch(request, *args, **kwargs)
 
-        staff = Staff.objects.get(pk=self.kwargs.get('pk'))
+        staff = get_object_or_404(Staff, pk=self.kwargs.get('pk'))
         
+        if staff.is_deleted:
+            raise PermissionDenied()
+    
         if staff.team.leader_id == request.user.id:
             return super(StaffRoleMixin, self).dispatch(request, *args, **kwargs)
         

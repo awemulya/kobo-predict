@@ -4,7 +4,8 @@ from .models import Team, Staff, StaffProject
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectRoleMixin, StaffTeamRoleMixin, StaffRoleMixin
-
+from django.contrib.auth.models import User
+from onadata.apps.staff.forms import TeamForm, StaffProjectForm
 # Team views:
 class TeamList(StaffProjectRoleMixin, ListView):
     model = Team
@@ -31,13 +32,12 @@ class TeamDelete(StaffProjectRoleMixin, DeleteView):
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
+        return reverse('staff:staff-project-detail', kwargs={'pk': self.object.staffproject_id})
 
 
 
 class TeamCreate(StaffProjectRoleMixin, CreateView):
-    model = Team
-    fields = ['leader','name']
+    form_class = TeamForm
 
     def form_valid(self, form):
         form.instance.staffproject_id = self.kwargs.get('pk')
@@ -49,10 +49,6 @@ class TeamCreate(StaffProjectRoleMixin, CreateView):
 
 
 
-
-
-
-
 class TeamDetail(StaffTeamRoleMixin, DetailView):
     model = Team
     template_name = 'staff/team_detail.html'
@@ -60,14 +56,13 @@ class TeamDetail(StaffTeamRoleMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(TeamDetail, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
-        context['staff_list'] = Staff.objects.filter(team_id = self.kwargs.get('pk'))
+        context['staff_list'] = Staff.objects.filter(team_id = self.kwargs.get('pk'), is_deleted=False)
         return context
 
 
 class TeamUpdate(StaffTeamRoleMixin, UpdateView):
+    form_class = TeamForm
     model = Team
-    fields = ['leader','name']
-
     def get_success_url(self):
         return reverse('staff:team-detail', kwargs={'pk': self.kwargs.get('pk')})
 
@@ -99,6 +94,7 @@ class StaffCreate(StaffTeamRoleMixin, CreateView):
     fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation']
     success_url = reverse_lazy('staff:staff-list')
 
+
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         form.instance.team_id = self.kwargs.get('pk')
@@ -111,7 +107,11 @@ class StaffDetail(StaffRoleMixin, DetailView):
     model = Staff
     template_name = 'staff/staff_detail.html'
 
-
+    def get_context_data(self, **kwargs):
+        context = super(StaffDetail, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['attendance_list'] = self.object.get_attendance()
+        return context
 
 class StaffUpdate(StaffRoleMixin, UpdateView):
     model = Staff
@@ -132,7 +132,6 @@ class StaffUpdate(StaffRoleMixin, UpdateView):
 
 class StaffDelete(StaffRoleMixin, DeleteView):
     model = Staff
-    success_url = reverse_lazy('staff:staff-list')
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -142,6 +141,8 @@ class StaffDelete(StaffRoleMixin, DeleteView):
         staff.save()
         return HttpResponseRedirect(self.get_success_url())
 
+    def get_success_url(self):
+        return reverse('staff:team-detail', kwargs={'pk': self.object.team_id})
 #StaffProject Views
 
 
@@ -151,9 +152,8 @@ class StaffDelete(StaffRoleMixin, DeleteView):
 
 
 class StaffProjectCreate(HasStaffRoleMixin, CreateView):
+    form = StaffProjectForm
     model = StaffProject
-    fields = ['name',]
-
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super(StaffProjectCreate, self).form_valid(form)
@@ -177,9 +177,8 @@ class StaffProjectList(HasStaffRoleMixin, ListView):
 
 
 class StaffProjectUpdate(StaffProjectRoleMixin, UpdateView):
+    form=StaffProjectForm
     model = StaffProject
-    fields = ['name',]
-
     def get_success_url(self):
         return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
 
@@ -191,5 +190,5 @@ class StaffProjectDetail(StaffProjectRoleMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(StaffProjectDetail, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
-        context['team_list'] = Team.objects.filter(staffproject_id = self.kwargs.get('pk'))
+        context['team_list'] = Team.objects.filter(staffproject_id = self.kwargs.get('pk'), is_deleted=False)
         return context

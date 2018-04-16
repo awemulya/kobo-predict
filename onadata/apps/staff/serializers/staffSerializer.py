@@ -54,8 +54,21 @@ class AttendanceSerializer(serializers.ModelSerializer):
             staffs = validated_data.pop('staffs') if 'staffs' in validated_data else []
             instance = Attendance.objects.create(**validated_data)
             instance.save()
+        
+            
+            if not staffs:
+                instance.delete()
+                raise ValidationError("Got Empty staffs list.")
+
+            else:
+                for staff in staffs:
+                    if int(staff.team_id) != int(instance.team_id):
+                        instance.delete()
+                        raise ValidationError("Got error on: Staffs entered has different team.")
+                
             instance.staffs = staffs
             instance.save()
+        
         except Exception as e:
             raise ValidationError("Got error on: {}".format(e))
         return instance

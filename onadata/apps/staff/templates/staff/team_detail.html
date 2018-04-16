@@ -3,39 +3,19 @@
 
 {% block content %}
 
-
- <section class="panel">
-            <header class="panel-heading clearfix">
-                <div class="panel-heading-right">
-
-                <br>
-                    <div class="panel-heading-right">
-                                <a href="{% url 'staff:team-update' object.pk  %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Edit' %} {% trans 'Team' %}</a>
-                                <a href="{% url 'staff:team-delete' object.pk  %}" title="" class="btn btn-sm btn-primary"><i class="la la-minus"></i> {% trans 'Delete' %} {% trans 'Team' %}</a>
-
-                    </div>
-                <br>
-                </div>
-            </header>
- </section>
-<br>
-              <div class="col-md-4 col-sm-6">
-
-							<h2>Team Detail</h2>
-
-							</div>
-
-
-
-			<div id="main-content" class="padding">
-				<section>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="margin-top user-profile-basic-info padding bg-white clearfix ">
-								<div class="media">
-									<div class="media-body">
-										<h2 class="margin-top col-md-4 col-sm-6">{{ team.name }} </h2>
-										<div class="row">
+<div id="main-content" class="padding">
+				<section class="panel">
+                    <header class="panel-heading clearfix">
+						
+                        <h3><i class="la la-building"></i>{{ object.name }}</h3>
+                        
+                         <a href="{% url 'staff:team-delete' object.pk  %}" title="" class="btn btn-sm btn-danger pull-right"><i class="la la-minus"></i> {% trans 'Delete' %} {% trans 'Team' %}</a>
+                         <a href="{% url 'staff:team-update' object.pk  %}" title="" class="btn btn-sm btn-primary pull-right"><i class="la la-plus"></i> {% trans 'Edit' %} {% trans 'Team' %}</a>
+                        <!-- <a href="{% url 'staff:team-create' pk %}" title="" class="btn btn-sm btn-primary pull-right"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'team' %}</a> -->
+						
+                    </header>
+					<div class="panel-body">
+						<div class="row">
 											<div class="col-lg-4">
 												<div class="contact-info-item margin-top" data-mh="eq-item">
 													<i class="la la-building"></i> <strong>Leader</strong><br/>
@@ -44,7 +24,7 @@
 											</div>
 											<div class="col-lg-4">
 												<div class="contact-info-item margin-top" data-mh="eq-item">
-													<i class="la la-envelope-o"></i> <strong>Staff Project</strong><br/>{{ team.staffproject}}
+													<i class="la la-envelope-o"></i> <strong>Staff Project</strong><br/>{{ team.staffproject.name}}
 												</div>
 											</div>
 											<div class="col-lg-4">
@@ -68,16 +48,57 @@
 
 
 										</div>
+					</div>
+					
+
+</section>
+
+
+<br>
+
+				<section class="panel">
+                    <header class="panel-heading clearfix">
+						
+                        <h3><i class="la la-building"></i>Staffs</h3>
+                         <a href="{% url 'staff:staff-create' pk %}" title="" class="btn btn-sm btn-primary pull-right"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'Staff' %}</a>
+                        <!-- <a href="{% url 'staff:team-create' pk %}" title="" class="btn btn-sm btn-primary pull-right"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'team' %}</a> -->
+						
+                    </header>
+					<div class="panel-body">
+						<div class="row">
+						{% for object in staff_list %}
+
+							<div class="col-md-4 col-sm-6">
+								<a href= "{% url 'staff:staff-detail' object.pk %}" title="" class="site-item-wrap  margin-top clearfix">
+									<div class="logo">
+										<img src="{{ object.photo.url }}" alt="" width="100" height="100">
 									</div>
-								</div>
+									<div class="basic-info clearfix">
+										<h4 class="detail-text1" >{{ object.first_name }}  {{ object.last_name }}</h4>
+                                 		<p class="address"><i class="fa fa-map-marker" aria-hidden="true"></i> <span  class="detail-text1">{% trans 'Address: '%}{{ object.address }}</span></p>
+                                 		<p class="phone"><i class="fa fa-phone" aria-hidden="true"></i> <span  class="detail-text1">{% trans 'Phone No: '%} {{ object.phone_number }}</span></p>
+									</div>
+
+
+							</a>
 							</div>
+						{% empty %}
+
+							<div class="col-md-4 col-sm-6">
+
+							<h5>Staffs not available</h5>
+
+							</div>
+
+						{% endfor %}
+
 						</div>
 					</div>
-                </section>
+					
 
-			</div>
+				</section>
+</div>
 
-			{% include "staff/get_staff_list.html" %}
 
 
 {% endblock %}
