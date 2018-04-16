@@ -195,56 +195,49 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         # dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
-        objs = Project.objects.filter(pk=self.kwargs.get('pk')).prefetch_related("project_roles")
+        objs = Project.objects.filter(pk=self.kwargs.get('pk')).select_related("organization")
         [o for o in objs]
         obj = objs[0]
 
-        peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
+        # peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
         # total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
 
 
         total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
-        total_survey_sites = 0
+        total_survey_sites = obj.sites.filter(is_survey=True)
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
-        if obj.id == 137:
-            progress_data = []
-            progress_labels = []
-            cumulative_labels = []
-            cumulative_data = []
-            data = []
-            sites = []
-        else:
-            sites = obj.sites.filter(is_active=True, is_survey=False).prefetch_related('site_forms', "site_instances")
-            data = serialize('custom_geojson', sites, geometry_field='location',
-                         fields=('location', 'id',))
-            bar_graph = BarGenerator(sites)
-            progress_data = bar_graph.data.values()
-            progress_labels = bar_graph.data.keys()
-            line_chart = LineChartGenerator(obj)
-            line_chart_data = line_chart.data()
-            cumulative_labels = line_chart_data.keys()
-            cumulative_data = line_chart_data.values()
-
-        roles_project = UserRole.objects.filter(organization__isnull=False,
-                                                project_id = self.kwargs.get('pk'),
-                                                site__isnull=True, ended_at__isnull=True)
+        # if obj.id == 137:
+        #     progress_data = []
+        #     progress_labels = []
+        #     cumulative_labels = []
+        #     cumulative_data = []
+        #     data = []
+        #     sites = []
+        # else:
+        #     sites = obj.sites.filter(is_active=True, is_survey=False).prefetch_related('site_forms', "site_instances")
+        #     data = serialize('custom_geojson', sites, geometry_field='location',
+        #                  fields=('location', 'id',))
+        #     bar_graph = BarGenerator(sites)
+        #     progress_data = bar_graph.data.values()
+        #     progress_labels = bar_graph.data.keys()
+        #     line_chart = LineChartGenerator(obj)
+        #     line_chart_data = line_chart.data()
+        #     cumulative_labels = line_chart_data.keys()
+        #     cumulative_data = line_chart_data.values()
+        #
+        # roles_project = UserRole.objects.filter(organization__isnull=False,
+        #                                         project_id = self.kwargs.get('pk'),
+        #                                         site__isnull=True, ended_at__isnull=True)
 
         dashboard_data = {
-            'sites': sites,
+            # 'sites': sites,
             'obj': obj,
-            'peoples_involved': peoples_involved,
             'total_sites': total_sites,
             'total_survey_sites': total_survey_sites,
             'outstanding': outstanding,
             'flagged': flagged,
             'approved': approved,
             'rejected': rejected,
-            'data': data,
-            'cumulative_data': cumulative_data,
-            'cumulative_labels': cumulative_labels,
-            'progress_data': progress_data,
-            'progress_labels': progress_labels,
-            'roles_project': roles_project,
             'total_submissions': flagged + approved + rejected + outstanding
     }
         return dashboard_data
