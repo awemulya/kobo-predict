@@ -16,8 +16,3 @@ class TeamForm(forms.ModelForm):
         fields = ('leader','name')
 
 
-class StaffProjectForm(forms.ModelForm):
-
-    class Meta:
-        model = StaffProject
-        fields = ('name',)

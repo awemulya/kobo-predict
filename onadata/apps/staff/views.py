@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectRoleMixin, StaffTeamRoleMixin, StaffRoleMixin
 from django.contrib.auth.models import User
-from onadata.apps.staff.forms import TeamForm, StaffProjectForm
+from onadata.apps.staff.forms import TeamForm
 # Team views:
 class TeamList(StaffProjectRoleMixin, ListView):
     model = Team
@@ -152,8 +152,10 @@ class StaffDelete(StaffRoleMixin, DeleteView):
 
 
 class StaffProjectCreate(HasStaffRoleMixin, CreateView):
-    form = StaffProjectForm
     model = StaffProject
+    model = StaffProject
+    fields = ['name',]
+
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super(StaffProjectCreate, self).form_valid(form)
@@ -177,8 +179,10 @@ class StaffProjectList(HasStaffRoleMixin, ListView):
 
 
 class StaffProjectUpdate(StaffProjectRoleMixin, UpdateView):
-    form=StaffProjectForm
     model = StaffProject
+    model = StaffProject
+    fields = ['name',]
+
     def get_success_url(self):
         return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
 
