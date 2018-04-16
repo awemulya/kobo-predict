@@ -38,7 +38,7 @@ class TeamDelete(StaffProjectRoleMixin, DeleteView):
 
 class TeamCreate(StaffProjectRoleMixin, CreateView):
     form_class = TeamForm
-
+    model = Team
     def form_valid(self, form):
         form.instance.staffproject_id = self.kwargs.get('pk')
         form.instance.created_by = self.request.user
