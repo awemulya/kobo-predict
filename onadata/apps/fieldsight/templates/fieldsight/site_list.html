@@ -172,7 +172,7 @@
 						              {% if page_obj.has_next %}
 						                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&raquo;</a></li>
 						              {% else %}
-						                <li class="disabled"><a class="page-link" href="#">&raquo;</a>
+						                <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
 						              {% endif %}
 
 						              {% if page_obj.number == paginator.num_pages %}
