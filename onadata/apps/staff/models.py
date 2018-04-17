@@ -49,6 +49,20 @@ class Team(models.Model):
     def __unicode__(self):
        return self.name +" C="+ str(self.created_date) +" U="+ str(self.updated_date)
 
+    def get_attendance(self):
+        days = self.attandence_team.all()
+        
+        present_list=[]
+
+        for day in days:
+            start=int(day.attendance_date.strftime("%s")) * 1000
+            
+            for staff in day.staffs.all():
+                record={"id":str(day.id)+"-"+str(staff.id), "start":str(start), "end":str(start), "title":staff.get_fullname()+" Present. Attendance submitted by "+day.submitted_by.first_name+" "+day.submitted_by.first_name+".", "class":"event-present"}
+                present_list.append(record)
+        return json.dumps(present_list)
+
+
 class Staff(models.Model):
     first_name = models.CharField(max_length=255, blank=True, null=True)
     last_name = models.CharField(max_length=255, blank=True, null=True)
@@ -65,7 +79,7 @@ class Staff(models.Model):
     created_by = models.ForeignKey(User, related_name="staff_created_by")
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
-    bank = models.ForeignKey(Bank, blank=True, null=True)
+    bank = models.ForeignKey(Bank, blank=True, null=True, default=None)
     date_of_birth = models.DateField(blank=True, null=True)
     contract_start = models.DateField(blank=True, null=True)
     contract_end = models.DateField(blank=True, null=True)
@@ -74,6 +88,9 @@ class Staff(models.Model):
 
     def __unicode__(self):
         return str(self.first_name) +" "+  str(self.last_name)
+
+    def get_fullname(self):
+        return str(self.first_name) +" "+ str(self.last_name)
 
     def get_attendance(self):
         present = Attendance.objects.filter(staffs__in = [self], team_id=self.team_id)

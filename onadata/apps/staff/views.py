@@ -58,6 +58,7 @@ class TeamDetail(StaffTeamRoleMixin, DetailView):
         context = super(TeamDetail, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
         context['staff_list'] = Staff.objects.filter(team_id = self.kwargs.get('pk'), is_deleted=False)
+        context['attendance_list'] = self.object.get_attendance()
         return context
 
 
@@ -118,13 +119,6 @@ class StaffUpdate(StaffRoleMixin, UpdateView):
     model = Staff
     form_class = StaffForm 
     success_url = reverse_lazy('staff:staff-list')
-
-    def get_success_url(self):
-        # Redirect to previous url
-        next = self.request.POST.get('next', '/')
-        return next
-
-
 
     def get_success_url(self):
         return reverse('staff:staff-detail', kwargs={'pk': self.kwargs.get('pk')})

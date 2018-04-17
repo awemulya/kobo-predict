@@ -39,7 +39,7 @@
 
 $( "#id_bank" ).change(function() {
   var selected = $('#id_bank').val();
-  if (selected == 0){
+  if (selected == ""){
   	$("#div_bank_name").show();
   	$("#id_bank_name").prop('disabled', false);
   }

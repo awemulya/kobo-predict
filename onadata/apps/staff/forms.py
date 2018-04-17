@@ -19,9 +19,9 @@ class TeamForm(forms.ModelForm):
 class StaffForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(StaffForm, self).__init__(*args, **kwargs)
-        self.fields['bank'].choices = [(0, "Other")] + [(bank.id, bank.name) for bank in Bank.objects.all()]
+        self.fields['bank'].empty_label = "Other"
+       
     
     class Meta:
         model = Staff
         fields = ('first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank','bank_name', 'account_number', 'photo', 'designation',)
-
