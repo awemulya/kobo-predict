@@ -2537,8 +2537,8 @@ def project_dashboard_peoples(request, pk):
 
 @api_view(["GET"])
 def project_dashboard_map(request, pk):
-    sites = Site.objects.filter(project__id=pk)[:200]
-    data = serialize('custom_geojson', sites, geometry_field='location', fields=('location', 'id',))
+    sites = Site.objects.filter(project__id=pk)[:100]
+    data = serialize('custom_geojson', sites, geometry_field='location', fields=('location', 'id', 'name'))
     return Response(data)
 
 @api_view(["GET"])
