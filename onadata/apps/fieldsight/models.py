@@ -7,6 +7,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.conf import settings
+from django.db.models import IntegerField, Count, Case, When
 from django.db.models.signals import post_save
 from django.utils.text import slugify
 from jsonfield import JSONField
@@ -244,12 +245,13 @@ class Project(models.Model):
 
 
     def get_submissions_count(self):
-        outstanding = self.project_instances.filter(form_status=0).count()
-        rejected = self.project_instances.filter(form_status=1).count()
-        flagged = self.project_instances.filter(form_status=2).count()
-        approved = self.project_instances.filter(form_status=3).count()
-
-        return outstanding, flagged, approved, rejected
+        qs = self.project_instances.aggregate(
+            outstanding=Count(Case(When(form_status=0, project=self, then=1), output_field=IntegerField(),)),
+            flagged=Count(Case(When(form_status=2, project=self, then=1), output_field=IntegerField(),)),
+            approved=Count(Case(When(form_status=3, project=self, then=1), output_field=IntegerField(),)),
+            rejected=Count(Case(When(form_status=1, project=self, then=1), output_field=IntegerField(),)),
+        )
+        return qs.get('outstanding', 0), qs.get('flagged', 0), qs.get('approved', 0), qs.get('rejected', 0)
 
     def get_absolute_url(self):
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.pk})
@@ -271,11 +273,16 @@ class Region(models.Model):
 
 
 class SiteType(models.Model):
+    identifier = models.IntegerField("ID")
     name = models.CharField("Type", max_length=256)
     project = models.ForeignKey(Project, related_name="types")
 
     def __unicode__(self):
         return u'{}'.format(self.name)
+
+    class Meta:
+        ordering = ['-identifier']
+        unique_together = [('identifier', 'project'), ]
 
 
 

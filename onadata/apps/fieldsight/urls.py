@@ -10,7 +10,7 @@ from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, 
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProjectViewSet
 from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionViewSet, RegionPagignatedViewSet, RegionSearchViewSet
 from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
-    SiteReviewViewSet, ProjectTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet, SiteUpdateViewSet, \
+    SiteReviewViewSet, ProjectTypeViewset, SiteTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet, SiteUpdateViewSet, \
     ProjectUpdateViewSet, SiteUnderOrgViewSet, SiteUnderRegionViewSet, SitePagignatedViewSet, SiteSearchViewSet
 from .forms import RegistrationForm
 
@@ -31,7 +31,7 @@ from .views import (
     ProjectCreateView,
     ProjectUpdateView,
     ProjectDeleteView,
-    Project_dashboard,
+    Project_dashboard, project_dashboard_peoples, project_dashboard_map,
     alter_proj_status,
     add_proj_manager,
     SiteListView,
@@ -109,13 +109,17 @@ urlpatterns = [
     url(r'^project/add-proj-manager/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
     url(r'^project/add-role/(?P<pk>\d+)/$', add_project_role, name='add_project_staffs'),
     url(r'^api/project-sites/(?P<pk>\d+)/$', SiteViewSet.as_view({'get': 'list'}), name='project_sites'),
-    url(r'^api/update-site/(?P<pk>\d+)$', SiteUpdateViewSet.as_view({'post': 'update'}), name='update_site_api'),
+    url(r'^api/update-site/(?P<pk>\d+)$', SiteUpdateViewSet.as_view({'get': 'retrieve','post': 'update'}), name='update_site_api'),
     url(r'^api/update-project/(?P<pk>\d+)$', ProjectUpdateViewSet.as_view({'put': 'update'}), name='update_project_api'),
 
 
     url(r'^survey-sites/(?P<pk>\d+)$', SiteSurveyListView.as_view(), name='site-survey-list'),
     url(r'^api/sites/$', AllSiteViewSet.as_view({'get': 'list'}), name='sites-list'),
     url(r'^api/project-types/$', ProjectTypeViewset.as_view({'get': 'list'})),
+
+    url(r'^api/site-types/(?P<pk>\d+)/$', SiteTypeViewset.as_view({'get': 'list'})),
+    url(r'^api/site-types/$', SiteTypeViewset.as_view({'get': 'list'})),
+
     url(r'^api/survey-sites/(?P<pk>\d+)/$', SiteCreationSurveyViewSet.as_view({'get': 'list'}), name='sites-list'),
     url(r'^api/survey-sites-review/(?P<pk>\d+)/$', SiteReviewViewSet.as_view({'get': 'list'}), name='sites-list-review'),
     url(r'^api/project-sites/(?P<pk>\d+)/$', SiteUnderProjectViewSet.as_view({'get': 'list'}), name='project-sites-list'),
@@ -222,6 +226,11 @@ urlpatterns = [
     url(r'^project-dashboard/lite/(?P<pk>[0-9]+)/$', DonorProjectDashboard.as_view(), name='donor_project_dashboard_lite'),
     url(r'^site-dashboard/lite/(?P<pk>[0-9]+)/$', DonorSiteDashboard.as_view(), name='site_dashboard_lite'),
     url(r'^project/(?P<pk>\d+)/define-criteria/$', DefineProjectSiteCriteria.as_view(), name='define-site-criteria'),
-    
+
+
+
+    url(r'^api/project_peoples/(?P<pk>\d+)/$', project_dashboard_peoples, name='pdp'),
+    url(r'^api/project_map/(?P<pk>\d+)/$', project_dashboard_map, name='pdm'),
+
 
     ]

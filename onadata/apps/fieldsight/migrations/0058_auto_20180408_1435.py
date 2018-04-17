@@ -7,9 +7,12 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staff', '0003_auto_20180404_1239'),
-        ('staff', '0004_auto_20180406_1345'),
+        ('fieldsight', '0057_auto_20180408_1416'),
     ]
 
     operations = [
+        migrations.AlterUniqueTogether(
+            name='sitetype',
+            unique_together=set([('identifier', 'project')]),
+        ),
     ]

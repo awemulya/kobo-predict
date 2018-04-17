@@ -1,0 +1,246 @@
+{% extends "staff/base.html" %}
+{% load i18n staticfiles %}
+
+{% block content %}
+
+
+
+			<div id="main-content" class="padding">
+			 <section class="panel">
+            <header class="panel-heading clearfix">
+                <div class="panel-heading-right">
+
+
+                    <div class="panel-heading-right">
+                                <a href="{% url 'staff:staff-update' object.pk  %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Edit' %} {% trans 'Staff' %}</a>
+                                <a href="{% url 'staff:staff-delete' object.pk  %}" title="" class="btn btn-sm btn-danger"><i class="la la-minus"></i> {% trans 'Delete' %} {% trans 'Staff' %}</a>
+
+                    </div>
+                <br>
+                </div>
+            </header>
+ 			</section>
+				<section>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="margin-top user-profile-basic-info padding bg-white clearfix ">
+								<div class="media">
+									<img class="d-flex align-self-start mr-3"  src="{{ staff.photo.url }}" width="200" height="200" alt="Generic placeholder image">
+									<div class="media-body">
+										<h2 class="margin-top">{{ staff.first_name }} {{ staff.last_name }}</h2>
+										<div class="row">
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-building"></i> <strong>Address</strong><br/>
+													{{ staff.address }}
+												</div>
+											</div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-envelope-o"></i> <strong>Email</strong><br/>{{ staff.email }}
+												</div>
+											</div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-phone"></i> <strong>Phone</strong><br/>
+													{{ staff.phone_number }}
+												</div>
+											</div>
+											<div class="clearfix"></div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-intersex"></i> <strong>Gender</strong><br/>
+													{{ staff.get_gender_display }}
+												</div>
+											</div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-certificate"></i> <strong>Designation</strong><br/>{{ staff.get_designation_display }}
+												</div>
+											</div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-user"></i> <strong>Ethnicity</strong><br/>
+													{{ staff.ethnicity }}
+												</div>
+											</div>
+											<div class="clearfix"></div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-bank"></i> <strong>Bank Name</strong><br/>
+													{{ staff.bank_name }}
+												</div>
+											</div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-credit-card"></i> <strong>Account Number</strong><br/>
+													{{ staff.account_number }}
+												</div>
+											</div>
+
+											<div class="col-lg-4">
+											<a href="{% url 'staff:team-detail' staff.team.pk %}">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-users"></i> <strong>Team</strong><br/>
+													{{ staff.team.name }}
+												</div>
+											</a>
+											</div>
+											<div class="clearfix"></div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-edit"></i> <strong>Created By</strong><br/>
+													{{ staff.created_by }}
+												</div>
+											</div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-calendar"></i> <strong>Created Date</strong><br/>
+													{{ staff.created_date }}
+												</div>
+											</div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-calendar"></i> <strong>Updated Date</strong><br/>
+													{{ staff.updated_date }}
+												</div>
+											</div>
+											<div class="clearfix"></div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-calendar"></i> <strong>Contract Start</strong><br/>
+													{{ staff.contract_start }}
+												</div>
+											</div>
+											<div class="col-lg-4">
+												<div class="contact-info-item margin-top" data-mh="eq-item">
+													<i class="la la-calendar"></i> <strong>Contract End</strong><br/>
+													{{ staff.contract_end }}
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="widget-info margin-top bg-white padding">
+								<!-- <div class="widget-head">
+									Attendance
+								</div> -->
+								<div class="widget-body">
+									<div class="calendar-header clearfix">
+
+										<div class="pull-right form-inline">
+											<div class="btn-group margin-right">
+												<button class="btn btn-sm btn-primary" data-calendar-nav="prev"><< Prev</button>
+												<button class="btn btn-sm" data-calendar-nav="today">Today</button>
+												<button class="btn btn-sm btn-primary" data-calendar-nav="next">Next >></button>
+											</div>
+											<div class="btn-group">
+												<button class="btn btn-sm btn-warning" data-calendar-view="year">Year</button>
+												<button class="btn btn-sm btn-warning active" data-calendar-view="month">Month</button>
+												<button class="btn btn-sm btn-warning" data-calendar-view="week">Week</button>
+											</div>
+										</div>
+										<h4></h4>
+									</div>
+									<div id="calendar" class="margin-top"></div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+                </section>
+
+			</div>
+
+			<div class="modal fade" id="events-modal" tabindex="-1" role="dialog" aria-labelledby="events-modal" aria-hidden="true">
+	        <div class="modal-dialog">
+	            <div class="modal-content modal-lg">
+	                <div class="modal-header">
+	                    <h6>Event</h6>
+	                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						  <span aria-hidden="true">&times;</span>
+						</button>
+	                </div>
+	                <div class="modal-body" style="height: 400px">
+	                </div>
+	                <div class="modal-footer">
+	                    <a href="#" data-dismiss="modal" class="btn btn-sm btn-primary">Close</a>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+
+        {% endblock %}
+
+{% block extrascript %}
+
+<script src="{% static 'dummy/assets/js/vendor/jquery.matchHeight.js' %}"></script>
+		<script src="{% static 'dummy/assets/js/vendor/underscore-min.js' %} "></script>
+		<script src="{% static 'dummy/assets/js/vendor/calendar.min.js' %}"></script>
+
+		<script>
+		var data={{ attendance_list|safe }};
+			(function($) {
+				"use strict";
+
+				var options = {
+					events_source: data,
+
+		        	//events_source: 'events.json.php',
+					view: 'month',
+					tmpl_path: "{% static 'dummy/assets/tmpls/' %}",
+					tmpl_cache: false,
+					views: {
+				      year:  {
+				        enable: 1
+				      },
+				      month:  {
+				        enable: 1
+				      },
+				      week:  {
+				        enable: 1
+				      },
+				      day:   {
+				        enable: 0 //disabled
+				      }
+				    },
+					modal : "#events-modal",
+		            modal_type : "ajax",
+		            modal_title : function (e) { return e.title },
+					// day: '2013-03-19',
+					onAfterViewLoad: function(view) {
+						$('.calendar-header h4').text(this.getTitle());
+						$('.btn-group button').removeClass('active');
+						$('button[data-calendar-view="' + view + '"]').addClass('active');
+					},
+					classes: {
+						months: {
+							general: 'label'
+						}
+					}
+				};
+
+				var calendar = $('#calendar').calendar(options);
+
+				$('.btn-group button[data-calendar-nav]').each(function() {
+					var $this = $(this);
+					$this.click(function() {
+						calendar.navigate($this.data('calendar-nav'));
+					});
+				});
+
+				$('.btn-group button[data-calendar-view]').each(function() {
+					var $this = $(this);
+					$this.click(function() {
+						calendar.view($this.data('calendar-view'));
+					});
+				});
+
+			}(jQuery));
+		</script>
+
+
+{% endblock %}

@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
-from onadata.apps.fieldsight.models import Site, Region, SiteCreateSurveyImages, ProjectType, Project
+from onadata.apps.fieldsight.models import Site, Region, SiteCreateSurveyImages, ProjectType, Project, SiteType
 
 
 class SiteSerializer(serializers.ModelSerializer):
@@ -62,6 +62,21 @@ class SiteUpdateSerializer(serializers.ModelSerializer):
         exclude = ('project',)
         read_only_fields = ('is_active',)
 
+    def update(self, instance, validated_data):
+        lat = self.context['request'].data.get('latitude', False)
+        long = self.context['request'].data.get('longitude', False)
+        type_id = self.context['request'].data.get('type', False)
+        site = super(SiteUpdateSerializer, self).update(instance, validated_data)
+        if lat and long:
+            lat = float(lat)
+            long = float(long)
+            location = Point(lat, long, srid=4326)
+            site.location = location
+        if type_id:
+            site.type = SiteType.objects.get(pk=type_id)
+        site.save()
+        return site
+
 
 class ProjectUpdateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -79,6 +94,12 @@ class ProjectTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProjectType
+        read_only_fields = ("id",)
+
+class SiteTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SiteType
         read_only_fields = ("id",)
 
 

@@ -34,11 +34,13 @@ class StageListViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         instance = Stage.objects.get(pk=kwargs.get('pk'))
         name = self.request.data.get('name', False)
+        tags = self.request.data.get('tags', [])
         if not name:
             return Response({'error':'No Stage Name Provided'}, status=status.HTTP_400_BAD_REQUEST)
         desc = self.request.data.get('description', "")
         instance.name = name
         instance.description = desc
+        instance.tags = tags;
         instance.save()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)

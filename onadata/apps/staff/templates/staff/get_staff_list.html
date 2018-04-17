@@ -1,0 +1,44 @@
+{% load i18n staticfiles filters %}
+<div class="col-md-4 col-sm-6">
+
+							<h3>Staffs:</h3>
+
+							</div>
+
+<div id="main-content" class="padding">
+                    <section class="panel">
+                        <header class="panel-heading clearfix">
+
+                            <div class="panel-heading-right">
+                                <a href="{% url 'staff:staff-create' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'Staff' %}</a>
+                            </div>
+                        </header>
+						<div class="row" >
+						{% for object in staff_list %}
+
+							<div class="col-md-4 col-sm-6">
+								<a href= "{% url 'staff:staff-detail' object.pk %}" title="" class="site-item-wrap  margin-top clearfix">
+									<div class="logo">
+										<img src="{{ object.photo.url }}" alt="" width="100" height="100">
+									</div>
+									<div class="basic-info clearfix">
+										<h4 class="detail-text1" >{{ object.first_name }}  {{ object.last_name }}</h4>
+                                 		<p class="address"><i class="fa fa-map-marker" aria-hidden="true"></i> <span  class="detail-text1">{% trans 'Address: '%}{{ object.address }}</span></p>
+                                 		<p class="phone"><i class="fa fa-phone" aria-hidden="true"></i> <span  class="detail-text1">{% trans 'Phone No: '%} {{ object.phone_number }}</span></p>
+									</div>
+
+
+							</a>
+							</div>
+						{% empty %}
+
+							<div class="col-md-4 col-sm-6">
+
+							<h5>Staffs not available</h5>
+
+							</div>
+
+						{% endfor %}
+						</div>
+                        </section>
+                        </div>

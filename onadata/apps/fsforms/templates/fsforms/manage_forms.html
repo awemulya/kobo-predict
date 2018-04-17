@@ -78,7 +78,7 @@ assigntoken(csrf_token);
     </nav>
     {% if is_project == "0" %}
     <div class="alert alert-danger">
-      <strong>Warning!</strong> You are managing forms for {{ obj.name }} only and will not be seen for other sites. 
+      <strong>Warning!</strong> You are managing forms for {{ obj.name }} only and will not be seen for other sites. Click <a href="{% url 'forms:setup-forms' 1 obj.project.id %}">here</a> to manage forms in project level. 
     </div>
     {% endif %}
 				<!-- Nav tabs -->

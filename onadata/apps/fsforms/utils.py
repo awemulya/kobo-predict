@@ -23,6 +23,14 @@ def send_message(fxf, status=None, comment=None, comment_url=None):
                'site': {'name': fxf.site.name, 'id': fxf.site.id}}
     Device.objects.filter(name__in=emails).send_message(message)
 
+def send_bulk_message_stages(site_ids):
+    roles = UserRole.objects.filter(site_id__in=site_ids, ended_at=None, group__name="Site Supervisor").distinct('user')
+    emails = [r.user.email for r in roles]
+    Device = get_device_model()
+    message = {'notify_type': 'Stages Ready',
+               'is_delete':True,
+               'site':{'name': site.name, 'id': site.id}}
+    Device.objects.filter(name__in=emails).send_message(message)
 
 def send_message_stages(site):
     roles = UserRole.objects.filter(site=site, ended_at=None, group__name="Site Supervisor")

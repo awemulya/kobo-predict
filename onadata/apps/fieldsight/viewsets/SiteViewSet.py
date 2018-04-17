@@ -9,14 +9,17 @@ from channels import Group as ChannelGroup
 
 
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
-from onadata.apps.fieldsight.models import Site, ProjectType, Project, Region
+from onadata.apps.fieldsight.models import Site, ProjectType, Project, Region, SiteType
 from onadata.apps.fieldsight.serializers.SiteSerializer import MinimalSiteSerializer, SiteSerializer, SiteCreationSurveySerializer, \
-    SiteReviewSerializer, ProjectTypeSerializer, SiteUpdateSerializer, ProjectUpdateSerializer, RegionSerializer
+    SiteReviewSerializer, ProjectTypeSerializer, SiteUpdateSerializer, ProjectUpdateSerializer, RegionSerializer, \
+    SiteTypeSerializer
 from onadata.apps.userrole.models import UserRole
 from django.contrib.auth.models import Group
 from django.db import transaction
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
+
+
 class SiteSurveyPermission(BasePermission):
     def has_object_permission(self, request, view, obj):
         if not obj.is_survey:
@@ -283,6 +286,26 @@ class ProjectTypeViewset(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     permission_classes = (ProjectViewPermission,)
     parser_classes = (MultiPartParser, FormParser,)
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+class SiteTypeViewset(viewsets.ModelViewSet):
+    queryset = SiteType.objects.all()
+    serializer_class = SiteTypeSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    permission_classes = (ProjectViewPermission,)
+    parser_classes = (MultiPartParser, FormParser,)
+
+    def get_queryset(self):
+        project = self.kwargs.get('pk', False)
+        if project:
+            return self.queryset.filter(project__id=project)
+        else:
+            user = self.request.user
+            projects = UserRole.objects.filter(project__isnull=False,user=user, ended_at=None, group__name="Site Supervisor").\
+                values_list('project', flat=True)
+            return self.queryset.filter(project__id__in=projects)
 
     def get_serializer_context(self):
         return {'request': self.request}
