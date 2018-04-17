@@ -150,7 +150,7 @@
 						              
 						              {% if page_obj.number == 1 %}
 						              {% else %}
-						                <li class="page-item"><a class="page-link" href="?page={{ 1 }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&laquo;</a></li>
+						                <li class="page-item"><a class="page-link" href="?page={{ 1 }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">First</a></li>
 						              {% endif %}
 
 						              {% if page_obj.has_previous %}
@@ -164,7 +164,7 @@
 
 
 						             
-						                <li class="page-item active"><a class="page-link" href="?page={{ page_obj.number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ i }}</a></li>
+						                <li class="page-item active"><a class="page-link" href="?page={{ page_obj.number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ page_obj.number }}</a></li>
 
 						                
 						              
@@ -175,9 +175,9 @@
 						                <li class="disabled"><a class="page-link" href="#">&raquo;</a>
 						              {% endif %}
 
-						              {% if page_obj.number == paginator.page_range %}
+						              {% if page_obj.number == paginator.num_pages %}
 						              {% else %}
-						                <li class="page-item"><a class="page-link" href="?page={{ paginator.page_range }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&laquo;</a></li>
+						                <li class="page-item"><a class="page-link" href="?page={{ paginator.num_pages }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">Last</a></li>
 						              {% endif %}
 
 						              </ul>
