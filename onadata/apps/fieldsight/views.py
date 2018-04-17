@@ -33,7 +33,7 @@ from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from onadata.apps.fieldsight.bar_data_project import BarGenerator
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
-    LineChartGeneratorSite, ProgressGeneratorSite
+    LineChartGeneratorSite, ProgressGeneratorSite, LineChartGeneratorProject
 from onadata.apps.fsforms.models import FieldSightXF, Stage, FInstance
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
@@ -201,7 +201,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         [o for o in objs]
         obj = objs[0]
 
-        # peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
+        peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user').count()
         # total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
 
 
@@ -233,6 +233,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
 
         dashboard_data = {
             # 'sites': sites,
+            'peoples_involved': peoples_involved,
             'obj': obj,
             'total_sites': total_sites,
             'total_survey_sites': total_survey_sites,
@@ -2539,3 +2540,19 @@ def project_dashboard_map(request, pk):
     sites = Site.objects.filter(project__id=pk)
     data = serialize('custom_geojson', sites, geometry_field='location', fields=('location', 'id',))
     return Response(data)
+
+@api_view(["GET"])
+def project_dashboard_graphs(request, pk):
+    project = Project.objects.get(pk=pk)
+    sites = Site.objects.filter(project__id=pk)
+    bar_graph = BarGenerator(sites)
+
+    progress_labels = bar_graph.data.keys()
+    progress_data = bar_graph.data.values()
+
+    line_chart = LineChartGeneratorProject(project)
+    submissions = line_chart.data()
+    submissions_labels = submissions.keys()
+    submissions_data = submissions.values()
+
+    return Response({'pl':progress_labels, 'pd':progress_data, 'sl': submissions_labels, 'sd':submissions_data})

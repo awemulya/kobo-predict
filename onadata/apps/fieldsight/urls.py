@@ -31,7 +31,7 @@ from .views import (
     ProjectCreateView,
     ProjectUpdateView,
     ProjectDeleteView,
-    Project_dashboard, project_dashboard_peoples, project_dashboard_map,
+    Project_dashboard, project_dashboard_peoples, project_dashboard_map, project_dashboard_graphs,
     alter_proj_status,
     add_proj_manager,
     SiteListView,
@@ -231,6 +231,7 @@ urlpatterns = [
 
     url(r'^api/project_peoples/(?P<pk>\d+)/$', project_dashboard_peoples, name='pdp'),
     url(r'^api/project_map/(?P<pk>\d+)/$', project_dashboard_map, name='pdm'),
+    url(r'^api/project_graphs/(?P<pk>\d+)/$', project_dashboard_graphs, name='pdg'),
 
 
     ]

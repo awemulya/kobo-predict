@@ -133,7 +133,7 @@ var project = "{{obj.pk}}";
 										<a href="{% url 'fieldsight:proj-user-list' obj.pk %}" class="org-profile-stat-item" title="">
 											<i class="la la-users"></i>
 											<div class="org-mini-stat-info">
-												<span>{{peoples_involved.count}}</span>
+												<span>{{peoples_involved}}</span>
 												{% trans 'Users' %}
 											</div>
 										</a>
@@ -320,7 +320,7 @@ var project = "{{obj.pk}}";
 								{% else %}
 
 								<div class="col-md-6 col-sm-12">
-									<div class="widget-info widget-scolling-large-list margin-top bg-white padding" data-mh="eq111">
+									<div class="widget-info widget-scrolling-large-list margin-top bg-white padding" data-mh="eq111">
 										<div class="widget-head">
 											<h4>{% trans 'Sites' %}</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:site-add' obj.pk %} "><i class="la la-plus"></i></a>
@@ -361,8 +361,8 @@ var project = "{{obj.pk}}";
 								{% endif %}
 
 								{% verbatim %}
-								<div class="col-md-6 col-sm-12" id="peoples">
-
+								<div class="col-md-6 col-sm-12">
+									<div id="peoples"></div>
 								</div>
 								{% endverbatim %}
 
@@ -372,6 +372,12 @@ var project = "{{obj.pk}}";
 						
 
 					</div>
+
+					{% verbatim %}
+						<div class="row" id="graphs">
+
+						</div>
+					{% endverbatim %}
 
 					<!--<div class="row">-->
 						<!--<div class="col-md-6">-->
@@ -428,6 +434,9 @@ var project = "{{obj.pk}}";
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
 <script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/highcharts/highcharts.js"></script>
+<!-- vue-highcharts should be load after Highcharts -->
+<script src="https://cdn.jsdelivr.net/npm/vue-highcharts/dist/vue-highcharts.min.js"></script>
 
-<script src="{% static 'js/fieldsight/manage_project_dashboard.js' %}?v=0.1"></script>
+<script src="{% static 'js/fieldsight/manage_project_dashboard.js' %}?v=0.3"></script>
 {% endblock %}

@@ -33,6 +33,25 @@ class LineChartGenerator(object):
         return d
 
 
+class LineChartGeneratorProject(object):
+
+    def __init__(self, project):
+        self.project = project
+        self.date_list = list(date_range(project.date_created.strftime("%Y%m%d"), datetime.datetime.today().strftime("%Y%m%d"), 6))
+
+    def get_count(self, date):
+        date = date + datetime.timedelta(days=1)
+        return self.project.project_instances.filter(date__lte=date.date()).count()
+
+    def data(self):
+        d = OrderedDict()
+        dt = self.date_list
+        for date in dt:
+            count = self.get_count(date)
+            d[date.strftime('%Y-%m-%d')] = count
+        return d
+
+
 class LineChartGeneratorOrganization(object):
 
     def __init__(self, organization):
