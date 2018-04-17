@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.db.models import Q
 from django.core.exceptions import ValidationError
-from onadata.apps.staff.models import Team, StaffProject
+from onadata.apps.staff.models import Team, StaffProject, Bank, Staff
 from onadata.apps.userrole.models import UserRole
 
 class TeamForm(forms.ModelForm):
@@ -15,4 +15,13 @@ class TeamForm(forms.ModelForm):
         model = Team
         fields = ('leader','name')
 
+
+class StaffForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(StaffForm, self).__init__(*args, **kwargs)
+        self.fields['bank'].choices = [(bank.id, role.name) for bank in Bank.objects.all()]
+    
+    class Meta:
+        model = Staff
+        fields = ('first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'bank', 'account_number', 'photo', 'designation',)
 

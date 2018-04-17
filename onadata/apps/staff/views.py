@@ -5,8 +5,9 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectRoleMixin, StaffTeamRoleMixin, StaffRoleMixin
 from django.contrib.auth.models import User
-from onadata.apps.staff.forms import TeamForm
+from onadata.apps.staff.forms import TeamForm, StaffForm
 # Team views:
+
 class TeamList(StaffProjectRoleMixin, ListView):
     model = Team
     template_name = 'staff/team_list.html'
@@ -115,7 +116,7 @@ class StaffDetail(StaffRoleMixin, DetailView):
 
 class StaffUpdate(StaffRoleMixin, UpdateView):
     model = Staff
-    fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation']
+    form_class = StaffForm 
     success_url = reverse_lazy('staff:staff-list')
 
     def get_success_url(self):
