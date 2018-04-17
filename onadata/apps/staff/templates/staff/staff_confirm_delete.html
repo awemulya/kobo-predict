@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h1>Lauda lassan</h1>
+<h1>Warning !</h1>
 <form action="" method="post">
 	{% csrf_token %}
 
@@ -12,7 +12,7 @@
 
 	<!--<input type="hidden" name="next" value="{% url 'staff:team-detail' object.pk %}">-->
     <!--<input type="submit" class="btn btn-primary" value="{% trans 'Confirm deletion' %}" name="confirm_delete" />-->
-    <input type="submit" class="btn btn-primary" value=name="next" value="{% url 'staff:team-detail' object.pk %}" name="next" />
+    <input type="submit" class="btn btn-primary" value="{% trans 'Confirm deletion' %}"/>
 </form>
 
 {% endblock %}

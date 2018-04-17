@@ -15,3 +15,16 @@ class Serializer(GeoJSONSerializer):
         data.update(status=status)
         data.update(progress=obj.site_progress)
         return data
+
+class FieldsightMapSerializer(GeoJSONSerializer):
+    def get_dump_object(self, obj):
+        data = super(Serializer, self).get_dump_object(obj)
+        # Extend to your taste
+        data.update(id=obj.pk)
+        try:
+            status = obj.site_instances.order_by('-date').first().form_status
+        except:
+            status = 4
+        data.update(status=status)
+        data.update(progress=obj.site_progress)
+        return data

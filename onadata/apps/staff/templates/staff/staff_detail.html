@@ -2,23 +2,24 @@
 {% load i18n staticfiles %}
 
 {% block content %}
- <section class="panel">
+
+
+
+			<div id="main-content" class="padding">
+			 <section class="panel">
             <header class="panel-heading clearfix">
                 <div class="panel-heading-right">
 
-                <br>
+
                     <div class="panel-heading-right">
                                 <a href="{% url 'staff:staff-update' object.pk  %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Edit' %} {% trans 'Staff' %}</a>
-                                <a href="{% url 'staff:staff-delete' object.pk  %}" title="" class="btn btn-sm btn-primary"><i class="la la-minus"></i> {% trans 'Delete' %} {% trans 'Staff' %}</a>
+                                <a href="{% url 'staff:staff-delete' object.pk  %}" title="" class="btn btn-sm btn-danger"><i class="la la-minus"></i> {% trans 'Delete' %} {% trans 'Staff' %}</a>
 
                     </div>
                 <br>
                 </div>
             </header>
- </section>
-
-
-			<div id="main-content" class="padding">
+ 			</section>
 				<section>
 					<div class="row">
 						<div class="col-md-12">
@@ -76,11 +77,14 @@
 													{{ staff.account_number }}
 												</div>
 											</div>
+
 											<div class="col-lg-4">
+											<a href="{% url 'staff:team-detail' staff.team.pk %}">
 												<div class="contact-info-item margin-top" data-mh="eq-item">
 													<i class="la la-users"></i> <strong>Team</strong><br/>
-													{{ staff.team }}
+													{{ staff.team.name }}
 												</div>
+											</a>
 											</div>
 											<div class="clearfix"></div>
 											<div class="col-lg-4">
@@ -121,9 +125,9 @@
 						</div>
 						<div class="col-md-12">
 							<div class="widget-info margin-top bg-white padding">
-								<div class="widget-head">
-									<h4>Attendance</h4>
-								</div>
+								<!-- <div class="widget-head">
+									Attendance
+								</div> -->
 								<div class="widget-body">
 									<div class="calendar-header clearfix">
 
@@ -169,7 +173,6 @@
 	        </div>
 	    </div>
 
-
         {% endblock %}
 
 {% block extrascript %}
@@ -179,19 +182,13 @@
 		<script src="{% static 'dummy/assets/js/vendor/calendar.min.js' %}"></script>
 
 		<script>
+		var data={{ attendance_list|safe }};
 			(function($) {
 				"use strict";
 
 				var options = {
-					 events_source: [
-					 {
-			            "id": "293",
-			"title": "Absent because of Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
-			"class": "event-absent",
-			"start": "1362938400000",
-			"end":   "1363197686300"
-			}
-		         	],
+					events_source: data,
+
 		        	//events_source: 'events.json.php',
 					view: 'month',
 					tmpl_path: "{% static 'dummy/assets/tmpls/' %}",
@@ -213,7 +210,7 @@
 					modal : "#events-modal",
 		            modal_type : "ajax",
 		            modal_title : function (e) { return e.title },
-					day: '2013-03-12',
+					// day: '2013-03-19',
 					onAfterViewLoad: function(view) {
 						$('.calendar-header h4').text(this.getTitle());
 						$('.btn-group button').removeClass('active');

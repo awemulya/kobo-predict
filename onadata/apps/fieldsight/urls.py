@@ -31,7 +31,7 @@ from .views import (
     ProjectCreateView,
     ProjectUpdateView,
     ProjectDeleteView,
-    Project_dashboard,
+    Project_dashboard, project_dashboard_peoples, project_dashboard_map, project_dashboard_graphs,
     alter_proj_status,
     add_proj_manager,
     SiteListView,
@@ -226,6 +226,12 @@ urlpatterns = [
     url(r'^project-dashboard/lite/(?P<pk>[0-9]+)/$', DonorProjectDashboard.as_view(), name='donor_project_dashboard_lite'),
     url(r'^site-dashboard/lite/(?P<pk>[0-9]+)/$', DonorSiteDashboard.as_view(), name='site_dashboard_lite'),
     url(r'^project/(?P<pk>\d+)/define-criteria/$', DefineProjectSiteCriteria.as_view(), name='define-site-criteria'),
-    
+
+
+
+    url(r'^api/project_peoples/(?P<pk>\d+)/$', project_dashboard_peoples, name='pdp'),
+    url(r'^api/project_map/(?P<pk>\d+)/$', project_dashboard_map, name='pdm'),
+    url(r'^api/project_graphs/(?P<pk>\d+)/$', project_dashboard_graphs, name='pdg'),
+
 
     ]

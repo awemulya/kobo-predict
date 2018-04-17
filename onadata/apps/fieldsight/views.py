@@ -33,7 +33,7 @@ from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from onadata.apps.fieldsight.bar_data_project import BarGenerator
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
-    LineChartGeneratorSite, ProgressGeneratorSite
+    LineChartGeneratorSite, ProgressGeneratorSite, LineChartGeneratorProject
 from onadata.apps.fsforms.models import FieldSightXF, Stage, FInstance
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
@@ -65,18 +65,20 @@ from django.utils import translation
 from django.conf import settings
 from django.db.models import Prefetch
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.serializers.json import DjangoJSONEncoder
+from django.core.serializers.json import DjangoJSONEncoder, Serializer
 from django.template import Context
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from onadata.apps.fsforms.reports_util import get_images_for_site, get_images_for_site_all, get_site_responses_coords, get_images_for_sites_count
-
+from onadata.apps.staff.models import Team
 @login_required
 def dashboard(request):
     current_role_count = request.roles.count()
     if current_role_count == 1:
         current_role = request.roles[0]
         role_type = request.roles[0].group.name
+        if role_type == "Staff Project Manager":
+            return HttpResponseRedirect(reverse("fieldsight:StaffProjectList"))
         if role_type == "Unassigned":
             return HttpResponseRedirect(reverse("fieldsight:roles-dashboard"))
         if role_type == "Site Supervisor":
@@ -195,56 +197,50 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         # dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
-        objs = Project.objects.filter(pk=self.kwargs.get('pk')).prefetch_related("project_roles")
+        objs = Project.objects.filter(pk=self.kwargs.get('pk')).select_related("organization")
         [o for o in objs]
         obj = objs[0]
 
-        peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
+        peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user').count()
         # total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
 
 
         total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
-        total_survey_sites = 0
+        total_survey_sites = obj.sites.filter(is_survey=True)
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
-        if obj.id == 137:
-            progress_data = []
-            progress_labels = []
-            cumulative_labels = []
-            cumulative_data = []
-            data = []
-            sites = []
-        else:
-            sites = obj.sites.filter(is_active=True, is_survey=False).prefetch_related('site_forms', "site_instances")
-            data = serialize('custom_geojson', sites, geometry_field='location',
-                         fields=('location', 'id',))
-            bar_graph = BarGenerator(sites)
-            progress_data = bar_graph.data.values()
-            progress_labels = bar_graph.data.keys()
-            line_chart = LineChartGenerator(obj)
-            line_chart_data = line_chart.data()
-            cumulative_labels = line_chart_data.keys()
-            cumulative_data = line_chart_data.values()
-
-        roles_project = UserRole.objects.filter(organization__isnull=False,
-                                                project_id = self.kwargs.get('pk'),
-                                                site__isnull=True, ended_at__isnull=True)
+        # if obj.id == 137:
+        #     progress_data = []
+        #     progress_labels = []
+        #     cumulative_labels = []
+        #     cumulative_data = []
+        #     data = []
+        #     sites = []
+        # else:
+        #     sites = obj.sites.filter(is_active=True, is_survey=False).prefetch_related('site_forms', "site_instances")
+        #     data = serialize('custom_geojson', sites, geometry_field='location',
+        #                  fields=('location', 'id',))
+        #     bar_graph = BarGenerator(sites)
+        #     progress_data = bar_graph.data.values()
+        #     progress_labels = bar_graph.data.keys()
+        #     line_chart = LineChartGenerator(obj)
+        #     line_chart_data = line_chart.data()
+        #     cumulative_labels = line_chart_data.keys()
+        #     cumulative_data = line_chart_data.values()
+        #
+        # roles_project = UserRole.objects.filter(organization__isnull=False,
+        #                                         project_id = self.kwargs.get('pk'),
+        #                                         site__isnull=True, ended_at__isnull=True)
 
         dashboard_data = {
-            'sites': sites,
-            'obj': obj,
+            # 'sites': sites,
             'peoples_involved': peoples_involved,
+            'obj': obj,
             'total_sites': total_sites,
             'total_survey_sites': total_survey_sites,
             'outstanding': outstanding,
             'flagged': flagged,
             'approved': approved,
             'rejected': rejected,
-            'data': data,
-            'cumulative_data': cumulative_data,
-            'cumulative_labels': cumulative_labels,
-            'progress_data': progress_data,
-            'progress_labels': progress_labels,
-            'roles_project': roles_project,
             'total_submissions': flagged + approved + rejected + outstanding
     }
         return dashboard_data
@@ -1041,6 +1037,11 @@ class RolesView(LoginRequiredMixin, TemplateView):
         context['proj_donor'] = self.request.roles.select_related('project').filter(group__name = "Project Donor")
         context['site_reviewer'] = self.request.roles.select_related('site').filter(group__name = "Reviewer")
         context['site_supervisor'] = self.request.roles.select_related('site').filter(group__name = "Site Supervisor")
+        context['staff_project_manager'] = self.request.roles.select_related('staff_project').filter(group__name = "Staff Project Manager")
+        if Team.objects.filter(leader_id = self.request.user.id).exists():
+            context['staff_teams'] = Team.objects.filter(leader_id = self.request.user.id)
+        else:
+            context['staff_teams'] = []
         return context
 
 
@@ -2503,3 +2504,55 @@ class AddSitesTypeView(ProjectRoleMixin, CreateView):
         self.object.project = Project.objects.get(pk=self.kwargs.get('pk'))
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
+
+
+@api_view(["GET"])
+def project_dashboard_peoples(request, pk):
+    name = request.query_params.get('name', False)
+
+    new_people_url = reverse('fieldsight:manage-people-project', kwargs={'pk': pk})
+    if name:
+        roles = UserRole.objects.filter(organization__isnull=False, project_id=pk,
+                                    site__isnull=True, ended_at__isnull=True, user__first_name__icontains=name).\
+            select_related("user", "user__user_profile")
+    else:
+        roles = UserRole.objects.filter(organization__isnull=False, project_id=pk,
+                                    site__isnull=True, ended_at__isnull=True).\
+            select_related("user", "user__user_profile")
+
+    users = []
+    user_data = []
+    for role in roles:
+        if role.user.username not in users:
+            user_data.append(dict(roles=[role.group.name],
+                                  name=role.user.get_full_name(),
+                                  email=role.user.email,
+                                  phone=role.user.user_profile.phone,
+                                  image=role.user.user_profile.profile_picture.url))
+            users.append(role.user.username)
+
+
+    return Response({'peoples':user_data, 'new_people_url':new_people_url})
+
+
+@api_view(["GET"])
+def project_dashboard_map(request, pk):
+    sites = Site.objects.filter(project__id=pk)
+    data = serialize('custom_geojson', sites, geometry_field='location', fields=('location', 'id',))
+    return Response(data)
+
+@api_view(["GET"])
+def project_dashboard_graphs(request, pk):
+    project = Project.objects.get(pk=pk)
+    sites = Site.objects.filter(project__id=pk)
+    bar_graph = BarGenerator(sites)
+
+    progress_labels = bar_graph.data.keys()
+    progress_data = bar_graph.data.values()
+
+    line_chart = LineChartGeneratorProject(project)
+    submissions = line_chart.data()
+    submissions_labels = submissions.keys()
+    submissions_data = submissions.values()
+
+    return Response({'pl':progress_labels, 'pd':progress_data, 'sl': submissions_labels, 'sd':submissions_data})
