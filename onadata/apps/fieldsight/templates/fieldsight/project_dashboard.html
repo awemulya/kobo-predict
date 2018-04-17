@@ -320,7 +320,7 @@ var project = "{{obj.pk}}";
 								{% else %}
 
 								<div class="col-md-6 col-sm-12">
-									<div class="widget-info widget-scolling-large-list margin-top bg-white padding" data-mh="eq111">
+									<div class="widget-info widget-scrolling-large-list margin-top bg-white padding" data-mh="eq111">
 										<div class="widget-head">
 											<h4>{% trans 'Sites' %}</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:site-add' obj.pk %} "><i class="la la-plus"></i></a>
@@ -361,8 +361,8 @@ var project = "{{obj.pk}}";
 								{% endif %}
 
 								{% verbatim %}
-								<div class="col-md-6 col-sm-12" id="peoples">
-
+								<div class="col-md-6 col-sm-12">
+									<div id="peoples"></div>
 								</div>
 								{% endverbatim %}
 
@@ -438,5 +438,5 @@ var project = "{{obj.pk}}";
 <!-- vue-highcharts should be load after Highcharts -->
 <script src="https://cdn.jsdelivr.net/npm/vue-highcharts/dist/vue-highcharts.min.js"></script>
 
-<script src="{% static 'js/fieldsight/manage_project_dashboard.js' %}?v=0.2"></script>
+<script src="{% static 'js/fieldsight/manage_project_dashboard.js' %}?v=0.3"></script>
 {% endblock %}
