@@ -136,13 +136,9 @@ class StaffDelete(StaffRoleMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('staff:team-detail', kwargs={'pk': self.object.team_id})
+
+
 #StaffProject Views
-
-
-
-
-
-
 
 class StaffProjectCreate(HasStaffRoleMixin, CreateView):
     model = StaffProject
