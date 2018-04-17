@@ -18,7 +18,7 @@ class Serializer(GeoJSONSerializer):
 
 class FieldsightMapSerializer(GeoJSONSerializer):
     def get_dump_object(self, obj):
-        data = super(Serializer, self).get_dump_object(obj)
+        data = super(FieldsightMapSerializer, self).get_dump_object(obj)
         # Extend to your taste
         data.update(id=obj.pk)
         try:

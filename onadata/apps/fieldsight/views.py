@@ -30,7 +30,7 @@ from rest_framework.response import Response
 from channels import Group as ChannelGroup
 
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
-from onadata.apps.fieldsight.bar_data_project import BarGenerator
+from onadata.apps.fieldsight.bar_data_project import BarGenerator, ProgressBarGenerator
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
     LineChartGeneratorSite, ProgressGeneratorSite, LineChartGeneratorProject
@@ -2537,18 +2537,21 @@ def project_dashboard_peoples(request, pk):
 
 @api_view(["GET"])
 def project_dashboard_map(request, pk):
-    sites = Site.objects.filter(project__id=pk)
+    sites = Site.objects.filter(project__id=pk)[:200]
     data = serialize('custom_geojson', sites, geometry_field='location', fields=('location', 'id',))
     return Response(data)
 
 @api_view(["GET"])
 def project_dashboard_graphs(request, pk):
     project = Project.objects.get(pk=pk)
-    sites = Site.objects.filter(project__id=pk)
-    bar_graph = BarGenerator(sites)
 
+    bar_graph = ProgressBarGenerator(project)
     progress_labels = bar_graph.data.keys()
     progress_data = bar_graph.data.values()
+
+    # bar_graph = ProgressBarGenerator(project)
+    # progress_labels = bar_graph.data.keys()
+    # progress_data = bar_graph.data.values()
 
     line_chart = LineChartGeneratorProject(project)
     submissions = line_chart.data()
