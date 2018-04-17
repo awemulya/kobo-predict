@@ -147,24 +147,39 @@
 						{% if is_paginated %}
 						            <nav class="pagination justify-content-center" aria-label="page-navigation">
 						              <ul class="pagination">
+						              
+						              {% if page_obj.number == 1 %}
+						              {% else %}
+						                <li class="page-item"><a class="page-link" href="?page={{ 1 }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&laquo;</a></li>
+						              {% endif %}
+
 						              {% if page_obj.has_previous %}
 						                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&laquo;</a></li>
 						              {% else %}
 						                <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
 						              {% endif %}
-						              {% for i in paginator.page_range %}
-						                {% if page_obj.number == i %}
-						                <li class="page-item active"><a class="page-link" href="?page={{ i }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ i }}</a></li>
 
-						                {% else %}
-						                <li class="page-item"><a class="page-link" href="?page={{ i }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ i }}</a></li>
-						                {% endif %}
-						              {% endfor %}
+
+
+
+
+						             
+						                <li class="page-item active"><a class="page-link" href="?page={{ page_obj.number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ i }}</a></li>
+
+						                
+						              
+						                
 						              {% if page_obj.has_next %}
 						                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&raquo;</a></li>
 						              {% else %}
 						                <li class="disabled"><a class="page-link" href="#">&raquo;</a>
 						              {% endif %}
+
+						              {% if page_obj.number == paginator.page_range %}
+						              {% else %}
+						                <li class="page-item"><a class="page-link" href="?page={{ paginator.page_range }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&laquo;</a></li>
+						              {% endif %}
+
 						              </ul>
 						            </nav>
 						{% endif %}
