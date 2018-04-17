@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectRoleMixin, StaffTeamRoleMixin, StaffRoleMixin
 from django.contrib.auth.models import User
-from onadata.apps.staff.forms import TeamForm
+from onadata.apps.staff.forms import TeamForm, StaffForm
 # Team views:
 
 class TeamList(StaffProjectRoleMixin, ListView):
