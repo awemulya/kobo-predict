@@ -6,8 +6,9 @@ from django.http import HttpResponseRedirect
 from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectRoleMixin, StaffTeamRoleMixin, StaffRoleMixin
 from django.contrib.auth.models import User
 from onadata.apps.staff.forms import TeamForm, StaffForm
-# Team views:
 
+
+# Team views:
 class TeamList(StaffProjectRoleMixin, ListView):
     model = Team
     template_name = 'staff/team_list.html'
@@ -126,8 +127,10 @@ class StaffDelete(StaffRoleMixin, DeleteView):
         return reverse('staff:team-detail', kwargs={'pk': self.object.team_id})
 
 
-#StaffProject Views
 
+
+
+#StaffProject Views
 class StaffProjectCreate(HasStaffRoleMixin, CreateView):
     model = StaffProject
     model = StaffProject
