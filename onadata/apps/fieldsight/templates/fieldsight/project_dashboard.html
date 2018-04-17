@@ -32,6 +32,7 @@ $(document).ready(function() {
 var project = "{{obj.pk}}";
  vm = new RegionViewModel(project);
  ko.applyBindings(vm);
+
 });
 </script>
 
@@ -271,7 +272,7 @@ var project = "{{obj.pk}}";
 								
 								{% if obj.cluster_sites %}
 								<div class="col-md-6 col-sm-12">
-									<div class="widget-info widget-scolling-large-list margin-top bg-white padding" data-mh="eq111">
+									<div class="widget-info widget-scrolling-large-list margin-top bg-white padding" data-mh="eq111">
 										<div class="widget-head">
 											<h4>{% trans 'Regions' %}</h4>
 											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:region-add' obj.pk %} "><i class="la la-plus"></i></a>
