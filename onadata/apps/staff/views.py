@@ -35,8 +35,6 @@ class TeamDelete(StaffProjectRoleMixin, DeleteView):
     def get_success_url(self):
         return reverse('staff:staff-project-detail', kwargs={'pk': self.object.staffproject_id})
 
-
-
 class TeamCreate(StaffProjectRoleMixin, CreateView):
     form_class = TeamForm
     model = Team
@@ -48,8 +46,6 @@ class TeamCreate(StaffProjectRoleMixin, CreateView):
     def get_success_url(self):
         return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
 
-
-
 class TeamDetail(StaffTeamRoleMixin, DetailView):
     model = Team
     template_name = 'staff/team_detail.html'
@@ -59,7 +55,6 @@ class TeamDetail(StaffTeamRoleMixin, DetailView):
         context['pk'] = self.kwargs.get('pk')
         context['staff_list'] = Staff.objects.filter(team_id = self.kwargs.get('pk'), is_deleted=False)
         return context
-
 
 class TeamUpdate(StaffTeamRoleMixin, UpdateView):
     form_class = TeamForm
@@ -84,11 +79,6 @@ class StaffList(StaffTeamRoleMixin, ListView):
     def get_queryset(self, request, queryset):
         queryset =  Staff.objects.filter(team_id=self.kwargs.get('pk'), is_deleted= False)
         return queryset
-
-
-
-
-
 
 class StaffCreate(StaffTeamRoleMixin, CreateView):
     model = Staff
@@ -120,8 +110,6 @@ class StaffUpdate(StaffRoleMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('staff:staff-detail', kwargs={'pk': self.kwargs.get('pk')})
-
-
 
 class StaffDelete(StaffRoleMixin, DeleteView):
     model = Staff
@@ -164,9 +152,6 @@ class StaffProjectList(HasStaffRoleMixin, ListView):
         queryset = StaffProject.objects.filter(is_deleted=False)
         return queryset
 
-
-
-
 class StaffProjectUpdate(StaffProjectRoleMixin, UpdateView):
     model = StaffProject
     model = StaffProject
@@ -174,7 +159,6 @@ class StaffProjectUpdate(StaffProjectRoleMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
-
 
 class StaffProjectDetail(StaffProjectRoleMixin, DetailView):
     model = StaffProject
