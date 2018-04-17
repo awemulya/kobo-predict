@@ -116,7 +116,11 @@ class StaffDetail(StaffRoleMixin, DetailView):
 
 class StaffUpdate(StaffRoleMixin, UpdateView):
     model = Staff
+<<<<<<< HEAD
     form_class = StaffForm
+=======
+    form_class = StaffForm 
+>>>>>>> 3a53327439ae9097072d648f6f8941cfdc2e526f
     success_url = reverse_lazy('staff:staff-list')
 
     def get_success_url(self):
