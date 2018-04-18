@@ -3,12 +3,13 @@ import json
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.exceptions import PermissionDenied
 # Create your models here.
 
 STAFF_TYPES = (
         (1, 'TSC Agent'),
         (2, 'Social Mobilizer'),
-        (3, 'Junior Builder-Trainer'),
+        (3, 'Senior Builder-Trainer'),
         (4, 'Junior Builder-Trainer'),
     )
 
@@ -114,7 +115,15 @@ class Attendance(models.Model):
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
-        unique_together = [('attendance_date', 'team'),]
+        unique_together = [('attendance_date', 'team', 'is_deleted'),]
+
+    def save(self, *args, **kwargs):
+        attendance_date = datetime.datetime.strptime(str(self.attendance_date), '%Y-%m-%d')
+        if attendance_date > datetime.datetime.today():
+            raise PermissionDenied()
+        else:
+            super(Attendance, self).save(*args, **kwargs)  # Call the "real" save() method.
+    
 
     def __unicode__(self):
         return str(self.attendance_date)

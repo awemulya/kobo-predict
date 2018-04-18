@@ -1,7 +1,7 @@
 from onadata.apps.staff.viewsets.staffViewset import StaffViewSet, AttendanceViewSet, TeamViewSet, StaffUpdateViewSet, staffdesignations, staffgender, BankViewSet
 
 from django.conf.urls import url
-from .views import TeamDetail, TeamList, TeamCreate, TeamUpdate, TeamDelete, StaffList,StaffCreate, StaffDetail, StaffDelete,StaffUpdate, StaffProjectCreate, StaffProjectUpdate, StaffProjectList, StaffProjectDetail
+from .views import TeamDetail, TeamList, TeamCreate, TeamUpdate, TeamDelete, StaffList, StaffAttendanceUpdate, StaffCreate, StaffDetail, StaffDelete,StaffUpdate, StaffProjectCreate, StaffProjectUpdate, StaffProjectList, StaffProjectDetail
 from . import views
 app_name = 'staff'
 
@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^staff-project/(?P<pk>[0-9]+)/$$', StaffProjectDetail.as_view(), name="staff-project-detail"),
 
     url(r'^staff-project/update/(?P<pk>[0-9]+)/$', StaffProjectUpdate.as_view(), name="staff-project-update"),
+    url(r'^attendance/update/(?P<pk>[0-9]+)/(?P<date>\d{4}-\d{2}-\d{2})/$', StaffAttendanceUpdate.as_view(), name="staff-attendance-update"),
     ]
