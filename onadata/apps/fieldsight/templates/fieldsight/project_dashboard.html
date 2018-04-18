@@ -69,11 +69,10 @@ var project = "{{obj.pk}}";
 
 					</div>
 					<div class="action-right">
-						<a href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i>{% trans 'Responses' %}</a>
 
 						<span class="dropdown">
 							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<i class="la la-clipboard"></i>{% trans 'Reports' %}
+								<i class="la la-clipboard"></i>{% trans 'Data' %}
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i>{% trans ' Project' %} {% trans 'Summary' %} {% trans 'Report' %}</a>
@@ -81,6 +80,8 @@ var project = "{{obj.pk}}";
 								<a class="dropdown-item" href="{% url 'fieldsight:download-stages' obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Excel' %} {% trans 'Report' %}</a>
 
 								<a class="dropdown-item" href="{% url 'fieldsight:ProjectStageDetailtemplate' obj.pk %}"><i class="la la-clipboard"></i>{% trans 'View' %} {% trans 'Tabular' %}{% trans 'Report' %}</a>
+								<a class="dropdown-item" href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i>{% trans 'Responses' %}</a>
+
 							</div>
 						</span>
 						<span class="dropdown">
@@ -283,6 +284,171 @@ var project = "{{obj.pk}}";
 
 
 					<div class="row">
+						<div class="col-md-12">
+							<div class="widget-info margin-top bg-white padding">
+								<div class="widget-head">
+									<h4>Tabular Report</h4>
+									<a class="btn btn-xs btn-primary" href="#"><i class="la la-plus"></i></a>
+								</div>
+								<div class="widget-body">
+									<div class="table-responsive">
+									  	<table class="table table-bordered table-hover tabular-report">
+									    	<thead class="thead-default">
+									    		<tr>
+									    			<th scope="col" rowspan="2">Site ID</th>
+									    			<th scope="col" rowspan="2">Site Name</th>
+									    			<th scope="col">Inspection Phase</th>
+									    			<th scope="col" colspan="2">Monitoring Phase</th>
+									    			<th scope="col">Another Title</th>
+									    			<th scope="col">Another Title</th>
+									    			<th scope="col">Another Title</th>
+									    		</tr>
+									    		<tr>
+									    			<th scope="col">Inspection</th>
+									    			<th scope="col">Monitoring</th>
+									    			<th scope="col">Final Monitoring</th>
+									    			<th scope="col">Another Title</th>
+									    			<th scope="col">Another Title</th>
+									    			<th scope="col">Another Title</th>
+									    		</tr>
+									    	</thead>
+									    	<tbody>
+									    		<tr>
+									    			<th scope="row">BG4589</th>
+									    			<td>Balaju Site</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    		</tr>
+									    		<tr>
+									    			<th scope="row">BG4589</th>
+									    			<td>Balaju Site</td>
+									    			<td class="cell-success">2</td>
+									    			<td class="cell-success">Value</td>
+									    			<td class="cell-success">Value</td>
+									    			<td class="cell-success">Value</td>
+									    			<td class="cell-warning">Value</td>
+									    			<td class="cell-danger">Value</td>
+									    		</tr>
+									    		<tr>
+									    			<th scope="row">BG4589</th>
+									    			<td>Balaju Site</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    		</tr>
+									    		<tr>
+									    			<th scope="row">BG4589</th>
+									    			<td>Balaju Site</td>
+									    			<td class="cell-success">2</td>
+									    			<td class="cell-success">Value</td>
+									    			<td class="cell-success">Value</td>
+									    			<td class="cell-success">Value</td>
+									    			<td class="cell-warning">Value</td>
+									    			<td class="cell-danger">Value</td>
+									    		</tr>
+									    		<tr>
+									    			<th scope="row">BG4589</th>
+									    			<td>Balaju Site</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    		</tr>
+									    		<tr>
+									    			<th scope="row">BG4589</th>
+									    			<td>Balaju Site</td>
+									    			<td class="cell-success">2</td>
+									    			<td class="cell-success">Value</td>
+									    			<td class="cell-success">Value</td>
+									    			<td class="cell-success">Value</td>
+									    			<td class="cell-warning">Value</td>
+									    			<td class="cell-danger">Value</td>
+									    		</tr>
+									    		<tr>
+									    			<th scope="row">BG4589</th>
+									    			<td>Balaju Site</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    			<td class="cell-inactive">Value</td>
+									    		</tr>
+									    		<tr>
+									    			<th scope="row">BG4589</th>
+									    			<td>Balaju Site</td>
+									    			<td class="cell-success">2</td>
+									    			<td class="cell-success">Value</td>
+									    			<td class="cell-success">Value</td>
+									    			<td class="cell-success">Value</td>
+									    			<td class="cell-warning">Value</td>
+									    			<td class="cell-danger">Value</td>
+									    		</tr>
+									    	</tbody>
+									  	</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 2 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
+								<div class="mini-stat-info">
+									<span>{{outstanding }}</span>
+									{% trans 'Pending' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 3%}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-thumbs-up"></i></span>
+								<div class="mini-stat-info">
+									<span>{{approved}}</span>
+									{% trans 'Approved' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 1 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
+								<div class="mini-stat-info">
+									<span>{{flagged}}</span>
+									{% trans 'Flagged' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 0 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
+								<div class="mini-stat-info">
+									<span>{{rejected}}</span>
+									{% trans 'Rejected' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+
+					</div>
+
+					{% verbatim %}
+						<div class="row" id="graphs">
+
+						</div>
+					{% endverbatim %}
+
+					<div class="row">
 						<div class="col-lg-8 col-md-12">
 							<div class="widget-info widget-scrolling-list margin-top bg-white padding" data-mh="row-1">
 								<div class="widget-head">
@@ -338,54 +504,6 @@ var project = "{{obj.pk}}";
 						</div>
 					</div>
 
-
-
-					{% verbatim %}
-						<div class="row" id="graphs">
-
-						</div>
-					{% endverbatim %}
-
-					<div class="row">
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 2 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
-								<div class="mini-stat-info">
-									<span>{{outstanding }}</span>
-									{% trans 'Pending' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 3%}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-thumbs-up"></i></span>
-								<div class="mini-stat-info">
-									<span>{{approved}}</span>
-									{% trans 'Approved' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 1 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
-								<div class="mini-stat-info">
-									<span>{{flagged}}</span>
-									{% trans 'Flagged' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 0 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
-								<div class="mini-stat-info">
-									<span>{{rejected}}</span>
-									{% trans 'Rejected' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-
-					</div>
 
 					<!--<div class="row">-->
 						<!--<div class="col-md-6">-->
