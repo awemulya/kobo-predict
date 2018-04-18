@@ -174,7 +174,7 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 												<img src="{% if obj.logo %}{{ obj.logo.url }}{% else %}{% static 'dummy/assets/img/default_image.png' %}{% endif %}" width="123" height="123" alt="">
 											</div>
 											<div class="org-profile-basic-info">
-												<h2>{{ obj.name }}</h2>
+												<h4>{{ obj.name }}</h4>
 												<h6>{{ obj.identifier }}</h6>
 												<p>{{ obj.address }}, {{ obj.get_country_display }}</p>
                                                 <p>{{ obj.email }}</p>
@@ -237,7 +237,6 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 									<h4><a href="#">{% trans 'About' %}</a></h4>
 								</div>
 								<div class="widget-body">
-
 									<!-- <p>
 									{{ obj.public_desc}}</p> -->
 									{% for data in meta_data %}
@@ -267,36 +266,43 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 							</div>
 						</div>
 					</div>
-
-					<!--<div class="row">-->
-						<!--<div class="col-md-12">-->
-							<!--&lt;!&ndash; Nav tabs &ndash;&gt;-->
-							<!--<div class="tabbing margin-top">-->
-								<!--<ul class="nav nav-tabs" role="tablist">-->
-								  <!--<li class="nav-item">-->
-									<!--<a class="nav-link active" data-toggle="tab" href="#tab1" role="tab">Project Manager</a>-->
-								  <!--</li>-->
-								  <!--<li class="nav-item">-->
-									<!--<a class="nav-link" data-toggle="tab" href="#tab2" role="tab">Reviewers</a>-->
-								  <!--</li>-->
-								  <!--<li class="nav-item">-->
-									<!--<a class="nav-link" data-toggle="tab" href="#tab3" role="tab">Site Supervisors</a>-->
-								  <!--</li>-->
-								  <!--<li class="nav-item">-->
-									<!--<a class="nav-link" data-toggle="tab" href="#tab4" role="tab">Contractors</a>-->
-								  <!--</li>-->
-								<!--</ul>-->
-
-								<!--&lt;!&ndash; Tab panes &ndash;&gt;-->
-								<!--<div class="tab-content">-->
-								  <!--<div class="tab-pane active" id="tab1" role="tabpanel">...</div>-->
-								  <!--<div class="tab-pane" id="tab2" role="tabpanel">...</div>-->
-								  <!--<div class="tab-pane" id="tab3" role="tabpanel">...</div>-->
-								  <!--<div class="tab-pane" id="tab4" role="tabpanel">...</div>-->
-								<!--</div>-->
-							<!--</div>-->
-						<!--</div>-->
-					<!--</div>-->
+					<div class="row">
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:site-submission-data' obj.pk 2 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
+								<div class="mini-stat-info">
+									<span>{{outstanding|length}}</span>
+									{% trans 'Pending' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:site-submission-data' obj.pk 3 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-thumbs-up"></i></span>
+								<div class="mini-stat-info">
+									<span>{{approved|length}}</span>
+									{% trans 'Approved' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:site-submission-data' obj.pk 1 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
+								<div class="mini-stat-info">
+									<span>{{flagged|length}}</span>
+									{% trans 'Flagged' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:site-submission-data' obj.pk 0 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
+								<div class="mini-stat-info">
+									<span>{{rejected|length}}</span>
+									{% trans 'Rejected' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
 
 
 					</div>
@@ -513,50 +519,36 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 						</div>
 
 					</div>
+					<!--<div class="row">-->
+						<!--<div class="col-md-12">-->
+							<!--&lt;!&ndash; Nav tabs &ndash;&gt;-->
+							<!--<div class="tabbing margin-top">-->
+								<!--<ul class="nav nav-tabs" role="tablist">-->
+								  <!--<li class="nav-item">-->
+									<!--<a class="nav-link active" data-toggle="tab" href="#tab1" role="tab">Project Manager</a>-->
+								  <!--</li>-->
+								  <!--<li class="nav-item">-->
+									<!--<a class="nav-link" data-toggle="tab" href="#tab2" role="tab">Reviewers</a>-->
+								  <!--</li>-->
+								  <!--<li class="nav-item">-->
+									<!--<a class="nav-link" data-toggle="tab" href="#tab3" role="tab">Site Supervisors</a>-->
+								  <!--</li>-->
+								  <!--<li class="nav-item">-->
+									<!--<a class="nav-link" data-toggle="tab" href="#tab4" role="tab">Contractors</a>-->
+								  <!--</li>-->
+								<!--</ul>-->
 
-<!--right heree-->
+								<!--&lt;!&ndash; Tab panes &ndash;&gt;-->
+								<!--<div class="tab-content">-->
+								  <!--<div class="tab-pane active" id="tab1" role="tabpanel">...</div>-->
+								  <!--<div class="tab-pane" id="tab2" role="tabpanel">...</div>-->
+								  <!--<div class="tab-pane" id="tab3" role="tabpanel">...</div>-->
+								  <!--<div class="tab-pane" id="tab4" role="tabpanel">...</div>-->
+								<!--</div>-->
+							<!--</div>-->
+						<!--</div>-->
+					<!--</div>-->
 					<div class="row">
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:site-submission-data' obj.pk 2 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
-								<div class="mini-stat-info">
-									<span>{{outstanding|length}}</span>
-									{% trans 'Pending' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:site-submission-data' obj.pk 3 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-thumbs-up"></i></span>
-								<div class="mini-stat-info">
-									<span>{{approved|length}}</span>
-									{% trans 'Approved' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:site-submission-data' obj.pk 1 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
-								<div class="mini-stat-info">
-									<span>{{flagged|length}}</span>
-									{% trans 'Flagged' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:site-submission-data' obj.pk 0 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
-								<div class="mini-stat-info">
-									<span>{{rejected|length}}</span>
-									{% trans 'Rejected' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-
-
-				</div>
-
-						<div class="row">
 						<div class="col-md-6">
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
@@ -589,10 +581,11 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 							</div>
 						</div>
 					</div>
+				</div>
 						</div>
 					</section>
 						</div>
-					</div>
+					<!--</div>-->
                 <!--</section>-->
 <!---->
 			<!--</div>-->

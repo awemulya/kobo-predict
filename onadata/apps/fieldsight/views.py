@@ -273,13 +273,13 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             if question['question_name'] in meta_answers:
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
         myanswers = mylist
-        result = get_images_for_sites_count(obj.id)
+        # result = get_images_for_sites_count(obj.id)
         
-        countlist = list(result["result"])
-        if countlist:
-            total_count = countlist[0]['count']
-        else:
-            total_count = 0
+        # countlist = list(result["result"])
+        # if countlist:
+        #     total_count = countlist[0]['count']
+        # else:
+        #     total_count = 0
         outstanding, flagged, approved, rejected = obj.get_site_submission()
         response = obj.get_site_submission_count()
         dashboard_data = {
@@ -297,8 +297,8 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             'has_progress_chart': has_progress_chart,
             'meta_data': myanswers,
             'is_supervisor_only': is_supervisor_only,
-            'next_photos_count':total_count - 5,
-            'total_photos': total_count,
+            'next_photos_count':20 - 5,
+            'total_photos': 10,
             'total_submissions': response['flagged'] + response['approved'] + response['rejected'] + response['outstanding']
         }
         return dashboard_data
