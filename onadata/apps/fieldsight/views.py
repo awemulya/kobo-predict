@@ -2264,11 +2264,15 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                         if  substage1.stage_forms.site_form_instances.all():
                              get_status = getStatus(substage1.stage_forms.site_form_instances.all()[0])
                              status = get_status
+                             submission_count = substage1.stage_forms.site_form_instances.all().count()
                         else:
                             status = "No submission."
+                            submission_count = 0
                     else:
                          status = "-"
-                    site_row.append(status)
+                         submission_count = 0
+                    site_row.append([status, submission_count])
+                
                 data.append(site_row)
 
             if sites.has_next():
