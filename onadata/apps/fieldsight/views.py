@@ -2222,7 +2222,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                 sub_stages = stage.parent.all()
                 if len(sub_stages) > 0:
                     stages_rows.append("Stage :"+stage.name)
-                    table_head.append({"name":stage.name, "rowspan":1, "colspan":len(sub_stages) })
+                    table_head.append({"name":stage.name, "stage_order": "Stage " +str(stage_count), "rowspan":1, "colspan":len(sub_stages) })
                     sub_stage_count=0
                     for ss in sub_stages:
                         sub_stage_count+=1
