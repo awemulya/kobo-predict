@@ -2215,16 +2215,20 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             table_head.append({"name":"Site Id", "rowspan":2, "colspan":1 })
             table_head.append({"name":"Site Name", "rowspan":2, "colspan":1 })
             
+            stage_count=0
             for stage in stages:
+                stage_count+=1
+
                 sub_stages = stage.parent.all()
                 if len(sub_stages) > 0:
                     stages_rows.append("Stage :"+stage.name)
                     table_head.append({"name":stage.name, "rowspan":1, "colspan":len(sub_stages) })
-
+                    sub_stage_count=0
                     for ss in sub_stages:
+                        sub_stage_count+=1
                         head_row.append("Sub Stage :"+ss.name)
                         ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
-                        substages.append(ss.name)
+                        substages.append([ss.name, "Sub Stage "+str(stage_count)+"."+str(sub_stage_countub)])
 
             
 
