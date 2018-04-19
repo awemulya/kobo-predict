@@ -2228,7 +2228,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
                         sub_stage_count+=1
                         head_row.append("Sub Stage :"+ss.name)
                         ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
-                        substages.append([ss.name, "Sub Stage "+str(stage_count)+"."+str(sub_stage_countub)])
+                        substages.append([ss.name, "Sub Stage "+str(stage_count)+"."+str(sub_stage_count)])
 
             
 
