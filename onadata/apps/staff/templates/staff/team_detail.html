@@ -55,6 +55,36 @@
 
 
 <br>
+<section class="panel">
+	<div class="col-md-12">
+							<div class="widget-info margin-top bg-white padding">
+								<!-- <div class="widget-head">
+									Attendance
+								</div> -->
+								<div class="widget-body">
+									<div class="calendar-header clearfix">
+
+										<div class="pull-right form-inline">
+											<div class="btn-group margin-right">
+												<button class="btn btn-sm btn-primary" data-calendar-nav="prev"><< Prev</button>
+												<button class="btn btn-sm" data-calendar-nav="today">Today</button>
+												<button class="btn btn-sm btn-primary" data-calendar-nav="next">Next >></button>
+											</div>
+											<div class="btn-group">
+												<button class="btn btn-sm btn-warning" data-calendar-view="year">Year</button>
+												<button class="btn btn-sm btn-warning active" data-calendar-view="month">Month</button>
+												<button class="btn btn-sm btn-warning" data-calendar-view="week">Week</button>
+											</div>
+										</div>
+										<h4></h4>
+									</div>
+									<div id="calendar" class="margin-top"></div>
+
+								</div>
+							</div>
+						</div>
+</section>
+<br>
 
 				<section class="panel">
                     <header class="panel-heading clearfix">
@@ -65,6 +95,7 @@
 						
                     </header>
 					<div class="panel-body">
+
 						<div class="row">
 						{% for object in staff_list %}
 
@@ -99,6 +130,75 @@
 				</section>
 </div>
 
+
+
+{% endblock %}
+{% block extrascript %}
+
+<script src="{% static 'dummy/assets/js/vendor/jquery.matchHeight.js' %}"></script>
+		<script src="{% static 'dummy/assets/js/vendor/underscore-min.js' %} "></script>
+		<script src="{% static 'dummy/assets/js/vendor/calendar.min.js' %}"></script>
+
+		<script>
+		var data={{ attendance_list|safe }};
+			(function($) {
+				"use strict";
+
+				var options = {
+					events_source: data,
+
+		        	//events_source: 'events.json.php',
+					view: 'month',
+					tmpl_path: "{% static 'dummy/assets/tmpls/' %}",
+					tmpl_cache: false,
+					views: {
+				      year:  {
+				        enable: 1
+				      },
+				      month:  {
+				        enable: 1
+				      },
+				      week:  {
+				        enable: 1
+				      },
+				      day:   {
+				        enable: 0 //disabled
+				      }
+				    },
+					modal : "#events-modal",
+		            modal_type : "ajax",
+		            modal_title : function (e) { return e.title },
+					// day: '2013-03-19',
+					onAfterViewLoad: function(view) {
+						$('.calendar-header h4').text(this.getTitle());
+						$('.btn-group button').removeClass('active');
+						$('button[data-calendar-view="' + view + '"]').addClass('active');
+					},
+					classes: {
+						months: {
+							general: 'label'
+						}
+					}
+				};
+
+				var calendar = $('#calendar').calendar(options);
+
+				$('.btn-group button[data-calendar-nav]').each(function() {
+					var $this = $(this);
+					$this.click(function() {
+						calendar.navigate($this.data('calendar-nav'));
+					});
+				});
+
+				$('.btn-group button[data-calendar-view]').each(function() {
+					var $this = $(this);
+					$this.click(function() {
+						calendar.view($this.data('calendar-view'));
+					});
+				});
+
+			}(jQuery));
+		</script>
 
 
 {% endblock %}

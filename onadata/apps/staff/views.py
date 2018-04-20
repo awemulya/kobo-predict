@@ -1,11 +1,16 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Team, Staff, StaffProject
+from .models import Team, Staff, StaffProject, Attendance
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectRoleMixin, StaffTeamRoleMixin, StaffRoleMixin
 from django.contrib.auth.models import User
+<<<<<<< HEAD
 from onadata.apps.staff.forms import TeamForm, StaffForm
+=======
+from onadata.apps.staff.forms import TeamForm, StaffForm, AttendanceForm
+# Team views:
+>>>>>>> kc_master
 
 
 # Team views:
@@ -55,6 +60,7 @@ class TeamDetail(StaffTeamRoleMixin, DetailView):
         context = super(TeamDetail, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
         context['staff_list'] = Staff.objects.filter(team_id = self.kwargs.get('pk'), is_deleted=False)
+        context['attendance_list'] = self.object.get_attendance()
         return context
 
 class TeamUpdate(StaffTeamRoleMixin, UpdateView):
@@ -107,7 +113,12 @@ class StaffDetail(StaffRoleMixin, DetailView):
 
 class StaffUpdate(StaffRoleMixin, UpdateView):
     model = Staff
+<<<<<<< HEAD
     form_class = StaffForm
+=======
+    form_class = StaffForm 
+    success_url = reverse_lazy('staff:staff-list')
+>>>>>>> kc_master
 
     def get_success_url(self):
         return reverse('staff:staff-detail', kwargs={'pk': self.kwargs.get('pk')})
@@ -157,7 +168,6 @@ class StaffProjectList(HasStaffRoleMixin, ListView):
 
 class StaffProjectUpdate(StaffProjectRoleMixin, UpdateView):
     model = StaffProject
-    model = StaffProject
     fields = ['name',]
 
     def get_success_url(self):
@@ -172,3 +182,22 @@ class StaffProjectDetail(StaffProjectRoleMixin, DetailView):
         context['pk'] = self.kwargs.get('pk')
         context['team_list'] = Team.objects.filter(staffproject_id = self.kwargs.get('pk'), is_deleted=False)
         return context
+
+
+
+class StaffAttendanceUpdate(StaffTeamRoleMixin, UpdateView):
+    model = Attendance
+    form_class = AttendanceForm
+
+    def get_object(self):
+        date = self.kwargs.get('date')
+        team_id = self.kwargs.get('pk')
+        has_attendance = Attendance.objects.filter(attendance_date=date, team_id=team_id, is_deleted=False)
+        if not has_attendance:
+            attendance = Attendance.objects.create(attendance_date=date, team_id=team_id, is_deleted=False, submitted_by=self.request.user)        
+        else:
+            attendance = has_attendance[0]
+        return attendance
+
+    def get_success_url(self):
+        return reverse('staff:team-detail', kwargs={'pk': self.kwargs.get('pk')})

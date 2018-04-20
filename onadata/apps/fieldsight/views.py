@@ -273,13 +273,13 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             if question['question_name'] in meta_answers:
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
         myanswers = mylist
-        # result = get_images_for_sites_count(obj.id)
+        result = get_images_for_sites_count(obj.id)
         
-        # countlist = list(result["result"])
-        # if countlist:
-        #     total_count = countlist[0]['count']
-        # else:
-        #     total_count = 0
+        countlist = list(result["result"])
+        if countlist:
+            total_count = countlist[0]['count']
+        else:
+            total_count = 0
         outstanding, flagged, approved, rejected = obj.get_site_submission()
         response = obj.get_site_submission_count()
         dashboard_data = {
@@ -297,8 +297,8 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             'has_progress_chart': has_progress_chart,
             'meta_data': myanswers,
             'is_supervisor_only': is_supervisor_only,
-            'next_photos_count':20 - 5,
-            'total_photos': 10,
+            'next_photos_count':total_count - 5,
+            'total_photos': total_count,
             'total_submissions': response['flagged'] + response['approved'] + response['rejected'] + response['outstanding']
         }
         return dashboard_data
@@ -2215,16 +2215,20 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
             table_head.append({"name":"Site Id", "rowspan":2, "colspan":1 })
             table_head.append({"name":"Site Name", "rowspan":2, "colspan":1 })
             
+            stage_count=0
             for stage in stages:
+                stage_count+=1
+
                 sub_stages = stage.parent.all()
                 if len(sub_stages) > 0:
                     stages_rows.append("Stage :"+stage.name)
-                    table_head.append({"name":stage.name, "rowspan":1, "colspan":len(sub_stages) })
-
+                    table_head.append({"name":stage.name, "stage_order": "Stage " +str(stage_count), "rowspan":1, "colspan":len(sub_stages) })
+                    sub_stage_count=0
                     for ss in sub_stages:
+                        sub_stage_count+=1
                         head_row.append("Sub Stage :"+ss.name)
                         ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
-                        substages.append(ss.name)
+                        substages.append([ss.name, "Sub Stage "+str(stage_count)+"."+str(sub_stage_count)])
 
             
 
@@ -2541,8 +2545,8 @@ def project_dashboard_peoples(request, pk):
 
 @api_view(["GET"])
 def project_dashboard_map(request, pk):
-    sites = Site.objects.filter(project__id=pk)[:200]
-    data = serialize('custom_geojson', sites, geometry_field='location', fields=('location', 'id',))
+    sites = Site.objects.filter(project__id=pk)[:100]
+    data = serialize('custom_geojson', sites, geometry_field='location', fields=('location', 'id', 'name'))
     return Response(data)
 
 @api_view(["GET"])

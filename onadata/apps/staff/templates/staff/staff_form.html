@@ -16,7 +16,7 @@
 									 {{ form.media }}
 									{% for field in form.visible_fields  %}
 
-									<div class="form-group col-md-6">
+									<div id="div_{{field.name}}" class="form-group col-md-6">
 									  <label class="col-form-label">{{ field.label }}</label>
 									 {{ field|add_class:"form-control" }}
 									</div>
@@ -35,5 +35,22 @@
 	</section>
 </div>
 
+<script>
+
+$( "#id_bank" ).change(function() {
+  var selected = $('#id_bank').val();
+  if (selected == ""){
+  	$("#div_bank_name").show();
+  	$("#id_bank_name").prop('disabled', false);
+  }
+  else{
+  	$("#div_bank_name").hide();
+  	$("#id_bank_name").prop('disabled', true);
+  }
+});
+
+$('#id_bank').trigger("change");
+
+</script>
 
 {% endblock %}

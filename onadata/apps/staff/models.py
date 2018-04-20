@@ -3,12 +3,13 @@ import json
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.exceptions import PermissionDenied
 # Create your models here.
 
 STAFF_TYPES = (
         (1, 'TSC Agent'),
         (2, 'Social Mobilizer'),
-        (3, 'Junior Builder-Trainer'),
+        (3, 'Senior Builder-Trainer'),
         (4, 'Junior Builder-Trainer'),
     )
 
@@ -49,6 +50,20 @@ class Team(models.Model):
     def __unicode__(self):
        return self.name +" C="+ str(self.created_date) +" U="+ str(self.updated_date)
 
+    def get_attendance(self):
+        days = self.attandence_team.all()
+        
+        present_list=[]
+
+        for day in days:
+            start=int(day.attendance_date.strftime("%s")) * 1000
+            
+            for staff in day.staffs.all():
+                record={"id":str(day.id)+"-"+str(staff.id), "start":str(start), "end":str(start), "title":staff.get_fullname()+" Present. Attendance submitted by "+day.submitted_by.first_name+" "+day.submitted_by.first_name+".", "class":"event-present"}
+                present_list.append(record)
+        return json.dumps(present_list)
+
+
 class Staff(models.Model):
     first_name = models.CharField(max_length=255, blank=True, null=True)
     last_name = models.CharField(max_length=255, blank=True, null=True)
@@ -65,7 +80,7 @@ class Staff(models.Model):
     created_by = models.ForeignKey(User, related_name="staff_created_by")
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
-    bank = models.ForeignKey(Bank, blank=True, null=True)
+    bank = models.ForeignKey(Bank, blank=True, null=True, default=None)
     date_of_birth = models.DateField(blank=True, null=True)
     contract_start = models.DateField(blank=True, null=True)
     contract_end = models.DateField(blank=True, null=True)
@@ -74,6 +89,9 @@ class Staff(models.Model):
 
     def __unicode__(self):
         return str(self.first_name) +" "+  str(self.last_name)
+
+    def get_fullname(self):
+        return str(self.first_name) +" "+ str(self.last_name)
 
     def get_attendance(self):
         present = Attendance.objects.filter(staffs__in = [self], team_id=self.team_id)
@@ -97,7 +115,15 @@ class Attendance(models.Model):
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
-        unique_together = [('attendance_date', 'team'),]
+        unique_together = [('attendance_date', 'team', 'is_deleted'),]
+
+    def save(self, *args, **kwargs):
+        attendance_date = datetime.datetime.strptime(str(self.attendance_date), '%Y-%m-%d')
+        if attendance_date > datetime.datetime.today():
+            raise PermissionDenied()
+        else:
+            super(Attendance, self).save(*args, **kwargs)  # Call the "real" save() method.
+    
 
     def __unicode__(self):
         return str(self.attendance_date)
