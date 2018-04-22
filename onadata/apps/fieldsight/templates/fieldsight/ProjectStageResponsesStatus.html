@@ -105,7 +105,7 @@
 						<!-- ko foreach: rows  -->
 						<tr>
 							<!-- ko foreach: $data  -->
-							<td data-bind="text: if typeof $data === 'string' ? $data:$data[0]">	
+							<td data-bind="text:typeof $data === 'string' ? $data:$data[0]">	
 								
 
 							</td>
