@@ -97,7 +97,7 @@
 							</tr>
 							<tr>
 							<!-- ko foreach: subHeaders  -->
-								<th data-bind="text: $data.length"></th>	
+								<th data-bind="text: $data[0] + ' / ' + $data[1]"></th>	
 							<!-- /ko-->
 							</tr>
 						</thead>
@@ -107,7 +107,7 @@
 						<!-- ko foreach: rows  -->
 						<tr>
 							<!-- ko foreach: $data  -->
-							<td data-bind="text: if $data.length$data[0]">	
+							<td data-bind="text: $data.length">	
 								
 
 							</td>
