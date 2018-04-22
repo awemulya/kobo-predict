@@ -2257,9 +2257,9 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     # If page is out of range (e.g. 9999), deliver last page of results.
         sites = paginator.page(paginator.num_pages)
     for site in sites:
-        site_row = [site.identifier, site.name]
+        site_row = [site.site.identifier, site.site.name]
         for k, v in ss_index.items():
-            substage = filterbyvalue(site.stages.all(), v)
+            substage = filterbyvalue(site.site.stages.all(), v)
             substage1 = next(substage, None)
             if substage1 is not None:
                 if  substage1.stage_forms.site_form_instances.all():
