@@ -101,13 +101,11 @@
 							<!-- /ko-->
 							</tr>
 						</thead>
-
-
 						<tbody>
 						<!-- ko foreach: rows  -->
 						<tr>
 							<!-- ko foreach: $data  -->
-							<td data-bind="text: $data.length">	
+							<td data-bind="text: if typeof $data === 'string' ? $data:$data[0]">	
 								
 
 							</td>
