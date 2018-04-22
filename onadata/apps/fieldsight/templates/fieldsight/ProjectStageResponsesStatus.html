@@ -91,7 +91,7 @@
 						<thead>
 							<tr rowspan="2">
 							<!-- ko foreach: headers  -->
-								<th data-bind="text: $data.name + $data.stage_order ? '('+ $data.stage_order +')':'', attr: { rowspan: $data.rowspan, colspan: $data.colspan }"></th>
+								<th data-bind="text: $data.stage_order ? $data.name + ' ('+ $data.stage_order +')':$data.name, attr: { rowspan: $data.rowspan, colspan: $data.colspan }"></th>
 							<!-- /ko-->
 								
 							</tr>
