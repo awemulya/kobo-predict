@@ -97,15 +97,17 @@
 							</tr>
 							<tr>
 							<!-- ko foreach: subHeaders  -->
-								<th data-bind="text: $data[0] + ' / ' + $data[1]"></th>	
+								<th data-bind="text: $data.length"></th>	
 							<!-- /ko-->
 							</tr>
 						</thead>
+
+
 						<tbody>
 						<!-- ko foreach: rows  -->
 						<tr>
 							<!-- ko foreach: $data  -->
-							<td data-bind="text: $data[0]">	
+							<td data-bind="text: if $data.length$data[0]">	
 								
 
 							</td>
