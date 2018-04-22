@@ -2240,7 +2240,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         elif el is not None and el.form_status==1: return "Rejected"
         else: return "Pending"
     if q_keyword is not None:
-        site_list = project.sites.filter(name__icontains=keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
+        site_list = project.sites.filter(name__icontains=q_keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
         get_params = "?q="+keyword +"&page="
     else:
         site_list = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id', '-id').prefetch_related(Prefetch('site__stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
@@ -2288,7 +2288,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
     def get(self, request, pk):
         q_keyword = self.request.GET.get("q", None)
         stage_data = get_project_stage_status(request, pk, q_keyword, page_list=10)
-        return render(request, 'fieldsight/ProjectStageResponsesStatus.html')
+        return HttpResponse(json.dumps(stage_data), status=200)
 
 class StageTemplateView(ReadonlyProjectLevelRoleMixin, View):
     def get(self, request, pk):
