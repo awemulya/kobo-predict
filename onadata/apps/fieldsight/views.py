@@ -230,7 +230,6 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         # roles_project = UserRole.objects.filter(organization__isnull=False,
         #                                         project_id = self.kwargs.get('pk'),
         #                                         site__isnull=True, ended_at__isnull=True)
-
         dashboard_data = {
             # 'sites': sites,
             'peoples_involved': peoples_involved,
@@ -2199,97 +2198,97 @@ class SiteSearchView(ListView):
         # import pdb; pdb.set_trace()
         return filtered_objects.filter(Q(name__icontains=query) | Q(identifier__icontains=query))
 
+def get_project_stage_status(request, pk, q_keyword,page_list):
+    data = []
+    ss_index = {}
+    stages_rows = []
+    head_row = ["Site ID", "Name"]
+    project = get_object_or_404(Project, pk=pk)
+    
+    stages = project.stages.filter(stage__isnull=True)
+    
+    table_head = []
+    substages =[]
+    table_head.append({"name":"Site Id", "rowspan":2, "colspan":1 })
+    table_head.append({"name":"Site Name", "rowspan":2, "colspan":1 })
+    
+    stage_count=0
+    for stage in stages:
+        stage_count+=1
+
+        sub_stages = stage.parent.all()
+        if len(sub_stages) > 0:
+            stages_rows.append("Stage :"+stage.name)
+            table_head.append({"name":stage.name, "stage_order": "Stage " +str(stage_count), "rowspan":1, "colspan":len(sub_stages) })
+            sub_stage_count=0
+            for ss in sub_stages:
+                sub_stage_count+=1
+                head_row.append("Sub Stage :"+ss.name)
+                ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
+                substages.append([ss.name, "Sub Stage "+str(stage_count)+"."+str(sub_stage_count)])
+
+    
+
+    # data.append(head_row)
+    def filterbyvalue(seq, value):
+        for el in seq:
+            if el.project_stage_id==value: yield el
+
+    def getStatus(el):
+        if el is not None and el.form_status==3: return "Approved"
+        elif el is not None and el.form_status==2: return "Flagged"
+        elif el is not None and el.form_status==1: return "Rejected"
+        else: return "Pending"
+    if q_keyword is not None:
+        site_list = project.sites.filter(name__icontains=keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
+        get_params = "?q="+keyword +"&page="
+    else:
+        site_list = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id', '-id').prefetch_related(Prefetch('site__stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
+        
+        get_params = "?page="
+    paginator = Paginator(site_list, page_list) # Show 25 contacts per page
+    page = request.GET.get('page')
+    try:
+        sites = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        sites = paginator.page(1)
+    except EmptyPage:
+    # If page is out of range (e.g. 9999), deliver last page of results.
+        sites = paginator.page(paginator.num_pages)
+    for site in sites:
+        site_row = [site.identifier, site.name]
+        for k, v in ss_index.items():
+            substage = filterbyvalue(site.stages.all(), v)
+            substage1 = next(substage, None)
+            if substage1 is not None:
+                if  substage1.stage_forms.site_form_instances.all():
+                     get_status = getStatus(substage1.stage_forms.site_form_instances.all()[0])
+                     status = get_status
+                     submission_count = substage1.stage_forms.site_form_instances.all().count()
+                else:
+                    status = "No submission."
+                    submission_count = 0
+            else:
+                 status = "-"
+                 submission_count = 0
+            site_row.append([status, submission_count])
+        
+        data.append(site_row)
+
+    if sites.has_next():
+        next_page_url = request.build_absolute_uri(reverse('fieldsight:ProjectStageResponsesStatus', kwargs={'pk': pk})) + get_params + str(sites.next_page_number())
+    else:
+        next_page_url =  None
+    content={'head_cols':table_head, 'sub_stages':substages, 'rows':data}
+    main_body = {'next_page':next_page_url,'content':content}
+    return main_body
+
 class ProjectStageResponsesStatus(ProjectRoleMixin, View): 
     def get(self, request, pk):
-            data = []
-            ss_index = {}
-            stages_rows = []
-            head_row = ["Site ID", "Name"]
-            obj = get_object_or_404(Project, pk=pk)
-            project = Project.objects.get(pk=pk)
-
-            stages = project.stages.filter(stage__isnull=True)
-            
-            table_head = []
-            substages =[]
-            table_head.append({"name":"Site Id", "rowspan":2, "colspan":1 })
-            table_head.append({"name":"Site Name", "rowspan":2, "colspan":1 })
-            
-            stage_count=0
-            for stage in stages:
-                stage_count+=1
-
-                sub_stages = stage.parent.all()
-                if len(sub_stages) > 0:
-                    stages_rows.append("Stage :"+stage.name)
-                    table_head.append({"name":stage.name, "stage_order": "Stage " +str(stage_count), "rowspan":1, "colspan":len(sub_stages) })
-                    sub_stage_count=0
-                    for ss in sub_stages:
-                        sub_stage_count+=1
-                        head_row.append("Sub Stage :"+ss.name)
-                        ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
-                        substages.append([ss.name, "Sub Stage "+str(stage_count)+"."+str(sub_stage_count)])
-
-            
-
-            # data.append(head_row)
-            def filterbyvalue(seq, value):
-                for el in seq:
-                    if el.project_stage_id==value: yield el
-
-            def getStatus(el):
-                if el is not None and el.form_status==3: return "Approved"
-                elif el is not None and el.form_status==2: return "Flagged"
-                elif el is not None and el.form_status==1: return "Rejected"
-                else: return "Pending"
-            keyword = self.request.GET.get("q", None)
-            if keyword is not None:
-                site_list = project.sites.filter(name__icontains=keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
-                get_params = "?q="+keyword +"&page="
-            else:
-                site_list = project.sites.filter(is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))    
-                get_params = "?page="
-            paginator = Paginator(site_list, 15) # Show 25 contacts per page
-            page = request.GET.get('page')
-            try:
-                sites = paginator.page(page)
-            except PageNotAnInteger:
-                # If page is not an integer, deliver first page.
-                sites = paginator.page(1)
-            except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-                sites = paginator.page(paginator.num_pages)
-            for site in sites:
-                site_row = [site.identifier, site.name]
-                for k, v in ss_index.items():
-                    substage = filterbyvalue(site.stages.all(), v)
-                    substage1 = next(substage, None)
-                    if substage1 is not None:
-                        if  substage1.stage_forms.site_form_instances.all():
-                             get_status = getStatus(substage1.stage_forms.site_form_instances.all()[0])
-                             status = get_status
-                             submission_count = substage1.stage_forms.site_form_instances.all().count()
-                        else:
-                            status = "No submission."
-                            submission_count = 0
-                    else:
-                         status = "-"
-                         submission_count = 0
-                    site_row.append([status, submission_count])
-                
-                data.append(site_row)
-
-            if sites.has_next():
-                has_next = sites.next_page_number()
-            else:
-                has_next = None
-            if has_next:
-                next_page_url = request.build_absolute_uri(reverse('fieldsight:ProjectStageResponsesStatus', kwargs={'pk': pk})) + get_params + str(has_next)
-            else:
-                next_page_url =  None
-            content={'head_cols':table_head, 'sub_stages':substages, 'rows':data}
-            main_body = {'next_page':next_page_url,'content':content}
-            return HttpResponse(json.dumps(main_body), status=200)
+        q_keyword = self.request.GET.get("q", None)
+        stage_data = get_project_stage_status(request, pk, q_keyword, page_list=10)
+        return render(request, 'fieldsight/ProjectStageResponsesStatus.html')
 
 class StageTemplateView(ReadonlyProjectLevelRoleMixin, View):
     def get(self, request, pk):

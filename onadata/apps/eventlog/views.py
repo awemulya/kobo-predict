@@ -63,6 +63,9 @@ class NotificationListView(LoginRequiredMixin, ListView):
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 20
 
+class SmallResultsSetPagination(PageNumberPagination):
+    page_size = 8
+
 
 class NotificationViewSet(viewsets.ModelViewSet):
     """
@@ -80,6 +83,30 @@ class NotificationViewSet(viewsets.ModelViewSet):
         project_ids = self.request.roles.filter(group__name='Project Manager').values('project_id')
         site_ids = self.request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')).values('site_id')
         return queryset.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids) | Q(recipient_id=self.request.user.id))
+
+
+class ProjectLog(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing sites.
+    """
+    queryset = FieldSightLog.objects.select_related('source__user_profile').all().prefetch_related('seen_by')
+    serializer_class = LogSerializer
+    pagination_class = SmallResultsSetPagination
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(project_id=self.kwargs.get('pk'))
+
+
+class SiteLog(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing sites.
+    """
+    queryset = FieldSightLog.objects.select_related('source__user_profile').all().prefetch_related('seen_by')
+    serializer_class = LogSerializer
+    pagination_class = SmallResultsSetPagination
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(site_id=self.kwargs.get('pk'))
 
 class NotificationCountnSeen(View):
     def get(self, request):
