@@ -2270,7 +2270,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                     status, style_class = "No submission.", "cell-inactive"
                     submission_count = 0
             else:
-                 status = "-"
+                 status, style_class = "-", "cell-inactive"
                  submission_count = 0
             site_row.append([status, submission_count, style_class])
         
