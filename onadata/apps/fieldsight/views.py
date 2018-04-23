@@ -2235,10 +2235,10 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
             if el.project_stage_id==value: yield el
 
     def getStatus(el):
-        if el is not None and el.form_status==3: return "Approved"
-        elif el is not None and el.form_status==2: return "Flagged"
-        elif el is not None and el.form_status==1: return "Rejected"
-        else: return "Pending"
+        if el is not None and el.form_status==3: return "Approved", "cell-success" 
+        elif el is not None and el.form_status==2: return "Flagged", "cell-warning"
+        elif el is not None and el.form_status==1: return "Rejected", "cell-danger"
+        else: return "Pending", "cell-primary"
     if q_keyword is not None:
         site_list = project.sites.filter(name__icontains=q_keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
         get_params = "?q="+keyword +"&page="
@@ -2264,15 +2264,15 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
             if substage1 is not None:
                 if  substage1.stage_forms.site_form_instances.all():
                      get_status = getStatus(substage1.stage_forms.site_form_instances.all()[0])
-                     status = get_status
+                     status, style_class = get_status
                      submission_count = substage1.stage_forms.site_form_instances.all().count()
                 else:
-                    status = "No submission."
+                    status, style_class = "No submission.", "cell-inactive"
                     submission_count = 0
             else:
                  status = "-"
                  submission_count = 0
-            site_row.append([status, submission_count])
+            site_row.append([status, submission_count, style_class])
         
         data.append(site_row)
 
