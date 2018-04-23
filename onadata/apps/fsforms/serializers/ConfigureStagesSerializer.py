@@ -46,6 +46,7 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
     responses_count = serializers.SerializerMethodField()
     has_stage = serializers.SerializerMethodField()
     has_em = serializers.SerializerMethodField()
+    is_deployed = serializers.SerializerMethodField()
 
     def get_responses_count(self, obj):
         try:
@@ -70,10 +71,16 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
             return True
         except:
             return False
+
+    def get_is_deployed(self, obj):
+        try:
+            return obj.stage_forms.is_deployed
+        except:
+            return False
     class Meta:
         model = Stage
         fields = ('weight', 'name', 'description', 'id', 'order', 'date_created', 'em', 'responses_count',
-                  'stage_forms', 'has_stage', 'has_em', 'tags')
+                  'stage_forms', 'has_stage', 'has_em', 'tags', 'is_deployed')
 
     def create(self, validated_data):
         stage_id = self.context['kwargs'].get('stage_id')

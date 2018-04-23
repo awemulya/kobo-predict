@@ -24,6 +24,7 @@ def send_message(fxf, status=None, comment=None, comment_url=None):
     Device.objects.filter(name__in=emails).send_message(message)
 
 def send_bulk_message_stages(site_ids):
+    return
     roles = UserRole.objects.filter(site_id__in=site_ids, ended_at=None, group__name="Site Supervisor").distinct('user')
     emails = [r.user.email for r in roles]
     Device = get_device_model()
@@ -38,6 +39,78 @@ def send_message_stages(site):
     Device = get_device_model()
     message = {'notify_type': 'Stages Ready',
                'is_delete':True,
+               'site':{'name': site.name, 'id': site.id}}
+    Device.objects.filter(name__in=emails).send_message(message)
+
+
+def send_bulk_message_stages_deployed_project(project):
+    roles = UserRole.objects.filter(site__project=project, ended_at=None, group__name="Site Supervisor")
+    emails = [r.user.email for r in roles]
+    Device = get_device_model()
+    message = {'notify_type': 'Multiple Stages Ready',
+               'is_delete':True,
+               'level':1,
+               'description':"Stages Ready in Project {}".format(project.name),
+               'project':{'name': project.name, 'id': project.id}}
+    Device.objects.filter(name__in=emails).send_message(message)
+
+
+def send_bulk_message_stages_deployed_site(site):
+    roles = UserRole.objects.filter(site=site, ended_at=None, group__name="Site Supervisor")
+    emails = [r.user.email for r in roles]
+    Device = get_device_model()
+    message = {'notify_type': 'Stage Ready',
+               'is_delete':True,
+               'level':0,
+               'description':"Stages Ready in Site {}".format(site.name),
+               'site':{'name': site.name, 'id': site.id}}
+    Device.objects.filter(name__in=emails).send_message(message)
+
+
+def send_bulk_message_stage_deployed_project(project, main_stage):
+    roles = UserRole.objects.filter(site__project=project, ended_at=None, group__name="Site Supervisor")
+    emails = [r.user.email for r in roles]
+    Device = get_device_model()
+    message = {'notify_type': 'Multiple Stages Ready',
+               'is_delete':True,
+               'level':1,
+               'description':"Main Stage Ready in Project {}".format(project.name),
+               'project':{'name': project.name, 'id': project.id}}
+    Device.objects.filter(name__in=emails).send_message(message)
+
+
+def send_bulk_message_stage_deployed_site(site, main_stage):
+    roles = UserRole.objects.filter(site=site, ended_at=None, group__name="Site Supervisor")
+    emails = [r.user.email for r in roles]
+    Device = get_device_model()
+    message = {'notify_type': 'Stage Ready',
+               'is_delete':True,
+               'level':0,
+               'description':"Main Stage Ready in Site {}".format(site.name),
+               'site':{'name': site.name, 'id': site.id}}
+    Device.objects.filter(name__in=emails).send_message(message)
+
+
+def send_sub_stage_deployed_project(project, sub_stage):
+    roles = UserRole.objects.filter(site__project=project, ended_at=None, group__name="Site Supervisor")
+    emails = [r.user.email for r in roles]
+    Device = get_device_model()
+    message = {'notify_type': 'Sub Stage Ready',
+               'is_delete':True,
+               'level':1,
+               'description':"Sub Stage Ready in Project {}".format(project.name),
+               'project':{'name': project.name, 'id': project.id}}
+    Device.objects.filter(name__in=emails).send_message(message)
+
+
+def send_sub_stage_deployed_site(site, sub_stage):
+    roles = UserRole.objects.filter(site=site, ended_at=None, group__name="Site Supervisor")
+    emails = [r.user.email for r in roles]
+    Device = get_device_model()
+    message = {'notify_type': 'Sub Stage Ready',
+               'is_delete':True,
+               'level':0,
+               'description':"Sub Stage Ready in Site {}".format(site.name),
                'site':{'name': site.name, 'id': site.id}}
     Device.objects.filter(name__in=emails).send_message(message)
 

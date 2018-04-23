@@ -29,10 +29,13 @@ from channels import Group as ChannelGroup
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.reports_util import get_images_for_site_all, get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
-from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer
+from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer, \
+    SubStageDetailSerializer
 from onadata.apps.fsforms.serializers.StageSerializer import EMSerializer
 from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed, send_bulk_message_stages, \
-    send_message_un_deploy
+    send_message_un_deploy, send_bulk_message_stages_deployed_project, send_bulk_message_stages_deployed_site, \
+    send_bulk_message_stage_deployed_project, send_bulk_message_stage_deployed_site, send_sub_stage_deployed_project, \
+    send_sub_stage_deployed_site
 from onadata.apps.logger.models import XForm
 from onadata.apps.main.models import MetaData
 from onadata.apps.main.views import set_xform_owner_data
@@ -569,7 +572,6 @@ def set_deploy_stages(request, is_project, pk):
                                 site_fsxf.is_deleted = False
                                 site_fsxf.is_deployed = True
                                 site_fsxf.save()
-                    send_bulk_message_stages(site_ids)
             # noti = project.logs.create(source=request.user, type=4, title="Project Stages Deployed",
             # organization=project.organization, description="Project Stages Deployed to sites.")
             # result = {}
@@ -1873,3 +1875,134 @@ def save_edumaterial_details(request, stageid):
         return Response({"em":response_data}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def set_deploy_stages_forms(request, is_project, pk):
+    try:
+        if is_project == "1":
+            project = Project.objects.get(pk=pk)
+            sites = project.sites.filter(is_active=True)
+            main_stages = project.stages.filter(stage__isnull=True)
+            main_stages_list = [ms for ms in main_stages]
+            if not main_stages_list:
+                return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+            with transaction.atomic():
+
+                FieldSightXF.objects.filter(is_staged=True, site__project=project, stage__isnull=False).\
+                    update(stage=None, is_deployed=False, is_deleted=True)
+                FieldSightXF.objects.filter(is_staged=True, project=project,is_deleted=False).update(is_deployed=True)
+                Stage.objects.filter(site__project=project).delete()
+                for main_stage in main_stages:
+                    for site in sites:
+                        site_main_stage = Stage(name=main_stage.name, order=main_stage.order, site=site,
+                                           description=main_stage.description, project_stage_id=main_stage.id)
+                        site_main_stage.save()
+                        project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
+                        for project_sub_stage in project_sub_stages:
+                            site_sub_stage = Stage(name=project_sub_stage.name, order=project_sub_stage.order, site=site,
+                                           description=project_sub_stage.description, stage=site_main_stage, project_stage_id=project_sub_stage.id)
+                            site_sub_stage.save()
+                            if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
+                                fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
+                                site_fsxf, created = FieldSightXF.objects.get_or_create(is_staged=True, default_submission_status=fsxf.default_submission_status, xf=fsxf.xf, site=site,
+                                                                   fsform=fsxf, stage=site_sub_stage)
+                                site_fsxf.is_deleted = False
+                                site_fsxf.is_deployed = True
+                                site_fsxf.save()
+            send_bulk_message_stages_deployed_project(project)
+            return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+        else:
+            site = Site.objects.get(pk=pk)
+            site.site_forms.filter(is_staged=True, xf__isnull=False, is_deployed=False, is_deleted=False).update(is_deployed=True)
+            send_bulk_message_stages_deployed_site(site)
+            return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def set_deploy_stage_forms(request, is_project, pk, stage_id):
+    try:
+        if is_project == "1":
+            project = Project.objects.get(pk=pk)
+            sites = project.sites.filter(is_active=True)
+            main_stage = Stage.objects.get(pk=stage_id)
+            project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
+            sub_stages_id = [s.id for s in project_sub_stages]
+            project_forms = FieldSightXF.objects.filter(stage__id__in=sub_stages_id)
+            project_form_ids = [p.id for p in project_forms]
+            with transaction.atomic():
+                FieldSightXF.objects.filter(pk__in=project_form_ids).update(is_deployed=True) # deploy this stage
+
+                FieldSightXF.objects.filter(fsform__id=project_form_ids).update(stage=None, is_deployed=False, is_deleted=True)
+                Stage.objects.filter(project_stage_id=main_stage.id).delete()
+                Stage.objects.filter(project_stage_id__in=sub_stages_id).delete()
+
+                for site in sites:
+                    site_main_stage = Stage(name=main_stage.name, order=main_stage.order, site=site,
+                                       description=main_stage.description, project_stage_id=main_stage.id)
+                    site_main_stage.save()
+
+                    for project_sub_stage in project_sub_stages:
+                        site_sub_stage = Stage(name=project_sub_stage.name, order=project_sub_stage.order, site=site,
+                                       description=project_sub_stage.description, stage=site_main_stage, project_stage_id=project_sub_stage.id)
+                        site_sub_stage.save()
+                        if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
+                            fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
+                            site_fsxf, created = FieldSightXF.objects.get_or_create(is_staged=True, default_submission_status=fsxf.default_submission_status, xf=fsxf.xf, site=site,
+                                                               fsform=fsxf, stage=site_sub_stage)
+                            site_fsxf.is_deleted = False
+                            site_fsxf.is_deployed = True
+                            site_fsxf.save()
+            send_bulk_message_stage_deployed_project(project, main_stage)
+            return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+        else:
+            site = Site.objects.get(pk=pk)
+            main_stage = Stage.objects.get(pk=stage_id)
+            Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False).update(is_deployed=True)
+            send_bulk_message_stage_deployed_site(site, main_stage)
+            return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def set_deploy_sub_stage(request, is_project, pk, stage_id):
+    try:
+
+        if is_project == "1":
+            project = Project.objects.get(pk=pk)
+            sites = project.sites.filter(is_active=True)
+            sub_stage = Stage.objects.get(pk=stage_id)
+            fieldsightxf = sub_stage.stage_forms
+
+            with transaction.atomic():
+                FieldSightXF.objects.filter(pk=fieldsightxf.pk).update(is_deployed=True) # deploy this stage
+
+                FieldSightXF.objects.filter(fsform__id=fieldsightxf.id).update(stage=None, is_deployed=False, is_deleted=True)
+                Stage.objects.filter(project_stage_id=sub_stage.id, stage__isnull=False).delete()
+
+                for site in sites:
+                    site_sub_stage = Stage(name=sub_stage.name, order=sub_stage.order, site=site,
+                                        description=sub_stage.description, project_stage_id=sub_stage.id)
+                    site_sub_stage.save()
+                    site_fsxf, created = FieldSightXF.objects.get_or_create(
+                        is_staged=True,
+                        default_submission_status=fieldsightxf.default_submission_status,
+                        xf=fieldsightxf.xf, site=site,fsform=fieldsightxf, stage=site_sub_stage)
+                    site_fsxf.is_deleted = False
+                    site_fsxf.is_deployed = True
+                    site_fsxf.save()
+            send_sub_stage_deployed_project(project, sub_stage)
+            serializer = SubStageDetailSerializer(sub_stage)
+            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+        else:
+            site = Site.objects.get(pk=pk)
+            sub_stage = Stage.objects.get(pk=stage_id)
+            FieldSightXF.objects.filter(stage__id=sub_stage.pk, stage_forms__is_deleted=False).update(is_deployed=True)
+            send_sub_stage_deployed_site(site, sub_stage)
+            serializer = SubStageDetailSerializer(sub_stage)
+            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return HttpResponse({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
