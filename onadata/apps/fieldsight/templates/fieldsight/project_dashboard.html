@@ -282,125 +282,11 @@ var project = "{{obj.pk}}";
 
 					</div>
 
-
-					<div class="row">
-						<div class="col-md-12">
-							<div class="widget-info margin-top bg-white padding">
-								<div class="widget-head">
-									<h4>Tabular Report</h4>
-									<a class="btn btn-xs btn-primary" href="#"><i class="la la-plus"></i></a>
-								</div>
-								<div class="widget-body">
-									<div class="table-responsive">
-									  	<table class="table table-bordered table-hover tabular-report">
-									    	<thead class="thead-default">
-									    		<tr>
-									    			<th scope="col" rowspan="2">Site ID</th>
-									    			<th scope="col" rowspan="2">Site Name</th>
-									    			<th scope="col">Inspection Phase</th>
-									    			<th scope="col" colspan="2">Monitoring Phase</th>
-									    			<th scope="col">Another Title</th>
-									    			<th scope="col">Another Title</th>
-									    			<th scope="col">Another Title</th>
-									    		</tr>
-									    		<tr>
-									    			<th scope="col">Inspection</th>
-									    			<th scope="col">Monitoring</th>
-									    			<th scope="col">Final Monitoring</th>
-									    			<th scope="col">Another Title</th>
-									    			<th scope="col">Another Title</th>
-									    			<th scope="col">Another Title</th>
-									    		</tr>
-									    	</thead>
-									    	<tbody>
-									    		<tr>
-									    			<th scope="row">BG4589</th>
-									    			<td>Balaju Site</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    		</tr>
-									    		<tr>
-									    			<th scope="row">BG4589</th>
-									    			<td>Balaju Site</td>
-									    			<td class="cell-success">2</td>
-									    			<td class="cell-success">Value</td>
-									    			<td class="cell-success">Value</td>
-									    			<td class="cell-success">Value</td>
-									    			<td class="cell-warning">Value</td>
-									    			<td class="cell-danger">Value</td>
-									    		</tr>
-									    		<tr>
-									    			<th scope="row">BG4589</th>
-									    			<td>Balaju Site</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    		</tr>
-									    		<tr>
-									    			<th scope="row">BG4589</th>
-									    			<td>Balaju Site</td>
-									    			<td class="cell-success">2</td>
-									    			<td class="cell-success">Value</td>
-									    			<td class="cell-success">Value</td>
-									    			<td class="cell-success">Value</td>
-									    			<td class="cell-warning">Value</td>
-									    			<td class="cell-danger">Value</td>
-									    		</tr>
-									    		<tr>
-									    			<th scope="row">BG4589</th>
-									    			<td>Balaju Site</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    		</tr>
-									    		<tr>
-									    			<th scope="row">BG4589</th>
-									    			<td>Balaju Site</td>
-									    			<td class="cell-success">2</td>
-									    			<td class="cell-success">Value</td>
-									    			<td class="cell-success">Value</td>
-									    			<td class="cell-success">Value</td>
-									    			<td class="cell-warning">Value</td>
-									    			<td class="cell-danger">Value</td>
-									    		</tr>
-									    		<tr>
-									    			<th scope="row">BG4589</th>
-									    			<td>Balaju Site</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    			<td class="cell-inactive">Value</td>
-									    		</tr>
-									    		<tr>
-									    			<th scope="row">BG4589</th>
-									    			<td>Balaju Site</td>
-									    			<td class="cell-success">2</td>
-									    			<td class="cell-success">Value</td>
-									    			<td class="cell-success">Value</td>
-									    			<td class="cell-success">Value</td>
-									    			<td class="cell-warning">Value</td>
-									    			<td class="cell-danger">Value</td>
-									    		</tr>
-									    	</tbody>
-									  	</table>
-									</div>
-								</div>
-							</div>
-						</div>
+					{% verbatim %}
+					<div class="row" id="stagedatas">
+						
 					</div>
-
+					{% endverbatim %}
 					<div class="row">
 						<div class="col-md-12">
 							<div class="widget-info margin-top bg-white padding">
@@ -566,7 +452,7 @@ var project = "{{obj.pk}}";
 <script type="text/javascript">
     	function getlogdata(){ 
 								
-						          $.ajax({
+						$.ajax({
 						            url: "{% url 'eventlog:project_logs' obj.pk %}",
 						            type: 'GET',
 						            success: function (data) {
@@ -578,6 +464,8 @@ var project = "{{obj.pk}}";
 						            }
 						          });
 						}
+
+					
 
 
 						

@@ -2287,10 +2287,14 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
 class ProjectStageResponsesStatus(ProjectRoleMixin, View): 
     def get(self, request, pk):
         q_keyword = self.request.GET.get("q", None)
-        stage_data = get_project_stage_status(request, pk, q_keyword, page_list=5)
-        return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'obj':obj,})
-        
-        # return HttpResponse(json.dumps(stage_data), status=200)
+        stage_data = get_project_stage_status(request, pk, q_keyword, page_list=15)
+        return HttpResponse(json.dumps(stage_data), status=200)
+
+class ProjectDashboardStageResponsesStatus(ProjectRoleMixin, View): 
+    def get(self, request, pk):
+        q_keyword = self.request.GET.get("q", None)
+        stage_data = get_project_stage_status(request, pk, q_keyword, page_list=8)
+        return HttpResponse(json.dumps(stage_data), status=200)
 
 class StageTemplateView(ReadonlyProjectLevelRoleMixin, View):
     def get(self, request, pk):
