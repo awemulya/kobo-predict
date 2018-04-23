@@ -2243,8 +2243,8 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         site_list = project.sites.filter(name__icontains=q_keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
         get_params = "?q="+keyword +"&page="
     else:
-        site_list = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id', '-id').prefetch_related(Prefetch('site__stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
-        
+        site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id').only('pk')
+        site_list = FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('site__stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
         get_params = "?page="
     paginator = Paginator(site_list, page_list) # Show 25 contacts per page
     page = request.GET.get('page')
@@ -2288,7 +2288,9 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
     def get(self, request, pk):
         q_keyword = self.request.GET.get("q", None)
         stage_data = get_project_stage_status(request, pk, q_keyword, page_list=10)
-        return HttpResponse(json.dumps(stage_data), status=200)
+        return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'obj':obj,})
+        
+        # return HttpResponse(json.dumps(stage_data), status=200)
 
 class StageTemplateView(ReadonlyProjectLevelRoleMixin, View):
     def get(self, request, pk):

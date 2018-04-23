@@ -641,6 +641,20 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 							</div>
 						</div>
 					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="widget-info margin-top bg-white padding">
+								<div class="widget-head">
+									<h4>Project Logs</h4>
+									<a class="btn btn-xs btn-primary" href="#"><i class="la la-plus"></i></a>
+								</div>
+								<div class="widget-body">
+									<ul id="log_list">
+									</ul>	
+								</div>
+							</div>
+						</div>
+					</div>
 						</div>
 					</section>
 						</div>
@@ -686,6 +700,7 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
     <!--<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/d3.tip.v0.6.3.js"></script>-->
     <!--<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_bar-graph.js"></script>-->
 {% if has_progress_chart %}
+
 <script>
 	$( document ).ready(function() {
 height_max = Math.max.apply(Math, progress_data) || 10;
@@ -764,7 +779,6 @@ var myChart1 = new Chart(ctx1, {
     }
 
 });
-
 });
 
 	var height = 0;
@@ -778,6 +792,67 @@ var myChart1 = new Chart(ctx1, {
 
 {% endif %}
 
+<script type="text/javascript">
+    	function getlogdata(){ 
+								
+						          $.ajax({
+						            url: "{% url 'eventlog:project_logs' obj.pk %}",
+						            type: 'GET',
+						            success: function (data) {
+						               $("#notification-ul").html( "" );
+						               data.results.forEach(populateloglist);
+						               if (data.results.length <= 0){
+						               	$("<li>No Logs Yet</li>").appendTo("#log_list");
+						               }
+						            }
+						          });
+						}
+
+
+						
+						function populateloglist(data, index){
+
+			   
+					    typeid = data.type;
+					    var readstatus='unread';
+					    if(data.seen_by.includes(user_id)){
+					       readstatus='read';
+					    }
+					// get description for notificationaccotding to its type id
+					    var content = types[typeid](data);
+					//append the data in main notificatin div
+					    
+					    var new_li = '<li class=" note-div-sm read" id="'+data.id+'">'+
+		                            
+		                                '<div class="notification-item">' +
+		                                    '<div class="notification-avatar pull-left">' +
+		                                        '<i class="avatar-icon la la-info"></i>' +
+		                                    '</div>' +
+		                                    '<div class="notification-highlight">'+
+												'<p class="notification-highlight-excerpt">'+
+		                                   			content +
+		                                   		'</p>'+
+		                      '<p class="notification-highlight-time">' + dateparser(data.date) + '</p>' +
+		                                    '</div>'+
+		                                    '</div>' +
+		                                '</div>' +
+		                            
+						'</li>';
+
+
+									    // var div = document.getElementById('notifications');
+
+									    // div.innerHTML += new_li;
+									    speed = speed+200;
+									
+									
+										$(new_li).appendTo("#log_list");
+										
+									
+								}
+								getlogdata();
+
+    </script>
 
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
 

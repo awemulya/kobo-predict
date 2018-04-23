@@ -17,6 +17,7 @@ from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from rest_framework.pagination import PageNumberPagination
 from onadata.apps.fieldsight.rolemixins import LoginRequiredMixin
 from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
 
 from django.http import JsonResponse
 from celery.result import AsyncResult
@@ -94,7 +95,7 @@ class ProjectLog(viewsets.ModelViewSet):
     pagination_class = SmallResultsSetPagination
 
     def filter_queryset(self, queryset):
-        return queryset.filter(project_id=self.kwargs.get('pk'))
+        return queryset.filter(Q(project_id=self.kwargs.get('pk')) | (Q(content_type=ContentType.objects.get(app_label="fieldsight", model="project")) & Q(object_id=self.kwargs.get('pk'))))
 
 
 class SiteLog(viewsets.ModelViewSet):
@@ -106,7 +107,7 @@ class SiteLog(viewsets.ModelViewSet):
     pagination_class = SmallResultsSetPagination
 
     def filter_queryset(self, queryset):
-        return queryset.filter(site_id=self.kwargs.get('pk'))
+        return queryset.filter(Q(site_id=self.kwargs.get('pk')) | (Q(content_type=ContentType.objects.get(app_label="fieldsight", model="site")) & Q(object_id=self.kwargs.get('pk'))))
 
 class NotificationCountnSeen(View):
     def get(self, request):
