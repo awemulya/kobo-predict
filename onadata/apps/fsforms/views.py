@@ -1969,11 +1969,11 @@ def set_deploy_stage_forms(request, is_project, pk, stage_id):
 @api_view(['GET'])
 def set_deploy_sub_stage(request, is_project, pk, stage_id):
     try:
-
+        sub_stage = Stage.objects.get(pk=stage_id)
         if is_project == "1":
             project = Project.objects.get(pk=pk)
             sites = project.sites.filter(is_active=True)
-            sub_stage = Stage.objects.get(pk=stage_id)
+            main_stage = sub_stage.stage
             fieldsightxf = sub_stage.stage_forms
 
             with transaction.atomic():
@@ -1983,8 +1983,20 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
                 Stage.objects.filter(project_stage_id=sub_stage.id, stage__isnull=False).delete()
 
                 for site in sites:
+                    try:
+                        site_main_stage = Stage.objects.get(project_stage_id=main_stage.id, site=site)
+                        site_main_stage.name = main_stage.name
+                        site_main_stage.order = main_stage.order
+                        site_main_stage.description = main_stage.description
+                        site_main_stage.save()
+                    except Exception as e:
+                        site_main_stage = Stage(name=main_stage.name, order=main_stage.order, site=site,
+                                        description=main_stage.description, project_stage_id=main_stage.id)
+                        site_main_stage.save()
+
+
                     site_sub_stage = Stage(name=sub_stage.name, order=sub_stage.order, site=site,
-                                        description=sub_stage.description, project_stage_id=sub_stage.id)
+                                        description=sub_stage.description, project_stage_id=sub_stage.id ,stage=site_main_stage)
                     site_sub_stage.save()
                     site_fsxf, created = FieldSightXF.objects.get_or_create(
                         is_staged=True,
@@ -1998,8 +2010,7 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
         else:
             site = Site.objects.get(pk=pk)
-            sub_stage = Stage.objects.get(pk=stage_id)
-            FieldSightXF.objects.filter(stage__id=sub_stage.pk, stage_forms__is_deleted=False).update(is_deployed=True)
+            FieldSightXF.objects.filter(stage__id=sub_stage.pk, is_deleted=False).update(is_deployed=True)
             send_sub_stage_deployed_site(site, sub_stage)
             serializer = SubStageDetailSerializer(sub_stage)
             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
