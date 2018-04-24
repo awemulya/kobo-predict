@@ -220,7 +220,7 @@ class MyPrint:
                 self.parse_group("", first_children)
             else:
                 question = first_children['name']
-                answe = self.main_answer
+                answer = self.main_answer
                 if question in self.main_answer:
                     if first_children['type'] == 'note':
                         answer=Paragraph('', styBackground)

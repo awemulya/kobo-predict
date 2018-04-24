@@ -164,8 +164,14 @@ body{
     {% for submission_id, row in data  %}
         <tr>
             <th><a href="{% url 'forms:instance' obj.id %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
-            {% for value in row %}
-            <td><span class="cell-content-wrap">{{ value }}</span></td>
+            {% for key, value in row %}
+            <td>
+            {% if key in media_attributes %}
+            <span class="cell-content-wrap"><a href="/media/{{ owner_username }}/attachments/{{ value }}" target="_blank">{{ value }}</a></span>
+            {% else %}
+            <span class="cell-content-wrap">{{ value }}</span>
+            {% endif %}
+            </td>
             {% endfor %}
         </tr>
     {% endfor %}
