@@ -10,34 +10,40 @@ from onadata.apps.logger.models import XForm
 
 
 class StageSerializer(serializers.ModelSerializer):
+    sub_stage_weight = serializers.SerializerMethodField()
+
     class Meta:
         model = Stage
-        fields = ('name', 'description', 'id', 'order', 'tags')
+        fields = ('name', 'description', 'id', 'order', 'tags', 'weight' ,'sub_stage_weight')
+
+    def get_sub_stage_weight(self, obj):
+
+        return obj.sub_stage_weight if obj.sub_stage_weight else 0
 
     def create(self, validated_data):
         pk = self.context['kwargs'].get('pk')
         is_project = self.context['kwargs'].get('is_project')
         stage = super(StageSerializer, self).create(validated_data)
-        if is_project:
+        if is_project == "1":
             stage.project = Project.objects.get(pk=pk)
         else:
             stage.site = Site.objects.get(pk=pk)
         stage.save()
         return stage
 
-    # def update(self, instance, validated_data):
-    #     tags = self.context['request'].data.get('tags', [])
-    #     stage = super(StageSerializer, self).update(instance, validated_data)
-    #     import ipdb
-    #     ipdb.set_trace()
-    #
-    #     return stage
+        # def update(self, instance, validated_data):
+        #     tags = self.context['request'].data.get('tags', [])
+        #     stage = super(StageSerializer, self).update(instance, validated_data)
+        #     import ipdb
+        #     ipdb.set_trace()
+        #
+        #     return stage
 
 
 class SubStageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stage
-        fields = ('name', 'description', 'id', 'order', 'tags')
+        fields = ('name', 'description', 'id', 'order', 'tags', 'weight')
 
 
 class SubStageDetailSerializer(serializers.ModelSerializer):

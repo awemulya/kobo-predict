@@ -1,4 +1,6 @@
 from __future__ import unicode_literals
+
+from django.db.models import Sum, F
 from rest_framework import viewsets
 from rest_framework.response import Response
 import rest_framework.status
@@ -24,7 +26,7 @@ class StageListViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(project__id=pk)
         else:
             queryset = queryset.filter(site__id=pk)
-        return queryset
+        return queryset.annotate(sub_stage_weight=Sum(F('parent__weight')))
 
     def retrieve_by_id(self, request, *args, **kwargs):
         instance = Stage.objects.get(pk=kwargs.get('pk'))

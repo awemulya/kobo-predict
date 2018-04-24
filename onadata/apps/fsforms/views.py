@@ -1877,8 +1877,8 @@ def save_edumaterial_details(request, stageid):
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
-def set_deploy_stages_forms(request, is_project, pk):
+@api_view(['GET'])
+def set_deploy_all_stages(request, is_project, pk):
     try:
         if is_project == "1":
             project = Project.objects.get(pk=pk)
@@ -1911,30 +1911,30 @@ def set_deploy_stages_forms(request, is_project, pk):
                                 site_fsxf.is_deployed = True
                                 site_fsxf.save()
             send_bulk_message_stages_deployed_project(project)
-            return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+            return Response({'msg': 'ok'}, status=status.HTTP_200_OK)
         else:
             site = Site.objects.get(pk=pk)
             site.site_forms.filter(is_staged=True, xf__isnull=False, is_deployed=False, is_deleted=False).update(is_deployed=True)
             send_bulk_message_stages_deployed_site(site)
             return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
     except Exception as e:
-        return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
-def set_deploy_stage_forms(request, is_project, pk, stage_id):
-    try:
+@api_view(['GET'])
+def set_deploy_main_stage(request, is_project, pk, stage_id):
+    if True:
         if is_project == "1":
             project = Project.objects.get(pk=pk)
             sites = project.sites.filter(is_active=True)
             main_stage = Stage.objects.get(pk=stage_id)
             project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
             sub_stages_id = [s.id for s in project_sub_stages]
-            project_forms = FieldSightXF.objects.filter(stage__id__in=sub_stages_id)
+            project_forms = FieldSightXF.objects.filter(stage__id__in=sub_stages_id, is_deleted=False)
             project_form_ids = [p.id for p in project_forms]
             with transaction.atomic():
                 FieldSightXF.objects.filter(pk__in=project_form_ids).update(is_deployed=True) # deploy this stage
 
-                FieldSightXF.objects.filter(fsform__id=project_form_ids).update(stage=None, is_deployed=False, is_deleted=True)
+                FieldSightXF.objects.filter(fsform__id__in=project_form_ids).update(stage=None, is_deployed=False, is_deleted=True)
                 Stage.objects.filter(project_stage_id=main_stage.id).delete()
                 Stage.objects.filter(project_stage_id__in=sub_stages_id).delete()
 
@@ -1955,15 +1955,17 @@ def set_deploy_stage_forms(request, is_project, pk, stage_id):
                             site_fsxf.is_deployed = True
                             site_fsxf.save()
             send_bulk_message_stage_deployed_project(project, main_stage)
-            return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
+            serializer = StageSerializer(main_stage)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             site = Site.objects.get(pk=pk)
             main_stage = Stage.objects.get(pk=stage_id)
             Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False).update(is_deployed=True)
             send_bulk_message_stage_deployed_site(site, main_stage)
-            return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
-    except Exception as e:
-        return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
+            serializer = StageSerializer(main_stage)
+            return Response({serializer.data}, status=status.HTTP_200_OK)
+    # except Exception as e:
+    #     return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -2007,13 +2009,13 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
                     site_fsxf.save()
             send_sub_stage_deployed_project(project, sub_stage)
             serializer = SubStageDetailSerializer(sub_stage)
-            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             site = Site.objects.get(pk=pk)
             FieldSightXF.objects.filter(stage__id=sub_stage.pk, is_deleted=False).update(is_deployed=True)
             send_sub_stage_deployed_site(site, sub_stage)
             serializer = SubStageDetailSerializer(sub_stage)
-            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     except Exception as e:
         return HttpResponse({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
