@@ -1386,10 +1386,8 @@ class FullResponseTable(ReadonlyFormMixin, View):
 
         context['labels'] = labels
         context['data'] = make_table(data)
-        # context['media_attributes'] = media_attributes
         context['owner_username'] = fsxf.xf.user.username
         context['obj'] = fsxf
-        # return JsonResponse({'data': cursor})
         return render(request, 'fsforms/full_response_table.html', context)
 
 @group_required('KoboForms')

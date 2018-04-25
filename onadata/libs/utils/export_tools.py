@@ -1025,6 +1025,7 @@ def generate_external_export(
         xform__user=user, xform__id_string=id_string))
 
     status_code = 0
+    import pdb; pdb.set_trace();
     if records and server:
 
         try:
