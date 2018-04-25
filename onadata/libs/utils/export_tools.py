@@ -526,7 +526,7 @@ class ExportBuilder(object):
         return generated_name
 
     def to_xls_export(self, path, data, *args):
-        print args[0]
+        print args[2]
         print "----------"
             
         def write_row(data, work_sheet, fields, work_sheet_titles):
@@ -762,7 +762,7 @@ def generate_export(export_type, extension, username, id_string,
     func = getattr(export_builder, export_type_func_map[export_type])
 
     func.__call__(
-        temp_file.name, records, username, id_string, None)
+        temp_file.name, records, username, id_string, xform, None)
 
     # generate filename
     basename = "%s_%s" % (
