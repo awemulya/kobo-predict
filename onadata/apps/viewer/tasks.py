@@ -44,7 +44,7 @@ def create_async_export(xform, export_type, query, force_xlsx, options=None, is_
 
         # start async export
         if export_type in [Export.XLS_EXPORT, Export.GDOC_EXPORT]:
-            result = create_xls_export.apply_async((), arguments, countdown=10)
+            result = create_xls_export((), arguments, countdown=10)
         elif export_type == Export.CSV_EXPORT:
             result = create_csv_export.apply_async(
                 (), arguments, countdown=10)
@@ -73,7 +73,7 @@ def create_async_export(xform, export_type, query, force_xlsx, options=None, is_
         result = create_external_export.apply_async(
             (), arguments, countdown=10)
     elif export_type == Export.ANALYSER_EXPORT:
-        result= create_analyser_export((), arguments, countdown=10)
+        result= create_analyser_export.apply_async((), arguments, countdown=10)
     else:
         raise Export.ExportTypeError
     if result:
