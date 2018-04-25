@@ -580,7 +580,7 @@ class ExportBuilder(object):
             data_new = []
             for f in fields:
                 if args[2] and f in media_attributes:
-                    data_new.append('=HYPERLINK("https://app.fieldsight.org/attachment/medium?media_file='+args[2].user.username+'/attachments/'+data.get(f)+'"; "SO")')
+                    data_new.append('=HYPERLINK("https://app.fieldsight.org/attachment/medium?media_file='+args[2].user.username+'/attachments/'+data.get(f)+'", "link")')
                 else:    
                     data_new.append(data.get(f))
             work_sheet.append(data_new)
