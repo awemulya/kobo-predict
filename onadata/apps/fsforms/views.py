@@ -1377,7 +1377,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
                     for question_name in question_names:
                         if question_name in row:
                             if question_name in media_attributes:
-                                row_data.append('<a href="/attachment/medium?media_file='+fsxf.xf.username+'/attachments/'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>')
+                                row_data.append('<a href="/attachment/medium?media_file='+fsxf.xf.user.username+'/attachments/'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>')
                             else:
                                 row_data.append(row[question_name])
                         else:
