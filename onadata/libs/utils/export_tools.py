@@ -406,6 +406,7 @@ class ExportBuilder(object):
                 row, self.gps_fields[section_name])
 
         # convert to native types
+        print row
         for elm in section['elements']:
             # only convert if its in our list and its not empty, just to
             # optimize
