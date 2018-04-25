@@ -11,6 +11,7 @@ from django.db.models import Max
 from django.db.models.signals import post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
+from jsonfield import JSONField
 
 from onadata.apps.fieldsight.models import Site, Project, Organization
 from onadata.apps.fsforms.fieldsight_models import IntegerRangeField
@@ -587,3 +588,11 @@ def copy_stages_from_project(sender, **kwargs):
             s.save()
             FieldSightXF.objects.create(is_scheduled=True, default_submission_status=schedule_form.default_submission_status, xf=schedule_form.xf, site=site, fsform=schedule_form,
                                              schedule=s, is_deployed=True)
+
+
+class DeployEvent(models.Model):
+    form_changed = models.BooleanField(default=True)
+    data = JSONField(default={})
+    date =  models.DateTimeField(auto_now=True)
+    site = models.ForeignKey(Site, related_name="deploy_data", null=True)
+    project = models.ForeignKey(Project, related_name="deploy_data", null=True)

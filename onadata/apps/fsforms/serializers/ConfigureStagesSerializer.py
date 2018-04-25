@@ -17,8 +17,9 @@ class StageSerializer(serializers.ModelSerializer):
         fields = ('name', 'description', 'id', 'order', 'tags', 'weight' ,'sub_stage_weight')
 
     def get_sub_stage_weight(self, obj):
-
-        return obj.sub_stage_weight if obj.sub_stage_weight else 0
+        if hasattr(obj, 'sub_stage_weight'):
+            return obj.sub_stage_weight
+        return 0
 
     def create(self, validated_data):
         pk = self.context['kwargs'].get('pk')

@@ -50,7 +50,7 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
     AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm, GeneralForm, KoScheduleForm, \
     EducationalmaterialForm
 from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
-    EducationMaterial, EducationalImages, InstanceImages
+    EducationMaterial, EducationalImages, InstanceImages, DeployEvent
 from django.db.models import Q
 from onadata.apps.fieldsight.rolemixins import MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
 
@@ -1975,6 +1975,7 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
         if is_project == "1":
             project = Project.objects.get(pk=pk)
             sites = project.sites.filter(is_active=True)
+            site_ids = []
             main_stage = sub_stage.stage
             fieldsightxf = sub_stage.stage_forms
 
@@ -1985,6 +1986,7 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
                 Stage.objects.filter(project_stage_id=sub_stage.id, stage__isnull=False).delete()
 
                 for site in sites:
+                    # if site.type.id in []
                     try:
                         site_main_stage = Stage.objects.get(project_stage_id=main_stage.id, site=site)
                         site_main_stage.name = main_stage.name
@@ -2007,7 +2009,10 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
                     site_fsxf.is_deleted = False
                     site_fsxf.is_deployed = True
                     site_fsxf.save()
-            send_sub_stage_deployed_project(project, sub_stage)
+            deploy_data = {'new_fsxf':fieldsightxf.id, 'stage':main_stage, 'site_ids':site_ids}
+            d = DeployEvent(project=project, data=deploy_data)
+            d.save()
+            send_sub_stage_deployed_project(project, sub_stage, d.id)
             serializer = SubStageDetailSerializer(sub_stage)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
