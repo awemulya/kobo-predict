@@ -1346,13 +1346,13 @@ class FullResponseTable(ReadonlyFormMixin, View):
                 raise Http404('This report has no submissions')
 
         data = [("v1", page.object_list)]
-        context = build_export_context(request, xform, id_string)
+        # context = build_export_context(request, xform, id_string)
 
-        context.update({
-            'page': page,
-            'table': [],
-            'title': id,
-        })
+        # context.update({
+        #     'page': page,
+        #     'table': [],
+        #     'title': id,
+        # })
 
         export = context['export']
         sections = list(export.labels.items())
