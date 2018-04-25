@@ -1373,7 +1373,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
                 for row in submission:
                     if section == section_name:
                         for label in labels:
-                            yield row[id_index], submission[label]
+                            yield row[id_index], row[label]
 
         context['labels'] = labels
         context['data'] = make_table(data)
