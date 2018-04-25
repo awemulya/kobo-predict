@@ -529,11 +529,15 @@ class ExportBuilder(object):
         def write_row(data, work_sheet, fields, work_sheet_titles):
             # work_sheet_titles = work_sheet_titles.append("fs_site")
             # update parent_table with the generated sheet's title
+            print username
             print fields
             print data
             data[PARENT_TABLE_NAME] = work_sheet_titles.get(
                 data.get(PARENT_TABLE_NAME))
-            work_sheet.append([data.get(f) for f in fields])
+            data = []
+            for f in fields:
+                data.append(data.get(f))
+            work_sheet.append(data)
 
         wb = Workbook(optimized_write=True)
         work_sheets = {}
