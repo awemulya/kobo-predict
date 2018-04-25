@@ -1371,7 +1371,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
         def make_table(submissions):
             for submission in submissions:
                 for label in labels:
-                    yield submission[label]
+                    yield row[id_index], submission[label]
 
         context['labels'] = labels
         context['data'] = make_table(data)
