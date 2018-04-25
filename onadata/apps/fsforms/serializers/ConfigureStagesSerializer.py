@@ -18,7 +18,7 @@ class StageSerializer(serializers.ModelSerializer):
 
     def get_sub_stage_weight(self, obj):
         if hasattr(obj, 'sub_stage_weight'):
-            return obj.sub_stage_weight
+            return obj.sub_stage_weight if obj.sub_stage_weight else 0
         return 0
 
     def create(self, validated_data):
