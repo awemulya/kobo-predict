@@ -1368,7 +1368,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
         #             if section == section_name:
         #                 for row in rows:
         #                     yield row[id_index], row
-        import pdb; pdb.set_trace();
+        
         def make_table(submissions):
             for section_name, submission in submissions:
                 for row in submission:
