@@ -1372,9 +1372,8 @@ class FullResponseTable(ReadonlyFormMixin, View):
         def make_table(submissions):
             for section_name, submission in submissions:
                 for row in submission:
-
+                    row_data=[]
                     for question_name in question_names:
-                        row_data=[]
                         if question_name in row:
                             if question_name in media_attributes:
                                 row_data.append('<a href="'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>')
