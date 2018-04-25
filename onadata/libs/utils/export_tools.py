@@ -526,8 +526,49 @@ class ExportBuilder(object):
         return generated_name
 
     def to_xls_export(self, path, data, *args):
-        print args[2]
-        print "----------"
+        media_attributes=[]
+        if args[2]:
+
+            json_question = json.loads(args[2].json)
+            
+            def parse_repeat(r_object):
+                r_question = r_object['name']
+                # data.append(r_question)
+                for first_children in r_object['children']:
+                    
+                    if first_children['type'] in ['photo', 'audio', 'video']:
+                        question = r_question+"/"+first_children['name']
+                        data.append(question)
+
+            def parse_group(prev_groupname, g_object):
+                g_question = prev_groupname+g_object['name']
+                
+                for first_children in g_object['children']:
+                    question_name = first_children['name']
+                    question_type = first_children['type']
+                    
+                    if question_type == 'group':
+                        parse_group(g_question+"/",first_children)
+                        continue
+
+                    if question_type in ['photo', 'audio', 'video']:
+                        question = g_question+"/",first_children
+                        media_attributes.append(question)   
+
+            def parse_individual_questions(parent_object):
+                for first_children in parent_object:
+                    if first_children['type'] == "repeat":
+                        parse_repeat(first_children)
+
+                    elif first_children['type'] == 'group':
+                        parse_group("",first_children)
+                    
+                    else:
+                        if first_children['type'] in ['photo', 'video', 'audio']:
+                            question = first_children['name']
+                            media_attributes.append(question)
+
+            parse_individual_questions(json_question['children'])
             
         def write_row(data, work_sheet, fields, work_sheet_titles):
             # work_sheet_titles = work_sheet_titles.append("fs_site")
@@ -538,7 +579,10 @@ class ExportBuilder(object):
                 data.get(PARENT_TABLE_NAME))
             data_new = []
             for f in fields:
-                data_new.append(data.get(f))
+                if args[2] and f in media_attributes:
+                    data_new.append('HYPERLINK("http://app.fieldsight.org/attachment/medium?media_file="'+args[2].user.username+'"/"'+data.get(f)'"; "SO")')
+                else:    
+                    data_new.append(data.get(f))
             work_sheet.append(data_new)
 
         wb = Workbook(optimized_write=True)
