@@ -44,7 +44,7 @@ def create_async_export(xform, export_type, query, force_xlsx, options=None, is_
 
         # start async export
         if export_type in [Export.XLS_EXPORT, Export.GDOC_EXPORT]:
-            result = create_xls_export(arguments)
+            result = create_xls_export(username, id_string, export.id, query)
         elif export_type == Export.CSV_EXPORT:
             result = create_csv_export.apply_async(
                 (), arguments, countdown=10)
