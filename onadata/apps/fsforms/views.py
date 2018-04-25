@@ -1368,17 +1368,20 @@ class FullResponseTable(ReadonlyFormMixin, View):
         #             if section == section_name:
         #                 for row in rows:
         #                     yield row[id_index], row
-        
+
         def make_table(submissions):
             for section_name, submission in submissions:
                 for row in submission:
 
                     for question_name in question_names:
-                       
-                        if question_name in media_attributes:
-                            yield row['_id'], '<a href="'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>'
+                        if question_name in row:
+                            if question_name in media_attributes:
+                                yield row['_id'], '<a href="'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>'
+                            else:
+                                yield row['_id'], row[question_name]
                         else:
-                            yield row['_id'], row[label]
+                            yield row['_id'], ''
+
         context['labels'] = labels
         context['data'] = make_table(data)
         context['media_attributes'] = media_attributes
