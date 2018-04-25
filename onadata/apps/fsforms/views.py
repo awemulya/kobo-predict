@@ -1374,13 +1374,14 @@ class FullResponseTable(ReadonlyFormMixin, View):
                 for row in submission:
 
                     for question_name in question_names:
+                        row_data=[]
                         if question_name in row:
                             if question_name in media_attributes:
-                                yield row['_id'], '<a href="'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>'
+                                row_data.append('<a href="'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>')
                             else:
-                                yield row['_id'], row[question_name]
-                        else:
-                            yield row['_id'], ''
+                                row_data.append(row[question_name])
+                    
+                    yield row['_id'], row_data
 
         context['labels'] = labels
         context['data'] = make_table(data)
