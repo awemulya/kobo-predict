@@ -1361,12 +1361,17 @@ class FullResponseTable(ReadonlyFormMixin, View):
 
         # generator dublicating the "_id" to allow to make a link to each
         # submission
+        # def make_table(submissions):
+        #     for chunk in export.parse_submissions(submissions):
+        #         for section_name, rows in chunk.items():
+        #             if section == section_name:
+        #                 for row in rows:
+        #                     yield row[id_index], row
+
         def make_table(submissions):
-            for chunk in export.parse_submissions(submissions):
-                for section_name, rows in chunk.items():
-                    if section == section_name:
-                        for row in rows:
-                            yield row[id_index], row
+            for submission in submissions:
+                for label in labels:
+                    yield submission[label]
 
         context['labels'] = labels
         context['data'] = make_table(data)
