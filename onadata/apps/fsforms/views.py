@@ -1358,7 +1358,8 @@ class FullResponseTable(ReadonlyFormMixin, View):
         sections = list(export.labels.items())
         question_names = export.sections.items()[0][1]
         section, labels = sections[0]
-        id_index = labels.index('_id')
+        
+        # id_index = labels.index('_id')
 
         # generator dublicating the "_id" to allow to make a link to each
         # submission
@@ -1376,15 +1377,16 @@ class FullResponseTable(ReadonlyFormMixin, View):
                     for question_name in question_names:
                         if question_name in row:
                             if question_name in media_attributes:
-                                row_data.append('<a href="'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>')
+                                row_data.append('<a href="/attachment/medium?media_file='+fsxf.xf.username+'/attachments/'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>')
                             else:
                                 row_data.append(row[question_name])
-                    
+                        else:
+                            row_data.append('')
                     yield row['_id'], row_data
 
         context['labels'] = labels
         context['data'] = make_table(data)
-        context['media_attributes'] = media_attributes
+        # context['media_attributes'] = media_attributes
         context['owner_username'] = fsxf.xf.user.username
         context['obj'] = fsxf
         # return JsonResponse({'data': cursor})
