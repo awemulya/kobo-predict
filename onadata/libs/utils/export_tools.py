@@ -526,18 +526,19 @@ class ExportBuilder(object):
         return generated_name
 
     def to_xls_export(self, path, data, *args):
+        print self.__dict__
+            
         def write_row(data, work_sheet, fields, work_sheet_titles):
             # work_sheet_titles = work_sheet_titles.append("fs_site")
             # update parent_table with the generated sheet's title
-            print self.__dict__
             print fields
             print data
             data[PARENT_TABLE_NAME] = work_sheet_titles.get(
                 data.get(PARENT_TABLE_NAME))
-            data = []
+            data_new = []
             for f in fields:
-                data.append(data.get(f))
-            work_sheet.append(data)
+                data_new.append(data.get(f))
+            work_sheet.append(data_new)
 
         wb = Workbook(optimized_write=True)
         work_sheets = {}
