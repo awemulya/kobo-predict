@@ -166,7 +166,7 @@ body{
             <th><a href="{% url 'forms:instance' obj.id %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
             {% for value in row %}
             <td>
-            <span class="cell-content-wrap">{% autoescape on %}
+            <span class="cell-content-wrap">{% autoescape off %}
     {{ value }}
 {% endautoescape %}</span>
             </td>
