@@ -1285,7 +1285,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
         
         def parse_repeat(r_object):
             r_question = r_object['name']
-            data.append(r_question)
+            # data.append(r_question)
             for first_children in r_object['children']:
                 
                 if first_children['type'] in ['photo', 'audio', 'video']:
@@ -1305,7 +1305,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
 
                 if question_type in ['photo', 'audio', 'video']:
                     question = g_question+"/",first_children
-                    data.append(question)   
+                    media_attributes.append(question)   
 
         def parse_individual_questions(parent_object):
             for first_children in parent_object:
@@ -1318,7 +1318,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
                 else:
                     if first_children['type'] in ['photo', 'video', 'audio']:
                         question = first_children['name']
-                        data.append(question)
+                        media_attributes.append(question)
 
         parse_individual_questions(json_question['children'])
         
