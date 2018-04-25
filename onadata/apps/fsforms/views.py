@@ -1356,6 +1356,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
 
         export = context['export']
         sections = list(export.labels.items())
+        question_names = export.section.items()[0][1]
         section, labels = sections[0]
         id_index = labels.index('_id')
 
@@ -1372,9 +1373,11 @@ class FullResponseTable(ReadonlyFormMixin, View):
             for section_name, submission in submissions:
                 for row in submission:
                     if section == section_name:
-                        for label in labels:
-                            yield row[id_index], row[label]
-
+                        for question_name in question_names:
+                            if question_name in media_attributes:
+                                yield row[id_index], '<a href="'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>'
+                            else:
+                                yield row[id_index], row[label]
         context['labels'] = labels
         context['data'] = make_table(data)
         context['media_attributes'] = media_attributes
