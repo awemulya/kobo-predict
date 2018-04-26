@@ -14,6 +14,7 @@ from registration import forms as registration_forms
 from onadata.apps.fieldsight.helpers import AdminImageWidget
 from .utils.forms import HTML5BootstrapModelForm, KOModelForm
 from .models import Organization, Project, Site, BluePrints, Region
+from onadata.apps.geo.models import GeoLayer
 from onadata.apps.userrole.models import UserRole
 
 USERNAME_REGEX = r'^[a-z][a-z0-9_]+$'
@@ -222,6 +223,7 @@ class ProjectForm(forms.ModelForm):
     y = forms.FloatField(widget=forms.HiddenInput(), required=False)
     width = forms.FloatField(widget=forms.HiddenInput(), required=False)
     height = forms.FloatField(widget=forms.HiddenInput(), required=False)
+
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
         if not self.fields['location'].initial:
@@ -230,19 +232,27 @@ class ProjectForm(forms.ModelForm):
         self.fields['cluster_sites'].label = "Do you want to cluster sites in this Project?"
         #self.fields['organization'].empty_label = None
 
+        is_new = kwargs.get('new')
+        if is_new:
+            org_id = kwargs['organization_id']
+        else:
+            org_id = kwargs['instance'].organization.id
+        self.fields['geo_layers'].queryset = GeoLayer.objects.filter(
+            organization__id=org_id
+        )
+
     class Meta:
         model = Project
         exclude = ('organization', 'is_active', 'site_meta_attributes',)
         #organization_filters = ['organization']
         widgets = {
-        'is_active': forms.HiddenInput(),
-        'address': forms.TextInput(),
-        'location': forms.HiddenInput(),
-        'logo': AdminImageWidget()
+            'is_active': forms.HiddenInput(),
+            'address': forms.TextInput(),
+            'location': forms.HiddenInput(),
+            'logo': AdminImageWidget()
         }
 
     def save(self, commit=True, *args, **kwargs):
-        
         is_new = kwargs.pop('new')
         
         if is_new:

@@ -238,6 +238,9 @@ INSTALLED_APPS = (
     'onadata.apps.userrole',
     'onadata.apps.fsforms',
     'onadata.apps.eventlog',
+
+    'onadata.apps.geo',
+
     'guardian',
     'djcelery',
     'onadata.apps.stats',
@@ -531,6 +534,6 @@ SOUTH_MIGRATION_MODULES = {
     'onadata.apps.viewer': 'onadata.apps.viewer.south_migrations',
 }
 SERIALIZATION_MODULES = {
-        "custom_geojson": "onadata.apps.fieldsight.serializers.GeoJSONSerializer",
-        "full_detail_geojson": "onadata.apps.fieldsight.serializers.FullDetailGeoJSONSerializer",
+    "custom_geojson": "onadata.apps.fieldsight.serializers.GeoJSONSerializer",
+    "full_detail_geojson": "onadata.apps.fieldsight.serializers.FullDetailGeoJSONSerializer",
 }

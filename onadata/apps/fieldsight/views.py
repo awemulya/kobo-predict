@@ -37,6 +37,7 @@ from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChart
 from onadata.apps.fsforms.models import FieldSightXF, Stage, FInstance
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
+from onadata.apps.geo.models import GeoLayer
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin, SiteView,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
@@ -1713,20 +1714,25 @@ class OrgFullmap(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
         data = serialize('full_detail_geojson', sites, geometry_field='location',
                fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
         dashboard_data = {
-           'data': data,
+            'data': data,
+            'geo_layers': obj.geo_layers.all(),
         }
         return dashboard_data
 
 
 class ProjFullmap(ProjectRoleMixin, TemplateView):
     template_name = "fieldsight/map.html"
+
     def get_context_data(self, **kwargs):
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
         sites = obj.sites.filter(is_active=True, is_survey=False)
-        data = serialize('full_detail_geojson', sites, geometry_field='location',
-                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id',))
+        data = serialize(
+            'full_detail_geojson', sites, geometry_field='location',
+            fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id',)
+        )
         dashboard_data = {
             'data': data,
+            'geo_layers': obj.geo_layers.all(),
         }
         return dashboard_data
 
@@ -1738,8 +1744,8 @@ class SiteFullmap(ReviewerRoleMixin, TemplateView):
         data = serialize('full_detail_geojson', [obj], geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
         dashboard_data = {
-
             'data': data,
+            'geo_layers': obj.project.geo_layers.all(),
         }
         return dashboard_data
 
@@ -2294,7 +2300,10 @@ class SiteResponseCoordinates(ReviewerRoleMixin, View):
     def get(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
-        return render(request, 'fieldsight/site_response_map_view.html', {'co_ords':json.dumps(list(coord_datas["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8')})
+        return render(request, 'fieldsight/site_response_map_view.html', {
+            'co_ords': json.dumps(list(coord_datas["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'),
+            'geo_layers': obj.project.geo_layers.all(),
+        })
 
     def post(self, request, pk):
         coord_datas = get_site_responses_coords(pk)

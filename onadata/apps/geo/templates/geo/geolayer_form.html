@@ -1,0 +1,54 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block content %}
+<link href="{% static 'css/geolayer_form.css' %}" rel="stylesheet">
+<div id="main-content" class="padding">
+
+    <nav aria-label="breadcrumb" role="navigation">
+        {% block breadcrumbs %}
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization' %} {% trans 'List' %}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' organization.pk %}">{{organization.name}}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:geo-layers' organization.pk %}">Geo layers</a></li>
+            {% if form.instance.id %}
+            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+            {% else %}
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+            {% endif %}
+        </ol>
+        {% endblock %}
+    </nav>
+
+    <div class="form-container">
+        <form enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            {% for hidden_field in form.hidden_fields %}
+            {{ hidden_field.errors }}
+            {{ hidden_field }}
+            {% endfor %}
+
+            <div class="row">
+                {% for field in form.visible_fields %}
+                {% if field.name == "title" or field.name == "geo_shape_file" %}
+                <div class="form-group col-md-12">
+                {% else %}
+                <div class="form-group col-md-4">
+                    {% endif %}
+                    {{ field.label_tag }}
+                    {{ field.errors }}
+                    {{ field|add_class:"form-control" }}
+                    {{ field.help_text|safe }}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="footer">
+                <button type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans 'Save' %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

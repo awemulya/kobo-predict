@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-from datetime import datetime
 import json
 from django.contrib.gis.db.models import PointField
 from django.contrib.gis.db.models import GeoManager
@@ -15,8 +14,6 @@ from django.contrib.auth.models import Group
 
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from django.utils.encoding import force_text
-from django.conf import settings
 
 
 class TimeZone(models.Model):
@@ -26,17 +23,20 @@ class TimeZone(models.Model):
     offset_time = models.CharField(max_length=255, blank=True, null=False)
 
     class Meta:
-         ordering = ['time_zone']
-    
+        ordering = ['time_zone']
+
     def __unicode__(self):
         return self.time_zone + " - " + self.country
 
+
 class ExtraUserDetail(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='extra_details')
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, related_name='extra_details')
     data = JSONField(default={})
 
     def __unicode__(self):
-        return '{}\'s data: {}'.format(self.user.__unicode__(), repr(self.data))
+        return '{}\'s data: {}'.format(self.user.__unicode__(),
+                                       repr(self.data))
 
 
 def create_extra_user_details(sender, instance, created, **kwargs):
@@ -54,7 +54,7 @@ class OrganizationType(models.Model):
         return u'{}'.format(self.name)
 
 
-class   ProjectType(models.Model):
+class ProjectType(models.Model):
     name = models.CharField("Project Type", max_length=256)
 
     def __unicode__(self):
@@ -63,24 +63,27 @@ class   ProjectType(models.Model):
 
 class Organization(models.Model):
     name = models.CharField("Organization Name", max_length=255)
-    type = models.ForeignKey(OrganizationType, verbose_name='Type of Organization')
-    phone = models.CharField("Contact Number",max_length=255, blank=True, null=True)
+    type = models.ForeignKey(
+        OrganizationType, verbose_name='Type of Organization')
+    phone = models.CharField(
+        "Contact Number", max_length=255, blank=True, null=True)
     fax = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     website = models.URLField(blank=True, null=True)
     country = models.CharField(max_length=3, choices=COUNTRIES, default=u'NPL')
     address = models.TextField(blank=True, null=True)
     public_desc = models.TextField("Public Description", blank=True, null=True)
-    additional_desc = models.TextField("Additional Description", blank=True, null=True)
-    logo = models.ImageField(upload_to="logo", default="logo/default_org_image.jpg")
+    additional_desc = models.TextField(
+        "Additional Description", blank=True, null=True)
+    logo = models.ImageField(
+        upload_to="logo", default="logo/default_org_image.jpg")
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True,)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
-
     class Meta:
-         ordering = ['-is_active', 'name', ]
+        ordering = ['-is_active', 'name', ]
 
     def __unicode__(self):
         return u'{}'.format(self.name)
@@ -129,29 +132,39 @@ class Organization(models.Model):
 
     def get_submissions_count(self):
         from onadata.apps.fsforms.models import FInstance
-        outstanding = FInstance.objects.filter(project__organization=self, form_status=0).count()
-        rejected = FInstance.objects.filter(project__organization=self, form_status=1).count()
-        flagged = FInstance.objects.filter(project__organization=self, form_status=2).count()
-        approved = FInstance.objects.filter(project__organization=self, form_status=3).count()
+        outstanding = FInstance.objects.filter(
+            project__organization=self, form_status=0).count()
+        rejected = FInstance.objects.filter(
+            project__organization=self, form_status=1).count()
+        flagged = FInstance.objects.filter(
+            project__organization=self, form_status=2).count()
+        approved = FInstance.objects.filter(
+            project__organization=self, form_status=3).count()
 
         return outstanding, flagged, approved, rejected
 
     def get_absolute_url(self):
-        return reverse('fieldsight:organizations-dashboard', kwargs={'pk': self.pk})
+        return reverse('fieldsight:organizations-dashboard',
+                       kwargs={'pk': self.pk})
 
     @property
     def get_staffs(self):
-        staffs = self.organization_roles.filter(group__name="Organization Admin").values_list('id', 'user__username')
+        staffs = self.organization_roles.filter(
+            group__name="Organization Admin"
+        ).values_list('id', 'user__username')
         return staffs
 
     @property
     def get_staffs_org(self):
-        staffs = self.organization_roles.filter(group__name="Organization Admin")
+        staffs = self.organization_roles.filter(
+            group__name="Organization Admin")
         return staffs
 
     @property
     def get_staffs_id(self):
-        return self.organization_roles.filter(group__name="Organization Admin").values_list('id', flat=True)
+        return self.organization_roles.filter(
+            group__name="Organization Admin"
+        ).values_list('id', flat=True)
 
     def get_organization_type(self):
         return self.type.name
@@ -167,9 +180,11 @@ class Project(models.Model):
     website = models.URLField(blank=True, null=True)
     donor = models.CharField(max_length=256, blank=True, null=True)
     public_desc = models.TextField("Public Description", blank=True, null=True)
-    additional_desc = models.TextField("Additional Description", blank=True, null=True)
+    additional_desc = models.TextField(
+        "Additional Description", blank=True, null=True)
     organization = models.ForeignKey(Organization, related_name='projects')
-    logo = models.ImageField(upload_to="logo", default="logo/default_project_image.jpg")
+    logo = models.ImageField(
+        upload_to="logo", default="logo/default_project_image.jpg")
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
@@ -177,9 +192,10 @@ class Project(models.Model):
     site_meta_attributes = JSONField(default=list)
     logs = GenericRelation('eventlog.FieldSightLog')
     objects = GeoManager()
+    geo_layers = models.ManyToManyField('geo.GeoLayer', blank=True)
 
     class Meta:
-         ordering = ['-is_active', 'name', ]
+        ordering = ['-is_active', 'name', ]
 
     @property
     def latitude(self):
@@ -196,18 +212,21 @@ class Project(models.Model):
 
     def __unicode__(self):
         return u'{}'.format(self.name)
+
     @property
     def get_staffs(self):
-        staffs = self.project_roles.filter(group__name__in=["Reviewer", "Project Manager"])
+        staffs = self.project_roles.filter(
+            group__name__in=["Reviewer", "Project Manager"])
         return staffs
 
     @property
     def get_staffs_both_role(self):
-        managers_id = self.project_roles.filter(group__name="Project Manager").values_list('user__id', flat=True)
-        reviewers_id = self.project_roles.filter(group__name="Reviewer").values_list('user__id', flat=True)
+        managers_id = self.project_roles.filter(
+            group__name="Project Manager").values_list('user__id', flat=True)
+        reviewers_id = self.project_roles.filter(
+            group__name="Reviewer").values_list('user__id', flat=True)
         both = list(set(managers_id).intersection(reviewers_id))
         return both
-
 
     def get_organization_name(self):
         return self.organization.name
@@ -242,7 +261,6 @@ class Project(models.Model):
 
         return outstanding, flagged, approved, rejected
 
-
     def get_submissions_count(self):
         outstanding = self.project_instances.filter(form_status=0).count()
         rejected = self.project_instances.filter(form_status=1).count()
@@ -254,6 +272,7 @@ class Project(models.Model):
     def get_absolute_url(self):
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.pk})
 
+
 class Region(models.Model):
     identifier = models.CharField("ID", max_length=255)
     name = models.CharField(max_length=255, null=True, blank=True,)
@@ -264,7 +283,7 @@ class Region(models.Model):
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
-        unique_together = [('identifier', 'project'),]
+        unique_together = [('identifier', 'project'), ]
 
     def get_sites_count(self):
         return self.regions.all().count()
@@ -277,23 +296,25 @@ class Site(models.Model):
     phone = models.CharField(max_length=255, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     public_desc = models.TextField("Public Description", blank=True, null=True)
-    additional_desc = models.TextField("Additional Description", blank=True, null=True)
+    additional_desc = models.TextField(
+        "Additional Description", blank=True, null=True)
     project = models.ForeignKey(Project, related_name='sites')
-    logo = models.ImageField(upload_to="logo", default="logo/default_site_image.png")
+    logo = models.ImageField(
+        upload_to="logo", default="logo/default_site_image.png")
     is_active = models.BooleanField(default=True)
     location = PointField(geography=True, srid=4326, blank=True, null=True)
     is_survey = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
-    region = models.ForeignKey(Region, related_name='regions', blank=True, null=True)
+    region = models.ForeignKey(
+        Region, related_name='regions', blank=True, null=True)
     site_meta_attributes_ans = JSONField(default=list)
     logs = GenericRelation('eventlog.FieldSightLog')
-
 
     objects = GeoManager()
 
     class Meta:
-         ordering = ['-is_active', '-id']
-         unique_together = [('identifier', 'project'), ]
+        ordering = ['-is_active', '-id']
+        unique_together = [('identifier', 'project'), ]
 
     @property
     def latitude(self):
@@ -310,10 +331,10 @@ class Site(models.Model):
 
     def __unicode__(self):
         return u'{}'.format(self.name)
+
     @property
     def get_supervisors(self):
         return self.site_roles.all()
-
 
     @property
     def get_supervisor_id(self):
@@ -332,8 +353,10 @@ class Site(models.Model):
         return self.type.name
 
     def progress(self):
-        stages = self.site_forms.filter(xf__isnull=False, is_staged=True, is_deleted=False).count()
-        approved = self.site_instances.filter(form_status=3, site_fxf__is_staged=True).count()
+        stages = self.site_forms.filter(
+            xf__isnull=False, is_staged=True, is_deleted=False).count()
+        approved = self.site_instances.filter(
+            form_status=3, site_fxf__is_staged=True).count()
         if not approved:
             return 0
         if not stages:
@@ -343,6 +366,7 @@ class Site(models.Model):
         if p > 99:
             return 100
         return p
+
     @property
     def site_progress(self):
         return self.progress()
@@ -359,7 +383,6 @@ class Site(models.Model):
             return 3
         return 4
 
-
     def get_site_submission(self):
         instances = self.site_instances.all().order_by('-date')
         outstanding, flagged, approved, rejected = [], [], [], []
@@ -374,7 +397,6 @@ class Site(models.Model):
                 approved.append(submission)
 
         return outstanding, flagged, approved, rejected
-
 
     def get_site_submission_count(self):
         instances = self.site_instances.all().order_by('-date')
@@ -433,18 +455,23 @@ class ChatMessage(models.Model):
     class Meta:
         db_table = 'chat_message'
 
+
 class UserInvite(models.Model):
-    email=models.CharField(max_length=255)
-    by_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='invited_by_user')
+    email = models.CharField(max_length=255)
+    by_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='invited_by_user')
     is_used = models.BooleanField(default=False)
     is_declied = models.BooleanField(default=False)
     token = models.CharField(max_length=255)
     group = models.ForeignKey(Group)
-    site = models.ForeignKey(Site, null=True, blank=True, related_name='invite_site_roles')
-    project = models.ForeignKey(Project, null=True, blank=True, related_name='invite_project_roles')
-    organization = models.ForeignKey(Organization, related_name='invite_organization_roles')
+    site = models.ForeignKey(Site, null=True, blank=True,
+                             related_name='invite_site_roles')
+    project = models.ForeignKey(
+        Project, null=True, blank=True, related_name='invite_project_roles')
+    organization = models.ForeignKey(
+        Organization, related_name='invite_organization_roles')
     logs = GenericRelation('eventlog.FieldSightLog')
-    
+
     def __unicode__(self):
         return self.email + "-----" + str(self.is_used)
 
@@ -470,11 +497,6 @@ class UserInvite(models.Model):
         super(UserInvite, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('fieldsight:activate-role', kwargs={'invite_idb64': urlsafe_base64_encode(force_bytes(self.pk)), 'token':self.token,})
-
-
-
-
-
-
-    
+        invite_idb64 = urlsafe_base64_encode(force_bytes(self.pk))
+        kwargs = {'invite_idb64': invite_idb64, 'token': self.token}
+        return reverse('fieldsight:activate-role', kwargs=kwargs)
