@@ -3,7 +3,7 @@ import json
 from rest_framework import serializers
 
 from onadata.apps.fieldsight.models import Project, Site
-from onadata.apps.fsforms.models import Stage, FieldSightXF, EducationalImages, EducationMaterial
+from onadata.apps.fsforms.models import Stage, FieldSightXF, EducationalImages, EducationMaterial, DeployEvent
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import EMSerializer
 from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import FSXFSerializer
 from onadata.apps.logger.models import XForm
@@ -147,4 +147,11 @@ class EMSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EducationMaterial
+        exclude = ()
+
+
+class DeploySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DeployEvent
         exclude = ()

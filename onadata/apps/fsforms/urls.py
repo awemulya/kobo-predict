@@ -9,7 +9,7 @@ from onadata.apps.fsforms.viewsets.SiteFormsViewset import SiteFormViewSet
 from onadata.apps.fsforms.viewsets.StageViewset import SiteMainStageViewSet, \
         SubStageViewSet, StageViewSet
 from onadata.apps.fsforms.viewsets.ConfigureStageViewset import StageListViewSet, SubStageListViewSet, \
-    SubStageDetailViewSet, EmViewSet
+    SubStageDetailViewSet, EmViewSet, DeployViewset
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
 from .views import (
     LibraryFormsListView,
@@ -222,6 +222,8 @@ urlpatterns = urlpatterns + [
     url(r'^api/set-deploy-main-stage/(?P<is_project>\d)/(?P<pk>\d+)/(?P<stage_id>\d+)/$', set_deploy_main_stage, name="sdms"),
     url(r'^api/set-deploy-sub-stage/(?P<is_project>\d)/(?P<pk>\d+)/(?P<stage_id>\d+)/$', set_deploy_sub_stage, name="sdss"),
 
+
+    url(r'^api/get-deploy-data/(?P<pk>\d+)/$', DeployViewset.as_view({'get': 'retrieve'})),
 
 
 ]

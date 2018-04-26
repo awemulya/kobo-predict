@@ -5,9 +5,9 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 import rest_framework.status
 
-from onadata.apps.fsforms.models import Stage, EducationMaterial
+from onadata.apps.fsforms.models import Stage, EducationMaterial, DeployEvent
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer, \
-    SubStageDetailSerializer, EMSerializer
+    SubStageDetailSerializer, EMSerializer, DeploySerializer
 
 
 class StageListViewSet(viewsets.ModelViewSet):
@@ -119,3 +119,6 @@ class EmViewSet(viewsets.ModelViewSet):
         return {'request': self.request, 'kwargs': self.kwargs,}
 
 
+class DeployViewset(viewsets.ModelViewSet):
+    queryset = DeployEvent.objects.all()
+    serializer_class = DeploySerializer

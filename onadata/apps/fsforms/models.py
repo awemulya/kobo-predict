@@ -63,7 +63,7 @@ class Stage(models.Model):
     ready = models.BooleanField(default=False)
     project_stage_id = models.IntegerField(default=0)
     weight = models.IntegerField(default=0)
-    tags = ArrayField(models.IntegerField(), null=True)
+    tags = ArrayField(models.IntegerField(), default=[])
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
