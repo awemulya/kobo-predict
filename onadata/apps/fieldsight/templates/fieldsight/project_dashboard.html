@@ -453,7 +453,7 @@ var project = "{{obj.pk}}";
     	function getlogdata(){ 
 								
 						$.ajax({
-						            url: "{% url 'eventlog:project_logs' obj.pk %}",
+						            url: "{% url 'eventlog:api_project_logs' obj.pk %}",
 						            type: 'GET',
 						            success: function (data) {
 						               $("#notification-ul").html( "" );

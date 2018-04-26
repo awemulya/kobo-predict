@@ -13,7 +13,7 @@
 <div id="main-content" class="padding">
     <section class="panel">
         <header class="panel-heading clearfix">
-            <h3><i class="la la-building"></i>{% trans 'New' %}{% trans 'Site' %} </h3>
+           
         </header>
         <div class="panel-body">
           
@@ -40,24 +40,31 @@
 
 <script type="text/javascript">
 
+{% if type == "Site" %}
+   api_url = "{% url 'eventlog:api_site_logs' obj.pk %}";
+{% else %}
+  api_url = "{% url 'eventlog:api_project_logs' obj.pk %}";
+{% endif %}
 
-document.onload = getnotifdatalist('{% url 'eventlog:api-not' %}');
+document.onload = getnotifdatalist(api_url);
 
-  function getnotifdatalist(url){
-      $.ajax({
-        url: url,
-        type: 'GET',
-        success: function (data) {
-           data.results.forEach(populatedatalist);
-           speed=0;
-           if (data.next == null){
-            document.getElementById('getnextlist').style.display = 'none';
-           }else{
-            document.getElementById('getnextlist').style.display = 'block';
-            document.getElementById("getnextlist").setAttribute( "onClick", "javascript: getnotifdatalist('"+ data.next+"');" );
-        }
-        }
-      });
+function getnotifdatalist(url){
+    $.ajax({
+      url: url,
+      type: 'GET',
+      success: function (data) {
+         data.results.forEach(populatedatalist);
+         speed=0;
+         if (data.next == null){
+          document.getElementById('getnextlist').style.display = 'none';
+         }else{
+          document.getElementById('getnextlist').style.display = 'block';
+          document.getElementById("getnextlist").setAttribute( "onClick", "javascript: getnotifdatalist('"+ data.next+"');" );
+      }
+      }
+    });
+}
+}
 }
 
 

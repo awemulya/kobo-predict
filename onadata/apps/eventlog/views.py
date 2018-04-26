@@ -22,6 +22,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.http import JsonResponse
 from celery.result import AsyncResult
 from onadata.apps.eventlog.serializers.LogSerializer import NotificationSerializer
+from onadata.apps.fieldsight.rolemixins import ProjectRoleMixin, SiteRoleMixin
 
 class NotificationListView(LoginRequiredMixin, TemplateView):
     template_name = "eventlog/fieldsight_notification_list.html"
@@ -146,3 +147,22 @@ class MyCeleryTaskProgress(TemplateView):
         return render(request, 'eventlog/fieldsight_task_list.html',{'pending':pending, 'ongoing':ongoing, 'completed': completed, 'failed':failed })
 
 
+class ProjectLogListView(ProjectRoleMixin, TemplateView):
+    template_name = "eventlog/fieldsight_log_list.html"
+
+    def get_context_data(self, **kwargs):
+        data = super(ProjectLogListView, self).get_context_data(**kwargs)
+        project = Project.objects.get(pk=kwargs.get('pk'))
+        data['types'] = "Project"
+        data['obj'] = project
+        return data
+
+class SiteLogListView(SiteRoleMixin, TemplateView):
+    template_name = "eventlog/fieldsight_log_list.html"
+
+    def get_context_data(self, **kwargs):
+        data = super(SiteLogListView, self).get_context_data(**kwargs)
+        site = Site.objects.get(pk=kwargs.get('pk'))
+        data['types'] = "Site"
+        data['obj'] = site
+        return data
