@@ -38,6 +38,7 @@ from onadata.libs.utils.common_tags import (
     FS_SITE_ADDRESS, FS_SITE_PHONE, FS_SITE_SUPERVISOR)
 from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
+from onadata.apps.fsform.XFormMediaAttributes import get_media_attributes
 
 
 # this is Mongo Collection where we will store the parsed submissions
@@ -526,61 +527,23 @@ class ExportBuilder(object):
         return generated_name
 
     def to_xls_export(self, path, data, *args):
-        media_attributes=[]
+        
         if args[2]:
-
             json_question = json.loads(args[2].json)
-            
-            def parse_repeat(r_object):
-                r_question = r_object['name']
-                # data.append(r_question)
-                for first_children in r_object['children']:
-                    
-                    if first_children['type'] in ['photo', 'audio', 'video']:
-                        question = r_question+"/"+first_children['name']
-                        data.append(question)
+            media_attributes = get_media_attributes(json_question['children'])
 
-            def parse_group(prev_groupname, g_object):
-                g_question = prev_groupname+g_object['name']
-                
-                for first_children in g_object['children']:
-                    question_name = first_children['name']
-                    question_type = first_children['type']
-                    
-                    if question_type == 'group':
-                        parse_group(g_question+"/",first_children)
-                        continue
+            from django.contrib.sites.models import Site as DjangoSite
+            domain = DjangoSite.objects.get_current().domain
 
-                    if question_type in ['photo', 'audio', 'video']:
-                        question = g_question+"/",first_children
-                        media_attributes.append(question)   
-
-            def parse_individual_questions(parent_object):
-                for first_children in parent_object:
-                    if first_children['type'] == "repeat":
-                        parse_repeat(first_children)
-
-                    elif first_children['type'] == 'group':
-                        parse_group("",first_children)
-                    
-                    else:
-                        if first_children['type'] in ['photo', 'video', 'audio']:
-                            question = first_children['name']
-                            media_attributes.append(question)
-
-            parse_individual_questions(json_question['children'])
-            
         def write_row(data, work_sheet, fields, work_sheet_titles):
             # work_sheet_titles = work_sheet_titles.append("fs_site")
             # update parent_table with the generated sheet's title
-            print fields
-            print data
             data[PARENT_TABLE_NAME] = work_sheet_titles.get(
                 data.get(PARENT_TABLE_NAME))
             data_new = []
             for f in fields:
                 if args[2] and f in media_attributes:
-                    data_new.append('=HYPERLINK("https://app.fieldsight.org/attachment/medium?media_file='+args[2].user.username+'/attachments/'+data.get(f)+'", "link")')
+                    data_new.append('=HYPERLINK("'+domain+'/attachment/medium?media_file='+args[2].user.username+'/attachments/'+data.get(f)+'", "Attachment")')
                 else:    
                     data_new.append(data.get(f))
             work_sheet.append(data_new)

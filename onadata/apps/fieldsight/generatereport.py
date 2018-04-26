@@ -176,6 +176,10 @@ class MyPrint:
                         photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ r_answer[r_question+"/"+question]
                         answer = self.create_logo(photo)
                         # answer =''
+                    elif first_children['type'] == 'audio' or first_children['type'] == 'video':
+                        media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ r_answer[r_question+"/"+question]
+                        answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
+
                     else:
                         answer = Paragraph(r_answer[r_question+"/"+question], styBackground)
                 else:
@@ -198,6 +202,11 @@ class MyPrint:
                 elif first_children['type'] == 'photo':
                     photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[g_question+"/"+question]
                     answer = self.create_logo(photo)
+
+                elif first_children['type'] == 'audio' or first_children['type'] == 'video':
+                    media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ r_answer[r_question+"/"+question]
+                    answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
+
                 else:
                     answer = Paragraph(self.main_answer[g_question+"/"+question], styBackground)
             else:
@@ -228,6 +237,11 @@ class MyPrint:
                     elif first_children['type'] == 'photo':
                         photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[question]
                         answer = self.create_logo(photo)
+
+                    elif first_children['type'] == 'audio' or first_children['type'] == 'video':
+                        media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ r_answer[r_question+"/"+question]
+                        answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
+                        
                     else:
                         answer = Paragraph(self.main_answer[question], styBackground)
                 else:    

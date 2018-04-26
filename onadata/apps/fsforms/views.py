@@ -50,7 +50,7 @@ from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, Fiel
     EducationMaterial, EducationalImages, InstanceImages
 from django.db.models import Q
 from onadata.apps.fieldsight.rolemixins import MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
-
+from onadata.apps.fsform.XFormMediaAttributes import get_media_attributes
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -1280,47 +1280,9 @@ class FullResponseTable(ReadonlyFormMixin, View):
         limit = int(request.GET.get('limit', 100))
         fsxf_id = int(fsxf_id)
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
-        media_attributes=[]
         json_question = json.loads(fsxf.xf.json)
         
-        def parse_repeat(r_object):
-            r_question = r_object['name']
-            # data.append(r_question)
-            for first_children in r_object['children']:
-                
-                if first_children['type'] in ['photo', 'audio', 'video']:
-                    question = r_question+"/"+first_children['name']
-                    data.append(question)
-
-        def parse_group(prev_groupname, g_object):
-            g_question = prev_groupname+g_object['name']
-            
-            for first_children in g_object['children']:
-                question_name = first_children['name']
-                question_type = first_children['type']
-                
-                if question_type == 'group':
-                    parse_group(g_question+"/",first_children)
-                    continue
-
-                if question_type in ['photo', 'audio', 'video']:
-                    question = g_question+"/",first_children
-                    media_attributes.append(question)   
-
-        def parse_individual_questions(parent_object):
-            for first_children in parent_object:
-                if first_children['type'] == "repeat":
-                    parse_repeat(first_children)
-
-                elif first_children['type'] == 'group':
-                    parse_group("",first_children)
-                
-                else:
-                    if first_children['type'] in ['photo', 'video', 'audio']:
-                        question = first_children['name']
-                        media_attributes.append(question)
-
-        parse_individual_questions(json_question['children'])
+        media_attributes = get_media_attributes(json_question['children'])
         
         xform = fsxf.xf
         id_string = xform.id_string

@@ -2225,7 +2225,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                 sub_stage_count+=1
                 head_row.append("Sub Stage :"+ss.name)
                 ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
-                substages.append([ss.name, "Sub Stage "+str(stage_count)+"."+str(sub_stage_count)])
+                substages.append([ss.name, str(stage_count)+"."+str(sub_stage_count)])
 
     
 
