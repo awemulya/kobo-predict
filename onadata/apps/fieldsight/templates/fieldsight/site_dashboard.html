@@ -645,8 +645,8 @@ vm = new StageViewModel("{% url 'fieldsight:generate_custom_report' obj.pk %}", 
 						<div class="col-md-12">
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<h4>Project Logs</h4>
-									<!-- <a class="btn btn-xs btn-primary" href="#"><i class="la la-plus"></i></a> -->
+									<h4>Site Logs</h4>
+									<a class="btn btn-xs btn-primary" href="{% url 'eventlog:site_logs' obj.pk %}"><i class="la la-eye"></i></a>
 								</div>
 								<div class="widget-body">
 									<ul id="log_list">
@@ -796,13 +796,18 @@ var myChart1 = new Chart(ctx1, {
     	function getlogdata(){ 
 				
 		          $.ajax({
-		            url: "{% url 'eventlog:api_project_logs' obj.pk %}",
+		            url: "{% url 'eventlog:api_site_logs' obj.pk %}",
 		            type: 'GET',
 		            success: function (data) {
 		               $("#notification-ul").html( "" );
-		               data.results.forEach(populateloglist);
 		               if (data.results.length <= 0){
 		               	$("<li>No Logs Yet</li>").appendTo("#log_list");
+		               }
+		               else if(data.results.length > 8){
+		               	data.results.slice(0, 8).forEach(populateloglist);	
+		               }
+		               else{
+		               	data.results.forEach(populateloglist);
 		               }
 		            }
 		          });

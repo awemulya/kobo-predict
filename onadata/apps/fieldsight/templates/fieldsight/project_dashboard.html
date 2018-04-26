@@ -292,7 +292,7 @@ var project = "{{obj.pk}}";
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
 									<h4>Project Logs</h4>
-									<!-- <a class="btn btn-xs btn-primary" href="#"><i class="la la-plus"></i></a> -->
+									<a class="btn btn-xs btn-primary" href="{% url 'eventlog:project_logs' obj.pk %}"><i class="la la-eye"></i></a>
 								</div>
 								<div class="widget-body">
 									<ul id="log_list">
@@ -457,11 +457,17 @@ var project = "{{obj.pk}}";
 						            type: 'GET',
 						            success: function (data) {
 						               $("#notification-ul").html( "" );
-						               data.results.forEach(populateloglist);
-						              	if (data.results.length <= 0){
-						               	$("<li>No Logs Yet</li>").appendTo("#log_list");
+						               	   if (data.results.length <= 0){
+							               	$("<li>No Logs Yet</li>").appendTo("#log_list");
+							               }
+							               else if(data.results.length > 8){
+							               	data.results.slice(0, 8).forEach(populateloglist);	
+							               }
+							               else{
+							               	data.results.forEach(populateloglist);
+							               }
 						               }
-						            }
+						            
 						          });
 						}
 
