@@ -50,7 +50,7 @@ from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, Fiel
     EducationMaterial, EducationalImages, InstanceImages
 from django.db.models import Q
 from onadata.apps.fieldsight.rolemixins import MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
-from onadata.apps.fsform.XFormMediaAttributes import get_media_attributes
+from onadata.apps.fsforms.XFormMediaAttributes import get_media_attributes
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
