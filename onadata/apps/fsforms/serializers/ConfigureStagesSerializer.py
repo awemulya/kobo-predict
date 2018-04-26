@@ -3,41 +3,48 @@ import json
 from rest_framework import serializers
 
 from onadata.apps.fieldsight.models import Project, Site
-from onadata.apps.fsforms.models import Stage, FieldSightXF, EducationalImages, EducationMaterial
+from onadata.apps.fsforms.models import Stage, FieldSightXF, EducationalImages, EducationMaterial, DeployEvent
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import EMSerializer
 from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import FSXFSerializer
 from onadata.apps.logger.models import XForm
 
 
 class StageSerializer(serializers.ModelSerializer):
+    sub_stage_weight = serializers.SerializerMethodField()
+
     class Meta:
         model = Stage
-        fields = ('name', 'description', 'id', 'order', 'tags')
+        fields = ('name', 'description', 'id', 'order', 'tags', 'weight' ,'sub_stage_weight')
+
+    def get_sub_stage_weight(self, obj):
+        if hasattr(obj, 'sub_stage_weight'):
+            return obj.sub_stage_weight if obj.sub_stage_weight else 0
+        return 0
 
     def create(self, validated_data):
         pk = self.context['kwargs'].get('pk')
         is_project = self.context['kwargs'].get('is_project')
         stage = super(StageSerializer, self).create(validated_data)
-        if is_project:
+        if is_project == "1":
             stage.project = Project.objects.get(pk=pk)
         else:
             stage.site = Site.objects.get(pk=pk)
         stage.save()
         return stage
 
-    # def update(self, instance, validated_data):
-    #     tags = self.context['request'].data.get('tags', [])
-    #     stage = super(StageSerializer, self).update(instance, validated_data)
-    #     import ipdb
-    #     ipdb.set_trace()
-    #
-    #     return stage
+        # def update(self, instance, validated_data):
+        #     tags = self.context['request'].data.get('tags', [])
+        #     stage = super(StageSerializer, self).update(instance, validated_data)
+        #     import ipdb
+        #     ipdb.set_trace()
+        #
+        #     return stage
 
 
 class SubStageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stage
-        fields = ('name', 'description', 'id', 'order', 'tags')
+        fields = ('name', 'description', 'id', 'order', 'tags', 'weight')
 
 
 class SubStageDetailSerializer(serializers.ModelSerializer):
@@ -46,6 +53,7 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
     responses_count = serializers.SerializerMethodField()
     has_stage = serializers.SerializerMethodField()
     has_em = serializers.SerializerMethodField()
+    is_deployed = serializers.SerializerMethodField()
 
     def get_responses_count(self, obj):
         try:
@@ -70,10 +78,16 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
             return True
         except:
             return False
+
+    def get_is_deployed(self, obj):
+        try:
+            return obj.stage_forms.is_deployed
+        except:
+            return False
     class Meta:
         model = Stage
         fields = ('weight', 'name', 'description', 'id', 'order', 'date_created', 'em', 'responses_count',
-                  'stage_forms', 'has_stage', 'has_em', 'tags')
+                  'stage_forms', 'has_stage', 'has_em', 'tags', 'is_deployed')
 
     def create(self, validated_data):
         stage_id = self.context['kwargs'].get('stage_id')
@@ -133,4 +147,11 @@ class EMSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EducationMaterial
+        exclude = ()
+
+
+class DeploySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DeployEvent
         exclude = ()

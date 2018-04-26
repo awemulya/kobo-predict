@@ -27,7 +27,7 @@
             {% else %}
 			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ obj.name }}</a></li>
             {% endif %}
-			<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage' %} {% trans 'Forms Weight' %}</li>
+			<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage' %} {% trans 'Stages' %}</li>
 		    {% endblock %}
         </ol>
     </nav>
@@ -56,5 +56,5 @@
 <script src="//cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.16.0/vuedraggable.min.js"></script>
 
-<script src="{% static 'js/forms/manage_forms.js' %}?v=2.1.7"></script>
+<script src="{% static 'js/forms/manage_forms.js' %}?v=2.1.17"></script>
 {% endblock %}

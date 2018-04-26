@@ -9,7 +9,7 @@ from onadata.apps.fsforms.viewsets.SiteFormsViewset import SiteFormViewSet
 from onadata.apps.fsforms.viewsets.StageViewset import SiteMainStageViewSet, \
         SubStageViewSet, StageViewSet
 from onadata.apps.fsforms.viewsets.ConfigureStageViewset import StageListViewSet, SubStageListViewSet, \
-    SubStageDetailViewSet, EmViewSet
+    SubStageDetailViewSet, EmViewSet, DeployViewset
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
 from .views import (
     LibraryFormsListView,
@@ -37,6 +37,7 @@ from .views import (
     setup_site_stages,
     stage_add,
     site_survey,
+    set_deploy_sub_stage, set_deploy_main_stage, set_deploy_all_stages,
     create_schedule, stages_reorder, substages_reorder, save_edumaterial, save_edumaterial_details,
     setup_project_stages, project_stage_add, Instance_detail, alter_answer_status, project_survey,
     project_create_schedule, project_edit_schedule, edit_main_stage, edit_sub_stage, edit_schedule, Responses,
@@ -216,6 +217,13 @@ urlpatterns = urlpatterns + [
     url(r'^api/em/files/(?P<stageid>\d+).$', save_edumaterial),
     url(r'^api/em/(?P<stageid>\d+).$', save_edumaterial_details),
 
+
+    url(r'^api/set-deploy-all-stages/(?P<is_project>\d)/(?P<pk>\d+)/$', set_deploy_all_stages, name="sdas"),
+    url(r'^api/set-deploy-main-stage/(?P<is_project>\d)/(?P<pk>\d+)/(?P<stage_id>\d+)/$', set_deploy_main_stage, name="sdms"),
+    url(r'^api/set-deploy-sub-stage/(?P<is_project>\d)/(?P<pk>\d+)/(?P<stage_id>\d+)/$', set_deploy_sub_stage, name="sdss"),
+
+
+    url(r'^api/get-deploy-data/(?P<pk>\d+)/$', DeployViewset.as_view({'get': 'retrieve'})),
 
 
 ]
