@@ -542,11 +542,8 @@ class ExportBuilder(object):
                 data.get(PARENT_TABLE_NAME))
             data_new = []
             for f in fields:
-                print media_attributes
-                print f
                 if args[2] and f in media_attributes:
                     data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+args[2].user.username+'/attachments/'+data.get(f)+'", "Attachment")')
-                    print "here===="
                 else:    
                     data_new.append(data.get(f))
             work_sheet.append(data_new)

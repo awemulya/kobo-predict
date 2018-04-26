@@ -21,45 +21,10 @@ from django.contrib.contenttypes.models import ContentType
 
 from django.http import JsonResponse
 from celery.result import AsyncResult
+from onadata.apps.eventlog.serializers.LogSerializer import NotificationSerializer
 
-class LogSerializer(serializers.ModelSerializer):
-    source_uid = serializers.ReadOnlyField(source='source_id', read_only=True)
-    source_name = serializers.SerializerMethodField(read_only=True)
-    source_img = serializers.ReadOnlyField(source='source.user_profile.profile_picture.url', read_only=True)
-    get_source_url = serializers.ReadOnlyField()
-    
-    get_event_name = serializers.ReadOnlyField()
-    get_event_url = serializers.ReadOnlyField()
-
-    get_extraobj_name = serializers.ReadOnlyField()
-    get_extraobj_url = serializers.ReadOnlyField()
-
-    get_absolute_url = serializers.ReadOnlyField()
-    
-    # org_name = serializers.ReadOnlyField(source='organization.name', read_only=True)
-    # get_org_url = serializers.ReadOnlyField()
-
-    # project_name = serializers.ReadOnlyField(source='project.name', read_only=True)
-    # get_project_url = serializers.ReadOnlyField()
-
-    # site_name = serializers.ReadOnlyField(source='site.name', read_only=True)
-    # get_site_url = serializers.ReadOnlyField()
-
-    class Meta:
-        model = FieldSightLog
-        exclude = ('title', 'description', 'is_seen', 'content_type', 'organization', 'project', 'site', 'object_id', 'extra_object_id', 'source', 'extra_content_type',)
-
-    def get_source_name(self, obj):
-        return obj.source.first_name + " " + obj.source.last_name
-
-
-
-class NotificationListView(LoginRequiredMixin, ListView):
-    model = FieldSightLog
-    paginate_by = 100
-
-    def get_queryset(self):
-        return super(NotificationListView, self).get_queryset().order_by('-date')
+class NotificationListView(LoginRequiredMixin, TemplateView):
+    template_name = "eventlog/fieldsight_notification_list.html"
 
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 20
@@ -74,7 +39,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     """
 
     queryset = FieldSightLog.objects.select_related('source__user_profile').all().prefetch_related('seen_by')
-    serializer_class = LogSerializer
+    serializer_class = NotificationSerializer
     pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
@@ -91,7 +56,7 @@ class ProjectLog(viewsets.ModelViewSet):
     A simple ViewSet for viewing and editing sites.
     """
     queryset = FieldSightLog.objects.select_related('source__user_profile').all().prefetch_related('seen_by')
-    serializer_class = LogSerializer
+    serializer_class = NotificationSerializer
     pagination_class = SmallResultsSetPagination
 
     def filter_queryset(self, queryset):
@@ -103,7 +68,7 @@ class SiteLog(viewsets.ModelViewSet):
     A simple ViewSet for viewing and editing sites.
     """
     queryset = FieldSightLog.objects.select_related('source__user_profile').all().prefetch_related('seen_by')
-    serializer_class = LogSerializer
+    serializer_class = NotificationSerializer
     pagination_class = SmallResultsSetPagination
 
     def filter_queryset(self, queryset):
