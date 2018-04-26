@@ -1,11 +1,13 @@
 from __future__ import unicode_literals
+
+from django.db.models import Sum, F
 from rest_framework import viewsets
 from rest_framework.response import Response
 import rest_framework.status
 
-from onadata.apps.fsforms.models import Stage, EducationMaterial
+from onadata.apps.fsforms.models import Stage, EducationMaterial, DeployEvent
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer, \
-    SubStageDetailSerializer, EMSerializer
+    SubStageDetailSerializer, EMSerializer, DeploySerializer
 
 
 class StageListViewSet(viewsets.ModelViewSet):
@@ -24,7 +26,7 @@ class StageListViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(project__id=pk)
         else:
             queryset = queryset.filter(site__id=pk)
-        return queryset
+        return queryset.annotate(sub_stage_weight=Sum(F('parent__weight')))
 
     def retrieve_by_id(self, request, *args, **kwargs):
         instance = Stage.objects.get(pk=kwargs.get('pk'))
@@ -115,3 +117,8 @@ class EmViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         return {'request': self.request, 'kwargs': self.kwargs,}
+
+
+class DeployViewset(viewsets.ModelViewSet):
+    queryset = DeployEvent.objects.all()
+    serializer_class = DeploySerializer
