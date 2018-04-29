@@ -1942,7 +1942,10 @@ def set_deploy_main_stage(request, is_project, pk, stage_id):
 
                 FieldSightXF.objects.filter(fsform__id__in=project_form_ids).update(stage=None, is_deployed=False, is_deleted=True)
                 deleted_forms = FieldSightXF.objects.filter(fsform__id__in=project_form_ids)
-                deleted_stages = Stage.objects.filter(project_stage_id__in=sub_stages_id.append(main_stage.id))
+                deleted_stages_id = sub_stages_id
+                if main_stage.id:
+                    deleted_stages_id.append(main_stage.id)
+                deleted_stages = Stage.objects.filter(project_stage_id__in=deleted_stages_id)
                 Stage.objects.filter(project_stage_id=main_stage.id).delete()
                 Stage.objects.filter(project_stage_id__in=sub_stages_id).delete()
                 sites_affected = []
