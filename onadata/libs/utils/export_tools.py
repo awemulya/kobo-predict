@@ -38,7 +38,7 @@ from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
 from onadata.apps.viewer.XFormMediaAttributes import get_media_attributes
 
-from openpyxl.drawing import Image
+from openpyxl.drawing.image import Image
 import PIL
 import io
 import urllib3
@@ -522,13 +522,16 @@ class ExportBuilder(object):
             for f in fields:
                 if f in media_attributes:
                     http = urllib3.PoolManager()
-                    #data_new.append('=HYPERLINK("http://nrakc.fieldsight.org/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f)+'", "Attachment")')
+                    data_new.append('=HYPERLINK("http://nrakc.fieldsight.org/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f)+'", "Attachment")')
+                    # r = http.request('GET', 'http://nrakc.fieldsight.org/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f))
+                    # image_file = io.BytesIO(r.data)
+                    # img = Image(image_file)
+                    # data_new.append(img)
+                    http = urllib3.PoolManager()
                     r = http.request('GET', 'http://nrakc.fieldsight.org/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f))
                     image_file = io.BytesIO(r.data)
-                    your_image = Image(image_file)
-                    your_image.anchor(ws.cell('A16'))
-                    img = Image(your_image)
-                    work_sheet.add_image(img)
+                    img = Image(image_file)
+                    work_sheet.add_image(img, 'A2')
                 else:    
                     data_new.append(data.get(f))
             work_sheet.append(data_new)
