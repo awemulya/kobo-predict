@@ -505,8 +505,7 @@ class ExportBuilder(object):
         return generated_name
 
     def to_xls_export(self, path, data, username, xform_id_string, *args):
-        xform = XForm.objects.get(
-        user__username__iexact=username, id_string__exact=id_string)
+        xform = XForm.objects.get(user__username__iexact=username, id_string__exact=xform_id_string)
         json_question = json.loads(xform.json)
         media_attributes = get_media_attributes(json_question['children'])
 
