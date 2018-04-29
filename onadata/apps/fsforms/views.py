@@ -2087,11 +2087,13 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
                     site_fsxf.is_deployed = True
                     site_fsxf.save()
                     site_data['sub_stage'] = StageSerializer(site_sub_stage).data
+                    site_data['main_stage'] = StageSerializer(site_main_stage).data
                     site_data['sub_stage_form'] = FSXFormListSerializer(site_fsxf).data
                     site_data['id'] = site.id
                     sites_affected.append(site_data)
             deploy_data = {'project_form':FSXFormListSerializer(stage_form).data,
                            'project_stage':StageSerializer(main_stage).data,
+                           'project_sub_stage':StageSerializer(sub_stage).data,
                            'deleted_forms': FSXFormListSerializer(deleted_forms, many=True).data,
                            'deleted_stages': StageSerializer(deleted_stages, many=True).data,
                            'sites_affected':sites_affected,
