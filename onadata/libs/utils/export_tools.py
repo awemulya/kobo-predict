@@ -518,7 +518,7 @@ class ExportBuilder(object):
             # update parent_table with the generated sheet's title
             data[PARENT_TABLE_NAME] = work_sheet_titles.get(
                 data.get(PARENT_TABLE_NAME))
-            data_new = []
+            data_new = {}
             for f in fields:
                 if f in media_attributes:
                     http = urllib3.PoolManager()
