@@ -36,6 +36,7 @@ from onadata.libs.utils.common_tags import (
     SUBMISSION_TIME, UUID, TAGS, NOTES)
 from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
+from onadata.apps.fsforms.XFormMediaAttributes import get_media_attributes
 
 
 # this is Mongo Collection where we will store the parsed submissions
@@ -504,11 +505,28 @@ class ExportBuilder(object):
         return generated_name
 
     def to_xls_export(self, path, data, *args):
+        xform = XForm.objects.get(
+        user__username__iexact=username, id_string__exact=id_string)
+
+        if args[3]:
+            json_question = json.loads(args[3].json)
+            media_attributes = get_media_attributes(json_question['children'])
+
+            from django.contrib.sites.models import Site as DjangoSite
+            domain = DjangoSite.objects.get_current().domain
+
         def write_row(data, work_sheet, fields, work_sheet_titles):
+            # work_sheet_titles = work_sheet_titles.append("fs_site")
             # update parent_table with the generated sheet's title
             data[PARENT_TABLE_NAME] = work_sheet_titles.get(
                 data.get(PARENT_TABLE_NAME))
-            work_sheet.append([data.get(f) for f in fields])
+            data_new = []
+            for f in fields:
+                if args[3] and f in media_attributes:
+                    data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+args[3].user.username+'/attachments/'+data.get(f)+'", "Attachment")')
+                else:    
+                    data_new.append(data.get(f))
+            work_sheet.append(data_new)
 
         wb = Workbook(optimized_write=True)
         work_sheets = {}
@@ -732,7 +750,7 @@ def generate_export(export_type, extension, username, id_string,
     func = getattr(export_builder, export_type_func_map[export_type])
 
     func.__call__(
-        temp_file.name, records, username, id_string, filter_query)
+        temp_file.name, records, username, id_string, filter_query, xform)
 
     # generate filename
     basename = "%s_%s" % (
