@@ -38,7 +38,7 @@ from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
 from onadata.apps.viewer.XFormMediaAttributes import get_media_attributes
 
-from openpyxl.drawing.image import Image
+from openpyxl.drawing import Image
 import PIL
 import io
 import urllib3
