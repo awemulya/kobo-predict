@@ -526,7 +526,7 @@ class ExportBuilder(object):
                     r = http.request('GET', 'http://nrakc.fieldsight.org/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f))
                     image_file = io.BytesIO(r.data)
                     img = Image(image_file)
-                    work_sheet.append(img)
+                    work_sheet.add_image(img, 'A12')
                 else:    
                     data_new.append(data.get(f))
             work_sheet.append(data_new)
