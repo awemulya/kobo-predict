@@ -504,13 +504,11 @@ class ExportBuilder(object):
             i += 1
         return generated_name
 
-    def to_xls_export(self, path, data, *args):
-        if args[3]:
-            json_question = json.loads(args[3].json)
-            media_attributes = get_media_attributes(json_question['children'])
-
-            from django.contrib.sites.models import Site as DjangoSite
-            domain = DjangoSite.objects.get_current().domain
+    def to_xls_export(self, path, data, username, xform_id_string, *args):
+        xform = XForm.objects.get(
+        user__username__iexact=username, id_string__exact=id_string)
+        json_question = json.loads(xform.json)
+        media_attributes = get_media_attributes(json_question['children'])
 
         def write_row(data, work_sheet, fields, work_sheet_titles):
             # work_sheet_titles = work_sheet_titles.append("fs_site")
@@ -519,8 +517,8 @@ class ExportBuilder(object):
                 data.get(PARENT_TABLE_NAME))
             data_new = []
             for f in fields:
-                if args[3] and f in media_attributes:
-                    data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+args[3].user.username+'/attachments/'+data.get(f)+'", "Attachment")')
+                if f in media_attributes:
+                    data_new.append('=HYPERLINK("http://nrakc.fieldsight.org/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f)+'", "Attachment")')
                 else:    
                     data_new.append(data.get(f))
             work_sheet.append(data_new)
@@ -597,7 +595,7 @@ class ExportBuilder(object):
         prefix = slugify('analyser_data__{}__{}'.format(username, xform_id_string))
         with tempfile.NamedTemporaryFile('w+b', prefix=prefix, suffix='.xlsx',) as xls_data:
             # Generate a new XLS export to work from.
-            self.to_xls_export(xls_data.name, data)
+            self.to_xls_export(xls_data.name, data, usernamme, xform_id_string)
             xls_data.file.seek(0)
 
             # Generate the analyser file.
@@ -747,7 +745,7 @@ def generate_export(export_type, extension, username, id_string,
     func = getattr(export_builder, export_type_func_map[export_type])
 
     func.__call__(
-        temp_file.name, records, username, id_string, filter_query, xform)
+        temp_file.name, records, username, id_string, filter_query)
 
     # generate filename
     basename = "%s_%s" % (
