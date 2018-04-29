@@ -2013,7 +2013,7 @@ def set_deploy_main_stage(request, is_project, pk, stage_id):
         else:
             site = Site.objects.get(pk=pk)
             main_stage = Stage.objects.get(pk=stage_id)
-            Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False).update(is_deployed=True)
+            FieldSightXF.objects.filter(stage__id=main_stage.pk, is_deleted=False).update(is_deployed=True)
             sub_stages  = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
             sub_stages_id = [s.id for s in sub_stages]
             stage_forms = FieldSightXF.objects.filter(stage__id__in=sub_stages_id)
@@ -2025,7 +2025,7 @@ def set_deploy_main_stage(request, is_project, pk, stage_id):
             d.save()
             send_bulk_message_stage_deployed_site(site, main_stage, d.id)
             serializer = StageSerializer(main_stage)
-            return Response({serializer.data}, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
     # except Exception as e:
     #     return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
