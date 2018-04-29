@@ -2,7 +2,7 @@ import json
 from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import BasePermission
 
 from channels import Group as ChannelGroup
@@ -295,7 +295,7 @@ class SiteTypeViewset(viewsets.ModelViewSet):
     serializer_class = SiteTypeSerializer
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     permission_classes = (ProjectViewPermission,)
-    parser_classes = (MultiPartParser, FormParser,)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def get_queryset(self):
         project = self.kwargs.get('pk', False)

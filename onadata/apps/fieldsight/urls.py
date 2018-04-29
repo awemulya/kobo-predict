@@ -118,7 +118,7 @@ urlpatterns = [
     url(r'^api/project-types/$', ProjectTypeViewset.as_view({'get': 'list'})),
 
     url(r'^api/site-types/(?P<pk>\d+)/$', SiteTypeViewset.as_view({'get': 'list'})),
-    url(r'^api/site-types/$', SiteTypeViewset.as_view({'get': 'list'})),
+    url(r'^api/site-types/$', SiteTypeViewset.as_view({'get': 'list', 'post':'create'})),
 
     url(r'^api/survey-sites/(?P<pk>\d+)/$', SiteCreationSurveyViewSet.as_view({'get': 'list'}), name='sites-list'),
     url(r'^api/survey-sites-review/(?P<pk>\d+)/$', SiteReviewViewSet.as_view({'get': 'list'}), name='sites-list-review'),
