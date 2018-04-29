@@ -159,8 +159,13 @@
 <script type="text/javascript" src="{% static 'vendor/vue-multiselect/vue-multiselect.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'vendor/vue-multiselect/select2.v.component.js' %}?v=1.0"></script>
 <script src="{% static 'vendor/pnotify/pnotify.custom.min.js' %}"></script>
+<script src="{% static 'vendor/vuejs-dialog.min.js' %}"></script>
 <script src="//cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.16.0/vuedraggable.min.js"></script>
 
-<script src="{% static 'js/forms/manage_forms.js' %}?v=2.1.20"></script>
+<script>
+window.Vue.use(VuejsDialog.default)
+</script>
+<script src="{% static 'js/forms/manage_forms.js' %}?v=2.1.21"></script>
+
 {% endblock %}
