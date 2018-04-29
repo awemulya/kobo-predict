@@ -594,7 +594,7 @@ class ExportBuilder(object):
         prefix = slugify('analyser_data__{}__{}'.format(username, xform_id_string))
         with tempfile.NamedTemporaryFile('w+b', prefix=prefix, suffix='.xlsx',) as xls_data:
             # Generate a new XLS export to work from.
-            self.to_xls_export(xls_data.name, data, usernamme, xform_id_string)
+            self.to_xls_export(xls_data.name, data, username, xform_id_string)
             xls_data.file.seek(0)
 
             # Generate the analyser file.
