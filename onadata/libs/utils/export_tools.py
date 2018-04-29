@@ -518,7 +518,7 @@ class ExportBuilder(object):
             # update parent_table with the generated sheet's title
             data[PARENT_TABLE_NAME] = work_sheet_titles.get(
                 data.get(PARENT_TABLE_NAME))
-            data_new = {}
+            data_new = []
             for f in fields:
                 if f in media_attributes:
                     http = urllib3.PoolManager()
@@ -526,7 +526,7 @@ class ExportBuilder(object):
                     r = http.request('GET', 'http://nrakc.fieldsight.org/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f))
                     image_file = io.BytesIO(r.data)
                     img = Image(image_file)
-                    data_new.append(img)
+                    work_sheet.append(img)
                 else:    
                     data_new.append(data.get(f))
             work_sheet.append(data_new)
