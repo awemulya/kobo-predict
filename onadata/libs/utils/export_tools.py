@@ -16,7 +16,7 @@ from django.core.files.storage import get_storage_class
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.utils.text import slugify
-from openpyxl.date_time import SharedDate
+from openpyxl.shared.date_time import SharedDate
 from openpyxl.workbook import Workbook
 from pyxform.question import Question
 from pyxform.section import Section, RepeatingSection
