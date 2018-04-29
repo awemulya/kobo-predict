@@ -36,7 +36,7 @@ from onadata.libs.utils.common_tags import (
     SUBMISSION_TIME, UUID, TAGS, NOTES)
 from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
-from onadata.apps.fsforms.XFormMediaAttributes import get_media_attributes
+from onadata.apps.viewer.XFormMediaAttributes import get_media_attributes
 
 
 # this is Mongo Collection where we will store the parsed submissions
