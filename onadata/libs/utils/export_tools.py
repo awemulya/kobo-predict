@@ -523,7 +523,9 @@ class ExportBuilder(object):
                 if f in media_attributes:
                     http = urllib3.PoolManager()
                     #data_new.append('=HYPERLINK("http://nrakc.fieldsight.org/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f)+'", "Attachment")')
-                    your_image = openpyxl.drawing.Image('http://nrakc.fieldsight.org/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f))
+                    r = http.request('GET', 'http://nrakc.fieldsight.org/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f))
+                    image_file = io.BytesIO(r.data)
+                    your_image = Image(image_file)
                     your_image.anchor(ws.cell('A16'))
                     img = Image(your_image)
                     work_sheet.add_image(img)
