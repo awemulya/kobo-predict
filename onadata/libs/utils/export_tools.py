@@ -16,7 +16,7 @@ from django.core.files.storage import get_storage_class
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.utils.text import slugify
-from openpyxl.shared.date_time import SharedDate
+from openpyxl.date_time import SharedDate
 from openpyxl.workbook import Workbook
 from pyxform.question import Question
 from pyxform.section import Section, RepeatingSection
@@ -38,10 +38,6 @@ from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
 from onadata.apps.viewer.XFormMediaAttributes import get_media_attributes
 
-from openpyxl.drawing.image import Image
-import PIL
-import io
-import urllib3
 
 # this is Mongo Collection where we will store the parsed submissions
 xform_instances = settings.MONGO_DB.instances
@@ -521,17 +517,7 @@ class ExportBuilder(object):
             data_new = []
             for f in fields:
                 if f in media_attributes:
-                    http = urllib3.PoolManager()
                     data_new.append('=HYPERLINK("http://nrakc.fieldsight.org/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f)+'", "Attachment")')
-                    # r = http.request('GET', 'http://nrakc.fieldsight.org/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f))
-                    # image_file = io.BytesIO(r.data)
-                    # img = Image(image_file)
-                    # data_new.append(img)
-                    http = urllib3.PoolManager()
-                    r = http.request('GET', 'http://nrakc.fieldsight.org/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f))
-                    image_file = io.BytesIO(r.data)
-                    img = Image(image_file)
-                    work_sheet.add_image(img, 'A2')
                 else:    
                     data_new.append(data.get(f))
             work_sheet.append(data_new)

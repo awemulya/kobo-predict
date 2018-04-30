@@ -63,6 +63,31 @@ from onadata.libs.utils.viewer_tools import enketo_url
 from onadata.libs.utils.export_tools import upload_template_for_external_export
 
 
+import os, tempfile, zipfile
+from django.http import HttpResponse
+from django.core.servers.basehttp import FileWrapper
+
+
+def send_zipfile(request):
+    """                                                                         
+    Create a ZIP file on disk and transmit it in chunks of 8KB,                 
+    without loading the whole file into memory. A similar approach can          
+    be used for large dynamic PDF files.                                        
+    """
+    
+    temp = tempfile.TemporaryFile()
+    archive = zipfile.ZipFile(temp, 'w', zipfile.ZIP_DEFLATED)
+    for url in urls:
+        filename = url # Select your files here.                           
+        archive.write(filename, 'file%d.txt' % index)
+    archive.close()
+    wrapper = FileWrapper(temp)
+    response = HttpResponse(wrapper, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=test.zip'
+    response['Content-Length'] = temp.tell()
+    temp.seek(0)
+    return response
+
 def home(request):
     if request.user.username:
         return HttpResponseRedirect(
