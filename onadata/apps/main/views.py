@@ -68,6 +68,9 @@ from django.http import HttpResponse
 from django.core.servers.basehttp import FileWrapper
 
 
+def get_images_for_site_all(xf_id):
+    return settings.MONGO_DB.instances.aggregate([{"$match":{"xform" : 85}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
+
 def send_zipfile(request):
     """                                                                         
     Create a ZIP file on disk and transmit it in chunks of 8KB,                 
