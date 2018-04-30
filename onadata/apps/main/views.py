@@ -69,7 +69,7 @@ from django.core.servers.basehttp import FileWrapper
 
 
 def get_images_for_site_all(xf_id):
-    return settings.MONGO_DB.instances.aggregate([{"$match":{"xform" : 85}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
+    return settings.MONGO_DB.instances.aggregate([{"$match":{"xform" : int(xf_id)}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
 
 def download_zipfile(request, pk):
     """                                                                         
