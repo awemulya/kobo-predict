@@ -154,14 +154,14 @@
       configure_settings.is_project = "{{is_project}}";
       configure_settings.id = "{{pk}}";
 </script>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
 <script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'vendor/vue-multiselect/vue-multiselect.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'vendor/vue-multiselect/select2.v.component.js' %}?v=1.0"></script>
 <script src="{% static 'vendor/pnotify/pnotify.custom.min.js' %}"></script>
 <script src="{% static 'vendor/vuejs-dialog.min.js' %}"></script>
-<script src="//cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.16.0/vuedraggable.min.js"></script>
+<script src="{% static 'vendor/Sortable.min.js' %}"></script>
+<script src="{% static 'vendor/vuedraggable.js' %}"></script>
 
 <script>
 window.Vue.use(VuejsDialog.default)
