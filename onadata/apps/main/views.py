@@ -63,7 +63,7 @@ from onadata.libs.utils.viewer_tools import enketo_url
 from onadata.libs.utils.export_tools import upload_template_for_external_export
 
 
-import os, zipfile
+import os, tempfile, zipfile
 from django.http import HttpResponse
 from django.core.servers.basehttp import FileWrapper
 
@@ -83,17 +83,18 @@ def download_zipfile(request, id_string):
     urls = list(datas["result"])
     archive = zipfile.ZipFile(temp, 'w', zipfile.ZIP_DEFLATED)
     index=0
+    username=url[0]['_attachments']['download_url'].split('/')[2]
     for url in urls:
         
         index+=1
         filename = '/srv/fieldsight/fieldsight-kobocat'+url['_attachments']['download_url'] # Select your files here.                           
-        archive.write(filename, 'file%d.jpeg' % index)
+        archive.write(filename, username + '/' + url['_attachments']['download_url'].split('/')[4])
+        
     archive.close()
-    # import pdb; pdb.set_trace();
     temp.seek(0)
     wrapper = FileWrapper(temp)
     response = HttpResponse(wrapper, content_type='application/zip')
-    response['Content-Disposition'] = 'attachment; filename=test.zip'
+    response['Content-Disposition'] = 'attachment; filename=media.zip'
     response['Content-Length'] = temp.tell()
     
     return response
