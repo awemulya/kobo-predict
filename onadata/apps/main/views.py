@@ -80,6 +80,7 @@ def download_zipfile(request, pk):
     
     temp = tempfile.TemporaryFile()
     datas = get_images_for_site_all(pk)
+    urls = list(datas["result"])
     archive = zipfile.ZipFile(temp, 'w', zipfile.ZIP_DEFLATED)
     for url in urls:
         filename = url # Select your files here.                           
