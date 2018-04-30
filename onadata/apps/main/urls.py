@@ -41,7 +41,7 @@ urlpatterns = patterns(
 
     # main website views
     url(r'^$', 'onadata.apps.main.views.home'),
-    url(r'^attachments/download/zip/(?P<pk>[\d+^/]+)/$', 'onadata.apps.main.views.download_zipfile', name='download_zip_attachments'),
+    url(r'^attachments/download/zip/(?P<id_string>[^/]+)/$', 'onadata.apps.main.views.download_zipfile', name='download_zip_attachments'),
     url(r'^tutorial/$', 'onadata.apps.main.views.tutorial', name='tutorial'),
     url(r'^about-us/$', 'onadata.apps.main.views.about_us', name='about-us'),
     url(r'^getting_started/$', 'onadata.apps.main.views.getting_started',
