@@ -90,7 +90,7 @@ def download_zipfile(request, id_string):
         archive.write(filename, 'file%d.jpeg' % index)
     archive.close()
     # import pdb; pdb.set_trace();
-    wrapper = FileWrapper(temp, 'rb')
+    wrapper = FileWrapper(temp)
     response = HttpResponse(wrapper, content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename=test.zip'
     response['Content-Length'] = temp.tell()
