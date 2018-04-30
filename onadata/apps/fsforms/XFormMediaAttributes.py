@@ -42,8 +42,8 @@ def get_questions_and_media_attributes(json):
                 parse_group("",first_children)
             
             else:
+                question = first_children['name']
                 if first_children['type'] in ['photo', 'video', 'audio']:
-                    question = first_children['name']
                     media_attributes.append(question)
                 else:
                     questions.append(question)
