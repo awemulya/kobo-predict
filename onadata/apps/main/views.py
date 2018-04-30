@@ -89,7 +89,7 @@ def download_zipfile(request, id_string):
         filename = '/srv/fieldsight/fieldsight-kobocat'+url['_attachments']['download_url'] # Select your files here.                           
         archive.write(filename, 'file%d.jpeg' % index)
     archive.close()
-    # import pdb; pdb.set_trace();
+    import pdb; pdb.set_trace();
     wrapper = FileWrapper(temp)
     response = HttpResponse(archive, content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename=test.zip'
