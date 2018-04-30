@@ -2013,7 +2013,7 @@ def set_deploy_main_stage(request, is_project, pk, stage_id):
         else:
             site = Site.objects.get(pk=pk)
             main_stage = Stage.objects.get(pk=stage_id)
-            Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False).update(is_deployed=True)
+            FieldSightXF.objects.filter(stage__id=main_stage.pk, is_deleted=False).update(is_deployed=True)
             sub_stages  = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
             sub_stages_id = [s.id for s in sub_stages]
             stage_forms = FieldSightXF.objects.filter(stage__id__in=sub_stages_id)
@@ -2025,7 +2025,7 @@ def set_deploy_main_stage(request, is_project, pk, stage_id):
             d.save()
             send_bulk_message_stage_deployed_site(site, main_stage, d.id)
             serializer = StageSerializer(main_stage)
-            return Response({serializer.data}, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
     # except Exception as e:
     #     return HttpResponse({'error':e.message}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -2087,11 +2087,13 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
                     site_fsxf.is_deployed = True
                     site_fsxf.save()
                     site_data['sub_stage'] = StageSerializer(site_sub_stage).data
+                    site_data['main_stage'] = StageSerializer(site_main_stage).data
                     site_data['sub_stage_form'] = FSXFormListSerializer(site_fsxf).data
                     site_data['id'] = site.id
                     sites_affected.append(site_data)
             deploy_data = {'project_form':FSXFormListSerializer(stage_form).data,
                            'project_stage':StageSerializer(main_stage).data,
+                           'project_sub_stage':StageSerializer(sub_stage).data,
                            'deleted_forms': FSXFormListSerializer(deleted_forms, many=True).data,
                            'deleted_stages': StageSerializer(deleted_stages, many=True).data,
                            'sites_affected':sites_affected,
