@@ -93,8 +93,8 @@ def download_zipfile(request, id_string):
     wrapper = FileWrapper(temp)
     response = HttpResponse(temp, content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename=test.zip'
-    response['Content-Length'] = temp.tell()
-    temp.seek(0)
+    # response['Content-Length'] = temp.tell()
+    # temp.seek(0)
     return response
 
 def home(request):
