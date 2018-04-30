@@ -2295,7 +2295,7 @@ class ProjectStageResponsesStatus(ProjectRoleMixin, View):
 
 def get_project_stage_status1(request, pk, q_keyword,page_list):
     data = []
-    ss_index = {}
+    ss_id = []
     stages_rows = []
     head_row = ["Site ID", "Name"]
     project = get_object_or_404(Project, pk=pk)
@@ -2319,7 +2319,7 @@ def get_project_stage_status1(request, pk, q_keyword,page_list):
             for ss in sub_stages:
                 sub_stage_count+=1
                 head_row.append("Sub Stage :"+ss.name)
-                ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
+                ss_id.append(ss.id)
                 substages.append([ss.name, str(stage_count)+"."+str(sub_stage_count)])
 
     
@@ -2353,7 +2353,7 @@ def get_project_stage_status1(request, pk, q_keyword,page_list):
         sites = paginator.page(paginator.num_pages)
     for site in sites:
         site_row = [site.site.identifier, site.site.name]
-        for k, v in ss_index.items():
+        for v in ss_id:
 
             substage = filterbyvalue(site.site.stages.all(), v)
             substage1 = next(substage, None)
