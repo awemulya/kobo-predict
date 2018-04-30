@@ -1415,7 +1415,7 @@ class FullResponseTable1(ReadonlyFormMixin, View):
                     if section == section_name:
                         rows1 = rows
                         for row in rows:
-                            yield rows[id_index], row
+                            return renders(request, 'fsforms/full_response_table.html', context)
 
         # def make_table(submissions):
         #     for section_name, submission in submissions:
