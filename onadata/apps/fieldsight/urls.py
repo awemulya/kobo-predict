@@ -216,7 +216,8 @@ urlpatterns = [
     url(r'^bulksitesample/(?P<pk>\d+)/$', ExcelBulkSiteSample.as_view(), name='excel_bulk_site_sample'),
     url(r'^ProjectStageResponsesStatus/(?P<pk>\d+)/$',ProjectStageResponsesStatus.as_view(), name='ProjectStageResponsesStatus'),
     url(r'^ProjectDashboardStageResponsesStatus/(?P<pk>\d+)/$',ProjectDashboardStageResponsesStatus.as_view(), name='ProjectDashboardStageResponsesStatus'),
-    url(r'^ProjectDashboardStageResponsesStatus1/(?P<pk>\d+)/$',ProjectDashboardStageResponsesStatus1.as_view(), name='ProjectDashboardStageResponsesStatus1'),
+    
+    url(r'^ProjectDashboardStageResponsesStatuss/(?P<pk>\d+)/$',ProjectStageResponsesStatus1.as_view(), name='ProjectDashboardStageResponsesStatuss'),
         
 
     url(r'^project/report/stage-table/(?P<pk>\d+)/$', StageTemplateView.as_view(), name='ProjectStageDetailtemplate'),
