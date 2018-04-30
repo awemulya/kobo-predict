@@ -1999,7 +1999,7 @@ def set_deploy_main_stage(request, is_project, pk, stage_id):
 
                 deploy_data = {
                             'project_stage':StageSerializer(main_stage).data,
-                            'project_sub_stage':StageSerializer(project_sub_stages, many=True).data,
+                            'project_sub_stages':StageSerializer(project_sub_stages, many=True).data,
                             'project_forms':FSXFormListSerializer(project_forms, many=True).data,
                            'deleted_forms': FSXFormListSerializer(deleted_forms, many=True).data,
                            'deleted_stages': StageSerializer(deleted_stages, many=True).data,
