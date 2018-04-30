@@ -82,9 +82,11 @@ def download_zipfile(request, id_string):
     datas = get_images_for_site_all(id_string)
     urls = list(datas["result"])
     archive = zipfile.ZipFile(temp, 'w', zipfile.ZIP_DEFLATED)
+    index=0
     for url in urls:
-        filename = url # Select your files here.                           
-        archive.write(filename, 'file%d.txt' % index)
+        index+=1
+        filename = url.download_url # Select your files here.                           
+        archive.write(filename, 'file%d.jpeg' % index)
     archive.close()
     import pdb; pdb.set_trace();
     wrapper = FileWrapper(temp)
