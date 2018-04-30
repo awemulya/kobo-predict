@@ -8,26 +8,27 @@ def get_questions_and_media_attributes(json):
         r_question = r_object['name']
         for first_children in r_object['children']:
             question = r_question+"/"+first_children['name']
-
             if first_children['type'] in ['photo', 'audio', 'video']:
                 media_attributes.append(question)
+                questions.append(question)
             else:
                 questions.append(question)
-                
+
     def parse_group(prev_groupname, g_object):
         g_question = prev_groupname+g_object['name']
 
         for first_children in g_object['children']:
             question_name = first_children['name']
             question_type = first_children['type']
-            question = g_question+"/",first_children
-
+            
             if question_type == 'group':
-                parse_group(question)
+                parse_group(g_question+"/",first_children)
                 continue
 
+            question = g_question+"/"+first_children['name']
             if question_type in ['photo', 'audio', 'video']:
                 media_attributes.append(question)
+                questions.append(question)
             else:
                 questions.append(question)
 
