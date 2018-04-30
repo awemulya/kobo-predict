@@ -1431,7 +1431,7 @@ class FullResponseTable1(ReadonlyFormMixin, View):
                             row_data.append('')
                     yield row['_id'], row_data
 
-        context['labels'] = labels
+        context['labels'] = questions
         context['data'] = make_table(data)
         context['owner_username'] = fsxf.xf.user.username
         context['obj'] = fsxf
