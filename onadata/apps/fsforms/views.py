@@ -1408,26 +1408,26 @@ class FullResponseTable1(ReadonlyFormMixin, View):
 
         # generator dublicating the "_id" to allow to make a link to each
         # submission
-        # def make_table(submissions):
-        #     for chunk in export.parse_submissions(submissions):
-        #         for section_name, rows in chunk.items():
-        #             if section == section_name:
-        #                 for row in rows:
-        #                     yield row[id_index], row
-
         def make_table(submissions):
-            for section_name, submission in submissions:
-                for row in submission:
-                    row_data=[]
-                    for question_name in question_names:
-                        if question_name in row:
-                            if question_name in media_attributes:
-                                row_data.append('<a href="/attachment/medium?media_file='+fsxf.xf.user.username+'/attachments/'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>')
-                            else:
-                                row_data.append(row[question_name])
-                        else:
-                            row_data.append('')
-                    yield row['_id'], row_data
+            for chunk in export.parse_submissions(submissions):
+                for section_name, rows in chunk.items():
+                    if section == section_name:
+                        for row in rows:
+                            yield rows[id_index], row
+
+        # def make_table(submissions):
+        #     for section_name, submission in submissions:
+        #         for row in submission:
+        #             row_data=[]
+        #             for question_name in question_names:
+        #                 if question_name in row:
+        #                     if question_name in media_attributes:
+        #                         row_data.append('<a href="/attachment/medium?media_file='+fsxf.xf.user.username+'/attachments/'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>')
+        #                     else:
+        #                         row_data.append(row[question_name])
+        #                 else:
+        #                     row_data.append('')
+        #             yield row['_id'], row_data
 
         context['labels'] = labels
         context['data'] = make_table(data)
