@@ -45,7 +45,7 @@ from .views import (
     project_html_export, Deploy_survey, deploy_stages, Deploy_general, set_deploy_stages, share_stages,
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms, Configure_forms,
     instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
-    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable, DeleteMyForm)
+    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable, DeleteMyForm, FullResponseTable1)
 
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
@@ -140,6 +140,7 @@ urlpatterns = urlpatterns + [
         url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', Instance_detail.as_view(), name='instance_detail'),
         url(r'^forms/alter-answer-status/(?P<instance_id>\d+)/(?P<status>\d)/(?P<fsid>\d+)$', alter_answer_status, name='alter-answer-status'),
         url(r'submissions/detailed/(?P<fsxf_id>\d+)$', FullResponseTable.as_view(), name='project_html_table_export'),
+        url(r'submissions/detailed1/(?P<fsxf_id>\d+)$', FullResponseTable1.as_view(), name='project_html_table_export1'),
 ]
 
 urlpatterns = urlpatterns + [
