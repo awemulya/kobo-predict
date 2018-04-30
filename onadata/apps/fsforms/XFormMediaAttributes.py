@@ -2,12 +2,18 @@
 def get_questions_and_media_attributes(json):
 
     questions=[]
+    labels=[]
     media_attributes=[]
     
     def parse_repeat(r_object):
         r_question = r_object['name']
         for first_children in r_object['children']:
             question = r_question+"/"+first_children['name']
+            label=""
+            if 'label' in first_children:
+                label=first_children['label']        
+            labels.append(label)
+
             if first_children['type'] in ['photo', 'audio', 'video']:
                 media_attributes.append(question)
                 questions.append(question)
@@ -26,6 +32,12 @@ def get_questions_and_media_attributes(json):
                 continue
 
             question = g_question+"/"+first_children['name']
+            
+            label=""
+            if 'label' in first_children:
+                label=first_children['label']        
+            labels.append(label)
+
             if question_type in ['photo', 'audio', 'video']:
                 media_attributes.append(question)
                 questions.append(question)
@@ -43,6 +55,12 @@ def get_questions_and_media_attributes(json):
             
             else:
                 question = first_children['name']
+                
+                label=""
+                if 'label' in first_children:
+                    label=first_children['label']        
+                labels.append(label)
+
                 if first_children['type'] in ['photo', 'video', 'audio']:
                     media_attributes.append(question)
                 else:
@@ -50,4 +68,4 @@ def get_questions_and_media_attributes(json):
 
     
     parse_individual_questions(json)
-    return questions, media_attributes
+    return questions, labels, media_attributes

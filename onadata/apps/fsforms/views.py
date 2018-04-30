@@ -1365,7 +1365,7 @@ class FullResponseTable1(ReadonlyFormMixin, View):
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         json_question = json.loads(fsxf.xf.json)
         
-        questions, media_attributes = get_questions_and_media_attributes(json_question['children'])
+        questions, label, media_attributes = get_questions_and_media_attributes(json_question['children'])
         
         xform = fsxf.xf
         id_string = xform.id_string
@@ -1431,7 +1431,7 @@ class FullResponseTable1(ReadonlyFormMixin, View):
                             row_data.append('')
                     yield row['_id'], row_data
 
-        context['labels'] = questions
+        context['labels'] = label
         context['data'] = make_table(data)
         context['owner_username'] = fsxf.xf.user.username
         context['obj'] = fsxf

@@ -530,7 +530,7 @@ class ExportBuilder(object):
         
         if args[2]:
             json_question = json.loads(args[2].json)
-            questions, media_attributes = get_questions_and_media_attributes(json_question['children'])
+            questions, labels, media_attributes = get_questions_and_media_attributes(json_question['children'])
 
             from django.contrib.sites.models import Site as DjangoSite
             domain = DjangoSite.objects.get_current().domain
