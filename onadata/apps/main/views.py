@@ -83,7 +83,7 @@ def download_zipfile(request, id_string):
     urls = list(datas["result"])
     archive = zipfile.ZipFile(temp, 'w', zipfile.ZIP_DEFLATED)
     index=0
-    username=url[0]['_attachments']['download_url'].split('/')[2]
+    username=urls[0]['_attachments']['download_url'].split('/')[2]
     for url in urls:
         
         index+=1
