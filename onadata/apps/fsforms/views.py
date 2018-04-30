@@ -1411,7 +1411,9 @@ class FullResponseTable1(ReadonlyFormMixin, View):
         def make_table(submissions):
             for chunk in export.parse_submissions(submissions):
                 for section_name, rows in chunk.items():
+                    section1=section_name
                     if section == section_name:
+                        rows1 = rows
                         for row in rows:
                             yield rows[id_index], row
 
