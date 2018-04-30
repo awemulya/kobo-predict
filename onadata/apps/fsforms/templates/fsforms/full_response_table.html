@@ -202,28 +202,45 @@ body{
 
 
        
-            <nav class="pagination justify-content-center" aria-label="page-navigation">
-              <ul class="pagination">
-              {% if page.has_previous %}
-                <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">&laquo;</a></li>
-              {% else %}
-                <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
-              {% endif %}
-              {% for i in page.paginator.page_range %}
-                {% if page.number == i %}
-                <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+          {% if is_paginated %}
+                        <nav class="pagination justify-content-center" aria-label="page-navigation">
+                          <ul class="pagination">
+                          
+                          {% if page_obj.number == 1 %}
+                          {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ 1 }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">First</a></li>
+                          {% endif %}
 
-                {% else %}
-                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                {% endif %}
-              {% endfor %}
-              {% if page.has_next %}
-                <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">&raquo;</a></li>
-              {% else %}
-                <li class="disabled"><a class="page-link" href="#">&raquo;</a>
-              {% endif %}
-              </ul>
-            </nav>
+                          {% if page_obj.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&laquo;</a></li>
+                          {% else %}
+                            <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+                          {% endif %}
+
+
+
+
+
+                         
+                            <li class="page-item active"><a class="page-link" href="?page={{ page_obj.number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ page_obj.number }}</a></li>
+
+                            
+                          
+                            
+                          {% if page_obj.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&raquo;</a></li>
+                          {% else %}
+                            <li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>
+                          {% endif %}
+
+                          {% if page_obj.number == paginator.num_pages %}
+                          {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ paginator.num_pages }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">Last</a></li>
+                          {% endif %}
+
+                          </ul>
+                        </nav>
+            {% endif %}
            
 
                 </section>
