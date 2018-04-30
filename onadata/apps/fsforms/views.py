@@ -1322,7 +1322,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
         export = context['export']
         sections = list(export.labels.items())
         # question_names = export.sections.items()[0][1]
-        section, labels = sections[0]
+        # section, labels = sections[0]
         
         # id_index = labels.index('_id')
 
