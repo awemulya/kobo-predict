@@ -54,7 +54,7 @@ from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, Fiel
     EducationMaterial, EducationalImages, InstanceImages, DeployEvent
 from django.db.models import Q
 from onadata.apps.fieldsight.rolemixins import MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
-from onadata.apps.fsforms.XFormMediaAttributes import get_media_attributes
+from onadata.apps.fsforms.XFormMediaAttributes import get_questions_and_media_attributes
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -1365,7 +1365,7 @@ class FullResponseTable1(ReadonlyFormMixin, View):
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         json_question = json.loads(fsxf.xf.json)
         
-        media_attributes = get_media_attributes(json_question['children'])
+        questions, media_attributes = get_questions_and_media_attributes(json_question['children'])
         
         xform = fsxf.xf
         id_string = xform.id_string
@@ -1401,41 +1401,42 @@ class FullResponseTable1(ReadonlyFormMixin, View):
 
         export = context['export']
         sections = list(export.labels.items())
-        question_names = export.sections.items()[0][1]
+        # question_names = export.sections.items()[0][1]
         section, labels = sections[0]
         
         # id_index = labels.index('_id')
 
         # generator dublicating the "_id" to allow to make a link to each
         # submission
-        def make_table(submissions):
-            for chunk in export.parse_submissions(submissions):
-                for section_name, rows in chunk.items():
-                    section1=section_name
-                    if section == section_name:
-                        rows1 = rows
-                        for row in rows:
-                            return renders(request, 'fsforms/full_response_table.html', context)
-
         # def make_table(submissions):
-        #     for section_name, submission in submissions:
-        #         for row in submission:
-        #             row_data=[]
-        #             for question_name in question_names:
-        #                 if question_name in row:
-        #                     if question_name in media_attributes:
-        #                         row_data.append('<a href="/attachment/medium?media_file='+fsxf.xf.user.username+'/attachments/'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>')
-        #                     else:
-        #                         row_data.append(row[question_name])
-        #                 else:
-        #                     row_data.append('')
-        #             yield row['_id'], row_data
+        #     for chunk in export.parse_submissions(submissions):
+        #         for section_name, rows in chunk.items():
+        #             section1=section_name
+        #             if section == section_name:
+        #                 rows1 = rows
+        #                 for row in rows:
+        #                     return renders(request, 'fsforms/full_response_table.html', context)
+
+        def make_table(submissions):
+            for section_name, submission in submissions:
+                for row in submission:
+                    row_data=[]
+                    for question_name in questions:
+                        if question_name in row:
+                            if question_name in media_attributes:
+                                row_data.append('<a href="/attachment/medium?media_file='+fsxf.xf.user.username+'/attachments/'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>')
+                            else:
+                                row_data.append(row[question_name])
+                        else:
+                            row_data.append('')
+                    yield row['_id'], row_data
 
         context['labels'] = labels
         context['data'] = make_table(data)
         context['owner_username'] = fsxf.xf.user.username
         context['obj'] = fsxf
         return renders(request, 'fsforms/full_response_table.html', context)
+        
 @group_required('KoboForms')
 def html_export(request, fsxf_id):
     

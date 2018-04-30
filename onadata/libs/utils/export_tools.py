@@ -38,7 +38,7 @@ from onadata.libs.utils.common_tags import (
     FS_SITE_ADDRESS, FS_SITE_PHONE, FS_SITE_SUPERVISOR)
 from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
-from onadata.apps.fsforms.XFormMediaAttributes import get_media_attributes
+from onadata.apps.fsforms.XFormMediaAttributes import get_questions_and_media_attributes
 
 
 # this is Mongo Collection where we will store the parsed submissions
@@ -530,7 +530,7 @@ class ExportBuilder(object):
         
         if args[2]:
             json_question = json.loads(args[2].json)
-            media_attributes = get_media_attributes(json_question['children'])
+            questions, media_attributes = get_questions_and_media_attributes(json_question['children'])
 
             from django.contrib.sites.models import Site as DjangoSite
             domain = DjangoSite.objects.get_current().domain
