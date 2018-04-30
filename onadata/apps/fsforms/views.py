@@ -1355,6 +1355,85 @@ class FullResponseTable(ReadonlyFormMixin, View):
         context['obj'] = fsxf
         return render(request, 'fsforms/full_response_table.html', context)
 
+
+
+
+class FullResponseTable1(ReadonlyFormMixin, View):
+    def get(self, request, fsxf_id):
+        limit = int(request.GET.get('limit', 100))
+        fsxf_id = int(fsxf_id)
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)
+        json_question = json.loads(fsxf.xf.json)
+        
+        media_attributes = get_media_attributes(json_question['children'])
+        
+        xform = fsxf.xf
+        id_string = xform.id_string
+        if fsxf.site is None:
+            cursor = get_instances_for_project_field_sight_form(fsxf_id)
+        else:
+            cursor = get_instances_for_field_sight_form(fsxf_id)
+        cursor = list(cursor)
+        for index, doc in enumerate(cursor):
+            medias = []
+            for media in cursor[index].get('_attachments', []):
+                if media:
+                    medias.append(media.get('download_url', ''))
+            cursor[index].update({'medias': medias})
+        paginator = Paginator(cursor, limit, request=request)
+
+        try:
+            page = paginator.page(request.GET.get('page', 1))
+        except (EmptyPage, PageNotAnInteger):
+            try:
+                page = paginator.page(1)
+            except (EmptyPage, PageNotAnInteger):
+                raise Http404('This report has no submissions')
+
+        data = [("v1", page.object_list)]
+        context = build_export_context(request, xform, id_string)
+
+        context.update({
+            'page': page,
+            'table': [],
+            'title': id,
+        })
+
+        export = context['export']
+        sections = list(export.labels.items())
+        question_names = export.sections.items()[0][1]
+        section, labels = sections[0]
+        
+        # id_index = labels.index('_id')
+
+        # generator dublicating the "_id" to allow to make a link to each
+        # submission
+        # def make_table(submissions):
+        #     for chunk in export.parse_submissions(submissions):
+        #         for section_name, rows in chunk.items():
+        #             if section == section_name:
+        #                 for row in rows:
+        #                     yield row[id_index], row
+
+        def make_table(submissions):
+            for section_name, submission in submissions:
+                for row in submission:
+                    row_data=[]
+                    for question_name in question_names:
+                        if question_name in row:
+                            if question_name in media_attributes:
+                                row_data.append('<a href="/attachment/medium?media_file='+fsxf.xf.user.username+'/attachments/'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>')
+                            else:
+                                row_data.append(row[question_name])
+                        else:
+                            row_data.append('')
+                    yield row['_id'], row_data
+
+        context['labels'] = labels
+        context['data'] = make_table(data)
+        context['owner_username'] = fsxf.xf.user.username
+        context['obj'] = fsxf
+        return renders(request, 'fsforms/full_response_table.html', context)
 @group_required('KoboForms')
 def html_export(request, fsxf_id):
     

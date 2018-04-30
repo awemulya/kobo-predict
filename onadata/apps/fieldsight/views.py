@@ -2284,7 +2284,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     content={'head_cols':table_head, 'sub_stages':substages, 'rows':data}
     main_body = {'next_page':next_page_url,'content':content}
     return main_body
-    
+
 class ProjectStageResponsesStatus(ProjectRoleMixin, View): 
     def get(self, request, pk):
         q_keyword = self.request.GET.get("q", None)
@@ -2355,7 +2355,9 @@ class FormlistAPI(View):
         report = MyPrint(buffer, 'Letter')
         data = json.loads(self.request.body)
         fs_ids = data.get('fs_ids')
-        pdf = report.generateCustomSiteReport(pk, base_url,fs_ids)
+        start_date = data.get('startdate')
+        end_date = data.get('enddate')
+        pdf = report.generateCustomSiteReport(pk, base_url,fs_ids, start_date, end_date)
         buffer.seek(0)
         pdf = buffer.getvalue()
         file = open("media/contract.pdf", "wb")
