@@ -69,9 +69,9 @@ from django.core.servers.basehttp import FileWrapper
 
 
 def get_images_for_site_all(xf_id):
-    return settings.MONGO_DB.instances.aggregate([{"$match":{"xform" : int(xf_id)}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
+    return settings.MONGO_DB.instances.aggregate([{"$match":{"_xform_id_string" : xf_id}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
 
-def download_zipfile(request, pk):
+def download_zipfile(request, xf_id):
     """                                                                         
     Create a ZIP file on disk and transmit it in chunks of 8KB,                 
     without loading the whole file into memory. A similar approach can          
@@ -79,13 +79,14 @@ def download_zipfile(request, pk):
     """
     
     temp = tempfile.TemporaryFile()
-    datas = get_images_for_site_all(pk)
+    datas = get_images_for_site_all(xf_id)
     urls = list(datas["result"])
     archive = zipfile.ZipFile(temp, 'w', zipfile.ZIP_DEFLATED)
     for url in urls:
         filename = url # Select your files here.                           
         archive.write(filename, 'file%d.txt' % index)
     archive.close()
+    import pdb; pdb.set_trace();
     wrapper = FileWrapper(temp)
     response = HttpResponse(wrapper, content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename=test.zip'
