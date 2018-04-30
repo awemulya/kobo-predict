@@ -1435,8 +1435,8 @@ class FullResponseTable1(ReadonlyFormMixin, View):
         context['data'] = make_table(data)
         context['owner_username'] = fsxf.xf.user.username
         context['obj'] = fsxf
-        return renders(request, 'fsforms/full_response_table.html', context)
-        
+        return render(request, 'fsforms/full_response_table.html', context)
+
 @group_required('KoboForms')
 def html_export(request, fsxf_id):
     
