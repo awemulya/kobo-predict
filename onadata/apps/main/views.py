@@ -63,10 +63,10 @@ from onadata.libs.utils.viewer_tools import enketo_url
 from onadata.libs.utils.export_tools import upload_template_for_external_export
 
 
-import os, tempfile, zipfile
+import os, zipfile
 from django.http import HttpResponse
 from django.core.servers.basehttp import FileWrapper
-
+from cStringIO import StringIO
 
 def get_images_for_site_all(id_string):
     return settings.MONGO_DB.instances.aggregate([{"$match":{"_xform_id_string" : id_string}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
@@ -78,10 +78,10 @@ def download_zipfile(request, id_string):
     be used for large dynamic PDF files.                                        
     """
     
-    temp = tempfile.TemporaryFile()
+    s = StringIO()
     datas = get_images_for_site_all(id_string)
     urls = list(datas["result"])
-    archive = zipfile.ZipFile(temp, 'w', zipfile.ZIP_DEFLATED)
+    archive = zipfile.ZipFile(s, 'w', zipfile.ZIP_DEFLATED)
     index=0
     for url in urls:
         
@@ -89,7 +89,7 @@ def download_zipfile(request, id_string):
         filename = '/srv/fieldsight/fieldsight-kobocat'+url['_attachments']['download_url'] # Select your files here.                           
         archive.write(filename, 'file%d.jpeg' % index)
     archive.close()
-    # import pdb; pdb.set_trace();
+    import pdb; pdb.set_trace();
     wrapper = FileWrapper(temp)
     response = HttpResponse(wrapper, content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename=test.zip'
