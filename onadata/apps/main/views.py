@@ -84,12 +84,12 @@ def download_zipfile(request, id_string):
     archive = zipfile.ZipFile(temp, 'w', zipfile.ZIP_DEFLATED)
     index=0
     for url in urls:
-        import pdb; pdb.set_trace();
+        
         index+=1
-        filename = url._attachments.download_url # Select your files here.                           
+        filename = url['_attachments']['download_url'] # Select your files here.                           
         archive.write(filename, 'file%d.jpeg' % index)
     archive.close()
-    
+    import pdb; pdb.set_trace();
     wrapper = FileWrapper(temp)
     response = HttpResponse(wrapper, content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename=test.zip'
