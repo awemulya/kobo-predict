@@ -85,7 +85,7 @@ def download_zipfile(request, id_string):
     index=0
     for url in urls:
         index+=1
-        filename = url.download_url # Select your files here.                           
+        filename = url._attachments.download_url # Select your files here.                           
         archive.write(filename, 'file%d.jpeg' % index)
     archive.close()
     import pdb; pdb.set_trace();
