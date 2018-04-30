@@ -59,7 +59,7 @@ from .views import (
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList, SitesTypeView, AddSitesTypeView,
     senduserinvite, ActivateRole, checkemailforinvite, ProjectSummaryReport, SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView,
     stages_status_download, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
-    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages, SiteSearchView, ProjectDashboardStageResponsesStatus, ProjectStageResponsesStatus1 )
+    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages, SiteSearchView, ProjectDashboardStageResponsesStatus )
 
 
 
@@ -217,8 +217,6 @@ urlpatterns = [
     url(r'^ProjectStageResponsesStatus/(?P<pk>\d+)/$',ProjectStageResponsesStatus.as_view(), name='ProjectStageResponsesStatus'),
     url(r'^ProjectDashboardStageResponsesStatus/(?P<pk>\d+)/$',ProjectDashboardStageResponsesStatus.as_view(), name='ProjectDashboardStageResponsesStatus'),
     
-    url(r'^ProjectDashboardStageResponsesStatuss/(?P<pk>\d+)/$',ProjectStageResponsesStatus1.as_view(), name='ProjectDashboardStageResponsesStatuss'),
-        
 
     url(r'^project/report/stage-table/(?P<pk>\d+)/$', StageTemplateView.as_view(), name='ProjectStageDetailtemplate'),
     url(r'^site/report/custom-responses/(?P<pk>\d+)/$', FormlistAPI.as_view(), name='generate_custom_report'),
