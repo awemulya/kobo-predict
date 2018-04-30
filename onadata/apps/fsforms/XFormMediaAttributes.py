@@ -9,7 +9,7 @@ def get_questions_and_media_attributes(json):
         r_question = r_object['name']
         for first_children in r_object['children']:
             question = r_question+"/"+first_children['name']
-            label=""
+            label=question
             if 'label' in first_children:
                 label=first_children['label']        
             labels.append(label)
@@ -33,7 +33,7 @@ def get_questions_and_media_attributes(json):
 
             question = g_question+"/"+first_children['name']
             
-            label=""
+            label=question
             if 'label' in first_children:
                 label=first_children['label']        
             labels.append(label)
@@ -56,7 +56,7 @@ def get_questions_and_media_attributes(json):
             else:
                 question = first_children['name']
                 
-                label=""
+                label=question
                 if 'label' in first_children:
                     label=first_children['label']        
                 labels.append(label)
