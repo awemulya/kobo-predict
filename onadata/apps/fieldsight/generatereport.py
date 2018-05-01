@@ -204,7 +204,7 @@ class PDFReport:
                     answer = self.create_logo(photo)
 
                 elif first_children['type'] == 'audio' or first_children['type'] == 'video':
-                    media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ self.main_answer[r_question+"/"+question]
+                    media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ self.main_answer[g_question+"/"+question]
                     answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
 
                 else:
@@ -239,7 +239,7 @@ class PDFReport:
                         answer = self.create_logo(photo)
 
                     elif first_children['type'] == 'audio' or first_children['type'] == 'video':
-                        media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ self.main_answer[r_question+"/"+question]
+                        media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ self.main_answer[question]
                         answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
                         
                     else:
