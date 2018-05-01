@@ -1344,7 +1344,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
 
                     for indv_question in parsedQuestions.get('questions'):
                         if indv_question.get('question') in row:
-                            if indv_question.type in ['photo', 'audio', 'video']:
+                            if indv_question.get('type') in ['photo', 'audio', 'video']:
                                 row_data.append('<a href="/attachment/medium?media_file='+fsxf.xf.user.username+'/attachments/'+row[indv_question.get('question')]+'" target="_blank">'+row[indv_question.get('question')]+'</a>')
                             else:
                                 row_data.append(row[indv_question.get('question')])
