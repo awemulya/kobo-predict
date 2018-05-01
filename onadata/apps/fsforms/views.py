@@ -1341,7 +1341,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
             for section_name, submission in submissions:
                 for row in submission:
                     row_data=[]
-                    import pdb; pdb.set_trace();
+
                     for indv_question in parsedQuestions.questions:
                         if indv_question.question in row:
                             if indv_question.type in ['photo', 'audio', 'video']:
@@ -1351,7 +1351,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
                         else:
                             row_data.append('')
                     yield row['_id'], row_data
-
+        import pdb; pdb.set_trace();
         context['labels'] = parsedQuestions.questions
         context['data'] = make_table(data)
         context['owner_username'] = fsxf.xf.user.username
