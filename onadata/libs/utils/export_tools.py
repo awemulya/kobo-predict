@@ -542,7 +542,7 @@ class ExportBuilder(object):
                 data.get(PARENT_TABLE_NAME))
             data_new = []
             for f in fields:
-                if args[2] and f in parsedQuestions.media_attributes:
+                if args[2] and f in parsedQuestions.get('media_attributes'):
                     data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+args[2].user.username+'/attachments/'+data.get(f)+'", "Attachment")')
                 else:    
                     data_new.append(data.get(f))
