@@ -153,8 +153,8 @@ body{
     <thead class="bold_title">
         <tr>
             <th class="table_titles">{% trans "View or Edit" %}</th>
-            {% for label in labels %}
-            <th class="table_titles"><span class="cell-content-wrap">{{ label }}</span></th>
+            {% for question in labels %}
+            <th class="table_titles"><span class="cell-content-wrap">{{ question.label }}</span></th>
             {% endfor %}
         </tr>
 
