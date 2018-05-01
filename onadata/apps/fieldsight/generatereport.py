@@ -56,7 +56,7 @@ class MyDocTemplate(SimpleDocTemplate):
                  self.canv.bookmarkPage(key)
                  self.notify('TOCEntry', (2, text, self.page, key))
 
-class MyPrint:
+class PDFReport:
 
 
     def __init__(self, buffer, pagesize):
@@ -253,7 +253,7 @@ class MyPrint:
                 self.data.append(row)
 
 
-    def print_users(self, pk, base_url):
+    def generateFullReport(self, pk, base_url):
         self.base_url = base_url
         
  
@@ -413,7 +413,7 @@ class MyPrint:
         self.doc.multiBuild(elements, onFirstPage=self._header_footer, onLaterPages=self._header_footer)
 
 
-    def generateCustomSiteReport(self, pk, base_url, fs_ids):
+    def generateCustomSiteReport(self, pk, base_url, fs_ids, startdate, enddate):
         self.base_url = base_url
         
  
@@ -450,7 +450,7 @@ class MyPrint:
         elements.append(PageBreak())
         elements.append(Paragraph('Responses', self.h2))
         
-        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
+        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
         
         if not forms:
             elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))

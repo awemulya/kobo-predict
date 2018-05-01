@@ -1285,7 +1285,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         json_question = json.loads(fsxf.xf.json)
         
-        questions, labels, media_attributes = get_questions_and_media_attributes(json_question['children'])
+        parsedQuestions = get_questions_and_media_attributes(json_question['children'])
         
         xform = fsxf.xf
         id_string = xform.id_string
@@ -1341,12 +1341,12 @@ class FullResponseTable(ReadonlyFormMixin, View):
             for section_name, submission in submissions:
                 for row in submission:
                     row_data=[]
-                    for question_name in questions:
-                        if question_name in row:
-                            if question_name in media_attributes:
-                                row_data.append('<a href="/attachment/medium?media_file='+fsxf.xf.user.username+'/attachments/'+row[question_name]+'" target="_blank">'+row[question_name]+'</a>')
+                    for indv_question in parsedQuestions.questions:
+                        if indv_question.question in row:
+                            if indv_question.type in ['photo', 'audio', 'video']:
+                                row_data.append('<a href="/attachment/medium?media_file='+fsxf.xf.user.username+'/attachments/'+row[indv_question.question]+'" target="_blank">'+row[question_name]+'</a>')
                             else:
-                                row_data.append(row[question_name])
+                                row_data.append(row[indv_question.question])
                         else:
                             row_data.append('')
                     yield row['_id'], row_data

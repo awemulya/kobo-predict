@@ -60,7 +60,7 @@ from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
 from onadata.apps.fieldsight.tasks import multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
-from .generatereport import MyPrint
+from .generatereport import PDFReport
 from django.utils import translation
 from django.conf import settings
 from django.db.models import Prefetch
@@ -2002,8 +2002,8 @@ def project_html_export(request, pk):
     file_name=site.name +"_summary.pdf"
     response['Content-Disposition'] = 'attachment; filename="'+file_name+'"'
     base_url = request.get_host()
-    report = MyPrint(buffer, 'Letter')
-    pdf = report.print_users(pk, base_url)
+    report = PDFReport(buffer, 'Letter')
+    pdf = report.generateFullReport(pk, base_url)
 
     buffer.seek(0)
 
@@ -2313,7 +2313,7 @@ def response_export(request, pk):
     file_name= form.xf.title +"_response.pdf"
     response['Content-Disposition'] = 'attachment; filename="'+ file_name +'"'
     base_url = request.get_host()
-    report = MyPrint(buffer, 'Letter')
+    report = PDFReport(buffer, 'Letter')
     pdf = report.print_individual_response(pk, base_url)
 
     buffer.seek(0)
@@ -2352,7 +2352,7 @@ class FormlistAPI(View):
         file_name= site.name +"_custom_report.pdf"
         response['Content-Disposition'] = 'attachment; filename="'+file_name+'"'
         base_url = request.get_host()
-        report = MyPrint(buffer, 'Letter')
+        report = PDFReport(buffer, 'Letter')
         data = json.loads(self.request.body)
         fs_ids = data.get('fs_ids')
         start_date = data.get('startdate')

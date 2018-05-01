@@ -530,7 +530,7 @@ class ExportBuilder(object):
         
         if args[2]:
             json_question = json.loads(args[2].json)
-            questions, labels, media_attributes = get_questions_and_media_attributes(json_question['children'])
+            parsedQuestions = get_questions_and_media_attributes(json_question['children'])
 
             from django.contrib.sites.models import Site as DjangoSite
             domain = DjangoSite.objects.get_current().domain
@@ -542,7 +542,7 @@ class ExportBuilder(object):
                 data.get(PARENT_TABLE_NAME))
             data_new = []
             for f in fields:
-                if args[2] and f in media_attributes:
+                if args[2] and f in parsedQuestions.media_attributes:
                     data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+args[2].user.username+'/attachments/'+data.get(f)+'", "Attachment")')
                 else:    
                     data_new.append(data.get(f))
