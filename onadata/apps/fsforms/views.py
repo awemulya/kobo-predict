@@ -1343,15 +1343,15 @@ class FullResponseTable(ReadonlyFormMixin, View):
                     row_data=[]
 
                     for indv_question in parsedQuestions.get('questions'):
-                        if indv_question.question in row:
+                        if indv_question.get('question') in row:
                             if indv_question.type in ['photo', 'audio', 'video']:
-                                row_data.append('<a href="/attachment/medium?media_file='+fsxf.xf.user.username+'/attachments/'+row[indv_question.question]+'" target="_blank">'+row[question_name]+'</a>')
+                                row_data.append('<a href="/attachment/medium?media_file='+fsxf.xf.user.username+'/attachments/'+row[indv_question.get('question')]+'" target="_blank">'+row[indv_question.get('question')]+'</a>')
                             else:
-                                row_data.append(row[indv_question.question])
+                                row_data.append(row[indv_question.get('question')])
                         else:
                             row_data.append('')
                     yield row['_id'], row_data
-                    
+
         context['labels'] = parsedQuestions.get('questions')
         context['data'] = make_table(data)
         context['owner_username'] = fsxf.xf.user.username
