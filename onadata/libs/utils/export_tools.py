@@ -544,9 +544,9 @@ class ExportBuilder(object):
             data_new = []
             for f in fields:
                 if f in parsedQuestions.get('media_attributes'):
-                    data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f)+'", "Attachment")')
+                    data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f, '')+'", "Attachment")')
                 else:    
-                    data_new.append(data.get(f))
+                    data_new.append(data.get(f, ''))
             work_sheet.append(data_new)
 
         wb = Workbook(optimized_write=True)
