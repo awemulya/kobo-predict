@@ -9,7 +9,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Sum, F
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
@@ -1812,13 +1812,14 @@ def save_educational_material(request):
 def stages_reorder(request):
     try:
         stages = request.data.get("stages")
-        qs = []
+        qs_list = []
         for i, stage in enumerate(stages):
             obj = Stage.objects.get(pk=stage.get("id"))
             obj.order = i+1
             obj.save()
-            qs.append(obj)
-        serializer = StageSerializer(qs, many=True)
+            qs_list.append(obj.id)
+        serializer = StageSerializer(Stage.objects.filter(pk__in=qs_list).annotate(
+            sub_stage_weight=Sum(F('parent__weight'))), many=True)
         return Response({'data': serializer.data}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
