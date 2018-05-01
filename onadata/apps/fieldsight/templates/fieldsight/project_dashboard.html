@@ -526,11 +526,9 @@ var project = "{{obj.pk}}";
 <script type="text/javascript" src="{{ STATIC_URL }}js/ajax_map.js?v=1.1"></script>
 <!--<script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>-->
 
-<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
 <script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
-<script src="https://cdn.jsdelivr.net/npm/highcharts/highcharts.js"></script>
-<!-- vue-highcharts should be load after Highcharts -->
-<script src="https://cdn.jsdelivr.net/npm/vue-highcharts/dist/vue-highcharts.min.js"></script>
-
+<script src="{% static 'vendor/highcharts.js' %}"></script>
+<script src="{% static 'vendor/vue-highcharts.min.js' %}"></script>
 <script src="{% static 'js/fieldsight/manage_project_dashboard.js' %}?v=0.4"></script>
 {% endblock %}
