@@ -290,7 +290,7 @@ class PDFReport:
         elements.append(PageBreak())
         elements.append(Paragraph('Responses', self.h2))
         
-        forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk, is_survey=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
+        forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
         
         if not forms:
             elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))
@@ -450,7 +450,7 @@ class PDFReport:
         elements.append(PageBreak())
         elements.append(Paragraph('Responses', self.h2))
         
-        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
+        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
         
         if not forms:
             elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))
