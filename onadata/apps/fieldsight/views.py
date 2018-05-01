@@ -2357,6 +2357,8 @@ class FormlistAPI(View):
         fs_ids = data.get('fs_ids')
         start_date = data.get('startdate')
         end_date = data.get('enddate')
+        print start_date
+        print end_date
         pdf = report.generateCustomSiteReport(pk, base_url,fs_ids, start_date, end_date)
         buffer.seek(0)
         pdf = buffer.getvalue()
