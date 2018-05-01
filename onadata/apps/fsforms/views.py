@@ -1341,6 +1341,7 @@ class FullResponseTable(ReadonlyFormMixin, View):
             for section_name, submission in submissions:
                 for row in submission:
                     row_data=[]
+                    import pdb; pdb.set_trace();
                     for indv_question in parsedQuestions.questions:
                         if indv_question.question in row:
                             if indv_question.type in ['photo', 'audio', 'video']:
