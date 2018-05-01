@@ -13,7 +13,7 @@ def get_questions_and_media_attributes(json):
             if first_children['type'] in ['photo', 'audio', 'video']:
                 media_attributes.append(question)
                 
-            questions.append({'question':question, 'label':first_children.get('label', ''), 'type':first_children.get('type', '')})
+            questions.append({'question':question, 'label':first_children.get('label', question), 'type':first_children.get('type', '')})
 
     def parse_group(prev_groupname, g_object):
         g_question = prev_groupname+g_object['name']
@@ -31,7 +31,7 @@ def get_questions_and_media_attributes(json):
             if question_type in ['photo', 'audio', 'video']:
                 media_attributes.append(question)
 
-            questions.append({'question':question, 'label':first_children.get('label', ''), 'type':first_children.get('type', '')})
+            questions.append({'question':question, 'label':first_children.get('label', question), 'type':first_children.get('type', '')})
 
 
     def parse_individual_questions(parent_object):
@@ -48,7 +48,7 @@ def get_questions_and_media_attributes(json):
                 if first_children['type'] in ['photo', 'video', 'audio']:
                     media_attributes.append(question)
 
-                questions.append({'question':question, 'label':first_children.get('label', ''), 'type':first_children.get('type', '')})
+                questions.append({'question':question, 'label':first_children.get('label', question), 'type':first_children.get('type', '')})
 
     
     parse_individual_questions(json)

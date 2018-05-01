@@ -385,7 +385,7 @@ class ExportBuilder(object):
             return value
 
     def pre_process_row(self, row, section):
-        print(type(row),"Row##################################")
+        # print(type(row),"Row##################################")
         """
         Split select multiples, gps and decode . and $
         """
@@ -407,7 +407,7 @@ class ExportBuilder(object):
                 row, self.gps_fields[section_name])
 
         # convert to native types
-        print row
+        # print row
         for elm in section['elements']:
             # only convert if its in our list and its not empty, just to
             # optimize
@@ -806,7 +806,7 @@ def generate_export(export_type, extension, username, id_string,
         export = Export.objects.get(id=export_id)
     else:
         fsxf = filter_query.values()[0]
-        print("fsxf", fsxf)
+        # print("fsxf", fsxf)
         export = Export(xform=xform, export_type=export_type, fsxf_id=fsxf)
     export.filedir = dir_name
     export.filename = basename
