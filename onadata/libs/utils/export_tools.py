@@ -526,14 +526,15 @@ class ExportBuilder(object):
             i += 1
         return generated_name
 
-    def to_xls_export(self, path, data, *args):
+    def to_xls_export(self, path, data, username, id_string, *args):
+        xform = XForm.objects.get(
+        user__username__iexact=username, id_string__exact=id_string)
         
-        if args[2]:
-            json_question = json.loads(args[2].json)
-            parsedQuestions = get_questions_and_media_attributes(json_question['children'])
+        json_question = json.loads(xform.json)
+        parsedQuestions = get_questions_and_media_attributes(json_question['children'])
 
-            from django.contrib.sites.models import Site as DjangoSite
-            domain = DjangoSite.objects.get_current().domain
+        from django.contrib.sites.models import Site as DjangoSite
+        domain = DjangoSite.objects.get_current().domain
 
         def write_row(data, work_sheet, fields, work_sheet_titles):
             # work_sheet_titles = work_sheet_titles.append("fs_site")
@@ -542,8 +543,8 @@ class ExportBuilder(object):
                 data.get(PARENT_TABLE_NAME))
             data_new = []
             for f in fields:
-                if args[2] and f in parsedQuestions.get('media_attributes'):
-                    data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+args[2].user.username+'/attachments/'+data.get(f)+'", "Attachment")')
+                if f in parsedQuestions.get('media_attributes'):
+                    data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f)+'", "Attachment")')
                 else:    
                     data_new.append(data.get(f))
             work_sheet.append(data_new)
@@ -769,7 +770,7 @@ def generate_export(export_type, extension, username, id_string,
     func = getattr(export_builder, export_type_func_map[export_type])
 
     func.__call__(
-        temp_file.name, records, username, id_string, xform, None)
+        temp_file.name, records, username, id_string, None)
 
     # generate filename
     basename = "%s_%s" % (
