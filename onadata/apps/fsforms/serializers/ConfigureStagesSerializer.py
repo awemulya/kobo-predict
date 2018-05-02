@@ -152,7 +152,12 @@ class EMSerializer(serializers.ModelSerializer):
 
 
 class DeploySerializer(serializers.ModelSerializer):
+    clean_data = serializers.SerializerMethodField()
 
     class Meta:
         model = DeployEvent
-        exclude = ()
+        exclude = ('data',)
+
+    def get_clean_data(self, obj):
+        return dict(obj.data)
+
