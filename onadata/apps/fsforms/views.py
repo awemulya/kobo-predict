@@ -9,7 +9,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Sum, F
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
@@ -31,7 +31,7 @@ from onadata.apps.fsforms.reports_util import get_images_for_site_all, get_insta
     get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer, \
     SubStageDetailSerializer
-from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormListSerializer
+from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormListSerializer, StageFormSerializer
 from onadata.apps.fsforms.serializers.StageSerializer import EMSerializer
 from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed, send_bulk_message_stages, \
     send_message_un_deploy, send_bulk_message_stages_deployed_project, send_bulk_message_stages_deployed_site, \
@@ -1813,13 +1813,14 @@ def save_educational_material(request):
 def stages_reorder(request):
     try:
         stages = request.data.get("stages")
-        qs = []
+        qs_list = []
         for i, stage in enumerate(stages):
             obj = Stage.objects.get(pk=stage.get("id"))
             obj.order = i+1
             obj.save()
-            qs.append(obj)
-        serializer = StageSerializer(qs, many=True)
+            qs_list.append(obj.id)
+        serializer = StageSerializer(Stage.objects.filter(pk__in=qs_list).annotate(
+            sub_stage_weight=Sum(F('parent__weight'))), many=True)
         return Response({'data': serializer.data}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -1995,7 +1996,7 @@ def set_deploy_main_stage(request, is_project, pk, stage_id):
                             site_fsxf.is_deployed = True
                             site_fsxf.save()
                             sub_stage_data['sub_stage'] = StageSerializer(site_sub_stage).data
-                            sub_stage_data['sub_stage_form'] = FSXFormListSerializer(site_fsxf).data
+                            sub_stage_data['sub_stage_form'] = StageFormSerializer(site_fsxf).data
                             site_data['sub_stage_data'].append(sub_stage_data)
                     sites_affected.append(site_data)
 
@@ -2003,8 +2004,8 @@ def set_deploy_main_stage(request, is_project, pk, stage_id):
                 deploy_data = {
                             'project_stage':StageSerializer(main_stage).data,
                             'project_sub_stages':StageSerializer(project_sub_stages, many=True).data,
-                            'project_forms':FSXFormListSerializer(project_forms, many=True).data,
-                           'deleted_forms': FSXFormListSerializer(deleted_forms, many=True).data,
+                            'project_forms':StageFormSerializer(project_forms, many=True).data,
+                           'deleted_forms': StageFormSerializer(deleted_forms, many=True).data,
                            'deleted_stages': StageSerializer(deleted_stages, many=True).data,
                            'sites_affected':sites_affected,
                            }
@@ -2022,7 +2023,7 @@ def set_deploy_main_stage(request, is_project, pk, stage_id):
             stage_forms = FieldSightXF.objects.filter(stage__id__in=sub_stages_id)
             deploy_data = {'main_stage':StageSerializer(main_stage).data,
                            'sub_stages':StageSerializer(sub_stages, many=True).data,
-                           'stage_forms':FSXFormListSerializer(stage_forms, many=True).data
+                           'stage_forms':StageFormSerializer(stage_forms, many=True).data
                             }
             d = DeployEvent(site=site, data=deploy_data)
             d.save()
@@ -2091,13 +2092,13 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
                     site_fsxf.save()
                     site_data['sub_stage'] = StageSerializer(site_sub_stage).data
                     site_data['main_stage'] = StageSerializer(site_main_stage).data
-                    site_data['sub_stage_form'] = FSXFormListSerializer(site_fsxf).data
+                    site_data['sub_stage_form'] = StageFormSerializer(site_fsxf).data
                     site_data['id'] = site.id
                     sites_affected.append(site_data)
-            deploy_data = {'project_form':FSXFormListSerializer(stage_form).data,
+            deploy_data = {'project_form':StageFormSerializer(stage_form).data,
                            'project_stage':StageSerializer(main_stage).data,
                            'project_sub_stage':StageSerializer(sub_stage).data,
-                           'deleted_forms': FSXFormListSerializer(deleted_forms, many=True).data,
+                           'deleted_forms': StageFormSerializer(deleted_forms, many=True).data,
                            'deleted_stages': StageSerializer(deleted_stages, many=True).data,
                            'sites_affected':sites_affected,
                            }
@@ -2115,7 +2116,7 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
             deploy_data = {
                 'main_stage':StageSerializer(sub_stage.stage).data,
                 'sub_stage':StageSerializer(sub_stage).data,
-                'stage_form':FSXFormListSerializer(stage_form).data,
+                'stage_form':StageFormSerializer(stage_form).data,
                            }
             d = DeployEvent(site=site, data=deploy_data)
             d.save()
