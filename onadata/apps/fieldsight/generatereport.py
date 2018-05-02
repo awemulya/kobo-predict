@@ -56,7 +56,7 @@ class MyDocTemplate(SimpleDocTemplate):
                  self.canv.bookmarkPage(key)
                  self.notify('TOCEntry', (2, text, self.page, key))
 
-class MyPrint:
+class PDFReport:
 
 
     def __init__(self, buffer, pagesize):
@@ -204,7 +204,7 @@ class MyPrint:
                     answer = self.create_logo(photo)
 
                 elif first_children['type'] == 'audio' or first_children['type'] == 'video':
-                    media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ r_answer[r_question+"/"+question]
+                    media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ self.main_answer[g_question+"/"+question]
                     answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
 
                 else:
@@ -239,7 +239,7 @@ class MyPrint:
                         answer = self.create_logo(photo)
 
                     elif first_children['type'] == 'audio' or first_children['type'] == 'video':
-                        media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ r_answer[r_question+"/"+question]
+                        media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ self.main_answer[question]
                         answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
                         
                     else:
@@ -253,7 +253,7 @@ class MyPrint:
                 self.data.append(row)
 
 
-    def print_users(self, pk, base_url):
+    def generateFullReport(self, pk, base_url):
         self.base_url = base_url
         
  
@@ -263,7 +263,7 @@ class MyPrint:
         toc.levelStyles = [
             PS(fontName='arialuni', fontSize=14, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
             PS(fontName='arialuni', fontSize=12, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
-            PS(fontName='arialuni', ontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+            PS(fontName='arialuni', fontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
         ]
         elements.append(Paragraph('Responses Report for Site', self.centered))
         elements.append(PageBreak())
@@ -290,7 +290,7 @@ class MyPrint:
         elements.append(PageBreak())
         elements.append(Paragraph('Responses', self.h2))
         
-        forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk, is_survey=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
+        forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
         
         if not forms:
             elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))
@@ -413,7 +413,7 @@ class MyPrint:
         self.doc.multiBuild(elements, onFirstPage=self._header_footer, onLaterPages=self._header_footer)
 
 
-    def generateCustomSiteReport(self, pk, base_url, fs_ids):
+    def generateCustomSiteReport(self, pk, base_url, fs_ids, startdate, enddate):
         self.base_url = base_url
         
  
@@ -423,7 +423,7 @@ class MyPrint:
         toc.levelStyles = [
             PS(fontName='arialuni', fontSize=14, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
             PS(fontName='arialuni', fontSize=12, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
-            PS(fontName='arialuni', ontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+            PS(fontName='arialuni', fontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
         ]
         elements.append(Paragraph('Custom Responses Report for Site', self.centered))
         elements.append(PageBreak())
@@ -450,7 +450,7 @@ class MyPrint:
         elements.append(PageBreak())
         elements.append(Paragraph('Responses', self.h2))
         
-        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
+        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
         
         if not forms:
             elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))

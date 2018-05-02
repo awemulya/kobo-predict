@@ -385,7 +385,7 @@ class ExportBuilder(object):
             return value
 
     def pre_process_row(self, row, section):
-        print(type(row),"Row##################################")
+        # print(type(row),"Row##################################")
         """
         Split select multiples, gps and decode . and $
         """
@@ -407,7 +407,7 @@ class ExportBuilder(object):
                 row, self.gps_fields[section_name])
 
         # convert to native types
-        print row
+        # print row
         for elm in section['elements']:
             # only convert if its in our list and its not empty, just to
             # optimize
@@ -526,14 +526,15 @@ class ExportBuilder(object):
             i += 1
         return generated_name
 
-    def to_xls_export(self, path, data, *args):
+    def to_xls_export(self, path, data, username, id_string, *args):
+        xform = XForm.objects.get(
+        user__username__iexact=username, id_string__exact=id_string)
         
-        if args[2]:
-            json_question = json.loads(args[2].json)
-            questions, labels, media_attributes = get_questions_and_media_attributes(json_question['children'])
+        json_question = json.loads(xform.json)
+        parsedQuestions = get_questions_and_media_attributes(json_question['children'])
 
-            from django.contrib.sites.models import Site as DjangoSite
-            domain = DjangoSite.objects.get_current().domain
+        from django.contrib.sites.models import Site as DjangoSite
+        domain = DjangoSite.objects.get_current().domain
 
         def write_row(data, work_sheet, fields, work_sheet_titles):
             # work_sheet_titles = work_sheet_titles.append("fs_site")
@@ -542,10 +543,10 @@ class ExportBuilder(object):
                 data.get(PARENT_TABLE_NAME))
             data_new = []
             for f in fields:
-                if args[2] and f in media_attributes:
-                    data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+args[2].user.username+'/attachments/'+data.get(f)+'", "Attachment")')
-                else:    
-                    data_new.append(data.get(f))
+                    if f in data and f in parsedQuestions.get('media_attributes'):
+                        data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f)+'", "Attachment")')
+                    else:    
+                        data_new.append(data.get(f,''))
             work_sheet.append(data_new)
 
         wb = Workbook(optimized_write=True)
@@ -769,7 +770,7 @@ def generate_export(export_type, extension, username, id_string,
     func = getattr(export_builder, export_type_func_map[export_type])
 
     func.__call__(
-        temp_file.name, records, username, id_string, xform, None)
+        temp_file.name, records, username, id_string, None)
 
     # generate filename
     basename = "%s_%s" % (
@@ -806,7 +807,7 @@ def generate_export(export_type, extension, username, id_string,
         export = Export.objects.get(id=export_id)
     else:
         fsxf = filter_query.values()[0]
-        print("fsxf", fsxf)
+        # print("fsxf", fsxf)
         export = Export(xform=xform, export_type=export_type, fsxf_id=fsxf)
     export.filedir = dir_name
     export.filename = basename
