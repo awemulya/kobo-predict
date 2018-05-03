@@ -614,6 +614,14 @@ class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
         context['pk'] = self.kwargs.get('pk')
         return context
 
+    def get_form_kwargs(self):
+        kwargs = super(ProjectCreateView, self).get_form_kwargs()
+        kwargs.update({
+            'organization_id': self.kwargs.get('pk'),
+            'new': True,
+        })
+        return kwargs
+
     def form_valid(self, form):
         self.object = form.save(organization_id=self.kwargs.get('pk'), new=True)
         

@@ -225,17 +225,17 @@ class ProjectForm(forms.ModelForm):
     height = forms.FloatField(widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
+        is_new = kwargs.pop('new', None)
+        org_id = kwargs.pop('organization_id', None)
         super(ProjectForm, self).__init__(*args, **kwargs)
+
         if not self.fields['location'].initial:
             self.fields['location'].initial = Point(85.3240, 27.7172,srid=4326)
         self.fields['type'].empty_label = None
         self.fields['cluster_sites'].label = "Do you want to cluster sites in this Project?"
         #self.fields['organization'].empty_label = None
 
-        is_new = kwargs.get('new')
-        if is_new:
-            org_id = kwargs['organization_id']
-        else:
+        if not is_new:
             org_id = kwargs['instance'].organization.id
         self.fields['geo_layers'].queryset = GeoLayer.objects.filter(
             organization__id=org_id
