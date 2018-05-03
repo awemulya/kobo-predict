@@ -17,7 +17,7 @@
     <form method="post" action="{% url 'fieldsight:filter-users' %}">
         {%csrf_token%}
          <div class="col-sm-12 registration_field">
-             <div class="col-sm-5"><input type="text" name="name" placeholder="Search"></div>
+             <div class="col-sm-5"><input type="text" class="form-control" name="name" placeholder="Search"></div>
             <div class="col-sm-5">
                 <select name="role">
                     <option value="0">{% trans 'Select' %}</option>
@@ -31,16 +31,7 @@
          </div>
          </div>
 
-        <div class="gap"></div>
-        <div class="gap"></div>
-        <div class="gap"></div> 
-        <div class="gap"></div>
-        <div class="gap"></div>    
-        <div class="gap"></div>
-        <div class="gap"></div>
-        <div class="gap"></div> 
-        <div class="gap"></div>
-        <div class="gap"></div>    
+        
     
     </form>
 

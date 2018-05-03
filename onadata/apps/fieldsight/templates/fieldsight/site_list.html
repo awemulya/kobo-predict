@@ -64,9 +64,9 @@
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										<input type="text" name="q" placeholder="Search for..." required value='{{ request.GET.q }}'/>
+										<input type="text" class="form-control" name="q" placeholder="Search for..." required value='{{ request.GET.q }}'/>
 										  <span class="input-group-btn">
-											<button class="btn btn-primary" type="submit"><i class="la la-search"></i>{% trans 'Search' %}</button>
+											<button class="btn btn-primary" type="submit"><i class="la la-search"></i> {% trans 'Search' %}</button>
 										  </span>
 										</div>
 									</div>

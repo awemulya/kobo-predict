@@ -26,6 +26,18 @@ class StaffForm(forms.ModelForm):
         model = Staff
         fields = ('first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank','bank_name', 'account_number', 'photo', 'designation',)
 
+class StaffEditForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(StaffEditForm, self).__init__(*args, **kwargs)
+        self.fields['bank'].empty_label = "Other"
+
+        current_team = self.instance.team
+        self.fields['team'].choices = [(team.id, team.name) for team in current_team.staffproject.team_project.all()]
+    
+    class Meta:
+        model = Staff
+        fields = ('first_name','team','last_name', 'gender', 'ethnicity','address','phone_number','bank','bank_name', 'account_number', 'photo', 'designation',)
+
 class AttendanceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AttendanceForm, self).__init__(*args, **kwargs)

@@ -88,14 +88,19 @@
 								{% trans 'New' %} {% trans 'Notifications' %}(<span id="noticount" class="not_count"></span>)
 
 							</div>
-							<ul class="menu" id="notification-ul" style="height:500px; overflow:hidden; overflow-y: scroll;">
-							<span style="margin-left:20px;">{% trans 'Loading...' %}</span>
-						
-							</ul>
+							<div id="notification-ul">
+							</div>
+
+
+							
+
+
+
+							
 							<div class="dropdown-divider"></div>
 							<div class="dropdown-header">
 								<div class="row">
-									<div class=""col text-left">
+									<div class="col text-left">
 										<a href="{% url 'eventlog:notification-list' %}">{% trans 'View' %} {% trans 'all' %}</a>
 									</div>
 									<div class="col text-right">
@@ -278,23 +283,19 @@
 			// get description for notificationaccotding to its type id
 			    var content = types[typeid](data);
 			//append the data in main notificatin div
+
+
 			    
-			    var new_li = '<li class=" note-div-sm '+ readstatus +'" id="'+data.id+'" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);">'+
-                            
-                                '<div class="notification-item">' +
-                                    '<div class="notification-avatar pull-left">' +
-                                        '<i class="avatar-icon la la-info"></i>' +
-                                    '</div>' +
-                                    '<div class="notification-highlight">'+
-										'<p class="notification-highlight-excerpt">'+
-                                   			content +
-                                   		'</p>'+
-                      '<p class="notification-highlight-time">' + dateparser(data.date) + '</p>' +
-                                    '</div>'+
-                                    '</div>' +
-                                '</div>' +
-                            
-'</li>';
+			    var new_li = '<div class="dropdown-item '+ readstatus +'"  id="'+data.id+'" onclick="redirect(`'+data.get_absolute_url+'`);">'+
+                '<div class="notification-item">'+
+                  '<div class="notification-avatar pull-left" href="">'+
+                  '<i class="avatar-icon la la-bolt"></i>'+
+                  '</div>'+
+                  '<div class="notification-highlight">'+
+                  '<p class="notification-highlight-excerpt">'+
+                  content +
+                  '</p>'+
+                  '<p class="notification-highlight-time">'+ dateparser(data.date) +'</p></div></div></div>';
 
 
 			    // var div = document.getElementById('notifications');
@@ -336,7 +337,7 @@
                                     '</div>' +
                                 '</div>' +
                             
-'</li>';
+							'</li>';
 
 
 			    // var div = document.getElementById('notifications');
