@@ -445,7 +445,7 @@ var project = "{{obj.pk}}";
   	<script type="text/javascript">
     var static_url ="{{ STATIC_URL }}";
     configure_settings =  {};
-  	configure_settings.project_id = {{obj.pk}};
+  	configure_settings.project_id = {{obj.pk|unlocalize}};
 
   	//getlogdata();
 						
