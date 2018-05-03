@@ -50,13 +50,13 @@ class TeamCreate(StaffProjectRoleMixin, CreateView):
     def get_success_url(self):
         return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
 
-class TeamStaffsapi(StaffProjectRoleMixin, View):
+class TeamStaffsapi(StaffTeamRoleMixin, View):
     def get(self, request, pk):
         staffs = Staff.objects.filter(team=pk).values_list('id', 'first_name', 'last_name')
         return HttpResponse(json.dumps(list(staffs)))
 
 
-class TeamReAssignStaff(StaffProjectRoleMixin, View):
+class TeamReAssignStaff(StaffTeamRoleMixin, View):
     def get(self, request, *args, **kwargs):
         teams=Team.objects.filter(staffproject_id=self.kwargs.get('pk')).exclude(pk=self.kwargs.get('team_id'))
         return render(request, 'staff/teamReAssignForm.html',{'teams': teams, 'obj':Team.objects.get(pk=self.kwargs.get('team_id'))})
