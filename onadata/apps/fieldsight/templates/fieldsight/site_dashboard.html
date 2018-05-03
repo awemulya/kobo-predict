@@ -1,4 +1,5 @@
 {% extends "fieldsight/fieldsight_base.html" %}
+
 {% load i18n staticfiles %}
 {% load filters %}
 {%block extracss %}
@@ -774,7 +775,8 @@
 <script type="text/javascript">
 
 				configure_settings =  {};
-  				configure_settings.site_id = {{obj.id}};
+				{% load l10n %}
+  				configure_settings.site_id = {{ obj.pk|unlocalize }};
 
 					var height = 0;
 					$(".gh-col" ).each(function() {

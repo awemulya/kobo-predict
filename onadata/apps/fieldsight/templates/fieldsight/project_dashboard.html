@@ -1,4 +1,5 @@
 {% extends "fieldsight/fieldsight_base.html" %}
+
 {% load i18n staticfiles %}
 {% load filters %}
 {% block extracss %}
@@ -445,7 +446,8 @@ var project = "{{obj.pk}}";
   	<script type="text/javascript">
     var static_url ="{{ STATIC_URL }}";
     configure_settings =  {};
-  	configure_settings.project_id = {{obj.pk}};
+    {% load l10n %}
+  	configure_settings.project_id = {{obj.pk|unlocalize}};
 
   	//getlogdata();
 						
