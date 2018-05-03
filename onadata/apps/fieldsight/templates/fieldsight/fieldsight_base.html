@@ -289,7 +289,7 @@
 			    var new_li = '<div class="dropdown-item '+ readstatus +'"  id="'+data.id+'" onclick="redirect(`'+data.get_absolute_url+'`);">'+
                 '<div class="notification-item">'+
                   '<div class="notification-avatar pull-left" href="">'+
-                  '<i class="avatar-icon la la-bolt"></i>'+
+                  '<i class="avatar-icon la la-info"></i>'+
                   '</div>'+
                   '<div class="notification-highlight">'+
                   '<p class="notification-highlight-excerpt">'+
@@ -361,7 +361,8 @@
             type: 'GET',
             success: function (data) {
                $("#notification-ul").html( "" );
-               data.results.forEach(populatelist);
+               new_data = data.results.slice(0, 6);
+               new_data.forEach(populatelist);
                request_isfirst = "false";
               
                
