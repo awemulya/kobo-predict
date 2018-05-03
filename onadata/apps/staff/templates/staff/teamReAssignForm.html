@@ -8,6 +8,7 @@
 	<section class="panel">
 					<div class="panel-body">
 						<div class="margin-top">
+						{% if team %}
 							<form id="staffReassignForm" enctype="multipart/form-data" method="post">
 
 								<div class="form-row">
@@ -38,9 +39,12 @@
 								</div>
 								</form>
                                 <button class="btn btn-primary registration__action" type="submit" onclick="submitform()" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans ' Save' %}</button>
+						}
 
 
-
+						{% else %}
+							No other teams within the project {{ obj.staffproject.name }} to reassign staffs from.
+						{% endif %}
 						</div>
 					</div>
 	</section>
