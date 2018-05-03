@@ -10,6 +10,7 @@ import pyexcel as p
 import datetime
 import calendar
 from django.http import HttpResponse
+import json
 # Team views:
 class TeamList(StaffProjectRoleMixin, ListView):
     model = Team
@@ -48,6 +49,24 @@ class TeamCreate(StaffProjectRoleMixin, CreateView):
 
     def get_success_url(self):
         return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
+
+class TeamStaffsapi(StaffProjectRoleMixin, View):
+    def get(self, request, pk):
+        staffs = Staff.objects.filter(team=pk).values_list('id', 'first_name', 'last_name')
+        return HttpResponse(json.dumps(list(staffs)))
+
+
+class TeamReAssignStaff(StaffProjectRoleMixin, View):
+    def get(self, request, *args, **kwargs):
+        teams=Team.objects.filter(staffproject_id=self.kwargs.get('pk')).exclude(pk=self.kwargs.get('team_id'))
+        return render(request, 'staff/teamReAssignForm.html',{'teams': teams, 'obj':Team.objects.get(pk=self.kwargs.get('team_id'))})
+
+    def post(self, request, *args, **kwargs):
+        staff = get_object_or_404(Staff, pk=request.POST.get('staff_id'))
+        staff.team = get_object_or_404(Team, pk=self.kwargs.get('team_id'))
+        staff.save()
+        return HttpResponseRedirect(reverse('staff:team-detail', kwargs={'pk': self.kwargs.get('team_id')}))
+
 
 class TeamDetail(StaffTeamRoleMixin, DetailView):
     model = Team

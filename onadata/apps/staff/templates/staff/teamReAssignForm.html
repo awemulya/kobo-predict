@@ -1,0 +1,97 @@
+{% extends "staff/base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block content %}
+
+<div id="main-content" class="padding">
+	<section class="panel">
+					<div class="panel-body">
+						<div class="margin-top">
+							<form id="staffReassignForm" enctype="multipart/form-data" method="post">
+
+								<div class="form-row">
+									{% csrf_token %}
+
+									
+									<div id="teamselect" class="form-group col-md-6">
+									<label class="col-form-label">Select Team:</label>
+									<select id="selectTeam" class = "form-control">
+									<option value="0" selected>Select your option</option>
+									{% for team in teams  %}
+
+									<option value="{{ team.id }}">{{ team.name }}</option>
+
+									{% endfor %}
+
+									</select>	
+									</div>
+
+									<div id="staffselect" class="form-group col-md-6" >
+									<label class="col-form-label">Select Staff:</label>
+									<select id="selectstaff" name="staff_id" class = "form-control">
+
+									</select>	
+									</div>
+
+
+								</div>
+								</form>
+                                <button class="btn btn-primary registration__action" type="submit" onclick="submitform()" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans ' Save' %}</button>
+
+
+
+						</div>
+					</div>
+	</section>
+</div>
+
+<script>
+$('#staffselect').hide();
+function submitform(){
+	if($("#selectstaff").val()){
+		if (confirm('Are you sure you want to assign "'+$("#selectstaff option:selected").text()+'"" to "{{ obj.name }}"')) {
+			$("#staffReassignForm").submit();			   
+
+		} else {
+		    return false;
+		}
+
+
+	}
+	else{
+		alert("Plese select staff to assign to this team.");
+	}
+}
+
+
+function addtostafflist(data, index){
+
+			   
+			    var new_li = '<option value="'+data.id+'">'+ data.first_name +" "+data.last_name+'</option> ';	
+				$(new_li).appendTo("#selectstaff");
+			
+		}
+
+
+$( "#selectTeam" ).change(function() {
+  $('#staffselect').hide();
+  if (this.value != "0"){
+  $.ajax({
+            url: "/staff/api/team/staff/"+this.value+"/",
+            type: 'GET',
+            success: function (data) {
+               $('#selectstaff').empty();
+               data.forEach(addtostafflist);
+               $('#staffselect').show();
+              
+            }
+          });
+}
+});
+
+$('#id_bank').trigger("change");
+
+</script>
+
+{% endblock %}

@@ -53,6 +53,9 @@
                         <h3><i class="la la-building"></i>{{ object.name }}</h3>
                          
                          <a href="{% url 'staff:team-delete' object.pk  %}" title="" class="btn btn-sm btn-danger pull-right"><i class="la la-minus"></i> {% trans 'Delete' %} {% trans 'Team' %}</a>
+                         
+                         <a href="{% url 'staff:team-reassign-staffs' object.staffproject_id object.pk  %}" title="" class="btn btn-sm btn-primary pull-right"><i class="la la-plus"></i> {% trans 'Assign' %} {% trans 'Staffs' %}</a>
+                         
                          <a href="{% url 'staff:team-update' object.pk  %}" title="" class="btn btn-sm btn-primary pull-right"><i class="la la-plus"></i> {% trans 'Edit' %} {% trans 'Team' %}</a>
                          <a href="#" data-toggle="modal" class="btn btn-sm btn-primary pull-right" data-target="#exportModal"><i class="la-file"></i>{% trans 'Excel' %} {% trans 'Report' %}</a>
                         <!-- <a href="{% url 'staff:team-create' pk %}" title="" class="btn btn-sm btn-primary pull-right"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'team' %}</a> -->
