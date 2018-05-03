@@ -74,7 +74,7 @@ class SiteLog(viewsets.ModelViewSet):
     pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
-        return queryset.filter(Q(site_id=self.kwargs.get('pk')) | (Q(content_type=ContentType.objects.get(app_label="fieldsight", model="site")) & Q(object_id=self.kwargs.get('pk'))))
+        return queryset.filter(Q(site_id=self.kwargs.get('pk')) | (Q(content_type=ContentType.objects.get(app_label="fieldsight", model="site")) & Q(object_id=self.kwargs.get('pk'))) | (Q(extra_content_type=ContentType.objects.get(app_label="fieldsight", model="site")) & Q(extra_object_id=self.kwargs.get('pk'))))
 
 class NotificationCountnSeen(View):
     def get(self, request):
