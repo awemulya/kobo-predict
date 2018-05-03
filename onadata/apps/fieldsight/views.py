@@ -45,7 +45,8 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
 from .rolemixins import ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
-                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm)
+                    SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm,
+                    SiteBulkEditForm)
 from django.views.generic import TemplateView
 from django.core.mail import send_mail, EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
@@ -1033,6 +1034,7 @@ class ProjSiteList(ProjectRoleMixin, ListView):
         context['type'] = "project"
         context['is_form_proj'] = True
         return context
+
     def get_queryset(self):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
         return queryset
@@ -2408,3 +2410,49 @@ class AllResponseImages(ReviewerRoleMixin, View):
         return render(request, 'fieldsight/gallery.html', {'all_imgs' : json.dumps(list(all_imgs["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8')})
 
 
+class SiteBulkEditView(View):
+    def get(self, request, pk):
+        project = Project.objects.get(pk=pk)
+
+        context = {
+            'project': project,
+            'form': SiteBulkEditForm(project=project),
+        }
+
+        return render(
+            request,
+            'fieldsight/site-bulk-edit.html',
+            context,
+        )
+
+    def post(self, request, pk):
+        project = Project.objects.get(pk=pk)
+        context = {
+            'project': project,
+            'form': SiteBulkEditForm(project=project),
+        }
+
+        data = {}
+        for attr in project.site_meta_attributes:
+            q_name = attr['question_name']
+            to_set = request.POST.get('set_{}'.format(q_name))
+            if to_set:
+                data[q_name] = request.POST.get(q_name)
+
+        sites = request.POST.getlist('sites')
+        for site_id in sites:
+            site = Site.objects.get(id=site_id)
+            new_data = site.site_meta_attributes_ans
+            if not isinstance(new_data, dict):
+                new_data = {}
+            new_data.update(data)
+            site.site_meta_attributes_ans = new_data
+            site.save()
+
+        context['done'] = True
+
+        return render(
+            request,
+            'fieldsight/site-bulk-edit.html',
+            context,
+        )

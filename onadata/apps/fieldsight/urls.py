@@ -59,7 +59,9 @@ from .views import (
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList,
     senduserinvite, ActivateRole, checkemailforinvite, ProjectSummaryReport, SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView,
     stages_status_download, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
-    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages
+    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages,
+
+    SiteBulkEditView,
 )
 
 from onadata.apps.geo.views import (
@@ -213,6 +215,7 @@ urlpatterns = [
     url(r'^search-org/$', OrganizationSearchView.as_view(), name='search-org-list'),
     url(r'^search-proj/(?P<pk>\d+)/$', ProjectSearchView.as_view(), name='search-proj-list'),
 
+    url(r'^project/(?P<pk>\d+)/bulk-edit-site/$', SiteBulkEditView.as_view(), name='bulk-edit-site'),
     url(r'^project/(?P<pk>\d+)/define-site-meta/$', DefineProjectSiteMeta.as_view(), name='define-site-meta'),
     url(r'^site/(?P<pk>\d+)/site-meta-form/$', SiteMetaForm.as_view(), name='site-meta-form'),
     url(r'^multi-site-assign-region/(?P<pk>\d+)/$', MultiSiteAssignRegionView.as_view(), name='multi_site_region_assign'),

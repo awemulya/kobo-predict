@@ -13,9 +13,9 @@
             <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' organization.pk %}">{{organization.name}}</a></li>
             <li class="breadcrumb-item"><a href="{% url 'fieldsight:geo-layers' organization.pk %}">Geo layers</a></li>
             {% if form.instance.id %}
-            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans 'Edit' %}</li>
             {% else %}
-            <li class="breadcrumb-item active" aria-current="page">Create</li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans 'Create' %}</li>
             {% endif %}
         </ol>
         {% endblock %}

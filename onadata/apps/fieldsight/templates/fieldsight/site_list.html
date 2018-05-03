@@ -74,6 +74,7 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 							<a href="{% url 'fieldsight:site-add' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'New' %}</a>
 
 							<a href="{% url 'fieldsight:define-site-meta' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
+                            <a href="{% url 'fieldsight:bulk-edit-site' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-edit"></i> {% trans 'Bulk' %} {% trans 'Edit' %} </a>
 							<a href="{% url 'fieldsight:site-upload' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-files-o"></i> {% trans 'Bulk' %} {% trans 'Upload' %} {% trans 'Sites' %}</a>
 							{% endif %}
 							{% if type == "region" %}

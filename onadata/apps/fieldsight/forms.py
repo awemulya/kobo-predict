@@ -393,3 +393,32 @@ class RegionForm(forms.ModelForm):
     class Meta:
         model = Region
         exclude = ['project','date_created','date_updated', 'is_active',]
+
+
+class SiteBulkEditForm(forms.Form):
+    def __init__(self, project, *args, **kwargs):
+        kwargs.setdefault('label_suffix', '')
+        super(SiteBulkEditForm, self).__init__(*args, **kwargs)
+
+        self.fields['sites'] = forms.ModelMultipleChoiceField(
+            widget=forms.CheckboxSelectMultiple,
+            queryset=project.sites.all(),
+        )
+
+        for attr in project.site_meta_attributes:
+            q_type = attr['question_type']
+            q_name = attr['question_name']
+
+            if q_type == 'Number':
+                field = forms.FloatField()
+            elif q_type == 'Date':
+                field = forms.DateField()
+            elif q_type == 'MCQ':
+                options = attr.get('mcq_options') or []
+                choices = [o.get('option_text') for o in options]
+                choices = [(c, c) for c in choices]
+                field = forms.ChoiceField(choices=choices)
+            else:
+                field = forms.CharField()
+
+            self.fields[q_name] = field
