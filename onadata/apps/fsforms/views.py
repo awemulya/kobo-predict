@@ -554,9 +554,9 @@ def set_deploy_stages(request, is_project, pk):
                 FieldSightXF.objects.filter(is_staged=True, project=project,is_deleted=False).update(is_deployed=True)
                 Stage.objects.filter(site__project=project).delete()
                 for main_stage in main_stages:
-                    sites = []
+                    # sites = []
                     for site in sites:
-                        sites.append(site.id)
+                        # sites.append(site.id)
                         # send_message_stages(site)
                         site_main_stage = Stage(name=main_stage.name, order=main_stage.order, site=site,
                                            description=main_stage.description, project_stage_id=main_stage.id)
@@ -564,7 +564,7 @@ def set_deploy_stages(request, is_project, pk):
                         project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
                         for project_sub_stage in project_sub_stages:
                             site_sub_stage = Stage(name=project_sub_stage.name, order=project_sub_stage.order, site=site,
-                                           description=project_sub_stage.description, stage=site_main_stage, project_stage_id=project_sub_stage.id)
+                                           description=project_sub_stage.description, stage=site_main_stage, project_stage_id=project_sub_stage.id, weight=project_sub_stage.weight)
                             site_sub_stage.save()
                             if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
                                 fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
