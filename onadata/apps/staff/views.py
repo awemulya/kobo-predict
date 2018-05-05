@@ -5,8 +5,12 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectRoleMixin, StaffTeamRoleMixin, StaffRoleMixin
 from django.contrib.auth.models import User
-from onadata.apps.staff.forms import TeamForm, StaffForm, AttendanceForm
-
+from onadata.apps.staff.forms import TeamForm, StaffEditForm, StaffForm, AttendanceForm
+import pyexcel as p
+import datetime
+import calendar
+from django.http import HttpResponse
+import json
 # Team views:
 class TeamList(StaffProjectRoleMixin, ListView):
     model = Team
@@ -46,6 +50,24 @@ class TeamCreate(StaffProjectRoleMixin, CreateView):
     def get_success_url(self):
         return reverse('staff:staff-project-detail', kwargs={'pk': self.kwargs.get('pk')})
 
+class TeamStaffsapi(StaffTeamRoleMixin, View):
+    def get(self, request, pk):
+        staffs = Staff.objects.filter(team=pk).values_list('id', 'first_name', 'last_name')
+        return HttpResponse(json.dumps(list(staffs)))
+
+
+class TeamReAssignStaff(StaffTeamRoleMixin, View):
+    def get(self, request, *args, **kwargs):
+        teams=Team.objects.filter(staffproject_id=self.kwargs.get('pk')).exclude(pk=self.kwargs.get('team_id'))
+        return render(request, 'staff/teamReAssignForm.html',{'teams': teams, 'obj':Team.objects.get(pk=self.kwargs.get('team_id'))})
+
+    def post(self, request, *args, **kwargs):
+        staff = get_object_or_404(Staff, pk=request.POST.get('staff_id'))
+        staff.team = get_object_or_404(Team, pk=self.kwargs.get('team_id'))
+        staff.save()
+        return HttpResponseRedirect(reverse('staff:team-detail', kwargs={'pk': self.kwargs.get('team_id')}))
+
+
 class TeamDetail(StaffTeamRoleMixin, DetailView):
     model = Team
     template_name = 'staff/team_detail.html'
@@ -63,6 +85,51 @@ class TeamUpdate(StaffTeamRoleMixin, UpdateView):
     def get_success_url(self):
         return reverse('staff:team-detail', kwargs={'pk': self.kwargs.get('pk')})
 
+
+class TeamAttendanceReport(StaffTeamRoleMixin, View):
+    def get(self, request, *args, **kwargs):
+        team_id = self.kwargs.get('pk')
+        year_month = self.kwargs.get('date')
+        
+        year = int(year_month.split('-')[0])
+        month = int(year_month.split('-')[1])
+        totaldays= calendar.monthrange(year,month)[1]
+        monthName = calendar.month_name[month]
+       
+        data = []
+        index_rows=["staff", "designation"]
+        head_rows = ["Staff Name", "Designation"]
+        pre_data={}
+        # head_row.append(monthName + " " +str(year))
+        for x in range(totaldays):
+            date_day=x+1
+            head_rows.append(str(date_day)+" - "+calendar.day_name[calendar.weekday(year, month, date_day)])
+            index_rows.append(str(year)+"-"+str(month).zfill(2)+"-"+str(date_day).zfill(2))
+        
+        data.append(head_rows)
+        team = Team.objects.get(pk=team_id, is_deleted=False)
+        attendance_data = team.get_attendance_for_excel(year, month)
+        
+        for staff in team.staff_team.filter(is_deleted=False):
+            staff_detail = [staff.get_fullname(), staff.get_designation()]
+            staff_detail.extend(['Absent']*totaldays)
+            pre_data[staff.id] = staff_detail
+        
+        for k,v in attendance_data.items():
+            index = index_rows.index(k)
+            if index:
+                for staff in v:
+                    pre_data[staff][index] = "Present"
+
+        for k,v in pre_data.items():
+            data.append(v)
+        
+
+        p.save_as(array=data, dest_file_name="media/attendance_data.xls".format(team), sheet_name=monthName)
+        xl_data = open("media/attendance_data.xls".format(team), "rb")
+        response = HttpResponse(xl_data, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="'+monthName+' '+ str(year) +' attendance '+team.name+'.xls"'
+        return response
 
 
 
@@ -107,7 +174,7 @@ class StaffDetail(StaffRoleMixin, DetailView):
 
 class StaffUpdate(StaffRoleMixin, UpdateView):
     model = Staff
-    form_class = StaffForm
+    form_class = StaffEditForm
 
 
     def get_success_url(self):

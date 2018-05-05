@@ -63,6 +63,13 @@ class Team(models.Model):
                 present_list.append(record)
         return json.dumps(present_list)
 
+    def get_attendance_for_excel(self, year, month):
+        days = self.attandence_team.filter(attendance_date__year=year, attendance_date__month=month)
+        attendances={}
+        for day in days:
+            attendances[str(day.attendance_date)] = day.staffs.all().values_list('id', flat=True)
+        return attendances
+
 
 class Staff(models.Model):
     first_name = models.CharField(max_length=255, blank=True, null=True)
@@ -89,6 +96,9 @@ class Staff(models.Model):
 
     def __unicode__(self):
         return str(self.first_name) +" "+  str(self.last_name)
+
+    def get_designation(self):
+        return dict(STAFF_TYPES)[self.designation]
 
     def get_fullname(self):
         return str(self.first_name) +" "+ str(self.last_name)

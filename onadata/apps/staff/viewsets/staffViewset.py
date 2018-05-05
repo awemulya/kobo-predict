@@ -57,6 +57,20 @@ class TeamViewSet(viewsets.ModelViewSet):
         queryset = queryset.filter(leader_id=self.request.user.id)
         return queryset
 
+class StafflistViewSet(viewsets.ModelViewSet):
+    queryset = Staff.objects.filter(is_deleted=False)
+    serializer_class = StaffSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    permission_classes = (TeamAccessPermission,)
+    # parser_classes = (MultiPartParser, FormParser,)
+
+    def filter_queryset(self, queryset):
+        try:
+            queryset = queryset.filter(team_id=self.kwargs.get('team_id'))
+        except:
+            queryset = []
+        return queryset
+
 
 class StaffViewSet(viewsets.ModelViewSet):
     queryset = Staff.objects.filter(is_deleted=False)

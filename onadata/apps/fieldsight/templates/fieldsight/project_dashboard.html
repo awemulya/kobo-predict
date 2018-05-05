@@ -1,4 +1,5 @@
 {% extends "fieldsight/fieldsight_base.html" %}
+
 {% load i18n staticfiles %}
 {% load filters %}
 {% block extracss %}
@@ -287,21 +288,12 @@ var project = "{{obj.pk}}";
 						
 					</div>
 					{% endverbatim %}
-					<div class="row">
-						<div class="col-md-12">
-							<div class="widget-info margin-top bg-white padding">
-								<div class="widget-head">
-									<h4>Project Logs</h4>
-									<a class="btn btn-xs btn-primary" href="{% url 'eventlog:project_logs' obj.pk %}"><i class="la la-eye"></i></a>
-								</div>
-								<div class="widget-body">
-									<ul id="log_list">
-
-									</ul>	
-								</div>
-							</div>
-						</div>
+					{% verbatim %}
+					<div class="row" id="logdatas">
+						
 					</div>
+					{% endverbatim %}
+					
 					
 					<div class="row">
 						<div class="col-lg-3 col-md-6 col-sm-12">
@@ -450,75 +442,14 @@ var project = "{{obj.pk}}";
     <!--<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>-->
     <script src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
 <script type="text/javascript">
-    	function getlogdata(){ 
-								
-						$.ajax({
-						            url: "{% url 'eventlog:api_project_logs' obj.pk %}",
-						            type: 'GET',
-						            success: function (data) {
-						               $("#notification-ul").html( "" );
-						               	   if (data.results.length <= 0){
-							               	$("<li>No Logs Yet</li>").appendTo("#log_list");
-							               }
-							               else if(data.results.length > 8){
-							               	data.results.slice(0, 8).forEach(populateloglist);	
-							               }
-							               else{
-							               	data.results.forEach(populateloglist);
-							               }
-						               }
-						            
-						          });
-						}
-
-					
-
-
-						
-						function populateloglist(data, index){
-
-			   
-					    typeid = data.type;
-					   
-					// get description for notificationaccotding to its type id
-					    var content = types[typeid](data);
-					//append the data in main notificatin div
-					    
-					    var new_li = '<li class=" note-div-sm read" id="'+data.id+'" >'+
-		                            
-		                                '<div class="notification-item">' +
-		                                    '<div class="notification-avatar pull-left">' +
-		                                        '<i class="avatar-icon la la-info"></i>' +
-		                                    '</div>' +
-		                                    '<div class="notification-highlight">'+
-												'<p class="notification-highlight-excerpt">'+
-		                                   			content +
-		                                   		'</p>'+
-		                      '<p class="notification-highlight-time">' + dateparser(data.date) + '</p>' +
-		                                    '</div>'+
-		                                    '</div>' +
-		                                '</div>' +
-		                            
-						'</li>';
-
-
-									    // var div = document.getElementById('notifications');
-
-									    // div.innerHTML += new_li;
-									    speed = speed+200;
-									
-									
-										$(new_li).appendTo("#log_list");
-										
-									
-								}
     </script>
   	<script type="text/javascript">
     var static_url ="{{ STATIC_URL }}";
     configure_settings =  {};
-  	configure_settings.project_id = {{obj.pk}};
+    {% load l10n %}
+  	configure_settings.project_id = {{obj.pk|unlocalize}};
 
-  	getlogdata();
+  	//getlogdata();
 						
     </script>
 
@@ -530,5 +461,5 @@ var project = "{{obj.pk}}";
 <script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
 <script src="{% static 'vendor/highcharts.js' %}"></script>
 <script src="{% static 'vendor/vue-highcharts.min.js' %}"></script>
-<script src="{% static 'js/fieldsight/manage_project_dashboard.js' %}?v=0.4"></script>
+<script src="{% static 'js/fieldsight/manage_project_dashboard.js' %}?v=0.5"></script>
 {% endblock %}
