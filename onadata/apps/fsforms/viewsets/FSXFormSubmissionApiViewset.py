@@ -124,27 +124,32 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                         xform = fxf.xf
                     except Exception as e:
                         # return self.error_response("This Stage form not deployed in this site. Please Contact Administrators", False, request)
-                        with transaction.atomic():
-                            project = fs_proj_xf.project
-                            project_main_stages = project.stages.filter(stage__isnull=True)
-                            for pms in project_main_stages:
-                                project_sub_stages = Stage.objects.filter(stage__id=pms.pk, stage_forms__is_deleted=False)
-                                site_main_stage, created = Stage.objects.get_or_create(name=pms.name, order=pms.order,
-                                                                                       site=site,
-                                                                                       description=pms.description,
-                                                                                       project_stage_id=pms.id)
-                                for pss in project_sub_stages:
-                                    site_sub_stage, created = Stage.objects.get_or_create(name=pss.name, order=pss.order, site=site,
-                                                   description=pss.description, stage=site_main_stage, project_stage_id=pss.id, weight=pss.weight)
-                                    if FieldSightXF.objects.filter(stage=pss).exists():
-                                        project_fsxf = pss.stage_forms
-                                        site_form, created = FieldSightXF.objects.get_or_create(is_staged=True, xf=project_fsxf.xf,
-                                                                                                site=siteid,fsform=project_fsxf,
-                                                                                                stage=site_sub_stage,
-                                                                                                is_deployed=True)
-                                        if project_fsxf.id == fs_proj_xf.id:
-                                            fxf = site_form
-                                            xform = fxf.xf
+                        try:
+                            with transaction.atomic():
+                                project = fs_proj_xf.project
+                                project_main_stages = project.stages.filter(stage__isnull=True)
+                                for pms in project_main_stages:
+                                    project_sub_stages = Stage.objects.filter(stage__id=pms.pk, stage_forms__is_deleted=False)
+                                    site_main_stage, created = Stage.objects.get_or_create(name=pms.name, order=pms.order,
+                                                                                           site=site,
+                                                                                           description=pms.description,
+                                                                                           project_stage_id=pms.id)
+                                    for pss in project_sub_stages:
+                                        site_sub_stage, created = Stage.objects.get_or_create(name=pss.name, order=pss.order, site=site,
+                                                       description=pss.description, stage=site_main_stage, project_stage_id=pss.id, weight=pss.weight)
+                                        if FieldSightXF.objects.filter(stage=pss).exists():
+                                            project_fsxf = pss.stage_forms
+                                            site_form, created = FieldSightXF.objects.get_or_create(is_staged=True, xf=project_fsxf.xf,
+                                                                                                    site=siteid,fsform=project_fsxf,
+                                                                                                    stage=site_sub_stage,
+                                                                                                    is_deployed=True)
+                                            if project_fsxf.id == fs_proj_xf.id:
+                                                fxf = site_form
+                                                xform = fxf.xf
+                        except Exception as e:
+                            return self.error_response("Error Occured in submission {0}".format(str(e)), False, request)
+                        if not xform:
+                            return self.error_response("This Stage form not deployed in this site. Please Contact Administrators", False, request)
             except Exception as e:
                 xform = fs_proj_xf.xf
             proj_id = fs_proj_xf.project.id
