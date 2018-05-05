@@ -135,7 +135,7 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                                                                                        project_stage_id=pms.id)
                                 for pss in project_sub_stages:
                                     site_sub_stage, created = Stage.objects.get_or_create(name=pss.name, order=pss.order, site=site,
-                                                   description=pss.description, stage=site_main_stage, project_stage_id=pss.id)
+                                                   description=pss.description, stage=site_main_stage, project_stage_id=pss.id, weight=pss.weight)
                                     if FieldSightXF.objects.filter(stage=pss).exists():
                                         project_fsxf = pss.stage_forms
                                         site_form, created = FieldSightXF.objects.get_or_create(is_staged=True, xf=project_fsxf.xf,
