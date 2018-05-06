@@ -26,5 +26,9 @@ class Command(BaseCommand):
                 site_id = data_dict[finstance.instance_id]
                 site_fxf = finstance.project_fxf.parent.filter(site_id=site_id)[0]
                 print str(site_id) + ", " + str(finstance.instance_id)  +", "+ str(site_fxf.id) + "," + finstance.submitted_by.first_name +" "+ finstance.submitted_by.last_name
+                
                 print count
+                finstance.site_id=site_id
+                finstance.site_fxf_id = site_fxf
+                finstance.save()
         import pdb; pdb.set_trace()
