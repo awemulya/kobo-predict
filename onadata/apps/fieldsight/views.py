@@ -2205,7 +2205,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     head_row = ["Site ID", "Name"]
     project = get_object_or_404(Project, pk=pk)
     
-    stages = project.stages.filter(stage__isnull=True, stage_forms__is_deleted=False).prefetch_related('parent')
+    stages = project.stages.filter(stage__isnull=True).prefetch_related('parent')
     
     table_head = []
     substages =[]
