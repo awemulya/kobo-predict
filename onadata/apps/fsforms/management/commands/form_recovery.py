@@ -15,7 +15,7 @@ class Command(BaseCommand):
         data_dict = {}
         
         for list_data in fm:
-            data_dict[list_data['_id']] = list_data['fs_site']
+            data_dict[list_data['_id']] = int(list_data['fs_site'])
 
 
         import pdb; pdb.set_trace()
