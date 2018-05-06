@@ -54,7 +54,7 @@ class Command(BaseCommand):
 
         # finstances=FInstance.objects.filter(project_fxf__is_staged=True, site_fxf=None, site=None)
         count = 0
-        for k,v in data_dict.items:
+        for k,v in data_dict.items():
             print k, v
                 
 
