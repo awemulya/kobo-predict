@@ -61,6 +61,6 @@ class Command(BaseCommand):
                 
 
             print count
-            settings.MONGO_DB.instances.update({ "_id": k }, { $set: { "fs_uuid": fi.site_fxf_id } })
+            settings.MONGO_DB.instances.update({ "_id": k }, { "$set": { "fs_uuid": fi.site_fxf_id } })
                
         import pdb; pdb.set_trace()
