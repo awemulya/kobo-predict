@@ -42,7 +42,7 @@ class Command(BaseCommand):
 
 
 
-        def handle(self, *args, **options):
+    def handle(self, *args, **options):
         # f=FInstance.objects.filter(project_fxf__is_staged=True, site_fxf=None, site=None).values_list('instance', flat=True)
         # fm =list(settings.MONGO_DB.instances.find({ "_id": { "$in": list(f) } }, {"fs_site":1, "_id":1}))
         
