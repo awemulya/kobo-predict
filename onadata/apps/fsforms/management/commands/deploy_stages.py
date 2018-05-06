@@ -13,10 +13,12 @@ class Command(BaseCommand):
             pk =  137
             project = Project.objects.get(pk=pk)
             sites = project.sites.filter(is_active=True)
+            [s for s in sites]
             main_stages = project.stages.filter(stage__isnull=True)
             with transaction.atomic():
                 for main_stage in main_stages:
                     for site in sites:
+                        print(site.id, main_stage.order)
                         try:
                             site_main_stage = Stage.objects.get(project_stage_id=main_stage.id, site=site)
                             site_main_stage.name = main_stage.name
