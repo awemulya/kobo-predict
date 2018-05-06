@@ -9,5 +9,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         f=FInstance.objects.filter(project_fxf__is_staged=True, site_fxf=None, site=None).values_list('instance', flat=True)
-        fm =settings.MONGO_DB.instances.find({ "_id": { "$in": [29387] } })
+        fm =settings.MONGO_DB.instances.find({ "_id": { "$in": list(f) } })
         import pdb; pdb.set_trace()
