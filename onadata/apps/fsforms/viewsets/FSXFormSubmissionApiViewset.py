@@ -94,6 +94,7 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         try:
             fs_proj_xf = get_object_or_404(FieldSightXF, pk=kwargs.get('pk'))
             fxf = None
+            xform  = None
             try:
                 if fs_proj_xf.is_survey:
                     xform = fs_proj_xf.xf
@@ -148,7 +149,7 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                                                 xform = fxf.xf
                         except Exception as e:
                             return self.error_response("Error Occured in submission {0}".format(str(e)), False, request)
-                        if not xform:
+                        if not (xform and fxf):
                             return self.error_response("This Stage form not deployed in this site. Please Contact Administrators", False, request)
             except Exception as e:
                 xform = fs_proj_xf.xf
