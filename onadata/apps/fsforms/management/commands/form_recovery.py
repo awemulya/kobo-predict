@@ -55,12 +55,12 @@ class Command(BaseCommand):
         # finstances=FInstance.objects.filter(project_fxf__is_staged=True, site_fxf=None, site=None)
         count = 0
         for k,v in data_dict.items():
-            fi = FInstance.objects.get(pk=k)
+            fi = FInstance.objects.get(instance_id=k)
             print fi.instance_id
-            break
+            
                 
 
             print count
-                # settings.MONGO_DB.instances.find({ "_id": { "$in": list(f) } }, {"fs_site":1, "_id":1})
-
+            settings.MONGO_DB.instances.update({ "_id": k }, { $set: { "fs_uuid": fi.site_fxf_id } })
+               
         import pdb; pdb.set_trace()
