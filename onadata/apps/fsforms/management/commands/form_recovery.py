@@ -24,7 +24,7 @@ class Command(BaseCommand):
             if finstance.instance_id in data_dict:
                 count += 1
                 site_id = data_dict[finstance.instance_id]
-                site_fxf = finstance.project_fxf.parent.filter(pk=site_id)[0]
+                site_fxf = finstance.project_fxf.parent.filter(site_id=site_id)[0]
                 print str(site_id) + ", " + str(finstance.instance_id)  +", "+ str(site_fxf.id)
                 print count
         import pdb; pdb.set_trace()
