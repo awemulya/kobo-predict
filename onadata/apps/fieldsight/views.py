@@ -2257,7 +2257,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     # If page is out of range (e.g. 9999), deliver last page of results.
         sites = paginator.page(paginator.num_pages)
     for site in sites:
-        site_row = [site.site.identifier, site.site.name]
+        site_row = ["<a href='/fieldsight/site-dashborad/"+site.site.id+"/'>"+site.site.identifier+"</a>", site.site.name]
         for v in ss_id:
 
             substage = filterbyvalue(site.site.stages.all(), v)
