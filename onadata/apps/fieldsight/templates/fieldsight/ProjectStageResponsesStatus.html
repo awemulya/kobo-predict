@@ -5,9 +5,12 @@
 {% load filters %}
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
-<script>
-	var configure_settings.project_id = "{{ obj.pk }}";
-</script>
+<script type="text/javascript">
+    var static_url ="{{ STATIC_URL }}";
+    configure_settings =  {};
+    {% load l10n %}
+  	configure_settings.project_id = {{obj.pk|unlocalize}};						
+    </script>
 		<div id="main-content" class="padding">
 			<nav aria-label="breadcrumb" role="navigation">
 				<ol class="breadcrumb">
