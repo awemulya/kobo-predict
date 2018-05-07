@@ -4,25 +4,9 @@
 {% block content %}
 {% load filters %}
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_stage_data.js"></script>
 <script type="text/javascript">
-	$(document).ready(function() {
-		vm=StageViewModel('/fieldsight/ProjectStageResponsesStatus/'+{{ obj.pk }}+'/');
-		 ko.applyBindings(vm);
-	});
-	var loading= false;
-	$(window).scroll(function() {
-    if (!loading && ($(window).scrollTop() >  $(document).height() - $(window).height() - 100)) {
-        loading= true;
-
-        // your content loading call goes here.
-
-        loading = false; // reset value of loading once content loaded
-    }
-});
+	
 </script>
 		<div id="main-content" class="padding">
 			<nav aria-label="breadcrumb" role="navigation">
@@ -42,35 +26,6 @@
                     </header>
 					<div class="panel-body">
 
-				<!-- 	<table class="table table-bordered table-hover">
-						<thead>
-							<tr rowspan="2">
-							{% for cols in table_head %}
-								<th rowspan="{{ cols.rowspan }}" colspan="{{ cols.colspan }}">{{ cols.name }}</th>
-							{% endfor %}
-								
-							</tr>
-							<tr>
-							{% for substage in substages%}
-								<th>{{ substage }}</th>	
-							{% endfor %}
-							</tr>
-						</thead>
-						<tbody>
-						{% for row in data %}
-						<tr>
-						{% for value in row %}
-						<td>	
-							{{ value }}
-						</td>
-						{% endfor %}
-						</tr>
-						{% endfor %}	
-						
-							
-						</tbody>
-					</table> -->	
-
 						<div class="collapse" id="searchOrganization">
 							
 								<div class="row">
@@ -87,41 +42,127 @@
 						</div>			
 					
 
-						<table class="table table-bordered table-hover">
-						<thead>
-							<tr rowspan="2">
-							<!-- ko foreach: headers  -->
-								<th data-bind="text: $data.stage_order ? $data.name + ' ('+ $data.stage_order +')':$data.name, attr: { rowspan: $data.rowspan, colspan: $data.colspan }"></th>
-							<!-- /ko-->
-								
-							</tr>
-							<tr>
-							<!-- ko foreach: subHeaders  -->
-								<th data-bind="text: typeof $data === 'string' ? $data:$data[0] + ' / ' + $data[1]"></th>	
-							<!-- /ko-->
-							</tr>
-						</thead>
-						<tbody>
-						<!-- ko foreach: rows  -->
-						<tr>
-							<!-- ko foreach: $data  -->
-							<td data-bind="text:typeof $data === 'string' ? $data:$data[0]">	
-								
-
-							</td>
-							<!-- /ko-->
-						</tr>
-						<!-- /ko-->	
+					{% verbatim %}
+					<div class="row" id="stagedatas">
 						
-							
-						</tbody>
-					</table>		
-					<div data-bind="scroll: show_next_page, scrollOptions: { loadFunc: loadMoreDatas, offset: 10 }">loading</div>
-					<!-- <button type="button" data-bind="click:loadMoreDatas, visible: show_next_page, enable: show_next_page">Load More</button> -->
-
+					</div>
+					{% endverbatim %}	
+						
+					
 					</div>
 
                 </section>
 
 			</div>
+<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
+<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+<script type="text/javascript">
+window.app = new Vue({
+  el: '#stagedatas',
+  template: `
+    <div class="row"><div class="col-md-12">
+              <div class="widget-info margin-top bg-white padding">
+                <div class="widget-head">
+                  <h4>Tabular Report</h4>
+                  <a class="btn btn-xs btn-primary" v-bind:href="'/fieldsight/project/report/stage-table/'+ project_id +'/'"><i class="la la-plus"></i></a>
+                </div>
+                <div class="widget-body">
+                  <template v-if="sub_headers.length > 0 && rows.length > 0 ">
+                  <div class="table-responsive">
+                      <table class="table table-bordered table-hover tabular-report">
+                        <thead class="thead-default">
+                          <tr>
+                          <template v-for="header in headers">
+                            <th v-if="header['stage_order']" scope="col" :colspan="header['colspan']" :rowspan="header['rowspan']">{{ header['name'] }}</th>
+                            <th v-else scope="col" :colspan="header['colspan']" :rowspan="header['rowspan']">{{ header['name'] }}</th>
+                          </template>
+                          </tr>
+                          <tr>
+                          <template v-for="sub_header in sub_headers">
+                            <th scope="col">{{ sub_header[1] }}</th>
+                          </template>
+                          </tr>
+                        </thead>
+                        <tbody>
+
+                          <tr v-for="row in rows">
+                          <template v-for="cell in row">
+                            <template v-if="typeof cell === 'string'">
+                              <th class="cell-inactive" v-html="cell"></th>
+                            </template>
+                            <template v-else>
+                              <th :class="cell[2]">{{ cell[1] }}</th>
+                            </template>
+                          </template>
+                          </tr>
+                        
+                        </tbody>
+                      </table>
+                     
+                  </div>
+                  </template>
+                  <template v-else>
+                    <span>No Data</span>
+                  </template>
+                </div>
+              </div>
+            </div>
+            </div>`,
+  data: {
+        headers: [],
+        sub_headers :[],
+        rows :[],
+        loading: false,
+        project_id: configure_settings.project_id,
+        load_next_url : '/fieldsight/ProjectStageResponsesStatus/'+configure_settings.project_id+'/',
+        
+     },
+
+  methods:{
+    loadDatas : function (){
+    var self = this;
+
+    var self = this;
+    self.loading = true;
+    if(self.search_key){
+        var options = {'name':self.search_key};
+
+    }else{
+        var options = {};
+
+    }
+
+    function successCallback(response) {
+        self.headers = response.body.content.head_cols;
+        self.sub_headers = response.body.content.sub_stages;
+        self.rows = self.rows.concat(response.body.content.rows);
+        self.load_next_url = response.body.next_page;
+        self.loading = false;
+    }
+
+    function errorCallback() {
+        self.loading = false;
+        console.log('failed');
+    }
+
+    self.$http.get(self.load_next_url, {
+        params: options
+    }).then(successCallback, errorCallback);
+
+    },
+    
+    searchChange : function (){
+        var self = this;
+        self.loadDatas();
+
+    },
+  },
+  created(){
+    var self= this;
+    self.loadDatas();
+    self.heightLevel();
+  },
+
+});
+</script>
 {% endblock %}
