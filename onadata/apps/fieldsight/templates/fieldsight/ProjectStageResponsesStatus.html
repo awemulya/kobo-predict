@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript">
-	
+	const configure_settings.project_id = "{{ obj.pk }}";
 </script>
 		<div id="main-content" class="padding">
 			<nav aria-label="breadcrumb" role="navigation">
@@ -56,6 +56,7 @@
 			</div>
 <script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
 <script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+
 {% verbatim %}
 <script type="text/javascript">
 window.app = new Vue({
