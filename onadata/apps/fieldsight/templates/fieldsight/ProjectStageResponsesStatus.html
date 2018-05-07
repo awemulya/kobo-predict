@@ -3,6 +3,21 @@
 {% load filters %}
 {% block content %}
 {% load filters %}
+
+<!-- <div class="collapse" id="searchOrganization">
+							
+								<div class="row">
+									<div class="col-md-6 ml-md-auto">
+										<div class="input-group">
+										  <input type="text" name="q" placeholder="Search for..." data-bind="value: searchKeyword"/>
+										  <span class="input-group-btn">
+											  <button class="btn btn-primary" data-bind="click: dbsearchallsites" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
+										  </span>
+										</div>
+									</div>
+									<div class="col-md-3"></div>
+								</div>
+						</div>		 -->
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript">
@@ -27,33 +42,16 @@
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i>{% trans 'Search' %}</a>
 						</div>
                     </header>
-					<div class="panel-body">
-
-						<div class="collapse" id="searchOrganization">
-							
-								<div class="row">
-									<div class="col-md-6 ml-md-auto">
-										<div class="input-group">
-										  <input type="text" name="q" placeholder="Search for..." data-bind="value: searchKeyword"/>
-										  <span class="input-group-btn">
-											  <button class="btn btn-primary" data-bind="click: dbsearchallsites" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
-										  </span>
-										</div>
-									</div>
-									<div class="col-md-3"></div>
-								</div>
-						</div>			
-					
-
 					{% verbatim %}
-					<div class="row" id="stagedatas">
-						
-					</div>
-					{% endverbatim %}	
+					<div id="stagedatas" class="panel-body">
+
+							
+					
+	
 						
 					
 					</div>
-
+					{% endverbatim %}
                 </section>
 
 			</div>
@@ -103,6 +101,13 @@ window.app = new Vue({
                         
                         </tbody>
                       </table>
+                      <div class="container-fluid">
+		                  <div class="row justify-content-center">
+		                    <div class="col-md-6 col-lg-4">
+		                      <button v-if="load_next_url" v-on:click="loadDatas" class="btn btn-sm btn-block btn-primary margin-top">Load more</button>
+		                    </div>
+		                  </div>
+		              </div>
                      
                   </div>
                   </template>
