@@ -50,6 +50,47 @@
                   	
 
                 </section>
+                <br>
+                <section class="panel">
+                    <header class="panel-heading clearfix">
+						
+                        <h3><i class="la la-building"></i>Project Managers</h3>
+                         <a href="{% url 'staff:staff-project-users' pk %}" title="" class="btn btn-sm btn-primary pull-right"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'Project Managers' %}</a>
+                        <!-- <a href="{% url 'staff:team-create' pk %}" title="" class="btn btn-sm btn-primary pull-right"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'team' %}</a> -->
+						
+                    </header>
+					<div class="panel-body">
+
+						<div class="row">
+						{% for object in staff_list %}
+
+							<div class="col-md-4 col-sm-6">
+								<a href= "{% url 'users:profile' object.user.pk %}" title="" class="site-item-wrap  margin-top clearfix">
+									<div class="logo">
+										<img src="{{ object.user.user_profile.profile_picture.url }}" alt="" width="100" height="100">
+									</div>
+									<div class="basic-info clearfix">
+										<h4 class="detail-text1" >{{ object.user.first_name }}  {{ object.user.last_name }}</h4>
+                                 		<p class="address"><i class="fa fa-map-marker" aria-hidden="true"></i> <span  class="detail-text1">{% trans 'Address: '%}{{ object.user.user_profile.address }}</span></p>
+                                 		<p class="phone"><i class="fa fa-phone" aria-hidden="true"></i> <span  class="detail-text1">{% trans 'Phone No: '%} {{ object.user.user_phone_number }}</span></p>
+									</div>
+								</a>
+							</div>
+						{% empty %}
+
+							<div class="col-md-4 col-sm-6">
+
+							<h5>Staffs not available</h5>
+
+							</div>
+
+						{% endfor %}
+
+						</div>
+					</div>
+					
+
+				</section>
 						
 						
 						

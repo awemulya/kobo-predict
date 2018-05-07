@@ -1,7 +1,7 @@
 from onadata.apps.staff.viewsets.staffViewset import StaffViewSet, StafflistViewSet, AttendanceViewSet, TeamViewSet, StaffUpdateViewSet, staffdesignations, staffgender, BankViewSet
 
 from django.conf.urls import url
-from .views import TeamDetail, TeamReAssignStaff, TeamStaffsapi,  TeamAttendanceReport, TeamList, TeamCreate, TeamUpdate, TeamDelete, StaffList, StaffAttendanceUpdate, StaffCreate, StaffDetail, StaffDelete,StaffUpdate, StaffProjectCreate, StaffProjectUpdate, StaffProjectList, StaffProjectDetail
+from .views import TeamDetail, TeamReAssignStaff, StaffAddProjectUsers, StaffProjectUsers, TeamStaffsapi,  TeamAttendanceReport, TeamList, TeamCreate, TeamUpdate, TeamDelete, StaffList, StaffAttendanceUpdate, StaffCreate, StaffDetail, StaffDelete,StaffUpdate, StaffProjectCreate, StaffProjectUpdate, StaffProjectList, StaffProjectDetail
 from . import views
 app_name = 'staff'
 
@@ -30,6 +30,10 @@ urlpatterns = [
     url(r'^staff-project/create/$', StaffProjectCreate.as_view(), name="staff-project-create"),
 
     url(r'^staff-project/(?P<pk>[0-9]+)/$', StaffProjectDetail.as_view(), name="staff-project-detail"),
+
+    url(r'^staff-project/users/(?P<pk>[0-9]+)/$', StaffProjectUsers.as_view(), name="staff-project-users"),
+
+    url(r'^staff-project/add/user/(?P<pk>[0-9]+)/(?P<user_id>[0-9]+)/$', StaffAddProjectUsers.as_view(), name="staff-project-add-users"),
 
     url(r'^staff-project/update/(?P<pk>[0-9]+)/$', StaffProjectUpdate.as_view(), name="staff-project-update"),
     url(r'^attendance/update/(?P<pk>[0-9]+)/(?P<date>\d{4}-\d{2}-\d{2})/$', StaffAttendanceUpdate.as_view(), name="staff-attendance-update"),

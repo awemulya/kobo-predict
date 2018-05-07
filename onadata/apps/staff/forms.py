@@ -6,6 +6,11 @@ from django.core.exceptions import ValidationError
 from onadata.apps.staff.models import Team, StaffProject, Bank, Staff, Attendance
 from onadata.apps.userrole.models import UserRole
 
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = StaffProject
+        fields = ('name',)
+
 class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(TeamForm, self).__init__(*args, **kwargs)
