@@ -1,0 +1,67 @@
+{% extends "staff/base.html" %}
+{% load i18n staticfiles filters %}
+
+{% block content %}
+
+<div id="main-content" class="padding">
+				<div class="row">
+					<div class="col-md-8">
+						<div class="widget-info margin-top bg-white padding">
+							<div class="widget-head">
+								<h4>Project Managers</h4>
+							</div>
+							<div class="widget-body">
+								
+								<ul class="">
+								{% for obj in available_user_list %}
+									<li class="col-md-4">
+										<label class="custom-control margin-top user-checkbox custom-checkbox">
+											
+											<span class="custom-control-description">
+												<div class="project-item-wrap clearfix">
+													<div class="project-logo">
+														<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
+													</div>
+													<div class="project-basic-info">
+														<h4>{{ obj.user.user_profile.getname }}</h4>
+														<p>{{ obj.user.user_profile.address }}</p>
+													</div>
+												</div>
+												<a href="{% url 'staff:staff-project-add-users' pk obj.user.id %}" title="" class="btn btn-xs btn-block btn-primary">Assign</a>
+											</span>
+										</label>
+									</li>
+									{% endfor %}
+									<li class="clearfix"></li>
+								</ul>
+								
+								
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="widget-info margin-top bg-white padding">
+							<div class="widget-head">
+								<h4>Current Project Managers</h4>
+							</div>
+							{% for obj in staff_list %}
+							<div class="widget-body max-513-scrolling">
+								<div class="project-item-wrap clearfix">
+									<div class="project-logo">
+										<img src="assets/img/img-avatar.jpg" alt="" width="50" height="50">
+									</div>
+									<div class="project-basic-info">
+										<h4>{{ obj.user.user_profile.getname }}</h4>
+										<p>{{ obj.user.user_profile.address }}</p>
+									</div>
+									<a href="{% url 'users:end_user_role' obj.id %}?next={% url 'staff:staff-project-users' pk %}" title="" class="btn btn-danger btn-sm project-action"><i class="la la-close"></i></a>
+								</div>
+							</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+				
+			</div>
+
+{% endblock %}

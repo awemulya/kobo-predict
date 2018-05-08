@@ -1,11 +1,12 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .models import Team, Staff, StaffProject, Attendance
+from onadata.apps.userrole.models import UserRole
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectRoleMixin, StaffTeamRoleMixin, StaffRoleMixin
 from django.contrib.auth.models import User
-from onadata.apps.staff.forms import TeamForm, StaffEditForm, StaffForm, AttendanceForm
+from onadata.apps.staff.forms import TeamForm, StaffEditForm, StaffForm, AttendanceForm, ProjectForm
 import pyexcel as p
 import datetime
 import calendar
@@ -201,8 +202,7 @@ class StaffDelete(StaffRoleMixin, DeleteView):
 #StaffProject Views
 class StaffProjectCreate(HasStaffRoleMixin, CreateView):
     model = StaffProject
-    model = StaffProject
-    fields = ['name',]
+    form_class = ProjectForm
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
@@ -238,9 +238,26 @@ class StaffProjectDetail(StaffProjectRoleMixin, DetailView):
         context = super(StaffProjectDetail, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
         context['team_list'] = Team.objects.filter(staffproject_id = self.kwargs.get('pk'), is_deleted=False)
+        context['staff_list'] = self.object.staff_project_roles.filter(ended_at = None)
+
         return context
 
+class StaffProjectUsers(StaffProjectRoleMixin, TemplateView):
+    template_name = 'staff/staffproject_users.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(StaffProjectUsers, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        current_users = UserRole.objects.filter(staff_project_id=self.kwargs.get('pk'), ended_at = None).values('user_id')
+        context['staff_list'] = UserRole.objects.filter(staff_project_id=self.kwargs.get('pk'), ended_at = None)
+        context['available_user_list'] = UserRole.objects.filter(project_id__in=[137, 105, 129], ended_at=None).exclude(user_id__in=current_users).distinct('user_id')
+        return context
+
+class StaffAddProjectUsers(StaffProjectRoleMixin, View):
+    def get(self, request, pk, user_id, *args, **kwargs):
+        staffproject_id = pk
+        role = UserRole.objects.create(user_id = user_id, group_id=8, staff_project_id = staffproject_id)
+        return HttpResponseRedirect(reverse('staff:staff-project-users', kwargs={'pk': staffproject_id }))
 
 class StaffAttendanceUpdate(StaffTeamRoleMixin, UpdateView):
     model = Attendance

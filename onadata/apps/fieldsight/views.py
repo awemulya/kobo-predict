@@ -2216,7 +2216,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     for stage in stages:
         stage_count+=1
 
-        sub_stages = stage.parent.all()
+        sub_stages = stage.parent.filter(stage_forms__is_deleted=False)
         if len(sub_stages) > 0:
             stages_rows.append("Stage :"+stage.name)
             table_head.append({"name":stage.name, "stage_order": "Stage " +str(stage_count), "rowspan":1, "colspan":len(sub_stages) })
@@ -2257,7 +2257,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     # If page is out of range (e.g. 9999), deliver last page of results.
         sites = paginator.page(paginator.num_pages)
     for site in sites:
-        site_row = [site.site.identifier, site.site.name]
+        site_row = ["<a href='"+site.site.get_absolute_url()+"'>"+site.site.identifier+"</a>", "<a href='"+site.site.get_absolute_url()+"'>"+site.site.name+"</a>"]
         for v in ss_id:
 
             substage = filterbyvalue(site.site.stages.all(), v)
