@@ -585,3 +585,36 @@ def divend(value):
 @register.filter(name='get')
 def get(d, k):
     return d.get(k, None)
+
+@register.assignment_tag
+def page_offsets(current, total, list_range_total):
+    front_range=0
+    back_range=0
+    page_front_list =[]
+    page_back_list =[]
+    list_range = list_range_total/2 #list_range_total should always be even
+
+    first_offset = list_range - current #Get no of offset pages work on adding or removing page numbers
+    if first_offset >= 0: #Check if offset exists, since we get our offset in positive, checking on positive since its easy to understand.
+        front_range += list_range-first_offset-1  #We reduce the number by 1 since the current page as "active page" will be included in frontend/template    
+        back_range += abs(first_offset)+1  #We add 1 to balance the number for page number list for all page.
+    else:
+        front_range += list_range 
+
+    last_offset =  total - (current + list_range) #Get no of offset pages work on adding or removing page numbers
+    
+    if last_offset <= 0:
+        back_range += abs(list_range - abs(last_offset))
+        front_range += abs(last_offset)
+    else:
+        back_range += list_range 
+
+    page_start = current - front_range 
+    for page_no in range(front_range):
+        page_front_list.append(page_start + page_no)
+
+    for page_no in range(back_range):
+        page_back_list.append(current + page_no + 1) #Because range starts from 0 we add 1 to get list starting from next page
+
+    print page_front_list
+    return {"front_range":page_front_list, "back_range":page_back_list}
