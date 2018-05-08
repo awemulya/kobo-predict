@@ -40,15 +40,15 @@
             
                     </header>
           <div class="panel-body">
-            <!--Search Organization-->
+           
             <div class="collapse margin-top" id="searchForms">
-              <form class="padding">
+              <form method="GET" class="padding">
                 <div class="row">
                   <div class="col-md-6 ml-md-auto">
                     <div class="input-group">
-                      <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+                      <input type="text" class="form-control" name="q" placeholder="Search for..." autofocus value='{{ request.GET.q }}'/>
                       <span class="input-group-btn">
-                      <button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
+                        <button class="btn btn-primary" type="submit" value="Search"><i class="la la-search"></i> {% trans 'Search' %}</button>
                       </span>
                     </div>
                   </div>
