@@ -1388,8 +1388,13 @@ class Html_export(ReadonlyFormMixin, ListView):
     
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
+        query = self.request.GET.get("q", None)
         queryset = FInstance.objects.filter(site_fxf=fsxf_id)
-        return queryset
+        if query:
+            new_queryset = FInstance.objects.filter(submitted_by__username__icontains=query)
+        else:
+            new_queryset = queryset 
+        return new_queryset
 
 class Project_html_export(ReadonlyFormMixin, ListView):
     model =   FInstance
@@ -1409,8 +1414,13 @@ class Project_html_export(ReadonlyFormMixin, ListView):
     
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
+        query = self.request.GET.get("q", None)
         queryset = FInstance.objects.filter(project_fxf=fsxf_id)
-        return queryset
+        if query:
+            new_queryset = FInstance.objects.filter(Q(site__name__icontains=query) | Q(site__identifier__icontains=query) | Q(submitted_by__username__icontains=query))
+        else:
+            new_queryset = queryset 
+        return new_queryset
 
 
 @group_required('KoboForms')

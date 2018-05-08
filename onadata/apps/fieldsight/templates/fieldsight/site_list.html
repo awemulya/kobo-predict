@@ -140,7 +140,7 @@
 						
 						{% endfor %}
 						</div>
-<br>
+					<br>
 
 
 						{% if is_paginated %}
@@ -161,13 +161,32 @@
 
 
 
+						              {% if paginator.num_pages > 21 %}
 
-						             
-						                <li class="page-item active"><a class="page-link" href="?page={{ page_obj.number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ page_obj.number }}</a></li>
+			                              {% page_offsets page_obj.number paginator.num_pages 20 as data %}
+			            
+			                              {% for item in data.front_range %}
+			                                    <li class="page-item"><a class="page-link" href="?page={{ item }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ item }}</a></li>
+			                              {% endfor %}
+			                         
+			                                <li class="page-item active"><a class="page-link" href="?page={{ page_obj.number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ page_obj.number }}</a></li>
 
-						                
-						              
-						                
+			                              {% for item in data.back_range %}
+			                                    <li class="page-item"><a class="page-link" href="?page={{ item }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ item }}</a></li>                             
+			                              {% endfor %}
+
+			                          {% else %}
+			                            {% for i in paginator.page_range %}
+			                              {% if page_obj.number == i %}
+			                              <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+
+			                              {% else %}
+			                              <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+			                              {% endif %}
+			                            {% endfor %}
+			                          {% endif %}
+
+										 
 						              {% if page_obj.has_next %}
 						                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&raquo;</a></li>
 						              {% else %}
