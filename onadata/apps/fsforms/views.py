@@ -2021,6 +2021,7 @@ def set_deploy_main_stage(request, is_project, pk, stage_id):
             sub_stages  = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
             sub_stages_id = [s.id for s in sub_stages]
             stage_forms = FieldSightXF.objects.filter(stage__id__in=sub_stages_id)
+            stage_forms.update(is_deployed=True)
             deploy_data = {'main_stage':StageSerializer(main_stage).data,
                            'sub_stages':StageSerializer(sub_stages, many=True).data,
                            'stage_forms':StageFormSerializer(stage_forms, many=True).data
@@ -2095,12 +2096,12 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
                     site_data['sub_stage_form'] = StageFormSerializer(site_fsxf).data
                     site_data['id'] = site.id
                     sites_affected.append(site_data)
-            deploy_data = {'project_form':StageFormSerializer(stage_form).data,
-                           'project_stage':StageSerializer(main_stage).data,
-                           'project_sub_stage':StageSerializer(sub_stage).data,
-                           'deleted_forms': StageFormSerializer(deleted_forms, many=True).data,
-                           'deleted_stages': StageSerializer(deleted_stages, many=True).data,
-                           'sites_affected':sites_affected,
+            deploy_data = {'project_forms': [StageFormSerializer(stage_form).data],
+                           'project_stage': StageSerializer(main_stage).data,
+                           'project_sub_stages': [StageSerializer(sub_stage).data],
+                           'deleted_forms':   StageFormSerializer(deleted_forms, many=True).data,
+                           'deleted_stages':  StageSerializer(deleted_stages, many=True).data,
+                           'sites_affected': sites_affected,
                            }
             d = DeployEvent(project=project, data=deploy_data)
             d.save()
@@ -2115,14 +2116,13 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
             serializer = SubStageDetailSerializer(sub_stage)
             deploy_data = {
                 'main_stage':StageSerializer(sub_stage.stage).data,
-                'sub_stage':StageSerializer(sub_stage).data,
-                'stage_form':StageFormSerializer(stage_form).data,
+                'sub_stages':[StageSerializer(sub_stage).data],
+                'stage_forms':[StageFormSerializer(stage_form).data],
                            }
             d = DeployEvent(site=site, data=deploy_data)
             d.save()
             send_sub_stage_deployed_site(site, sub_stage, d.id)
-
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     except Exception as e:
-        return HttpResponse({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return HttpResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
