@@ -14,8 +14,10 @@ class StageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stage
-        fields = ('name', 'description', 'id', 'order', 'tags', 'weight' ,'sub_stage_weight', 'stage')
-        read_only_fields = ('stage',)
+        fields = ('name', 'description', 'id', 'order', 'tags',
+                  'weight' ,'sub_stage_weight', 'stage',
+                  'project_stage_id')
+        read_only_fields = ('stage' ,'project_stage_id')
 
     def get_sub_stage_weight(self, obj):
         if hasattr(obj, 'sub_stage_weight'):
