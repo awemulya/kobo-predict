@@ -161,7 +161,7 @@
 
 
 
-						              {% page_offsets page_obj.number paginator.num_pages 6 as data %}
+						              {% page_offsets page_obj.number paginator.num_pages 20 as data %}
 				
 						              {% for item in data.front_range %}
 						              		  <li class="page-item"><a class="page-link" href="?page={{ item }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ item }}</a></li>
