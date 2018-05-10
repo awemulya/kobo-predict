@@ -49,8 +49,9 @@ class Command(BaseCommand):
 
         data2 =[item for item in f if item not in data ]
         fm2 =list(settings.MONGO_DB.instances.find({ "_id": { "$in": list(data2) } }, {"_submission_time":1}))
-
-        
+        nf=FInstance.objects.filter(pk__in=data2)
+        for fi in nf:
+            print date
         # for list_data in fm:
         #     data_dict[list_data['_id']] = int(list_data['fs_site'])
 
