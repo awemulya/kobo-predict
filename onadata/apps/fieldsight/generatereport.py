@@ -24,7 +24,7 @@ styles = getSampleStyleSheet()
 
 class MyDocTemplate(SimpleDocTemplate):
      def __init__(self, filename, **kw):
-         self.allowSplitting = 0
+         self.allowSplitting = 1
          apply(SimpleDocTemplate.__init__, (self, filename), kw)
          pdfmetrics.registerFont(TTFont('arialuni', 'ARIALUNI.TTF'))
 
