@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 from onadata.apps.viewer.models.parsed_instance import dict_for_mongo, _encode_for_mongo, xform_instances
 from django.conf import settings
 from onadata.apps.fsforms.models import FInstance, FieldSightParsedInstance
+from onadata.apps.viewer.models import ParsedInstance
 import json
 class Command(BaseCommand):
     help = 'Create default groups'
@@ -77,37 +78,43 @@ class Command(BaseCommand):
         data2 =[item for item in f if item not in data ]
         fm2 =list(settings.MONGO_DB.instances.find({ "_id": { "$in": list(data2) } }, {"_submission_time":1}))
         nf=FInstance.objects.filter(instance_id__in=data2)
+        nnf = ParsedInstance.objects.filter(instance_id__in=data2)
         change_ids ={}
-        for fi in nf:
-            change_ids[fi.instance_id] = fi.instance_id
-            print fi.instance_id
+      
+        nnff = ParsedInstance.objects.get(instance_id=21319)
+        nnff.update_mongo(False)
+
+        # for fi in nf:
+        #     change_ids[fi.instance_id] = fi.instance_id
+        #     print fi.instance_id
             
-            if fi.site is None:
-                site_id = ""
-            else:
-                site_id =fi.site_id
+        #     if fi.site is None:
+        #         site_id = ""
+        #     else:
+        #         site_id =fi.site_id
 
-            if fi.project_fxf is None:
-                project_fxf_id = ""
-            else:
-                project_fxf_id=fi.project_fxf_id
+        #     if fi.project_fxf is None:
+        #         project_fxf_id = ""
+        #     else:
+        #         project_fxf_id=fi.project_fxf_id
 
-            if fi.project is None:
-                project_id = ""
-            else:
-                project_id = fi.project_id
+        #     if fi.project is None:
+        #         project_id = ""
+        #     else:
+        #         project_id = fi.project_id
 
-            if fi.site_fxf is None:
-                site_fxf_id = ""
-            else:
-                site_fxf_id = fi.site_fxf_id
+        #     if fi.site_fxf is None:
+        #         site_fxf_id = ""
+        #     else:
+        #         site_fxf_id = fi.site_fxf_id
 
-            pi, created=FieldSightParsedInstance.get_or_create(fi.instance, update_data={'fs_uuid': site_fxf_id, 'fs_status': 0,
-                                                                          'fs_site':site_id, 'fs_project':project_id,
-                                                                          'fs_project_uuid':project_fxf_id})
-            print created
-            if not created:
-                pi.save(async=False)
+        #     pi, created=FieldSightParsedInstance.get_or_create(fi.instance, update_data={'fs_uuid': site_fxf_id, 'fs_status': 0,
+        #                                                                   'fs_site':site_id, 'fs_project':project_id,
+        #                                                                   'fs_project_uuid':project_fxf_id})
+        #     print created
+        #     print pi
+        #     if not created:
+        #         pi.save(async=False)
         
             # for list_data in fm:
         #     data_dict[list_data['_id']] = int(list_data['fs_site'])
