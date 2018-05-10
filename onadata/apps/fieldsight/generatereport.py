@@ -20,7 +20,7 @@ from  reportlab.platypus.tableofcontents import TableOfContents
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 styleSheet = getSampleStyleSheet()
-
+styles = getSampleStyleSheet()
 
 class MyDocTemplate(SimpleDocTemplate):
      def __init__(self, filename, **kw):
@@ -58,7 +58,7 @@ class MyDocTemplate(SimpleDocTemplate):
 
 class PDFReport:
 
-    styles = getSampleStyleSheet()
+
     def __init__(self, buffer, pagesize):
         self.main_answer = {}
         self.question={}
