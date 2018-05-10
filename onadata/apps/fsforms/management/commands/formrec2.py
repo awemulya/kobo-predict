@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import Group
 from onadata.apps.viewer.models.parsed_instance import dict_for_mongo, _encode_for_mongo, xform_instances
 from django.conf import settings
-from onadata.apps.fsforms.models import FInstance
+from onadata.apps.fsforms.models import FInstance, FieldSightParsedInstance
 import json
 class Command(BaseCommand):
     help = 'Create default groups'
@@ -49,9 +49,34 @@ class Command(BaseCommand):
 
         data2 =[item for item in f if item not in data ]
         fm2 =list(settings.MONGO_DB.instances.find({ "_id": { "$in": list(data2) } }, {"_submission_time":1}))
-        nf=FInstance.objects.filter(pk__in=data2)
+        nf=FInstance.objects.filter(instance_id__in=data2)
+        change_ids ={}
         for fi in nf:
+            change_ids['_id'] = fi.instance_id
             print fi.date
+            
+            # if fi.fsxfid is None:
+            #     fsxfid = ""
+            
+            # if fi.site is None:
+            #     site_id = ""
+            # else:
+            #     site_id =fi.site_id
+
+            # if fi.project_fxf in None:
+            #     project_fxf_id = ""
+            # else:
+            #     project_fxf_id=fi.project_fxf_id
+
+            # if fi.project is None:
+            #     project_id = fi.project_id
+            # else:
+            #     project_id = fi.project_id
+
+            # FieldSightParsedInstance.get_or_create(instance, update_data={'fs_uuid': fxid, 'fs_status': 0,
+            #                                                               'fs_site':site_id, 'fs_project':project_id,
+            #                                                               'fs_project_uuid':project_fxf_id})
+        print change_ids
         # for list_data in fm:
         #     data_dict[list_data['_id']] = int(list_data['fs_site'])
 
