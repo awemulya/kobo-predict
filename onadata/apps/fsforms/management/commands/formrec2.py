@@ -75,7 +75,7 @@ class Command(BaseCommand):
         # nnff = ParsedInstance.objects.get(instance_id=21319)
         # nnff.update_mongo(False)
 
-
+        main_data={}
         for fi in nf:
             
             if fi.site is None:
