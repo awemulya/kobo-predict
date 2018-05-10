@@ -171,6 +171,9 @@ class PDFReport:
                 if r_question+"/"+question in r_answer:
                     if first_children['type'] == 'note':
                         answer=Paragraph('', styBackground)
+                        row=(Paragraph(question, styBackground), answer)
+                        self.data.append(row)
+                        continue
                     elif first_children['type'] == 'photo':
                         #photo = '/media/user/attachments/'+ r_answer[r_question+"/"+question]
                         photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ r_answer[r_question+"/"+question]
@@ -199,6 +202,9 @@ class PDFReport:
             if g_question+"/"+question in self.main_answer:
                 if first_children['type'] == 'note':
                     answer=Paragraph('', styBackground)
+                    row=(Paragraph(question, styBackground), answer)
+                    self.data.append(row)
+                    continue
                 elif first_children['type'] == 'photo':
                     photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[g_question+"/"+question]
                     answer = self.create_logo(photo)
@@ -233,6 +239,9 @@ class PDFReport:
                 if question in self.main_answer:
                     if first_children['type'] == 'note':
                         answer=Paragraph('', styBackground)
+                        row=(Paragraph(question, styBackground), answer)
+                        self.data.append(row)
+                        continue
 
                     elif first_children['type'] == 'photo':
                         photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[question]

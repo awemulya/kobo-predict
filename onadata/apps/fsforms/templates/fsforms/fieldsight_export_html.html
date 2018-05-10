@@ -24,9 +24,9 @@
 
 <div id="main-content" class="padding">
         <section class="panel">
-                    <header class="panel-heading clearfix">
-                        <h3><i class="la la-pencil-square-o"></i>{% if request.GET.q %}Search Results for "{{request.GET.q}}"{% else %}
-                        {% trans 'Form' %} {% trans 'Submissions' %}{% endif %} | {{ form_name  }}</h3>
+            <header class="panel-heading clearfix">
+                <h3><i class="la la-pencil-square-o"></i>{% if request.GET.q %}Search Results for "{{request.GET.q}}"{% else %}
+                {% trans 'Form' %} {% trans 'Submissions' %}{% endif %} | {{ form_name  }}</h3>
 
      
 
@@ -39,7 +39,7 @@
 
 
             
-                    </header>
+            </header>
           <div class="panel-body">
            
             <div class="collapse margin-top" id="searchForms">
@@ -95,7 +95,7 @@
                   <td>{{ sub.site.name }}</td>
                   <td>{{ sub.site.identifier }}</td>
                   <td>{{ sub.instance.id }}</td>
-                  <td>{{ sub.submitted_by.username }}</td>
+                  <td>{{ sub.submitted_by.user_profile.getname }}</td>
                   <td>{{ sub.date }}</td>
                   </tr>
               <!-- {% endif %} -->
@@ -116,8 +116,8 @@
     <thead>
       <tr>
         <th>{% trans 'S.N' %}</th>
-        <th>{% trans 'Site' %} {% trans 'Name' %}</th>
-        <th>{% trans 'Site' %} {% trans 'Id' %}</th>
+       <!--  <th>{% trans 'Site' %} {% trans 'Name' %}</th>
+        <th>{% trans 'Site' %} {% trans 'Id' %}</th> -->
         <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
@@ -130,10 +130,10 @@
                <tr onclick="redirectto(`{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
                  
                   <td>{{ forloop.counter }}</td>
-                  <td>{{ sub.site.name }}</td>
-                  <td>{{ sub.site.identifier }}</td>
+                  <!-- <td>{{ sub.site.name }}</td>
+                  <td>{{ sub.site.identifier }}</td> -->
                   <td>{{ sub.instance.id }}</td>
-                  <td>{{ sub.submitted_by.username }}</td>
+                  <td>{{ sub.submitted_by.user_profile.getname }}</td>
                   <td>{{ sub.date }}</td>
                   </tr>
             

@@ -1391,7 +1391,7 @@ class Html_export(ReadonlyFormMixin, ListView):
         query = self.request.GET.get("q", None)
         queryset = FInstance.objects.filter(site_fxf=fsxf_id)
         if query:
-            new_queryset = FInstance.objects.filter(submitted_by__username__icontains=query)
+            new_queryset = FInstance.objects.filter(Q(submitted_by__first_name__icontains=query) | Q(submitted_by__first_last__icontains=query))
         else:
             new_queryset = queryset 
         return new_queryset
@@ -1417,7 +1417,7 @@ class Project_html_export(ReadonlyFormMixin, ListView):
         query = self.request.GET.get("q", None)
         queryset = FInstance.objects.filter(project_fxf=fsxf_id)
         if query:
-            new_queryset = FInstance.objects.filter(Q(site__name__icontains=query) | Q(site__identifier__icontains=query) | Q(submitted_by__username__icontains=query))
+            new_queryset = FInstance.objects.filter(Q(site__name__icontains=query) | Q(site__identifier__icontains=query) | Q(submitted_by__first_name__icontains=query) | Q(submitted_by__first_last__icontains=query))
         else:
             new_queryset = queryset 
         return new_queryset
