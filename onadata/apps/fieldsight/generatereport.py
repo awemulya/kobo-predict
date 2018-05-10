@@ -80,6 +80,14 @@ class PDFReport:
         alignment = 1,
         spaceAfter = 20,
         fontName = 'arialuni')
+        
+
+        self.bodystyle = PS(
+            name = 'bodystyle',
+            parent=styles['Normal'],
+            fontSize = 8,
+            fontName = 'arialuni',
+            )
 
         self.h1 = PS(
             name = 'Heading1',
@@ -126,14 +134,14 @@ class PDFReport:
         # Save the state of our canvas so we can draw on it
         canvas.saveState()
         styles = getSampleStyleSheet()
-        style_right = ParagraphStyle(name='right', parent=styles['Normal'], fontName='arialuni',
+        style_right = ParagraphStyle(name='right', parent=styles['bodystyle'], fontName='arialuni',
                 fontSize=10, alignment=TA_RIGHT)
         
         fieldsight_logo = Image('http://' + self.base_url +'/static/images/fs1.jpg')
         fieldsight_logo._restrictSize(1.5 * inch, 1.5 * inch)
         
 
-        # headerleft = Paragraph("FieldSight", styles['Normal'])
+        # headerleft = Paragraph("FieldSight", styles['bodystyle'])
         headerright = Paragraph(self.project_name, style_right)
 
         # w1, h1 = headerleft.wrap(doc.width, doc.topMargin)
@@ -160,7 +168,7 @@ class PDFReport:
         canvas.restoreState()
     
     def parse_repeat(self, r_object):
-        styNormal = styleSheet['Normal']
+        styNormal = styleSheet['bodystyle']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
         r_question = r_object['name']
         for r_answer in self.main_answer[r_question]:
@@ -190,7 +198,7 @@ class PDFReport:
                 self.data.append(row)
 
     def parse_group(self, prev_groupname, g_object):
-        styNormal = styleSheet['Normal']
+        styNormal = styleSheet['bodystyle']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
         g_question = prev_groupname+g_object['name']
         for first_children in g_object['children']:
@@ -220,7 +228,7 @@ class PDFReport:
                 self.parse_group(g_question+"/",first_children)
 
     def parse_individual_questions(self, parent_object):
-        styNormal = styleSheet['Normal']
+        styNormal = styleSheet['bodystyle']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
         for first_children in parent_object:
             if first_children['type'] == "repeat":
