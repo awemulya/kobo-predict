@@ -102,7 +102,7 @@ class Command(BaseCommand):
             else:
                 site_fxf_id = fi.site_fxf_id
 
-            FieldSightParsedInstance.get_or_create(instance, update_data={'fs_uuid': site_fxf_id, 'fs_status': 0,
+            FieldSightParsedInstance.get_or_create(fi.instance, update_data={'fs_uuid': site_fxf_id, 'fs_status': 0,
                                                                           'fs_site':site_id, 'fs_project':project_id,
                                                                           'fs_project_uuid':project_fxf_id})
         
