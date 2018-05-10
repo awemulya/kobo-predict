@@ -103,7 +103,8 @@ class Command(BaseCommand):
 
         for finnf in nnf:
             if finnf.instance_id in main_data:
-                finnf.save(update_fs_data=main_data.get(finnf.instance_id), async=False)
+                finnf._update_fs_data = main_data.get(finnf.instance_id)
+                finnf.save()
                 finnf.to_dict_for_mongo()
         #     print created
         #     print pi
