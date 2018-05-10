@@ -58,7 +58,7 @@ class MyDocTemplate(SimpleDocTemplate):
 
 class PDFReport:
 
-
+    styles = getSampleStyleSheet()
     def __init__(self, buffer, pagesize):
         self.main_answer = {}
         self.question={}
@@ -133,7 +133,7 @@ class PDFReport:
     def _header_footer(self, canvas, doc):
         # Save the state of our canvas so we can draw on it
         canvas.saveState()
-        styles = getSampleStyleSheet()
+        
         style_right = ParagraphStyle(name='right', parent=styles['bodystyle'], fontName='arialuni',
                 fontSize=10, alignment=TA_RIGHT)
         
