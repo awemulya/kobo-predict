@@ -102,11 +102,14 @@ class Command(BaseCommand):
             else:
                 site_fxf_id = fi.site_fxf_id
 
-            FieldSightParsedInstance.get_or_create(fi.instance, update_data={'fs_uuid': site_fxf_id, 'fs_status': 0,
+            pi, created=FieldSightParsedInstance.get_or_create(fi.instance, update_data={'fs_uuid': site_fxf_id, 'fs_status': 0,
                                                                           'fs_site':site_id, 'fs_project':project_id,
                                                                           'fs_project_uuid':project_fxf_id})
+            print created
+            if not created:
+                pi.save(async=False)
         
-        # for list_data in fm:
+            # for list_data in fm:
         #     data_dict[list_data['_id']] = int(list_data['fs_site'])
 
         # finstances=FInstance.objects.filter(project_fxf__is_staged=True, site_fxf=None, site=None)
