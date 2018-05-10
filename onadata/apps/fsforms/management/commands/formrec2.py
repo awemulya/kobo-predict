@@ -53,7 +53,7 @@ class Command(BaseCommand):
         change_ids ={}
         for fi in nf:
             change_ids['_id'+str(fi.instance_id)] = fi.instance_id
-            print fi.date
+            print fi.instance_id
             
             # if fi.fsxfid is None:
             #     fsxfid = ""
