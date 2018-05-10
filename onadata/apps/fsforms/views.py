@@ -48,6 +48,8 @@ from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, Fiel
 from django.db.models import Q
 from onadata.apps.fieldsight.rolemixins import MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
 
+import requests
+
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -1108,6 +1110,29 @@ class Setup_forms(SPFmixin, View):
         return render(request, "fsforms/manage_forms.html",
                   {'obj': obj, 'is_project': self.kwargs.get('is_project'), 'pk': self.kwargs.get('pk'), 'form': GeneralForm(request=request),
                    'schedule_form': KoScheduleForm(request=request)})
+
+
+class FormView(View):
+    def get(self, request, *args, **kwargs):
+        if self.kwargs.get('is_project') == '1':
+            obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        else:
+            obj = Site.objects.get(pk=self.kwargs.get('pk'))
+
+        xform = XForm.objects.get(pk=self.kwargs.get('form_pk'))
+        result = requests.post(
+            'http://enketo:8085/transform',
+            data={
+                'xform': xform.xml,
+            }
+        )
+
+        return render(request, 'fsforms/form.html', {
+            'obj': obj, 'is_project': self.kwargs.get('is_project'),
+            'pk': self.kwargs.get('pk'),
+            'xform': xform,
+            'html_form': result.json()['form'],
+        })
 
 
 class Configure_forms(SPFmixin, View):
