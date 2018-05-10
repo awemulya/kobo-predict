@@ -52,7 +52,7 @@ class Command(BaseCommand):
         nf=FInstance.objects.filter(instance_id__in=data2)
         change_ids ={}
         for fi in nf:
-            change_ids['_id'+str(fi.instance_id)] = fi.instance_id
+            change_ids[fi.instance_id] = fi.instance_id
             print fi.instance_id
             
             # if fi.fsxfid is None:
