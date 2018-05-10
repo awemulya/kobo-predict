@@ -44,8 +44,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         f=FInstance.objects.filter(date__range=["2018-4-10","2018-5-10"]).values_list('instance', flat=True)
-        fm =list(settings.MONGO_DB.instances.find({ "_id": { "$in": list(f) } }, {"fs_site":1, "_id":1}))
-        
+        fm =list(settings.MONGO_DB.instances.find({ "_id": { "$in": list(f) } }, {"_id":1}))
+        data = [id['_id'] for id in fm]
+
+        data2 =[item for item in f if item not in data ]
+        fm2 =list(settings.MONGO_DB.instances.find({ "_id": { "$in": list(data2) } }, {"_submission_time":1}))
 
         
         # for list_data in fm:
