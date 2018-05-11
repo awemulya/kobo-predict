@@ -193,7 +193,7 @@ class PDFReport:
 
             else:
                 answer_text=answer_dict[question_name]
-                if len(answer) > 1200:
+                if len(answer_text) > 1200:
                     new_answer_text = answer[0:360]
                     answer_text = new_answer_text + ".... ( full answer at end of submission table. )"
 
