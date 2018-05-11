@@ -167,62 +167,54 @@ class PDFReport:
         # Release the canvas
         canvas.restoreState()
     
+    def append_row(self, question_name, question_label, question_type, answer_dict):
+        if question_name in answer_dict:
+            if question_type == 'note':
+                continue
+            elif question_type == 'photo':
+                #photo = '/media/user/attachments/'+ r_answer[r_question+"/"+question]
+                photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ answer_dict[question_name]
+                answer = self.create_logo(photo)
+                # answer =''
+            elif question_type == 'audio' or question_type == 'video':
+                media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ answer_dict[question_name]
+                answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
+
+            else:
+                answer = Paragraph(answer_dict[question_name], styBackground)
+        else:
+            answer=Paragraph('', styBackground)
+        
+        row=[Paragraph(question_label, styBackground), answer]
+        self.data.append(row)
+
     def parse_repeat(self, r_object):
         styNormal = self.bodystyle
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
         r_question = r_object['name']
         for r_answer in self.main_answer[r_question]:
             for first_children in r_object['children']:
-                question = first_children['name']
-                group_answer = self.main_answer[r_question]
-                question_label = first_children['label']
-                if r_question+"/"+question in r_answer:
-                    if first_children['type'] == 'note':
-                        continue
-                    elif first_children['type'] == 'photo':
-                        #photo = '/media/user/attachments/'+ r_answer[r_question+"/"+question]
-                        photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ r_answer[r_question+"/"+question]
-                        answer = self.create_logo(photo)
-                        # answer =''
-                    elif first_children['type'] == 'audio' or first_children['type'] == 'video':
-                        media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ r_answer[r_question+"/"+question]
-                        answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
-
-                    else:
-                        answer = Paragraph(r_answer[r_question+"/"+question], styBackground)
-                else:
-                    answer=Paragraph('', styBackground)
+                question_name = r_question+"/"+first_children['name']
+                question_label = question_name
+                
                 if 'label' in first_children:
-                    question = first_children['label']
-                row=[Paragraph(question, styBackground), answer]
-                self.data.append(row)
+                    question_label = first_children['label']
+
+                self.append_row(question_name, question_label, first_children['type'], r_answer)
 
     def parse_group(self, prev_groupname, g_object):
         styNormal = self.bodystyle
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
         g_question = prev_groupname+g_object['name']
         for first_children in g_object['children']:
-            question = first_children['name']
-            question_type = first_children['type']
-            if g_question+"/"+question in self.main_answer:
-                if first_children['type'] == 'note':
-                    continue
-                elif first_children['type'] == 'photo':
-                    photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[g_question+"/"+question]
-                    answer = self.create_logo(photo)
+            question_name = g_question+"/"+first_children['name']
+            question_label = question_name
 
-                elif first_children['type'] == 'audio' or first_children['type'] == 'video':
-                    media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ self.main_answer[g_question+"/"+question]
-                    answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
-
-                else:
-                    answer = Paragraph(self.main_answer[g_question+"/"+question], styBackground)
-            else:
-                answer=Paragraph('', styBackground)
             if 'label' in first_children:
-                question = first_children['label']
-            row=[Paragraph(question, styBackground), answer]
-            self.data.append(row)
+                question_label = first_children['label']
+            
+            self.append_row(question_name, question_label, first_children['type'], self.main_answer)
+            
             # done at the end because wee want to print group name as well in report.
             if question_type == 'group':
                 self.parse_group(g_question+"/",first_children)
@@ -236,29 +228,14 @@ class PDFReport:
             elif first_children['type'] == 'group':
                 self.parse_group("", first_children)
             else:
-                question = first_children['name']
-                answer = self.main_answer
-                if question in self.main_answer:
-                    if first_children['type'] == 'note':
-                        continue
+                question_name = first_children['name']
+                question_label = question_name
 
-                    elif first_children['type'] == 'photo':
-                        photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+self.main_answer[question]
-                        answer = self.create_logo(photo)
-
-                    elif first_children['type'] == 'audio' or first_children['type'] == 'video':
-                        media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ self.main_answer[question]
-                        answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
-                        
-                    else:
-                        answer = Paragraph(self.main_answer[question], styBackground)
-                else:    
-                    answer=Paragraph('', styBackground)
-                
                 if 'label' in first_children:
-                    question = first_children['label']
-                row=(Paragraph(question, styBackground), answer)
-                self.data.append(row)
+                    question_label = first_children['label']
+                
+                self.append_row(question_name, question_label, first_children['type'], self.main_answer)
+
 
 
     def generateFullReport(self, pk, base_url):
