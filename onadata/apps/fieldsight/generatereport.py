@@ -349,10 +349,10 @@ class PDFReport:
                     elements.append(Spacer(0,10))
 
                     if self.additional_data:
-                        elements.append(Paragraph("Full Answers", styles['Heading5']))
+                        elements.append(Paragraph("Full Answers", styles['Heading4']))
                         for items in self.additional_data:
                             for k,v in items.items():
-                                elements.append(Paragraph(k + " : ", self.paragraphstyle))
+                                elements.append(Paragraph(k + " : ", styles['Heading5']))
                                 elements.append(Paragraph(v, self.paragraphstyle))
                                 elements.append(Spacer(0,10))
 
@@ -421,10 +421,10 @@ class PDFReport:
         elements.append(t1)
         elements.append(Spacer(0,10))
         if self.additional_data:
-            elements.append(Paragraph("Full Answers", styles['Heading5']))
+            elements.append(Paragraph("Full Answers", styles['Heading4']))
             for items in self.additional_data:
                 for k,v in items.items():
-                    elements.append(Paragraph(k + " : ", self.paragraphstyle))
+                    elements.append(Paragraph(k + " : ", styles['Heading5']))
                     elements.append(Paragraph(v, self.paragraphstyle))
                     elements.append(Spacer(0,10))
         self.doc.multiBuild(elements, onFirstPage=self._header_footer, onLaterPages=self._header_footer)
@@ -528,10 +528,10 @@ class PDFReport:
                     elements.append(Spacer(0,10))
                     
                     if self.additional_data:
-                        elements.append(Paragraph("Full Answers", styles['Heading5']))
+                        elements.append(Paragraph("Full Answers", styles['Heading4']))
                         for items in self.additional_data:
                             for k,v in items.items():
-                                elements.append(Paragraph(k + " : ", self.paragraphstyle))
+                                elements.append(Paragraph(k + " : ", styles['Heading5']))
                                 elements.append(Paragraph(v, self.paragraphstyle))
                                 elements.append(Spacer(0,10))
 
