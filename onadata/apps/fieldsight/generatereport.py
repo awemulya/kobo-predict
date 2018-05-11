@@ -169,6 +169,8 @@ class PDFReport:
         canvas.restoreState()
     
     def append_row(self, question_name, question_label, question_type, answer_dict):
+        styNormal = self.bodystyle
+        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
         if question_name in answer_dict:
             if question_type == 'note':
                 answer=Paragraph('', styBackground)
@@ -191,8 +193,7 @@ class PDFReport:
         self.data.append(row)
 
     def parse_repeat(self, r_object):
-        styNormal = self.bodystyle
-        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
+        
         r_question = r_object['name']
         for r_answer in self.main_answer[r_question]:
             for first_children in r_object['children']:
@@ -205,8 +206,7 @@ class PDFReport:
                 self.append_row(question_name, question_label, first_children['type'], r_answer)
 
     def parse_group(self, prev_groupname, g_object):
-        styNormal = self.bodystyle
-        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
+       
         g_question = prev_groupname+g_object['name']
         for first_children in g_object['children']:
             question_name = g_question+"/"+first_children['name']
@@ -222,8 +222,7 @@ class PDFReport:
                 self.parse_group(g_question+"/",first_children)
 
     def parse_individual_questions(self, parent_object):
-        styNormal = self.bodystyle
-        styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
+       
         for first_children in parent_object:
             if first_children['type'] == "repeat":
                 self.parse_repeat(first_children)
