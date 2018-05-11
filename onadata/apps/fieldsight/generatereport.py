@@ -196,7 +196,7 @@ class PDFReport:
                 answer_text=answer_dict[question_name]
                 if len(answer_text) > 1200:
                     new_answer_text = answer_text[0:360]
-                    answer_text = new_answer_text + ".... ( full answer at end of submission table. )"
+                    answer_text = new_answer_text + ".... ( full answer followed after this table. )"
                     self.additional_data.append({question_label : answer_dict[question_name]})
 
                 answer = Paragraph(answer_text, styBackground)
