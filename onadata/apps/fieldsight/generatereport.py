@@ -170,7 +170,8 @@ class PDFReport:
     def append_row(self, question_name, question_label, question_type, answer_dict):
         if question_name in answer_dict:
             if question_type == 'note':
-                continue
+                answer=Paragraph('', styBackground)
+                
             elif question_type == 'photo':
                 #photo = '/media/user/attachments/'+ r_answer[r_question+"/"+question]
                 photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ answer_dict[question_name]
