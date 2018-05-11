@@ -218,7 +218,7 @@ class PDFReport:
             self.append_row(question_name, question_label, first_children['type'], self.main_answer)
             
             # done at the end because wee want to print group name as well in report.
-            if question_type == 'group':
+            if first_children['type'] == 'group':
                 self.parse_group(g_question+"/",first_children)
 
     def parse_individual_questions(self, parent_object):
