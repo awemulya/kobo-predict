@@ -192,7 +192,12 @@ class PDFReport:
                 answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
 
             else:
-                answer = Paragraph(answer_dict[question_name], styBackground)
+                answer_text=answer_dict[question_name]
+                if len(answer) > 1200:
+                    new_answer_text = answer[0:360]
+                    answer_text = new_answer_text + ".... ( full answer at end of submission table. )"
+
+                answer = Paragraph(answer_text, styBackground)
         else:
             answer=Paragraph('', styBackground)
         
@@ -256,7 +261,7 @@ class PDFReport:
         toc.levelStyles = [
             PS(fontName='arialuni', fontSize=12, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
             PS(fontName='arialuni', fontSize=10, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
-            PS(fontName='arialuni', fontSize=8, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+            PS(fontName='arialuni', fontSize=9, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
         ]
         elements.append(Paragraph('Responses Report for Site', self.centered))
         elements.append(PageBreak())
@@ -299,10 +304,10 @@ class PDFReport:
             elements.append(Paragraph(form.form_type() + " Form", styles['Heading4']))
             if form.stage:
                 if form.stage.stage:
-                    elements.append(Paragraph("Stage Id: " + str(form.stage.stage.order), styles['Normal']))
-                    elements.append(Paragraph("Sub Stage Id: " + str(form.stage.order), styles['Normal']))    
+                    elements.append(Paragraph("Stage Id: " + str(form.stage.stage.order), self.paragraphstyle))
+                    elements.append(Paragraph("Sub Stage Id: " + str(form.stage.order), self.paragraphstyle))    
                 else:
-                    elements.append(Paragraph("Stage Id: " + str(form.stage.order), styles['Normal']))
+                    elements.append(Paragraph("Stage Id: " + str(form.stage.order), self.paragraphstyle))
 
             json_question = form.xf.json
             form_user_name = form.xf.user.username
@@ -324,7 +329,7 @@ class PDFReport:
                         form_status = "Approved"
                     sub_count += 1
                     elements.append(Spacer(0,10))
-                    elements.append(Paragraph("Submision "+ str(sub_count), styles['Normal']))
+                    elements.append(Paragraph("Submision "+ str(sub_count), self.paragraphstyle))
                     elements.append(Paragraph("Status : "+form_status, self.paragraphstyle))
                     elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, self.paragraphstyle))
                     elements.append(Paragraph("Submitted Date:"+str(instance.date), self.paragraphstyle))
@@ -416,7 +421,7 @@ class PDFReport:
         toc.levelStyles = [
             PS(fontName='arialuni', fontSize=12, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
             PS(fontName='arialuni', fontSize=10, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
-            PS(fontName='arialuni', fontSize=8, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+            PS(fontName='arialuni', fontSize=9, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
         ]
         elements.append(Paragraph('Custom Responses Report for Site', self.centered))
         elements.append(PageBreak())
@@ -461,10 +466,10 @@ class PDFReport:
             elements.append(Paragraph(form.form_type() + " Form", styles['Heading4']))
             if form.stage:
                 if form.stage.stage:
-                    elements.append(Paragraph("Stage Id: " + str(form.stage.stage.order), styles['Heading5']))
-                    elements.append(Paragraph("Sub Stage Id: " + str(form.stage.order), styles['Heading5']))    
+                    elements.append(Paragraph("Stage Id: " + str(form.stage.stage.order), self.paragraphstyle))
+                    elements.append(Paragraph("Sub Stage Id: " + str(form.stage.order), self.paragraphstyle))    
                 else:
-                    elements.append(Paragraph("Stage Id: " + str(form.stage.order), styles['Heading5']))
+                    elements.append(Paragraph("Stage Id: " + str(form.stage.order), self.paragraphstyle))
 
             json_question = form.xf.json
             form_user_name = form.xf.user.username
@@ -486,10 +491,10 @@ class PDFReport:
                         form_status = "Approved"
                     sub_count += 1
                     elements.append(Spacer(0,10))
-                    elements.append(Paragraph("Submision "+ str(sub_count), styles['Heading4']))
-                    elements.append(Paragraph("Status : "+form_status, styles['Normal']))
-                    elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, styles['Normal']))
-                    elements.append(Paragraph("Submitted Date:"+str(instance.date), styles['Normal']))
+                    elements.append(Paragraph("Submision "+ str(sub_count), self.paragraphstyle))
+                    elements.append(Paragraph("Status : "+form_status, self.paragraphstyle))
+                    elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, self.paragraphstyle))
+                    elements.append(Paragraph("Submitted Date:"+str(instance.date), self.paragraphstyle))
                     elements.append(Spacer(0,10))
                     self.data = []
                     self.main_answer = instance.instance.json
