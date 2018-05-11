@@ -89,6 +89,13 @@ class PDFReport:
             fontName = 'arialuni',
             )
 
+        self.paragraphstyle = PS(
+            name = 'paragraphstyle',
+            parent=styles['Normal'],
+            fontSize = 9,
+            fontName = 'arialuni',
+            )
+
         self.h1 = PS(
             name = 'Heading1',
             fontSize = 16,
@@ -247,9 +254,9 @@ class PDFReport:
         elements = []
         toc = TableOfContents()
         toc.levelStyles = [
-            PS(fontName='arialuni', fontSize=14, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
-            PS(fontName='arialuni', fontSize=12, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
-            PS(fontName='arialuni', fontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+            PS(fontName='arialuni', fontSize=12, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
+            PS(fontName='arialuni', fontSize=10, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+            PS(fontName='arialuni', fontSize=8, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
         ]
         elements.append(Paragraph('Responses Report for Site', self.centered))
         elements.append(PageBreak())
@@ -292,10 +299,10 @@ class PDFReport:
             elements.append(Paragraph(form.form_type() + " Form", styles['Heading4']))
             if form.stage:
                 if form.stage.stage:
-                    elements.append(Paragraph("Stage Id: " + str(form.stage.stage.order), styles['Heading5']))
-                    elements.append(Paragraph("Sub Stage Id: " + str(form.stage.order), styles['Heading5']))    
+                    elements.append(Paragraph("Stage Id: " + str(form.stage.stage.order), styles['Normal']))
+                    elements.append(Paragraph("Sub Stage Id: " + str(form.stage.order), styles['Normal']))    
                 else:
-                    elements.append(Paragraph("Stage Id: " + str(form.stage.order), styles['Heading5']))
+                    elements.append(Paragraph("Stage Id: " + str(form.stage.order), styles['Normal']))
 
             json_question = form.xf.json
             form_user_name = form.xf.user.username
@@ -317,10 +324,10 @@ class PDFReport:
                         form_status = "Approved"
                     sub_count += 1
                     elements.append(Spacer(0,10))
-                    elements.append(Paragraph("Submision "+ str(sub_count), styles['Heading4']))
-                    elements.append(Paragraph("Status : "+form_status, styles['Normal']))
-                    elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, styles['Normal']))
-                    elements.append(Paragraph("Submitted Date:"+str(instance.date), styles['Normal']))
+                    elements.append(Paragraph("Submision "+ str(sub_count), styles['Normal']))
+                    elements.append(Paragraph("Status : "+form_status, self.paragraphstyle))
+                    elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, self.paragraphstyle))
+                    elements.append(Paragraph("Submitted Date:"+str(instance.date), self.paragraphstyle))
                     elements.append(Spacer(0,10))
                     self.data = []
                     self.main_answer = instance.instance.json
@@ -407,9 +414,9 @@ class PDFReport:
         elements = []
         toc = TableOfContents()
         toc.levelStyles = [
-            PS(fontName='arialuni', fontSize=14, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
-            PS(fontName='arialuni', fontSize=12, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
-            PS(fontName='arialuni', fontSize=10, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+            PS(fontName='arialuni', fontSize=12, name='TOCHeading1', leftIndent=20, firstLineIndent=-20, spaceBefore=5, leading=10),
+            PS(fontName='arialuni', fontSize=10, name='TOCHeading2', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
+            PS(fontName='arialuni', fontSize=8, name='TOCHeading3', leftIndent=40, firstLineIndent=-20, spaceBefore=3, leading=10),
         ]
         elements.append(Paragraph('Custom Responses Report for Site', self.centered))
         elements.append(PageBreak())
