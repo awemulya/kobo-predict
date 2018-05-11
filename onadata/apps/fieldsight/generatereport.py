@@ -63,6 +63,7 @@ class PDFReport:
         self.main_answer = {}
         self.question={}
         self.data=[]
+        self.additional_data=[]
         self.buffer = buffer
         if pagesize == 'A4':
             self.pagesize = A4
@@ -196,6 +197,7 @@ class PDFReport:
                 if len(answer_text) > 1200:
                     new_answer_text = answer_text[0:360]
                     answer_text = new_answer_text + ".... ( full answer at end of submission table. )"
+                    self.additional_data.append({question_label : answer_dict[question_name]})
 
                 answer = Paragraph(answer_text, styBackground)
         else:
@@ -335,6 +337,7 @@ class PDFReport:
                     elements.append(Paragraph("Submitted Date:"+str(instance.date), self.paragraphstyle))
                     elements.append(Spacer(0,10))
                     self.data = []
+                    self.additional_data=[]
                     self.main_answer = instance.instance.json
                     question = json.loads(json_question)
                     self.parse_individual_questions(question['children'])
@@ -344,6 +347,11 @@ class PDFReport:
                     t1.setStyle(self.ts1)
                     elements.append(t1)
                     elements.append(Spacer(0,10))
+
+                    elements.append(Paragraph("Full Answers", self.paragraphstyle))
+                    for k,v in self.additional_data.items():
+                        elements.append(Paragraph(k + " : " +v, self.paragraphstyle))
+                        elements.append(Spacer(0,10))
 
             else:
                 elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
