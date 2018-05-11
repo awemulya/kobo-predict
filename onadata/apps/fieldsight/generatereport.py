@@ -349,9 +349,10 @@ class PDFReport:
                     elements.append(Spacer(0,10))
 
                     elements.append(Paragraph("Full Answers", self.paragraphstyle))
-                    for k,v in self.additional_data.items():
-                        elements.append(Paragraph(k + " : " +v, self.paragraphstyle))
-                        elements.append(Spacer(0,10))
+                    for items in self.additional_data:
+                        for k,v in items.items():
+                            elements.append(Paragraph(k + " : " +v, self.paragraphstyle))
+                            elements.append(Spacer(0,10))
 
             else:
                 elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
