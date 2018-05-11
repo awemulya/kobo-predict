@@ -2,6 +2,7 @@ from rest_framework import viewsets, status, response
 from fcm.utils import get_device_model
 from fcm.serializers import DeviceSerializer
 from rest_framework.authentication import BasicAuthentication
+from django.contrib.auth.models import User
 
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
 
@@ -28,7 +29,15 @@ class FcmDeviceViewSet(viewsets.ModelViewSet):
             device = Device(dev_id=serializer.data["dev_id"])
         device.is_active = True
         device.reg_id = serializer.data["reg_id"]
-        device.name = serializer.data["name"]
+        user = User.objects.filter(email__iexact=serializer.data["name"])
+        if user:
+            device.name = user[0].email
+        else:
+            user = User.objects.filter(username__iexact=serializer.data["name"])
+            if user:
+                device.name = user[0].email
+            else:
+                return response.Response(status=status.HTTP_404_NOT_FOUND)    
         device.save()
 
     def destroy(self, request, *args, **kwargs):
