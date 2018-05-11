@@ -152,11 +152,12 @@ class PDFReport:
         
         fieldsight_logo.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin + 12)
         headerright.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin + 20)
-
-        project_logo = Image('http://' + self.base_url + self.project_logo)
-        project_logo._restrictSize(0.4 * inch, 0.4 * inch)
-        project_logo.drawOn(canvas, headerright.width + doc.leftMargin -0.5 * inch - textWidth, doc.height + doc.topMargin + 10)
-        
+        try:
+            project_logo = Image('http://' + self.base_url + self.project_logo)
+            project_logo._restrictSize(0.4 * inch, 0.4 * inch)
+            project_logo.drawOn(canvas, headerright.width + doc.leftMargin -0.5 * inch - textWidth, doc.height + doc.topMargin + 10)
+        except:
+            pass        
         # header.drawOn(canvas, doc.leftMargin + doc.width, doc.height + doc.topMargin +20)
         
         # Footer
