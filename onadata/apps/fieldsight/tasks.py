@@ -23,11 +23,11 @@ def printr():
     return ' random users created with success!'
 
 @task()
-def bulkuploadsites(source_user, file, pk):
+def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
     time.sleep(2)
     project = Project.objects.get(pk=pk)
     task_id = bulkuploadsites.request.id
-    task = CeleryTaskProgress.objects.get(task_id=task_id)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.content_object = project
     task.status=1
     task.save()
@@ -141,13 +141,14 @@ def bulkuploadsites(source_user, file, pk):
         return None
 
 @shared_task()
-def multiuserassignproject(source_user, org_id, projects, users, group_id):
+def multiuserassignproject(task_prog_obj_id, source_user, org_id, projects, users, group_id):
+    time.sleep(2)
     org = Organization.objects.get(pk=org_id)
     projects_count = len(projects)
     users_count = len(users)
     
     task_id = multiuserassignproject.request.id
-    task = CeleryTaskProgress.objects.get(task_id=task_id)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.content_object = org
     task.description = "Assign "+str(users_count)+" people in "+str(projects_count)+" projects."
     task.status=1
@@ -242,14 +243,15 @@ def multiuserassignproject(source_user, org_id, projects, users, group_id):
         return None
 
 @shared_task()
-def multiuserassignsite(source_user, project_id, sites, users, group_id):
+def multiuserassignsite(task_prog_obj_id, source_user, project_id, sites, users, group_id):
+    time.sleep(2)
     project = Project.objects.get(pk=project_id)
     group_name = Group.objects.get(pk=group_id).name
     sites_count = len(sites)
     users_count = len(users)
 
     task_id = multiuserassignsite.request.id
-    task = CeleryTaskProgress.objects.get(task_id=task_id)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.content_object = project
     task.description = "Assign "+str(users_count)+" people in "+str(sites_count)+" sites."
     task.status=1
@@ -358,7 +360,8 @@ def multiuserassignsite(source_user, project_id, sites, users, group_id):
         return None
 
 @shared_task()
-def multiuserassignregion(source_user, project_id, regions, users, group_id):
+def multiuserassignregion(task_prog_obj_id, source_user, project_id, regions, users, group_id):
+    time.sleep(2)
     project = Project.objects.get(pk=project_id)
     group_name = Group.objects.get(pk=group_id).name
     sites_count = len(regions)
@@ -366,7 +369,7 @@ def multiuserassignregion(source_user, project_id, regions, users, group_id):
 
     task_id = multiuserassignregion.request.id
     print task_id
-    task = CeleryTaskProgress.objects.get(task_id=task_id)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     print task
     task.content_object = project
     task.description = "Assign "+str(users_count)+" people in "+str(sites_count)+" regions."

@@ -889,8 +889,11 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
                 sitefile=request.FILES['file']
                 user = request.user
                 print sitefile
-                task = bulkuploadsites.delay(user, sitefile, pk)
-                if CeleryTaskProgress.objects.create(task_id=task.id, user=user, task_type=0):
+                task_obj=CeleryTaskProgress.objects.create(user=user, task_type=0)
+                if task_obj:
+                    task = bulkuploadsites.delay(task_obj.pk, user, sitefile, pk)
+                    task_obj.task_id = task.id
+                    task_obj.save()
                     messages.success(request, 'Sites are being uploaded. You will be notified in notifications list as well.')
                 else:
                     messages.success(request, 'Sites cannot be updated a the moment.')
@@ -1614,8 +1617,11 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         users = data.get('users')
         group = Group.objects.get(name=data.get('group'))
         user = request.user
-        task = multiuserassignsite.delay(user, pk, sites, users, group.id)
-        if CeleryTaskProgress.objects.create(task_id=task.id, user=user, task_type=2):
+        task_obj =CeleryTaskProgress.objects.create(user=user, task_type=2)
+        if task_obj:
+            task = multiuserassignsite.delay(task_obj.pk, user, pk, sites, users, group.id)
+            task_obj.task_id = task.id
+            task_obj.save()
             return HttpResponse('sucess')
         else:
             return HttpResponse('Failed')
@@ -1680,8 +1686,11 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
         group = Group.objects.get(name=data.get('group'))
         group_id = Group.objects.get(name="Project Manager").id
         user = request.user
-        task = multiuserassignproject.delay(user, pk, projects, users, group_id)
-        if CeleryTaskProgress.objects.create(task_id=task.id, user=user, task_type=1):
+        task_obj = CeleryTaskProgress.objects.create(user=user, task_type=1)
+        if task_obj:
+            task = multiuserassignproject.delay(task_obj.pk, user, pk, projects, users, group_id)
+            task_obj.task_id=task.id
+            task_obj.save()
             return HttpResponse("Sucess")
         else:
             return HttpResponse("Failed")
@@ -1979,8 +1988,11 @@ class MultiUserAssignRegionView(ProjectRoleMixin, TemplateView):
         users = data.get('users')
         group = Group.objects.get(name=data.get('group'))
         user = request.user
-        task = multiuserassignregion.delay(user, pk, regions, users, group.id)
-        if CeleryTaskProgress.objects.create(task_id=task.id, user=user, task_type=2):
+        task_obj = CeleryTaskProgress.objects.create(user=user, task_type=2)
+        if task_obj:
+            task = multiuserassignregion.delay(task_obj.pk, user, pk, regions, users, group.id)
+            task_obj.task_id = task.id
+            task_obj.save()
             return HttpResponse('sucess')
         else:
             return HttpResponse('Failed')

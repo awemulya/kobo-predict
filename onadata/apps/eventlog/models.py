@@ -165,7 +165,7 @@ class CeleryTaskProgress(models.Model):
         (2, 'Multi User Assign Site'),
         (3, 'Report Generation')
         )
-    task_id = models.CharField(max_length=255, unique=True)
+    task_id = models.CharField(max_length=255, blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
     date_updateded = models.DateTimeField(auto_now=True, blank=True, null=True)
     user = models.ForeignKey(User, related_name="task_owner")
@@ -178,9 +178,12 @@ class CeleryTaskProgress(models.Model):
 
     def get_progress(self):
         if self.status == 1:
-            task = AsyncResult(self.task_id)
-            data = task.result or task.state
-            return json.dumps(data)
+            if task_id:
+                task = AsyncResult(self.task_id)
+                data = task.result or task.state
+                return json.dumps(data)
+            else:
+                return None
         return None
 
     def __str__(self):
