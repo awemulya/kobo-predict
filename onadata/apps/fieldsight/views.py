@@ -205,7 +205,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         # total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
 
 
-        total_sites = obj.sites.filter(is_active=True, is_survey=False)
+        total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
         total_survey_sites = obj.sites.filter(is_survey=True)
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
         # if obj.id == 137:
