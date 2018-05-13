@@ -116,7 +116,7 @@ class Staff(models.Model):
 
 class Attendance(models.Model):
     attendance_date = models.DateField()
-    staffs = models.ManyToManyField(Staff, null=True, blank=True )
+    staffs = models.ManyToManyField(Staff)
     team = models.ForeignKey(Team, blank=True, null=True, related_name="attandence_team")
     submitted_by = models.ForeignKey(User, related_name="attendance_submitted_by")
     created_date = models.DateTimeField(auto_now_add=True)
