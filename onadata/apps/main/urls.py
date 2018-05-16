@@ -20,6 +20,7 @@ urlpatterns = patterns(
     url(r'^staff/', include('onadata.apps.staff.urls', namespace='staff')),
     url(r'^users/', include('onadata.apps.users.urls', namespace='users')),
     url(r'^fieldsight/', include('onadata.apps.fieldsight.urls', namespace='fieldsight')),
+    url(r'^fieldsight/export/', include('onadata.apps.fieldsight.fs_exports.urls', namespace='fieldsight_export')),
     url(r'^userrole/', include('onadata.apps.userrole.urls', namespace='role')),
     url(r'^forms/', include('onadata.apps.fsforms.urls', namespace='forms')),
     url(r'^events/', include('onadata.apps.eventlog.urls', namespace='eventlog')),
