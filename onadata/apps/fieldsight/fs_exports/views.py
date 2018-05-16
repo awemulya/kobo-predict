@@ -31,7 +31,13 @@ class ExportProjectSites(DonorRoleMixin, View):
 
         font_style_unbold = xlwt.XFStyle()
         font_style_unbold.font.bold = False
-        for site in project.sites.all():
+        region_id = self.kwargs.get('region_id', None)
+        sites = project.sites.all().order_by('identifier')
+
+        if region_id:
+            sites = project.sites.filter(region_id=region_id).order_by('identifier')
+
+        for site in sites:
             column = [site.identifier, site.name, site.type, site.phone, site.address, site.public_desc, site.additional_desc, site.latitude,
                        site.longitude, ]
             if project.cluster_sites:
