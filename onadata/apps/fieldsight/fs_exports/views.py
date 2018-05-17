@@ -38,7 +38,7 @@ class ExportProjectSites(DonorRoleMixin, View):
             sites = project.sites.filter(region_id=region_id).order_by('identifier')
 
         for site in sites:
-            column = [site.identifier, site.name, site.type, site.phone, site.address, site.public_desc, site.additional_desc, site.latitude,
+            column = [site.identifier, site.name, site.type.identifier, site.phone, site.address, site.public_desc, site.additional_desc, site.latitude,
                        site.longitude, ]
             if project.cluster_sites:
                 if site.region:
