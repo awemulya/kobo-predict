@@ -82,6 +82,10 @@ class TeamDetail(StaffTeamRoleMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(TeamDetail, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['is_project_manager'] = False
+        user_role = request.roles.filter(group_id=8, staff_project_id=team.staffproject.id)
+        if user_role or request.group.name == "Super Admin":
+            context['is_project_manager'] = True
         context['staff_list'] = Staff.objects.filter(team_id = self.kwargs.get('pk'), is_deleted=False)
         context['attendance_list'] = self.object.get_attendance()
         return context
@@ -269,7 +273,7 @@ class StaffAddProjectUsers(StaffProjectRoleMixin, View):
         role = UserRole.objects.create(user_id = user_id, group_id=8, staff_project_id = staffproject_id)
         return HttpResponseRedirect(reverse('staff:staff-project-users', kwargs={'pk': staffproject_id }))
 
-class StaffAttendanceUpdate(StaffTeamRoleMixin, UpdateView):
+class StaffAttendanceUpdate(StaffProjectRoleMixin, UpdateView):
     model = Attendance
     form_class = AttendanceForm
 

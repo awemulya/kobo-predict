@@ -227,6 +227,9 @@
 						$('.calendar-header h4').text(this.getTitle());
 						$('.btn-group button').removeClass('active');
 						$('button[data-calendar-view="' + view + '"]').addClass('active');
+						
+						{% if is_project_manager %}
+						
 						$(".cal-month-day").click(function(){
 						  // Holds the product ID of the clicked element
 						  // .getAttribute( "data-cal-date" )
@@ -237,6 +240,10 @@
 						//}
 						
 						});
+
+						{% endif %}
+					
+
 					},
 					classes: {
 						months: {
