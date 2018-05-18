@@ -5,6 +5,25 @@
 {% block content %}
 
 <div id="main-content" class="padding">
+
+
+	<nav aria-label="breadcrumb" role="navigation">
+		{% block breadcrumbs %}
+		{% if team %}
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item" aria-current="page"><a href="{% url 'staff:staff-project-detail' team.staffproject_id %}">{{ team.staffproject.name }}</a></li>
+			<li class="breadcrumb-item" aria-current="page"><a href="{% url 'staff:team-detail' team.id %}">{{ team.name }}</a></li>
+			<li class="breadcrumb-item active" aria-current="page">{% trans 'Edit' %}</li>
+		</ol>
+		{% else %}
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item" aria-current="page"><a href="{% url 'staff:staff-project-detail' staffproject.id %}">{{ staffproject.name }}</a></li>
+		<li class="breadcrumb-item active" aria-current="page">{% trans 'Add' %}</li>
+		</ol>
+		{% endif %}
+		{% endblock %}
+	</nav>
+			
 			 <section class="panel">
 					<div class="panel-body">
 						<div class="margin-top">

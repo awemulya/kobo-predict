@@ -59,20 +59,30 @@ class ExportProjectSites(DonorRoleMixin, View):
         return response
 
 
-
 class CloneProjectSites(ProjectRoleMixin, View):
     def get(self, *args, **kwargs):
         f_project=get_object_or_404(Project, pk=self.kwargs.get('pk'))
         t_project=get_object_or_404(Project, pk=self.kwargs.get('t_pk'))
         region_id = self.kwargs.get('region_id', None)
+
+        def filterbyquestion_name(seq, value):
+            for el in seq:
+                if el.get('question_name')==value:
+                    return True
+            return False
         
-        #migrate metas
-        if not t_project.site_meta_attributes:
-            t_project.site_meta_attributes = f_project.site_meta_attributes
-        
+        # migrate metas
+        if t_project.site_meta_attributes:
+            t_metas = t_project.site_meta_attributes
+            f_metas = t_project.site_meta_attributes
+
+            for f_meta in f_metas:
+                check = filterbyquestion_name(t_metas, f_meta.get('question_name'))
+                if not check:
+                    t_metas.append(f_meta)
+
         region_map = {}
 
-        
         def get_t_region_id(f_region_id):
             # To get new region id without a query
             if f_region_id in region_map:
@@ -80,37 +90,45 @@ class CloneProjectSites(ProjectRoleMixin, View):
             else:
                 return None
         
-        #migrate regions
+        # migrate regions
         if f_project.cluster_sites:
+            
+            t_project_regions = t_project.regions.all().values_list('identifier', flat=True)
             t_project.cluster_sites=True
             
             # To handle whole project or a single region migrate
             if region_id:
-                regions = project.regions.filter(region_id=region_id)
+                regions = f_project.regions.filter(region_id=region_id)
             else:
-                regions = project.regions.all()
+                regions = f_project.regions.all()
 
             for region in regions:
                 f_region_id = region.id
-                region.id=None
-                region.project_id=t_project.id
-                region.save()
-                t_region_id = region.id
+                if region.identifier in t_project_regions:
+                    t_region_id = project.regions.get(identifier=region.identifier).id
+                else:
+                    region.id=None
+                    region.project_id=t_project.id
+                    region.save()
+                    t_region_id = region.id
                 region_map[f_region_id]=t_region_id
         
         t_project.save()
 
-        #migrate sites
+        # migrate sites
         if region_id:
             sites = f_project.sites.filter(region_id=region_id)
         else:
             sites = f_project.sites.all()
 
         if sites:
+            t_project_sites = t_project.sites.all().values_list('identifier', flat=True)
+
             for site in sites:
-                site.id = None
-                site.project_id = t_project_id
-                site.region_id = get_t_region_id(site.region_id)
-                site.save()
+                if site.identifier not in t_project_sites:
+                    site.id = None
+                    site.project_id = t_project_id
+                    site.region_id = get_t_region_id(site.region_id)
+                    site.save()
         return None
 

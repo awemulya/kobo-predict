@@ -17,7 +17,14 @@
 
 <div id="main-content" class="padding">
 
-
+	<nav aria-label="breadcrumb" role="navigation">
+		{% block breadcrumbs %}
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item" aria-current="page"><a href="{% url 'staff:staff-project-detail' team.staffproject_id %}">{{ team.staffproject.name }}</a></li>
+			<li class="breadcrumb-item active" aria-current="page">{{ team.name }}</li>
+		</ol>
+		{% endblock %}
+	</nav>
 						<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
@@ -220,6 +227,16 @@
 						$('.calendar-header h4').text(this.getTitle());
 						$('.btn-group button').removeClass('active');
 						$('button[data-calendar-view="' + view + '"]').addClass('active');
+						$(".cal-month-day").click(function(){
+						  // Holds the product ID of the clicked element
+						  // .getAttribute( "data-cal-date" )
+						var span = $(this).find('.pull-right');
+						//if (confirm('Do you want update the attendance of '+ span.attr( "data-cal-date" ) +'?')) {
+							// alert("/staff/attendance/update/{{ team.id }}/"+span.attr( "data-cal-date" ));
+						window.location.href ="/staff/attendance/update/{{ team.id }}/"+span.attr( "data-cal-date" ); 
+						//}
+						
+						});
 					},
 					classes: {
 						months: {

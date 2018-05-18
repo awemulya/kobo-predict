@@ -43,6 +43,12 @@ class TeamDelete(StaffProjectRoleMixin, DeleteView):
 class TeamCreate(StaffProjectRoleMixin, CreateView):
     form_class = TeamForm
     model = Team
+
+    def get_context_data(self, **kwargs):
+        context = super(TeamCreate, self).get_context_data(**kwargs)
+        context['staffproject'] = StaffProject.objects.get(pk=self.kwargs.get('pk'))
+        return context
+
     def form_valid(self, form):
         form.instance.staffproject_id = self.kwargs.get('pk')
         form.instance.created_by = self.request.user
@@ -154,6 +160,10 @@ class StaffCreate(StaffTeamRoleMixin, CreateView):
     fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation']
     success_url = reverse_lazy('staff:staff-list')
 
+    def get_context_data(self, **kwargs):
+        context = super(StaffCreate, self).get_context_data(**kwargs)
+        context['team'] = Team.objects.get(pk=self.kwargs.get('pk'))
+        return context
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
@@ -247,7 +257,7 @@ class StaffProjectUsers(StaffProjectRoleMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(StaffProjectUsers, self).get_context_data(**kwargs)
-        context['pk'] = self.kwargs.get('pk')
+        context['staffproject'] = StaffProject.objects.get(pk=self.kwargs.get('pk'))
         current_users = UserRole.objects.filter(staff_project_id=self.kwargs.get('pk'), ended_at = None).values('user_id')
         context['staff_list'] = UserRole.objects.filter(staff_project_id=self.kwargs.get('pk'), ended_at = None)
         context['available_user_list'] = UserRole.objects.filter(project_id__in=[137, 105, 129], ended_at=None).exclude(user_id__in=current_users).distinct('user_id')

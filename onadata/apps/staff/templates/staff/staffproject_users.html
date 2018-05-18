@@ -4,6 +4,16 @@
 {% block content %}
 
 <div id="main-content" class="padding">
+	<nav aria-label="breadcrumb" role="navigation">
+		{% block breadcrumbs %}
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item" aria-current="page"><a href="{% url 'staff:staff-project-detail' staffproject.id %}">{{ staffproject.name }}</a></li>
+			
+			<li class="breadcrumb-item active" aria-current="page">Re-Assign Staffs</li>
+		</ol>
+		{% endblock %}
+	</nav>
+
 				<div class="row">
 					<div class="col-md-8">
 						<div class="widget-info margin-top bg-white padding">

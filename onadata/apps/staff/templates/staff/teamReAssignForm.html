@@ -5,6 +5,18 @@
 {% block content %}
 
 <div id="main-content" class="padding">
+
+	<nav aria-label="breadcrumb" role="navigation">
+		{% block breadcrumbs %}
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item" aria-current="page"><a href="{% url 'staff:staff-project-detail' obj.staffproject_id %}">{{ obj.staffproject.name }}</a></li>
+			<li class="breadcrumb-item" aria-current="page"><a href="{% url 'staff:team-detail' obj.pk %}">{{ obj.name }}</a></li>
+			<li class="breadcrumb-item active" aria-current="page">Re-Assign Staffs</li>
+		</ol>
+		{% endblock %}
+	</nav>
+
+	
 	<section class="panel">
 					<div class="panel-body">
 						<div class="margin-top">

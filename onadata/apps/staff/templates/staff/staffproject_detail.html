@@ -4,13 +4,14 @@
 {% block content %}
 
 <div id="main-content" class="padding">
-						<section class="panel">
-	                        
-
-
-
-
-
+	<nav aria-label="breadcrumb" role="navigation">
+		{% block breadcrumbs %}
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item active" aria-current="page">{{ staffproject.name }}</li>
+		</ol>
+		{% endblock %}
+	</nav>		
+			<section class="panel">
 				<section class="panel">
                     <header class="panel-heading clearfix">
 						

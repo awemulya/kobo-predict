@@ -5,6 +5,15 @@
 {% block content %}
 
 <div id="main-content" class="padding">
+	<nav aria-label="breadcrumb" role="navigation">
+		{% block breadcrumbs %}
+		{% if staffproject %}
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item active" aria-current="page">Add Project</li>
+		</ol>
+		{% endif %}
+		{% endblock %}
+	</nav>
 			 <section class="panel">
 					<div class="panel-body">
 						<div class="margin-top">

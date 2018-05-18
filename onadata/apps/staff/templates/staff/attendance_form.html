@@ -1,4 +1,25 @@
+{% extends "staff/base.html" %}
 {% load i18n staticfiles filters %}
+{% block content %}
+
+<div id="main-content" class="padding">
+
+	<nav aria-label="breadcrumb" role="navigation">
+		{% block breadcrumbs %}
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item" aria-current="page"><a href="{% url 'staff:staff-project-detail' attendance.team.staffproject_id %}">{{ attendance.team.staffproject.name }}</a></li>
+			<li class="breadcrumb-item" aria-current="page"><a href="{% url 'staff:team-detail' attendance.team.staffproject_id %}">{{ attendance.team.name }}</a></li>
+			<li class="breadcrumb-item active" aria-current="page">{{ attendance.attendance_date }}</li>
+		</ol>
+		{% endblock %}
+	</nav>
+			 <section class="panel">
+					<div class="panel-body">
+					
+						<div class="margin-top">
+					<div class="alert alert-info">
+					  <strong>{{ attendance.attendance_date }} !</strong> Staffs present on the day are marked as checked.
+					</div>
 							<form enctype="multipart/form-data" method="post">
 
 								<div class="form-row">
@@ -7,7 +28,7 @@
 									 {{ form.media }}
 									{% for field in form.visible_fields  %}
 
-									<div id="div_{{field.name}}" class="form-group col-md-6">
+									<div class="form-group col-md-6">
 									  <label class="col-form-label">{{ field.label }}</label>
 									 {{ field }}
 									</div>
@@ -20,3 +41,12 @@
                                 <button class="btn btn-primary registration__action" type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans ' Save' %}</button>
 
 							</form>
+
+						</div>
+					</div>
+			</section>
+</div>
+
+{% endblock %}
+
+
