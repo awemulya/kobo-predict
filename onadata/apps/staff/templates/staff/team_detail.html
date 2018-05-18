@@ -58,9 +58,9 @@
                     <header class="panel-heading clearfix">
 						
                         <h3><i class="la la-building"></i>{{ object.name }}</h3>
-                         
+                         {% if is_project_manager %}
                          <a href="{% url 'staff:team-delete' object.pk  %}" title="" class="btn btn-sm btn-danger pull-right"><i class="la la-minus"></i> {% trans 'Delete' %} {% trans 'Team' %}</a>
-                         
+                         {% endif %}
                          <a href="{% url 'staff:team-reassign-staffs' object.staffproject_id object.pk  %}" title="" class="btn btn-sm btn-primary pull-right"><i class="la la-plus"></i> {% trans 'Assign' %} {% trans 'Staffs' %}</a>
                          
                          <a href="{% url 'staff:team-update' object.pk  %}" title="" class="btn btn-sm btn-primary pull-right"><i class="la la-plus"></i> {% trans 'Edit' %} {% trans 'Team' %}</a>
