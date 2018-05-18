@@ -82,8 +82,9 @@ class TeamDetail(StaffTeamRoleMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(TeamDetail, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        
         context['is_project_manager'] = False
-        user_role = self.request.roles.filter(group_id=8, staff_project_id=team.staffproject.id)
+        user_role = self.request.roles.filter(group_id=8, staff_project_id=self.get_object().staffproject.id)
         if user_role or self.request.group.name == "Super Admin":
             context['is_project_manager'] = True
         context['staff_list'] = Staff.objects.filter(team_id = self.kwargs.get('pk'), is_deleted=False)
