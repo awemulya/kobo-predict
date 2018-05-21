@@ -383,7 +383,7 @@ class UploadFileForm(forms.Form):
 
 
 class BluePrintForm(forms.ModelForm):
-    image = forms.ImageField(label='Image')
+    image = forms.FileField(label='File')
 
     class Meta:
         model = BluePrints

@@ -4,55 +4,55 @@
 {% block content %}
 {% load filters %}
 <style type="text/css">
-    #removebutton{
+#removebutton{
     margin-top:33px;  
 }
 </style>
- <script src="{% static 'js/reactjs/react.min.js' %}"></script>
- <script src="{% static 'js/reactjs/browser.min.js' %}"></script>
- <script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
+<script src="{% static 'js/reactjs/react.min.js' %}"></script>
+<script src="{% static 'js/reactjs/browser.min.js' %}"></script>
+<script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
 
 
-            <div id="main-content" class="padding">
-                <nav aria-label="breadcrumb" role="navigation">
-					{% block breadcrumbs %}
-					<ol class="breadcrumb">
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
-						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</li>
-					 </ol>
-					{% endblock %}
-				</nav>
+<div id="main-content" class="padding">
+    <nav aria-label="breadcrumb" role="navigation">
+        {% block breadcrumbs %}
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</li>
+        </ol>
+        {% endblock %}
+    </nav>
 
-                <section class="panel">
-                    <header class="panel-heading clearfix">
-                        <h3><i class="la la-cogs"></i>{% trans 'Site' %} {% trans 'Meta' %} {% trans 'Attributes' %}</h3>
-                    </header>
-                    <div class="panel-body">
-                      
-                        <div id="newOrganization" class="margin-top">
-                           <div id="app"></div>
-                        </div>
-                    </div>
+    <section class="panel">
+        <header class="panel-heading clearfix">
+            <h3><i class="la la-cogs"></i>{% trans 'Site' %} {% trans 'Meta' %} {% trans 'Attributes' %}</h3>
+        </header>
+        <div class="panel-body">
 
-                </section>
-                   
-                    <form id="theForm" action="{% url 'fieldsight:define-site-meta' obj.pk %}" method="post">
-                    {% csrf_token %}
-                      <input name="json_questions" id="json_questions" type="hidden" value="" />
-                    </form> 
-
+            <div id="newOrganization" class="margin-top">
+                <div id="app"></div>
             </div>
+        </div>
+
+    </section>
+
+    <form id="theForm" action="{% url 'fieldsight:define-site-meta' obj.pk %}" method="post">
+        {% csrf_token %}
+        <input name="json_questions" id="json_questions" type="hidden" value="" />
+    </form> 
+
+</div>
 {% endblock %}
 
 {%block extrascript %}
 <script>
 
 </script>
-    <script type="text/babel">
-     var _json_question = JSON.parse("{{json_questions|escapejs}}");
+<script type="text/babel">
+    var _json_question = JSON.parse("{{json_questions|escapejs}}");
      console.log(_json_question);
      var NormalQuestion = React.createClass({
-            
+
             getInitialState: function () {
                 return {'editing':false}
             },
@@ -64,7 +64,7 @@
                 }
                 // console.log('save');
             },
-            
+
             remove:function(){
                 // console.log('Delete pressed.')
                 this.props.deleteFromForm(this.props.index);
@@ -87,13 +87,13 @@
                             </select>
                         </div>
 
-                        
+
 
                         <div className="form-group col-md-4">
                             <label className="col-form-label"> &nbsp; </label>                     
 
                             <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
-                            
+
 
                         </div>
                     </div>
@@ -102,15 +102,15 @@
             },
             render: function () {
                     return this.renderForm();
-               
+
             }
         });
      var Option = React.createClass({
-            
+
             getInitialState: function () {
                 return {editing: true}
             },
-            
+
             edit:function(){
                this.setState({editing: true});
             },
@@ -119,13 +119,13 @@
                 this.props.updateOption(this.refs.newOptionText.value, this.props.index);
                 // console.log('save');
             },
-            
+
             remove:function(){
                 // console.log('Delete pressed.' + this.props.index)
                 this.props.deleteOption(this.props.index);
             },
-            
-   
+
+
             renderNormal:function(){
                 // console.log("----"+this.props.option_text);
                 return(
@@ -139,7 +139,7 @@
                             <label className="col-form-label"> &nbsp; </label>                     
 
                             <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
-                            
+
 
                         </div>
                     </div>
@@ -147,26 +147,26 @@
             );
             },
             render: function () {
-              
+
                     return this.renderNormal();
-                
+
             }
         });
 
       var MCQQuestion = React.createClass({
-            
+
             getInitialState: function () {
-                
+
                 return {options:this.props.options}
             },
-            
+
             addOption:function () {
             // console.log(i);
-            
+
             var arr =this.state.options;
             var new_option={"option_text":""};
             arr.push(new_option);
-            
+
             this.setState({options: arr});
             // console.log(arr);
             },
@@ -174,11 +174,11 @@
             save: function () {
                 this.props.updateMCQOptions(this.state.options, this.props.index);
                 this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
-                
+
                 // console.log('save');
-                
+
             },
-            
+
 
 
             updateOption: function(newTextoption, i){
@@ -203,8 +203,8 @@
                 // this.setState({options:arr});
                 this.setState({options:arr})
                 // console.log(this.state.options);
-               
-                
+
+
                 this.props.updateMCQOptions(this.state.options, this.props.index);
             },
 
@@ -212,7 +212,7 @@
                 console.log('Delete pressed.')
                 this.props.deleteFromForm(this.props.index);
             },
-            
+
 
             eachOption: function (obj, j){
                             // console.log(text);
@@ -241,13 +241,13 @@
                             </select>
                         </div>
 
-                        
+
 
                         <div className="form-group col-md-4">
                             <label className="col-form-label"> &nbsp; </label>                     
 
                             <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
-                            
+
 
                         </div>
                     </div>
@@ -263,14 +263,14 @@
 
                     }
                     <button onClick={this.addOption} className="btn btn-primary"><i className="la la-plus"></i>Add New</button>
-                                
+
                     </div>
 
             );
             },
             render: function () {
                     return this.renderForm();
-               
+
             }
         });
 
@@ -296,101 +296,101 @@
 
     save: function () {
         if(this.state.Questions.length < 1){ return alert("No Any Questions Found."); } 
-        var json_convertible = this.state.Questions.filter(function(item) {
-            // return item.is_deleted == false;
+                                                                                    var json_convertible = this.state.Questions.filter(function(item) {
+                                                                                    // return item.is_deleted == false;
 
-            if (!item.hasOwnProperty('is_deleted')){
-                return item;
-            }
-            else if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
-                delete item.is_deleted;
-                // console.log(item);
-                return item;
-        }});
-        for (var key in json_convertible) {
-        json_convertible[key].question_name = json_convertible[key].question_text.replace(/\W/g,"_");
-        }
+                                                                                    if (!item.hasOwnProperty('is_deleted')){
+                                                                                    return item;
+                                                                                    }
+                                                                                    else if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
+                                                                                    delete item.is_deleted;
+                                                                                    // console.log(item);
+                                                                                    return item;
+                                                                                    }});
+                                                                                    for (var key in json_convertible) {
+                                                                                    json_convertible[key].question_name = json_convertible[key].question_text.replace(/\W/g,"_");
+                                                                                    }
 
-        // console.log(json_convertible);
-        var json_Question = JSON.stringify(json_convertible);
-        
+                                                                                    // console.log(json_convertible);
+                                                                                    var json_Question = JSON.stringify(json_convertible);
 
-        document.getElementById('json_questions').value = json_Question;
-        document.getElementById('theForm').submit();
-    },
 
-    removeQuestion: function(i){
-        // console.log('Removing Question:' + i);
-        var arr= this.state.Questions;
-        arr[i].is_deleted=true;
-        // var newArray = arr.filter(function (item) {
-        //     if (!item.hasOwnProperty('is_deleted')){
-        //    console.log(item);
-        //         return item;
-        //     }
-        //     else if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
-        //         delete item.is_deleted;
-        //         console.log(item);
-        //         return item;
-        // }
-        // });
-        this.setState({Questions: arr});
-    },
+                                                                                    document.getElementById('json_questions').value = json_Question;
+                                                                                    document.getElementById('theForm').submit();
+                                                                                    },
 
-    updateQuestion: function (newtext, questionType, i) {
-        console.log(this.state.Questions[i]);
-        var arr = this.state.Questions;
-        if(arr[i].question_type == "MCQ" && questionType != "MCQ"){
-                 delete arr[i].mcq_options;
-                 // console.log(arr[i]);           
-                  }
-        else{
-                if(questionType == "MCQ"){
-                    arr[i].mcq_options=[];
-                }
-        }
-        arr[i].question_text=newtext;
-        arr[i].question_type=questionType;
-        // var newArray = arr.filter(function (item) {
-        //     if (!item.hasOwnProperty('is_deleted')){
-        //         return item;
-        //     }
-        //     else if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
-        //         delete item.is_deleted;
-        //         console.log(item);
-        //         return item;
-        // }
-        // });
-        
-        this.setState({Questions:arr});
-        console.log(newArray);
-    },
+                                                                                    removeQuestion: function(i){
+                                                                                    // console.log('Removing Question:' + i);
+                                                                                    var arr= this.state.Questions;
+                                                                                    arr[i].is_deleted=true;
+                                                                                    // var newArray = arr.filter(function (item) {
+                                                                                    //     if (!item.hasOwnProperty('is_deleted')){
+                                                                                    //    console.log(item);
+                                                                                    //         return item;
+                                                                                    //     }
+                                                                                    //     else if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
+                                                                                    //         delete item.is_deleted;
+                                                                                    //         console.log(item);
+                                                                                    //         return item;
+                                                                                    // }
+                                                                                    // });
+                                                                                    this.setState({Questions: arr});
+                                                                                    },
 
-    updateMCQOptions: function (options, i){
-        var arr = this.state.Questions;
-        var newOptionsArray = options.filter(function (op) {
-        if (!op.hasOwnProperty('is_deleted')){
-            return op
-        }
-        
-        });
-        // console.log(newOptionsArray);
-        arr[i].mcq_options=newOptionsArray;
+                                                                                    updateQuestion: function (newtext, questionType, i) {
+                                                                                    console.log(this.state.Questions[i]);
+                                                                                    var arr = this.state.Questions;
+                                                                                    if(arr[i].question_type == "MCQ" && questionType != "MCQ"){
+                                                                                    delete arr[i].mcq_options;
+                                                                                    // console.log(arr[i]);           
+                                                                                    }
+                                                                                    else{
+                                                                                    if(questionType == "MCQ"){
+                                                                                    arr[i].mcq_options=[];
+                                                                                    }
+                                                                                    }
+                                                                                    arr[i].question_text=newtext;
+                                                                                    arr[i].question_type=questionType;
+                                                                                    // var newArray = arr.filter(function (item) {
+                                                                                    //     if (!item.hasOwnProperty('is_deleted')){
+                                                                                    //         return item;
+                                                                                    //     }
+                                                                                    //     else if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
+                                                                                    //         delete item.is_deleted;
+                                                                                    //         console.log(item);
+                                                                                    //         return item;
+                                                                                    // }
+                                                                                    // });
 
-        this.setState({Questions:arr});
-        console.log("updatingmcqoptions");
-        console.log(arr[i]);
-    },
+                                                                                    this.setState({Questions:arr});
+                                                                                    console.log(newArray);
+                                                                                    },
 
-    // updateMCQQuestion: function (newtext, questionType, mcq_options, i) {
-    //         // console.log('Updating Question');
-    //         var arr = this.state.Questions;
-    //         if(arr[i].question_type == "MCQ" && questionType != "MCQ"){
-    //                  delete arr[i].mcq_options;
-    //         }else{
-    //             arr[i].question_text=newtext;
-    //             arr[i].question_type=questionType;
-    //             arr[i].mcq_options=mcq_options;
+                                                                                    updateMCQOptions: function (options, i){
+                                                                                    var arr = this.state.Questions;
+                                                                                    var newOptionsArray = options.filter(function (op) {
+                                                                                    if (!op.hasOwnProperty('is_deleted')){
+                                                                                    return op
+                                                                                    }
+
+                                                                                    });
+                                                                                    // console.log(newOptionsArray);
+                                                                                    arr[i].mcq_options=newOptionsArray;
+
+                                                                                    this.setState({Questions:arr});
+                                                                                    console.log("updatingmcqoptions");
+                                                                                    console.log(arr[i]);
+                                                                                    },
+
+                                                                                    // updateMCQQuestion: function (newtext, questionType, mcq_options, i) {
+                                                                                    //         // console.log('Updating Question');
+                                                                                    //         var arr = this.state.Questions;
+                                                                                    //         if(arr[i].question_type == "MCQ" && questionType != "MCQ"){
+                                                                                    //                  delete arr[i].mcq_options;
+                                                                                    //         }else{
+                                                                                    //             arr[i].question_text=newtext;
+                                                                                    //             arr[i].question_type=questionType;
+                                                                                    //             arr[i].mcq_options=mcq_options;
     //         }
     //         // if(questionType == "MCQ"){
     //         //         arr[i].mcq_options=[];
@@ -414,32 +414,26 @@
       render: function () {
             return (
                 <div>
-                    
+
                         {   
                             this.state.Questions.map(this.eachQuestion)
                         }
-                    
+
                     <button onClick={this.addQuestion.bind(null, 'New Question')} className="btn btn-primary"><i className="la la-plus"></i>Add New</button>
-                  
+
                     <button onClick={this.save.bind()} className="btn btn-success pull-right"><i className="la la-save"></i>Save Form</button>
-                    
+
 
                 </div>
                 );
             }
   });
 
-        
+
         ReactDOM.render(<Form /> , document.getElementById('app')
             );
-    </script>
+</script>
 
-
-
-
-
-
-  
 {% endblock %}
 
 

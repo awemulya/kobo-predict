@@ -439,8 +439,12 @@ def get_survey_image_filename(instance, filename):
 
 class BluePrints(models.Model):
     site = models.ForeignKey(Site, related_name="blueprints")
-    image = models.ImageField(upload_to=get_image_filename,
-                              verbose_name='BluePrints',)
+    image = models.FileField(upload_to=get_image_filename,
+                             verbose_name='BluePrints',)
+
+    def get_name(self):
+        import os
+        return os.path.basename(self.image.file.name)
 
 
 class SiteCreateSurveyImages(models.Model):

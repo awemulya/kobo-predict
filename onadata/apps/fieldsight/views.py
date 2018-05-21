@@ -940,37 +940,57 @@ class BluePrintsView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         site = Site.objects.get(pk=self.kwargs.get('id'))
         blueprints = site.blueprints.all()
-
-        ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
-        formset = ImageFormSet(queryset=BluePrints.objects.none())
+        count = 10 - blueprints.count()
+        ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=count, can_delete=True)
+        formset = ImageFormSet(queryset=blueprints)
         return render(request, 'fieldsight/blueprints_form.html', {'site': site, 'formset': formset,'id': self.kwargs.get('id'),
                                                                    'blueprints':blueprints},)
 
     def post(self, request, id):
-        ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
-        formset = ImageFormSet(request.POST, request.FILES,
-                                   queryset=BluePrints.objects.none())
+        site = Site.objects.get(pk=self.kwargs.get('id'))
+        blueprints = site.blueprints.all()
+        count = 10 - blueprints.count()
+        ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=count, can_delete=True)
+        formset = ImageFormSet(request.POST, request.FILES, queryset=blueprints)
 
         if formset.is_valid():
-            for form in formset.cleaned_data:
-                if 'image' in form:
-                    image = form['image']
-                    photo = BluePrints(site_id=id, image=image)
-                    photo.save()
-            messages.success(request,
-                             "Blueprints saved!")
-            site = Site.objects.get(pk=id)
-            blueprints = site.blueprints.all()
+            instances = formset.save(commit=False)
+            for item in instances:
+                item.site_id = id
+                item.save()
 
-            ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
-            formset = ImageFormSet(queryset=BluePrints.objects.none())
-            return render(request, 'fieldsight/blueprints_form.html', {'site': site, 'formset': formset,'id': self.kwargs.get('id'),
-                                                                   'blueprints':blueprints},)
+            try:
+                # For Django 1.7+
+                for item in formset.deleted_objects:
+                    item.delete()
+            except AssertionError:
+                # Django 1.6 and earlier already deletes the objects, trying to
+                # delete them a second time raises an AssertionError.
+                pass
 
-            # return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': id}))
+        return HttpResponseRedirect(reverse("fieldsight:site-blue-prints",
+                                            kwargs={'id': id}))
 
-        formset = ImageFormSet(queryset=BluePrints.objects.none())
-        return render(request, 'fieldsight/blueprints_form.html', {'formset': formset, 'id': self.kwargs.get('id')}, )
+        # if formset.is_valid():
+        #     for form in formset.cleaned_data:
+        #         if 'image' in form:
+        #             image = form['image']
+        #             photo = BluePrints(site_id=id, image=image)
+        #             photo.save()
+        #     messages.success(request,
+        #                      "Blueprints saved!")
+        #     site = Site.objects.get(pk=id)
+        #     blueprints = site.blueprints.all()
+
+        #     ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
+        #     formset = ImageFormSet(queryset=BluePrints.objects.none())
+        #     return render(request, 'fieldsight/blueprints_form.html', {'site': site, 'formset': formset,'id': self.kwargs.get('id'),
+        #                                                            'blueprints':blueprints},)
+
+        #     # return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': id}))
+
+        # formset = ImageFormSet(queryset=BluePrints.objects.none())
+        # return render(request, 'fieldsight/blueprints_form.html', {'formset': formset, 'id': self.kwargs.get('id')}, )
 
 
 class ManagePeopleSiteView(LoginRequiredMixin, ReviewerRoleMixin, TemplateView):
