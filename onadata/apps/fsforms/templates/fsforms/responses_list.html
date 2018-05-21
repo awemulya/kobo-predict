@@ -55,6 +55,7 @@
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
               <th>{% trans 'Submissions' %}</th>
               <th>{% trans 'Download' %}</th>
+              <th>{% trans 'New' %}</th>
               </thead>
               <tbody>
               {% for obj in generals %}
@@ -84,6 +85,11 @@
                       <td>
                       <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
                           <i class="la la-download" aria-hidden="true"></i></a>
+                      </td>
+                      <td>
+                          <a target="_blank" href="{% url 'forms:new-submission' obj.id %}">
+                              <i class="la la-plus" aria-hidden="true"></i>
+                          </a>
                       </td>
                   </tr>
               {% endfor %}

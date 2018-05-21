@@ -46,12 +46,15 @@ from .views import (
     instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
     save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable, DeleteMyForm,
 
-    FormView,
+    FormFillView,
 
 )
 
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
+
+        url(r'^new-submission/(?P<pk>\d+)/$', FormFillView.as_view(), name='new-submission'),
+
         url(r'^assigned/$', MyOwnFormsListView.as_view(), name='forms-list'),
         url(r'^xform/(?P<pk>\d+)/$', XformDetailView.as_view(), name='xform-detail'),
         url(r'^xform/delete/(?P<xf_id>\d+)/$', DeleteMyForm.as_view(), name='xform-delete'),
@@ -112,9 +115,6 @@ urlpatterns = [
         #setup forms UI urls
         url(r'^setup-forms/(?P<is_project>\d)/(?P<pk>\d+)$', Setup_forms.as_view(), name='setup-forms'),
         url(r'^configure-stages/(?P<is_project>\d)/(?P<pk>\d+)$', Configure_forms.as_view(), name='configure_stages'),
-
-        url(r'^form/(?P<is_project>\d)/(?P<pk>\d+)/(?P<form_pk>\d+)$', FormView.as_view(), name='form'),
-
 ]
 
 
@@ -220,9 +220,6 @@ urlpatterns = urlpatterns + [
     url(r'^api/substages-reorder/$', substages_reorder),
 
     url(r'^api/em/files/(?P<stageid>\d+).$', save_edumaterial),
-
-
-
 ]
 
 

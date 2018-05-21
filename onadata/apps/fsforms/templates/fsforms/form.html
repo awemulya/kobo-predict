@@ -1,3 +1,4 @@
+{% load staticfiles i18n filters %}
 <html>
     <head>
         <style>
@@ -102,7 +103,45 @@
     <body>
         <div class="form">
             {{ html_form | safe }}
-            <button class="submit-button">Submit</button>
+            <button class="submit-button" onClick="submit()">Submit</button>
         </div>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="{{STATIC_URL}}js/enketo-core.js"></script>
+        <script>
+            const formSelector = 'form.or:eq(0)';
+            const data = {
+                modelStr: '{{ model_str|escapejs|safe }}',
+                instanceStr: null,
+                submitted: false,
+                external: [],
+                session: {},
+            };
+
+            const csrfInput = $("{% csrf_token %}");
+            const hiddenInput = $('<input type="hidden" name="enketo_xml_data">');
+
+            const formElement = $(formSelector);
+            hiddenInput.appendTo(formElement);
+            csrfInput.appendTo(formElement);
+
+            const form = new enketo.Form(formSelector, data, {});
+            form.init();
+
+            formElement.removeAttr('onsubmit')
+                .attr('method', 'POST')
+                .attr('enctype', 'multipart/form-data')
+                .attr('encoding', 'multipart/form-data');
+            
+
+            function submit() {
+                form.validate().then((valid) => {
+                    if (valid) {
+                        hiddenInput.val(form.getDataStr());
+                        formElement.submit();
+                    }
+                    // TODO Alert with errors
+                });
+            }
+        </script>
     </body>
 </html>

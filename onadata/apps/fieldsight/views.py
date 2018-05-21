@@ -1144,13 +1144,12 @@ def RepresentsInt(s):
 
 @login_required()
 def senduserinvite(request):
-
-    emails =request.POST.getlist('emails[]')
+    emails = request.POST.getlist('emails[]')
     group = Group.objects.get(name=request.POST.get('group'))
 
     organization_id = None
-    project_id =None
-    site_id =None
+    project_id = None
+    site_id = None
 
     if RepresentsInt(request.POST.get('organization_id')):
         organization_id = request.POST.get('organization_id')
@@ -1159,7 +1158,7 @@ def senduserinvite(request):
     if RepresentsInt(request.POST.get('site_id')):
         site_id = request.POST.get('site_id')
 
-    response=""
+    response = ""
 
     for email in emails:
         email = email.strip()

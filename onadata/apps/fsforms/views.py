@@ -47,6 +47,7 @@ from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, Fiel
     EducationMaterial, EducationalImages, InstanceImages
 from django.db.models import Q
 from onadata.apps.fieldsight.rolemixins import MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
+from .fieldsight_logger_tools import save_submission
 
 import requests
 
@@ -1112,27 +1113,47 @@ class Setup_forms(SPFmixin, View):
                    'schedule_form': KoScheduleForm(request=request)})
 
 
-class FormView(View):
+class FormFillView(View):
     def get(self, request, *args, **kwargs):
-        if self.kwargs.get('is_project') == '1':
-            obj = Project.objects.get(pk=self.kwargs.get('pk'))
-        else:
-            obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        pk = self.kwargs.get('pk')
+        fieldsight_xf = FieldSightXF.objects.get(pk=pk)
+        xform = fieldsight_xf.xf
 
-        xform = XForm.objects.get(pk=self.kwargs.get('form_pk'))
         result = requests.post(
             'http://enketo:8085/transform',
             data={
                 'xform': xform.xml,
             }
-        )
+        ).json()
 
         return render(request, 'fsforms/form.html', {
-            'obj': obj, 'is_project': self.kwargs.get('is_project'),
-            'pk': self.kwargs.get('pk'),
             'xform': xform,
-            'html_form': result.json()['form'],
+            'html_form': result['form'],
+            'model_str': result['model'],
         })
+
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        fs_xf = FieldSightXF.objects.get(pk=pk)
+        xform = fs_xf.xf
+
+        xml = request.POST['enketo_xml_data']
+        media_files = request.FILES.values()
+        new_uuid = str(uuid.uuid4())
+        with transaction.atomic():
+            instance = save_submission(
+                xform=xform,
+                xml=xml,
+                media_files=media_files,
+                new_uuid=new_uuid,
+                submitted_by=request.user,
+                status='submitted_via_web',
+                date_created_override=None,
+                fxid=fs_xf.id,
+                site=fs_xf.site.id,
+            )
+        return HttpResponseRedirect(reverse("forms:site-responses",
+                                            kwargs={'pk': fs_xf.site.pk}))
 
 
 class Configure_forms(SPFmixin, View):
