@@ -39,11 +39,41 @@
 								<button class="btn btn-primary registration__action" type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans ' Save' %}</button>
 								{% if form.instance.id %}
 								<a href="{% url 'fieldsight:region-delete' form.instance.id %}">
-								<button type="button" class="btn btn-danger "><i class="la la-trash"></i>{% trans 'Delete' %}</button></a>
+								<button type="button" class="btn btn-danger "><i class="la la-trash"></i>{% trans 'Delete' %}</button>
 								</a>
 								{% endif %}
 							</form>
 						</div>
+                        {% if form.instance.id %}
+                        <br/>
+                        <br/>
+                        <h5>Sub regions</h5>
+                        <a href="{% url 'fieldsight:sub-region-add' project.id form.instance.id %}">
+                            <button type="button" class="btn btn-primary "><i class="la la-plus"></i>{% trans 'Add' %}</button>
+                        </a>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">{% trans 'Region' %} {% trans 'ID' %}</th>
+                                    <th class="text-center">{% trans 'Region' %} {% trans 'Name' %}</th>
+                                    <th class="text-center"> {% trans 'Created' %} {% trans 'Date' %}</th>
+                                    <th class="text-center">{% trans 'Actions' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for obj in subregion_list %}
+                                <tr>
+                                    <td class="text-center">{{ obj.identifier }}</td>
+                                    <td class="text-center">{{ obj.name }}</td>
+                                    <td class="text-center">{{ obj.date_created }}</td>
+                                    <td class="text-center">
+                                        <a class="btn btn-primary btn-sm" href="{% url 'fieldsight:region-update' obj.pk %}"><i class="la la-pencil-square-o"></i>{% trans ' Edit' %}</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %}
 					</div>
 
                 </section>

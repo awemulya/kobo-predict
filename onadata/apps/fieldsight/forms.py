@@ -389,10 +389,13 @@ class BluePrintForm(forms.ModelForm):
         model = BluePrints
         fields = ('image', )
 
+
 class RegionForm(forms.ModelForm):
     class Meta:
         model = Region
-        exclude = ['project','date_created','date_updated', 'is_active',]
+        exclude = ['project', 'date_created', 'date_updated',
+                   'is_active', 'parent']
+
 
 
 class SiteBulkEditForm(forms.Form):

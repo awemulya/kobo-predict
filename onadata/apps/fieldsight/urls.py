@@ -8,7 +8,7 @@ from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProject
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet, ProjectRegionslistViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProjectViewSet
-from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionViewSet, RegionPagignatedViewSet, RegionSearchViewSet
+from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionPagignatedViewSet, RegionSearchViewSet
 from onadata.apps.fieldsight.viewsets.SiteViewSet import RegionViewSet, SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
     SiteReviewViewSet, ProjectTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet, SiteUpdateViewSet, \
     ProjectUpdateViewSet, SiteUnderOrgViewSet, SiteUnderRegionViewSet, SitePagignatedViewSet, SiteSearchViewSet
@@ -187,6 +187,7 @@ urlpatterns = [
 
     url(r'^api/project/(?P<pk>\d+)/regions/$', ProjectRegionslistViewSet.as_view({'get': 'list'}), name='project_regions_list'),
     url(r'^region/add/(?P<pk>\d+)/$', RegionCreateView.as_view(), name='region-add'),
+    url(r'^sub-region/add/(?P<pk>\d+)/(?P<parent_pk>\d+)$', RegionCreateView.as_view(), name='sub-region-add'),
 
     url(r'^region/delete/(?P<pk>[0-9]+)$', RegionDeleteView.as_view(), name='region-delete'),
     # url(r'^region/deactivate/(?P<pk>[0-9]+)$', RegionDeactivateView.as_view(), name='region-deactivate'),

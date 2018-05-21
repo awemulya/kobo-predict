@@ -231,7 +231,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'progress_data': bar_graph.data.values(),
             'progress_labels': bar_graph.data.keys(),
             'roles_project': roles_project,
-    }
+        }
         return dashboard_data
 
 
@@ -1805,11 +1805,11 @@ class SitedataSubmissionView(ReadonlySiteLevelRoleMixin, TemplateView):
         return data
 
 
-
 class RegionView(object):
     model = Region
     success_url = reverse_lazy('fieldsight:region-list')
     form_class = RegionForm
+
 
 class RegionListView(RegionView, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
@@ -1821,12 +1821,12 @@ class RegionListView(RegionView, LoginRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
-        queryset = Region.objects.filter(project_id=self.kwargs.get('pk'), is_active=True)
+        queryset = Region.objects.filter(project_id=self.kwargs.get('pk'), is_active=True,
+                                         parent=None)
         return queryset
 
 
 class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
-
     def get_context_data(self, **kwargs):
         context = super(RegionCreateView, self).get_context_data(**kwargs)
         project = Project.objects.get(pk=self.kwargs.get('pk'))
@@ -1838,11 +1838,25 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         # print form.cleaned_data['identifier']
         self.object = form.save(commit=False)
-        self.object.project_id=self.kwargs.get('pk')
+        self.object.project_id = self.kwargs.get('pk')
+        self.object.parent_id = self.kwargs.get('parent_pk')
         existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'))
         if existing_identifier:
             messages.add_message(self.request, messages.INFO, 'Your identifier conflict with existing region please use different identifier to create region')
-            return HttpResponseRedirect(reverse('fieldsight:region-add', kwargs={'pk': self.kwargs.get('pk')}))
+
+            if not self.kwargs.get('parent_pk'):
+                return HttpResponseRedirect(reverse(
+                    'fieldsight:region-add',
+                    kwargs={'pk': self.kwargs.get('pk')},
+                ))
+            else:
+                return HttpResponseRedirect(reverse(
+                    'fieldsight:sub-region-add',
+                    kwargs={
+                        'pk': self.kwargs.get('pk'),
+                        'parent_pk': self.kwargs.get('parent_pk'),
+                    }
+                ))
         else:
             self.object.save()
             messages.add_message(self.request, messages.INFO, 'Sucessfully new region is created')
@@ -1850,7 +1864,20 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
+        if not self.kwargs.get('parent_pk'):
+            return reverse(
+                'fieldsight:region-list',
+                kwargs={
+                    'pk': self.kwargs.get('pk'),
+                }
+            )
+        else:
+            return reverse(
+                'fieldsight:region-update',
+                kwargs={
+                    'pk': self.kwargs.get('parent_pk'),
+                }
+            )
 
 
 class RegionDeleteView(RegionView, DeleteView):
@@ -1883,6 +1910,9 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
         region = Region.objects.get(pk=self.kwargs.get('pk'))
         context['project'] = region.project
         context['pk'] = self.kwargs.get('pk')
+        context['subregion_list'] = Region.objects.filter(
+            parent__pk=self.kwargs.get('pk')
+        )
         return context
 
     def form_valid(self, form):
