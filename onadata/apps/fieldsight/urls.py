@@ -175,7 +175,7 @@ urlpatterns = [
 
     #for Regions
 
-    url(r'^api/my_projects/$', MyProjectlistViewSet.as_view({'get': 'list'}), name='my_projects'),
+    url(r'^api/my_projects/(?P<exclude_pk>\d+)/$', MyProjectlistViewSet.as_view({'get': 'list'}), name='my_projects'),
     
     url(r'^api/project/(?P<pk>\d+)/regions/$', ProjectRegionslistViewSet.as_view({'get': 'list'}), name='project_regions_list'),
     url(r'^region/add/(?P<pk>\d+)/$', RegionCreateView.as_view(), name='region-add'),

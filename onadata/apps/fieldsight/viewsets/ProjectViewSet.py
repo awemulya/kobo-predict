@@ -122,9 +122,10 @@ class MyProjectlistViewSet(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         user_id = self.kwargs.get('pk', None)
+        exclude_pk = self.kwargs.get('exclude_pk', 0)
         project_ids = self.request.roles.filter(group_id=2).values('project_id')
         org_ids = self.request.roles.filter(group_id=1).values('organization_id')
-        return queryset.filter(Q(pk__in=project_ids) | Q(organization_id__in=org_ids))
+        return queryset.filter(Q(pk__in=project_ids) | Q(organization_id__in=org_ids)).exclude(pk=exclude_pk)
 
 
 class ProjectRegionslistViewSet(viewsets.ModelViewSet):

@@ -45,6 +45,7 @@ class FieldSightLog(models.Model):
         (26, 'User was added as the Project Manager in count project of org by Invitor Full Name.'),
         (27, 'User was added as Reviewer in count site of project by Invitor Full Name.'),
         (28, 'User was added as Site Supervisor in count site of project by Invitor Full Name.'),
+        
     )
     
     type = models.IntegerField(default=0, choices=ACTION_TYPES)
@@ -163,7 +164,8 @@ class CeleryTaskProgress(models.Model):
         (0, 'Bulk Site Upload'),
         (1, 'Multi User Assign Project'),
         (2, 'Multi User Assign Site'),
-        (3, 'Report Generation')
+        (3, 'Report Generation'),
+        (4, 'Site Import')
         )
     task_id = models.CharField(max_length=255, blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
