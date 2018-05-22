@@ -121,6 +121,10 @@ class MyProjectlistViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectMiniSerializer
 
     def filter_queryset(self, queryset):
+        if self.request.group.name == "Super Admin":
+            print "here"
+            return queryset
+
         user_id = self.kwargs.get('pk', None)
         exclude_pk = self.kwargs.get('exclude_pk', 0)
         project_ids = self.request.roles.filter(group_id=2).values('project_id')

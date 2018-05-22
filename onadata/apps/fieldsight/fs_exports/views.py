@@ -8,6 +8,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from onadata.apps.fieldsight.tasks import importSites
+from django.http import HttpResponse
+from rest_framework import status
 
 class ExportProjectSites(DonorRoleMixin, View):
     def get(self, *args, **kwargs):
@@ -84,9 +86,10 @@ class CloneProjectSites(ProjectRoleMixin, View):
                 result='Sites are being Imported. You will be notified in notifications list as well.'
             else:
                 result = 'Sites cannot be imported a the moment.'
-            return Response({'msg': result}, status=status.HTTP_200_OK)
+            return HttpResponse({result}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'msg': 'Site Import Failed, Contact Fieldsight Team'}, status=status.HTTP_200_OK)
+            return HttpResponse({'Site Import Failed, Contact Fieldsight Team'}, status=status.HTTP_200_OK)
+
 # class CloneProjectSites(ProjectRoleMixin, View):
 #     def post(self, *args, **kwargs):
 #         f_project=get_object_or_404(Project, pk=self.kwargs.get('pk'))
