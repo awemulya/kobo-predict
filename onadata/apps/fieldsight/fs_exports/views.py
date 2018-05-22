@@ -60,15 +60,20 @@ class ExportProjectSites(DonorRoleMixin, View):
 
 
 class CloneProjectSites(ProjectRoleMixin, View):
-    def get(self, *args, **kwargs):
+    def post(self, *args, **kwargs):
         f_project=get_object_or_404(Project, pk=self.kwargs.get('pk'))
         t_project=get_object_or_404(Project, pk=self.kwargs.get('t_pk'))
         region_id = self.kwargs.get('region_id', None)
 
+        meta_attributes = self.request.boby.get('meta_attributes')
+        regions = self.request.boby.get('regions')
+        ignore_region = self.request.bofy.get('ignore_region')
+        
         def filterbyquestion_name(seq, value):
             for el in seq:
-                if el.get('question_name')==value:
-                    return True
+                if (not meta_attributes) or (meta_attributes and el.get('question_name') in meta_attributes)
+                    if el.get('question_name')==value:
+                        return True
             return False
         
         # migrate metas
@@ -85,22 +90,19 @@ class CloneProjectSites(ProjectRoleMixin, View):
 
         def get_t_region_id(f_region_id):
             # To get new region id without a query
-            if f_region_id in region_map:
+            if f_region_id is not None and f_region_id in region_map:
                 return region_map[f_region_id]
             else:
                 return None
         
         # migrate regions
-        if f_project.cluster_sites:
+        if f_projec.cluster_sites and not ignore_region:
             
             t_project_regions = t_project.regions.all().values_list('identifier', flat=True)
             t_project.cluster_sites=True
             
             # To handle whole project or a single region migrate
-            if region_id:
-                regions = f_project.regions.filter(region_id=region_id)
-            else:
-                regions = f_project.regions.all()
+            regions = f_project.regions.filter(region_id__in=regions)
 
             for region in regions:
                 f_region_id = region.id
@@ -116,19 +118,30 @@ class CloneProjectSites(ProjectRoleMixin, View):
         t_project.save()
 
         # migrate sites
-        if region_id:
-            sites = f_project.sites.filter(region_id=region_id)
+        t_project_sites = t_project.sites.all().values_list('identifier', flat=True)
+
+        if f_project.cluster_sites and not ignore_region:
+            sites = f_project.sites.filter(region_id=regions)
+          
+            if 0 in regions:
+                unassigned_sites = f_project.sites.filter(region_id=None)
+                sites = sites | unassigned_sites
+
         else:
             sites = f_project.sites.all()
 
-        if sites:
-            t_project_sites = t_project.sites.all().values_list('identifier', flat=True)
 
-            for site in sites:
-                if site.identifier not in t_project_sites:
-                    site.id = None
-                    site.project_id = t_project_id
-                    site.region_id = get_t_region_id(site.region_id)
-                    site.save()
+        for site in sites:
+            site.id = None
+            site.project_id = t_project_id
+            
+            if site.identifier in t_project_sites:
+                site.identifier = str(site.identifier) + "IFP" + str(f_project.id)
+        
+            if f_project.cluster_sites and not ignore_region:
+                site.region_id = get_t_region_id(site.region_id)
+            else:
+                site.region_id = None
+            
+            site.save()
         return None
-

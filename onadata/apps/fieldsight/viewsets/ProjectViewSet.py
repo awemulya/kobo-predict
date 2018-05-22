@@ -17,8 +17,10 @@ from rest_framework.permissions import BasePermission
 
 
 from onadata.apps.fieldsight.models import Project, Region
-from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectTypeSerializer, ProjectSerializer, ProjectCreationSerializer
+from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectTypeSerializer, ProjectMiniSerializer, ProjectSerializer, ProjectCreationSerializer
 from onadata.apps.fieldsight.serializers.RegionSerializer import RegionSerializer
+
+from django.db.models import Q
 
 class ProjectPermission(BasePermission):
     # def has_permission(self, request, view):
@@ -108,6 +110,21 @@ class OrganizationsProjectViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+
+
+class MyProjectlistViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing Regions.
+    """
+    queryset = Project.objects.all()
+    serializer_class = ProjectMiniSerializer
+
+    def filter_queryset(self, queryset):
+        user_id = self.kwargs.get('pk', None)
+        project_ids = self.request.roles.filter(group_id=2).values('project_id')
+        org_ids = self.request.roles.filter(group_id=1).values('organization_id')
+        return queryset.filter(Q(pk__in=project_ids) | Q(organization_id__in=org_ids))
 
 
 class ProjectRegionslistViewSet(viewsets.ModelViewSet):
