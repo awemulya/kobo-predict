@@ -110,14 +110,17 @@ class TeamAttendanceReport(StaffTeamRoleMixin, View):
        
         data = []
         index_rows=["staff", "designation"]
+        preheader=["",""]
         head_rows = ["Staff Name", "Designation"]
         pre_data={}
         # head_row.append(monthName + " " +str(year))
         for x in range(totaldays):
             date_day=x+1
-            head_rows.append(str(date_day)+" - "+calendar.day_name[calendar.weekday(year, month, date_day)])
+            preheader.append(str(calendar.day_name[calendar.weekday(year, month, date_day)])[:3])
+            head_rows.append(str(date_day))
             index_rows.append(str(year)+"-"+str(month).zfill(2)+"-"+str(date_day).zfill(2))
         
+        data.append(preheader)
         data.append(head_rows)
         team = Team.objects.get(pk=team_id, is_deleted=False)
         attendance_data = team.get_attendance_for_excel(year, month)
@@ -131,7 +134,7 @@ class TeamAttendanceReport(StaffTeamRoleMixin, View):
             index = index_rows.index(k)
             if index:
                 for staff in v:
-                    pre_data[staff][index] = "Present"
+                    pre_data[staff][index] = "P"
 
         for k,v in pre_data.items():
             data.append(v)
