@@ -162,8 +162,7 @@ class StaffList(StaffTeamRoleMixin, ListView):
 
 class StaffCreate(StaffTeamRoleMixin, CreateView):
     model = Staff
-    fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number', 'bank', 'bank_name', 'account_number', 'photo', 'designation']
-    success_url = reverse_lazy('staff:staff-list')
+    form_class = StaffForm
 
     def get_context_data(self, **kwargs):
         context = super(StaffCreate, self).get_context_data(**kwargs)
