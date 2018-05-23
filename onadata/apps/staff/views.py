@@ -127,7 +127,7 @@ class TeamAttendanceReport(StaffTeamRoleMixin, View):
         
         for staff in team.staff_team.filter(is_deleted=False):
             staff_detail = [staff.get_fullname(), staff.get_designation()]
-            staff_detail.extend(['Absent']*totaldays)
+            staff_detail.extend(['A']*totaldays)
             pre_data[staff.id] = staff_detail
         
         for k,v in attendance_data.items():
