@@ -1116,8 +1116,12 @@ class Setup_forms(SPFmixin, View):
 class FormFillView(View):
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get('pk')
+        sub_pk = self.kwargs.get('sub_pk')
+
         fieldsight_xf = FieldSightXF.objects.get(pk=pk)
         xform = fieldsight_xf.xf
+
+        finstance = FInstance.objects.get(pk=sub_pk) if sub_pk else None
 
         result = requests.post(
             'http://enketo:8085/transform',
@@ -1130,16 +1134,21 @@ class FormFillView(View):
             'xform': xform,
             'html_form': result['form'],
             'model_str': result['model'],
+            'existing': finstance,
         })
 
     def post(self, request, *args, **kwargs):
         pk = self.kwargs.get('pk')
+        sub_pk = self.kwargs.get('sub_pk')
+
         fs_xf = FieldSightXF.objects.get(pk=pk)
         xform = fs_xf.xf
+        finstance = FInstance.objects.get(pk=sub_pk) if sub_pk else None
 
         xml = request.POST['enketo_xml_data']
         media_files = request.FILES.values()
-        new_uuid = str(uuid.uuid4())
+        new_uuid = finstance.instance.uuid if finstance else str(uuid.uuid4())
+
         with transaction.atomic():
             instance = save_submission(
                 xform=xform,
@@ -1387,35 +1396,36 @@ class Html_export(ReadonlyFormMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(Html_export, self).get_context_data(**kwargs)
         fsxf_id = int(self.kwargs.get('fsxf_id'))
-        fsxf = FieldSightXF.objects.get(pk=fsxf_id)    
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         # context['pk'] = self.kwargs.get('pk')
         context['is_site_data'] = True
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
         return context
-    
+
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         queryset = FInstance.objects.filter(site_fxf=fsxf_id)
         return queryset
 
+
 class Project_html_export(ReadonlyFormMixin, ListView):
-    model =   FInstance
+    model = FInstance
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
 
     def get_context_data(self, **kwargs):
         context = super(Project_html_export, self).get_context_data(**kwargs)
         fsxf_id = int(self.kwargs.get('fsxf_id'))
-        fsxf = FieldSightXF.objects.get(pk=fsxf_id)    
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         # context['pk'] = self.kwargs.get('pk')
         context['is_project_data'] = True
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
         return context
-    
+
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         queryset = FInstance.objects.filter(project_fxf=fsxf_id)

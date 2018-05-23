@@ -7,215 +7,222 @@
 {% load pagination_tags %}
 
 
-    <style>
-      .pre-scrollable{
-        height:500px;
-  
+<style>
+.pre-scrollable{
+    height:500px;
 }
 
 .sortable tr {
     cursor: pointer;
 }
-  
-  </style>
-    
+
+</style>
+
 {% endblock %}
 {% block content %}
 
 <div id="main-content" class="padding">
-        <section class="panel">
-                    <header class="panel-heading clearfix">
-                        <h3><i class="la la-pencil-square-o"></i>{% trans 'Form' %} {% trans 'Submissions' %} | {{ form_name  }}</h3>
+    <section class="panel">
+        <header class="panel-heading clearfix">
+            <h3><i class="la la-pencil-square-o"></i>{% trans 'Form' %} {% trans 'Submissions' %} | {{ form_name  }}</h3>
 
-     
+
 
             <div class="panel-heading-right">
-            
-              <a class="btn btn-sm btn-primary" href="{% url 'forms:project_html_table_export' obj.id %}"><i class="la la-eye"></i> Detailed Responses List</a>
-              <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForms" aria-expanded="false" aria-controls="searchForms"><i class="la la-search"></i> Search</a>
-            
+
+                <a class="btn btn-sm btn-primary" href="{% url 'forms:project_html_table_export' obj.id %}"><i class="la la-eye"></i> Detailed Responses List</a>
+                <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForms" aria-expanded="false" aria-controls="searchForms"><i class="la la-search"></i> Search</a>
+
             </div>
 
 
-            
-                    </header>
-          <div class="panel-body">
+
+        </header>
+        <div class="panel-body">
             <!--Search Organization-->
             <div class="collapse margin-top" id="searchForms">
-              <form class="padding">
-                <div class="row">
-                  <div class="col-md-6 ml-md-auto">
-                    <div class="input-group">
-                      <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
-                      <span class="input-group-btn">
-                      <button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
-                      </span>
+                <form class="padding">
+                    <div class="row">
+                        <div class="col-md-6 ml-md-auto">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-3"></div>
                     </div>
-                  </div>
-                  <div class="col-md-3"></div>
-                </div>
-              </form>
+                </form>
             </div>
-         
-<div class="container">
-    
-   {% if is_project_data %}
-          
-  <table class="table table-hover ceter-block sortable">
-    <thead>
-      <tr>
-        <th>{% trans 'S.N' %}</th>
-        <th>{% trans 'Site' %} {% trans 'Name' %}</th>
-        <th>{% trans 'Site' %} {% trans 'Id' %}</th>
-        <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
-        <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
-        <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
-      </tr>
-    </thead>
-    <tbody>
 
-    {% for sub in object_list  %}
-            <!--   {% if sub.site_fxf %}
-               <tr>
-                 
-                  <td> <a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.site.identifier }}</a></td>
-                  <td>{{ sub.site_fxf.xf.title }}</td>
-                  <td>{{ sub.site.name }}</td>
-                  <td>{{ sub.site.id }}</td>
-                  <td>{{ sub.submitted_by.username }}</td>
-                  <td>{{ sub.date }}</td>
-                  </tr>
-              {% endif %}
+            <div class="container">
 
-              {% if sub.project_fxf %} -->
-               <tr onclick="redirectto(`{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
-                 
-                  <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
-                  <td>{{ sub.site.name }}</td>
-                  <td>{{ sub.site.identifier }}</td>
-                  <td>{{ sub.instance.id }}</td>
-                  <td>{{ sub.submitted_by.username }}</td>
-                  <td>{{ sub.date }}</td>
-                  </tr>
-              <!-- {% endif %} -->
-        
+                {% if is_project_data %}
 
-    {% endfor %}
-     
-     
-    </tbody>
-  </table>
-  {% endif %}
+                <table class="table table-hover ceter-block sortable">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'S.N' %}</th>
+                            <th>{% trans 'Site' %} {% trans 'Name' %}</th>
+                            <th>{% trans 'Site' %} {% trans 'Id' %}</th>
+                            <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
+                            <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
+                            <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for sub in object_list  %}
+                        <!--   {% if sub.site_fxf %}
+                            <tr>
+
+                            <td> <a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.site.identifier }}</a></td>
+                            <td>{{ sub.site_fxf.xf.title }}</td>
+                            <td>{{ sub.site.name }}</td>
+                            <td>{{ sub.site.id }}</td>
+                            <td>{{ sub.submitted_by.username }}</td>
+                            <td>{{ sub.date }}</td>
+                            </tr>
+                            {% endif %}
+
+                            {% if sub.project_fxf %} -->
+                            <tr onclick="redirectto(`{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
+
+                                <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+                                <td>{{ sub.site.name }}</td>
+                                <td>{{ sub.site.identifier }}</td>
+                                <td>{{ sub.instance.id }}</td>
+                                <td>{{ sub.submitted_by.username }}</td>
+                                <td>{{ sub.date }}</td>
+                            </tr>
+                            <!-- {% endif %} -->
 
 
-
-  {% if is_site_data %}
-
-  <table class="table table-hover ceter-block sortable">
-    <thead>
-      <tr>
-        <th>{% trans 'S.N' %}</th>
-        <th>{% trans 'Site' %} {% trans 'Name' %}</th>
-        <th>{% trans 'Site' %} {% trans 'Id' %}</th>
-        <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
-        <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
-        <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
-      </tr>
-    </thead>
-    <tbody>
-
-    {% for sub in object_list  %}
-           
-               <tr onclick="redirectto(`{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
-                 
-                  <td>{{ forloop.counter }}</td>
-                  <td>{{ sub.site.name }}</td>
-                  <td>{{ sub.site.identifier }}</td>
-                  <td>{{ sub.instance.id }}</td>
-                  <td>{{ sub.submitted_by.username }}</td>
-                  <td>{{ sub.date }}</td>
-                  </tr>
-            
-        
-
-    {% endfor %}
-     
-     
-    </tbody>
-  </table>
-  {% endif %}
-</div>
+                            {% endfor %}
 
 
-{% if is_paginated %}
-            <nav class="pagination justify-content-center" aria-label="page-navigation">
-              <ul class="pagination">
-              {% if page_obj.has_previous %}
-                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
-              {% else %}
-                <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
-              {% endif %}
-              {% for i in paginator.page_range %}
-                {% if page_obj.number == i %}
-                <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-
-                {% else %}
-                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    </tbody>
+                </table>
                 {% endif %}
-              {% endfor %}
-              {% if page_obj.has_next %}
-                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
-              {% else %}
-                <li class="disabled"><a class="page-link" href="#">&raquo;</a>
-              {% endif %}
-              </ul>
+
+
+
+                {% if is_site_data %}
+
+                <table class="table table-hover ceter-block sortable">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'S.N' %}</th>
+                            <th>{% trans 'Site' %} {% trans 'Name' %}</th>
+                            <th>{% trans 'Site' %} {% trans 'Id' %}</th>
+                            <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
+                            <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
+                            <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
+                            <th>{% trans 'Edit' %}</th>
+                            <th>{% trans 'View' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for sub in object_list  %}
+
+                        <tr>
+
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ sub.site.name }}</td>
+                            <td>{{ sub.site.identifier }}</td>
+                            <td>{{ sub.instance.id }}</td>
+                            <td>{{ sub.submitted_by.username }}</td>
+                            <td>{{ sub.date }}</td>
+                            <td>
+                                {% if request.user|can_edit_finstance:sub %}
+                                <a href="{% url 'forms:edit-submission' sub.site_fxf.pk sub.id %}">Edit</a>
+                                {% endif %}
+                            </td>
+                            <td><a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">View</a></td>
+                        </tr>
+
+
+
+                        {% endfor %}
+
+
+                    </tbody>
+                </table>
+                {% endif %}
+            </div>
+
+
+            {% if is_paginated %}
+            <nav class="pagination justify-content-center" aria-label="page-navigation">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                    {% else %}
+                    <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+                    {% endif %}
+                    {% for i in paginator.page_range %}
+                    {% if page_obj.number == i %}
+                    <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+
+                    {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                    {% else %}
+                    <li class="disabled"><a class="page-link" href="#">&raquo;</a>
+                        {% endif %}
+                </ul>
             </nav>
             {% endif %}
-           
-          </div>
 
-          
+        </div>
 
-                </section>
-        
-      </div>
+
+
+    </section>
+
+</div>
 
 
 {% endblock %}
 
 
 {% block extrascript %}
-    <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
-    <script type="text/javascript">
-      function redirectto(url){
+<script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
+<script type="text/javascript">
+    function redirectto(url){
         window.location.href = url
-      }
-    </script>
+    }
+</script>
 {% endblock %}
 
 <!-- 
-<table>
+    <table>
 
     <thead>
-        <tr>
-            <th>{% trans "View or Edit" %}</th>
-            {% for label in labels %}
-            <th><span class="cell-content-wrap">{{ label }}</span></th>
-            {% endfor %}
-        </tr>
+    <tr>
+    <th>{% trans "View or Edit" %}</th>
+    {% for label in labels %}
+    <th><span class="cell-content-wrap">{{ label }}</span></th>
+    {% endfor %}
+    </tr>
 
     </thead>
 
     <tbody>
     {% for submission_id, row in data  %}
-        <tr>
-            <th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
-            {% for value in row %}
-            <td><span class="cell-content-wrap">{{ value }}</span></td>
-            {% endfor %}
-        </tr>
+    <tr>
+    <th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
+    {% for value in row %}
+    <td><span class="cell-content-wrap">{{ value }}</span></td>
+    {% endfor %}
+    </tr>
     {% endfor %}
 
     </tbody>
 
-</table> -->
+    </table> -->

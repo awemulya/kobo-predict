@@ -310,7 +310,7 @@ class XForm(BaseModel):
                 if file_path.endswith('.csv'):
                     xlsform_io = convert_csv_to_xls(xlsform_file.read())
                 else:
-                    xlsform_io= io.BytesIO(xlsform_file.read())
+                    xlsform_io = io.BytesIO(xlsform_file.read())
             return xlsform_io
         else:
             return None

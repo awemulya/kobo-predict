@@ -111,7 +111,7 @@
             const formSelector = 'form.or:eq(0)';
             const data = {
                 modelStr: '{{ model_str|escapejs|safe }}',
-                instanceStr: null,
+                instanceStr: {% if existing %}'{{ existing.instance.xml|escapejs|safe }}'{% else %}null{% endif %},
                 submitted: false,
                 external: [],
                 session: {},

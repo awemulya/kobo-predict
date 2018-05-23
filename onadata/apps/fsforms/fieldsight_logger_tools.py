@@ -118,7 +118,6 @@ def get_uuid_from_submission(xml):
     return len(split_xml) > 1 and split_xml[1] or None
 
 
-
 def _has_edit_xform_permission(xform, user):
     if isinstance(xform, XForm) and isinstance(user, User):
         return user.has_perm('logger.change_xform', xform)

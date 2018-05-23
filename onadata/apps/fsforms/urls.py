@@ -54,6 +54,7 @@ urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
 
         url(r'^new-submission/(?P<pk>\d+)/$', FormFillView.as_view(), name='new-submission'),
+        url(r'^edit-submission/(?P<pk>\d+)/(?P<sub_pk>\d+)/$', FormFillView.as_view(), name='edit-submission'),
 
         url(r'^assigned/$', MyOwnFormsListView.as_view(), name='forms-list'),
         url(r'^xform/(?P<pk>\d+)/$', XformDetailView.as_view(), name='xform-detail'),
