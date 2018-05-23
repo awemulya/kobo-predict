@@ -123,10 +123,12 @@ class TeamAttendanceReport(StaffTeamRoleMixin, View):
         team = Team.objects.get(pk=team_id, is_deleted=False)
         attendance_data = team.get_attendance_for_excel(year, month)
 
+        data.append(["","","",""])
         data.append(["","","","", str(team.staffproject.name)])
         data.append(["","","","", str(team.name)])
         data.append(["","","","", "Attendance Report"])
         data.append(["","","","", monthName + ' ' + str(year)])
+        data.append(["","","",""])
         data.append(preheader)
         data.append(head_rows)
         
