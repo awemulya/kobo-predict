@@ -13,6 +13,12 @@ STAFF_TYPES = (
         (4, 'Junior Builder-Trainer'),
     )
 
+STAFF_TYPES_SHORT = (
+        (1, 'TSC A'),
+        (2, 'S M'),
+        (3, 'Sr. B-T'),
+        (4, 'Jr. B-T'),
+    )
 
 GENDER_TYPES = (
         (1, 'Male'),
@@ -99,6 +105,9 @@ class Staff(models.Model):
 
     def get_designation(self):
         return dict(STAFF_TYPES)[self.designation]
+
+    def get_abr_designation(self):
+        return dict(STAFF_TYPES_SHORT)[self.designation]
 
     def get_fullname(self):
         return str(self.first_name) +" "+ str(self.last_name)

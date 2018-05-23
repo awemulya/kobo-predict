@@ -120,13 +120,19 @@ class TeamAttendanceReport(StaffTeamRoleMixin, View):
             head_rows.append(str(date_day))
             index_rows.append(str(year)+"-"+str(month).zfill(2)+"-"+str(date_day).zfill(2))
         
-        data.append(preheader)
-        data.append(head_rows)
         team = Team.objects.get(pk=team_id, is_deleted=False)
         attendance_data = team.get_attendance_for_excel(year, month)
+
+        data.append(["","","","", str(team.staffproject_name)])
+        data.append(["","","","", str(team.name)])
+        data.append(["","","","", "Attendance Report"])
+        data.append(["","","","", monthName + ' ' + str(year)])
+        data.append(preheader)
+        data.append(head_rows)
+        
         
         for staff in team.staff_team.filter(is_deleted=False):
-            staff_detail = [staff.get_fullname(), staff.get_designation()]
+            staff_detail = [staff.get_fullname(), staff.get_abr_designation()]
             staff_detail.extend(['A']*totaldays)
             pre_data[staff.id] = staff_detail
         
