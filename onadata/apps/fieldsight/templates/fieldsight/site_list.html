@@ -100,12 +100,14 @@
                 {% endif %}
                 {% if type == "region" %}
 
-                <a href="{% url 'fieldsight:regional-site-add' obj.project.id pk %}" title="" class="btn btn-sm
-                btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'New' %} {% trans 'Regional' %} {% trans 'Site' %}</a>
+                <a href="{% url 'fieldsight:regional-site-add' obj.project.id pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'New' %} {% trans 'Regional' %} {% trans 'Site' %}</a>
                 <a href="{% url 'fieldsight:define-site-meta' obj.project.id %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
+                <a href="{% url 'fieldsight:bulk-edit-site' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-edit"></i> {% trans 'Bulk' %} {% trans 'Edit' %} </a>
+                <a href="{% url 'fieldsight:site-upload' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-files-o"></i> {% trans 'Bulk' %} {% trans 'Upload' %} {% trans 'Sites' %}</a>
                 {% elif type == "Unregioned" %}
                 <a href="{% url 'fieldsight:site-add' project_id %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'New' %} {% trans 'Regional' %} {% trans 'Site' %}</a>
                 <a href="{% url 'fieldsight:define-site-meta' project_id %}" title="" class="btn btn-sm btn-primary"><i class="la la-files-o"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
+                <a href="{% url 'fieldsight:bulk-edit-site' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-edit"></i> {% trans 'Bulk' %} {% trans 'Edit' %} </a>
                 {% endif %}
 
             </div>

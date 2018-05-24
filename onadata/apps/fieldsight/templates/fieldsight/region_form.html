@@ -48,9 +48,11 @@
                         <br/>
                         <br/>
                         <h5>Sub regions</h5>
-                        <a href="{% url 'fieldsight:sub-region-add' project.id form.instance.id %}">
-                            <button type="button" class="btn btn-primary "><i class="la la-plus"></i>{% trans 'Add' %}</button>
-                        </a>
+                        <div style="text-align: right; padding: 2px 8px 8px 0;">
+                            <a href="{% url 'fieldsight:sub-region-add' project.id form.instance.id %}">
+                                <button type="button" class="btn btn-primary "><i class="la la-plus"></i>{% trans 'Add' %}</button>
+                            </a>
+                        </div>
                         <table class="table">
                             <thead>
                                 <tr>

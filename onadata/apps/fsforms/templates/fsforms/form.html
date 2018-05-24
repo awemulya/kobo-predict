@@ -1,6 +1,8 @@
 {% load staticfiles i18n filters %}
 <html>
     <head>
+        <link rel="stylesheet" href="{% static 'css/enketo/plain.css' %}">
+
         <style>
             body {
                 font-family: 'PT Sans', sans-serif;
@@ -11,7 +13,6 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                line-height: 1.6;
                 color: #565656;
                 font-size: 14px;
             }
@@ -27,62 +28,6 @@
                 width: 100%;
             }
 
-            form .or-required-msg {
-                display: none;
-            }
-
-            form > h3 {
-                margin: 0;
-                font-weight: 400;
-                color: #41d698;
-                text-transform: uppercase;
-                margin-bottom: 10px;
-            }
-
-            form > fieldset {
-                display: block;
-                padding: 10px;
-                padding: 10px 0;
-            }
-
-            form fieldset {
-                border: 0;
-                padding: 0;
-                margin: 0;
-            }
-
-            form legend {
-                display: block;
-                font-size: 12px;
-                color: rgba(0, 0, 0, 0.6);
-            }
-
-            form > label {
-                font-size: 12px;
-                color: rgba(0, 0, 0, 0.6);
-                display: block;
-                padding: 10px 0;
-            }
-
-            .option-wrapper label {
-                display: inline-flex;
-                align-items: center;
-                margin-right: 16px;
-                cursor: pointer;
-            }
-
-            .option-wrapper input {
-                margin: 0;
-                margin-right: 4px;
-            }
-
-            form > label > input {
-                display: block;
-                width: 100%;
-                font-family: inherit;
-                font-size: 14px;
-            }
-            
             .submit-button {
                 font-family: inherit;
                 border: 0;
