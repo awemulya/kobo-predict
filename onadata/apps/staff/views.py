@@ -110,28 +110,39 @@ class TeamAttendanceReport(StaffTeamRoleMixin, View):
        
         data = []
         index_rows=["staff", "designation"]
+        preheader=["",""]
         head_rows = ["Staff Name", "Designation"]
         pre_data={}
         # head_row.append(monthName + " " +str(year))
         for x in range(totaldays):
             date_day=x+1
-            head_rows.append(str(date_day)+" - "+calendar.day_name[calendar.weekday(year, month, date_day)])
+            preheader.append(str(calendar.day_name[calendar.weekday(year, month, date_day)])[:3])
+            head_rows.append(str(date_day))
             index_rows.append(str(year)+"-"+str(month).zfill(2)+"-"+str(date_day).zfill(2))
         
-        data.append(head_rows)
         team = Team.objects.get(pk=team_id, is_deleted=False)
         attendance_data = team.get_attendance_for_excel(year, month)
+
+        data.append(["","","",""])
+        data.append(["","","","", str(team.staffproject.name)])
+        data.append(["","","","", str(team.name)])
+        data.append(["","","","", "Attendance Report"])
+        data.append(["","","","", monthName + ' ' + str(year)])
+        data.append(["","","",""])
+        data.append(preheader)
+        data.append(head_rows)
+        
         
         for staff in team.staff_team.filter(is_deleted=False):
-            staff_detail = [staff.get_fullname(), staff.get_designation()]
-            staff_detail.extend(['Absent']*totaldays)
+            staff_detail = [staff.get_fullname(), staff.get_abr_designation()]
+            staff_detail.extend(['A']*totaldays)
             pre_data[staff.id] = staff_detail
         
         for k,v in attendance_data.items():
             index = index_rows.index(k)
             if index:
                 for staff in v:
-                    pre_data[staff][index] = "Present"
+                    pre_data[staff][index] = "P"
 
         for k,v in pre_data.items():
             data.append(v)
@@ -162,8 +173,7 @@ class StaffList(StaffTeamRoleMixin, ListView):
 
 class StaffCreate(StaffTeamRoleMixin, CreateView):
     model = Staff
-    fields = ['first_name','last_name', 'gender', 'ethnicity','address','phone_number','bank_name', 'account_number', 'photo', 'designation']
-    success_url = reverse_lazy('staff:staff-list')
+    form_class = StaffForm
 
     def get_context_data(self, **kwargs):
         context = super(StaffCreate, self).get_context_data(**kwargs)

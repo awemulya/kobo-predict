@@ -140,6 +140,120 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
         ChannelGroup("notif-user-{}".format(source_user.id)).send({"text": json.dumps(result)})
         return None
 
+
+@task()
+def importSites(task_prog_obj_id, source_user, f_project, t_project, meta_attributes, regions, ignore_region):
+    time.sleep(2)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.content_object = t_project
+    task.status=1
+    task.save()
+    
+    try:
+        def filterbyquestion_name(seq, value):
+            for el in seq:
+                if (not meta_attributes) or (meta_attributes and el.get('question_name') in meta_attributes):
+                    if el.get('question_name')==value:
+                        return True
+            return False
+        
+        # migrate metas
+
+        if t_project.site_meta_attributes:
+            t_metas = t_project.site_meta_attributes
+            f_metas = f_project.site_meta_attributes
+            
+            for f_meta in f_metas:
+                # print t_metas
+                # print ""
+                check = filterbyquestion_name(t_metas, f_meta.get('question_name'))
+                if not check:
+                    t_metas.append(f_meta)
+        region_map = {}      
+
+        t_project_sites = t_project.sites.all().values_list('identifier', flat=True)
+
+        # migrate regions
+        if f_project.cluster_sites and not ignore_region:
+            
+            t_project_regions = t_project.project_region.all().values_list('identifier', flat=True)
+            t_project.cluster_sites=True
+            
+            # To handle whole project or a single region migrate
+            region_objs = f_project.project_region.filter(id__in=regions)
+
+            for region in region_objs:
+                f_region_id = region.id
+                if region.identifier in t_project_regions:
+                    t_region_id = t_project.project_region.get(identifier=region.identifier).id
+                else:
+                    region.id=None
+                    region.project_id=t_project.id
+                    region.save()
+                    t_region_id = region.id
+                region_map[f_region_id]=t_region_id
+        
+            t_project.save()
+
+            # getting Sites
+        
+            sites = f_project.sites.filter(region_id__in=regions)
+          
+            if 0 in regions:
+                unassigned_sites = f_project.sites.filter(region_id=None)
+                sites = sites | unassigned_sites
+
+        else:
+
+            sites = f_project.sites.all()
+
+        
+        def get_t_region_id(f_region_id):
+            # To get new region id without a query
+            if f_region_id is not None and f_region_id in region_map:
+                return region_map[f_region_id]
+            else:
+                return None
+
+        # migrate sites
+        for site in sites:
+            site.id = None
+            site.project_id = t_project.id
+            
+            if site.identifier in t_project_sites:
+                site.identifier = str(site.identifier) + "IFP" + str(f_project.id)
+        
+            if f_project.cluster_sites and not ignore_region:
+                site.region_id = get_t_region_id(site.region_id)
+            else:
+                site.region_id = None
+            
+            site.save()
+
+        task.status = 2
+        task.save()
+
+        if f_project.cluster_sites and not ignore_region:
+            noti = FieldSightLog.objects.create(source=source_user, type=30, title="Bulk Project import sites",
+                                       content_object=t_project, recipient=source_user,
+                                       extra_object=f_project, extra_message="Project Sites import from " + str(len(regions))+" Regions of ")
+        else:
+            noti = FieldSightLog.objects.create(source=source_user, type=29, title="Bulk Project import sites",
+                                       content_object=t_project, recipient=source_user,
+                                       extra_object=f_project)        
+    except Exception as e:
+        task.status = 3
+        task.save()
+        if f_project.cluster_sites and not ignore_region:
+            noti = FieldSightLog.objects.create(source=source_user, type=423, title="Bulk Project import sites",
+                                       content_object=t_project, recipient=source_user,
+                                       extra_object=f_project)
+        else:
+            noti = FieldSightLog.objects.create(source=source_user, type=424, title="Bulk Project import sites",
+                                       content_object=t_project, recipient=source_user,
+                                       extra_object=f_project, extra_message="Project Sites import from "+str(len(regions))+" Regions of ")
+        
+
 @shared_task()
 def multiuserassignproject(task_prog_obj_id, source_user, org_id, projects, users, group_id):
     time.sleep(2)

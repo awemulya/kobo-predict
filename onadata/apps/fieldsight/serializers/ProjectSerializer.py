@@ -51,3 +51,9 @@ class ProjectSerializer(serializers.ModelSerializer):
         validated_data.update({'location':p})
         project = Project.objects.create(**validated_data)
         return project
+
+class ProjectMiniSerializer(serializers.ModelSerializer):
+    site_meta_attributes = serializers.JSONField(binary=False)
+    class Meta:
+        model = Project
+        fields = ('id', 'name', 'cluster_sites', 'site_meta_attributes',)

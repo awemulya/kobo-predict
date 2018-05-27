@@ -25,7 +25,6 @@ class StaffForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(StaffForm, self).__init__(*args, **kwargs)
         self.fields['bank'].empty_label = "Other"
-       
     
     class Meta:
         model = Staff

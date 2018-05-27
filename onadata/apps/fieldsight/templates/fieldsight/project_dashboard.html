@@ -68,6 +68,19 @@ var project = "{{obj.pk}}";
 
 
 
+				<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						{% verbatim %}
+						<div class="modal-content">
+						<div id="exportSitesToProject" >
+						</div>
+						</div>
+						{% endverbatim %}
+					</div>
+				</div>
+
+
+
 				<div class="org-profile-top-action">
 					<div class="action-left">
 
@@ -99,8 +112,9 @@ var project = "{{obj.pk}}";
 								<a class="dropdown-item" href="{% url 'fieldsight:site-types'  obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Site Types' %}</a>
 
 								<a class="dropdown-item" href="{% url 'fieldsight:project-edit' obj.pk %}"><i class="la la-clipboard"></i> {% trans 'Edit Project' %}</a>
-
-
+								{% if request.group.name == "Super Admin" %}
+								<button class="dropdown-item"  data-toggle="modal" data-target="#importModal"><i class="la la-clipboard"></i> {% trans 'Import Sites' %}</button>
+								{% endif %}
 								{% if obj.cluster_sites %}
 								<a class="dropdown-item" href="{% url 'fieldsight:multi_site_region_assign' obj.id%}"><i class="la la-map-marker"></i>{% trans 'Assign' %} {% trans 'sites' %} {% trans 'to' %} {% trans 'regions' %}</a>
 								{% else %}
@@ -447,9 +461,11 @@ var project = "{{obj.pk}}";
 
   	<script type="text/javascript">
     var static_url ="{{ STATIC_URL }}";
-    configure_settings =  {};
+    
     {% load l10n %}
+    configure_settings =  {};
   	configure_settings.project_id = {{obj.pk|unlocalize}};
+  	configure_settings.csrf_token = '{{ csrf_token }}';
 
   	//getlogdata();
 						
