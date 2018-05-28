@@ -83,67 +83,64 @@
 
     var CheckboxComponent = React.createClass({
             
+            
             getInitialState: function () {
-                return {isloaded:false, metas:[]}
+                return {isloaded:false, metas:[], project_id:0}
             },
 
-            loadmetas: function(project_id){
-                fetch("/fieldsight/api/project/metas/"+project_id+"/", {
-                      method: 'GET',
-                      credentials: 'include'
-                    })
-                  .then(res => res.json())
-                  .then(
-                    (result) => {
-                      this.setState({
-                        isLoaded: true,
-                        metas: result[0].site_meta_attributes,
-                        
-                      });
-                    },
-                    (error) => {
-                      this.setState({
-                        isLoaded: true,
-                        metas:[],
-                        
-                      });
-                    }
-                  )
+            loadmetas: function(metas, project_id, updateSelectedMetas){
+
+                this.setState({'metas':metas, 'project_id':project_id})
+                
             },
             componentDidMount(){
-                this.setState({'project_id':this.props.project_id});
-                this.loadmetas(this.props.project_id);
+                
+                this.loadmetas(this.props.metas, this.props.project_id);
             },
             componentWillReceiveProps(nextProps) {
-                this.setState({'project_id':nextProps.project_id});
-                this.loadmetas(nextProps.project_id);
+                
+                this.loadmetas(nextProps.metas, nextProps.project_id);
             },
+            
             toggleCheckbox:function(index) {
-                var checkboxes = this.state.checkboxes;
+                var checkboxes = this.state.metas;
                 checkboxes[index].checked = !checkboxes[index].checked;
                 this.setState({
-                    checkboxes
+                    metas:checkboxes
                 });
+                this.props.updateSelectedMetas(this.state.project_id);
+
             },
-   
+
+            eachMeta: function (obj, j){
+                       
+                      
+                            return(
+                                 <div>
+                      <label>
+                                <input
+                                    type="checkbox"
+                                    checked={obj.is_checked}
+                                    onChange={this.toggleCheckbox.bind(this, j)}
+                                />
+                                {obj.question_text}
+                            </label>
+                        </div>)
+                        },
+                            // console.log(text);
+                            
+                            // if(!obj.hasOwnProperty('is_deleted')){
+                            // return(
+                                // <Option key={j} index={j} option_text={obj.option_text} deleteOption={this.deleteOption} updateOption={this.updateOption}/>
+                                // );
+                             //}},
             renderNormal:function(){
                 
                 return (<div>
+                 {         
+                                  this.state.metas.map(this.eachMeta)
+                    }
                 
-                    {
-                this.state.metas.map((checkbox, index) =>
-                    <div>
-                        <label>
-                            <input
-                                type="checkbox"
-                                checked={checkbox.question_name}
-                                onChange={this.toggleCheckbox.bind(this, index)}
-                            />
-                            {checkbox.question_text}
-                        </label>
-                    </div>
-                )
-            }
                 </div>
             );
             },
@@ -313,7 +310,7 @@
     var ExtLinkQuestion = React.createClass({
             
             getInitialState: function () {
-                return {questionTypes:questionTypes, isLoaded: true, projects:[], selectedProject: 0}
+                return {questionTypes:questionTypes, isLoaded: true, projects:[], metas:[],selectedProject: 0}
             },
 
             componentDidMount() {
@@ -345,10 +342,36 @@
                 // console.log('save');
             },
             
+
+            updateSelectedMetas: function(project_id){
+                console.log(project_id);
+            },
+
             projectChanged: function () {        
                 this.props.updateLinkProject(this.refs.selectProjectRef.value, this.props.index);
                 // console.log(this.state);
                 this.setState({selectedProject:this.refs.selectProjectRef.value,});
+                fetch("/fieldsight/api/project/metas/"+this.refs.selectProjectRef.value+"/", {
+                      method: 'GET',
+                      credentials: 'include'
+                    })
+                  .then(res => res.json())
+                  .then(
+                    (result) => {
+                      this.setState({
+                        isLoaded: true,
+                        metas: result[0].site_meta_attributes,
+                        
+                      });
+                    },
+                    (error) => {
+                      this.setState({
+                        isLoaded: true,
+                        metas:[],
+                        
+                      });
+                    }
+                  )
             },
 
             remove:function(){
@@ -360,8 +383,8 @@
                 var checklist;
                 if(this.state.selectedProject > 0){
                     
-                  //console.log("loadedddddd");
-                checklist = <CheckboxComponent project_id={this.state.selectedProject} project_id={this.state.selectedProject}/>
+                
+                checklist = <CheckboxComponent project_id={this.state.selectedProject} metas={this.state.metas} project_id={this.state.selectedProject} updateSelectedMetas={this.updateSelectedMetas}/>
                 }
                 return(
                     <div className="QuestionContainer form-row">
@@ -451,6 +474,7 @@
         this.setState({Questions: arr});
     },
 
+
     updateQuestion: function (newtext, questionType, i) {
         console.log(this.state.Questions[i]);
         var arr = this.state.Questions;
@@ -500,6 +524,11 @@
         console.log("updatingLinkproject_id");
         console.log(arr[i]);
     },
+
+    updateLinkMetas: function (project_id, i){
+        console.log("hurray");
+    },
+
 
     eachQuestion: function (question, i){
         if(!question.hasOwnProperty('is_deleted') || (question.hasOwnProperty('is_deleted') && question.is_deleted == false)){
