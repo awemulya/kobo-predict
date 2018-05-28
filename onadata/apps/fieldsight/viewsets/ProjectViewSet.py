@@ -17,7 +17,7 @@ from rest_framework.permissions import BasePermission
 
 
 from onadata.apps.fieldsight.models import Project, Region
-from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectTypeSerializer, ProjectMiniSerializer, ProjectSerializer, ProjectCreationSerializer
+from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectMetasSerializer, ProjectTypeSerializer, ProjectMiniSerializer, ProjectSerializer, ProjectCreationSerializer
 from onadata.apps.fieldsight.serializers.RegionSerializer import RegionSerializer
 
 from django.db.models import Q
@@ -122,7 +122,6 @@ class MyProjectlistViewSet(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         if self.request.group.name == "Super Admin":
-            print "here"
             return queryset
 
         user_id = self.kwargs.get('pk', None)
@@ -154,3 +153,14 @@ def all_notification(user,  message):
             "msg": message
         })
     })
+
+
+class ProjectMetas(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing Regions.
+    """
+    queryset = Project.objects.all()
+    serializer_class = ProjectMetasSerializer
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(pk=self.kwargs.get('pk'))
