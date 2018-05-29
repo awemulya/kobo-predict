@@ -82,68 +82,6 @@
         });
 
 
-var InterCheckboxComponent = React.createClass({
-            
-            
-            getInitialState: function () {
-                console.log("Fiest");
-                return {isloaded:false, metas:[], project_id:0, parent_id:0}
-            },
-
-            loadmetas: function(metas, project_id, updateSelectedMetas){
-                this.setState({'metas':metas, 'project_id':project_id})
-                console.log(this.state.project_id);
-                
-            },
-            componentDidMount(){
-                console.log(this.props.metas);
-                this.loadmetas(this.props.metas, this.props.project_id);
-            },
-            componentWillReceiveProps(nextProps) {
-                
-                this.loadmetas(nextProps.metas, nextProps.project_id);
-            },
-            
-            toggleCheckbox:function(index) {
-                var checkboxes = this.state.metas;
-                checkboxes[index].checked = !checkboxes[index].checked;
-                this.setState({
-                    metas:checkboxes
-                });
-                this.props.updateSelectedMetas(this.state.project_id);
-
-            },
-
-           
-            eachMeta: function (obj, j){            
-                if(obj.question_type!='Link'){
-                     return(
-                        <div>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={obj.is_checked}
-                                    onChange={this.toggleCheckbox.bind(this, j)}
-                                />
-                                {obj.question_text}
-                            </label>
-                        </div>)
-                    }
-            },
-            renderNormal:function(){
-                
-                return (<div>
-                 {         
-                        this.state.metas.map(this.eachMeta)
-                    }
-                
-                </div>
-            );
-            },
-            render: function () {
-                    return this.renderNormal();
-            }
-        });
 
 
     var CheckboxComponent = React.createClass({
@@ -167,11 +105,6 @@ var InterCheckboxComponent = React.createClass({
             },
             
             toggleCheckbox:function(index, obj) {
-                var checkboxes = this.state.metas;
-                checkboxes[index].checked = !checkboxes[index].checked;
-                this.setState({
-                    metas:checkboxes
-                });
                 this.props.updateSelectedMetas(this.state.project_id, obj);
 
             },
@@ -381,7 +314,7 @@ var InterCheckboxComponent = React.createClass({
             
             getInitialState: function () {
                 console.log(this.props.selected_metas);
-                return {questionTypes:questionTypes, isLoaded: true, projects:[], selected_metas:this.props.selected_metas, metas:[], project_id: 0}
+                return {questionTypes:questionTypes, isLoaded: false, projects:[], project_index:0, selected_metas:this.props.selected_metas, metas:[], project_id: this.props.link_project_id}
             },
 
             componentDidMount() {
@@ -393,10 +326,15 @@ var InterCheckboxComponent = React.createClass({
                   .then(
                     (result) => {
                       this.setState({
-                        isLoaded: true,
+                        
                         projects: result,
-                        project_id: 0
-                      });
+                        });
+                    
+            
+                    let project_index=this.state.projects.indexOf(this.state.projects.find(temp=>temp.id == this.state.project_id));
+                    if (project_index < 0){ project_index = 0; }
+                    this.setState({project_index:project_index, metas:this.state.projects[project_index].site_meta_attributes,  isLoaded: true});
+                
                     },
                     (error) => {
                       this.setState({
@@ -419,30 +357,11 @@ var InterCheckboxComponent = React.createClass({
             },
 
             projectChanged: function () {        
-                this.props.updateLinkProject(this.refs.selectProjectRef.value, this.props.index);
+                const selectedProject = this.state.projects[this.refs.selectProjectRef.value]
+                this.props.updateLinkProject(selectedProject.id, this.props.index);
                 // console.log(this.state);
-                this.setState({project_id:this.refs.selectProjectRef.value,});
-                fetch("/fieldsight/api/project/metas/"+this.refs.selectProjectRef.value+"/", {
-                      method: 'GET',
-                      credentials: 'include'
-                    })
-                  .then(res => res.json())
-                  .then(
-                    (result) => {
-                      this.setState({
-                        isLoaded: true,
-                        metas: result[0].site_meta_attributes,
-                        
-                      });
-                    },
-                    (error) => {
-                      this.setState({
-                        isLoaded: true,
-                        metas:[],
-                        
-                      });
-                    }
-                  )
+                this.setState({project_id:selectedProject.id, metas:selectedProject.site_meta_attributes});
+                
             },
 
             remove:function(){
@@ -451,13 +370,8 @@ var InterCheckboxComponent = React.createClass({
             },
 
             renderForm:function(){
-                var checklist;
-                if(this.state.project_id > 0){
-                    
-                console.log("here"+this.props.selected_metas);
-                checklist = <CheckboxComponent project_id={this.state.project_id}  selected_metas={this.state.selected_metas} metas={this.state.metas} updateSelectedMetas={this.updateSelectedMetas}/>
-                }
-                return(
+                if(this.state.isLoaded){
+                    return(
                     <div className="QuestionContainer form-row">
                         <div className="form-group col-md-4">
                             <label for="input1" className="col-form-label">Input Label:</label>
@@ -473,13 +387,34 @@ var InterCheckboxComponent = React.createClass({
                         </div>
                         <div className="form-group col-md-4">
                             <label className="col-form-label">Select Project</label>                     
-                            <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_id} options={this.state.projects}/>
+                            <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_index} options={this.state.projects}/>
                         </div>
 
-                        { checklist }
+                        <CheckboxComponent project_id={this.state.project_id}  selected_metas={this.state.selected_metas} metas={this.state.metas} updateSelectedMetas={this.updateSelectedMetas}/>
+                
                         
                     </div>
-                );
+                   ); 
+                }else{
+                     return(<div>
+                        <div className="QuestionContainer form-row">
+                        <div className="form-group col-md-4">
+                        <label className="col-form-label"><h4>Loading</h4></label>                     
+                            
+                        </div>
+                        <div className="form-group col-md-4">
+                        </div>
+                        <div className="form-group col-md-4">
+                        </div>
+                        <div className="form-group col-md-4">
+                        </div>
+
+                        
+                    </div>
+                     </div>);
+                }
+                
+                
             },
             render: function () {
                 return this.renderForm();
@@ -627,7 +562,7 @@ var InterCheckboxComponent = React.createClass({
             }
             else if(question.question_type=="Link"){
                 return(
-                        <ExtLinkQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} updateLinkMetas={this.updateLinkMetas} selected_metas={question.metas} deleteFromForm={this.removeQuestion} />                        
+                        <ExtLinkQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} link_project_id ={question.project_id} updateLinkMetas={this.updateLinkMetas} selected_metas={question.metas} deleteFromForm={this.removeQuestion} />                        
                     );
             
             }else{
