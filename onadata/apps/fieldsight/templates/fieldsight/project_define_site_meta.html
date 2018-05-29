@@ -50,20 +50,7 @@
 </script>
 
     <script type="text/babel">
-     var data=[{
-                    "question_name": "New_Site_Tests_____sadsa",
-                    "question_text": "New Site Tests..\"\"\"sadsa",
-                    "question_type": "Text"
-                },
-                {
-                    "mcq_options": [{
-                        "option_text": "test1opt"
-                    }],
-                    "question_name": "tes2",
-                    "question_text": "tes2",
-                    "question_type": "MCQ"
-                }
-            ];
+
      var _json_question = JSON.parse("{{json_questions|escapejs}}");
      var project_id = "{{ obj.id|unlocalize }}";
 
@@ -83,7 +70,7 @@
                 return(
                     <select ref={this.props.inputRef} className="form-group col-md-4" name="project" onChange={this.props.onChangeFunction} defaultValue={this.props.defaultValue}>
                         {this.props.options.map((e, key) => {
-                            return <option key={key} value={e.id}>{e.id}{e.name}</option>;
+                            return <option key={key} value={this.props.isProject ? key : e.id}>{e.id}{e.name}</option>;
                         })}
                     </select>
                     
@@ -486,7 +473,7 @@ var InterCheckboxComponent = React.createClass({
                         </div>
                         <div className="form-group col-md-4">
                             <label className="col-form-label">Select Project</label>                     
-                            <SelectComponent inputRef={el => this.refs.selectProjectRef = el} onChangeFunction={this.projectChanged} defaultValue={this.state.project_id} options={this.state.projects}/>
+                            <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_id} options={this.state.projects}/>
                         </div>
 
                         { checklist }
@@ -612,11 +599,11 @@ var InterCheckboxComponent = React.createClass({
     updateLinkMetas: function (project_id, i, obj){
         var arr = this.state.Questions;
         if (project_id in arr[i].metas){
-            var obj_exists = arr[i].metas[project_id].find(temp=>temp.question_name==obj.question_name)
-            console.log("sdsdsdasdsadasDelete", arr[i].metas[project_id].find(temp=>temp.question_name==obj.question_name));
-            if (obj_exists > -1){
-                arr[i].metas[project_id].splice(obj_exists, 1);
-                console.log(obj_exists);
+            const obj_exists = arr[i].metas[project_id].find(temp=>temp.question_name == obj.question_name)
+            console.log("hurra");
+            if (obj_exists){
+                arr[i].metas[project_id].splice(arr[i].metas[project_id].indexOf(obj_exists), 1);
+                
             }
             else{
                 arr[i].metas[project_id].push(obj);
