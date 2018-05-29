@@ -164,63 +164,59 @@ var InterCheckboxComponent = React.createClass({
             
             getInitialState: function () {
                 console.log("Fiest");
-                return {isloaded:false, metas:[], project_id:0}
+                return {isloaded:false, metas:[], project_id:0, selected_metas:[]}
             },
 
-            loadmetas: function(metas, project_id, updateSelectedMetas){
-                this.setState({'metas':metas, 'project_id':project_id})
-                console.log(this.state.project_id);
+            loadmetas: function(metas, project_id, selected_metas){
+                this.setState({'metas':metas, 'project_id':project_id, 'selected_metas':selected_metas})
+                
                 
             },
             componentDidMount(){
-                console.log(this.props.metas);
-                this.loadmetas(this.props.metas, this.props.project_id);
+                this.loadmetas(this.props.metas, this.props.project_id, this.props.selected_metas);
             },
             componentWillReceiveProps(nextProps) {
-                
-                this.loadmetas(nextProps.metas, nextProps.project_id);
+                this.loadmetas(nextProps.metas, nextProps.project_id, nextProps.selected_metas);
             },
             
-            toggleCheckbox:function(index) {
+            toggleCheckbox:function(index, obj) {
                 var checkboxes = this.state.metas;
                 checkboxes[index].checked = !checkboxes[index].checked;
                 this.setState({
                     metas:checkboxes
                 });
-                this.props.updateSelectedMetas(this.state.project_id);
+                this.props.updateSelectedMetas(this.state.project_id, obj);
 
             },
 
-           
             eachMeta: function (obj, j){            
+                
                 if(obj.question_type=='Link'){
-                    Object.keys(obj.site_meta_attributes).map((key) => {
-                            console.log(data);
-                            return <InterCheckboxComponent project_id={key} metas={data}/>
-                            
-                        });
-                    }
-                    else{
-                    return(
-                    <div>
-                        <label>
-                            <input
-                                type="checkbox"
-                                checked={obj.is_checked}
-                                onChange={this.toggleCheckbox.bind(this, j)}
-                            />
-                            {obj.question_text}
+                    const submetas = [];
+                    Object.keys(obj.site_meta_attributes).map((key, index) => submetas.push(
+                         <CheckboxComponent project_id={key} metas={obj.site_meta_attributes[key]} selected_metas={this.state.selected_metas} updateSelectedMetas={this.props.updateSelectedMetas}/>
+                        ))
+                    return (
+                        <div>{
+                            submetas
+                        }</div>
+                        )
+                }
+                else{
+                return(
+                <div>
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={(this.state.selected_metas[this.state.project_id] || []).find(temp=>temp.question_name == obj.question_name)}
+                            onChange={this.toggleCheckbox.bind(this, j, obj)}
+                        />
+                        {obj.question_text}
                         </label>
-                    </div>)
+                </div>)
                 }
             },
-                            // console.log(text);
-                            
-                            // if(!obj.hasOwnProperty('is_deleted')){
-                            // return(
-                                // <Option key={j} index={j} option_text={obj.option_text} deleteOption={this.deleteOption} updateOption={this.updateOption}/>
-                                // );
-                             //}},
+                          
             renderNormal:function(){
                 
                 return (<div>
@@ -397,7 +393,8 @@ var InterCheckboxComponent = React.createClass({
     var ExtLinkQuestion = React.createClass({
             
             getInitialState: function () {
-                return {questionTypes:questionTypes, isLoaded: true, projects:[], metas:[],selectedProject: 0}
+                console.log(this.props.selected_metas);
+                return {questionTypes:questionTypes, isLoaded: true, projects:[], selected_metas:this.props.selected_metas, metas:[], project_id: 0}
             },
 
             componentDidMount() {
@@ -411,14 +408,14 @@ var InterCheckboxComponent = React.createClass({
                       this.setState({
                         isLoaded: true,
                         projects: result,
-                        selectedProject: 0
+                        project_id: 0
                       });
                     },
                     (error) => {
                       this.setState({
                         isLoaded: true,
                         projects:[],
-                        selectedProject: 0
+                        project_id: 0
                       });
                     }
                   )
@@ -430,14 +427,14 @@ var InterCheckboxComponent = React.createClass({
             },
             
 
-            updateSelectedMetas: function(project_id){
-                console.log(project_id);
+            updateSelectedMetas: function(project_id, obj){
+                this.props.updateLinkMetas(project_id, this.props.index, obj);
             },
 
             projectChanged: function () {        
                 this.props.updateLinkProject(this.refs.selectProjectRef.value, this.props.index);
                 // console.log(this.state);
-                this.setState({selectedProject:this.refs.selectProjectRef.value,});
+                this.setState({project_id:this.refs.selectProjectRef.value,});
                 fetch("/fieldsight/api/project/metas/"+this.refs.selectProjectRef.value+"/", {
                       method: 'GET',
                       credentials: 'include'
@@ -468,10 +465,10 @@ var InterCheckboxComponent = React.createClass({
 
             renderForm:function(){
                 var checklist;
-                if(this.state.selectedProject > 0){
+                if(this.state.project_id > 0){
                     
-                
-                checklist = <CheckboxComponent project_id={this.state.selectedProject} metas={this.state.metas} updateSelectedMetas={this.updateSelectedMetas}/>
+                console.log("here"+this.props.selected_metas);
+                checklist = <CheckboxComponent project_id={this.state.project_id}  selected_metas={this.state.selected_metas} metas={this.state.metas} updateSelectedMetas={this.updateSelectedMetas}/>
                 }
                 return(
                     <div className="QuestionContainer form-row">
@@ -489,7 +486,7 @@ var InterCheckboxComponent = React.createClass({
                         </div>
                         <div className="form-group col-md-4">
                             <label className="col-form-label">Select Project</label>                     
-                            <SelectComponent inputRef={el => this.refs.selectProjectRef = el} onChangeFunction={this.projectChanged} defaultValue={this.state.selectedProject} options={this.state.projects}/>
+                            <SelectComponent inputRef={el => this.refs.selectProjectRef = el} onChangeFunction={this.projectChanged} defaultValue={this.state.project_id} options={this.state.projects}/>
                         </div>
 
                         { checklist }
@@ -571,7 +568,7 @@ var InterCheckboxComponent = React.createClass({
         }
         else if(arr[i].question_type == "Link" && questionType != "Link"){
             delete arr[i].project_id;
-            delete arr[i].selectedMetas;
+            delete arr[i].metas;
         }
         
         if(questionType == "MCQ" && arr[i].question_type != "MCQ"){
@@ -579,7 +576,7 @@ var InterCheckboxComponent = React.createClass({
         }
         else if(questionType == "Link" && arr[i].question_type != "Link"){
             arr[i].project_id = 0;
-            arr[i].selectedMetas=[];
+            arr[i].metas=[];
         }
         
         
@@ -612,8 +609,25 @@ var InterCheckboxComponent = React.createClass({
         console.log(arr[i]);
     },
 
-    updateLinkMetas: function (project_id, i){
-        console.log("hurray");
+    updateLinkMetas: function (project_id, i, obj){
+        var arr = this.state.Questions;
+        if (project_id in arr[i].metas){
+            var obj_exists = arr[i].metas[project_id].find(temp=>temp.question_name==obj.question_name)
+            console.log("sdsdsdasdsadasDelete", arr[i].metas[project_id].find(temp=>temp.question_name==obj.question_name));
+            if (obj_exists > -1){
+                arr[i].metas[project_id].splice(obj_exists, 1);
+                console.log(obj_exists);
+            }
+            else{
+                arr[i].metas[project_id].push(obj);
+            }
+        }else{
+            arr[i].metas[project_id]=[obj];
+        }
+        this.setState({Questions:arr});
+        console.log("updatingLinkmetas");
+        console.log(arr[i]);
+        
     },
 
 
@@ -626,7 +640,7 @@ var InterCheckboxComponent = React.createClass({
             }
             else if(question.question_type=="Link"){
                 return(
-                        <ExtLinkQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} deleteFromForm={this.removeQuestion} />                        
+                        <ExtLinkQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} updateLinkMetas={this.updateLinkMetas} selected_metas={question.metas} deleteFromForm={this.removeQuestion} />                        
                     );
             
             }else{
