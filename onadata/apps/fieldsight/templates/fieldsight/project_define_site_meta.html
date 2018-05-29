@@ -50,7 +50,20 @@
 </script>
 
     <script type="text/babel">
-
+     var data=[{
+                    "question_name": "New_Site_Tests_____sadsa",
+                    "question_text": "New Site Tests..\"\"\"sadsa",
+                    "question_type": "Text"
+                },
+                {
+                    "mcq_options": [{
+                        "option_text": "test1opt"
+                    }],
+                    "question_name": "tes2",
+                    "question_text": "tes2",
+                    "question_type": "MCQ"
+                }
+            ];
      var _json_question = JSON.parse("{{json_questions|escapejs}}");
      var project_id = "{{ obj.id|unlocalize }}";
 
@@ -81,20 +94,22 @@
             }
         });
 
-    var CheckboxComponent = React.createClass({
+
+var InterCheckboxComponent = React.createClass({
             
             
             getInitialState: function () {
-                return {isloaded:false, metas:[], project_id:0}
+                console.log("Fiest");
+                return {isloaded:false, metas:[], project_id:0, parent_id:0}
             },
 
             loadmetas: function(metas, project_id, updateSelectedMetas){
-
                 this.setState({'metas':metas, 'project_id':project_id})
+                console.log(this.state.project_id);
                 
             },
             componentDidMount(){
-                
+                console.log(this.props.metas);
                 this.loadmetas(this.props.metas, this.props.project_id);
             },
             componentWillReceiveProps(nextProps) {
@@ -112,12 +127,12 @@
 
             },
 
-            eachMeta: function (obj, j){
-                       
-                      
-                            return(
-                                 <div>
-                      <label>
+           
+            eachMeta: function (obj, j){            
+                if(obj.question_type!='Link'){
+                     return(
+                        <div>
+                            <label>
                                 <input
                                     type="checkbox"
                                     checked={obj.is_checked}
@@ -126,7 +141,79 @@
                                 {obj.question_text}
                             </label>
                         </div>)
-                        },
+                    }
+            },
+            renderNormal:function(){
+                
+                return (<div>
+                 {         
+                        this.state.metas.map(this.eachMeta)
+                    }
+                
+                </div>
+            );
+            },
+            render: function () {
+                    return this.renderNormal();
+            }
+        });
+
+
+    var CheckboxComponent = React.createClass({
+            
+            
+            getInitialState: function () {
+                console.log("Fiest");
+                return {isloaded:false, metas:[], project_id:0}
+            },
+
+            loadmetas: function(metas, project_id, updateSelectedMetas){
+                this.setState({'metas':metas, 'project_id':project_id})
+                console.log(this.state.project_id);
+                
+            },
+            componentDidMount(){
+                console.log(this.props.metas);
+                this.loadmetas(this.props.metas, this.props.project_id);
+            },
+            componentWillReceiveProps(nextProps) {
+                
+                this.loadmetas(nextProps.metas, nextProps.project_id);
+            },
+            
+            toggleCheckbox:function(index) {
+                var checkboxes = this.state.metas;
+                checkboxes[index].checked = !checkboxes[index].checked;
+                this.setState({
+                    metas:checkboxes
+                });
+                this.props.updateSelectedMetas(this.state.project_id);
+
+            },
+
+           
+            eachMeta: function (obj, j){            
+                if(obj.question_type=='Link'){
+                    Object.keys(obj.site_meta_attributes).map((key) => {
+                            console.log(data);
+                            return <InterCheckboxComponent project_id={key} metas={data}/>
+                            
+                        });
+                    }
+                    else{
+                    return(
+                    <div>
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={obj.is_checked}
+                                onChange={this.toggleCheckbox.bind(this, j)}
+                            />
+                            {obj.question_text}
+                        </label>
+                    </div>)
+                }
+            },
                             // console.log(text);
                             
                             // if(!obj.hasOwnProperty('is_deleted')){
@@ -384,7 +471,7 @@
                 if(this.state.selectedProject > 0){
                     
                 
-                checklist = <CheckboxComponent project_id={this.state.selectedProject} metas={this.state.metas} project_id={this.state.selectedProject} updateSelectedMetas={this.updateSelectedMetas}/>
+                checklist = <CheckboxComponent project_id={this.state.selectedProject} metas={this.state.metas} updateSelectedMetas={this.updateSelectedMetas}/>
                 }
                 return(
                     <div className="QuestionContainer form-row">
