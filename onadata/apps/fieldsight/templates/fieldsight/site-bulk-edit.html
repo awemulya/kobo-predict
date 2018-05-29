@@ -22,6 +22,19 @@
     </p>
     {% else %}
 
+    <div id="filters">
+        <select id="regions" placeholder="Filter by regions" multiple>
+            {% for region in regions %}
+            <option value="{{ region.id }}">{{ region.name }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="togglesites">
+            <input type="checkbox" id="togglesites">
+            All sites
+        </label>
+    </div>
+
     <form enctype="multipart/form-data" method="post">
         {% csrf_token %}
 
@@ -66,4 +79,53 @@
     {% endif %}
 
 </div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.min.js"></script>
+<script>
+    const regionalSites = {
+        {% for region in regions %}
+        {{ region.id }}: [{% for s in region.sites %}'{{ s }}', {% endfor %}],
+        {% endfor %}
+    };
+
+    function filterSites(siteIds, clear=false) {
+        const siteInputs = [];
+
+        $('input[name="sites"]').each(function() {
+            if (clear || siteIds.indexOf($(this).attr('value')) >= 0) {
+                siteInputs.push($(this));
+                $(this).closest('li').show();
+            } else {
+                $(this).prop('checked', false);
+                $(this).closest('li').hide();
+            }
+        });
+    }
+
+    $(document).ready(() => {
+        $('#filters select').selectize();
+
+        $('#regions').change(function() {
+            if (!$(this).val().length) {
+                filterSites(undefined, true);
+                return;
+            }
+
+            const sites = $(this).val().reduce((acc, id) => {
+                return [
+                    ...acc,
+                    ...regionalSites[id],
+                ];
+            }, []);
+
+            filterSites(sites);
+        });
+
+        $('#togglesites').change(function() {
+            const selected = $(this).prop('checked');
+            $('input[name="sites"]').prop('checked', false);
+            $('input[name="sites"]:visible').prop('checked', selected);
+        });
+    });
+</script>
 {% endblock %}

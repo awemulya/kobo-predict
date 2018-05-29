@@ -2468,11 +2468,41 @@ class AllResponseImages(ReviewerRoleMixin, View):
 
 
 class SiteBulkEditView(View):
+    def get_regions(self, project, parent=None, default=[], prefix=''):
+        regions = Region.objects.filter(project=project, parent=parent)
+        if regions.count() == 0:
+            return default
+
+        result = default + [
+            {
+                'id': region.pk,
+                'name': '{}{} ({})'.format(
+                    prefix,
+                    region.name,
+                    region.identifier,
+                ),
+                'sites': [s.id for s in Site.objects.filter(
+                    region=region
+                )],
+            } for region in regions
+        ]
+
+        for region in regions:
+            result = self.get_regions(
+                project,
+                region,
+                result,
+                '{}{} / '.format(prefix, region.name),
+            )
+
+        return result
+
     def get(self, request, pk):
         project = Project.objects.get(pk=pk)
 
         context = {
             'project': project,
+            'regions': self.get_regions(project),
             'form': SiteBulkEditForm(project=project),
         }
 
@@ -2486,6 +2516,7 @@ class SiteBulkEditView(View):
         project = Project.objects.get(pk=pk)
         context = {
             'project': project,
+            'regions': self.get_regions(project),
             'form': SiteBulkEditForm(project=project),
         }
 
