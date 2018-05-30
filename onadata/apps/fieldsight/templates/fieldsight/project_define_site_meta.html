@@ -113,8 +113,8 @@
                 
                 if(obj.question_type=='Link'){
                     const submetas = [];
-                    Object.keys(obj.site_meta_attributes).map((key, index) => submetas.push(
-                         <CheckboxComponent project_id={key} metas={obj.site_meta_attributes[key]} selected_metas={this.state.selected_metas} updateSelectedMetas={this.props.updateSelectedMetas}/>
+                    Object.keys(obj.metas).map((key, index) => submetas.push(
+                         <CheckboxComponent project_id={key} metas={obj.metas[key]} selected_metas={this.state.selected_metas} updateSelectedMetas={this.props.updateSelectedMetas}/>
                         ))
                     return (
                         <div>{
@@ -140,8 +140,8 @@
             renderNormal:function(){
                 
                 return (<div>
-                 {         
-                                  this.state.metas.map(this.eachMeta)
+                    {         
+                        this.state.metas.map(this.eachMeta)
                     }
                 
                 </div>
@@ -313,7 +313,7 @@
     var ExtLinkQuestion = React.createClass({
             
             getInitialState: function () {
-                console.log(this.props.selected_metas);
+                
                 return {questionTypes:questionTypes, isLoaded: false, projects:[], project_index:0, selected_metas:this.props.selected_metas, metas:[], project_id: this.props.link_project_id}
             },
 
@@ -359,7 +359,7 @@
             projectChanged: function () {        
                 const selectedProject = this.state.projects[this.refs.selectProjectRef.value]
                 this.props.updateLinkProject(selectedProject.id, this.props.index);
-                // console.log(this.state);
+                console.log(selectedProject.site_meta_attributes);
                 this.setState({project_id:selectedProject.id, metas:selectedProject.site_meta_attributes});
                 
             },
@@ -370,6 +370,7 @@
             },
 
             renderForm:function(){
+                console.log("sdfsdf"+this.state.metas);
                 if(this.state.isLoaded){
                     return(
                     <div className="QuestionContainer form-row">
@@ -498,7 +499,7 @@
         }
         else if(questionType == "Link" && arr[i].question_type != "Link"){
             arr[i].project_id = 0;
-            arr[i].metas=[];
+            arr[i].metas={};
         }
         
         

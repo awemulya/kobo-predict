@@ -9,7 +9,7 @@ from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTyp
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet, ProjectRegionslistViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectMetas, OrganizationsProjectViewSet, MyProjectlistViewSet
 from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionViewSet, RegionPagignatedViewSet, RegionSearchViewSet
-from onadata.apps.fieldsight.viewsets.SiteViewSet import SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
+from onadata.apps.fieldsight.viewsets.SiteViewSet import SitelistMinimalViewset, SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
     SiteReviewViewSet, ProjectTypeViewset, SiteTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet, SiteUpdateViewSet, \
     ProjectUpdateViewSet, SiteUnderOrgViewSet, SiteUnderRegionViewSet, SitePagignatedViewSet, SiteSearchViewSet
 from .forms import RegistrationForm
@@ -237,6 +237,7 @@ urlpatterns = [
     url(r'^api/project_map/(?P<pk>\d+)/$', project_dashboard_map, name='pdm'),
     url(r'^api/project_graphs/(?P<pk>\d+)/$', project_dashboard_graphs, name='pdg'),
     url(r'^api/project/metas/(?P<pk>\d+)/$', ProjectMetas.as_view({'get':'list'}), name='pmetas'),
+    url(r'^api/project/sites/(?P<pk>\d+)/$', SitelistMinimalViewset.as_view({'get':'list'}), name='inimalsitelist'),
 
 
     ]
