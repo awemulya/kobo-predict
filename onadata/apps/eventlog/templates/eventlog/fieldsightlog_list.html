@@ -4,331 +4,308 @@
 {% block content %}
 {% load filters %}
 <script type="text/javascript">
-  
-
-// document.onload = getnotifdata('{% url 'eventlog:api-not' %}');
-
-//     var data = "";
-//     var speed = 500;
-//     var types = {
-//         0 : type0,
-//         1 : type1,
-//         2 : type2,
-//         3 : type3,
-//         4 : type4,
-//         5 : type5,
-//         6 : type6,
-//         7 : type7,
-//         8 : type8,
-//         9 : type9,
-//         10 : type10,
-//         11 : type11,
-//         12 : type12,
-//         13 : type13,
-//         14 : type14,
-//         15 : type15,
-//         16 : type16,
-//         17 : type17,
-//         18 : type18,
-//         19 : type19,
-//         20 : type20,
-//     }
-
-// //notification message list builder with ahref links
-//     function type0(data){
-//          content = '<b><a href="'+ data.get_source_url +'">' + data.source_name +'</a></b> joined <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> as an Organization Admin.';
-//          return content;
-//     }
-//     function type1(data){
-//          content = '<b><a href="'+ data.get_source_url +'">' + data.source_name +'</a></b> joined <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> as an Organization Admin.';
-//          return content;
-//     }
-
-//     function type2(data){
-//           content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as the Project Manager <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.invitor_url + '">' + data.invitor_name + '</a></b>';
-//               return content;
-//     }
-
-//     function type3(data){
-//            content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Reviewer of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>';
-//               return content;
-
-//     }
-//     function type4(data){
-//           content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Site Supervisor of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>';
-//                 return content;
-
-//     }
-//     function type5(data){
-//            content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as an Organization Admin in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
-//               return content;
-//     }
-//     function type6(data){
-//            content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as a Project Manager in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
-//               return content;
-//     }
-//     function type7(data){
-//            content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as a Reviewer in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
-//               return content;
-//     }
-
-//     function type8(data){
-//                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as a Site Supervisor in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
-//                   return content;
-//         }
-
-//     function type9(data){
-//                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created a new organization named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
-//                   return content;
-//         }
 
 
-//     function type10(data){
-//                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created a new project named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
-//                   return content;
-//         }
+    // document.onload = getnotifdata('{% url 'eventlog:api-not' %}');
+
+    //     var data = "";
+    //     var speed = 500;
+    //     var types = {
+    //         0 : type0,
+    //         1 : type1,
+    //         2 : type2,
+    //         3 : type3,
+    //         4 : type4,
+    //         5 : type5,
+    //         6 : type6,
+    //         7 : type7,
+    //         8 : type8,
+    //         9 : type9,
+    //         10 : type10,
+    //         11 : type11,
+    //         12 : type12,
+    //         13 : type13,
+    //         14 : type14,
+    //         15 : type15,
+    //         16 : type16,
+    //         17 : type17,
+    //         18 : type18,
+    //         19 : type19,
+    //         20 : type20,
+    //     }
+
+    // //notification message list builder with ahref links
+    //     function type0(data){
+    //          content = '<b><a href="'+ data.get_source_url +'">' + data.source_name +'</a></b> joined <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> as an Organization Admin.';
+    //          return content;
+    //     }
+    //     function type1(data){
+    //          content = '<b><a href="'+ data.get_source_url +'">' + data.source_name +'</a></b> joined <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> as an Organization Admin.';
+    //          return content;
+    //     }
+
+    //     function type2(data){
+    //           content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as the Project Manager <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.invitor_url + '">' + data.invitor_name + '</a></b>';
+    //               return content;
+    //     }
+
+    //     function type3(data){
+    //            content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Reviewer of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>';
+    //               return content;
+
+    //     }
+    //     function type4(data){
+    //           content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was added as Site Supervisor of <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> by <b><a href="' +  data.get_invitor_url + '">' + data.invitor_name + '</a></b>';
+    //                 return content;
+
+    //     }
+    //     function type5(data){
+    //            content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as an Organization Admin in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+    //               return content;
+    //     }
+    //     function type6(data){
+    //            content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as a Project Manager in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+    //               return content;
+    //     }
+    //     function type7(data){
+    //            content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as a Reviewer in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+    //               return content;
+    //     }
+
+    //     function type8(data){
+    //                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> was assigned as a Site Supervisor in <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+    //                   return content;
+    //         }
+
+    //     function type9(data){
+    //                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created a new organization named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+    //                   return content;
+    //         }
 
 
-//     function type11(data){
-//                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created a new site named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> in  <b><a href="' +  data.get_extraobj_url + '">' + data.get_extraobj_name + '</a></b>';
-//                   return content;
-//         }
-
-//     function type12(data){
-//                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created <b>'+ title +' in <a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
-//                   return content;
-//         }
+    //     function type10(data){
+    //                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created a new project named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+    //                   return content;
+    //         }
 
 
-//     function type13(data){
-//                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of organization named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
-//                   return content;
-//         }       
-            
-//     function type14(data){
-//                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of project named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
-//                   return content;
-//         } 
+    //     function type11(data){
+    //                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created a new site named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b> in  <b><a href="' +  data.get_extraobj_url + '">' + data.get_extraobj_name + '</a></b>';
+    //                   return content;
+    //         }
 
-//     function type15(data){
-//                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of site named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
-//                   return content;
-//         }   
-
-//     function type16(data){
-//                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> submitted a response for '+ data.extra_message +' <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
-//                   return content;
-//         }   
-
-//     function type17(data){
-//                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> reviewed a response '+ data.title +' <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> in site <b><a href="' + data.get_extraobj_url+ '">' + data.get_eventobj_url+'</a></b>';
-//                   return content;
-//         }   
-
-//     function type18(data){
-//                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> assigned a new form'+ data.title +' in project <b><a href="' + data.get_content_url+ '">' + data.get_content_url+'</a></b>';
-//                   return content;
-//         }   
-
-//     function type19(data){
-//                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> assigned a new '+ data.title +' in site <b><a href="' + data.get_content_url+ '">' + data.get_content_url+'</a></b>';
-//                   return content;
-//         }   
+    //     function type12(data){
+    //                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> created <b>'+ title +' in <a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+    //                   return content;
+    //         }
 
 
-//     function type20(data){
-//                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> edited <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> form.';
-//                   return content;
-//         }
+    //     function type13(data){
+    //                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of organization named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+    //                   return content;
+    //         }       
 
-// function redirect(url){
-//   window.location = url;
-// }
+    //     function type14(data){
+    //                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of project named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+    //                   return content;
+    //         } 
+
+    //     function type15(data){
+    //                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> changed the details of site named <b><a href="' +  data.get_event_url + '">' + data.get_event_name + '</a></b>';
+    //                   return content;
+    //         }   
+
+    //     function type16(data){
+    //                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> submitted a response for '+ data.extra_message +' <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b>';
+    //                   return content;
+    //         }   
+
+    //     function type17(data){
+    //                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> reviewed a response '+ data.title +' <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> in site <b><a href="' + data.get_extraobj_url+ '">' + data.get_eventobj_url+'</a></b>';
+    //                   return content;
+    //         }   
+
+    //     function type18(data){
+    //                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> assigned a new form'+ data.title +' in project <b><a href="' + data.get_content_url+ '">' + data.get_content_url+'</a></b>';
+    //                   return content;
+    //         }   
+
+    //     function type19(data){
+    //                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> assigned a new '+ data.title +' in site <b><a href="' + data.get_content_url+ '">' + data.get_content_url+'</a></b>';
+    //                   return content;
+    //         }   
 
 
+    //     function type20(data){
+    //                content = '<b><a href="' + data.get_source_url + '">'+ data.source_name +'</a></b> edited <b><a href="' +  data.get_event_url + '">' + data.event_name + '</a></b> form.';
+    //                   return content;
+    //         }
 
-// function dateparser(date){
-//    let months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
- 
-//     var d = new Date(date);
-
-//     month = d.getMonth();
-//     time=d.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-//     clean_date = months[month] +', '+ d.getDate() +', '+ d.getFullYear() +', '+ time.toLowerCase()+'.';
-//     return clean_date;
-
-// }
-//   function getnotifdata(url){ 
-//       $.ajax({
-//         url: url,
-//         type: 'GET',
-//         success: function (data) {
-//            data.results.forEach(populatelist);
-//            speed=0;
-
-//         }
-//       });
-// }
+    // function redirect(url){
+    //   window.location = url;
+    // }
 
 
 
+    // function dateparser(date){
+    //    let months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
 
-// function populatelist(data, index){
+    //     var d = new Date(date);
 
-   
-//     typeid = data.type;
-//     var readstatus='unread';
-//     if(data.seen_by.includes({{ request.user.id }})){
-//        readstatus='read';
-//     }
-// // get description for notificationaccotding to its type id
-//     var content = types[typeid](data);
-// //append the data in main notificatin div
-    
-//     var new_li = '<li class="note-div-sm '+ readstatus +'" id="'+data.id+'" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ dateparser(data.date)+' </div></div>  </li>';
+    //     month = d.getMonth();
+    //     time=d.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+    //     clean_date = months[month] +', '+ d.getDate() +', '+ d.getFullYear() +', '+ time.toLowerCase()+'.';
+    //     return clean_date;
 
-//     // var div = document.getElementById('notifications');
+    // }
+    //   function getnotifdata(url){ 
+    //       $.ajax({
+    //         url: url,
+    //         type: 'GET',
+    //         success: function (data) {
+    //            data.results.forEach(populatelist);
+    //            speed=0;
 
-//     // div.innerHTML += new_li;
-//     speed = speed+200;
+    //         }
+    //       });
+    // }
 
-// $(new_li).appendTo("#notification-ul");
-// $("#"+data.id).fadeIn(speed);
-// }
+
+
+
+    // function populatelist(data, index){
+
+
+    //     typeid = data.type;
+    //     var readstatus='unread';
+    //     if(data.seen_by.includes({{ request.user.id }})){
+    //        readstatus='read';
+    //     }
+    // // get description for notificationaccotding to its type id
+    //     var content = types[typeid](data);
+    // //append the data in main notificatin div
+
+    //     var new_li = '<li class="note-div-sm '+ readstatus +'" id="'+data.id+'" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);"> <div class="col-md-1"><i class="fa fa-info-circle fa-1 note-icon-sm"></i> </div>   <div class="col-md-10"><span class="detail-text1 notification-title-sm">' + content + '</span><div class="low">  <i class="fa fa-clock-o space" aria-hidden="true"></i>'+ dateparser(data.date)+' </div></div>  </li>';
+
+    //     // var div = document.getElementById('notifications');
+
+    //     // div.innerHTML += new_li;
+    //     speed = speed+200;
+
+    // $(new_li).appendTo("#notification-ul");
+    // $("#"+data.id).fadeIn(speed);
+    // }
 
 
 </script>
-            <div id="main-content" class="padding">
-                <section class="panel">
-                    <header class="panel-heading clearfix">
-                        <h3><i class="la la-building"></i>{% trans 'New' %}{% trans 'Site' %} </h3>
-                    </header>
-                    <div class="panel-body">
-                      
-
-                    <style >
-    .panel-body{
-        position: relative;
-        bottom: 46px;
-    }
-</style>
-    <span class="title2_note">{% trans 'Your' %} {% trans 'Notifications' %}</span>
-    <div class="gap"></div>
-    <div class='well'>
-
-        
-
-       <ul class="menu" id="notificationul">
-       </ul>
-
-        <center>
-                <input style="display:none;" type="button" id="getnextlist" value="load more">
-            </center>
-    </div>
+<div id="main-content" class="padding">
+    <section class="panel">
+        <header class="panel-heading clearfix">
+            <h3><i class="la la-building"></i>{% trans 'New' %}{% trans 'Site' %} </h3>
+        </header>
+        <div class="panel-body">
 
 
-
-                    </div>
-                </section>
-
-            </div>
-{% endblock %}
- {% block extrascript %}
- <script type="text/javascript">
-
-
-document.onload = getnotifdatalist('{% url 'eventlog:api-not' %}');
-
-  function getnotifdatalist(url){
-      $.ajax({
-        url: url,
-        type: 'GET',
-        success: function (data) {
-           data.results.forEach(populatedatalist);
-           speed=0;
-           if (data.next == null){
-            document.getElementById('getnextlist').style.display = 'none';
-           }else{
-            document.getElementById('getnextlist').style.display = 'block';
-            document.getElementById("getnextlist").setAttribute( "onClick", "javascript: getnotifdatalist('"+ data.next+"');" );
-        }
-        }
-      });
+            <style >
+.panel-body{
+    position: relative;
+    bottom: 46px;
 }
+            </style>
+            <span class="title2_note">{% trans 'Your' %} {% trans 'Notifications' %}</span>
+            <div class="gap"></div>
+            <div class='well'>
 
 
-function populatedatalist(data, index){
 
-   
-    typeid = data.type;
-    var readstatus='unread';
-    if(data.seen_by.includes({{ request.user.id }})){
-       readstatus='read';
+                <ul class="menu" id="notificationul">
+                </ul>
+
+                <center>
+                    <input style="display:none;" type="button" id="getnextlist" value="load more">
+                </center>
+            </div>
+
+
+
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+{% block extrascript %}
+<script type="text/javascript">
+
+
+    document.onload = getnotifdatalist('{% url 'eventlog:api-not' %}');
+
+    function getnotifdatalist(url){
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (data) {
+                data.results.forEach(populatedatalist);
+                speed=0;
+                if (data.next == null){
+                    document.getElementById('getnextlist').style.display = 'none';
+                }else{
+                    document.getElementById('getnextlist').style.display = 'block';
+                    document.getElementById("getnextlist").setAttribute( "onClick", "javascript: getnotifdatalist('"+ data.next+"');" );
+                }
+            }
+        });
     }
-// get description for notificationaccotding to its type id
-    var content = types[typeid](data);
-//append the data in main notificatin div
-    
+
+
+    function populatedatalist(data, index){
+        typeid = data.type;
+        var readstatus='unread';
+        if(data.seen_by.includes({{ request.user.id }})){
+            readstatus='read';
+        }
+        // get description for notificationaccotding to its type id
+        var content = types[typeid](data);
+        //append the data in main notificatin div
 
 
 
 
 
-    var new_li = '<li class=" note-div-sm '+ readstatus +'" id="'+data.id+'list" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);">'+
-                            
-                                '<div class="notification-item">' +
-                                    '<div class="notification-avatar pull-left">' +
-                                        '<i class="avatar-icon la la-bolt"></i>' +
-                                    '</div>' +
-                                   content +
-                      '<p class="notification-highlight-time">' + dateparser(data.date) + '</p>' +
-                                    '</div>' +
-                                '</div>' +
-                            
+
+        var new_li = '<li class=" note-div-sm '+ readstatus +'" id="'+data.id+'list" style="display:none;" onclick="redirect(`'+data.get_absolute_url+'`);">'+
+
+            '<div class="notification-item">' +
+            '<div class="notification-avatar pull-left">' +
+            '<i class="avatar-icon la la-bolt"></i>' +
+            '</div>' +
+            content +
+            '<p class="notification-highlight-time">' + dateparser(data.date) + '</p>' +
+            '</div>' +
+            '</div>' +
+
 '</li>';
 
-console.log(new_li);
 
 
 
+        // var div = document.getElementById('notifications');
 
-    // var div = document.getElementById('notifications');
+        // div.innerHTML += new_li;
+        speed = speed+200;
 
-    // div.innerHTML += new_li;
-    speed = speed+200;
-
-$(new_li).appendTo("#notificationul");
-$("#"+data.id+"list").fadeIn(speed);
-}
+        $(new_li).appendTo("#notificationul");
+        $("#"+data.id+"list").fadeIn(speed);
+    }
 
 
 
 </script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
-    <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
-  <script type="text/javascript">
-     var static_url ="{{ STATIC_URL }}";
-     var elat = "{{form.instance.latitude}}";
-     var elong = "{{form.instance.longitude}}";
-    </script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/addmarker.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
+<script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
+<script type="text/javascript">
+    var static_url ="{{ STATIC_URL }}";
+    var elat = "{{form.instance.latitude}}";
+    var elong = "{{form.instance.longitude}}";
+</script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/addmarker.js"></script>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-

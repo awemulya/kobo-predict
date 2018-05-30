@@ -34,6 +34,8 @@ class LogSerializer(serializers.ModelSerializer):
     get_extraobj_url = serializers.ReadOnlyField()
 
     get_absolute_url = serializers.ReadOnlyField()
+
+    extra_json = serializers.ReadOnlyField()
     
     # org_name = serializers.ReadOnlyField(source='organization.name', read_only=True)
     # get_org_url = serializers.ReadOnlyField()
@@ -50,7 +52,6 @@ class LogSerializer(serializers.ModelSerializer):
 
     def get_source_name(self, obj):
         return obj.source.first_name + " " + obj.source.last_name
-
 
 
 class NotificationListView(LoginRequiredMixin, ListView):

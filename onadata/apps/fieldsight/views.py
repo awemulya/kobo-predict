@@ -261,6 +261,11 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             if question['question_name'] in meta_answers:
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
         myanswers = mylist
+
+        logs = []
+        for log in obj.logs.all()[:50]:
+            logs.append(log)
+
         result = get_images_for_sites_count(obj.id)
         
         countlist = list(result["result"])
@@ -283,8 +288,9 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             'progress_chart_data_labels': progress_chart_data.values(),
             'meta_data': myanswers,
             'is_supervisor_only': is_supervisor_only,
-            'next_photos_count':total_count - 5,
-            'total_photos': total_count
+            'next_photos_count': total_count - 5,
+            'total_photos': total_count,
+            'logs': logs,
         }
         return dashboard_data
 
@@ -722,11 +728,10 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-
 class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(SiteUpdateView, self).get_context_data(**kwargs)
-        site=Site.objects.get(pk=self.kwargs.get('pk'))
+        site = Site.objects.get(pk=self.kwargs.get('pk'))
         context['project'] = site.project
         context['pk'] = self.kwargs.get('pk')
         context['json_questions'] = json.dumps(site.project.site_meta_attributes)
@@ -737,11 +742,34 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
+        site = Site.objects.get(pk=self.kwargs.get('pk'))
+        old_meta = site.site_meta_attributes_ans
+
         self.object = form.save(project_id=self.kwargs.get('pk'), new=False)
-        noti = self.object.logs.create(source=self.request.user, type=15, title="edit Site",
-                                       organization=self.object.project.organization, project=self.object.project, content_object=self.object,
-                                       description='{0} changed the details of site named {1}'.format(
-                                           self.request.user.get_full_name(), self.object.name))
+        site = Site.objects.get(pk=self.kwargs.get('pk'))
+        new_meta = site.site_meta_attributes_ans
+
+        extra_json = None
+        if old_meta != new_meta:
+            updated = {}
+            meta_questions = site.project.site_meta_attributes
+            for question in meta_questions:
+                key = question['question_name']
+                label = question['question_text']
+                if old_meta.get(key) != new_meta.get(key):
+                    updated[label] = [old_meta.get(key, 'null'), new_meta.get(key, 'null')]
+            extra_json = updated
+
+        description = '{0} changed the details of site named {1}'.format(
+            self.request.user.get_full_name(), self.object.name
+        )
+        noti = self.object.logs.create(
+            source=self.request.user, type=15, title="edit Site",
+            organization=self.object.project.organization,
+            project=self.object.project, content_object=self.object,
+            description=description,
+            extra_json=extra_json,
+        )
         result = {}
         result['description'] = 'new site {0} updated by {1}'.format(self.object.name, self.request.user.username)
         result['url'] = noti.get_absolute_url()
@@ -1940,8 +1968,6 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk':self.object.project.id}))
 
 
-
-
 class RegionalSitelist(ProjectRoleMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         if self.kwargs.get('region_pk') == "0":
@@ -2427,9 +2453,15 @@ class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
         meta_questions = obj.project.site_meta_attributes
         meta_answers = obj.site_meta_attributes_ans
         mylist =[]
+
         for question in meta_questions:
             if question['question_name'] in meta_answers:
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
+
+        logs = []
+        for log in obj.logs.all()[:50]:
+            logs.append(log)
+
         myanswers = mylist
         outstanding, flagged, approved, rejected = obj.get_site_submission()
         dashboard_data = {
@@ -2445,6 +2477,7 @@ class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
             'progress_chart_data_data': progress_chart_data.keys(),
             'progress_chart_data_labels': progress_chart_data.values(),
             'meta_data': myanswers,
+            'logs': logs,
         }
         return dashboard_data
 

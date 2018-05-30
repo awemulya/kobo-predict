@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
+from jsonfield import JSONField
 
 from onadata.apps.fieldsight.models import Organization, Project, Site
 from onadata.apps.users.models import UserProfile
@@ -55,6 +56,7 @@ class FieldSightLog(models.Model):
     project = models.ForeignKey(Project, related_name="logs", null=True)
     site = models.ForeignKey(Site, related_name="logs", null=True)
     extra_message = models.TextField(blank=True, null=True)
+    extra_json = JSONField(blank=True, null=True, default=None)
     
     recipient = models.ForeignKey(User, related_name='recipent_log', null=True)
 
@@ -107,6 +109,9 @@ class FieldSightLog(models.Model):
         else:
             return profile.get_absolute_url()
 
+    def get_source_name(self):
+        return self.source.first_name + ' ' + self.source.last_name
+
     def get_org_url(self):
         if self.organization is None:
             return None
@@ -121,6 +126,9 @@ class FieldSightLog(models.Model):
         if self.site is None:
             return None
         return self.site.get_absolute_url()
+
+    def get_extra_json_string(self):
+        return json.dumps(self.extra_json)
 
     def __str__(self):
         return str(self.get_type_display())

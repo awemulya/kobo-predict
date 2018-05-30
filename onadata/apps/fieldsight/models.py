@@ -436,7 +436,6 @@ def get_survey_image_filename(instance, filename):
     slug = slugify(title)
     return "survey_images/%s-%s-%s" % (project, slug, filename)
 
-
 class BluePrints(models.Model):
     site = models.ForeignKey(Site, related_name="blueprints")
     image = models.FileField(upload_to=get_image_filename,

@@ -1,3 +1,4 @@
+import json
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
 from onadata.apps.evevtlog.models import FieldSightLog
@@ -9,4 +10,4 @@ class LogSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = FieldSightLog
-        exclude = (,)
+        fields = '__all__'
