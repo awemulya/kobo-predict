@@ -221,6 +221,7 @@ urlpatterns = [
     url(r'^site/(?P<pk>\d+)/site-meta-form/$', SiteMetaForm.as_view(), name='site-meta-form'),
     url(r'^multi-site-assign-region/(?P<pk>\d+)/$', MultiSiteAssignRegionView.as_view(), name='multi_site_region_assign'),
     url(r'^bulksitesample/(?P<pk>\d+)/$', ExcelBulkSiteSample.as_view(), name='excel_bulk_site_sample'),
+    url(r'^bulksitesample/(?P<pk>\d+)/(?P<edit>\d+)/$', ExcelBulkSiteSample.as_view(), name='excel_bulk_site_sample'),
     url(r'^ProjectStageResponsesStatus/(?P<pk>\d+)/$',ProjectStageResponsesStatus.as_view(), name='ProjectStageResponsesStatus'),
     url(r'^project/report/stage-table/(?P<pk>\d+)/$', StageTemplateView.as_view(), name='ProjectStageDetailtemplate'),
     url(r'^site/report/custom-responses/(?P<pk>\d+)/$', FormlistAPI.as_view(), name='generate_custom_report'),

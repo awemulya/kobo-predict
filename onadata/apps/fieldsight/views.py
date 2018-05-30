@@ -888,9 +888,8 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                sitefile=request.FILES['file']
+                sitefile = request.FILES['file']
                 user = request.user
-                print sitefile
                 task = bulkuploadsites.delay(user, sitefile, pk)
                 if CeleryTaskProgress.objects.create(task_id=task.id, user=user, task_type=0):
                     messages.success(request, 'Sites are being uploaded. You will be notified in notifications list as well.')
@@ -2177,8 +2176,9 @@ class MultiSiteAssignRegionView(ProjectRoleMixin, TemplateView):
 
         return HttpResponse("Success")
 
+
 class ExcelBulkSiteSample(ProjectRoleMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk, edit=0):
         project = Project.objects.get(pk=pk)
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename="bulk_upload_sites.xls"'
@@ -2201,11 +2201,46 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
         for col_num in range(len(columns)):
             ws.write(row_num, col_num, columns[col_num], font_style)
 
+        if edit:
+            sites = Site.objects.filter(project=project)
+            for i, site in enumerate(sites):
+                self.write_site(i + 1, site, ws)
+
         # Sheet body, remaining rows
         font_style = xlwt.XFStyle()
 
         wb.save(response)
         return response
+
+    def write_site(self, row, site, ws):
+        columns = [
+            site.identifier,
+            site.name,
+            site.type.name,
+            site.phone,
+            site.address,
+            site.public_desc,
+            site.additional_desc,
+            site.latitude,
+            site.longitude,
+        ]
+
+        if site.project.cluster_sites:
+            columns += [site.region and site.region.identifier]
+
+        meta_ques = site.project.site_meta_attributes
+        meta_ans = site.site_meta_attributes_ans
+
+        if not isinstance(meta_ans, dict):
+            meta_ans = None
+
+        for question in meta_ques:
+            columns += [
+                meta_ans.get(question['question_name'], '') if meta_ans else ''
+            ]
+
+        for col in range(len(columns)):
+            ws.write(row, col, columns[col] or '')
 
 class ProjectSearchView(ListView):
     model = Project
