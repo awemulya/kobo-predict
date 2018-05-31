@@ -2590,3 +2590,62 @@ def project_dashboard_graphs(request, pk):
     submissions_data = submissions.values()
 
     return Response({'pl':progress_labels, 'pd':progress_data, 'sl': submissions_labels, 'sd':submissions_data})
+
+
+def site_refrenced_metas(request, pk):
+    metas = []
+    site = Site.objects.get(pk=pk)
+    project = site.project
+    main_project = project.id
+
+
+
+    def generate(project_id, metas_to_parse, site, selected_metas)
+
+        for meta in metas_to_parse:
+
+            if meta.question_type == "link":
+                if not selected_metas:
+                    selected_metas = meta.metas
+                
+                site = Site.objects.filter(identifier = site.meta_attributes_answers.get(meta.question_name, None), project_id = meta.project_id)
+                if site and site.project_id in selected_metas:
+                    meta['answer'] = '<a href="'+site.meta_attributes_answers.get(meta.question_name)+'></a>'
+                    metas.append(meta)
+                    generate(site.project_id, selected_metas[site.project_id], site, selected_metas)
+            
+                else:
+                    meta['answer'] = "No Site Refrenced"
+                    metas.append(meta)
+
+            else:
+                meta['answer'] = site.meta_attributes_answers[meta.question_name]
+                metas.append(meta)
+
+
+    generate(project.id, project.site_meta_attributes, site, None)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
