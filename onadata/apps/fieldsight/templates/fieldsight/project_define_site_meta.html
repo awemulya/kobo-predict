@@ -110,16 +110,16 @@
             },
 
             eachMeta: function (obj, j){            
-                console.log(obj.project_id, project_id);
+                console.log(obj);
                 if(obj.question_type=='Link'){
-                    if (obj.project_id != project_id){
+                    if (obj.project_id.toString() != project_id.toString()){
+                    
+                    console.log("huhahaha", obj.project_id.toString(), project_id.toString());
+                    
                     const submetas = [];
-                    if (obj.metas.hasOwnProperty(project_id)){
-                        delete obj.metas[project_id];
-                    }
-                    Object.keys(obj.metas).map((key, index) => submetas.push(
-                         <CheckboxComponent project_id={key} metas={obj.metas[key]} selected_metas={this.state.selected_metas} updateSelectedMetas={this.props.updateSelectedMetas}/>
-                        ))
+                    submetas.push(
+                         <CheckboxComponent project_id={obj.project_id} metas={obj.metas[obj.project_id]} selected_metas={this.state.selected_metas} updateSelectedMetas={this.props.updateSelectedMetas}/>
+                        )
                     return (
 
                         <div>
@@ -378,7 +378,7 @@
                 this.props.updateLinkProject(selectedProject.id, this.props.index);
                 console.log(selectedProject.site_meta_attributes);
                 this.setState({project_id:selectedProject.id, metas:selectedProject.site_meta_attributes});
-                
+                //CLEAR ALL SELECTED METAS ON CHANGE
             },
 
             remove:function(){
@@ -387,7 +387,7 @@
             },
 
             renderForm:function(){
-                console.log("sdfsdf"+this.state.metas);
+                
                 if(this.state.isLoaded){
                     return(
                     <div className="QuestionContainer form-row">
