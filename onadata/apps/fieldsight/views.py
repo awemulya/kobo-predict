@@ -307,7 +307,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             'next_photos_count':total_count - 5,
             'total_photos': total_count,
             'total_submissions': response['flagged'] + response['approved'] + response['rejected'] + response['outstanding']
-            'logs': logs,
+            
         }
         return dashboard_data
 
