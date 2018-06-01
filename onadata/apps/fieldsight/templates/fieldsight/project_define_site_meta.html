@@ -18,7 +18,7 @@
 					{% block breadcrumbs %}
 					<ol class="breadcrumb">
 						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
-						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Meta' %} {% trans 'Attributes' %} {% trans 'Upload' %}</li>
 					 </ol>
 					{% endblock %}
 				</nav>
@@ -53,6 +53,7 @@
 
      var _json_question = JSON.parse("{{json_questions|escapejs}}");
      var project_id = "{{ obj.id|unlocalize }}";
+     var org_id = "{{ obj.organization_id|unlocalize }}";
 
      var questionTypes = [{'id': 'Text', 'name': 'Text'}, 
                           {'id': 'Number', 'name': 'Number'},
@@ -88,7 +89,6 @@
             
             
             getInitialState: function () {
-                console.log("Fiest");
                 return {isloaded:false, metas:[], project_id:0, selected_metas:[]}
             },
 
@@ -110,17 +110,35 @@
             },
 
             eachMeta: function (obj, j){            
-                
+                console.log(obj.project_id, project_id);
                 if(obj.question_type=='Link'){
+                    if (obj.project_id != project_id){
                     const submetas = [];
+                    if (obj.metas.hasOwnProperty(project_id)){
+                        delete obj.metas[project_id];
+                    }
                     Object.keys(obj.metas).map((key, index) => submetas.push(
                          <CheckboxComponent project_id={key} metas={obj.metas[key]} selected_metas={this.state.selected_metas} updateSelectedMetas={this.props.updateSelectedMetas}/>
                         ))
                     return (
-                        <div>{
+
+                        <div>
+                        <br/>
+                        <div>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={(this.state.selected_metas[this.state.project_id] || []).find(temp=>temp.question_name == obj.question_name)}
+                                    onChange={this.toggleCheckbox.bind(this, j, obj)}
+                                />
+                                {obj.question_text}
+                                </label>
+                        </div>
+                        {
                             submetas
                         }</div>
                         )
+                    }
                 }
                 else{
                 return(
@@ -143,7 +161,6 @@
                     {         
                         this.state.metas.map(this.eachMeta)
                     }
-                
                 </div>
             );
             },
@@ -318,7 +335,7 @@
             },
 
             componentDidMount() {
-                fetch("/fieldsight/api/my_projects/"+project_id+"/", {
+                fetch("/fieldsight/api/organization/"+org_id+"/my_projects/"+project_id+"/", {
                       method: 'GET',
                       credentials: 'include'
                     })
@@ -532,11 +549,11 @@
         console.log(arr[i]);
     },
 
-    updateLinkMetas: function (project_id, i, obj){
+    updateIndividualLink: function (project_id, i, obj){
         var arr = this.state.Questions;
         if (project_id in arr[i].metas){
             const obj_exists = arr[i].metas[project_id].find(temp=>temp.question_name == obj.question_name)
-            console.log("hurra");
+        
             if (obj_exists){
                 arr[i].metas[project_id].splice(arr[i].metas[project_id].indexOf(obj_exists), 1);
                 
@@ -544,12 +561,22 @@
             else{
                 arr[i].metas[project_id].push(obj);
             }
-        }else{
+        }
+        else{
             arr[i].metas[project_id]=[obj];
         }
         this.setState({Questions:arr});
+        console.log(arr);
+    },
+
+    updateLinkMetas: function (project_id, i, obj){
+        
+        this.updateIndividualLink(project_id, i, obj);
+        if (obj['question_type'] === "Link"){
+            obj.metas[obj['project_id']].forEach((item) => {this.updateIndividualLink(obj['project_id'], i, item);});
+        }
         console.log("updatingLinkmetas");
-        console.log(arr[i]);
+        
         
     },
 
