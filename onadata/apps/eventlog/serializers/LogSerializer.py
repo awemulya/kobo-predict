@@ -17,7 +17,7 @@ class LogSerializer(serializers.ModelSerializer):
 
     get_absolute_url = serializers.ReadOnlyField()
 
-    extra_json = serializers.ReadOnlyField()
+    extra_json = serializers.JSONField(binary=False)
     
     # org_name = serializers.ReadOnlyField(source='organization.name', read_only=True)
     # get_org_url = serializers.ReadOnlyField()
@@ -49,7 +49,7 @@ class NotificationSerializer(serializers.ModelSerializer):
     get_extraobj_url = serializers.ReadOnlyField()
 
     get_absolute_url = serializers.ReadOnlyField()
-    
+    extra_json = serializers.JSONField(binary=False)
     # org_name = serializers.ReadOnlyField(source='organization.name', read_only=True)
     # get_org_url = serializers.ReadOnlyField()
 
