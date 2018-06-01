@@ -1,0 +1,33 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+
+{% block content %}
+<link href="{% static 'css/geolayer_list.css' %}" rel="stylesheet">
+<div id="main-content" class="padding">
+
+    <nav aria-label="breadcrumb" role="navigation">
+        {% block breadcrumbs %}
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization' %} {% trans 'List' %}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' organization.pk %}">{{organization.name}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Geo layers</li>
+        </ol>
+        {% endblock %}
+    </nav>
+
+    <div class="header">
+        <h2> Geo Layers </h2>
+        <a class="add-btn" href="{% url 'fieldsight:geo-layer-create' organization.id %}">{% trans 'Create new' %}</a>
+    </div>
+
+    <div class="geo-layer-list">
+    {% for geo_layer in object_list %}
+    <div class="geo-layer">
+        <a href="{% url 'fieldsight:geo-layer-update' organization.id geo_layer.id %}">
+            {{ geo_layer.title }}
+        </a>
+    </div>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}

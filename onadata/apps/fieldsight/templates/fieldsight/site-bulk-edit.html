@@ -1,0 +1,131 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+{% block content %}
+<link href="{% static 'css/site-bulk-edit.css' %}" rel="stylesheet">
+<div id="main-content" class="padding">
+
+    <nav aria-label="breadcrumb" role="navigation">
+        {% block breadcrumbs %}
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' project.pk %}">{{ project.name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:proj-site-list' project.pk %}">{% trans 'Sites' %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk edit' %}</li>
+        </ol>
+        {% endblock %}
+    </nav>
+
+    {% if done %}
+    <p>
+    {% trans 'Successfully applied changes' %}
+    </p>
+    {% else %}
+
+    <div id="filters">
+        <select id="regions" placeholder="Filter by regions" multiple>
+            {% for region in regions %}
+            <option value="{{ region.id }}">{{ region.name }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="togglesites">
+            <input type="checkbox" id="togglesites">
+            All sites
+        </label>
+    </div>
+
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+
+        {% for hidden_field in form.hidden_fields %}
+        {{ hidden_field.errors }}
+        {{ hidden_field }}
+        {% endfor %}
+
+        {% for field in form %}
+        {% if field.name != "sites" %}
+        <div class="form-group">
+            <input type="checkbox" name="set_{{ field.name }}" class="select-attr" />
+            {{ field.label_tag }}
+        {% else %}
+        <p>
+            Select the sites for which you want to change metadata:
+        </p>
+        <div class="sites">
+        {% endif %}
+            {{ field.errors }}
+            {% if field.name == "sites" %}
+            {{ field }}
+            {% else %}
+            {{ field|add_class:"form-control" }}
+            {% endif %}
+            {{ field.help_text|safe }}
+        </div>
+        {% if field.name == "sites" %}
+        <p>
+        Select the meta attributes that you want to change and set new values:
+        </p>
+        <div class="attributes">
+        {% endif %}
+        {% endfor %}
+        </div>
+
+        <button type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans 'Apply' %}</button>
+    </form>
+
+    {% endif %}
+
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.min.js"></script>
+<script>
+    const regionalSites = {
+        {% for region in regions %}
+        {{ region.id }}: [{% for s in region.sites %}'{{ s }}', {% endfor %}],
+        {% endfor %}
+    };
+
+    function filterSites(siteIds, clear=false) {
+        const siteInputs = [];
+
+        $('input[name="sites"]').each(function() {
+            if (clear || siteIds.indexOf($(this).attr('value')) >= 0) {
+                siteInputs.push($(this));
+                $(this).closest('li').show();
+            } else {
+                $(this).prop('checked', false);
+                $(this).closest('li').hide();
+            }
+        });
+    }
+
+    $(document).ready(() => {
+        $('#filters select').selectize();
+
+        $('#regions').change(function() {
+            if (!$(this).val().length) {
+                filterSites(undefined, true);
+                return;
+            }
+
+            const sites = $(this).val().reduce((acc, id) => {
+                return [
+                    ...acc,
+                    ...regionalSites[id],
+                ];
+            }, []);
+
+            filterSites(sites);
+        });
+
+        $('#togglesites').change(function() {
+            const selected = $(this).prop('checked');
+            $('input[name="sites"]').prop('checked', false);
+            $('input[name="sites"]:visible').prop('checked', selected);
+        });
+    });
+</script>
+{% endblock %}

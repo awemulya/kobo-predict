@@ -55,6 +55,11 @@ from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, Fiel
 from django.db.models import Q
 from onadata.apps.fieldsight.rolemixins import MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
 from onadata.apps.fsforms.XFormMediaAttributes import get_questions_and_media_attributes
+from .fieldsight_logger_tools import save_submission
+
+import requests
+
+
 
 TYPE_CHOICES = {3, 'Normal Form', 2, 'Schedule Form', 1, 'Stage Form'}
 
@@ -1125,6 +1130,58 @@ class Setup_forms(SPFmixin, View):
                    'schedule_form': KoScheduleForm(request=request)})
 
 
+class FormFillView(View):
+    def get(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        sub_pk = self.kwargs.get('sub_pk')
+
+        fieldsight_xf = FieldSightXF.objects.get(pk=pk)
+        xform = fieldsight_xf.xf
+
+        finstance = FInstance.objects.get(pk=sub_pk) if sub_pk else None
+
+        result = requests.post(
+            'http://localhost:8085/transform',
+            data={
+                'xform': xform.xml,
+            }
+        ).json()
+
+        return render(request, 'fsforms/form.html', {
+            'xform': xform,
+            'html_form': result['form'],
+            'model_str': result['model'],
+            'existing': finstance,
+        })
+
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        sub_pk = self.kwargs.get('sub_pk')
+
+        fs_xf = FieldSightXF.objects.get(pk=pk)
+        xform = fs_xf.xf
+        finstance = FInstance.objects.get(pk=sub_pk) if sub_pk else None
+
+        xml = request.POST['enketo_xml_data']
+        media_files = request.FILES.values()
+        new_uuid = finstance.instance.uuid if finstance else str(uuid.uuid4())
+
+        with transaction.atomic():
+            instance = save_submission(
+                xform=xform,
+                xml=xml,
+                media_files=media_files,
+                new_uuid=new_uuid,
+                submitted_by=request.user,
+                status='submitted_via_web',
+                date_created_override=None,
+                fxid=fs_xf.id,
+                site=fs_xf.site.id,
+            )
+        return HttpResponseRedirect(reverse("forms:site-responses",
+                                            kwargs={'pk': fs_xf.site.pk}))
+
+
 class Configure_forms(SPFmixin, View):
     def get(self, request, *args, **kwargs):
         if self.kwargs.get('is_project') == '1':
@@ -1378,14 +1435,14 @@ class Html_export(ReadonlyFormMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(Html_export, self).get_context_data(**kwargs)
         fsxf_id = int(self.kwargs.get('fsxf_id'))
-        fsxf = FieldSightXF.objects.get(pk=fsxf_id)    
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         # context['pk'] = self.kwargs.get('pk')
         context['is_site_data'] = True
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
         return context
-    
+
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         query = self.request.GET.get("q", None)
@@ -1396,22 +1453,23 @@ class Html_export(ReadonlyFormMixin, ListView):
             new_queryset = queryset 
         return new_queryset
 
+
 class Project_html_export(ReadonlyFormMixin, ListView):
-    model =   FInstance
+    model = FInstance
     paginate_by = 100
     template_name = "fsforms/fieldsight_export_html.html"
 
     def get_context_data(self, **kwargs):
         context = super(Project_html_export, self).get_context_data(**kwargs)
         fsxf_id = int(self.kwargs.get('fsxf_id'))
-        fsxf = FieldSightXF.objects.get(pk=fsxf_id)    
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         # context['pk'] = self.kwargs.get('pk')
         context['is_project_data'] = True
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
         return context
-    
+
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
         query = self.request.GET.get("q", None)

@@ -5,52 +5,53 @@
 {%block extracss %}
 {% endblock %}
 {% block head %}
-    <a class="btn btn-success btn-raised" href="{% url 'fieldsight:sites-list' project %}">{% trans 'Sites' %}</a>
+<a class="btn btn-success btn-raised" href="{% url 'fieldsight:sites-list' project %}">{% trans 'Sites' %}</a>
 {% endblock %}
 
 
 {% block content %}
 
-    <div id="main-content" class="padding">
-				<nav aria-label="breadcrumb" role="navigation">
-					{% block breadcrumbs %}
-					<ol class="breadcrumb">
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' project %}">{{ obj.name }}</a></li>
-						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</li>
-					 </ol>
-					{% endblock %}
-				</nav>
-				<section class="panel">
-					<header class="panel-heading clearfix">
-                        <h3><i class="la la-files-o"></i>{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</h3>
-                    </header>
-					<div class="panel-body">
-						<!-- Add New Organization-->
-						<div id="newOrganization" class="margin-top">
-							<form enctype="multipart/form-data" method="post" action="{% url 'fieldsight:site-upload' project %}">
-								
-								<div class="form-row">
-									{% csrf_token %}
-                                    {{ form.media }}
-                                    {% for field in form %}
+<div id="main-content" class="padding">
+    <nav aria-label="breadcrumb" role="navigation">
+        {% block breadcrumbs %}
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' project %}">{{ obj.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</li>
+        </ol>
+        {% endblock %}
+    </nav>
+    <section class="panel">
+        <header class="panel-heading clearfix">
+            <h3><i class="la la-files-o"></i>{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</h3>
+        </header>
+        <div class="panel-body">
+            <!-- Add New Organization-->
+            <div id="newOrganization" class="margin-top">
+                <form enctype="multipart/form-data" method="post" action="{% url 'fieldsight:site-upload' project %}">
 
-									<div class="form-group col-sm-12">
+                    <div class="form-row">
+                        {% csrf_token %}
+                        {{ form.media }}
+                        {% for field in form %}
 
-									<label class="col-form-label">{% trans 'Upload' %}{% trans 'File:' %}</label>
-									<div class="col-sm-3"><a href="{% url 'fieldsight:excel_bulk_site_sample' project %}" target="_blank">{% trans 'Download' %} {% trans 'Excel' %} {% trans 'Bulk' %} {% trans 'Upload' %} {% trans 'Form.' %}</a></div><br>
-                                    <label class="col-form-label">{{ field }}</label>
-                                    <label class="col-form-label">{{ field.errors }}</label>
-									</div>
+                        <div class="form-group col-sm-12">
 
-                                    {% endfor %}
+                            <label class="col-form-label">{% trans 'Upload' %}{% trans 'File:' %}</label>
+                            <div class="col-sm-3"><a href="{% url 'fieldsight:excel_bulk_site_sample' project %}" target="_blank">{% trans 'Download' %} {% trans 'Excel' %} {% trans 'Bulk' %} {% trans 'Upload' %} {% trans 'Form' %} {% trans 'Empty' %}</a></div><br>
+                            <div class="col-sm-3"><a href="{% url 'fieldsight:excel_bulk_site_sample' project 1 %}" target="_blank">{% trans 'Download' %} {% trans 'Excel' %} {% trans 'Bulk' %} {% trans 'Upload' %} {% trans 'Form' %} {% trans 'Existing' %}</a></div><br>
+                            <label class="col-form-label">{{ field }}</label>
+                            <label class="col-form-label">{{ field.errors }}</label>
+                        </div>
 
-								</div>
-                                <button type="submit" class="btn btn-primary"><i class="la la-upload"></i>{% trans ' upload' %}</button>
-                                <span style="font-color:red;" >{{ form.non_field_errors }}
-							</form>
-						</div>
-					</div>
-                </section>
+                        {% endfor %}
 
-    </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="la la-upload"></i>{% trans ' upload' %}</button>
+                    <span style="font-color:red;" >{{ form.non_field_errors }}
+                </form>
+            </div>
+        </div>
+    </section>
+
+</div>
 {% endblock %}

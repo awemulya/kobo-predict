@@ -45,10 +45,18 @@ from .views import (
     project_html_export, Deploy_survey, deploy_stages, Deploy_general, set_deploy_stages, share_stages,
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms, Configure_forms,
     instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
-    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable, DeleteMyForm)
+    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable, DeleteMyForm,
+
+    FormFillView,
+
+)
 
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
+
+        url(r'^new-submission/(?P<pk>\d+)/$', FormFillView.as_view(), name='new-submission'),
+        url(r'^edit-submission/(?P<pk>\d+)/(?P<sub_pk>\d+)/$', FormFillView.as_view(), name='edit-submission'),
+
         url(r'^assigned/$', MyOwnFormsListView.as_view(), name='forms-list'),
         url(r'^xform/(?P<pk>\d+)/$', XformDetailView.as_view(), name='xform-detail'),
         url(r'^xform/delete/(?P<xf_id>\d+)/$', DeleteMyForm.as_view(), name='xform-delete'),
@@ -109,7 +117,6 @@ urlpatterns = [
         #setup forms UI urls
         url(r'^setup-forms/(?P<is_project>\d)/(?P<pk>\d+)$', Setup_forms.as_view(), name='setup-forms'),
         url(r'^configure-stages/(?P<is_project>\d)/(?P<pk>\d+)$', Configure_forms.as_view(), name='configure_stages'),
-
 ]
 
 

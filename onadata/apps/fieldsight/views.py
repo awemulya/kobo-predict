@@ -36,6 +36,7 @@ from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChart
 from onadata.apps.fsforms.models import FieldSightXF, Stage, FInstance
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
+from onadata.apps.geo.models import GeoLayer
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin, SiteView,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
@@ -44,7 +45,7 @@ from .rolemixins import SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, Reado
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region, SiteType
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm,
-                    SiteTypeForm)
+                    SiteBulkEditForm, SiteTypeForm)
 from django.views.generic import TemplateView
 from django.core.mail import send_mail, EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
@@ -243,6 +244,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'rejected': rejected,
             'total_submissions': flagged + approved + rejected + outstanding
     }
+
         return dashboard_data
 
 
@@ -273,6 +275,11 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             if question['question_name'] in meta_answers:
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
         myanswers = mylist
+
+        logs = []
+        for log in obj.logs.all()[:50]:
+            logs.append(log)
+
         result = get_images_for_sites_count(obj.id)
         
         countlist = list(result["result"])
@@ -300,6 +307,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             'next_photos_count':total_count - 5,
             'total_photos': total_count,
             'total_submissions': response['flagged'] + response['approved'] + response['rejected'] + response['outstanding']
+            'logs': logs,
         }
         return dashboard_data
 
@@ -629,6 +637,14 @@ class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
         context['pk'] = self.kwargs.get('pk')
         return context
 
+    def get_form_kwargs(self):
+        kwargs = super(ProjectCreateView, self).get_form_kwargs()
+        kwargs.update({
+            'organization_id': self.kwargs.get('pk'),
+            'new': True,
+        })
+        return kwargs
+
     def form_valid(self, form):
         self.object = form.save(organization_id=self.kwargs.get('pk'), new=True)
         
@@ -738,11 +754,10 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
         return form
 
 
-
 class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(SiteUpdateView, self).get_context_data(**kwargs)
-        site=Site.objects.get(pk=self.kwargs.get('pk'))
+        site = Site.objects.get(pk=self.kwargs.get('pk'))
         context['project'] = site.project
         context['pk'] = self.kwargs.get('pk')
         context['json_questions'] = json.dumps(site.project.site_meta_attributes)
@@ -753,11 +768,34 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
         return reverse('fieldsight:site-dashboard', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
+        site = Site.objects.get(pk=self.kwargs.get('pk'))
+        old_meta = site.site_meta_attributes_ans
+
         self.object = form.save(project_id=self.kwargs.get('pk'), new=False)
-        noti = self.object.logs.create(source=self.request.user, type=15, title="edit Site",
-                                       organization=self.object.project.organization, project=self.object.project, content_object=self.object,
-                                       description='{0} changed the details of site named {1}'.format(
-                                           self.request.user.get_full_name(), self.object.name))
+        site = Site.objects.get(pk=self.kwargs.get('pk'))
+        new_meta = site.site_meta_attributes_ans
+
+        extra_json = None
+        if old_meta != new_meta:
+            updated = {}
+            meta_questions = site.project.site_meta_attributes
+            for question in meta_questions:
+                key = question['question_name']
+                label = question['question_text']
+                if old_meta.get(key) != new_meta.get(key):
+                    updated[label] = [old_meta.get(key, 'null'), new_meta.get(key, 'null')]
+            extra_json = updated
+
+        description = '{0} changed the details of site named {1}'.format(
+            self.request.user.get_full_name(), self.object.name
+        )
+        noti = self.object.logs.create(
+            source=self.request.user, type=15, title="edit Site",
+            organization=self.object.project.organization,
+            project=self.object.project, content_object=self.object,
+            description=description,
+            extra_json=extra_json,
+        )
         result = {}
         result['description'] = 'new site {0} updated by {1}'.format(self.object.name, self.request.user.username)
         result['url'] = noti.get_absolute_url()
@@ -887,9 +925,9 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                sitefile=request.FILES['file']
+                sitefile = request.FILES['file']
                 user = request.user
-                print sitefile
+                # print sitefile
                 task_obj=CeleryTaskProgress.objects.create(user=user, task_type=0)
                 if task_obj:
                     task = bulkuploadsites.delay(task_obj.pk, user, sitefile, pk)
@@ -970,37 +1008,57 @@ class BluePrintsView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         site = Site.objects.get(pk=self.kwargs.get('id'))
         blueprints = site.blueprints.all()
-
-        ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
-        formset = ImageFormSet(queryset=BluePrints.objects.none())
+        count = 10 - blueprints.count()
+        ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=count, can_delete=True)
+        formset = ImageFormSet(queryset=blueprints)
         return render(request, 'fieldsight/blueprints_form.html', {'site': site, 'formset': formset,'id': self.kwargs.get('id'),
                                                                    'blueprints':blueprints},)
 
     def post(self, request, id):
-        ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
-        formset = ImageFormSet(request.POST, request.FILES,
-                                   queryset=BluePrints.objects.none())
+        site = Site.objects.get(pk=self.kwargs.get('id'))
+        blueprints = site.blueprints.all()
+        count = 10 - blueprints.count()
+        ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=count, can_delete=True)
+        formset = ImageFormSet(request.POST, request.FILES, queryset=blueprints)
 
         if formset.is_valid():
-            for form in formset.cleaned_data:
-                if 'image' in form:
-                    image = form['image']
-                    photo = BluePrints(site_id=id, image=image)
-                    photo.save()
-            messages.success(request,
-                             "Blueprints saved!")
-            site = Site.objects.get(pk=id)
-            blueprints = site.blueprints.all()
+            instances = formset.save(commit=False)
+            for item in instances:
+                item.site_id = id
+                item.save()
 
-            ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
-            formset = ImageFormSet(queryset=BluePrints.objects.none())
-            return render(request, 'fieldsight/blueprints_form.html', {'site': site, 'formset': formset,'id': self.kwargs.get('id'),
-                                                                   'blueprints':blueprints},)
+            try:
+                # For Django 1.7+
+                for item in formset.deleted_objects:
+                    item.delete()
+            except AssertionError:
+                # Django 1.6 and earlier already deletes the objects, trying to
+                # delete them a second time raises an AssertionError.
+                pass
 
-            # return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': id}))
+        return HttpResponseRedirect(reverse("fieldsight:site-blue-prints",
+                                            kwargs={'id': id}))
 
-        formset = ImageFormSet(queryset=BluePrints.objects.none())
-        return render(request, 'fieldsight/blueprints_form.html', {'formset': formset, 'id': self.kwargs.get('id')}, )
+        # if formset.is_valid():
+        #     for form in formset.cleaned_data:
+        #         if 'image' in form:
+        #             image = form['image']
+        #             photo = BluePrints(site_id=id, image=image)
+        #             photo.save()
+        #     messages.success(request,
+        #                      "Blueprints saved!")
+        #     site = Site.objects.get(pk=id)
+        #     blueprints = site.blueprints.all()
+
+        #     ImageFormSet = modelformset_factory(BluePrints, form=BluePrintForm, extra=5)
+        #     formset = ImageFormSet(queryset=BluePrints.objects.none())
+        #     return render(request, 'fieldsight/blueprints_form.html', {'site': site, 'formset': formset,'id': self.kwargs.get('id'),
+        #                                                            'blueprints':blueprints},)
+
+        #     # return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': id}))
+
+        # formset = ImageFormSet(queryset=BluePrints.objects.none())
+        # return render(request, 'fieldsight/blueprints_form.html', {'formset': formset, 'id': self.kwargs.get('id')}, )
 
 
 class ManagePeopleSiteView(LoginRequiredMixin, ReviewerRoleMixin, TemplateView):
@@ -1085,6 +1143,7 @@ class ProjSiteList(ProjectRoleMixin, ListView):
         context['region_id'] = None
         context['type'] = "project"
         return context
+
     def get_queryset(self):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
         return queryset
@@ -1166,13 +1225,13 @@ def RepresentsInt(s):
 
 @login_required()
 def senduserinvite(request):
-
-    emails =request.POST.getlist('emails[]')
+    emails = request.POST.getlist('emails[]')
     group = Group.objects.get(name=request.POST.get('group'))
 
     organization_id = None
     project_id =[]
     site_id =[]
+
 
     if RepresentsInt(request.POST.get('organization_id')):
         organization_id = request.POST.get('organization_id')
@@ -1181,7 +1240,7 @@ def senduserinvite(request):
     if RepresentsInt(request.POST.get('site_id')):
         site_id = [request.POST.get('site_id')]
 
-    response=""
+    response = ""
 
     for email in emails:
         email = email.strip()
@@ -1753,20 +1812,25 @@ class OrgFullmap(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
         data = serialize('full_detail_geojson', sites, geometry_field='location',
                fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
         dashboard_data = {
-           'data': data,
+            'data': data,
+            'geo_layers': obj.geo_layers.all(),
         }
         return dashboard_data
 
 
 class ProjFullmap(ProjectRoleMixin, TemplateView):
     template_name = "fieldsight/map.html"
+
     def get_context_data(self, **kwargs):
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
         sites = obj.sites.filter(is_active=True, is_survey=False)
-        data = serialize('full_detail_geojson', sites, geometry_field='location',
-                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id',))
+        data = serialize(
+            'full_detail_geojson', sites, geometry_field='location',
+            fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id',)
+        )
         dashboard_data = {
             'data': data,
+            'geo_layers': obj.geo_layers.all(),
         }
         return dashboard_data
 
@@ -1778,8 +1842,8 @@ class SiteFullmap(ReviewerRoleMixin, TemplateView):
         data = serialize('full_detail_geojson', [obj], geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
         dashboard_data = {
-
             'data': data,
+            'geo_layers': obj.project.geo_layers.all(),
         }
         return dashboard_data
 
@@ -1829,11 +1893,11 @@ class SitedataSubmissionView(ReadonlySiteLevelRoleMixin, TemplateView):
         return data
 
 
-
 class RegionView(object):
     model = Region
     success_url = reverse_lazy('fieldsight:region-list')
     form_class = RegionForm
+
 
 class RegionListView(RegionView, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
@@ -1845,12 +1909,12 @@ class RegionListView(RegionView, LoginRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
-        queryset = Region.objects.filter(project_id=self.kwargs.get('pk'), is_active=True)
+        queryset = Region.objects.filter(project_id=self.kwargs.get('pk'), is_active=True,
+                                         parent=None)
         return queryset
 
 
 class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
-
     def get_context_data(self, **kwargs):
         context = super(RegionCreateView, self).get_context_data(**kwargs)
         project = Project.objects.get(pk=self.kwargs.get('pk'))
@@ -1862,11 +1926,26 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         # print form.cleaned_data['identifier']
         self.object = form.save(commit=False)
-        self.object.project_id=self.kwargs.get('pk')
-        existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'), project_id=self.kwargs.get('pk'))
+
+        self.object.project_id = self.kwargs.get('pk')
+        self.object.parent_id = self.kwargs.get('parent_pk')
+        existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'))
         if existing_identifier:
             messages.add_message(self.request, messages.INFO, 'Your identifier conflict with existing region please use different identifier to create region')
-            return HttpResponseRedirect(reverse('fieldsight:region-add', kwargs={'pk': self.kwargs.get('pk')}))
+
+            if not self.kwargs.get('parent_pk'):
+                return HttpResponseRedirect(reverse(
+                    'fieldsight:region-add',
+                    kwargs={'pk': self.kwargs.get('pk')},
+                ))
+            else:
+                return HttpResponseRedirect(reverse(
+                    'fieldsight:sub-region-add',
+                    kwargs={
+                        'pk': self.kwargs.get('pk'),
+                        'parent_pk': self.kwargs.get('parent_pk'),
+                    }
+                ))
         else:
             self.object.save()
             messages.add_message(self.request, messages.INFO, 'Sucessfully new region is created')
@@ -1874,7 +1953,20 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse('fieldsight:region-list', kwargs={'pk': self.kwargs.get('pk')})
+        if not self.kwargs.get('parent_pk'):
+            return reverse(
+                'fieldsight:region-list',
+                kwargs={
+                    'pk': self.kwargs.get('pk'),
+                }
+            )
+        else:
+            return reverse(
+                'fieldsight:region-update',
+                kwargs={
+                    'pk': self.kwargs.get('parent_pk'),
+                }
+            )
 
 
 class RegionDeleteView(RegionView, DeleteView):
@@ -1907,6 +1999,9 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
         region = Region.objects.get(pk=self.kwargs.get('pk'))
         context['project'] = region.project
         context['pk'] = self.kwargs.get('pk')
+        context['subregion_list'] = Region.objects.filter(
+            parent__pk=self.kwargs.get('pk')
+        )
         return context
 
     def form_valid(self, form):
@@ -1916,26 +2011,31 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
 
 
 
-class RegionalSitelist(ProjectRoleMixin, ListView):
-    model = Site
-    template_name = 'fieldsight/site_list.html'
-    paginate_by = 180
+# class RegionalSitelist(ProjectRoleMixin, ListView):
+#     model = Site
+#     template_name = 'fieldsight/site_list.html'
+#     paginate_by = 180
 
-    def get_context_data(self, **kwargs):
-        context = super(RegionalSitelist, self).get_context_data(**kwargs)
-        context['pk'] = self.kwargs.get('pk')
-        context['region_id'] = self.kwargs.get('region_id')
-        context['type'] = "region"
-        return context
-    def get_queryset(self, **kwargs):
-        queryset = Site.objects.filter(project_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
-        # print self.kwargs.get('region_id')
-        # print "------------------------------------>>>>>>>>>>"
-        if self.kwargs.get('region_id') == "0":
-            object_list = queryset.filter(region=None)
-        else:    
-            object_list = queryset.filter(region_id=self.kwargs.get('region_id'))
-        return object_list
+#     def get_context_data(self, **kwargs):
+#         context = super(RegionalSitelist, self).get_context_data(**kwargs)
+#         context['pk'] = self.kwargs.get('pk')
+#         context['region_id'] = self.kwargs.get('region_id')
+#         context['type'] = "region"
+#         return context
+#     def get_queryset(self, **kwargs):
+#         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
+#         # print self.kwargs.get('region_id')
+#         # print "------------------------------------>>>>>>>>>>"
+#         if self.kwargs.get('region_id') == "0":
+#             object_list = queryset.filter(region=None)
+#         else:    
+#             object_list = queryset.filter(region_id=self.kwargs.get('region_id'))
+#         return object_list
+
+class RegionalSitelist(ProjectRoleMixin, TemplateView):
+    def get(self, request, *args, **kwargs):
+        if self.kwargs.get('region_pk') == "0":
+            return render(request, 'fieldsight/site_list.html',{'project_id':self.kwargs.get('pk'),'type':"Unregioned",'pk':self.kwargs.get('region_pk'),})
 
 # class RegionalSitelist(ProjectRoleMixin, ListView):
 #     paginate_by = 10
@@ -2154,8 +2254,9 @@ class MultiSiteAssignRegionView(ProjectRoleMixin, TemplateView):
 
         return HttpResponse("Success")
 
+
 class ExcelBulkSiteSample(ProjectRoleMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk, edit=0):
         project = Project.objects.get(pk=pk)
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename="bulk_upload_sites.xls"'
@@ -2178,11 +2279,48 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
         for col_num in range(len(columns)):
             ws.write(row_num, col_num, columns[col_num], font_style)
 
+        if edit:
+            sites = Site.objects.filter(project=project)
+            for i, site in enumerate(sites):
+                self.write_site(i + 1, site, ws)
+
         # Sheet body, remaining rows
         font_style = xlwt.XFStyle()
 
         wb.save(response)
         return response
+
+
+    def write_site(self, row, site, ws):
+        columns = [
+            site.identifier,
+            site.name,
+            site.type.name,
+            site.phone,
+            site.address,
+            site.public_desc,
+            site.additional_desc,
+            site.latitude,
+            site.longitude,
+        ]
+
+        if site.project.cluster_sites:
+            columns += [site.region and site.region.identifier]
+
+        meta_ques = site.project.site_meta_attributes
+        meta_ans = site.site_meta_attributes_ans
+
+        if not isinstance(meta_ans, dict):
+            meta_ans = None
+
+        for question in meta_ques:
+            columns += [
+                meta_ans.get(question['question_name'], '') if meta_ans else ''
+            ]
+
+        for col in range(len(columns)):
+            ws.write(row, col, columns[col] or '')
+
 
 class SiteSearchView(ListView):
     model = Site
@@ -2400,7 +2538,10 @@ class SiteResponseCoordinates(ReviewerRoleMixin, View):
     def get(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
-        return render(request, 'fieldsight/site_response_map_view.html', {'co_ords':json.dumps(list(coord_datas["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8')})
+        return render(request, 'fieldsight/site_response_map_view.html', {
+            'co_ords': json.dumps(list(coord_datas["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'),
+            'geo_layers': obj.project.geo_layers.all(),
+        })
 
     def post(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
@@ -2465,9 +2606,15 @@ class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
         meta_questions = obj.project.site_meta_attributes
         meta_answers = obj.site_meta_attributes_ans
         mylist =[]
+
         for question in meta_questions:
             if question['question_name'] in meta_answers:
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
+
+        logs = []
+        for log in obj.logs.all()[:50]:
+            logs.append(log)
+
         myanswers = mylist
         outstanding, flagged, approved, rejected = obj.get_site_submission()
         dashboard_data = {
@@ -2483,6 +2630,7 @@ class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
             'progress_chart_data_data': progress_chart_data.keys(),
             'progress_chart_data_labels': progress_chart_data.values(),
             'meta_data': myanswers,
+            'logs': logs,
         }
         return dashboard_data
 
@@ -2503,6 +2651,7 @@ class AllResponseImages(ReviewerRoleMixin, View):
     def get(self, request, pk):
         all_imgs = get_images_for_site_all(pk)
         return render(request, 'fieldsight/gallery.html', {'all_imgs' : json.dumps(list(all_imgs["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8')})
+
 
 
 
@@ -2646,22 +2795,81 @@ def redirectToSite(request, pk):
 
 
 
+class SiteBulkEditView(View):
+    def get_regions(self, project, parent=None, default=[], prefix=''):
+        regions = Region.objects.filter(project=project, parent=parent)
+        if regions.count() == 0:
+            return default
 
+        result = default + [
+            {
+                'id': region.pk,
+                'name': '{}{} ({})'.format(
+                    prefix,
+                    region.name,
+                    region.identifier,
+                ),
+                'sites': [s.id for s in Site.objects.filter(
+                    region=region
+                )],
+            } for region in regions
+        ]
 
+        for region in regions:
+            result = self.get_regions(
+                project,
+                region,
+                result,
+                '{}{} / '.format(prefix, region.name),
+            )
 
+        return result
 
+    def get(self, request, pk):
+        project = Project.objects.get(pk=pk)
 
+        context = {
+            'project': project,
+            'regions': self.get_regions(project),
+            'form': SiteBulkEditForm(project=project),
+        }
 
+        return render(
+            request,
+            'fieldsight/site-bulk-edit.html',
+            context,
+        )
 
+    def post(self, request, pk):
+        project = Project.objects.get(pk=pk)
+        context = {
+            'project': project,
+            'regions': self.get_regions(project),
+            'form': SiteBulkEditForm(project=project),
+        }
 
+        data = {}
+        for attr in project.site_meta_attributes:
+            q_name = attr['question_name']
+            to_set = request.POST.get('set_{}'.format(q_name))
+            if to_set:
+                data[q_name] = request.POST.get(q_name)
 
+        sites = request.POST.getlist('sites')
+        for site_id in sites:
+            site = Site.objects.get(id=site_id)
+            new_data = site.site_meta_attributes_ans
+            if not isinstance(new_data, dict):
+                new_data = {}
+            new_data.update(data)
+            site.site_meta_attributes_ans = new_data
+            site.save()
 
+        context['done'] = True
 
-
-
-
-
-
-
-
+        return render(
+            request,
+            'fieldsight/site-bulk-edit.html',
+            context,
+        )
 

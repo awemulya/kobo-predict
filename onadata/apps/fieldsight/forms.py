@@ -13,7 +13,10 @@ from registration import forms as registration_forms
 
 from onadata.apps.fieldsight.helpers import AdminImageWidget
 from .utils.forms import HTML5BootstrapModelForm, KOModelForm
+
 from .models import Organization, Project, Site, BluePrints, Region, SiteType
+from onadata.apps.geo.models import GeoLayer
+
 from onadata.apps.userrole.models import UserRole
 
 USERNAME_REGEX = r'^[a-z][a-z0-9_]+$'
@@ -222,27 +225,36 @@ class ProjectForm(forms.ModelForm):
     y = forms.FloatField(widget=forms.HiddenInput(), required=False)
     width = forms.FloatField(widget=forms.HiddenInput(), required=False)
     height = forms.FloatField(widget=forms.HiddenInput(), required=False)
+
     def __init__(self, *args, **kwargs):
+        is_new = kwargs.pop('new', None)
+        org_id = kwargs.pop('organization_id', None)
         super(ProjectForm, self).__init__(*args, **kwargs)
+
         if not self.fields['location'].initial:
             self.fields['location'].initial = Point(85.3240, 27.7172,srid=4326)
         self.fields['type'].empty_label = None
         self.fields['cluster_sites'].label = "Do you want to cluster sites in this Project?"
         #self.fields['organization'].empty_label = None
 
+        if not is_new:
+            org_id = kwargs['instance'].organization.id
+        self.fields['geo_layers'].queryset = GeoLayer.objects.filter(
+            organization__id=org_id
+        )
+
     class Meta:
         model = Project
         exclude = ('organization', 'is_active', 'site_meta_attributes',)
         #organization_filters = ['organization']
         widgets = {
-        'is_active': forms.HiddenInput(),
-        'address': forms.TextInput(),
-        'location': forms.HiddenInput(),
-        'logo': AdminImageWidget()
+            'is_active': forms.HiddenInput(),
+            'address': forms.TextInput(),
+            'location': forms.HiddenInput(),
+            'logo': AdminImageWidget()
         }
 
     def save(self, commit=True, *args, **kwargs):
-        
         is_new = kwargs.pop('new')
         
         if is_new:
@@ -372,11 +384,12 @@ class UploadFileForm(forms.Form):
 
 
 class BluePrintForm(forms.ModelForm):
-    image = forms.ImageField(label='Image')
+    image = forms.FileField(label='File')
 
     class Meta:
         model = BluePrints
         fields = ('image', )
+
 
 class RegionForm(forms.ModelForm):
     class Meta:
@@ -389,3 +402,34 @@ class SiteTypeForm(forms.ModelForm):
     class Meta:
         model = SiteType
         exclude = ('project',)
+
+
+
+class SiteBulkEditForm(forms.Form):
+    def __init__(self, project, *args, **kwargs):
+        kwargs.setdefault('label_suffix', '')
+        super(SiteBulkEditForm, self).__init__(*args, **kwargs)
+
+        self.fields['sites'] = forms.ModelMultipleChoiceField(
+            widget=forms.CheckboxSelectMultiple,
+            queryset=project.sites.all(),
+        )
+
+        for attr in project.site_meta_attributes:
+            q_type = attr['question_type']
+            q_name = attr['question_name']
+
+            if q_type == 'Number':
+                field = forms.FloatField()
+            elif q_type == 'Date':
+                field = forms.DateField()
+            elif q_type == 'MCQ':
+                options = attr.get('mcq_options') or []
+                choices = [o.get('option_text') for o in options]
+                choices = [(c, c) for c in choices]
+                field = forms.ChoiceField(choices=choices)
+            else:
+                field = forms.CharField()
+
+            self.fields[q_name] = field
+

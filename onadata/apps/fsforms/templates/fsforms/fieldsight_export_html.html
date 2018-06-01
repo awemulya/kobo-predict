@@ -7,18 +7,17 @@
 {% load pagination_tags %}
 
 
-    <style>
-      .pre-scrollable{
-        height:500px;
-  
+<style>
+.pre-scrollable{
+    height:500px;
 }
 
 .sortable tr {
     cursor: pointer;
 }
-  
-  </style>
-    
+
+</style>
+
 {% endblock %}
 {% block content %}
 
@@ -28,13 +27,13 @@
                 <h3><i class="la la-pencil-square-o"></i>{% if request.GET.q %}Search Results for "{{request.GET.q}}"{% else %}
                 {% trans 'Form' %} {% trans 'Submissions' %}{% endif %} | {{ form_name  }}</h3>
 
-     
+
 
             <div class="panel-heading-right">
-            
-              <a class="btn btn-sm btn-primary" href="{% url 'forms:project_html_table_export' obj.id %}"><i class="la la-eye"></i> Detailed Responses List</a>
-              <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForms" aria-expanded="false" aria-controls="searchForms"><i class="la la-search"></i> Search</a>
-            
+
+                <a class="btn btn-sm btn-primary" href="{% url 'forms:project_html_table_export' obj.id %}"><i class="la la-eye"></i> Detailed Responses List</a>
+                <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchForms" aria-expanded="false" aria-controls="searchForms"><i class="la la-search"></i> Search</a>
+
             </div>
 
 
@@ -51,29 +50,11 @@
                       <span class="input-group-btn">
                         <button class="btn btn-primary" type="submit" value="Search"><i class="la la-search"></i> {% trans 'Search' %}</button>
                       </span>
+
                     </div>
-                  </div>
-                  <div class="col-md-3"></div>
-                </div>
-              </form>
+                </form>
             </div>
-         
-<div class="container">
-    
-   {% if is_project_data %}
-          
-  <table class="table table-hover ceter-block sortable">
-    <thead>
-      <tr>
-        <th>{% trans 'S.N' %}</th>
-        <th>{% trans 'Site' %} {% trans 'Name' %}</th>
-        <th>{% trans 'Site' %} {% trans 'Id' %}</th>
-        <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
-        <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
-        <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
-      </tr>
-    </thead>
-    <tbody>
+
 
     {% for sub in object_list  %}
             <!--   {% if sub.site_fxf %}
@@ -101,16 +82,26 @@
               <!-- {% endif %} -->
         
 
-    {% endfor %}
-     
-     
-    </tbody>
-  </table>
-  {% endif %}
 
 
 
-  {% if is_site_data %}
+                {% if is_site_data %}
+
+                <table class="table table-hover ceter-block sortable">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'S.N' %}</th>
+                            <th>{% trans 'Site' %} {% trans 'Name' %}</th>
+                            <th>{% trans 'Site' %} {% trans 'Id' %}</th>
+                            <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
+                            <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
+                            <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
+                            <th>{% trans 'Edit' %}</th>
+                            <th>{% trans 'View' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
 
   <table class="table table-hover ceter-block sortable">
     <thead>
@@ -137,15 +128,22 @@
                   <td>{{ sub.date }}</td>
                   </tr>
             
-        
 
-    {% endfor %}
-     
-     
-    </tbody>
-  </table>
-  {% endif %}
-</div>
+
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ sub.site.name }}</td>
+                            <td>{{ sub.site.identifier }}</td>
+                            <td>{{ sub.instance.id }}</td>
+                            <td>{{ sub.submitted_by.username }}</td>
+                            <td>{{ sub.date }}</td>
+                            <td>
+                                {% if request.user|can_edit_finstance:sub %}
+                                <a href="{% url 'forms:edit-submission' sub.site_fxf.pk sub.id %}">Edit</a>
+                                {% endif %}
+                            </td>
+                            <td><a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">View</a></td>
+                        </tr>
+
 
 
         {% if is_paginated %}
@@ -209,52 +207,53 @@
 
                           </ul>
                         </nav>
+
             {% endif %}
-           
-          </div>
 
-          
+        </div>
 
-                </section>
-        
-      </div>
+
+
+    </section>
+
+</div>
 
 
 {% endblock %}
 
 
 {% block extrascript %}
-    <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
-    <script type="text/javascript">
-      function redirectto(url){
+<script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
+<script type="text/javascript">
+    function redirectto(url){
         window.location.href = url
-      }
-    </script>
+    }
+</script>
 {% endblock %}
 
 <!-- 
-<table>
+    <table>
 
     <thead>
-        <tr>
-            <th>{% trans "View or Edit" %}</th>
-            {% for label in labels %}
-            <th><span class="cell-content-wrap">{{ label }}</span></th>
-            {% endfor %}
-        </tr>
+    <tr>
+    <th>{% trans "View or Edit" %}</th>
+    {% for label in labels %}
+    <th><span class="cell-content-wrap">{{ label }}</span></th>
+    {% endfor %}
+    </tr>
 
     </thead>
 
     <tbody>
     {% for submission_id, row in data  %}
-        <tr>
-            <th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
-            {% for value in row %}
-            <td><span class="cell-content-wrap">{{ value }}</span></td>
-            {% endfor %}
-        </tr>
+    <tr>
+    <th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
+    {% for value in row %}
+    <td><span class="cell-content-wrap">{{ value }}</span></td>
+    {% endfor %}
+    </tr>
     {% endfor %}
 
     </tbody>
 
-</table> -->
+    </table> -->

@@ -633,6 +633,7 @@
 </div>
 </div>
 <!--</section>-->
+
 <!---->
 <!--</div>-->
 
@@ -755,6 +756,41 @@
 	});
 
 
+// <<<<<<< HEAD
+// =======
+// 	var height = 0;
+// 	$(".gh-col" ).each(function() {
+// 	    height += $(this).height();
+// 	});
+// 	height = height + 14;
+// 	$(".ah-col" ).height(height);
+
+//     const logs = [
+//         {% for log in logs %}
+//         {
+//             "id": {{ log.id }},
+//             "type": {{ log.type }},
+//             "source_name": "{{ log.source.first_name }} {{ log.source.last_name }}",
+//             "get_source_url": "{{ log.get_source_url }}",
+//             "extra_message": "{{ log.extra_message }}",
+//             "extra_json": {{ log.get_extra_json_string|default:"null"|safe }},
+//             "get_event_url": "{{ log.get_event_url }}",
+//             "get_event_name": "{{ log.get_event_name }}",
+//             "get_extraobj_url": "{{ log.get_extraobj_url }}",
+//             "get_extraobj_name": "{{ log.get_extraobj_name }}",
+//         },
+//         {% endfor %}
+//     ];
+
+//     $(document).ready(() => {
+//         logs.forEach((log) => {
+//             const typeId = log.type;
+//             const content = types[typeId](log, true);
+//             $('.log td[data-log-content="' + log.id + '"]').html(content);
+//         });
+//     });
+
+// >>>>>>> cdeba08b92b5d04b1b8bafcf60f5b5675b99bb02
 </script>
 
 {% endif %}
@@ -781,6 +817,7 @@
 					}
 				</script>
 
+
 				<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
 				<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
 				<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
@@ -788,3 +825,4 @@
 
 
 				{% endblock %}
+
