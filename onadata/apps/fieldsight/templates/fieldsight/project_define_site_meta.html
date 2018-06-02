@@ -117,9 +117,11 @@
                     console.log("huhahaha", obj.project_id.toString(), project_id.toString());
                     
                     const submetas = [];
+                    if((this.state.selected_metas[this.state.project_id] || []).find(temp=>temp.question_name == obj.question_name)){
                     submetas.push(
                          <CheckboxComponent project_id={obj.project_id} metas={obj.metas[obj.project_id]} selected_metas={this.state.selected_metas} updateSelectedMetas={this.props.updateSelectedMetas}/>
                         )
+                    }
                     return (
 
                         <div>
@@ -572,9 +574,9 @@
     updateLinkMetas: function (project_id, i, obj){
         
         this.updateIndividualLink(project_id, i, obj);
-        if (obj['question_type'] === "Link"){
-            obj.metas[obj['project_id']].forEach((item) => {this.updateIndividualLink(obj['project_id'], i, item);});
-        }
+        // if (obj['question_type'] === "Link"){
+        //     obj.metas[obj['project_id']].forEach((item) => {this.updateIndividualLink(obj['project_id'], i, item);});
+        // }
         console.log("updatingLinkmetas");
         
         
