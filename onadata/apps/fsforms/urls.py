@@ -9,7 +9,7 @@ from onadata.apps.fsforms.viewsets.SiteFormsViewset import SiteFormViewSet
 from onadata.apps.fsforms.viewsets.StageViewset import SiteMainStageViewSet, \
         SubStageViewSet, StageViewSet
 from onadata.apps.fsforms.viewsets.ConfigureStageViewset import StageListViewSet, SubStageListViewSet, \
-    SubStageDetailViewSet, EmViewSet, DeployViewset
+    SubStageDetailViewSet, EmViewSet, DeployViewset, FInstanceViewset
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
 from .views import (
     LibraryFormsListView,
@@ -109,6 +109,7 @@ urlpatterns = [
         #setup forms UI urls
         url(r'^setup-forms/(?P<is_project>\d)/(?P<pk>\d+)$', Setup_forms.as_view(), name='setup-forms'),
         url(r'^configure-stages/(?P<is_project>\d)/(?P<pk>\d+)$', Configure_forms.as_view(), name='configure_stages'),
+        url(r'^last-submissions/$', FInstanceViewset.as_view({'get': 'list'}), name='finstance-lastsubmission'),
 
 ]
 

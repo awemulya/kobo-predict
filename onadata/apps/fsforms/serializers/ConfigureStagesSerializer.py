@@ -3,10 +3,11 @@ import json
 from rest_framework import serializers
 
 from onadata.apps.fieldsight.models import Project, Site
-from onadata.apps.fsforms.models import Stage, FieldSightXF, EducationalImages, EducationMaterial, DeployEvent
+from onadata.apps.fsforms.models import Stage, FieldSightXF, EducationalImages, EducationMaterial, DeployEvent, \
+    FInstance
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import EMSerializer
 from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import FSXFSerializer
-from onadata.apps.logger.models import XForm
+from onadata.apps.logger.models import XForm, Instance
 
 
 class StageSerializer(serializers.ModelSerializer):
@@ -163,3 +164,18 @@ class DeploySerializer(serializers.ModelSerializer):
     def get_clean_data(self, obj):
         return dict(obj.data)
 
+class InstanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Instance
+        fields = ('json',)
+
+class FinstanceSerializer(serializers.ModelSerializer):
+    # instance = InstanceSerializer()
+    submission_data = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FInstance
+        fields = ('submission_data', 'site', 'project', 'site_fxf', 'project_fxf', 'date')
+
+    def  get_submission_data(self, obj):
+        return dict(obj.instance.json)
