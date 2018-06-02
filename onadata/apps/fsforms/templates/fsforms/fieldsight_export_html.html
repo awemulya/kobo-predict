@@ -144,6 +144,7 @@
                             <td><a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">View</a></td>
                         </tr>
     {% endfor %}
+    {% endif %}
 
 
                 {% if is_paginated %}
