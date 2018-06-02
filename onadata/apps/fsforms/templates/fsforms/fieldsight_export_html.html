@@ -143,10 +143,10 @@
                             </td>
                             <td><a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">View</a></td>
                         </tr>
+    {% endfor %}
 
 
-
-        {% if is_paginated %}
+                {% if is_paginated %}
                         <nav class="pagination justify-content-center" aria-label="page-navigation">
                           <ul class="pagination">
                           
