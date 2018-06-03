@@ -450,6 +450,7 @@
 
      var Form = React.createClass({
         getInitialState: function () {
+            const initialselectedProjectlink=_json_question.
             return {
                 Questions: _json_question,
                 selectedProjectlink:[]
@@ -543,9 +544,18 @@
 
     updateLinkProject: function (project_id, i){
         var arr = this.state.Questions;
-        console.log(i);
+        var selectedProjectlink = this.state.selectedProjectlink
+        var prev_project_id = arr[i].project_id
         arr[i].project_id=project_id;
-        this.setState({Questions:arr});
+        
+        var index = selectedProjectlink.indexOf(prev_project_id);
+        if (index > -1) {
+          selectedProjectlink.splice(index, 1);
+        }
+        selectedProjectlink.push(project_id);
+        
+        this.setState({Questions:arr, selectedProjectlink: selectedProjectlink});
+
         console.log("updatingLinkproject_id");
         console.log(arr[i]);
     },
