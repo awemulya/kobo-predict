@@ -125,14 +125,14 @@ class DeployViewset(viewsets.ModelViewSet):
     serializer_class = DeploySerializer
 
 class LargeResultsSetPagination(PageNumberPagination):
-    page_size = 500
+    page_size = 100
     # page_size_query_param = 'page_size'
     # max_page_size = 10000
 
 class FInstanceViewset(viewsets.ReadOnlyModelViewSet):
-    queryset = FInstance.objects.all().select_related('instance')
+    queryset = FInstance.objects.filter(project_fxf__isnull=False).select_related('instance', 'submitted_by' ,'project_fxf',   'project_fxf__xf',  'project_fxf__xf__user')
     serializer_class = FinstanceSerializer
     pagination_class = LargeResultsSetPagination
 
     def get_queryset(self):
-        return self.queryset.filter(project=self.request.project)
+        return self.queryset #.filter(project=self.request.project)
