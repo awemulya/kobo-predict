@@ -135,4 +135,4 @@ class FInstanceViewset(viewsets.ReadOnlyModelViewSet):
     pagination_class = LargeResultsSetPagination
 
     def get_queryset(self):
-        return self.queryset #.filter(project=self.request.project)
+        return self.queryset.filter(project=self.request.project)
