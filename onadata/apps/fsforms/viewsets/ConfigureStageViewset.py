@@ -2,12 +2,13 @@ from __future__ import unicode_literals
 
 from django.db.models import Sum, F
 from rest_framework import viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 import rest_framework.status
 
-from onadata.apps.fsforms.models import Stage, EducationMaterial, DeployEvent
+from onadata.apps.fsforms.models import Stage, EducationMaterial, DeployEvent, FInstance
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer, \
-    SubStageDetailSerializer, EMSerializer, DeploySerializer
+    SubStageDetailSerializer, EMSerializer, DeploySerializer, FinstanceSerializer
 
 
 class StageListViewSet(viewsets.ModelViewSet):
@@ -122,3 +123,16 @@ class EmViewSet(viewsets.ModelViewSet):
 class DeployViewset(viewsets.ModelViewSet):
     queryset = DeployEvent.objects.all()
     serializer_class = DeploySerializer
+
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    # page_size_query_param = 'page_size'
+    # max_page_size = 10000
+
+class FInstanceViewset(viewsets.ReadOnlyModelViewSet):
+    queryset = FInstance.objects.filter(project_fxf__isnull=False).select_related('instance', 'submitted_by' ,'project_fxf',   'project_fxf__xf',  'project_fxf__xf__user')
+    serializer_class = FinstanceSerializer
+    pagination_class = LargeResultsSetPagination
+
+    def get_queryset(self):
+        return self.queryset.filter(project=self.request.project)

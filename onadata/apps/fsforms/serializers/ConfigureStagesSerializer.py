@@ -3,10 +3,15 @@ import json
 from rest_framework import serializers
 
 from onadata.apps.fieldsight.models import Project, Site
-from onadata.apps.fsforms.models import Stage, FieldSightXF, EducationalImages, EducationMaterial, DeployEvent
+from onadata.apps.fsforms.models import Stage, FieldSightXF, EducationalImages, EducationMaterial, DeployEvent, \
+    FInstance
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import EMSerializer
 from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import FSXFSerializer
-from onadata.apps.logger.models import XForm
+from onadata.apps.logger.models import XForm, Instance
+
+from django.contrib.sites.models import Site as DjangoSite
+BASEURL = DjangoSite.objects.get_current().domain
+
 
 
 class StageSerializer(serializers.ModelSerializer):
@@ -162,4 +167,124 @@ class DeploySerializer(serializers.ModelSerializer):
 
     def get_clean_data(self, obj):
         return dict(obj.data)
+
+class InstanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Instance
+        fields = ('json',)
+
+
+class FinstanceSerializer(serializers.ModelSerializer):
+    # instance = InstanceSerializer()
+    submission_data = serializers.SerializerMethodField()
+    submitted_by = serializers.SerializerMethodField()
+    form_type = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FInstance
+        fields = ('submission_data', 'site', 'project', 'site_fxf', 'project_fxf', 'date', 'submitted_by', 'form_type')
+
+    def get_submitted_by(self, obj):
+        return obj.submitted_by.username
+
+    def get_form_type(self, obj):
+        return {'is_staged': obj.project_fxf.is_staged, 'is_scheduled': obj.project_fxf.is_scheduled, 'is_survey': obj.project_fxf.is_survey, }
+
+    def get_submission_data(self, obj):
+        data = []
+        json_answer = obj.instance.json
+        json_question = json.loads(obj.project_fxf.xf.json)
+        base_url = BASEURL
+        media_folder = obj.project_fxf.xf.user.username
+
+        def parse_repeat(r_object):
+            r_question = r_object['name']
+            data.append(r_question)
+
+            if r_question in json_answer:
+                for gnr_answer in json_answer[r_question]:
+                    for first_children in r_object['children']:
+                        question_type = first_children['type']
+                        question = first_children['name']
+                        group_answer = json_answer[r_question]
+                        answer = ''
+                        if r_question + "/" + question in gnr_answer:
+                            if first_children['type'] == 'note':
+                                answer = ''
+                            elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or \
+                                    first_children['type'] == 'video':
+                                answer = 'http://' + base_url + '/media/' + media_folder + '/attachments/' + gnr_answer[
+                                    r_question + "/" + question]
+                            else:
+                                answer = gnr_answer[r_question + "/" + question]
+
+                        if 'label' in first_children:
+                            question = first_children['label']
+                        row = {'type': question_type, 'question': question, 'answer': answer}
+                        data.append(row)
+            else:
+                for first_children in r_object['children']:
+                    question_type = first_children['type']
+                    question = first_children['name']
+                    answer = ''
+                    if 'label' in first_children:
+                        question = first_children['label']
+                    row = {'type': question_type, 'question': question, 'answer': answer}
+                    data.append(row)
+
+        def parse_group(prev_groupname, g_object):
+            g_question = prev_groupname + g_object['name']
+            for first_children in g_object['children']:
+                question = first_children['name']
+                question_type = first_children['type']
+                if question_type == 'group':
+                    parse_group(g_question + "/", first_children)
+                    continue
+                answer = ''
+                if g_question + "/" + question in json_answer:
+                    if question_type == 'note':
+                        answer = ''
+                    elif question_type == 'photo' or question_type == 'audio' or question_type == 'video':
+                        answer = 'http://' + base_url + '/media/' + media_folder + '/attachments/' + json_answer[
+                            g_question + "/" + question]
+                    else:
+                        answer = json_answer[g_question + "/" + question]
+
+                if 'label' in first_children:
+                    question = first_children['label']
+                row = {'type': question_type, 'question': question, 'answer': answer}
+                data.append(row)
+
+        def parse_individual_questions(parent_object):
+            for first_children in parent_object:
+                if first_children['type'] == "repeat":
+                    parse_repeat(first_children)
+                elif first_children['type'] == 'group':
+                    parse_group("", first_children)
+                else:
+                    question = first_children['name']
+                    question_type = first_children['type']
+                    answer = ''
+                    if question in json_answer:
+                        if first_children['type'] == 'note':
+                            answer = ''
+                        elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or first_children[
+                            'type'] == 'video':
+                            answer = 'http://' + base_url + '/media/' + media_folder + '/attachments/' + json_answer[
+                                question]
+                        else:
+                            answer = json_answer[question]
+                    if 'label' in first_children:
+                        question = first_children['label']
+                    row = {"type": question_type, "question": question, "answer": answer}
+                    data.append(row)
+
+            submitted_by = {'type': 'submitted_by', 'question': 'Submitted by', 'answer': json_answer['_submitted_by']}
+            submittion_time = {'type': 'submittion_time', 'question': 'Submittion Time',
+                               'answer': json_answer['_submission_time']}
+            data.append(submitted_by)
+            data.append(submittion_time)
+
+        parse_individual_questions(json_question['children'])
+        return data
 
