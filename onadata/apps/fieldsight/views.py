@@ -2034,8 +2034,16 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
 
 class RegionalSitelist(ProjectRoleMixin, TemplateView):
     def get(self, request, *args, **kwargs):
-        if self.kwargs.get('region_pk') == "0":
-            return render(request, 'fieldsight/site_list.html',{'project_id':self.kwargs.get('pk'),'type':"Unregioned",'pk':self.kwargs.get('region_pk'),})
+        queryset = Site.objects.filter(project_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
+        if self.kwargs.get('region_id') == "0":
+            object_list = queryset.filter(region=None)
+        else:    
+            object_list = queryset.filter(region_id=self.kwargs.get('region_id'))
+        if self.kwargs.get('region_id') == "0":
+            return render(request, 'fieldsight/site_list.html',{'object_list':object_list, 'project_id':self.kwargs.get('pk'),'type':"Unregioned", 'pk': self.kwargs.get('pk'),'region_id':self.kwargs.get('region_id'),})
+        
+        obj = get_object_or_404(Region, id=self.kwargs.get('region_id'))
+        return render(request, 'fieldsight/site_list.html',{'object_list':object_list, 'obj':obj, 'type':"region", 'pk': self.kwargs.get('pk'), 'region_id':self.kwargs.get('region_id'),})
 
 # class RegionalSitelist(ProjectRoleMixin, ListView):
 #     paginate_by = 10
