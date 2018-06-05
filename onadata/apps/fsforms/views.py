@@ -2146,4 +2146,5 @@ class CreateKoboFormView(TemplateView, LoginRequiredMixin):
         data = super(CreateKoboFormView, self).get_context_data(**kwargs)
         token, created = Token.objects.get_or_create(user=self.request.user)
         data["token_key"] = token
+        data["kpi_url"] = settings.KPI_URL
         return data

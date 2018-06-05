@@ -147,6 +147,7 @@
       var settings =  {};
       settings.token_key = "{{token_key}}";
       settings.kpi_url = "{{ koboform_url }}#/forms/";
+      settings.kpi_url = "{{ kpi_url }}";
 
 </script>
 <script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
@@ -157,6 +158,6 @@
 <script>
 window.Vue.use(VuejsDialog.default)
 </script>
-<script src="{% static 'js/forms/create_form.js' %}?v=0.9"></script>
+<script src="{% static 'js/forms/create_form.js' %}?v=1.00"></script>
 
 {% endblock %}
