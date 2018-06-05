@@ -69,9 +69,9 @@
    
             renderNormal:function(){
                 return(
-                    <select ref={this.props.inputRef} className="form-group col-md-4" name="project" onChange={this.props.onChangeFunction} defaultValue={this.props.defaultValue}>
+                    <select ref={this.props.inputRef} className="form-group col-md-4" name="project" onChange={this.props.onChangeFunction} value={this.props.defaultValue}>
                         {this.props.options.map((e, key) => {
-                            return <option key={key} value={this.props.isProject ? key : e.id}>{e.id}{e.name}</option>;
+                            return <option key={key} value={this.props.isProject ? key : e.id}>{e.id} {e.name}</option>;
                         })}
                     </select>
                     
@@ -89,19 +89,19 @@
             
             
             getInitialState: function () {
-                return {isloaded:false, metas:[], project_id:0, selected_metas:[]}
+                return {isloaded:false, metas:[], project_id:0, selected_metas:[], indent:0}
             },
 
-            loadmetas: function(metas, project_id, selected_metas){
-                this.setState({'metas':metas, 'project_id':project_id, 'selected_metas':selected_metas})
+            loadmetas: function(metas, project_id, selected_metas, indent){
+                this.setState({'metas':metas, 'project_id':project_id, 'selected_metas':selected_metas, 'indent':indent})
                 
                 
             },
             componentDidMount(){
-                this.loadmetas(this.props.metas, this.props.project_id, this.props.selected_metas);
+                this.loadmetas(this.props.metas, this.props.project_id, this.props.selected_metas, this.props.indent || 0);
             },
             componentWillReceiveProps(nextProps) {
-                this.loadmetas(nextProps.metas, nextProps.project_id, nextProps.selected_metas);
+                this.loadmetas(nextProps.metas, nextProps.project_id, nextProps.selected_metas, this.props.indent || 0);
             },
             
             toggleCheckbox:function(index, obj) {
@@ -110,28 +110,34 @@
             },
 
             eachMeta: function (obj, j){            
-                console.log(obj.project_id, project_id);
+               
+                const style={
+                            'margin-left': this.props.indent+'px',
+                        }
                 if(obj.question_type=='Link'){
-                    if (obj.project_id != project_id){
+                    if (obj.project_id.toString() != project_id.toString()){
+                    
                     const submetas = [];
-                    if (obj.metas.hasOwnProperty(project_id)){
-                        delete obj.metas[project_id];
+                    if((this.state.selected_metas[this.state.project_id] || []).find(temp=>temp.question_name == obj.question_name)){
+                    submetas.push(
+                         <CheckboxComponent project_id={obj.project_id} metas={obj.metas[obj.project_id]} selected_metas={this.state.selected_metas} indent={this.state.indent + 20} updateSelectedMetas={this.props.updateSelectedMetas}/>
+                        )
                     }
-                    Object.keys(obj.metas).map((key, index) => submetas.push(
-                         <CheckboxComponent project_id={key} metas={obj.metas[key]} selected_metas={this.state.selected_metas} updateSelectedMetas={this.props.updateSelectedMetas}/>
-                        ))
-                    return (
 
+                    return (
                         <div>
                         <br/>
-                        <div>
+
+                        <div style={style}>
                             <label>
                                 <input
                                     type="checkbox"
                                     checked={(this.state.selected_metas[this.state.project_id] || []).find(temp=>temp.question_name == obj.question_name)}
                                     onChange={this.toggleCheckbox.bind(this, j, obj)}
                                 />
+                                <b>
                                 {obj.question_text}
+                                </b>
                                 </label>
                         </div>
                         {
@@ -142,7 +148,7 @@
                 }
                 else{
                 return(
-                <div>
+                <div style={style}>
                     <label>
                         <input
                             type="checkbox"
@@ -285,18 +291,18 @@
             },
 
             remove:function(){
-                console.log('Delete pressed.')
+                //console.log('Delete pressed.')
                 this.props.deleteFromForm(this.props.index);
             },
             
 
             eachOption: function (obj, j){
-                            // console.log(text);
-                            if(!obj.hasOwnProperty('is_deleted')){
-                            return(
-                                <Option key={j} index={j} option_text={obj.option_text} deleteOption={this.deleteOption} updateOption={this.updateOption}/>
-                                );
-                             }},
+                // console.log(text);
+                if(!obj.hasOwnProperty('is_deleted')){
+                return(
+                    <Option key={j} index={j} option_text={obj.option_text} deleteOption={this.deleteOption} updateOption={this.updateOption}/>
+                    );
+                 }},
 
             renderForm:function(){
                 return(
@@ -316,7 +322,7 @@
                         </div>
                     </div>
                     {         
-                                  this.state.options.map(this.eachOption)
+                        this.state.options.map(this.eachOption)
                     }
                     <button onClick={this.addOption} className="btn btn-primary"><i className="la la-plus"></i>Add New</button>            
                     </div>
@@ -331,37 +337,24 @@
             
             getInitialState: function () {
                 
-                return {questionTypes:questionTypes, isLoaded: false, projects:[], project_index:0, selected_metas:this.props.selected_metas, metas:[], project_id: this.props.link_project_id}
+                return {questionTypes:questionTypes, isLoaded: false, projects:this.props.projects, project_index:0, selected_metas:this.props.selected_metas, metas:[], project_id: this.props.link_project_id}
             },
 
             componentDidMount() {
-                fetch("/fieldsight/api/organization/"+org_id+"/my_projects/"+project_id+"/", {
-                      method: 'GET',
-                      credentials: 'include'
-                    })
-                  .then(res => res.json())
-                  .then(
-                    (result) => {
-                      this.setState({
-                        
-                        projects: result,
-                        });
-                    
-            
-                    let project_index=this.state.projects.indexOf(this.state.projects.find(temp=>temp.id == this.state.project_id));
-                    if (project_index < 0){ project_index = 0; }
-                    this.setState({project_index:project_index, metas:this.state.projects[project_index].site_meta_attributes,  isLoaded: true});
-                
-                    },
-                    (error) => {
-                      this.setState({
-                        isLoaded: true,
-                        projects:[],
-                        project_id: 0
-                      });
-                    }
-                  )
+                this.setState({isLoaded: false});
+                let project_index=this.state.projects.indexOf(this.state.projects.find(temp=>temp.id == this.state.project_id));
+                if (project_index < 0){ project_index = 0; }
+                this.setState({project_index:project_index, projects:this.props.projects, metas:this.props.projects[project_index].site_meta_attributes,  isLoaded: true});
+               console.log(this.props, this.state);
               },
+            componentWillReceiveProps(nextProps) {
+
+                this.setState({isLoaded: false});
+                let project_index=nextProps.projects.indexOf(nextProps.projects.find(temp=>temp.id == nextProps.link_project_id));
+                if (project_index < 0){ project_index = 0; }
+                this.setState({project_index:project_index, projects:nextProps.projects, selected_metas:nextProps.selected_metas, metas:nextProps.projects[project_index].site_meta_attributes,  isLoaded: true});
+                console.log("here", project_index);
+            },
 
             save: function () {
                 this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
@@ -373,12 +366,20 @@
                 this.props.updateLinkMetas(project_id, this.props.index, obj);
             },
 
-            projectChanged: function () {        
+            projectChanged: function () {
                 const selectedProject = this.state.projects[this.refs.selectProjectRef.value]
-                this.props.updateLinkProject(selectedProject.id, this.props.index);
-                console.log(selectedProject.site_meta_attributes);
-                this.setState({project_id:selectedProject.id, metas:selectedProject.site_meta_attributes});
-                
+                if (this.props.selectedProjectLinkIds.indexOf(selectedProject.id) > -1){
+                    alert("Project already selected");
+                    //this.setState({project_index:0});
+                    // console.log(this.props.selectedProjectLinkIds, this.state.project_index);
+                }else{
+                    this.props.updateLinkProject(selectedProject.id, this.props.index);
+                    
+                    //console.log(selectedProject.site_meta_attributes);
+                    this.setState({project_index:this.refs.selectProjectRef.value, project_id:selectedProject.id, metas:selectedProject.site_meta_attributes});
+                    //console.log(selectedProject.id);
+                    //CLEAR ALL SELECTED METAS ON CHANGE
+                }
             },
 
             remove:function(){
@@ -386,8 +387,9 @@
                 this.props.deleteFromForm(this.props.index);
             },
 
+
             renderForm:function(){
-                console.log("sdfsdf"+this.state.metas);
+                console.log("update2", this.props.projects);
                 if(this.state.isLoaded){
                     return(
                     <div className="QuestionContainer form-row">
@@ -405,7 +407,7 @@
                         </div>
                         <div className="form-group col-md-4">
                             <label className="col-form-label">Select Project</label>                     
-                            <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_index} options={this.state.projects}/>
+                            <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_index} options={this.props.projects} />
                         </div>
 
                         <CheckboxComponent project_id={this.state.project_id}  selected_metas={this.state.selected_metas} metas={this.state.metas} updateSelectedMetas={this.updateSelectedMetas}/>
@@ -440,29 +442,58 @@
         });
 
 
-
-
-
-
-
-
-
-
-
      var Form = React.createClass({
         getInitialState: function () {
+            
+            //console.log(linkTypeObjs);
             return {
-                Questions: _json_question
+                Questions: _json_question,
+                projects: [{id:0, name:"Select project", site_meta_attributes:[]}],
+                selectedProjectLinkIds:[],
+                isLoaded: false,
             }
         },
+
+            componentDidMount() {
+                
+                const linkTypeObjs =_json_question.filter(function (obj) {
+                        return obj.question_type == "Link" ;
+                    }).map(x => x.project_id);
+
+                fetch("/fieldsight/api/organization/"+org_id+"/my_projects/"+project_id+"/", {
+                      method: 'GET',
+                      credentials: 'include'
+                    })
+                  .then(res => res.json())
+                  .then(
+                    (result) => {
+                        const project_options = this.state.projects.concat(result);
+                      this.setState({
+                        
+                        projects: project_options,
+                        selectedProjectLinkIds: linkTypeObjs,
+                        
+                        });
+                    },
+                    (error) => {
+                      this.setState({
+                        isLoaded: true,
+                        projects:[],
+                        project_id: 0
+                      });
+                    }
+                  )
+
+              },
+
 
     addQuestion: function (text) {
         var arr =this.state.Questions;
 
         var question = {
             "question_text": "",
-            "question_type": "textual",
-            "question_name": ""
+            "question_type": "Text",
+            "question_name": this.state.Questions.toString()
         }
         arr.push(question);
 
@@ -494,13 +525,20 @@
 
     removeQuestion: function(i){
         var arr= this.state.Questions;
+        var selectedProjectLinkIds = this.state.selectedProjectLinkIds
         arr[i].is_deleted=true;
-        this.setState({Questions: arr});
+        if (arr[i].question_type == "Link"){
+            var index = selectedProjectLinkIds.indexOf(arr[i].project_id);
+            if (index > -1) {
+              selectedProjectLinkIds.splice(index, 1);
+            }
+        }
+        this.setState({Questions: arr, selectedProjectLinkIds: selectedProjectLinkIds});
     },
 
 
     updateQuestion: function (newtext, questionType, i) {
-        console.log(this.state.Questions[i]);
+        //console.log(this.state.Questions[i]);
         var arr = this.state.Questions;
 
         if (arr[i].question_type == "MCQ" && questionType != "MCQ"){
@@ -536,17 +574,28 @@
         arr[i].mcq_options=newOptionsArray;
 
         this.setState({Questions:arr});
-        console.log("updatingmcqoptions");
-        console.log(arr[i]);
+        //console.log("updatingmcqoptions");
+        //console.log(arr[i]);
     },
 
     updateLinkProject: function (project_id, i){
         var arr = this.state.Questions;
-        console.log(i);
+        var selectedProjectLinkIds = this.state.selectedProjectLinkIds
+        var prev_project_id = arr[i].project_id
         arr[i].project_id=project_id;
-        this.setState({Questions:arr});
-        console.log("updatingLinkproject_id");
+        arr[i].metas = {};
         console.log(arr[i]);
+        var index = selectedProjectLinkIds.indexOf(prev_project_id);
+        if (index > -1) {
+          selectedProjectLinkIds.splice(index, 1);
+        }
+        selectedProjectLinkIds.push(project_id);
+        
+        console.log(selectedProjectLinkIds);
+        this.setState({Questions:arr, selectedProjectLinkIds: selectedProjectLinkIds});
+
+        //console.log("updatingLinkproject_id");
+        //console.log(selectedProjectLinkIds);
     },
 
     updateIndividualLink: function (project_id, i, obj){
@@ -566,22 +615,23 @@
             arr[i].metas[project_id]=[obj];
         }
         this.setState({Questions:arr});
-        console.log(arr);
+        //console.log(arr);
     },
 
     updateLinkMetas: function (project_id, i, obj){
         
         this.updateIndividualLink(project_id, i, obj);
-        if (obj['question_type'] === "Link"){
-            obj.metas[obj['project_id']].forEach((item) => {this.updateIndividualLink(obj['project_id'], i, item);});
-        }
-        console.log("updatingLinkmetas");
+        // if (obj['question_type'] === "Link"){
+        //     obj.metas[obj['project_id']].forEach((item) => {this.updateIndividualLink(obj['project_id'], i, item);});
+        // }
+        //console.log("updatingLinkmetas");
         
         
     },
 
 
     eachQuestion: function (question, i){
+        console.log("update");
         if(!question.hasOwnProperty('is_deleted') || (question.hasOwnProperty('is_deleted') && question.is_deleted == false)){
             if(question.question_type=="MCQ" ){
                 return(
@@ -590,7 +640,7 @@
             }
             else if(question.question_type=="Link"){
                 return(
-                        <ExtLinkQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} link_project_id ={question.project_id} updateLinkMetas={this.updateLinkMetas} selected_metas={question.metas} deleteFromForm={this.removeQuestion} />                        
+                        <ExtLinkQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} link_project_id ={question.project_id} updateLinkMetas={this.updateLinkMetas} selected_metas={question.metas} deleteFromForm={this.removeQuestion} selectedProjectLinkIds={this.state.selectedProjectLinkIds} projects={this.state.projects} />                        
                     );
             
             }else{

@@ -2750,37 +2750,31 @@ def site_refrenced_metas(request, pk):
 
 
 
-    def generate(project_id, metas_to_parse, site, selected_metas):
+    def generate(metas, project_id, metas_to_parse, meta_answer, selected_metas):
 
         for meta in metas_to_parse:
-            meta_answer={}
-            if site.site_meta_attributes_ans:
-                meta_answer = site.site_meta_attributes_ans
 
             if meta.get('question_type') == "Link":
                 if not selected_metas:
                     selected_metas = meta.get('metas')
                 if meta.get('project_id') == main_project:
                     continue
-                # print meta.get('question_name');
-                site = Site.objects.filter(identifier = meta_answer.get(meta.get('question_name'), None), project_id = meta.get('project_id'))
-                # import pdb; pdb.set_trace();
-                if site and str(site[0].project_id) in selected_metas:
-                    meta['answer'] = "<a href='/fieldsight/redirect/"+str(site[0].project_id)+"/site/?identifier="+meta_answer.get(meta.get('question_name'))+"'>"+meta_answer.get(meta.get('question_name'))+"</a>"
-                    metas.append(meta)
-                    print meta['question_name']
-                    generate(site[0].project_id, selected_metas[str(site[0].project_id)], site[0], selected_metas)
-            
+                sitenew = Site.objects.filter(identifier = meta_answer.get(meta.get('question_name'), None), project_id = meta.get('project_id'))
+                if sitenew and str(sitenew[0].project_id) in selected_metas:
+                    answer = meta_answer.get(meta.get('question_name'))
+                    sub_metas = []
+                    generate(sub_metas, sitenew[0].project_id, selected_metas[str(sitenew[0].project_id)], sitenew[0].site_meta_attributes_ans, selected_metas)
+                    metas.append({'question_text': meta.get('question_text'), 'project_id':meta.get('project_id'), 'answer':answer, 'question_type':'Link', 'children':sub_metas})
+                    
                 else:
-                    meta['answer'] = "No Site Refrenced"
-                    metas.append(meta)
-
+                    answer = "No Site Refrenced"
+                    metas.append({'question_text': meta.get('question_text'), 'answer':answer, 'question_type':'Normal'})
             else:
-                meta['answer'] = meta_answer.get(meta.get('question_name'), "")
-                metas.append(meta)
+                answer = meta_answer.get(meta.get('question_name'), "")
+                metas.append({'question_text': meta.get('question_text'), 'answer':answer, 'question_type':'Normal'})
 
 
-    generate(project.id, project.site_meta_attributes, site, None)
+    generate(metas, project.id, project.site_meta_attributes, site.site_meta_attributes_ans, None)
     return JsonResponse(metas, safe=False)
 
 

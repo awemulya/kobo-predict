@@ -56,7 +56,7 @@
 			</div>
 
 {% endblock %}
-{%block extrascript %}
+{% block extrascript %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
 
     <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.ajax.min.js"></script>
@@ -72,10 +72,10 @@
 	<script type = "text/javascript">
 		$('.legend').css('display','block');
 	</script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/geo-layers.js"></script>
 
     <script type="text/javascript" src="{{ STATIC_URL }}js/map.js?v=1.1"></script>
 
-    <script type="text/javascript" src="{{ STATIC_URL }}js/geo-layers.js"></script>
 
 {% endblock %}
 
