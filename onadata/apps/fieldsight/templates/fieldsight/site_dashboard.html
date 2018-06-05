@@ -632,9 +632,7 @@
 </section>
 </div>
 </div>
-<!--</section>-->
-<!---->
-<!--</div>-->
+
 
 {% endblock %}
 
@@ -649,11 +647,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.markercluster-src.js"></script>
 
 <script src="{% static 'dummy/assets/js/vendor/jquery.matchHeight.js' %}"></script>
-<script>
-	$(document).ready(function(){
 
-	});
-</script>
 
 <script src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
 <script type="text/javascript">
@@ -781,10 +775,119 @@
 					}
 				</script>
 
-				<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
-				<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
-				<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
-				<script src="{% static 'js/fieldsight/manage_site_dashboard.js' %}?v=0.4"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
+	<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
+	<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+	<script src="{% static 'js/fieldsight/manage_site_dashboard.js' %}?v=0.4"></script>
+
+	<script src="{% static 'js/reactjs/react.min.js' %}"></script>
+	<script src="{% static 'js/reactjs/browser.min.js' %}"></script>
+	<script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
+
+    <script type="text/babel">
+     
+
+        var MetaAttributes = React.createClass({
+            
+            
+            getInitialState: function () {
+                return {}
+            },         
+
+            eachMeta: function (obj, j){            
+               
+                const style={
+                            'margin-left': this.props.indent+'px',
+                        }
+                if(obj.question_type=='Link'){
+                    
+                    
+                    const submetas = [];
+                    
+                    submetas.push(
+                         <MetaAttributes children={obj.children} indent={this.props.indent + 15}/>
+                        )
+                    
+                    return (
+                        <div>
+                        <br/>
+                        <div style={style}>
+                                <b>{obj.question_text} :</b> <a href={'/fieldsight/redirect/'+obj.project_id +'/site/?identifier='+obj.answer}>{obj.answer}</a>
+                        </div>
+                        {
+                            submetas
+                        }
+                        </div>
+                        )
+                }
+                else{
+                return(
+                <div style={style}>
+                    {obj.question_text} : {obj.answer}
+                </div>)
+                }
+            },
+                          
+            renderNormal:function(){
+                
+                return (<div>
+                    {         
+                        this.props.children.map(this.eachMeta)
+                    }
+                </div>
+            );
+            },
+            render: function () {
+                return this.renderNormal();
+            }
+        });   
+
+    var LoadMetas = React.createClass({
+            
+            getInitialState: function () {
+                return {metas:[],}
+            },         
+            componentDidMount() {
+            
+
+            	fetch('/fieldsight/api/siteallmetas/'+configure_settings.site_id+'/', {
+                      method: 'GET',
+                      credentials: 'include'
+                    })
+                  .then(res => res.json())
+                  .then(
+                    (result) => {
+                     
+                      this.setState({
+                        
+                        metas: result,
+                    
+                        
+                        });
+                    },
+                    (error) => {
+                      this.setState({
+                     
+                        metas:[],
+                     
+                      });
+                    })
 
 
-				{% endblock %}
+            },
+            
+            render: function () {
+                return (
+                		<div>
+                		<MetaAttributes children={this.state.metas} indent={0}/>
+                		</div>
+                	)
+            }
+        });     
+  	ReactDOM.render(<LoadMetas /> , document.getElementById('allmetas'));
+
+</script>
+
+
+
+{% endblock %}
