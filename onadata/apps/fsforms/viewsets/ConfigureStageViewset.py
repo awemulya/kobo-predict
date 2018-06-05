@@ -130,7 +130,7 @@ class LargeResultsSetPagination(PageNumberPagination):
     # max_page_size = 10000
 
 class FInstanceViewset(viewsets.ReadOnlyModelViewSet):
-    queryset = FInstance.objects.filter(project_fxf__isnull=False).select_related('instance', 'submitted_by' ,'project_fxf',   'project_fxf__xf',  'project_fxf__xf__user')
+    queryset = FInstance.objects.filter(site_fxf__isnull=False).select_related('instance', 'submitted_by' ,'site_fxf',   'site_fxf__xf',  'site_fxf__xf__user')
     serializer_class = FinstanceSerializer
     pagination_class = LargeResultsSetPagination
 

@@ -188,14 +188,14 @@ class FinstanceSerializer(serializers.ModelSerializer):
         return obj.submitted_by.username
 
     def get_form_type(self, obj):
-        return {'is_staged': obj.project_fxf.is_staged, 'is_scheduled': obj.project_fxf.is_scheduled, 'is_survey': obj.project_fxf.is_survey, }
+        return {'is_staged': obj.site_fxf.is_staged, 'is_scheduled': obj.site_fxf.is_scheduled, 'is_survey': obj.site_fxf.is_survey, }
 
     def get_submission_data(self, obj):
         data = []
         json_answer = obj.instance.json
-        json_question = json.loads(obj.project_fxf.xf.json)
+        json_question = json.loads(obj.site_fxf.xf.json)
         base_url = BASEURL
-        media_folder = obj.project_fxf.xf.user.username
+        media_folder = obj.site_fxf.xf.user.username
 
         def parse_repeat(r_object):
             r_question = r_object['name']
