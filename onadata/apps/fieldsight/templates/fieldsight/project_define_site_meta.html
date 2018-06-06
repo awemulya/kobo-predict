@@ -18,7 +18,7 @@
 					{% block breadcrumbs %}
 					<ol class="breadcrumb">
 						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
-						<li class="breadcrumb-item active" aria-current="page">{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</li>
+						<li class="breadcrumb-item active" aria-current="page">{% trans 'Meta' %} {% trans 'Attributes' %} {% trans 'Upload' %}</li>
 					 </ol>
 					{% endblock %}
 				</nav>
@@ -46,22 +46,139 @@
 
 {%block extrascript %}
 <script>
-
+{% load l10n %}
 </script>
+
     <script type="text/babel">
+
      var _json_question = JSON.parse("{{json_questions|escapejs}}");
-     console.log(_json_question);
+     var project_id = "{{ obj.id|unlocalize }}";
+     var org_id = "{{ obj.organization_id|unlocalize }}";
+
+     var questionTypes = [{'id': 'Text', 'name': 'Text'}, 
+                          {'id': 'Number', 'name': 'Number'},
+                          {'id': 'Date', 'name': 'Date'},
+                          {'id': 'MCQ', 'name': 'MCQ'},
+                          {'id': 'Link', 'name': 'Link'}, ];
+     
+    var SelectComponent = React.createClass({
+            
+            getInitialState: function () {
+                return {}
+            },
+   
+            renderNormal:function(){
+                return(
+                    <select ref={this.props.inputRef} className="form-group col-md-4" name="project" onChange={this.props.onChangeFunction} defaultValue={this.props.defaultValue}>
+                        {this.props.options.map((e, key) => {
+                            return <option key={key} value={this.props.isProject ? key : e.id}>{e.id}{e.name}</option>;
+                        })}
+                    </select>
+                    
+            );
+            },
+            render: function () {
+                    return this.renderNormal();
+            }
+        });
+
+
+
+
+    var CheckboxComponent = React.createClass({
+            
+            
+            getInitialState: function () {
+                return {isloaded:false, metas:[], project_id:0, selected_metas:[]}
+            },
+
+            loadmetas: function(metas, project_id, selected_metas){
+                this.setState({'metas':metas, 'project_id':project_id, 'selected_metas':selected_metas})
+                
+                
+            },
+            componentDidMount(){
+                this.loadmetas(this.props.metas, this.props.project_id, this.props.selected_metas);
+            },
+            componentWillReceiveProps(nextProps) {
+                this.loadmetas(nextProps.metas, nextProps.project_id, nextProps.selected_metas);
+            },
+            
+            toggleCheckbox:function(index, obj) {
+                this.props.updateSelectedMetas(this.state.project_id, obj);
+
+            },
+
+            eachMeta: function (obj, j){            
+                console.log(obj);
+                if(obj.question_type=='Link'){
+                    if (obj.project_id.toString() != project_id.toString()){
+                    
+                    console.log("huhahaha", obj.project_id.toString(), project_id.toString());
+                    
+                    const submetas = [];
+                    if((this.state.selected_metas[this.state.project_id] || []).find(temp=>temp.question_name == obj.question_name)){
+                    submetas.push(
+                         <CheckboxComponent project_id={obj.project_id} metas={obj.metas[obj.project_id]} selected_metas={this.state.selected_metas} updateSelectedMetas={this.props.updateSelectedMetas}/>
+                        )
+                    }
+                    return (
+
+                        <div>
+                        <br/>
+                        <div>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={(this.state.selected_metas[this.state.project_id] || []).find(temp=>temp.question_name == obj.question_name)}
+                                    onChange={this.toggleCheckbox.bind(this, j, obj)}
+                                />
+                                {obj.question_text}
+                                </label>
+                        </div>
+                        {
+                            submetas
+                        }</div>
+                        )
+                    }
+                }
+                else{
+                return(
+                <div>
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={(this.state.selected_metas[this.state.project_id] || []).find(temp=>temp.question_name == obj.question_name)}
+                            onChange={this.toggleCheckbox.bind(this, j, obj)}
+                        />
+                        {obj.question_text}
+                        </label>
+                </div>)
+                }
+            },
+                          
+            renderNormal:function(){
+                
+                return (<div>
+                    {         
+                        this.state.metas.map(this.eachMeta)
+                    }
+                </div>
+            );
+            },
+            render: function () {
+                    return this.renderNormal();
+            }
+        });
+
      var NormalQuestion = React.createClass({
             
             getInitialState: function () {
-                return {'editing':false}
+                return {questionTypes:questionTypes, 'editing':false}
             },
 
             save: function () {
                 this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
-                if (this.refs.questionType.value == 'mcq'){
-                    this.setState({type: 'mcq', options: []})
-                }
                 // console.log('save');
             },
             
@@ -79,32 +196,23 @@
                         </div>
                         <div className="form-group col-md-4">
                             <label for="input2" className="col-form-label">Input Type:</label>
-                            <select className="form-control" ref="questionType" id="input2" onChange={this.save} defaultValue={this.props.question_type}>
-                              <option value="Text">Text</option>
-                             <option value="Number">Number</option>
-                              <option value="Date">Date</option>
-                              <option value="MCQ">MCQ</option>
-                            </select>
+                            <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
                         </div>
-
-                        
-
                         <div className="form-group col-md-4">
                             <label className="col-form-label"> &nbsp; </label>                     
-
                             <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
-                            
-
                         </div>
                     </div>
-
-            );
+                );
             },
             render: function () {
                     return this.renderForm();
                
             }
         });
+
+
+
      var Option = React.createClass({
             
             getInitialState: function () {
@@ -123,28 +231,21 @@
             remove:function(){
                 // console.log('Delete pressed.' + this.props.index)
                 this.props.deleteOption(this.props.index);
-            },
-            
+            },            
    
             renderNormal:function(){
-                // console.log("----"+this.props.option_text);
                 return(
                     <div className="QuestionContainer form-row">
                         <div className="form-group col-md-4">
                             <label for="input1" className="col-form-label">Option {this.props.index + 1}:</label>
                             <input type="text" ref="newOptionText" className="form-control" onChange={this.save} defaultValue={this.props.option_text} placeholder= "Option Text"></input>
                         </div>
-
                         <div className="form-group col-md-4">
                             <label className="col-form-label"> &nbsp; </label>                     
-
                             <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
-                            
-
                         </div>
                     </div>
-
-            );
+                );
             },
             render: function () {
               
@@ -154,57 +255,34 @@
         });
 
       var MCQQuestion = React.createClass({
-            
             getInitialState: function () {
-                
-                return {options:this.props.options}
+                return {questionTypes:questionTypes, options:this.props.options}
             },
             
             addOption:function () {
-            // console.log(i);
-            
-            var arr =this.state.options;
-            var new_option={"option_text":""};
-            arr.push(new_option);
-            
-            this.setState({options: arr});
-            // console.log(arr);
+                var arr =this.state.options;
+                var new_option={"option_text":""};
+                arr.push(new_option);
+                this.setState({options: arr});
             },
 
             save: function () {
                 this.props.updateMCQOptions(this.state.options, this.props.index);
                 this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
-                
-                // console.log('save');
-                
             },
-            
-
 
             updateOption: function(newTextoption, i){
-                // console.log('Removing Question:' + i);
                 var arr= this.state.options;
                 arr[i].option_text = newTextoption;
                 this.setState({options: arr});
-                // console.log(this.state.options);
                 this.props.updateMCQOptions(this.state.options, this.props.index);
 
             },
 
             deleteOption: function(i){
-                // console.log('Removing Question:' + i);
                 var arr= this.state.options;
-                // console.log(i);
-                // arr[i];
-                // arr.splice(i, 1);
                 arr[i].is_deleted=true;
-                // console.log(this.state.options);
-                // this.setState({options:[]});
-                // this.setState({options:arr});
-                this.setState({options:arr})
-                // console.log(this.state.options);
-               
-                
+                this.setState({options:arr})               
                 this.props.updateMCQOptions(this.state.options, this.props.index);
             },
 
@@ -223,7 +301,6 @@
                              }},
 
             renderForm:function(){
-                // this.state.options = this.props.options;
                 return(
                     <div>
                     <div className="QuestionContainer form-row">
@@ -233,46 +310,146 @@
                         </div>
                         <div className="form-group col-md-4">
                             <label for="input2" className="col-form-label">Input Type:</label>
-                            <select className="form-control" ref="questionType" id="input2" onChange={this.save} defaultValue={this.props.question_type}>
-                              <option value="Text">Text</option>
-                              <option value="Number">Number</option>
-                              <option value="Date">Date</option>
-                              <option value="MCQ">MCQ</option>
-                            </select>
+                            <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
                         </div>
-
-                        
-
                         <div className="form-group col-md-4">
                             <label className="col-form-label"> &nbsp; </label>                     
-
                             <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
-                            
-
                         </div>
                     </div>
-                 {
-                                    // console.log(text.mcq_options);
-                                    // text.mcq_options.map(this.eachOption)
-                                    // text.mcq_options.forEach(function (item, j, mapObj){
-                                    //      return(
-                                    //         <Option key={j} index={j} question={item.question_text} question_type={item.question_type}  />
-                                    //         );
-                                    //      })
+                    {         
                                   this.state.options.map(this.eachOption)
-
                     }
-                    <button onClick={this.addOption} className="btn btn-primary"><i className="la la-plus"></i>Add New</button>
-                                
+                    <button onClick={this.addOption} className="btn btn-primary"><i className="la la-plus"></i>Add New</button>            
                     </div>
-
-            );
+                );
             },
             render: function () {
                     return this.renderForm();
-               
             }
         });
+
+    var ExtLinkQuestion = React.createClass({
+            
+            getInitialState: function () {
+                
+                return {questionTypes:questionTypes, isLoaded: false, projects:[], project_index:0, selected_metas:this.props.selected_metas, metas:[], project_id: this.props.link_project_id}
+            },
+
+            componentDidMount() {
+                fetch("/fieldsight/api/organization/"+org_id+"/my_projects/"+project_id+"/", {
+                      method: 'GET',
+                      credentials: 'include'
+                    })
+                  .then(res => res.json())
+                  .then(
+                    (result) => {
+                      this.setState({
+                        
+                        projects: result,
+                        });
+                    
+            
+                    let project_index=this.state.projects.indexOf(this.state.projects.find(temp=>temp.id == this.state.project_id));
+                    if (project_index < 0){ project_index = 0; }
+                    this.setState({project_index:project_index, metas:this.state.projects[project_index].site_meta_attributes,  isLoaded: true});
+                
+                    },
+                    (error) => {
+                      this.setState({
+                        isLoaded: true,
+                        projects:[],
+                        project_id: 0
+                      });
+                    }
+                  )
+              },
+
+            save: function () {
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
+                // console.log('save');
+            },
+            
+
+            updateSelectedMetas: function(project_id, obj){
+                this.props.updateLinkMetas(project_id, this.props.index, obj);
+            },
+
+            projectChanged: function () {        
+                const selectedProject = this.state.projects[this.refs.selectProjectRef.value]
+                this.props.updateLinkProject(selectedProject.id, this.props.index);
+                console.log(selectedProject.site_meta_attributes);
+                this.setState({project_id:selectedProject.id, metas:selectedProject.site_meta_attributes});
+                //CLEAR ALL SELECTED METAS ON CHANGE
+            },
+
+            remove:function(){
+                // console.log('Delete pressed.')
+                this.props.deleteFromForm(this.props.index);
+            },
+
+            renderForm:function(){
+                
+                if(this.state.isLoaded){
+                    return(
+                    <div className="QuestionContainer form-row">
+                        <div className="form-group col-md-4">
+                            <label for="input1" className="col-form-label">Input Label:</label>
+                            <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
+                        </div>
+                        <div className="form-group col-md-4">
+                            <label for="input2" className="col-form-label">Input Type:</label>
+                            <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
+                        </div>
+                        <div className="form-group col-md-4">
+                            <label className="col-form-label"> &nbsp; </label>                     
+                            <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
+                        </div>
+                        <div className="form-group col-md-4">
+                            <label className="col-form-label">Select Project</label>                     
+                            <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_index} options={this.state.projects}/>
+                        </div>
+
+                        <CheckboxComponent project_id={this.state.project_id}  selected_metas={this.state.selected_metas} metas={this.state.metas} updateSelectedMetas={this.updateSelectedMetas}/>
+                
+                        
+                    </div>
+                   ); 
+                }else{
+                     return(<div>
+                        <div className="QuestionContainer form-row">
+                        <div className="form-group col-md-4">
+                        <label className="col-form-label"><h4>Loading</h4></label>                     
+                            
+                        </div>
+                        <div className="form-group col-md-4">
+                        </div>
+                        <div className="form-group col-md-4">
+                        </div>
+                        <div className="form-group col-md-4">
+                        </div>
+
+                        
+                    </div>
+                     </div>);
+                }
+                
+                
+            },
+            render: function () {
+                return this.renderForm();
+            }
+        });
+
+
+
+
+
+
+
+
+
+
 
      var Form = React.createClass({
         getInitialState: function () {
@@ -295,75 +472,59 @@
     },
 
     save: function () {
+        
         if(this.state.Questions.length < 1){ return alert("No Any Questions Found."); } 
+        
         var json_convertible = this.state.Questions.filter(function(item) {
-            // return item.is_deleted == false;
-
             if (!item.hasOwnProperty('is_deleted')){
                 return item;
             }
             else if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
                 delete item.is_deleted;
-                // console.log(item);
                 return item;
-        }});
+            }
+        });
+        
         for (var key in json_convertible) {
-        json_convertible[key].question_name = json_convertible[key].question_text.replace(/\W/g,"_");
+            json_convertible[key].question_name = json_convertible[key].question_text.replace(/\W/g,"_");
         }
 
-        // console.log(json_convertible);
         var json_Question = JSON.stringify(json_convertible);
-        
-
         document.getElementById('json_questions').value = json_Question;
         document.getElementById('theForm').submit();
     },
 
     removeQuestion: function(i){
-        // console.log('Removing Question:' + i);
         var arr= this.state.Questions;
         arr[i].is_deleted=true;
-        // var newArray = arr.filter(function (item) {
-        //     if (!item.hasOwnProperty('is_deleted')){
-        //    console.log(item);
-        //         return item;
-        //     }
-        //     else if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
-        //         delete item.is_deleted;
-        //         console.log(item);
-        //         return item;
-        // }
-        // });
         this.setState({Questions: arr});
     },
+
 
     updateQuestion: function (newtext, questionType, i) {
         console.log(this.state.Questions[i]);
         var arr = this.state.Questions;
-        if(arr[i].question_type == "MCQ" && questionType != "MCQ"){
-                 delete arr[i].mcq_options;
-                 // console.log(arr[i]);           
-                  }
-        else{
-                if(questionType == "MCQ"){
-                    arr[i].mcq_options=[];
-                }
+
+        if (arr[i].question_type == "MCQ" && questionType != "MCQ"){
+            delete arr[i].mcq_options; 
         }
+        else if(arr[i].question_type == "Link" && questionType != "Link"){
+            delete arr[i].project_id;
+            delete arr[i].metas;
+        }
+        
+        if(questionType == "MCQ" && arr[i].question_type != "MCQ"){
+            arr[i].mcq_options=[];
+        }
+        else if(questionType == "Link" && arr[i].question_type != "Link"){
+            arr[i].project_id = 0;
+            arr[i].metas={};
+        }
+        
+        
         arr[i].question_text=newtext;
         arr[i].question_type=questionType;
-        // var newArray = arr.filter(function (item) {
-        //     if (!item.hasOwnProperty('is_deleted')){
-        //         return item;
-        //     }
-        //     else if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
-        //         delete item.is_deleted;
-        //         console.log(item);
-        //         return item;
-        // }
-        // });
-        
         this.setState({Questions:arr});
-        console.log(newArray);
     },
 
     updateMCQOptions: function (options, i){
@@ -371,8 +532,7 @@
         var newOptionsArray = options.filter(function (op) {
         if (!op.hasOwnProperty('is_deleted')){
             return op
-        }
-        
+            }
         });
         // console.log(newOptionsArray);
         arr[i].mcq_options=newOptionsArray;
@@ -382,64 +542,83 @@
         console.log(arr[i]);
     },
 
-    // updateMCQQuestion: function (newtext, questionType, mcq_options, i) {
-    //         // console.log('Updating Question');
-    //         var arr = this.state.Questions;
-    //         if(arr[i].question_type == "MCQ" && questionType != "MCQ"){
-    //                  delete arr[i].mcq_options;
-    //         }else{
-    //             arr[i].question_text=newtext;
-    //             arr[i].question_type=questionType;
-    //             arr[i].mcq_options=mcq_options;
-    //         }
-    //         // if(questionType == "MCQ"){
-    //         //         arr[i].mcq_options=[];
-    //         //     }
-    //         this.setState({Questions:arr});
-    //         console.log(arr);
-    //     },
-     eachQuestion: function (question, i){
+    updateLinkProject: function (project_id, i){
+        var arr = this.state.Questions;
+        console.log(i);
+        arr[i].project_id=project_id;
+        this.setState({Questions:arr});
+        console.log("updatingLinkproject_id");
+        console.log(arr[i]);
+    },
+
+    updateIndividualLink: function (project_id, i, obj){
+        var arr = this.state.Questions;
+        if (project_id in arr[i].metas){
+            const obj_exists = arr[i].metas[project_id].find(temp=>temp.question_name == obj.question_name)
+        
+            if (obj_exists){
+                arr[i].metas[project_id].splice(arr[i].metas[project_id].indexOf(obj_exists), 1);
+                
+            }
+            else{
+                arr[i].metas[project_id].push(obj);
+            }
+        }
+        else{
+            arr[i].metas[project_id]=[obj];
+        }
+        this.setState({Questions:arr});
+        console.log(arr);
+    },
+
+    updateLinkMetas: function (project_id, i, obj){
+        
+        this.updateIndividualLink(project_id, i, obj);
+        // if (obj['question_type'] === "Link"){
+        //     obj.metas[obj['project_id']].forEach((item) => {this.updateIndividualLink(obj['project_id'], i, item);});
+        // }
+        console.log("updatingLinkmetas");
+        
+        
+    },
+
+
+    eachQuestion: function (question, i){
         if(!question.hasOwnProperty('is_deleted') || (question.hasOwnProperty('is_deleted') && question.is_deleted == false)){
             if(question.question_type=="MCQ" ){
                 return(
                         <MCQQuestion key={i} index={i} options={question.mcq_options} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateMCQOptions={this.updateMCQOptions} deleteFromForm={this.removeQuestion} />
                     );
+            }
+            else if(question.question_type=="Link"){
+                return(
+                        <ExtLinkQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} link_project_id ={question.project_id} updateLinkMetas={this.updateLinkMetas} selected_metas={question.metas} deleteFromForm={this.removeQuestion} />                        
+                    );
+            
             }else{
                 return(
                         <NormalQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} deleteFromForm={this.removeQuestion} />
                     );
             }
         }
-      },
-      render: function () {
-            return (
-                <div>
-                    
-                        {   
-                            this.state.Questions.map(this.eachQuestion)
-                        }
-                    
-                    <button onClick={this.addQuestion.bind(null, 'New Question')} className="btn btn-primary"><i className="la la-plus"></i>Add New</button>
-                  
-                    <button onClick={this.save.bind()} className="btn btn-success pull-right"><i className="la la-save"></i>Save Form</button>
-                    
+    },
 
-                </div>
-                );
-            }
-  });
-
-        
-        ReactDOM.render(<Form /> , document.getElementById('app')
+    render: function () {
+        return (
+            <div>
+                {   
+                    this.state.Questions.map(this.eachQuestion)
+                }
+                <button onClick={this.addQuestion.bind(null, 'New Question')} className="btn btn-primary"><i className="la la-plus"></i>Add New</button>         
+                <button onClick={this.save.bind()} className="btn btn-success pull-right"><i className="la la-save"></i>Save Form</button>
+            </div>
             );
-    </script>
+        }
+    });
 
+    ReactDOM.render(<Form /> , document.getElementById('app'));
 
-
-
-
-
-  
+</script> 
 {% endblock %}
 
 

@@ -17,7 +17,7 @@ from rest_framework.permissions import BasePermission
 
 
 from onadata.apps.fieldsight.models import Project, Region
-from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectTypeSerializer, ProjectMiniSerializer, ProjectSerializer, ProjectCreationSerializer
+from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectMetasSerializer, ProjectTypeSerializer, ProjectMiniSerializer, ProjectSerializer, ProjectCreationSerializer
 from onadata.apps.fieldsight.serializers.RegionSerializer import RegionSerializer
 
 from django.db.models import Q
@@ -122,7 +122,6 @@ class MyProjectlistViewSet(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         if self.request.group.name == "Super Admin":
-            print "here"
             return queryset
 
         user_id = self.kwargs.get('pk', None)
@@ -130,6 +129,25 @@ class MyProjectlistViewSet(viewsets.ModelViewSet):
         project_ids = self.request.roles.filter(group_id=2).values('project_id')
         org_ids = self.request.roles.filter(group_id=1).values('organization_id')
         return queryset.filter(Q(pk__in=project_ids) | Q(organization_id__in=org_ids)).exclude(pk=exclude_pk)
+
+
+class MyOrgProjectlistViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing Regions.
+    """
+    queryset = Project.objects.all()
+    serializer_class = ProjectMiniSerializer
+
+    def filter_queryset(self, queryset):
+
+        org_id = self.kwargs.get('pk', None)
+        if self.request.group.name == "Super Admin":
+            return queryset.filter(organization_id=org_id)
+
+        exclude_pk = self.kwargs.get('exclude_pk', 0)
+        project_ids = self.request.roles.filter(group_id=2).values('project_id')
+        orgqueryset =  queryset.filter(organization_id = pk)
+        return orgqueryset.filter(Q(pk__in=project_ids)).exclude(pk=exclude_pk)
 
 
 class ProjectRegionslistViewSet(viewsets.ModelViewSet):
@@ -154,3 +172,14 @@ def all_notification(user,  message):
             "msg": message
         })
     })
+
+
+class ProjectMetas(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing Regions.
+    """
+    queryset = Project.objects.all()
+    serializer_class = ProjectMetasSerializer
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(pk=self.kwargs.get('pk'))

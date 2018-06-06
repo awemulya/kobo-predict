@@ -240,41 +240,29 @@
 									{% endwith %}
 									</div>
 								<div class="widget-info margin-top bg-white padding gh-col">
-															<div class="widget-head">
-																<h4><a href="#">{% trans 'About' %}</a></h4>
-																<a href="#" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#moreMetaAttribute">
-																	<i class="la la-plus"></i>
-																</a>
-																<div class="modal fade" id="moreMetaAttribute" tabindex="-1" role="dialog" aria-labelledby="moreMetaAttributeTitle" aria-hidden="true">
-																	<div class="modal-dialog" role="document">
-																		<div class="modal-content">
-																			<div class="modal-header">
-																				<h6 class="modal-title" id="moreMetaAttributeTitle">Meta Attributes</h6>
-																				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-																					<span aria-hidden="true">&times;</span>
-																				</button>
-																			</div>
-																			<div class="modal-body">
-																				<div class="row">
-																					{% if meta_data %}
-																					
-
-																					{% for data in meta_data %}
-																					{% for key, value in data.items %}
-																					<div class="col-md-6">
-																						<div class="meta-item">
-																							<p><strong>{{ key }} :</strong> <br> {{ value }}  </p>
-																						</div>
-																					</div>
-																					{% endfor %}
-																					{% endfor %}
-																					{% endif %}
-																				</div>
-																			</div>
-																		</div>
-																	</div>
-																</div>
-															</div>
+									<div class="widget-head">
+										<h4><a href="#">{% trans 'About' %}</a></h4>
+										<a href="#" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#moreMetaAttribute">
+											<i class="la la-plus"></i>
+										</a>
+										<div class="modal fade" id="moreMetaAttribute" tabindex="-1" role="dialog" aria-labelledby="moreMetaAttributeTitle" aria-hidden="true">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h6 class="modal-title" id="moreMetaAttributeTitle">Meta Attributes</h6>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body">
+														<div id="allmetas">
+														
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
 										<div class="widget-body">
 
 											<!-- <p>

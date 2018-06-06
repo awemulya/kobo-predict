@@ -9,7 +9,7 @@ from django.contrib.gis.geos import Point
 from django.db import transaction
 from django.db.models import Q
 from django.forms import modelformset_factory
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template.response import TemplateResponse
 from django.views.generic import ListView, TemplateView, View
@@ -17,7 +17,6 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
 from django.forms.forms import NON_FIELD_ERRORS
-from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied
 
 from fcm.utils import get_device_model
@@ -71,6 +70,8 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from onadata.apps.fsforms.reports_util import get_images_for_site, get_images_for_site_all, get_site_responses_coords, get_images_for_sites_count
 from onadata.apps.staff.models import Team
+
+
 @login_required
 def dashboard(request):
     current_role_count = request.roles.count()
@@ -2590,3 +2591,77 @@ def project_dashboard_graphs(request, pk):
     submissions_data = submissions.values()
 
     return Response({'pl':progress_labels, 'pd':progress_data, 'sl': submissions_labels, 'sd':submissions_data})
+
+
+def site_refrenced_metas(request, pk):
+    metas = []
+    site = Site.objects.get(pk=pk)
+    project = site.project
+    main_project = project.id
+
+
+
+    def generate(project_id, metas_to_parse, site, selected_metas):
+
+        for meta in metas_to_parse:
+            meta_answer={}
+            if site.site_meta_attributes_ans:
+                meta_answer = site.site_meta_attributes_ans
+
+            if meta.get('question_type') == "Link":
+                if not selected_metas:
+                    selected_metas = meta.get('metas')
+                if meta.get('project_id') == main_project:
+                    continue
+                # print meta.get('question_name');
+                site = Site.objects.filter(identifier = meta_answer.get(meta.get('question_name'), None), project_id = meta.get('project_id'))
+                # import pdb; pdb.set_trace();
+                if site and str(site[0].project_id) in selected_metas:
+                    meta['answer'] = "<a href='/fieldsight/redirect/"+str(site[0].project_id)+"/site/?identifier="+meta_answer.get(meta.get('question_name'))+"'>"+meta_answer.get(meta.get('question_name'))+"</a>"
+                    metas.append(meta)
+                    print meta['question_name']
+                    generate(site[0].project_id, selected_metas[str(site[0].project_id)], site[0], selected_metas)
+            
+                else:
+                    meta['answer'] = "No Site Refrenced"
+                    metas.append(meta)
+
+            else:
+                meta['answer'] = meta_answer.get(meta.get('question_name'), "")
+                metas.append(meta)
+
+
+    generate(project.id, project.site_meta_attributes, site, None)
+    return JsonResponse(metas, safe=False)
+
+
+
+def redirectToSite(request, pk):
+    identifier = request.GET.get('identifier', None)
+    if not identifier:
+        raise Http404()
+    site = get_object_or_404(Site, identifier=identifier, project_id=pk)
+    return HttpResponseRedirect(reverse("fieldsight:site-dashboard",  kwargs={'pk': site.id}))    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
