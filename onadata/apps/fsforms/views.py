@@ -21,6 +21,7 @@ from django.http import HttpResponse, HttpResponseForbidden, Http404, HttpRespon
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
 from rest_framework.response import Response
@@ -2194,3 +2195,14 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
 
     except Exception as e:
         return HttpResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateKoboFormView(TemplateView, LoginRequiredMixin):
+    template_name = "fsforms/create_form.html"
+
+    def get_context_data(self, **kwargs):
+        data = super(CreateKoboFormView, self).get_context_data(**kwargs)
+        token, created = Token.objects.get_or_create(user=self.request.user)
+        data["token_key"] = token
+        data["kpi_url"] = settings.KPI_URL
+        return data
