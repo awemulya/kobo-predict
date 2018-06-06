@@ -18,6 +18,7 @@ from onadata.apps.userrole.models import UserRole
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
 from django.db.models import Q
+from onadata.apps.logger.models import XForm
 
 
 
