@@ -45,7 +45,7 @@ class StaffEditForm(forms.ModelForm):
 class AttendanceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AttendanceForm, self).__init__(*args, **kwargs)
-        self.fields['staffs'].choices = [(staff.id, staff) for staff in Staff.objects.filter(team_id=kwargs.get('instance').team_id)]
+        self.fields['staffs'].choices = [(staff.id, staff) for staff in Staff.objects.filter(team_id=kwargs.get('instance').team_id, is_deleted=False)]
         self.fields['staffs'].required = False
 
     staffs = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())
