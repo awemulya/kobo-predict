@@ -5,12 +5,15 @@ from .. models import Project, Site
 from .. rolemixins import DonorRoleMixin, ProjectRoleMixin
 from django.views.generic import TemplateView, View
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from onadata.apps.fieldsight.tasks import importSites
 from django.http import HttpResponse
 from rest_framework import status
 
+class ExportOptions(ProjectRoleMixin, View):
+    def get(self, request):
+        return render(request, "fieldsight/fs_export/xls_export.html")
 class ExportProjectSites(DonorRoleMixin, View):
     def get(self, *args, **kwargs):
         project=get_object_or_404(Project, pk=self.kwargs.get('pk'))
