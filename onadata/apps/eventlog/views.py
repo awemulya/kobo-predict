@@ -21,12 +21,17 @@ from django.contrib.contenttypes.models import ContentType
 
 from django.http import JsonResponse
 from celery.result import AsyncResult
-from onadata.apps.eventlog.serializers.LogSerializer import NotificationSerializer
+from onadata.apps.eventlog.serializers.LogSerializer import NotificationSerializer, LogSerializer
 from onadata.apps.fieldsight.rolemixins import ProjectRoleMixin, SiteRoleMixin
 from onadata.apps.fieldsight.models import Project, Site
 
-class NotificationListView(LoginRequiredMixin, TemplateView):
-    template_name = "eventlog/fieldsight_notification_list.html"
+class NotificationListView(LoginRequiredMixin, ListView):
+    model = FieldSightLog
+    paginate_by = 100
+
+    def get_queryset(self):
+        return super(NotificationListView, self).get_queryset().order_by('-date')
+
 
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 20

@@ -9,6 +9,7 @@ class RegionSerializer(serializers.ModelSerializer):
 
     def get_sites_count(self, obj):
         return obj.regions.all().count()
+
     class Meta:
         model = Region
-        fields = ('id', 'name', 'identifier', 'total_sites_count')
+        fields = ('id', 'name', 'identifier', 'total_sites_count', 'parent')

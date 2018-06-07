@@ -55,6 +55,7 @@
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
               <th>{% trans 'Submissions' %}</th>
               <th>{% trans 'Download' %}</th>
+              <th>{% trans 'New' %}</th>
               </thead>
               <tbody>
               {% for obj in generals %}
@@ -83,6 +84,11 @@
                       <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
                           <i class="la la-download" aria-hidden="true"></i></a>
                       </td>
+                      <td>
+                          <a target="_blank" href="{% url 'forms:new-submission' obj.id %}">
+                              <i class="la la-plus" aria-hidden="true"></i>
+                          </a>
+                      </td>
                   </tr>
               {% endfor %}
               </tbody>
@@ -103,6 +109,7 @@
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
               <th>{% trans 'Submissions' %}</th>
               <th>{% trans 'Download' %}</th>
+              <th>{% trans 'New' %}</th>
               </thead>
               <tbody>
               {% for obj in schedules %}
@@ -133,6 +140,11 @@
                       <td>
                       <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.schedule_forms.xf.user.username obj.schedule_forms.xf.id_string 'xls' 0 obj.schedule_forms.id%}">
                           <i class="la la-download" aria-hidden="true"></i></a>
+                      </td>
+                      <td>
+                          <a target="_blank" href="{% url 'forms:new-submission' obj.form.id %}">
+                              <i class="la la-plus" aria-hidden="true"></i>
+                          </a>
                       </td>
                   </tr>
               {% endfor %}
@@ -208,8 +220,8 @@
             
           </div> 
         {% endif %}
-                       <div class="col-sm-4 card">
-                           <div class="well well-sm notice-danger"><h4>{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}</h4></div>
+        <div class="col-sm-4 card">
+            <div class="well well-sm notice-danger"><h4>{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}</h4></div>
             {% for obj in deleted_forms %}
             <div class="row card_inside">{{obj.xf.title}} {% trans 'with' %}
              {% with obj.id|project_submissions as count %}
@@ -220,11 +232,12 @@
                                </a>
 
              {% endwith %}
+
             </div>
             {% endfor %}
         </div>
-          </div> 
-      </div>
+      </div> 
+    </div>
     </div>
 </div>
 {% endblock %}

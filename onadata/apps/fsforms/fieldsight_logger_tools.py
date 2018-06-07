@@ -69,9 +69,8 @@ mongo_instances = settings.MONGO_DB.instances
 def _get_instance(xml, new_uuid, submitted_by, status, xform, fxfid, project_fxf, site_id, project_id):
     # check if its an edit submission
     # old_uuid = get_deprecated_uuid_from_xml(xml)
-    # instances = Instance.objects.filter(uuid=new_uuid)
-    instances = None
-    if instances:
+    instances = Instance.objects.filter(uuid=new_uuid)
+    if instances.count() > 0:
         # edits
         check_edit_submission_permissions(submitted_by, xform)
         instance = instances[0]
@@ -86,7 +85,7 @@ def _get_instance(xml, new_uuid, submitted_by, status, xform, fxfid, project_fxf
             xml=xml, user=submitted_by, status=status, xform=xform)
         if fxfid and site_id and project_fxf and project_id and fxfid:
             FInstance.objects.create(instance=instance, site_id=site_id, project_id=project_id, site_fxf_id=fxfid,
-                                 project_fxf_id=project_fxf, submitted_by=submitted_by)
+                                     project_fxf_id=project_fxf, submitted_by=submitted_by)
         elif fxfid and site_id and project_id:
             FInstance.objects.create(instance=instance, site_id=site_id, project_id=project_id, site_fxf_id=fxfid,
                              submitted_by=submitted_by)
@@ -119,7 +118,6 @@ def get_uuid_from_submission(xml):
     return len(split_xml) > 1 and split_xml[1] or None
 
 
-
 def _has_edit_xform_permission(xform, user):
     if isinstance(xform, XForm) and isinstance(user, User):
         return user.has_perm('logger.change_xform', xform)
@@ -129,8 +127,7 @@ def _has_edit_xform_permission(xform, user):
 
 def check_edit_submission_permissions(request_user, xform):
     if xform and request_user and request_user.is_authenticated():
-        requires_auth = UserProfile.objects.get_or_create(user=xform.user
-            )[0].require_auth
+        requires_auth = UserProfile.objects.get_or_create(user=xform.user)[0].require_auth
         has_edit_perms = _has_edit_xform_permission(xform, request_user)
 
         if requires_auth and not has_edit_perms:

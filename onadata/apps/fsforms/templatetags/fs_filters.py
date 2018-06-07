@@ -71,3 +71,8 @@ def site_submissions(formid):
         return f.site_form_instances.count()
     return 0
 
+
+@register.filter
+def can_edit_finstance(user, finstance):
+    # TODO Check for project admins and stuffs?
+    return user.has_perm('logger.change_xform', finstance.instance.xform)

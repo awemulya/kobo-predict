@@ -4,6 +4,8 @@
 {% block content %}
 {% load filters %}
 <link href="{% static 'css/cropper.min.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.min.js"></script>
  <script>
     $(function () {
 
@@ -110,7 +112,11 @@
 
 									  <label class="col-form-label">{{ field.label }}</label>
 
+                                        {% if field.name == "geo_layers" %}
+                                        {{ field|add_class:"form-control selectize" }}
+                                        {% else %}
                                         {{ field|add_class:"form-control" }}
+                                        {% endif %}
 									</div>
                                     {% endif %}
                                     {% endif %}
@@ -205,8 +211,10 @@
      var elong = "{{form.instance.longitude}}";
     </script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/addmarker.js"></script>
+
 <script type="text/javascript">
 	map.setView([27,85],2);
+    $('.selectize').selectize();
 </script>
 
 {% endblock %}

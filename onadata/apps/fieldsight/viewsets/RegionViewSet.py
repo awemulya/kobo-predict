@@ -12,6 +12,7 @@ from rest_framework.permissions import BasePermission
 
 from django.db.models import Q
 
+
 class RegionAccessPermission(BasePermission):
     def has_permission(self, request, view):
         if request.group.name == "Super Admin":
@@ -35,6 +36,7 @@ class RegionViewSet(viewsets.ModelViewSet):
     def filter_queryset(self, queryset):
         project_id = self.kwargs.get('pk', None)
         return queryset.filter(project__id=project_id)
+
 
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 2
@@ -67,6 +69,5 @@ class RegionSearchViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         query = self.request.GET.get("q")
-        return self.queryset.filter(Q(name__icontains=query) | Q(identifier__icontains=query))
-
-
+        return self.queryset.filter(Q(name__icontains=query) |
+                                    Q(identifier__icontains=query))

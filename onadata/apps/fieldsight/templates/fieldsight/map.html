@@ -4,19 +4,16 @@
 {% block page-title %}{% trans 'Dashboard' %}{% endblock %}
 <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
 {%block extracss %}
-    <style type="text/css">
-        #map {
-    	height: 560px;
-		}
-    </style>
-
+<link rel="stylesheet" href="{% static 'css/map-geo-layers.css' %}">
+<style type="text/css">
+#map {
+    height: 560px;
+}
+</style>
 {% endblock %}
 {% block content %}
 
 <div id="main-content" class="padding">
-
-
-
 
    <!--  <nav aria-label="breadcrumb" role="navigation">
                     <ol class="breadcrumb">
@@ -44,14 +41,15 @@
                     </div>
                 </div>
 
-
-
-
-
-
-
-
-
+                <div class="geo-layers">
+                    <div class="header">Geo Layers</div>
+                    <div class="content">
+                        <label><input type="radio" name="geo-layer" value="" checked> None </label>
+                        {% for geo_layer in geo_layers %}
+                        <label><input type="radio" name="geo-layer" value="{{ geo_layer.id }}"> {{ geo_layer.title }} </label>
+                        {% endfor %}
+                    </div>
+                </div>
 				
                 <!--<a href="{% url 'dashboard' %}" class="btn btn-success"><i class="la la-reply"></i>{% trans 'Back to dashboard' %}</a>-->
 
@@ -75,7 +73,10 @@
 		$('.legend').css('display','block');
 	</script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/geo-layers.js"></script>
+
     <script type="text/javascript" src="{{ STATIC_URL }}js/map.js?v=1.1"></script>
+
+
 {% endblock %}
 
 

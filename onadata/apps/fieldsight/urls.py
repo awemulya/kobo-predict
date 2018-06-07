@@ -61,7 +61,17 @@ from .views import (
     stages_status_download, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
     SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI,
     GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages,
-    SiteSearchView, ProjectDashboardStageResponsesStatus, site_refrenced_metas, redirectToSite )
+    SiteSearchView, ProjectDashboardStageResponsesStatus, SiteBulkEditView, site_refrenced_metas, redirectToSite )
+
+    
+
+from onadata.apps.geo.views import (
+    GeoLayersView,
+    GeoLayerCreateView,
+    GeoLayerUpdateView,
+    GeoJsonView,
+)
+
 
 
 
@@ -77,6 +87,11 @@ urlpatterns = [
     url(r'^organization/delete/(?P<pk>\d+)/$', OrganizationDeleteView.as_view(), name='organization-delete'),
     url(r'^organization/alter-status/(?P<pk>\d+)/$', alter_org_status, name='alter_org_status'),
     url(r'^organization/add-org-admin/(?P<pk>\d+)/$', OrganizationadminCreateView.as_view(), name='add_org_admin'),
+
+    url(r'^organization/(?P<org_pk>\d+)/geo-layer/$', GeoLayersView.as_view(), name='geo-layers'),
+    url(r'^organization/(?P<org_pk>\d+)/geo-layer/new/$', GeoLayerCreateView.as_view(), name='geo-layer-create'),
+    url(r'^organization/(?P<org_pk>\d+)/geo-layer/(?P<pk>\d+)/$', GeoLayerUpdateView.as_view(), name='geo-layer-update'),
+    url(r'^geo-json/(?P<pk>\d+)/$', GeoJsonView.as_view(), name='geo-json'),
 
     url(r'^api/projects/(?P<pk>\d+)/$', ProjectCreationViewSet.as_view({'get': 'list'}), name='projects-list'),
     url(r'^api/projects/$', ProjectCreationViewSet.as_view({'post': 'create', 'put': 'update'}), name='projects-list'),
@@ -183,6 +198,7 @@ urlpatterns = [
 
     url(r'^api/project/(?P<pk>\d+)/regions/$', ProjectRegionslistViewSet.as_view({'get': 'list'}), name='project_regions_list'),
     url(r'^region/add/(?P<pk>\d+)/$', RegionCreateView.as_view(), name='region-add'),
+    url(r'^sub-region/add/(?P<pk>\d+)/(?P<parent_pk>\d+)$', RegionCreateView.as_view(), name='sub-region-add'),
 
     url(r'^region/delete/(?P<pk>[0-9]+)$', RegionDeleteView.as_view(), name='region-delete'),
     # url(r'^region/deactivate/(?P<pk>[0-9]+)$', RegionDeactivateView.as_view(), name='region-deactivate'),
@@ -211,14 +227,19 @@ urlpatterns = [
     url(r'^search-org/$', OrganizationSearchView.as_view(), name='search-org-list'),
     url(r'^search-proj/(?P<pk>\d+)/$', ProjectSearchView.as_view(), name='search-proj-list'),
 
+
     url(r'^search-site/(?P<pk>\d+)/regional/(?P<region_id>\d+)/$', SiteSearchView.as_view(), name='search-regional-site-list'),
     url(r'^search-site/(?P<pk>\d+)/$', SiteSearchView.as_view(), name='search-site-list'),
 
+
+
+    url(r'^project/(?P<pk>\d+)/bulk-edit-site/$', SiteBulkEditView.as_view(), name='bulk-edit-site'),
 
     url(r'^project/(?P<pk>\d+)/define-site-meta/$', DefineProjectSiteMeta.as_view(), name='define-site-meta'),
     url(r'^site/(?P<pk>\d+)/site-meta-form/$', SiteMetaForm.as_view(), name='site-meta-form'),
     url(r'^multi-site-assign-region/(?P<pk>\d+)/$', MultiSiteAssignRegionView.as_view(), name='multi_site_region_assign'),
     url(r'^bulksitesample/(?P<pk>\d+)/$', ExcelBulkSiteSample.as_view(), name='excel_bulk_site_sample'),
+    url(r'^bulksitesample/(?P<pk>\d+)/(?P<edit>\d+)/$', ExcelBulkSiteSample.as_view(), name='excel_bulk_site_sample'),
     url(r'^ProjectStageResponsesStatus/(?P<pk>\d+)/$',ProjectStageResponsesStatus.as_view(), name='ProjectStageResponsesStatus'),
     url(r'^ProjectDashboardStageResponsesStatus/(?P<pk>\d+)/$',ProjectDashboardStageResponsesStatus.as_view(), name='ProjectDashboardStageResponsesStatus'),
     
@@ -237,6 +258,7 @@ urlpatterns = [
 
 
 
+
     url(r'^api/project_peoples/(?P<pk>\d+)/$', project_dashboard_peoples, name='pdp'),
     url(r'^api/project_map/(?P<pk>\d+)/$', project_dashboard_map, name='pdm'),
     url(r'^api/project_graphs/(?P<pk>\d+)/$', project_dashboard_graphs, name='pdg'),
@@ -247,3 +269,4 @@ urlpatterns = [
     
 
     ]
+

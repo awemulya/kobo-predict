@@ -71,6 +71,9 @@
         <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
+        {% if request.user|can_edit_finstance:sub %}
+          <td>{% trans 'Submission' %} {% trans 'Date' %}</td>
+        {% endif %}
       </tr>
     </thead>
     <tbody>
@@ -97,6 +100,11 @@
                   <td>{{ sub.instance.id }}</td>
                   <td>{{ sub.submitted_by.user_profile.getname }}</td>
                   <td>{{ sub.date }}</td>
+                  {% if request.user|can_edit_finstance:sub %}
+                  <td>
+                      <a href="{% url 'forms:edit-submission' sub.project_fxf.pk sub.id %}">Edit</a>    
+                  </td>
+                  {% endif %}
                   </tr>
               <!-- {% endif %} -->
         
@@ -121,6 +129,9 @@
         <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
+        {% if request.user|can_edit_finstance:sub %}
+          <td>{% trans 'Submission' %} {% trans 'Date' %}</td>
+        {% endif %}
       </tr>
     </thead>
     <tbody>
@@ -135,6 +146,11 @@
                   <td>{{ sub.instance.id }}</td>
                   <td>{{ sub.submitted_by.user_profile.getname }}</td>
                   <td>{{ sub.date }}</td>
+                  {% if request.user|can_edit_finstance:sub %}
+                  <td>
+                      <a href="{% url 'forms:edit-submission' sub.site_fxf.pk sub.id %}">Edit</a>    
+                  </td>
+                  {% endif %}
                   </tr>
             
         

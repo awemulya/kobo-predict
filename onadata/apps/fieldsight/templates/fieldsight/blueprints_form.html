@@ -44,6 +44,7 @@
 					</div>
                 </section>
 
+                {% comment %}
 				<div class="col">
             <div class="wrapper-md">
               <div class="panel pannel-default">
@@ -55,7 +56,7 @@
                        {% endif %}
 
                       <div class="col-sm-2 well">
-                        <image src="{{blueprint.image.url}}"></image>
+                          <a href="{{ blueprint.image.url }}">{{ blueprint.get_name }}</a>
                       </div>
 
                          {% if forloop.counter|divend %}
@@ -68,6 +69,7 @@
               </div>
             </div>
           </div>
+          {% endcomment %}
 
     </div>
 {% endblock %}
