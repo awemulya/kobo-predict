@@ -1100,7 +1100,7 @@ class RolesView(LoginRequiredMixin, TemplateView):
         context['site_supervisor'] = self.request.roles.select_related('site').filter(group__name = "Site Supervisor")
         context['staff_project_manager'] = self.request.roles.select_related('staff_project').filter(group__name = "Staff Project Manager")
         if Team.objects.filter(leader_id = self.request.user.id).exists():
-            context['staff_teams'] = Team.objects.filter(leader_id = self.request.user.id)
+            context['staff_teams'] = Team.objects.filter(leader_id = self.request.user.id, is_deleted=False)
         else:
             context['staff_teams'] = []
         return context

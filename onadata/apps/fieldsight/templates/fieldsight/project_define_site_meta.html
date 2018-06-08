@@ -71,7 +71,7 @@
                 return(
                     <select ref={this.props.inputRef} className="form-group col-md-4" name="project" onChange={this.props.onChangeFunction} value={this.props.defaultValue}>
                         {this.props.options.map((e, key) => {
-                            return <option key={key} value={this.props.isProject ? key : e.id}>{e.id} {e.name}</option>;
+                            return <option key={key} value={this.props.isProject ? key : e.id}>{e.name}</option>;
                         })}
                     </select>
                     
@@ -353,7 +353,6 @@
                 let project_index=nextProps.projects.indexOf(nextProps.projects.find(temp=>temp.id == nextProps.link_project_id));
                 if (project_index < 0){ project_index = 0; }
                 this.setState({project_index:project_index, projects:nextProps.projects, selected_metas:nextProps.selected_metas, metas:nextProps.projects[project_index].site_meta_attributes,  isLoaded: true});
-                console.log("here", project_index);
             },
 
             save: function () {
@@ -389,7 +388,6 @@
 
 
             renderForm:function(){
-                console.log("update2", this.props.projects);
                 if(this.state.isLoaded){
                     return(
                     <div className="QuestionContainer form-row">
@@ -500,11 +498,16 @@
         this.setState({Questions: arr});
     },
 
-    save: function () {
-        
+    save: function () {  
         if(this.state.Questions.length < 1){ return alert("No Any Questions Found."); } 
-        
+        var is_form_valid = true;
+        console.log(is_form_valid);
         var json_convertible = this.state.Questions.filter(function(item) {
+            if (item.question_text == ""){
+                console.log(item.question_text);
+                is_form_valid = false;
+                return false;
+            }
             if (!item.hasOwnProperty('is_deleted')){
                 return item;
             }
@@ -513,11 +516,12 @@
                 return item;
             }
         });
+        console.log(is_form_valid);
         
+        if (is_form_valid === false){ return alert("The question text cannot be blank.");}
         for (var key in json_convertible) {
             json_convertible[key].question_name = json_convertible[key].question_text.replace(/\W/g,"_");
         }
-
         var json_Question = JSON.stringify(json_convertible);
         document.getElementById('json_questions').value = json_Question;
         document.getElementById('theForm').submit();
@@ -584,7 +588,6 @@
         var prev_project_id = arr[i].project_id
         arr[i].project_id=project_id;
         arr[i].metas = {};
-        console.log(arr[i]);
         var index = selectedProjectLinkIds.indexOf(prev_project_id);
         if (index > -1) {
           selectedProjectLinkIds.splice(index, 1);
@@ -631,7 +634,6 @@
 
 
     eachQuestion: function (question, i){
-        console.log("update");
         if(!question.hasOwnProperty('is_deleted') || (question.hasOwnProperty('is_deleted') && question.is_deleted == false)){
             if(question.question_type=="MCQ" ){
                 return(

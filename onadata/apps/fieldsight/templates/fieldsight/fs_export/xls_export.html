@@ -1,0 +1,179 @@
+
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{%block extracss %}
+
+{% endblock %}
+
+{%block kocript %}
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/organization_projects.js"></script>
+
+
+{% endblock %}
+{% block content %}
+<div id="generateXls">
+	<checkbox-item v-model="checkData">Hello World</checkbox-item>
+  {{ checkData }}
+</div>
+<div id="main-container" class="minified">
+			<div id="sidebar" data-toggle="affix">
+				<div class="leftside-navigation">
+					<ul class="sidebar-menu" id="nav-accordion">
+						<li>
+							<a class="" href="index.php">
+								<i class="la la-dashboard"></i>
+								<span>Dashboard</span>
+							</a>
+						</li>
+						<li class="sub-menu">
+							<a href="javascript:;">
+								<i class="la la-building"></i>
+								<span>Organizations</span>
+							</a>
+							<ul class="sub">
+								<li><a href="organization.php">All Organizations</a></li>
+								<li><a href="new-organization.php">New Organization</a></li>
+							</ul>
+						</li>
+						<li class="sub-menu">
+							<a href="javascript:;">
+								<i class="la la-tasks"></i>
+								<span>Projects</span>
+							</a>
+							<ul class="sub">
+								<li><a href="#">All Projects</a></li>
+								<li><a href="#">New Project</a></li>
+							</ul>
+						</li>
+						<li class="sub-menu">
+							<a href="javascript:;">
+								<i class="la la-clipboard"></i>
+								<span>Forms</span>
+							</a>
+							<ul class="sub">
+								<li><a href="#">All Forms</a></li>
+								<li><a href="#">New Form</a></li>
+							</ul>
+						</li>
+						<li class="sub-menu">
+							<a href="javascript:;">
+								<i class="la la-users"></i>
+								<span>Users</span>
+							</a>
+							<ul class="sub">
+								<li><a href="manage-user.php">All Users</a></li>
+								<li><a href="#">New User</a></li>
+							</ul>
+						</li>
+						<li class="sub-menu">
+							<a href="javascript:;">
+								<i class="la la-book"></i>
+								<span>Library</span>
+							</a>
+							<ul class="sub">
+								<li><a href="#">Library Forms</a></li>
+								<li><a href="#">Stages Library</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div id="main-content" class="padding">
+				<nav aria-label="breadcrumb" role="navigation">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
+						<li class="breadcrumb-item"><a href="organization.php">Organization</a></li>
+						<li class="breadcrumb-item active" aria-current="page">Report</li>
+					 </ol>
+				</nav>
+				<section class="panel margin-top ">
+                    <header class="panel-heading clearfix">
+                        <h3><i class="la la-file-text"></i> Export Report</h3>
+                    </header>
+					<div class="panel-body padding-top">
+						<form>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="btn-group btn-group-toggle date-preset-filters margin-bottom" data-toggle="buttons">
+										<label class="btn btn-primary">
+									    <input type="radio" name="options" id="lastYear" autocomplete="off" value="lastyear"> Last Year
+									  </label>
+									  <label class="btn btn-primary">
+									    <input type="radio" name="options" id="lastMonth" value="lastmonth" autocomplete="off"> Last Month
+									  </label>
+									  <label class="btn btn-primary active">
+									    <input type="radio" name="options" id="customDate" value="customdate" autocomplete="off" checked> Custom Date
+									  </label>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div id="customDatePicker" class="margin-bottom">
+										<div class="input-daterange input-group" id="datepicker">
+											<span class="input-group-addon">From</span>
+										    <input type="text" class="input-sm form-control" name="start" id="inputDateStart"/>
+										    <span class="input-group-addon">To</span>
+										    <input type="text" class="input-sm form-control" name="end" id="inputDateEnd"/>
+										</div>
+									</div>
+								</div>
+							</div>
+							<ul class="reporting-form-list margin-top">
+								<li>
+									<label class="custom-control custom-checkbox">
+										<input type="checkbox" class="custom-control-input">
+										<span class="custom-control-indicator"></span>
+										<span class="custom-control-description">General Forms</span>
+									</label>
+									<div class="reporting-forms">
+										<div class="btn-group" data-toggle="buttons">
+										  <label class="btn btn-outline-primary active ">
+										    <input type="checkbox" autocomplete="off" checked ><i class="la la-file-text-o"></i> Naxa Form
+										  </label>
+										  <label class="btn btn-outline-primary">
+										    <input type="checkbox" autocomplete="off"><i class="la la-file-text-o"></i> Fieldsight Form
+										  </label>
+										  <label class="btn btn-outline-primary">
+										    <input type="checkbox" autocomplete="off"><i class="la la-file-text-o"></i> UNOPS Form
+										  </label>
+										</div>
+									</div>
+								</li>
+								<li>
+									<label class="custom-control custom-checkbox">
+										<input type="checkbox" class="custom-control-input">
+										<span class="custom-control-indicator"></span>
+										<span class="custom-control-description">Schedule Forms</span>
+									</label>
+									<div class="reporting-forms">
+										<div class="btn-group" data-toggle="buttons">
+										  <label class="btn btn-outline-primary">
+										    <input type="checkbox" autocomplete="off"><i class="la la-file-text-o"></i> Naxa Form
+										  </label>
+										  <label class="btn btn-outline-primary">
+										    <input type="checkbox" autocomplete="off"><i class="la la-file-text-o"></i> Fieldsight Form
+										  </label>
+										  <label class="btn btn-outline-primary">
+										    <input type="checkbox" autocomplete="off"><i class="la la-file-text-o"></i> UNOPS Form
+										  </label>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<button class="btn btn-primary margin-top" type="submit"><i class="la la-download"></i> Download Data</button>
+						</form>
+					</div>
+				</section>
+				
+			</div>
+</div>
+{% endblock %}
+{%block extrascript %}
+<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
+<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+<script src="{% static 'js/fieldsight/fs_export_xls.js' %}?v=0.6"></script>
+
+
+	
+{% endblock %}

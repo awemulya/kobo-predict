@@ -17,7 +17,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/custom_report.js"></script>
-
+ 
 <script>
 	var CSRF_TOKEN = '{{ csrf_token }}';
 	$(document).ready(function() {
@@ -38,8 +38,14 @@
 {% load pagination_tags %}
 {% load filters %}
 
-
-
+<!-- <div id="example">
+  <my-component></my-component>
+</div>
+ -->
+ <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<div id="allmetass"></div> -->
 
 
 <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
@@ -317,7 +323,7 @@
 										<h4>{% trans 'Site' %} {% trans 'Map' %}</h4>
 									</div>
 									<div class="widget-body">
-										<div id="map" class="full-map ah-col"></div>
+										<div id="map" class="full-map ah-col" style="z-index:0;"></div>
 									</div>
 								</div>
 							</div>
