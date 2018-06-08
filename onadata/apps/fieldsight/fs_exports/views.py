@@ -11,9 +11,124 @@ from onadata.apps.fieldsight.tasks import importSites
 from django.http import HttpResponse
 from rest_framework import status
 
+
+def parse_form_response(main_question, main_answer):
+
+    parsed_question=[]
+    parsed_answer=[]
+    media_folder =''
+    base_url=''
+
+    def append_row( question_name, question_label, question_type, answer_dict):
+    
+        if question_name in answer_dict:
+            if question_type == 'note':
+                answer=''
+                
+            elif question_type == 'photo':
+                answer = 'http://'+base_url+'/media/'+ media_folder +'/attachments/'+ answer_dict[question_name]
+                
+            elif question_type == 'audio' or question_type == 'video':
+                answer = 'http://'+base_url+'/media/'+ media_folder +'/attachments/'+ answer_dict[question_name]
+                
+            else:
+                answer=answer_dict[question_name]
+
+        else:
+            answer=''
+        
+        parsed_question.append({'question_name':question_name, 'question_label':question_label})
+        parsed_answer.append({question_name:answer})
+
+    def parse_repeat( r_object):
+        
+        r_question = r_object['name']
+        for r_answer in main_answer[r_question]:
+            for first_children in r_object['children']:
+                question_name = r_question+"/"+first_children['name']
+                question_label = question_name
+                
+                if 'label' in first_children:
+                    question_label = first_children['label']
+
+                append_row(question_name, question_label, first_children['type'], r_answer)
+
+    def parse_group( prev_groupname, g_object):
+       
+        g_question = prev_groupname+g_object['name']
+        for first_children in g_object['children']:
+            question_name = g_question+"/"+first_children['name']
+            question_label = question_name
+
+            if 'label' in first_children:
+                question_label = first_children['label']
+            
+            append_row(question_name, question_label, first_children['type'], main_answer)
+            
+            # done at the end because wee want to print group name as well in report.
+            if first_children['type'] == 'group':
+                parse_group(g_question+"/",first_children)
+
+    def parse_individual_questions():
+       
+        for first_children in main_question:
+            if first_children['type'] == "repeat":
+                parse_repeat(first_children)
+            elif first_children['type'] == 'group':
+                parse_group("", first_children)
+            else:
+                question_name = first_children['name']
+                question_label = question_name
+
+                if 'label' in first_children:
+                    question_label = first_children['label']
+                
+                append_row(question_name, question_label, first_children['type'], main_answer)
+    
+    parse_individual_questions(question)
+
+    return parsed_question, parsed_answer
+
 class ExportOptions(ProjectRoleMixin, View):
     def get(self, request):
         return render(request, "fieldsight/fs_export/xls_export.html")
+
+class ExportProjectSites(DonorRoleMixin, View):
+    def get(self, *args, **kwargs):
+        project=get_object_or_404(Project, pk=self.kwargs.get('pk'))
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="bulk_upload_sites.xls"'
+        
+        sites=project.sites.all().values('id')
+        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
+        
+        for form in forms:
+
+            wb = xlwt.Workbook(encoding='utf-8')
+            ws = wb.add_sheet(form.xf.title)
+            # Sheet header, first row
+            row_num = 1
+            font_style = xlwt.XFStyle()
+            head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}]
+            
+            questions = get_form_questions(form.xf.json)
+            concat arrays
+
+            for response in form.site_form_instances.all():
+                questions, answers = parse_form_response(form.xf.json, response.instance.json)
+                if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
+                    head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
+
+                for col_num in range(len(head_columns)):
+                    ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
+                row_num += 1
+
+            font_style.font.bold = True
+            for col_num in range(len(head_columns)):
+                ws.write(row_num, col_num, head_columns[col_num]['question_label'], font_style)
+        wb.save(response)
+        return response
+
 class ExportProjectSites(DonorRoleMixin, View):
     def get(self, *args, **kwargs):
         project=get_object_or_404(Project, pk=self.kwargs.get('pk'))
@@ -49,26 +164,27 @@ class ExportProjectSites(DonorRoleMixin, View):
         
         for site in sites:
             
-            column = [site.identifier, site.name, site.type.identifier if site.type else "", site.phone, site.address, site.public_desc, site.additional_desc, site.latitude,
+            columns = [site.identifier, site.name, site.type.identifier if site.type else "", site.phone, site.address, site.public_desc, site.additional_desc, site.latitude,
                        site.longitude, ]
             
             if project.cluster_sites:
                 if site.region:
-                    column += [site.region.identifier, ]
+                    columns += [site.region.identifier, ]
                 else:
-                    column += ['', ]
+                    columns += ['', ]
             meta_ques = project.site_meta_attributes
             meta_ans = site.site_meta_attributes_ans
             for question in meta_ques:
                 if question['question_name'] in meta_ans:
-                    column += [meta_ans[question['question_name']]]
+                    columns += [meta_ans[question['question_name']]]
                 else:
-                    column += ['']
-            for col_num in range(len(column)):
-                ws.write(row_num, col_num, column[col_num], font_style_unbold)
+                    columns += ['']
+            for col_num in range(len(columns)):
+                ws.write(row_num, col_num, columns[col_num], font_style_unbold)
             row_num += 1
         wb.save(response)
         return response
+
 
 
 class ExportProjectSitesWithRefs(DonorRoleMixin, View):
@@ -108,17 +224,17 @@ class ExportProjectSitesWithRefs(DonorRoleMixin, View):
         meta_ref_sites={}
         for site in sites:
             
-            column = {'identifier':site.identifier, 'name':site.name, 'site_type_identifier':site.type.identifier if site.type else "", 'phone':site.phone, 'address':site.address, 'public_desc':site.public_desc, 'additional_desc':site.additional_desc, 'latitude':site.latitude,
+            columns = {'identifier':site.identifier, 'name':site.name, 'site_type_identifier':site.type.identifier if site.type else "", 'phone':site.phone, 'address':site.address, 'public_desc':site.public_desc, 'additional_desc':site.additional_desc, 'latitude':site.latitude,
                        'longitude':site.longitude, }
             
             if project.cluster_sites:
-                column['region_identifier'] = site.region.identifier if site.region else ""
+                columns['region_identifier'] = site.region.identifier if site.region else ""
             
             meta_ques = project.site_meta_attributes
             meta_ans = site.site_meta_attributes_ans
             for question in meta_ques:
                 if question['question_name'] in meta_ans:
-                    column[question['question_name']] = meta_ans[question['question_name']]
+                    columns[question['question_name']] = meta_ans[question['question_name']]
 
                     if question['question_type'] == "Link" and meta_ans[question['question_name']] != "":
                         if question.get('question_name') in meta_ref_sites:
@@ -126,9 +242,9 @@ class ExportProjectSitesWithRefs(DonorRoleMixin, View):
                         else:
                             meta_ref_sites[question.get('question_name')] = [meta_ans[question['question_name']]]
                 else:
-                    column[question['question_name']] = ''
+                    columns[question['question_name']] = ''
             
-            site_list[site.identifier] = column
+            site_list[site.identifier] = columns
         
 
         def generate(project_id, site_map, meta, identifiers, selected_metas):
