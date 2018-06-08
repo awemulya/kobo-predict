@@ -112,7 +112,7 @@ class ExportProjectSites(DonorRoleMixin, View):
             head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}]
             
             questions = get_form_questions(form.xf.json)
-            concat arrays
+            # concat arrays
 
             for response in form.site_form_instances.all():
                 questions, answers = parse_form_response(form.xf.json, response.instance.json)
