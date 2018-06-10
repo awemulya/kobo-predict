@@ -11,14 +11,14 @@
 						</div>
 					{% endfor %}
 				{% endif %}
-				{% if obj.region_set.all %}
+				{% if obj.children.all %}
 		    <section class="panel">
 		        <header class="panel-heading clearfix">
 		            <h3>{% trans 'Sub regions' %}</h3>
 		        </header>
 		        <div class="panel-body">
 		            <div class="row">
-		                {% for child in obj.region_set.all %}
+		                {% for child in obj.children.all %}
 		                <div class="col-md-4 col-sm-6">
 		                    <a class="site-item-wrap margin-top" href="{% url 'fieldsight:regional-sites' child.project.pk child.pk %}">
 		                        <div class="basic-info clearfix">

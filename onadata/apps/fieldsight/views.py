@@ -1923,7 +1923,6 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
         project = Project.objects.get(pk=self.kwargs.get('pk'))
         context['project'] = project
         context['pk'] = self.kwargs.get('pk')
-        context['json_questions'] = json.dumps(project.site_meta_attributes)
         return context
 
     def form_valid(self, form):
@@ -1932,7 +1931,7 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
 
         self.object.project_id = self.kwargs.get('pk')
         self.object.parent_id = self.kwargs.get('parent_pk')
-        existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'))
+        existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'), project_id=self.kwargs.get('pk'))
         if existing_identifier:
             messages.add_message(self.request, messages.INFO, 'Your identifier conflict with existing region please use different identifier to create region')
 
