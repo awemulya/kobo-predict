@@ -277,7 +277,7 @@ class Project(models.Model):
 
 class Region(models.Model):
     identifier = models.CharField("ID", max_length=255)
-    parent = models.ForeignKey('Region', blank=True, null=True, default=None)
+    parent = models.ForeignKey('Region', blank=True, null=True, default=None, related_name="children")
     name = models.CharField(max_length=255, null=True, blank=True,)
     project = models.ForeignKey(Project, related_name="project_region")
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
@@ -289,7 +289,13 @@ class Region(models.Model):
         unique_together = [('identifier', 'project'), ]
 
     def get_sites_count(self):
-        return self.regions.all().count()
+        if self.children.all().count() > 0:
+            count = 0
+            for child in self.children.all():
+                count += child.get_sites_count()
+            return count
+        else:
+            return self.regions.all().count()
 
 
 class SiteType(models.Model):

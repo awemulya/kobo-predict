@@ -1506,7 +1506,10 @@ class ActivateRole(TemplateView):
                 userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project_id=project_id, site=None)
         if not project_ids:
             userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=None, site=None)
-
+            if invite.group_id == 1:
+                permission = Permission.objects.filter(codename='can_edit_finstance')
+                user.user_permissions.add(permission[0])
+                
         
         invite.is_used = True
         invite.save()
