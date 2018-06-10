@@ -289,13 +289,14 @@ class Region(models.Model):
         unique_together = [('identifier', 'project'), ]
 
     def get_sites_count(self):
+        site_count = self.regions.all().count()
         if self.children.all().count() > 0:
-            count = 0
+            sub_site_count = 0
             for child in self.children.all():
-                count += child.get_sites_count()
-            return count
+                sub_site_count += child.get_sites_count()
+            return sub_site_count + site_count
         else:
-            return self.regions.all().count()
+            return site_count
 
 
 class SiteType(models.Model):
