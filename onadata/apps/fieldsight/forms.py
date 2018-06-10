@@ -394,7 +394,7 @@ class BluePrintForm(forms.ModelForm):
 class RegionForm(forms.ModelForm):
     class Meta:
         model = Region
-        exclude = ['project','date_created','date_updated', 'is_active',]
+        exclude = ['project','date_created','date_updated', 'is_active', 'parent']
 
 
 

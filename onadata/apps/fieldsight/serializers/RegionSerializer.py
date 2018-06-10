@@ -8,7 +8,7 @@ class RegionSerializer(serializers.ModelSerializer):
     total_sites_count = serializers.SerializerMethodField('get_sites_count', read_only=True)
 
     def get_sites_count(self, obj):
-        return obj.regions.all().count()
+        return obj.get_sites_count()
 
     class Meta:
         model = Region
