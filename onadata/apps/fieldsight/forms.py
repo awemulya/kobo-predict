@@ -18,7 +18,7 @@ from .models import Organization, Project, Site, BluePrints, Region, SiteType
 from onadata.apps.geo.models import GeoLayer
 
 from onadata.apps.userrole.models import UserRole
-
+from django.core.exceptions import ValidationError
 USERNAME_REGEX = r'^[a-z][a-z0-9_]+$'
 USERNAME_MAX_LENGTH = 30
 USERNAME_INVALID_MESSAGE = _(
@@ -392,10 +392,22 @@ class BluePrintForm(forms.ModelForm):
 
 
 class RegionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(RegionForm, self).__init__(*args, **kwargs)
+        if self.instance.id:
+            idfs = self.instance.identifier.split('_')
+            
+            self.initial['identifier'] = idfs[len(idfs)-1]
+
     class Meta:
         model = Region
         exclude = ['project','date_created','date_updated', 'is_active', 'parent']
 
+    def clean_identifier(self):
+        identifier = self.cleaned_data['identifier']
+        if "_" in identifier or " " in identifier:
+            raise ValidationError("Identifier cannot contains '_' or ' ' , please try again by removing it.")
+        return identifier
 
 
 class SiteTypeForm(forms.ModelForm):

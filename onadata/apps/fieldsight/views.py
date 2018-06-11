@@ -772,7 +772,6 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
         old_meta = site.site_meta_attributes_ans
 
         self.object = form.save(project_id=self.kwargs.get('pk'), new=False)
-        site = Site.objects.get(pk=self.kwargs.get('pk'))
         new_meta = site.site_meta_attributes_ans
 
         extra_json = None
@@ -1923,14 +1922,20 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
         project = Project.objects.get(pk=self.kwargs.get('pk'))
         context['project'] = project
         context['pk'] = self.kwargs.get('pk')
+        if self.kwargs.get('parent_pk'):
+            context['parent_identifier'] = Region.objects.get(pk=self.kwargs.get('parent_pk')).get_concat_identifier()
+            print context['parent_identifier']
         return context
 
     def form_valid(self, form):
-        # print form.cleaned_data['identifier']
         self.object = form.save(commit=False)
 
         self.object.project_id = self.kwargs.get('pk')
         self.object.parent_id = self.kwargs.get('parent_pk')
+        if self.kwargs.get('parent_pk'):
+            parent_identifier = Region.objects.get(pk=self.kwargs.get('parent_pk')).get_concat_identifier()
+            form.cleaned_data['identifier'] = parent_identifier + form.cleaned_data.get('identifier')
+        
         existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'), project_id=self.kwargs.get('pk'))
         if existing_identifier:
             messages.add_message(self.request, messages.INFO, 'Your identifier conflict with existing region please use different identifier to create region')
@@ -1949,6 +1954,7 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
                     }
                 ))
         else:
+            self.object.identifier = form.cleaned_data.get('identifier')
             self.object.save()
             messages.add_message(self.request, messages.INFO, 'Sucessfully new region is created')
             return HttpResponseRedirect(self.get_success_url())
@@ -2004,13 +2010,63 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
         context['subregion_list'] = Region.objects.filter(
             parent__pk=self.kwargs.get('pk')
         )
+        region = Region.objects.get(pk=self.kwargs.get('pk'))
+        if region.parent:
+            context['parent_identifier'] = region.parent.get_concat_identifier()
+            idfs = region.identifier.split('_')
+            context['current_identifier'] = idfs[len(idfs)-1]
         return context
 
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.save()
-        return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk':self.object.project.id}))
+    
 
+    def form_valid(self, form):
+        def replace_idfs(region, previous_identifier, new_identifier):
+            identifier = region.identifier
+            identifiers =  identifier.split(previous_identifier)
+            
+            if len(identifiers) == 2:
+                region.identifier = new_identifier+identifiers[1]
+                region.save()
+
+            for sub_region in region.children.all():
+                replace_idfs(sub_region, previous_identifier, new_identifier)
+
+        previous_identifier = Region.objects.get(pk=self.kwargs.get('pk')).identifier
+        self.object = form.save(commit=False)
+        if self.object.parent:
+            parent_identifier = self.object.parent.get_concat_identifier()
+            form.cleaned_data['identifier'] = parent_identifier + form.cleaned_data.get('identifier')
+
+        existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'), project_id=self.kwargs.get('pk'))
+        if existing_identifier:
+            messages.add_message(self.request, messages.INFO, 'Your identifier "'+ form.cleaned_data.get('identifier') +'" conflict with existing region please use different identifier to create region')
+            return HttpResponseRedirect(reverse(
+                'fieldsight:region-update',
+                kwargs={
+                    'pk': self.object.pk,
+                }
+            ))
+        else:
+            self.object.identifier = form.cleaned_data.get('identifier')
+            self.object.save()
+            for sub_region in self.object.children.all():
+                replace_idfs(sub_region, previous_identifier, self.object.identifier)
+            messages.add_message(self.request, messages.INFO, 'Sucessfully saved.')
+        
+        if self.object.parent:
+            return HttpResponseRedirect(reverse(
+                'fieldsight:region-update',
+                kwargs={
+                    'pk': self.object.parent.pk,
+                }
+            ))
+        else:
+            return HttpResponseRedirect(reverse(
+                'fieldsight:region-list',
+                kwargs={
+                    'pk': self.object.project_id,
+                }
+            ))
 
 
 # class RegionalSitelist(ProjectRoleMixin, ListView):

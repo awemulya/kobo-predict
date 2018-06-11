@@ -276,7 +276,7 @@ class Project(models.Model):
 
 
 class Region(models.Model):
-    identifier = models.CharField("ID", max_length=255)
+    identifier = models.CharField(max_length=255)
     parent = models.ForeignKey('Region', blank=True, null=True, default=None, related_name="children")
     name = models.CharField(max_length=255, null=True, blank=True,)
     project = models.ForeignKey(Project, related_name="project_region")
@@ -298,6 +298,8 @@ class Region(models.Model):
         else:
             return site_count
 
+    def get_concat_identifier(self):       
+        return self.identifier + "_"
 
 class SiteType(models.Model):
     identifier = models.IntegerField("ID")
