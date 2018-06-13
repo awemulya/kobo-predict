@@ -1168,7 +1168,7 @@ class FormFillView(View):
         new_uuid = finstance.instance.uuid if finstance else str(uuid.uuid4())
 
         with transaction.atomic():
-            if fs_xf.site:
+            if finstance.site:
                 instance = save_submission(
                     xform=xform,
                     xml=xml,
@@ -1178,7 +1178,7 @@ class FormFillView(View):
                     status='submitted_via_web',
                     date_created_override=None,
                     fxid=fs_xf.id,
-                    site=fs_xf.site.id,
+                    site=finstance.site.id,
                 )
             else:
                 instance = save_submission(
@@ -1192,9 +1192,12 @@ class FormFillView(View):
                     fxid=fs_xf.id,
                     site=None,
                 )
-
-        return HttpResponseRedirect(reverse("forms:site-responses",
-                                            kwargs={'pk': fs_xf.site.pk}))
+        if finstance.site:
+            return HttpResponseRedirect(reverse("forms:site-responses",
+                                        kwargs={'pk': finstance.site.pk}))
+        else:
+            return HttpResponseRedirect(reverse("forms:project-responses",
+                                        kwargs={'pk': finstance.project.pk}))
 
 
 class Configure_forms(SPFmixin, View):
