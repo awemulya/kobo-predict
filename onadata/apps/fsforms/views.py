@@ -1168,17 +1168,31 @@ class FormFillView(View):
         new_uuid = finstance.instance.uuid if finstance else str(uuid.uuid4())
 
         with transaction.atomic():
-            instance = save_submission(
-                xform=xform,
-                xml=xml,
-                media_files=media_files,
-                new_uuid=new_uuid,
-                submitted_by=request.user,
-                status='submitted_via_web',
-                date_created_override=None,
-                fxid=fs_xf.id,
-                site=fs_xf.site.id,
-            )
+            if fs_xf.site:
+                instance = save_submission(
+                    xform=xform,
+                    xml=xml,
+                    media_files=media_files,
+                    new_uuid=new_uuid,
+                    submitted_by=request.user,
+                    status='submitted_via_web',
+                    date_created_override=None,
+                    fxid=fs_xf.id,
+                    site=fs_xf.site.id,
+                )
+            else:
+                instance = save_submission(
+                    xform=xform,
+                    xml=xml,
+                    media_files=media_files,
+                    new_uuid=new_uuid,
+                    submitted_by=request.user,
+                    status='submitted_via_web',
+                    date_created_override=None,
+                    fxid=fs_xf.id,
+                    site=None,
+                )
+
         return HttpResponseRedirect(reverse("forms:site-responses",
                                             kwargs={'pk': fs_xf.site.pk}))
 

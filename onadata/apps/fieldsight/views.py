@@ -2933,3 +2933,39 @@ class SiteBulkEditView(View):
             context,
         )
 
+
+
+class ProjectRegions(ProjectRoleMixin, View):
+    metas = []
+    site = Site.objects.get(pk=pk)
+    project = site.project
+    main_project = project.id
+
+
+
+    def generate(metas, project_id, metas_to_parse, meta_answer, selected_metas):
+
+        for meta in metas_to_parse:
+
+            if meta.get('question_type') == "Link":
+                if not selected_metas:
+                    selected_metas = meta.get('metas')
+                if meta.get('project_id') == main_project:
+                    continue
+                sitenew = Site.objects.filter(identifier = meta_answer.get(meta.get('question_name'), None), project_id = meta.get('project_id'))
+                if sitenew and str(sitenew[0].project_id) in selected_metas:
+                    answer = meta_answer.get(meta.get('question_name'))
+                    sub_metas = []
+                    generate(sub_metas, sitenew[0].project_id, selected_metas[str(sitenew[0].project_id)], sitenew[0].site_meta_attributes_ans, selected_metas)
+                    metas.append({'question_text': meta.get('question_text'), 'project_id':meta.get('project_id'), 'answer':answer, 'question_type':'Link', 'children':sub_metas})
+                    
+                else:
+                    answer = "No Site Refrenced"
+                    metas.append({'question_text': meta.get('question_text'), 'answer':answer, 'question_type':'Normal'})
+            else:
+                answer = meta_answer.get(meta.get('question_name'), "")
+                metas.append({'question_text': meta.get('question_text'), 'answer':answer, 'question_type':'Normal'})
+
+
+    generate(metas, project.id, project.site_meta_attributes, site.site_meta_attributes_ans, None)
+    return JsonResponse(metas, safe=False)

@@ -78,16 +78,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for obj in subregion_list %}
-                                <tr>
-                                    <td class="text-center">{{ obj.identifier }}</td>
-                                    <td class="text-center">{{ obj.name }}</td>
-                                    <td class="text-center">{{ obj.date_created }}</td>
-                                    <td class="text-center">
-                                        <a class="btn btn-primary btn-sm" href="{% url 'fieldsight:region-update' obj.pk %}"><i class="la la-pencil-square-o"></i>{% trans ' Edit' %}</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
+                            {% for obj in subregion_list %}
+                            <tr>
+                                <td class="text-center">{{ obj.identifier }}</td>
+                                <td class="text-center">{{ obj.name }}</td>
+                                <td class="text-center">{{ obj.date_created }}</td>
+                                <td class="text-center">
+                                    <a class="btn btn-primary btn-sm" href="{% url 'fieldsight:region-update' obj.pk %}"><i class="la la-pencil-square-o"></i>{% trans ' Edit' %}</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                         {% endif %}
