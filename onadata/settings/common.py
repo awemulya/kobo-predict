@@ -240,6 +240,7 @@ INSTALLED_APPS = (
     'onadata.apps.eventlog',
     'onadata.apps.staff',
     'onadata.apps.geo',
+    'onadata.apps.remote_app',
     'guardian',
     'djcelery',
     'onadata.apps.stats',

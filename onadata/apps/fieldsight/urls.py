@@ -71,7 +71,7 @@ from onadata.apps.geo.views import (
     GeoLayerUpdateView,
     GeoJsonView,
 )
-
+from onadata.apps.remote_app.views import RemoteProjectView
 
 
 
@@ -92,6 +92,8 @@ urlpatterns = [
     url(r'^organization/(?P<org_pk>\d+)/geo-layer/new/$', GeoLayerCreateView.as_view(), name='geo-layer-create'),
     url(r'^organization/(?P<org_pk>\d+)/geo-layer/(?P<pk>\d+)/$', GeoLayerUpdateView.as_view(), name='geo-layer-update'),
     url(r'^geo-json/(?P<pk>\d+)/$', GeoJsonView.as_view(), name='geo-json'),
+
+    url(r'^api/remote/(?P<project_id>\d+)/$', RemoteProjectView.as_view(), name='remote-project'),
 
     url(r'^api/projects/(?P<pk>\d+)/$', ProjectCreationViewSet.as_view({'get': 'list'}), name='projects-list'),
     url(r'^api/projects/$', ProjectCreationViewSet.as_view({'post': 'create', 'put': 'update'}), name='projects-list'),
