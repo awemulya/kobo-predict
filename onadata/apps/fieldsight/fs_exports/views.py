@@ -130,6 +130,8 @@ class ExportProjectFormsForSites(View):
 
             for response in form.site_form_instances.all():
                 questions, answers = parse_form_response(json.loads(form.xf.json)['children'], response.instance.json)
+                meta_ques = project.site_meta_attributes
+                meta_ans = site.site_meta_attributes_ans
                 if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
                     head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
 
@@ -177,7 +179,7 @@ def exporttest(pk):
             for col_num in range(len(head_columns)):
                 ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
             row_num += 1
-
+        import pdb; pdb.set_trace();
         font_style.font.bold = True
         for col_num in range(len(head_columns)):
             ws.write(0, col_num, head_columns[col_num]['question_label'], font_style)
