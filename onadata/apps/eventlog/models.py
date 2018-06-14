@@ -41,11 +41,22 @@ class FieldSightLog(models.Model):
         (18, 'User assigned a new Form Type Form Name in Project Name.'),
         (19, 'User assigned a new Form Type Form Name to Site Name.'),
         (20, 'User edited Form Name form.'),
+        (21, 'User assign successful in organization.'),
+        (22, 'User assign sucessfull in project.'),
+        (23, 'Users were already assigned.'),
         (24, 'User was added as unassigned.'),
         (25, 'User was added as donor in project.'),
         (26, 'User was added as the Project Manager in count project of org by Invitor Full Name.'),
         (27, 'User was added as Reviewer in count site of project by Invitor Full Name.'),
         (28, 'User was added as Site Supervisor in count site of project by Invitor Full Name.'),
+        (29, 'Project SIte Import From Project Name Completed SuccessFully'),
+        (30, 'Project SIte Import From number of region in Project Name Completed SuccessFully'),
+        (31, 'User edited a response for Form Type Form Name in Site Name.'),
+        (412, 'Bulk upload of number + sites in Project Name failed.'),
+        (421, 'User assign unsuccessful in organization.'),
+        (422, 'User assign unsucessfull in project.'),
+        (429, 'Project SIte Import From Project Name Completed SuccessFully'),
+        (430, 'Project SIte Import From number of region in Project Name Completed SuccessFully'),
         
     )
     

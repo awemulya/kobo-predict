@@ -245,13 +245,14 @@ def importSites(task_prog_obj_id, source_user, f_project, t_project, meta_attrib
         task.status = 3
         task.save()
         if f_project.cluster_sites and not ignore_region:
-            noti = FieldSightLog.objects.create(source=source_user, type=423, title="Bulk Project import sites",
-                                       content_object=t_project, recipient=source_user,
-                                       extra_object=f_project)
-        else:
-            noti = FieldSightLog.objects.create(source=source_user, type=424, title="Bulk Project import sites",
+            noti = FieldSightLog.objects.create(source=source_user, type=430, title="Bulk Project import sites",
                                        content_object=t_project, recipient=source_user,
                                        extra_object=f_project, extra_message="Project Sites import from "+str(len(regions))+" Regions of ")
+        else:
+            
+            noti = FieldSightLog.objects.create(source=source_user, type=429, title="Bulk Project import sites",
+                                       content_object=t_project, recipient=source_user,
+                                       extra_object=f_project)           
         
 
 @shared_task()

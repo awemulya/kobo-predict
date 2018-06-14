@@ -1174,17 +1174,38 @@ class FormFillView(View):
                 site_id = finstance.site_id
             site_id = None
         with transaction.atomic():
-                instance = save_submission(
-                    xform=xform,
-                    xml=xml,
-                    media_files=media_files,
-                    new_uuid=new_uuid,
-                    submitted_by=request.user,
-                    status='submitted_via_web',
-                    date_created_override=None,
-                    fxid=fs_xf.id,
-                    site=site_id,
-                )
+            instance = save_submission(
+                xform=xform,
+                xml=xml,
+                media_files=media_files,
+                new_uuid=new_uuid,
+                submitted_by=request.user,
+                status='submitted_via_web',
+                date_created_override=None,
+                fxid=fs_xf.id,
+                site=site_id,
+            )
+            if finstance:
+                noti_type=31
+                title = "editing submission"
+            else:
+                noti_type=16
+                title = "new submission"
+
+            if instance.fieldsight_instance.site:
+                extra_object=instance.fieldsight_instance.site
+                extra_message=""
+            else:
+                extra_object=instance.fieldsight_instance.project
+                extra_message="project"
+            
+            noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=noti_type, title=title,
+                                       organization=instance.fieldsight_instance.site.project.organization,
+                                       project=instance.fieldsight_instance.site.project,
+                                                        site=instance.fieldsight_instance.site,
+                                                        extra_object=extra_object,
+                                                        extra_message=extra_message,
+                                                        content_object=instance.fieldsight_instance)
         if site_id:
             return HttpResponseRedirect(reverse("forms:site-responses",
                                         kwargs={'pk': site_id}))
@@ -1609,6 +1630,27 @@ def instance_status(request, instance):
                 fi.save()
                 comment_url = reverse("forms:instance_status_change_detail",
                                                 kwargs={'pk': status_changed.id})
+                if fi.site:
+                    extra_object=fi.site
+                    extra_message=""
+                else:
+                    extra_object=fi.project
+                    extra_message="project"
+
+                org = fi.project.organization if fi.project else fi.site.project.organization
+                noti = status_changed.logs.create(source=request.user, type=17, title="form status changed",
+                                          organization=org,
+                                          project=fi.project,
+                                          site = fi.site,
+                                          content_object=fi,
+                                          extra_object=extra_object,
+                                          extra_message=extra_message,
+                                          description='{0} reviewed a response for {1} form {2} in {3}'.format(
+                                              request.user.get_full_name(),
+                                              fi.site_fxf.form_type(),
+                                              str(fi.site_fxf.xf.title),
+                                              str(fi.site.name)
+                                          ))
     except Exception as e:
         return Response({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
     else:
