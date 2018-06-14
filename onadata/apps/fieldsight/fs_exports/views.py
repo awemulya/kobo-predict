@@ -12,13 +12,14 @@ from django.http import HttpResponse
 from rest_framework import status
 from onadata.apps.fsforms.models import FieldSightXF, FInstance
 from django.db.models import Prefetch
-
+import json
 def parse_form_response(main_question, main_answer):
 
     parsed_question=[]
-    parsed_answer=[]
+    parsed_answer={}
     media_folder =''
     base_url=''
+
 
     def append_row( question_name, question_label, question_type, answer_dict):
     
@@ -39,20 +40,30 @@ def parse_form_response(main_question, main_answer):
             answer=''
         
         parsed_question.append({'question_name':question_name, 'question_label':question_label})
-        parsed_answer.append({question_name:answer})
+        parsed_answer[question_name]=answer
 
     def parse_repeat( r_object):
         
         r_question = r_object['name']
-        for r_answer in main_answer[r_question]:
+        if r_question in main_question:
+            for r_answer in main_answer[r_question][:1]:
+                for first_children in r_object['children']:
+                    question_name = r_question+"/"+first_children['name']
+                    question_label = question_name
+                    
+                    if 'label' in first_children:
+                        question_label = first_children['label']
+
+                    append_row(question_name, question_label, first_children['type'], r_answer)
+        else:
             for first_children in r_object['children']:
                 question_name = r_question+"/"+first_children['name']
-                question_label = question_name
-                
-                if 'label' in first_children:
-                    question_label = first_children['label']
+                    question_label = question_name
+                    
+                    if 'label' in first_children:
+                        question_label = first_children['label']
 
-                append_row(question_name, question_label, first_children['type'], r_answer)
+                    append_row(question_name, question_label, first_children['type'], {})
 
     def parse_group( prev_groupname, g_object):
        
@@ -86,7 +97,7 @@ def parse_form_response(main_question, main_answer):
                 
                 append_row(question_name, question_label, first_children['type'], main_answer)
     
-    parse_individual_questions(question)
+    parse_individual_questions()
 
     return parsed_question, parsed_answer
 
@@ -141,7 +152,7 @@ def exporttest(pk):
     fs_ids = FieldSightXF.objects.filter(project_id = project.id).values('id')
     startdate="2016-05-01"
     enddate= "2018-06-05"
-    forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
+    forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('project_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
     
     for form in forms:
         wb = xlwt.Workbook(encoding='utf-8')
@@ -151,12 +162,12 @@ def exporttest(pk):
         font_style = xlwt.XFStyle()
         head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}]
         
-        import pdb; pdb.set_trace();
+        
         #questions = get_form_questions(form.xf.json)
         # concat arrays
 
-        for response in form.site_form_instances.all():
-            questions, answers = parse_form_response(form.xf.json, response.instance.json)
+        for response in form.project_form_instances.all():
+            questions, answers = parse_form_response(json.dumps(form.xf.json)['children'], response.instance.json)
             if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
                 head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
 
