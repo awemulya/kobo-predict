@@ -758,8 +758,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 {% if obj.cluster_sites %}
 
                 <input type="text" class="form-control" data-bind="value:region_search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search Sites...">
-                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:setAllAssignSiteAsSelected">
-                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllSiteUnSelected">
+                  <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind=" click:setAllAssignRegionAsSelected">
+                 <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllRegionUnSelected">
                 <ul class="row" data-bind="foreach:regions">
                 
                   <li class="col-md-12">

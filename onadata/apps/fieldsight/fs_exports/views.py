@@ -10,7 +10,8 @@ from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from onadata.apps.fieldsight.tasks import importSites
 from django.http import HttpResponse
 from rest_framework import status
-
+from onadata.apps.fsforms.models import FieldSightXF, FInstance
+from django.db.models import Prefetch
 
 def parse_form_response(main_question, main_answer):
 
@@ -93,17 +94,19 @@ class ExportOptions(ProjectRoleMixin, View):
     def get(self, request):
         return render(request, "fieldsight/fs_export/xls_export.html")
 
-class ExportProjectSites(DonorRoleMixin, View):
+class ExportProjectFormsForSites(View):
     def get(self, *args, **kwargs):
         project=get_object_or_404(Project, pk=self.kwargs.get('pk'))
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename="bulk_upload_sites.xls"'
         
         sites=project.sites.all().values('id')
+        fs_ids = FieldSightXF.objects.filter(project_id = project.id).values('id')
+        startdate="2016-05-01"
+        enddate= "2018-06-05"
         forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
         
         for form in forms:
-
             wb = xlwt.Workbook(encoding='utf-8')
             ws = wb.add_sheet(form.xf.title)
             # Sheet header, first row
@@ -126,7 +129,7 @@ class ExportProjectSites(DonorRoleMixin, View):
             font_style.font.bold = True
             for col_num in range(len(head_columns)):
                 ws.write(row_num, col_num, head_columns[col_num]['question_label'], font_style)
-        wb.save(response)
+            wb.save(response)
         return response
 
 class ExportProjectSites(DonorRoleMixin, View):
