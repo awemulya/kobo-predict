@@ -58,12 +58,12 @@ def parse_form_response(main_question, main_answer):
         else:
             for first_children in r_object['children']:
                 question_name = r_question+"/"+first_children['name']
-                    question_label = question_name
-                    
-                    if 'label' in first_children:
-                        question_label = first_children['label']
+                question_label = question_name
+                
+                if 'label' in first_children:
+                    question_label = first_children['label']
 
-                    append_row(question_name, question_label, first_children['type'], {})
+                append_row(question_name, question_label, first_children['type'], {})
 
     def parse_group( prev_groupname, g_object):
        
