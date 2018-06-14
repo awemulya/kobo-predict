@@ -129,16 +129,16 @@ class ExportProjectFormsForSites(View):
             # concat arrays
 
             for response in form.project_form_instances.all():
-            questions, answers = parse_form_response(json.loads(form.xf.json)['children'], response.instance.json)
-            answers['identifier'] = response.site.identifier
-            answers['name'] = response.site.name
-            
-            if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
-                head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
+                questions, answers = parse_form_response(json.loads(form.xf.json)['children'], response.instance.json)
+                answers['identifier'] = response.site.identifier
+                answers['name'] = response.site.name
+                
+                if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
+                    head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
 
-            for col_num in range(len(head_columns)):
-                ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
-                row_num += 1
+                for col_num in range(len(head_columns)):
+                    ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
+                    row_num += 1
             
             font_style.font.bold = True
             for col_num in range(len(head_columns)):
