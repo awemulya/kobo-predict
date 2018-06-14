@@ -114,7 +114,7 @@ class ExportProjectFormsForSites(View):
             font_style = xlwt.XFStyle()
             head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}]
             
-            questions = get_form_questions(form.xf.json)
+            #questions = get_form_questions(form.xf.json)
             # concat arrays
 
             for response in form.site_form_instances.all():
@@ -128,7 +128,7 @@ class ExportProjectFormsForSites(View):
 
             font_style.font.bold = True
             for col_num in range(len(head_columns)):
-                ws.write(row_num, col_num, head_columns[col_num]['question_label'], font_style)
+                ws.write(0, col_num, head_columns[col_num]['question_label'], font_style)
             wb.save(response)
         return response
 
