@@ -139,12 +139,13 @@ class ExportProjectFormsForSites(View):
 
                 for col_num in range(len(head_columns)):
                     ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
-                    row_num += 1
+                
+                row_num += 1
             
             font_style.font.bold = True
             for col_num in range(len(head_columns)):
                 ws.write(0, col_num, head_columns[col_num]['question_label'], font_style)
-            wb.save(response)
+        wb.save(response)
         return response
 
 def exporttest(pk):
