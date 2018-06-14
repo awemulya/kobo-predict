@@ -108,7 +108,7 @@ class ExportProjectFormsForSites(View):
         
         for form in forms:
             wb = xlwt.Workbook(encoding='utf-8')
-            ws = wb.add_sheet(form.xf.title)
+            ws = wb.add_sheet((form.xf.title[:29] + '..') if len(form.xf.title) > 29 else form.xf.title)
             # Sheet header, first row
             row_num = 1
             font_style = xlwt.XFStyle()
