@@ -128,10 +128,10 @@ class ExportProjectFormsForSites(View):
             #questions = get_form_questions(form.xf.json)
             # concat arrays
 
-            for response in form.project_form_instances.all():
-                questions, answers = parse_form_response(json.loads(form.xf.json)['children'], response.instance.json)
-                answers['identifier'] = response.site.identifier
-                answers['name'] = response.site.name
+            for formresponse in form.project_form_instances.all():
+                questions, answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json)
+                answers['identifier'] = formresponse.site.identifier
+                answers['name'] = formresponse.site.name
                 
                 if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
                     head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
