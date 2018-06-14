@@ -117,9 +117,10 @@ class ExportProjectFormsForSites(View):
         enddate= "2018-06-05"
         forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
         wb = xlwt.Workbook(encoding='utf-8')
+        form_id = 0
         for form in forms:
-            
-            ws = wb.add_sheet((form.xf.title[:29] + '..') if len(form.xf.title) > 29 else form.xf.title)
+            form_id += 1
+            ws = wb.add_sheet((str(form_id) + form.xf.title[:27] + '..') if len(form.xf.title) > 29 else form.xf.title)
             # Sheet header, first row
             row_num = 1
             font_style = xlwt.XFStyle()
