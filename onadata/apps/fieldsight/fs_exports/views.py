@@ -116,9 +116,9 @@ class ExportProjectFormsForSites(View):
         startdate="2016-05-01"
         enddate= "2018-06-05"
         forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
-        
+        wb = xlwt.Workbook(encoding='utf-8')
         for form in forms:
-            wb = xlwt.Workbook(encoding='utf-8')
+            
             ws = wb.add_sheet((form.xf.title[:29] + '..') if len(form.xf.title) > 29 else form.xf.title)
             # Sheet header, first row
             row_num = 1
@@ -128,17 +128,18 @@ class ExportProjectFormsForSites(View):
             #questions = get_form_questions(form.xf.json)
             # concat arrays
 
-            for response in form.site_form_instances.all():
-                questions, answers = parse_form_response(json.loads(form.xf.json)['children'], response.instance.json)
-                meta_ques = project.site_meta_attributes
-                meta_ans = site.site_meta_attributes_ans
-                if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
-                    head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
+            for response in form.project_form_instances.all():
+            questions, answers = parse_form_response(json.loads(form.xf.json)['children'], response.instance.json)
+            answers['identifier'] = response.site.identifier
+            answers['name'] = response.site.name
+            
+            if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
+                head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
 
-                for col_num in range(len(head_columns)):
-                    ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
+            for col_num in range(len(head_columns)):
+                ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
                 row_num += 1
-
+            
             font_style.font.bold = True
             for col_num in range(len(head_columns)):
                 ws.write(0, col_num, head_columns[col_num]['question_label'], font_style)
