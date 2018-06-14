@@ -129,7 +129,7 @@ class ExportProjectFormsForSites(View):
             # concat arrays
 
             for response in form.site_form_instances.all():
-                questions, answers = parse_form_response(form.xf.json, response.instance.json)
+                questions, answers = parse_form_response(json.loads(form.xf.json)['children'], response.instance.json)
                 if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
                     head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
 
@@ -167,7 +167,7 @@ def exporttest(pk):
         # concat arrays
 
         for response in form.project_form_instances.all():
-            questions, answers = parse_form_response(json.dumps(form.xf.json)['children'], response.instance.json)
+            questions, answers = parse_form_response(json.loads(form.xf.json)['children'], response.instance.json)
             if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
                 head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
 
