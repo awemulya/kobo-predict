@@ -14,13 +14,14 @@ from onadata.apps.fsforms.models import FieldSightXF, FInstance
 from django.db.models import Prefetch
 import json
 from . formParserForExcelReport import parse_form_response
-
+from io import BytesIO
 class ExportOptions(ProjectRoleMixin, View):
     def get(self, request):
         return render(request, "fieldsight/fs_export/xls_export.html")
 
 class ExportProjectFormsForSites(View):
     def get(self, *args, **kwargs):
+        buffer = BytesIO()
         project=get_object_or_404(Project, pk=self.kwargs.get('pk'))
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename="bulk_upload_sites.xls"'
@@ -33,7 +34,7 @@ class ExportProjectFormsForSites(View):
         wb = xlwt.Workbook(encoding='utf-8')
         form_id = 0
         form_names=[]
-        base_url = request.get_host()
+        base_url = self.request.get_host()
         for form in forms:
             form_id += 1
             form_names.append(form.xf.title)
@@ -74,8 +75,17 @@ class ExportProjectFormsForSites(View):
 
             for col_num in range(len(head_columns)):
                 ws.write(0, col_num, head_columns[col_num]['question_label'], font_style)
+        if not forms:
+            ws = wb.add_sheet('No Forms')
 
-        wb.save(response)
+        
+        wb.save(buffer)
+        buffer.seek(0)
+        pdf = buffer.getvalue()
+        file = open("media/"+str(project.id)+".xls", "wb")
+        file.write(pdf)
+        response.write(pdf)
+        buffer.close()
         return response
 
 
