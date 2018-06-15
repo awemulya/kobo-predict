@@ -1,8 +1,7 @@
-def parse_form_response(main_question, main_answer, base_url):
+def parse_form_response(main_question, main_answer, base_url, media_folder):
 
     parsed_question=[]
     parsed_answer={}
-    media_folder =''
     
 
 

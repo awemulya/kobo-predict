@@ -59,7 +59,7 @@ class ExportProjectFormsForSites(View):
             # concat arrays
 
             for formresponse in form.project_form_instances.all():
-                questions, answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url)
+                questions, answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url, form.xf.user.username)
                 answers['identifier'] = formresponse.site.identifier
                 answers['name'] = formresponse.site.name
                 
@@ -81,11 +81,10 @@ class ExportProjectFormsForSites(View):
         
         wb.save(buffer)
         buffer.seek(0)
-        pdf = buffer.getvalue()
+        xls = buffer.getvalue()
         file = open("media/"+str(project.id)+".xls", "wb")
-        file.write(pdf)
-        print file.name
-        response.write(pdf)
+        file.write(xls)
+        response.write(xls)
         buffer.close()
         return response
 
