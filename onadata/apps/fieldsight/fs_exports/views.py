@@ -40,11 +40,11 @@ class ExportProjectFormsForSites(View):
             form_names.append(form.xf.title)
             occurance = form_names.count(form.xf.title)
 
-            if occurance > 1 and len(sheet_name) > 25:
+            if occurance > 1 and len(form.xf.title) > 25:
                 sheet_name = form.xf.title[:25] + ".." + "(" +str(occurance)+ ")"
-            elif occurance > 1 and len(sheet_name) < 25:
+            elif occurance > 1 and len(form.xf.title) < 25:
                 sheet_name = form.xf.title + "(" +str(occurance)+ ")"
-            elif len(sheet_name) > 29:
+            elif len(form.xf.title) > 29:
                 sheet_name = form.xf.title[:29] + ".."
             else:
                 sheet_name = form.xf.title
@@ -84,6 +84,7 @@ class ExportProjectFormsForSites(View):
         pdf = buffer.getvalue()
         file = open("media/"+str(project.id)+".xls", "wb")
         file.write(pdf)
+        print file.name
         response.write(pdf)
         buffer.close()
         return response
