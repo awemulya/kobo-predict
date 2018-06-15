@@ -13,93 +13,7 @@ from rest_framework import status
 from onadata.apps.fsforms.models import FieldSightXF, FInstance
 from django.db.models import Prefetch
 import json
-def parse_form_response(main_question, main_answer):
-
-    parsed_question=[]
-    parsed_answer={}
-    media_folder =''
-    base_url=''
-
-
-    def append_row( question_name, question_label, question_type, answer_dict):
-    
-        if question_name in answer_dict:
-            if question_type == 'note':
-                answer=''
-                
-            elif question_type == 'photo':
-                answer = 'http://'+base_url+'/media/'+ media_folder +'/attachments/'+ answer_dict[question_name]
-                
-            elif question_type == 'audio' or question_type == 'video':
-                answer = 'http://'+base_url+'/media/'+ media_folder +'/attachments/'+ answer_dict[question_name]
-                
-            else:
-                answer=answer_dict[question_name]
-
-        else:
-            answer=''
-        
-        parsed_question.append({'question_name':question_name, 'question_label':question_label})
-        parsed_answer[question_name]=answer
-
-    def parse_repeat( r_object):
-        
-        r_question = r_object['name']
-        if r_question in main_question:
-            for r_answer in main_answer[r_question][:1]:
-                for first_children in r_object['children']:
-                    question_name = r_question+"/"+first_children['name']
-                    question_label = question_name
-                    
-                    if 'label' in first_children:
-                        question_label = first_children['label']
-
-                    append_row(question_name, question_label, first_children['type'], r_answer)
-        else:
-            for first_children in r_object['children']:
-                question_name = r_question+"/"+first_children['name']
-                question_label = question_name
-                
-                if 'label' in first_children:
-                    question_label = first_children['label']
-
-                append_row(question_name, question_label, first_children['type'], {})
-
-    def parse_group( prev_groupname, g_object):
-       
-        g_question = prev_groupname+g_object['name']
-        for first_children in g_object['children']:
-            question_name = g_question+"/"+first_children['name']
-            question_label = question_name
-
-            if 'label' in first_children:
-                question_label = first_children['label']
-            
-            append_row(question_name, question_label, first_children['type'], main_answer)
-            
-            # done at the end because wee want to print group name as well in report.
-            if first_children['type'] == 'group':
-                parse_group(g_question+"/",first_children)
-
-    def parse_individual_questions():
-       
-        for first_children in main_question:
-            if first_children['type'] == "repeat":
-                parse_repeat(first_children)
-            elif first_children['type'] == 'group':
-                parse_group("", first_children)
-            else:
-                question_name = first_children['name']
-                question_label = question_name
-
-                if 'label' in first_children:
-                    question_label = first_children['label']
-                
-                append_row(question_name, question_label, first_children['type'], main_answer)
-    
-    parse_individual_questions()
-
-    return parsed_question, parsed_answer
+from . formParserForExcelReport import parse_form_response
 
 class ExportOptions(ProjectRoleMixin, View):
     def get(self, request):
@@ -118,9 +32,23 @@ class ExportProjectFormsForSites(View):
         forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
         wb = xlwt.Workbook(encoding='utf-8')
         form_id = 0
+        form_names=[]
+        base_url = request.get_host()
         for form in forms:
-            form_id += 1 
-            ws = wb.add_sheet((str(form_id) + form.xf.title[:27] + '..') if len(form.xf.title) > 29 else str(form_id) +form.xf.title)
+            form_id += 1
+            form_names.append(form.xf.title)
+            occurance = form_names.count(form.xf.title)
+
+            if occurance > 1 and len(sheet_name) > 25:
+                sheet_name = form.xf.title[:25] + ".." + "(" +str(occurance)+ ")"
+            elif occurance > 1 and len(sheet_name) < 25:
+                sheet_name = form.xf.title + "(" +str(occurance)+ ")"
+            elif len(sheet_name) > 29:
+                sheet_name = form.xf.title[:29] + ".."
+            else:
+                sheet_name = form.xf.title
+
+            ws = wb.add_sheet(sheet_name)
             # Sheet header, first row
             row_num = 1
             font_style = xlwt.XFStyle()
@@ -130,7 +58,7 @@ class ExportProjectFormsForSites(View):
             # concat arrays
 
             for formresponse in form.project_form_instances.all():
-                questions, answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json)
+                questions, answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url)
                 answers['identifier'] = formresponse.site.identifier
                 answers['name'] = formresponse.site.name
                 
@@ -143,51 +71,13 @@ class ExportProjectFormsForSites(View):
                 row_num += 1
             
             font_style.font.bold = True
+
             for col_num in range(len(head_columns)):
                 ws.write(0, col_num, head_columns[col_num]['question_label'], font_style)
+
         wb.save(response)
         return response
 
-def exporttest(pk):
-    project=get_object_or_404(Project, pk=pk)
-    # response = HttpResponse(content_type='application/ms-excel')
-    # response['Content-Disposition'] = 'attachment; filename="bulk_upload_sites.xls"'
-    
-    sites=project.sites.all().values('id')
-    fs_ids = FieldSightXF.objects.filter(project_id = project.id).values('id')
-    startdate="2016-05-01"
-    enddate= "2018-06-05"
-    forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('project_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
-    
-    for form in forms:
-        wb = xlwt.Workbook(encoding='utf-8')
-        ws = wb.add_sheet((form.xf.title[:29] + '..') if len(form.xf.title) > 29 else form.xf.title)
-        # Sheet header, first row
-        row_num = 1
-        font_style = xlwt.XFStyle()
-        head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}]
-        
-        
-        #questions = get_form_questions(form.xf.json)
-        # concat arrays
-
-        for response in form.project_form_instances.all():
-            questions, answers = parse_form_response(json.loads(form.xf.json)['children'], response.instance.json)
-            answers['identifier'] = response.site.identifier
-            answers['name'] = response.site.name
-            
-            if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
-                head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
-
-            for col_num in range(len(head_columns)):
-                ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
-            row_num += 1
-        import pdb; pdb.set_trace();
-        font_style.font.bold = True
-        for col_num in range(len(head_columns)):
-            ws.write(0, col_num, head_columns[col_num]['question_label'], font_style)
-        wb.save(response)
-    return response
 
 class ExportProjectSites(DonorRoleMixin, View):
     def get(self, *args, **kwargs):
