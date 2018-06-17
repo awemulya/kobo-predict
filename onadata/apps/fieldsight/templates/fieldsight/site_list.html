@@ -56,6 +56,7 @@
 
 							<a href="{% url 'fieldsight:define-site-meta' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
 							<a href="{% url 'fieldsight:site-upload' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-files-o"></i> {% trans 'Bulk' %} {% trans 'Upload' %} {% trans 'Sites' %}</a>
+							<a href="{% url 'fieldsight:bulk-edit-site' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-files-o"></i> {% trans 'Bulk' %} {% trans 'edit' %} {% trans 'Sites' %}</a>
 							<a href="{% url 'fieldsight_export:export_xls_project_sites' pk %}" title="" class="btn btn-sm
 							btn-primary"><i class="la la-plus"></i> {% trans 'Export' %} {% trans 'Sites' %} {% trans 'data' %} </a>
 

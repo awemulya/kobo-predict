@@ -913,11 +913,25 @@ def ajax_save_project(request):
     return Response({'error': 'Invalid Project Data'}, status=status.HTTP_400_BAD_REQUEST)
 
 class UploadSitesView(ProjectRoleMixin, TemplateView):
-
     def get(self, request, pk):
         obj = get_object_or_404(Project, pk=pk)
         form = UploadFileForm()
-        return render(request, 'fieldsight/upload_sites.html',{'obj': obj, 'form':form, 'project':pk})
+        regions = SiteBulkEditView.get_regions_filter(obj)
+
+        selected_regions = request.GET.get('regions')
+        if selected_regions:
+            selected_regions = selected_regions.split(',')
+
+        return render(
+            request, 'fieldsight/upload_sites.html',
+            {
+                'obj': obj,
+                'form': form,
+                'project': pk,
+                'regions': regions,
+                'selected_regions': selected_regions,
+            }
+        )
 
     def post(self, request, pk=id):
         obj = get_object_or_404(Project, pk=pk)
@@ -2347,6 +2361,12 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
 
         if edit:
             sites = Site.objects.filter(project=project)
+            regions = request.GET.get('regions')
+            if regions:
+                regions = regions.split(',')
+                if len(regions) > 0:
+                    sites = sites.filter(region__in=regions)
+
             for i, site in enumerate(sites):
                 self.write_site(i + 1, site, ws)
 
@@ -2361,7 +2381,7 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
         columns = [
             site.identifier,
             site.name,
-            site.type.name,
+            site.type and site.type.name,
             site.phone,
             site.address,
             site.public_desc,
@@ -2856,7 +2876,8 @@ def redirectToSite(request, pk):
 
 
 class SiteBulkEditView(View):
-    def get_regions(self, project, parent=None, default=[], prefix=''):
+    @staticmethod
+    def get_regions_filter(project, parent=None, default=[], prefix=''):
         regions = Region.objects.filter(project=project, parent=parent)
         if regions.count() == 0:
             return default
@@ -2876,7 +2897,7 @@ class SiteBulkEditView(View):
         ]
 
         for region in regions:
-            result = self.get_regions(
+            result = SiteBulkEditView.get_regions_filter(
                 project,
                 region,
                 result,
@@ -2887,10 +2908,9 @@ class SiteBulkEditView(View):
 
     def get(self, request, pk):
         project = Project.objects.get(pk=pk)
-
         context = {
             'project': project,
-            'regions': self.get_regions(project),
+            'regions': SiteBulkEditView.get_regions_filter(project),
             'form': SiteBulkEditForm(project=project),
         }
 

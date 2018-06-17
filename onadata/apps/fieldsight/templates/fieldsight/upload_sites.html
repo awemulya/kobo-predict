@@ -25,8 +25,34 @@
             <h3><i class="la la-files-o"></i>{% trans 'Bulk' %} {% trans 'Site' %} {% trans 'Upload' %}</h3>
         </header>
         <div class="panel-body">
-            <!-- Add New Organization-->
-            <div id="newOrganization" class="margin-top">
+
+            <div class="download-section">
+                <fieldset>
+                    <legend>
+                        {% trans 'Download' %} {% trans 'empty' %} {% trans 'template:' %}
+                    </legend>
+                    <a href="{% url 'fieldsight:excel_bulk_site_sample' project %}" target="_blank">
+                        {% trans 'Download' %} {% trans 'Excel' %} {% trans 'File' %}
+                    </a>
+                </fieldset>
+                <fieldset>
+                    <legend>
+                        {% trans 'Download' %} {% trans 'for' %} {% trans 'editing:' %}
+                    </legend>
+                    {% trans 'Filter' %} {% trans 'by' %} {% trans 'regions' %}
+                    <select id="regions" placeholder="Filter by regions" multiple>
+                        {% for region in regions %}
+                        <option value="{{ region.id }}">{{ region.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <a id="download-for-edit" href="{% url 'fieldsight:excel_bulk_site_sample' project 1 %}" target="_blank">
+                        {% trans 'Download' %} {% trans 'Excel' %} {% trans 'File' %}
+                    </a>
+                </fieldset>
+            </div>
+
+            <div id="newOrganization" class="margin-top upload-section">
+                <legend>{% trans 'Upload' %} {% trans 'File' %}</legend>
                 <form enctype="multipart/form-data" method="post" action="{% url 'fieldsight:site-upload' project %}">
 
                     <div class="form-row">
@@ -34,19 +60,13 @@
                         {{ form.media }}
                         {% for field in form %}
 
-                        <div class="form-group col-sm-12">
-
-                            <label class="col-form-label">{% trans 'Upload' %}{% trans 'File:' %}</label>
-                            <div class="col-sm-3"><a href="{% url 'fieldsight:excel_bulk_site_sample' project %}" target="_blank">{% trans 'Download' %} {% trans 'Excel' %} {% trans 'Bulk' %} {% trans 'Upload' %} {% trans 'Form' %} {% trans 'Empty' %}</a></div><br>
-                            <div class="col-sm-3"><a href="{% url 'fieldsight:excel_bulk_site_sample' project 1 %}" target="_blank">{% trans 'Download' %} {% trans 'Excel' %} {% trans 'Bulk' %} {% trans 'Upload' %} {% trans 'Form' %} {% trans 'Existing' %}</a></div><br>
-                            <label class="col-form-label">{{ field }}</label>
-                            <label class="col-form-label">{{ field.errors }}</label>
-                        </div>
+                        <label class="col-form-label">{{ field }}</label>
+                        <label class="col-form-label">{{ field.errors }}</label>
 
                         {% endfor %}
 
                     </div>
-                    <button type="submit" class="btn btn-primary"><i class="la la-upload"></i>{% trans ' upload' %}</button>
+                    <button type="submit" class="btn btn-primary">{% trans 'Upload' %} {% trans 'Excel' %} {% trans 'File' %}</button>
                     <span style="font-color:red;" >{{ form.non_field_errors }}
                 </form>
             </div>
@@ -54,4 +74,67 @@
     </section>
 
 </div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.min.js"></script>
+<script>
+    $(document).ready(() => {
+        const regionsSelectize = $('#regions').selectize();
+        const downloadAnchor = $('#download-for-edit');
+        const downloadUrl = "{% url 'fieldsight:excel_bulk_site_sample' project 1 %}";
+
+        downloadAnchor.attr('href', downloadUrl);
+
+        $('#regions').change(() => {
+            const regionsVal = $('#regions').val();
+            if (!regionsVal || regionsVal.length === 0) {
+                downloadAnchor.attr('href', downloadUrl);
+            } else {
+                downloadAnchor.attr('href', downloadUrl + '?regions=' + regionsVal.join(','));
+            }
+        });
+
+        {% if selected_regions %}
+        const regionsVal = [{% for r in selected_regions %}'{{r}}', {% endfor %}];
+        regionsSelectize[0].selectize.setValue(regionsVal);
+        {% endif %}
+    });
+</script>
+
+<!-- move following to proper css file -->
+<style>
+    .download-section {
+    }
+
+    .download-section fieldset {
+        margin-bottom: 16px;
+        font-size: 12px;
+    }
+
+    .download-section fieldset legend {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 0;
+    }
+
+    .download-section a {
+        font-size: 14px;
+    }
+
+    .upload-section {
+        margin: 16px 0;
+        font-size: 12px;
+    }
+
+    .upload-section legend {
+        font-size: 16px;
+        font-weight: 400;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    }
+
+    .upload-section button[type="submit"] {
+        cursor: pointer;
+        font-size: 14px;
+    }
+</style>
 {% endblock %}
