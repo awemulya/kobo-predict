@@ -50,19 +50,24 @@ class ExportProjectFormsForSites(View):
                 sheet_name = form.xf.title
 
             ws = wb.add_sheet(sheet_name)
-            # Sheet header, first row
             row_num = 1
             font_style = xlwt.XFStyle()
             head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}]
-            
-            #questions = get_form_questions(form.xf.json)
-            # concat arrays
+            repeat_questions = []
+            repeat_answers = {}
+
 
             for formresponse in form.project_form_instances.all():
-                questions, answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url, form.xf.user.username)
+                
+                questions, answers, r_questions, r_answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url, form.xf.user.username)
                 answers['identifier'] = formresponse.site.identifier
                 answers['name'] = formresponse.site.name
                 
+                if r_questions:
+                    if not repeat_questions:
+                        repeat_questions = r_questions
+                    repeat_answers[formresponse.site.identifier] = {'name': formresponse.site.name, 'answers':r_answers}
+
                 if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
                     head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
 
@@ -71,10 +76,45 @@ class ExportProjectFormsForSites(View):
                 
                 row_num += 1
             
+
             font_style.font.bold = True
 
             for col_num in range(len(head_columns)):
                 ws.write(0, col_num, head_columns[col_num]['question_label'], font_style)
+            
+            font_style.font.bold = False
+            if repeat_questions:
+                max_repeats = 0
+                wr = wb.add_sheet(sheet_name)
+                row_num = 1
+                font_style = xlwt.XFStyle()
+                
+                for k, site_r_answers in repeat_answers.items():
+                    col_no = 2
+                    wr.write(row_num, 1, k, font_style)
+                    wr.write(row_num, 2, site_r_answers['name'], font_style)
+                    
+                    if max_repeats < len(site_r_answers['answers']):
+                        max_repeats = len(site_r_answers['answers'])
+
+                    for answer in site_r_answers['answers']:
+                        for col_num in range(len(repeat_questions)):
+                            wr.write(row_num, col_no + col_num, answer[repeat_questions[col_num]['question_name']], font_style)
+                            col_no += 1
+
+                row_num += 1
+            
+
+                font_style.font.bold = True
+                wr.write(row_num, 1, 'Identifier', font_style)
+                wr.write(row_num, 2, 'name', font_style)
+                col_no=2
+
+                #for loop needed.
+                for m_repeats in range(max_repeats):
+                    for col_num in range(len(head_columns)):
+                        wr.write(0, col_num, head_columns[col_num]['question_label'], font_style)    
+                        col_no += 1 
         if not forms:
             ws = wb.add_sheet('No Forms')
 

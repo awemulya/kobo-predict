@@ -95,8 +95,9 @@ var project = "{{obj.pk}}";
 								<a class="dropdown-item" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i>{% trans ' Project' %} {% trans 'Summary' %} {% trans 'Report' %}</a>
 								<!--<a class="dropdown-item" href="#"><i class="la la-clipboard"></i>{% trans 'Project Detail Report' %}</a>-->
 								<a class="dropdown-item" href="{% url 'fieldsight:download-stages' obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Excel' %} {% trans 'Report' %}</a>
-
+								{% if request.group.name == "Super Admin" %}
 								<a class="dropdown-item" href="{% url 'fieldsight_export:export_xls_project_sites' obj.pk %}"><i class="la la-clipboard"></i>{% trans 'Excel' %} {% trans 'Site' %} {% trans 'Submission' %} {% trans 'Report' %}</a>
+								{% endif %}
 
 								<a class="dropdown-item" href="{% url 'fieldsight:ProjectStageDetailtemplate' obj.pk %}"><i class="la la-clipboard"></i>{% trans 'View' %} {% trans 'Tabular' %}{% trans 'Report' %}</a>
 								<a class="dropdown-item" href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i>{% trans 'Responses' %}</a>
