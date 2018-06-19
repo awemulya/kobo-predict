@@ -85,7 +85,7 @@ class ExportProjectFormsForSites(View):
             font_style.font.bold = False
             if repeat_questions:
                 max_repeats = 0
-                wr = wb.add_sheet(sheet_name)
+                wr = wb.add_sheet(str(form_id)+"repeated")
                 row_num = 1
                 font_style = xlwt.XFStyle()
                 
