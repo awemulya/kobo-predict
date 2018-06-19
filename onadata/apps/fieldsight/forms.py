@@ -19,6 +19,10 @@ from onadata.apps.geo.models import GeoLayer
 
 from onadata.apps.userrole.models import UserRole
 from django.core.exceptions import ValidationError
+import StringIO
+import mimetypes
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 USERNAME_REGEX = r'^[a-z][a-z0-9_]+$'
 USERNAME_MAX_LENGTH = 30
 USERNAME_INVALID_MESSAGE = _(
@@ -98,7 +102,14 @@ class OrganizationForm(forms.ModelForm):
             image = Image.open(photo.logo)
             cropped_image = image.crop((x, y, w+x, h+y))
             resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
-            resized_image.save(photo.logo.path)
+            # resized_image.save(photo.logo.path)
+            resized_image_file = StringIO.StringIO()
+            mime = mimetypes.guess_type(photo.logo.name)[0]
+            plain_ext = mime.split('/')[1]
+            resized_image.save(resized_image_file, plain_ext)
+            default_storage.delete(photo.logo.name)
+            default_storage.save(photo.logo.name, ContentFile(resized_image_file.getvalue()))
+            resized_image_file.close()
         return photo
 
 
@@ -273,7 +284,14 @@ class ProjectForm(forms.ModelForm):
             image = Image.open(photo.logo)
             cropped_image = image.crop((x, y, w+x, h+y))
             resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
-            resized_image.save(photo.logo.path)
+            # resized_image.save(photo.logo.path)
+            resized_image_file = StringIO.StringIO()
+            mime = mimetypes.guess_type(photo.logo.name)[0]
+            plain_ext = mime.split('/')[1]
+            resized_image.save(resized_image_file, plain_ext)
+            default_storage.delete(photo.logo.name)
+            default_storage.save(photo.logo.name, ContentFile(resized_image_file.getvalue()))
+            resized_image_file.close()
         return photo
 
     def clean(self):
@@ -336,7 +354,14 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
             image = Image.open(photo.logo)
             cropped_image = image.crop((x, y, w + x, h + y))
             resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
-            resized_image.save(photo.logo.path)
+            # resized_image.save(photo.logo.path)
+            resized_image_file = StringIO.StringIO()
+            mime = mimetypes.guess_type(photo.logo.name)[0]
+            plain_ext = mime.split('/')[1]
+            resized_image.save(resized_image_file, plain_ext)
+            default_storage.delete(photo.logo.name)
+            default_storage.save(photo.logo.name, ContentFile(resized_image_file.getvalue()))
+            resized_image_file.close()
         return photo
 
     def clean(self):
