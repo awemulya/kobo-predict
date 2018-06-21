@@ -253,7 +253,7 @@ def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs
         task.save()
 
         noti = task.logs.create(source=source_user, type=32, title="Pdf Report generation in site",
-                                   recipient=source_user, content_object=project,
+                                   recipient=source_user, content_object=site,
                                    extra_message=" <a href='"+ task.file.url +"'>Pdf report</a> generation in site")
     except Exception as e:
         task.status = 3
