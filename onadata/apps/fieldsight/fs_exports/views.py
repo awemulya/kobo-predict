@@ -7,7 +7,7 @@ from django.views.generic import TemplateView, View
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
-from onadata.apps.fieldsight.tasks import importSites, exportProjectSiteResponses
+from onadata.apps.fieldsight.tasks import importSites, exportProjectSiteResponses, generateSiteDetailsXls
 from django.http import HttpResponse
 from rest_framework import status
 from onadata.apps.fsforms.models import FieldSightXF, FInstance, Stage
@@ -114,140 +114,16 @@ class ExportProjectSites(DonorRoleMixin, View):
 
 class ExportProjectSitesWithRefs(DonorRoleMixin, View):
     def get(self, *args, **kwargs):
-        project=get_object_or_404(Project, pk=self.kwargs.get('pk'))
-        response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="bulk_upload_sites.xls"'
-        wb = xlwt.Workbook(encoding='utf-8')
-        ws = wb.add_sheet('Sites')
-        # Sheet header, first row
-        
-        header_columns = [{'id': 'identifier' ,'name':'identifier'},
-                   {'id': 'name','name':'name'},
-                   {'id': 'site_type_identifier','name':'type'}, 
-                   {'id': 'phone','name':'phone'},
-                   {'id': 'address','name':'address'},
-                   {'id': 'public_desc','name':'public_desc'},
-                   {'id': 'additional_desc','name':'additional_desc'},
-                   {'id': 'latitude','name':'latitude'},
-                   {'id': 'longitude','name':'longitude'}, ]
-        if project.cluster_sites:
-            header_columns += [{'id':'region_identifier', 'name':'region_id'}, ]
-        meta_ques = project.site_meta_attributes
-        for question in meta_ques:
-            header_columns += [{'id': question['question_name'], 'name':question['question_name']}]
-        
-        
-        region_id = self.kwargs.get('region_id', None)
-        sites = project.sites.all().order_by('identifier')
-
-        if region_id:
-            if region_id == "0":
-                sites = project.sites.filter(region_id=None).order_by('identifier')
-            else:
-                sites = project.sites.filter(region_id=region_id).order_by('identifier')
-        site_list={}
-        meta_ref_sites={}
-        for site in sites:
-            
-            columns = {'identifier':site.identifier, 'name':site.name, 'site_type_identifier':site.type.identifier if site.type else "", 'phone':site.phone, 'address':site.address, 'public_desc':site.public_desc, 'additional_desc':site.additional_desc, 'latitude':site.latitude,
-                       'longitude':site.longitude, }
-            
-            if project.cluster_sites:
-                columns['region_identifier'] = site.region.identifier if site.region else ""
-            
-            meta_ques = project.site_meta_attributes
-            meta_ans = site.site_meta_attributes_ans
-            for question in meta_ques:
-                if question['question_name'] in meta_ans:
-                    columns[question['question_name']] = meta_ans[question['question_name']]
-
-                    if question['question_type'] == "Link" and meta_ans[question['question_name']] != "":
-                        if question.get('question_name') in meta_ref_sites:
-                            meta_ref_sites[question.get('question_name')].append(meta_ans[question['question_name']])
-                        else:
-                            meta_ref_sites[question.get('question_name')] = [meta_ans[question['question_name']]]
-                else:
-                    columns[question['question_name']] = ''
-            
-            site_list[site.identifier] = columns
-        
-
-        def generate(project_id, site_map, meta, identifiers, selected_metas):
-            project_id = str(project_id)
-            sub_meta_ref_sites = {}
-            sub_site_map = {}  
-            sitenew = Site.objects.filter(identifier__in = identifiers, project_id = project_id)
-            
-            for site in sitenew:
-                if project_id == str(project.id):
-                    continue
-            
-                identifier = site_map.get(site.identifier)
-                  
-                if not site.site_meta_attributes_ans:
-                    meta_ans = {}
-                else:
-                    meta_ans = site.site_meta_attributes_ans
-
-                for meta in selected_metas.get(project_id, []):
-                    
-                    if meta.get('question_type') == "Link":
-                        link_answer=str(meta_ans.get(meta.get('question_name'), ""))
-                        if link_answer != "":    
-                            if meta['question_name'] in sub_site_map:
-                                if site.identifier in sub_site_map[meta['question_name']]:
-                                    sub_site_map[meta['question_name']][link_answer].append(identifier)
-                                else:
-                                    sub_site_map[meta['question_name']][link_answer] = identifier
-                            else:
-                                sub_site_map[meta['question_name']] = {}
-                                sub_site_map[meta['question_name']][link_answer] = identifier
-                            
-                            for idf in identifier:
-                                if meta['question_name'] in sub_meta_ref_sites:
-                                    sub_meta_ref_sites[meta['question_name']].append(meta_ans.get(meta['question_name']))
-                                else:
-                                    sub_meta_ref_sites[meta['question_name']] = [meta_ans.get(meta['question_name'])]
-
-                    else:
-                        for idf in identifier:
-                            site_list[idf][project_id+"-"+meta.get('question_name')] = meta_ans.get(meta.get('question_name'), "")
-                         
-            for meta in selected_metas.get(project_id, []):
-                head = header_columns
-                head += [{'id':project_id+"-"+meta.get('question_name'), 'name':meta.get('question_text')}]
-                if meta.get('question_type') == "Link":
-                    generate(meta['project_id'], sub_site_map.get(meta['question_name'], []), meta, sub_meta_ref_sites.get(meta['question_name'], []), selected_metas)
-
-        for meta in meta_ques:
-            if meta['question_type'] == "Link":
-                site_map = {}
-                for key, value in site_list.items():
-                    if value[meta['question_name']] != "":
-                        identifier = str(value.get(meta['question_name']))
-                        if identifier in site_map:
-                            site_map[identifier].append(key)
-                        else:
-                            site_map[identifier] = [key]
-                
-                generate(meta['project_id'], site_map, meta, meta_ref_sites.get(meta['question_name'], []), meta.get('metas'))
-        # import pdb; pdb.set_trace();
-        row_num = 0
-        font_style = xlwt.XFStyle()
-        font_style.font.bold = True
-        for col_num in range(len(header_columns)):
-            ws.write(row_num, col_num, header_columns[col_num]['name'], font_style)
-        row_num += 1
-
-        font_style_unbold = xlwt.XFStyle()
-        font_style_unbold.font.bold = False
-        
-        for key,site in site_list.iteritems():
-            for col_num in range(len(header_columns)):
-                ws.write(row_num, col_num, site.get(header_columns[col_num]['id'], ""), font_style_unbold)
-            row_num += 1
-        wb.save(response)
-        return response
+        source_user = self.request.user            
+        task_obj=CeleryTaskProgress.objects.create(user=source_user, task_type=5)
+        if task_obj:
+            task = generateSiteDetailsXls.delay(task_prog_obj_id, source_user, self.kwargs.get('pk'), self.kwargs.get('region_id', None))
+            task_obj.task_id = task.id
+            task_obj.save()
+             status, data = 200, {'status':'true','message':'Sucess, the sites details xls file is being generated. You will be notified after the file is generated.'}
+        else:
+            status, data = 401, {'status':'false','message':'Error occured please try again.'}
+        return JsonResponse(data, status=status)
 
 
 class CloneProjectSites(ProjectRoleMixin, View):
@@ -268,9 +144,9 @@ class CloneProjectSites(ProjectRoleMixin, View):
                 result='Sites are being Imported. You will be notified in notifications list as well.'
             else:
                 result = 'Sites cannot be imported a the moment.'
-            return HttpResponse({result}, status=status.HTTP_200_OK)
+            return JsonResponse({result}, status=status.HTTP_200_OK)
         except Exception as e:
-            return HttpResponse({'Site Import Failed, Contact Fieldsight Team'}, status=status.HTTP_200_OK)
+            return JsonResponse({'Site Import Failed, Contact Fieldsight Team'}, status=status.HTTP_200_OK)
 
 # class CloneProjectSites(ProjectRoleMixin, View):
 #     def post(self, *args, **kwargs):
