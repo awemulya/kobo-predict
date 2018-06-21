@@ -333,7 +333,7 @@ class Site(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     region = models.ForeignKey(
         Region, related_name='regions', blank=True, null=True)
-    site_meta_attributes_ans = JSONField(default=list)
+    site_meta_attributes_ans = JSONField(default=dict)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     objects = GeoManager()

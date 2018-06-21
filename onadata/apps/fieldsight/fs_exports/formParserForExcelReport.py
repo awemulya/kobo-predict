@@ -7,7 +7,7 @@ def parse_form_response(main_question, main_answer, base_url, media_folder):
     
 
 
-    def append_row( question_name, question_label, question_type, answer_dict, is_repeat=None):
+    def append_row(question_name, question_label, question_type, answer_dict, is_repeat=None):
     
         if question_name in answer_dict:
             if question_type == 'note':

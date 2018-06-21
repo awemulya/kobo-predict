@@ -7,127 +7,52 @@ from django.views.generic import TemplateView, View
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
-from onadata.apps.fieldsight.tasks import importSites
+from onadata.apps.fieldsight.tasks import importSites, exportProjectSiteResponses
 from django.http import HttpResponse
 from rest_framework import status
-from onadata.apps.fsforms.models import FieldSightXF, FInstance
+from onadata.apps.fsforms.models import FieldSightXF, FInstance, Stage
 from django.db.models import Prefetch
-import json
-from . formParserForExcelReport import parse_form_response
-from io import BytesIO
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import JsonResponse
+
 class ExportOptions(ProjectRoleMixin, View):
     def get(self, request):
         return render(request, "fieldsight/fs_export/xls_export.html")
 
 class ExportProjectFormsForSites(View):
-    def get(self, *args, **kwargs):
-        buffer = BytesIO()
-        project=get_object_or_404(Project, pk=self.kwargs.get('pk'))
-        response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="bulk_upload_sites.xls"'
-        
-        sites=project.sites.all().values('id')
-        fs_ids = FieldSightXF.objects.filter(project_id = project.id).values('id')
-        startdate="2016-05-01"
-        enddate= "2018-06-05"
-        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
-        wb = xlwt.Workbook(encoding='utf-8')
-        form_id = 0
-        form_names=[]
+    def get(self, request, pk):
+        mainstage=[]
+        schedule = FieldSightXF.objects.filter(project_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','schedule__name')
+        stages = Stage.objects.filter(site_id=pk)
+        for stage in stages:
+            if stage.stage_id is None:
+                substages=stage.get_sub_stage_list()
+                main_stage = {'id':stage.id, 'title':stage.name, 'sub_stages':list(substages)}
+                # stagegroup = {'main_stage':main_stage,}
+                mainstage.append(main_stage)
+
+        survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title')
+        general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title')
+        content={'general':list(general), 'schedule':list(schedule), 'stage':list(mainstage), 'survey':list(survey)}
+        return JsonResponse(content, status=200)
+
+    def post(self, *args, **kwargs):
         base_url = self.request.get_host()
-        for form in forms:
-            form_id += 1
-            form_names.append(form.xf.title)
-            occurance = form_names.count(form.xf.title)
-
-            if occurance > 1 and len(form.xf.title) > 25:
-                sheet_name = form.xf.title[:25] + ".." + "(" +str(occurance)+ ")"
-            elif occurance > 1 and len(form.xf.title) < 25:
-                sheet_name = form.xf.title + "(" +str(occurance)+ ")"
-            elif len(form.xf.title) > 29:
-                sheet_name = form.xf.title[:29] + ".."
-            else:
-                sheet_name = form.xf.title
-
-            ws = wb.add_sheet(sheet_name)
-            row_num = 1
-            font_style = xlwt.XFStyle()
-            head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}]
-            repeat_questions = []
-            repeat_answers = {}
-
-
-            for formresponse in form.project_form_instances.all():
-                
-                questions, answers, r_questions, r_answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url, form.xf.user.username)
-                answers['identifier'] = formresponse.site.identifier
-                answers['name'] = formresponse.site.name
-                
-                if r_questions:
-                    if not repeat_questions:
-                        repeat_questions = r_questions
-                    repeat_answers[formresponse.site.identifier] = {'name': formresponse.site.name, 'answers':r_answers}
-
-                if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
-                    head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
-
-                for col_num in range(len(head_columns)):
-                    ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
-                
-                row_num += 1
-            
-
-            font_style.font.bold = True
-
-            for col_num in range(len(head_columns)):
-                ws.write(0, col_num, head_columns[col_num]['question_label'], font_style)
-            
-            font_style.font.bold = False
-            if repeat_questions:
-                max_repeats = 0
-                wr = wb.add_sheet(str(form_id)+"repeated")
-                row_num = 1
-                font_style = xlwt.XFStyle()
-                
-                for k, site_r_answers in repeat_answers.items():
-                    col_no = 2
-                    wr.write(row_num, 1, k, font_style)
-                    wr.write(row_num, 2, site_r_answers['name'], font_style)
-                    
-                    if max_repeats < len(site_r_answers['answers']):
-                        max_repeats = len(site_r_answers['answers'])
-
-                    for answer in site_r_answers['answers']:
-                        for col_num in range(len(repeat_questions)):
-                            wr.write(row_num, col_no + col_num, answer[repeat_questions[col_num]['question_name']], font_style)
-                            col_no += 1
-
-                row_num += 1
-            
-
-                font_style.font.bold = True
-                wr.write(row_num, 1, 'Identifier', font_style)
-                wr.write(row_num, 2, 'name', font_style)
-                col_no=2
-
-                #for loop needed.
-                for m_repeats in range(max_repeats):
-                    for col_num in range(len(head_columns)):
-                        wr.write(0, col_num, head_columns[col_num]['question_label'], font_style)    
-                        col_no += 1 
-        if not forms:
-            ws = wb.add_sheet('No Forms')
-
-        
-        wb.save(buffer)
-        buffer.seek(0)
-        xls = buffer.getvalue()
-        file = open("media/"+str(project.id)+".xls", "wb")
-        file.write(xls)
-        response.write(xls)
-        buffer.close()
-        return response
-
+        user = self.request.user
+        data = json.loads(self.request.body)
+        fs_ids = data.get('fs_ids')
+        start_date = data.get('startdate')
+        end_date = data.get('enddate')
+        # print sitefile
+        task_obj=CeleryTaskProgress.objects.create(user=user, task_type=3)
+        if task_obj:
+            task = exportProjectSiteResponses.delay(task_obj.pk, user, self.kwargs.get('pk'), base_url, fs_ids, start_date, end_date)
+            task_obj.task_id = task.id
+            task_obj.save()
+            status, data = 200, {'status':'true','message':'Sucess, the report is being generated. You will be notified after the report is generated.'}
+        else:
+            status, data = 401, {'status':'false','message':'Error occured please try again.'}
+        return JsonResponse(data, status=status)
 
 class ExportProjectSites(DonorRoleMixin, View):
     def get(self, *args, **kwargs):

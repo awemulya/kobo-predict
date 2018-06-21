@@ -77,50 +77,20 @@
 						</li>
 					</script>
 
-
-<!-- 										<ul>
-											<li>
-												<input type="checkbox" id="itemAll" data-id="itemAll" data-name="itemAll" />
-												<label for="itemAll">Select All</label>
-
-
-												<ul>
-													<li>
-														<input type="checkbox" data-id="item" data-name="Item" id="item" />
-														<label for="item">Stage 1</label>
-														<ul>
-															<li><input type="checkbox" id="subitem1" data-id="subitem1" data-name="Subitem 1" />
-															<label for="subitem1">Substage 1</label>
-															</li>
-
-														</ul>
-													</li>
-													<li>
-														<input type="checkbox" data-id="item2" data-name="Item2" id="item2" />
-														<label for="item2">Stage 2</label>
-														<ul>
-															<li><input type="checkbox" id="subitem21" data-id="subitem21" data-name="Subitem 21" />
-															<label for="subitem21">Substage 21</label>
-															</li>
-														</ul>
-													</li>
-												</ul>
-											</li>
-										</ul> -->
-										Start Date:
-										<input type="date" value="{{ obj.date_created.date|date:'Y-m-d'}}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="startdate" id="startdate">
-										<br>
-										End Date:
-										<input type="date" value="{% now 'Y-m-d' %}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="enddate" id="enddate">
-									</div>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-									<button type="button" class="btn btn-primary" data-bind="click: $root.generateReport">Download</button>
-								</div>
-							</div>
-						</div>
-					</div>
+					Start Date:
+					<input type="date" value="{{ obj.date_created.date|date:'Y-m-d'}}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="startdate" id="startdate">
+					<br>
+					End Date:
+					<input type="date" value="{% now 'Y-m-d' %}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="enddate" id="enddate">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" data-bind="click: $root.generateReport">Download</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 					<div id="main-content" class="padding" onload="change()">
 

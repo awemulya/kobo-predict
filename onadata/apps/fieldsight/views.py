@@ -59,7 +59,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from onadata.apps.fieldsight.tasks import multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
+from onadata.apps.fieldsight.tasks import generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
 from .generatereport import PDFReport
 from django.utils import translation
 from django.conf import settings
@@ -2580,30 +2580,23 @@ class FormlistAPI(View):
         survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title')
         general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title')
         content={'general':list(general), 'schedule':list(schedule), 'stage':list(mainstage), 'survey':list(survey)}
-        return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+        return JsonResponse(content, status=200)
 
     def post(self, request, pk, **kwargs):
-        buffer = BytesIO()
-        response = HttpResponse(content_type='application/pdf')
-        site=Site.objects.get(pk=pk)
-        file_name= site.name +"_custom_report.pdf"
-        response['Content-Disposition'] = 'attachment; filename="'+file_name+'"'
         base_url = request.get_host()
-        report = PDFReport(buffer, 'Letter')
         data = json.loads(self.request.body)
         fs_ids = data.get('fs_ids')
         start_date = data.get('startdate')
         end_date = data.get('enddate')
-        print start_date
-        print end_date
-        pdf = report.generateCustomSiteReport(pk, base_url,fs_ids, start_date, end_date)
-        buffer.seek(0)
-        pdf = buffer.getvalue()
-        file = open("media/contract.pdf", "wb")
-        file.write(pdf)
-        response.write(pdf)
-        buffer.close()
-        return response
+        task_obj=CeleryTaskProgress.objects.create(user=request.user, task_type=0)
+        if task_obj:
+            task = generateCustomReportPdf.delay(task_obj.id, request.user, pk, base_url, fs_ids, start_date, end_date)
+            task_obj.task_id = task.id
+            task_obj.save()
+            status, data = 200, {'status':'True','message':'Sucess, the report is being generated. You will be notified after the report is generated. '}
+        else:
+            status, data = 401, {'status':'false','message':'Error occured try again.'}
+        return JsonResponse(data, status=status)
 
 class GenerateCustomReport(ReviewerRoleMixin, View):
     def get(self, request, pk):
@@ -2839,7 +2832,7 @@ def site_refrenced_metas(request, pk):
     def generate(metas, project_id, metas_to_parse, meta_answer, selected_metas):
 
         for meta in metas_to_parse:
-
+            
             if meta.get('question_type') == "Link":
                 if not selected_metas:
                     selected_metas = meta.get('metas')
@@ -2855,6 +2848,7 @@ def site_refrenced_metas(request, pk):
                 else:
                     answer = "No Site Refrenced"
                     metas.append({'question_text': meta.get('question_text'), 'answer':answer, 'question_type':'Normal'})
+                    
             else:
                 answer = meta_answer.get(meta.get('question_name'), "")
                 metas.append({'question_text': meta.get('question_text'), 'answer':answer, 'question_type':'Normal'})

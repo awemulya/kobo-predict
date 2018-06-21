@@ -15,7 +15,7 @@ from onadata.apps.fieldsight.models import Organization, Project, Site
 from onadata.apps.users.models import UserProfile
 from django.http import JsonResponse
 from celery.result import AsyncResult
-
+from django.contrib.contenttypes.fields import GenericRelation
 # user_type = ContentType.objects.get(app_label="users", model="userprofile")
 
 
@@ -52,12 +52,13 @@ class FieldSightLog(models.Model):
         (29, 'Project SIte Import From Project Name Completed SuccessFully'),
         (30, 'Project SIte Import From number of region in Project Name Completed SuccessFully'),
         (31, 'User edited a response for Form Type Form Name in Site Name.'),
+        (32, 'Report generated sucessfull.'),
         (412, 'Bulk upload of number + sites in Project Name failed.'),
         (421, 'User assign unsuccessful in organization.'),
         (422, 'User assign unsucessfull in project.'),
         (429, 'Project SIte Import From Project Name Completed SuccessFully'),
         (430, 'Project SIte Import From number of region in Project Name Completed SuccessFully'),
-        
+        (432, 'Report generation failed.'),
     )
     
     type = models.IntegerField(default=0, choices=ACTION_TYPES)
@@ -190,13 +191,19 @@ class CeleryTaskProgress(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     date_updateded = models.DateTimeField(auto_now=True, blank=True, null=True)
     user = models.ForeignKey(User, related_name="task_owner")
+    file = models.FileField(
+        upload_to="celeryFiles", blank=True, null=True)
     status = models.IntegerField(default=0, choices=Task_Status)
     description = models.CharField(max_length=755, blank=True)
     task_type = models.IntegerField(default=0, choices=Task_Type)
     content_type = models.ForeignKey(ContentType, related_name='task_object', blank=True, null=True)
     object_id = models.CharField(max_length=255, blank=True, null=True)
     content_object = GenericForeignKey('content_type', 'object_id')
+    logs = GenericRelation('eventlog.FieldSightLog')
 
+    def get_name():
+        return self.file.name
+        
     def get_progress(self):
         if self.status == 1:
             if task_id:

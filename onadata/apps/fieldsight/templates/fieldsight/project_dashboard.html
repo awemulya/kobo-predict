@@ -30,8 +30,10 @@
 <script>
 
 $(document).ready(function() {
+var csrf_token = "{{ csrf_token }}";
 var project = "{{obj.pk}}";
- vm = new RegionViewModel(project);
+assigntoken(csrf_token);
+ vm = new RegionViewModel(project, "{% url 'fieldsight_export:export_xls_project_sites' obj.pk %}");
  ko.applyBindings(vm);
 
 });
@@ -43,7 +45,9 @@ var project = "{{obj.pk}}";
 
 	$(document).ready(function() {
 	var project = "{{obj.pk}}";
-	 vm = new SitesViewModel(project);
+	var csrf_token = "{{ csrf_token }}";
+	assigntoken(csrf_token);
+	 vm = new SitesViewModel(project, "{% url 'fieldsight_export:export_xls_project_sites' obj.pk %}");
 	 ko.applyBindings(vm);
 	});
 	 </script>
@@ -52,6 +56,50 @@ var project = "{{obj.pk}}";
 
 {% endblock %}
 {% block content %}
+{% csrf_token %}
+<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exportModalLabel">Export Report</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<div class="modal-body" style="margin-left:15px;">
+				<div class="form-item-wrapper checkbox-listing">
+
+
+					<ul data-bind="template: { name: 'itemTmpl', foreach: allformjson }"></ul>
+
+					<script id="itemTmpl" type="text/html">
+						<li>
+
+							<input style="left:0px !important; margin-top:3px !important;" type='checkbox' data-bind="checked: selected, click: $root.setSelected" />
+							<span data-bind="text: xf_title"></span>
+
+
+							<ul data-bind="template: { name: 'itemTmpl', foreach: $data.forms }">
+								<!--  style: { 'opacity' : (selected() ? 1 : 0.5 ), 'pointer-events':(selected() ? '' : 'none' ) } -->
+							</ul>
+						</li>
+					</script>
+
+					Start Date:
+					<input type="date" value="{{ obj.date_created.date|date:'Y-m-d'}}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="startdate" id="startdate">
+					<br>
+					End Date:
+					<input type="date" value="{% now 'Y-m-d' %}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="enddate" id="enddate">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" data-bind="click: $root.generateReport">Download</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 			<div id="main-content" class="padding">
 				<nav aria-label="breadcrumb" role="navigation">
@@ -96,7 +144,7 @@ var project = "{{obj.pk}}";
 								<!--<a class="dropdown-item" href="#"><i class="la la-clipboard"></i>{% trans 'Project Detail Report' %}</a>-->
 								<a class="dropdown-item" href="{% url 'fieldsight:download-stages' obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Excel' %} {% trans 'Report' %}</a>
 								{% if request.group.name == "Super Admin" %}
-								<a class="dropdown-item" href="{% url 'fieldsight_export:export_xls_project_sites' obj.pk %}"><i class="la la-clipboard"></i>{% trans 'Excel' %} {% trans 'Site' %} {% trans 'Submission' %} {% trans 'Report' %}</a>
+								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#exportModal"><i class="la la-table"></i>{% trans 'Excel' %} {% trans 'Responses' %} {% trans 'Report' %}</a>
 								{% endif %}
 
 								<a class="dropdown-item" href="{% url 'fieldsight:ProjectStageDetailtemplate' obj.pk %}"><i class="la la-clipboard"></i>{% trans 'View' %} {% trans 'Tabular' %}{% trans 'Report' %}</a>
