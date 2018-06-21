@@ -248,6 +248,7 @@ def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs
         pdf = buffer.getvalue()
         pdf_url = default_storage.save(site.name + '/pdf/submissions.pdf', ContentFile(pdf))
         buffer.close()
+        task.file.name = pdf_url
 
         task.status = 2
         task.save()
