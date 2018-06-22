@@ -368,16 +368,22 @@ class PDFReport:
         elements = []
 
         instance = FInstance.objects.get(instance_id=pk)
-        form = instance.site_fxf
+        
 
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
-        site = instance.site
-        self.project_name = site.project.name
-        self.project_logo = site.project.logo.url
+        if instance.site_fxf:
+            site = instance.site
+            project = site.project
+            form = instance.site_fxf
+        else:
+            form = instance.project_fxf
+            project = instance.project
+        
+        self.project_name = project.name
+        self.project_logo = project.logo.url
         
 
-        
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
 

@@ -1644,13 +1644,8 @@ def instance_status(request, instance):
                                           site = fi.site,
                                           content_object=fi,
                                           extra_object=extra_object,
-                                          extra_message=extra_message,
-                                          description='{0} reviewed a response for {1} form {2} in {3}'.format(
-                                              request.user.get_full_name(),
-                                              fi.site_fxf.form_type(),
-                                              str(fi.site_fxf.xf.title),
-                                              str(fi.site.name)
-                                          ))
+                                          extra_message=extra_message
+                                          )
     except Exception as e:
         return Response({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
     else:
@@ -1671,7 +1666,7 @@ def instance_status(request, instance):
         # result['description'] = noti.description
         # result['url'] = noti.get_absolute_url()
         # ChannelGroup("site-{}".format(fi.site.id)).send({"text": json.dumps(result)})
-        if request.method == 'POST':
+        if request.method == 'POST' and fi.site_fxf:
             send_message(fi.site_fxf, fi.form_status, message, comment_url)
         return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
 

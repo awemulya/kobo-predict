@@ -271,8 +271,8 @@ def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs
 def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id):
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
-    project=get_object_or_404(project, pk=project_id)
-    task.content_object = site
+    project=get_object_or_404(Project, pk=project_id)
+    task.content_object = project
     task.save()
 
     try:
@@ -421,6 +421,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
 
     except Exception as e:
         task.status = 3
+        print e.__dict__
         task.save()
         noti = task.logs.create(source=source_user, type=432, title="Xls Report generation in project",
                                    content_object=project, recipient=source_user,

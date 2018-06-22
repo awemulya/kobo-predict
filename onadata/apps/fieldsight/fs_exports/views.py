@@ -117,10 +117,10 @@ class ExportProjectSitesWithRefs(DonorRoleMixin, View):
         source_user = self.request.user            
         task_obj=CeleryTaskProgress.objects.create(user=source_user, task_type=5)
         if task_obj:
-            task = generateSiteDetailsXls.delay(task_prog_obj_id, source_user, self.kwargs.get('pk'), self.kwargs.get('region_id', None))
+            task = generateSiteDetailsXls.delay(task_obj.pk, source_user, self.kwargs.get('pk'), self.kwargs.get('region_id', None))
             task_obj.task_id = task.id
             task_obj.save()
-             status, data = 200, {'status':'true','message':'Sucess, the sites details xls file is being generated. You will be notified after the file is generated.'}
+            status, data = 200, {'status':'true','message':'The sites details xls file is being generated. You will be notified after the file is generated.'}
         else:
             status, data = 401, {'status':'false','message':'Error occured please try again.'}
         return JsonResponse(data, status=status)

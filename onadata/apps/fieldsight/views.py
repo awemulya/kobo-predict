@@ -2546,7 +2546,10 @@ def response_export(request, pk):
     buffer = BytesIO()
     response = HttpResponse(content_type='application/pdf')
     instance = FInstance.objects.get(instance_id=pk)
-    form = instance.site_fxf
+    if instance.site_fxf:
+        form = instance.site_fxf
+    else:
+        form = instance.project_fxf
     file_name= form.xf.title +"_response.pdf"
     response['Content-Disposition'] = 'attachment; filename="'+ file_name +'"'
     base_url = request.get_host()
