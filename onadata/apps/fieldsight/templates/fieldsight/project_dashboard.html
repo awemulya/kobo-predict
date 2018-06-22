@@ -171,7 +171,7 @@ assigntoken(csrf_token);
 								{% else %}
 								<a class="dropdown-item" href="{% url 'fieldsight:proj-site-list' obj.id%}"><i class="la la-map-marker"></i>{% trans ' Sites' %}</a>
 								{% endif %}
-								<a href="{% url 'fieldsight:define-site-meta' obj.pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
+								<a href="{% url 'fieldsight:define-site-meta' obj.pk %}" title="" class="dropdown-item"><i class="la la-cogs"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
 								
 								{% verbatim %}
 									<div id="export_button"></div>
