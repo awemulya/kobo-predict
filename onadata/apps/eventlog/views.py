@@ -79,6 +79,17 @@ class SiteLog(viewsets.ModelViewSet):
     pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
+        site = Site.objects.get(pk=self.kwargs.get('pk'))
+        project = site.project
+        meta_dict = {}
+        for meta in project.site_meta_attributes:
+            if meta['question_type'] == "Link" and meta['question_name'] in site.site_meta_attributes_ans:
+                meta_site_id = Site.objects.get(identifier=site.site_meta_attributes_ans[meta['question_name']], project_id=meta['project_id']).id
+                selected_metas = [sub_meta['question_name'] for sub_meta in meta['metas'][str(meta['project_id'])]]
+                meta_dict[meta['question_name']] = {'site_id': meta_site_id, 'metas': selected_metas}
+
+        # print meta_dict
+
         return queryset.filter(Q(site_id=self.kwargs.get('pk')) | (Q(content_type=ContentType.objects.get(app_label="fieldsight", model="site")) & Q(object_id=self.kwargs.get('pk'))) | (Q(extra_content_type=ContentType.objects.get(app_label="fieldsight", model="site")) & Q(extra_object_id=self.kwargs.get('pk'))))
 
 class NotificationCountnSeen(View):

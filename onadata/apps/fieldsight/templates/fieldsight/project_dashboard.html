@@ -171,7 +171,15 @@ assigntoken(csrf_token);
 								{% else %}
 								<a class="dropdown-item" href="{% url 'fieldsight:proj-site-list' obj.id%}"><i class="la la-map-marker"></i>{% trans ' Sites' %}</a>
 								{% endif %}
-
+								<a href="{% url 'fieldsight:define-site-meta' obj.pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
+								
+								{% verbatim %}
+									<div id="export_button"></div>
+								{% endverbatim %}
+								<script>
+									configure_settings = {}
+									configure_settings.url = "{% url 'fieldsight_export:export_xls_project_level_sites' pk %}";
+								</script>
 							</div>
 						</span>
 					</div>
@@ -531,4 +539,5 @@ assigntoken(csrf_token);
 <script src="{% static 'vendor/highcharts.js' %}"></script>
 <script src="{% static 'vendor/vue-highcharts.min.js' %}"></script>
 <script src="{% static 'js/fieldsight/manage_project_dashboard.js' %}?v=0.6"></script>
+<script src="{% static 'js/fieldsight/site_export.js' %}?v=0.4"></script>
 {% endblock %}
