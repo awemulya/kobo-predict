@@ -306,30 +306,6 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
                 sites = project.sites.filter(region_id=region_id).order_by('identifier')
         site_list={}
         meta_ref_sites={}
-        for site in sites:
-            
-            columns = {'identifier':site.identifier, 'name':site.name, 'site_type_identifier':site.type.identifier if site.type else "", 'phone':site.phone, 'address':site.address, 'public_desc':site.public_desc, 'additional_desc':site.additional_desc, 'latitude':site.latitude,
-                       'longitude':site.longitude, }
-            
-            if project.cluster_sites:
-                columns['region_identifier'] = site.region.identifier if site.region else ""
-            
-            meta_ques = project.site_meta_attributes
-            meta_ans = site.site_meta_attributes_ans
-            for question in meta_ques:
-                if question['question_name'] in meta_ans:
-                    columns[question['question_name']] = meta_ans[question['question_name']]
-
-                    if question['question_type'] == "Link" and meta_ans[question['question_name']] != "":
-                        if question.get('question_name') in meta_ref_sites:
-                            meta_ref_sites[question.get('question_name')].append(meta_ans[question['question_name']])
-                        else:
-                            meta_ref_sites[question.get('question_name')] = [meta_ans[question['question_name']]]
-                else:
-                    columns[question['question_name']] = ''
-            
-            site_list[site.identifier] = columns
-        
 
         def generate(project_id, site_map, meta, identifiers, selected_metas):
             project_id = str(project_id)
@@ -378,6 +354,34 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
                 if meta.get('question_type') == "Link":
                     generate(meta['project_id'], sub_site_map.get(meta['question_name'], []), meta, sub_meta_ref_sites.get(meta['question_name'], []), selected_metas)
 
+
+        for site in sites:
+            
+            columns = {'identifier':site.identifier, 'name':site.name, 'site_type_identifier':site.type.identifier if site.type else "", 'phone':site.phone, 'address':site.address, 'public_desc':site.public_desc, 'additional_desc':site.additional_desc, 'latitude':site.latitude,
+                       'longitude':site.longitude, }
+            
+            if project.cluster_sites:
+                columns['region_identifier'] = site.region.identifier if site.region else ""
+            
+            meta_ques = project.site_meta_attributes
+            meta_ans = site.site_meta_attributes_ans
+            for question in meta_ques:
+                if question['question_name'] in meta_ans:
+                    columns[question['question_name']] = meta_ans[question['question_name']]
+
+                    if question['question_type'] == "Link" and meta_ans[question['question_name']] != "":
+                        if question.get('question_name') in meta_ref_sites:
+                            meta_ref_sites[question.get('question_name')].append(meta_ans[question['question_name']])
+                        else:
+                            meta_ref_sites[question.get('question_name')] = [meta_ans[question['question_name']]]
+                else:
+                    columns[question['question_name']] = ''
+            
+            site_list[site.identifier] = columns
+        
+
+        
+
         for meta in meta_ques:
             if meta['question_type'] == "Link":
                 site_map = {}
@@ -403,12 +407,13 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         
         for key,site in site_list.iteritems():
             for col_num in range(len(header_columns)):
+                print site
                 ws.write(row_num, col_num, site.get(header_columns[col_num]['id'], ""), font_style_unbold)
             row_num += 1
         wb.save(buffer)
         buffer.seek(0)
         xls = buffer.getvalue()
-        xls_url = default_storage.save(site.name + '/sites/details.xls', ContentFile(xls))
+        xls_url = default_storage.save(project.name + '/sites/details.xls', ContentFile(xls))
         buffer.close()
         task.file.name = xls_url
 

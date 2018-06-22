@@ -62,7 +62,7 @@
 							{% endverbatim %}
 							<script>
 							configure_settings = {}
-							configure_settings.url = "{% url 'fieldsight_export:export_xls_project_sites' pk %}";
+							configure_settings.url = "{% url 'fieldsight_export:export_xls_project_level_sites' pk %}";
 							</script>
 							<!-- <a href="{% url 'fieldsight_export:export_xls_project_sites' pk %}" title="" class="btn btn-sm
 							btn-primary"><i class="la la-plus"></i> {% trans 'Export' %} {% trans 'Sites' %} {% trans 'data' %} </a> -->
@@ -91,7 +91,7 @@
 							{% endverbatim %}
 							<script>
 							configure_settings = {}
-							configure_settings.url = "{% url 'fieldsight_export:export_xls_project_sites' project_id %}";
+							configure_settings.url = "{% url 'fieldsight_export:export_xls_region_sites' project_id 0 %}";
 							</script>
 							<!-- <a href="{% url 'fieldsight_export:export_xls_project_sites' project_id %}" title="" class="btn btn-sm
 							btn-primary"><i class="la la-plus"></i> {% trans 'Export' %} {% trans 'Sites' %} {% trans 'data' %} </a> -->
