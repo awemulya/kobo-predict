@@ -178,7 +178,7 @@ assigntoken(csrf_token);
 								{% endverbatim %}
 								<script>
 									configure_settings = {}
-									configure_settings.url = "{% url 'fieldsight_export:export_xls_project_level_sites' pk %}";
+									configure_settings.url = "{% url 'fieldsight_export:export_xls_project_level_sites' obj.pk %}";
 								</script>
 							</div>
 						</span>
