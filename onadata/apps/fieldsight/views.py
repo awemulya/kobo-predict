@@ -772,7 +772,7 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
         old_meta = site.site_meta_attributes_ans
 
         self.object = form.save(project_id=self.kwargs.get('pk'), new=False)
-        new_meta = site.site_meta_attributes_ans
+        new_meta = json.loads(self.object.site_meta_attributes_ans)
 
         extra_json = None
         if old_meta != new_meta:
@@ -782,12 +782,13 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
                 key = question['question_name']
                 label = question['question_text']
                 if old_meta.get(key) != new_meta.get(key):
-                    updated[label] = [old_meta.get(key, 'null'), new_meta.get(key, 'null')]
+                    updated[key] = {'label': label, 'data':[old_meta.get(key, 'null'), new_meta.get(key, 'null')]}
             extra_json = updated
 
         description = '{0} changed the details of site named {1}'.format(
             self.request.user.get_full_name(), self.object.name
         )
+
         noti = self.object.logs.create(
             source=self.request.user, type=15, title="edit Site",
             organization=self.object.project.organization,
