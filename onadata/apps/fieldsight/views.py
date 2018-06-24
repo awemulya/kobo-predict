@@ -667,7 +667,31 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
+        
+        main_project = Project.objects.get(pk=self.kwargs.get('pk'))
+        old_meta = main_project.site_meta_attributes
         self.object = form.save(new=False)
+        new_meta = json.loads(self.object.site_meta_attributes)
+        updated_json = None
+
+        if old_meta != new_meta:
+            deleted = []
+
+            for meta in old_meta:
+                if meta not in new_meta:
+                    deleted.append(meta)
+
+        for project in Project.objects.filter(organization_id=main_project.organization_id):
+            
+            for meta in project.site_meta_attributes:
+            
+                if meta['question_type'] == "Link":
+                    if str(main_project.id) in meta.metas:
+                        for del_meta in deleted:
+                            del meta.metas[meta.metas.index(del_meta)]
+            
+            project.save()
+
         noti = self.object.logs.create(source=self.request.user, type=14, title="Edit Project",
                                        organization=self.object.organization,
                                        project=self.object, content_object=self.object,
@@ -680,7 +704,6 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
         ChannelGroup("project-{}".format(self.object.id)).send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
-
 
 
 class ProjectDeleteView(ProjectView, ProjectRoleMixinDeleteView, DeleteView):
@@ -2833,10 +2856,11 @@ def site_refrenced_metas(request, pk):
 
 
 
-    def generate(metas, project_id, metas_to_parse, meta_answer, selected_metas):
+    def generate(metas, project_id, metas_to_parse, meta_answer, selected_metas, project_metas):
 
         for meta in metas_to_parse:
-            
+            if project_metas and meta not in project_metas:
+                continue
             if meta.get('question_type') == "Link":
                 if not selected_metas:
                     selected_metas = meta.get('metas')
@@ -2846,7 +2870,7 @@ def site_refrenced_metas(request, pk):
                 if sitenew and str(sitenew[0].project_id) in selected_metas:
                     answer = meta_answer.get(meta.get('question_name'))
                     sub_metas = []
-                    generate(sub_metas, sitenew[0].project_id, selected_metas[str(sitenew[0].project_id)], sitenew[0].site_meta_attributes_ans, selected_metas)
+                    generate(sub_metas, sitenew[0].project_id, selected_metas[str(sitenew[0].project_id)], sitenew[0].site_meta_attributes_ans, selected_metas, sitenew[0].project.site_meta_attributes)
                     metas.append({'question_text': meta.get('question_text'), 'project_id':meta.get('project_id'), 'answer':answer, 'question_type':'Link', 'children':sub_metas})
                     
                 else:
@@ -2858,7 +2882,7 @@ def site_refrenced_metas(request, pk):
                 metas.append({'question_text': meta.get('question_text'), 'answer':answer, 'question_type':'Normal'})
 
 
-    generate(metas, project.id, project.site_meta_attributes, site.site_meta_attributes_ans, None)
+    generate(metas, project.id, project.site_meta_attributes, site.site_meta_attributes_ans, None, None)
     return JsonResponse(metas, safe=False)
 
 
