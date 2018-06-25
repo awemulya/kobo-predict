@@ -741,11 +741,11 @@ assigntoken(csrf_token);
 						</div>
 						<div class="tab-pane" id="tab003" role="tabpanel">
                             <div data-bind="with:stagesVm">
-                                <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:add_stage"><i class="la la-plus" aria-hidden="true"></i> {% trans 'Add Stage' %}</a>
-                                <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:reorder_stage"><i class="la la-reorder" aria-hidden="true"></i> {% trans 'Reorder Stages' %}</a>
-                                <a href="javascript:void(0);" title="" class="btn btn-sm btn-success" data-bind="visible:stages().length > 0,
-                                            click: deployStages"><i class="la la-rocket" aria-hidden="true"></i> {% trans 'Deploy' %} {% trans 'to' %} {% trans 'Mobile' %}</a>
-                                <!--<a href="{% url 'forms:configure_stages' is_project pk %}" class="btn btn-sm btn-warning"><i class="la la-asterisk" aria-hidden="true"></i>  {% trans 'Configure' %}</a>-->
+                                <!--<a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:add_stage"><i class="la la-plus" aria-hidden="true"></i> {% trans 'Add Stage' %}</a>-->
+                                <!--<a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:reorder_stage"><i class="la la-reorder" aria-hidden="true"></i> {% trans 'Reorder Stages' %}</a>-->
+                                <!--<a href="javascript:void(0);" title="" class="btn btn-sm btn-success" data-bind="visible:stages().length > 0,-->
+                                            <!--click: deployStages"><i class="la la-rocket" aria-hidden="true"></i> {% trans 'Deploy' %} {% trans 'to' %} {% trans 'Mobile' %}</a>-->
+                                <a href="{% url 'forms:configure_stages' is_project pk %}" class="btn btn-sm btn-warning"><i class="la la-asterisk" aria-hidden="true"></i>  {% trans 'Configure Stages' %}</a>
                                 {% csrf_token %}
 
 
@@ -959,7 +959,7 @@ assigntoken(csrf_token);
                                             <span data-bind="text:name"></span>
                                         </div>
                                         <div class="stage-action">
-                                            <a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
+                                            <!--<a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>-->
                                             <div class="modal fade" id="stageOneEditModal" tabindex="-1" role="dialog" aria-labelledby="stageOneEditModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -979,8 +979,8 @@ assigntoken(csrf_token);
                                                     </div>
                                                 </div>
                                             </div>
-                                            <a href="javascript:void(0);" title="Delete" data-bind="confirmClick: { message: ' Submissions data of this stage will be lost.\n Are you sure ?',
-                              click: delete_stage }" class="btn btn-sm btn-danger"><i class="la la-close"></i>{% trans ' Delete' %}</a>
+                                            <!--<a href="javascript:void(0);" title="Delete" data-bind="confirmClick: { message: ' Submissions data of this stage will be lost.\n Are you sure ?',-->
+                              <!--click: delete_stage }" class="btn btn-sm btn-danger"><i class="la la-close"></i>{% trans ' Delete' %}</a>-->
                                         </div>
                                     </div>
 
@@ -1087,9 +1087,9 @@ assigntoken(csrf_token);
 
                                                     </div>
                                                     <div class="substage-form-action" data-bind="visible:!editable()">
-                                                        <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>
+                                                        <!--<a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>-->
 
-                                                        <a href="javascript:void(0);"  class="badge badge-success" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> Materials</a>
+                                                        <!--<a href="javascript:void(0);"  class="badge badge-success" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> Materials</a>-->
 
                                                     </div>
 
@@ -1141,9 +1141,9 @@ assigntoken(csrf_token);
                                             </ul>
                                         </div>
                                      </div>
-                                      <button type="button" class="btn btn-sm btn-primary margin-top"
-                                              data-bind="confirmClick: { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }">
-                                          <i class="la la-save"></i> {% trans 'Save' %} {% trans 'Changes' %}</button>
+                                      <!--<button type="button" class="btn btn-sm btn-primary margin-top"-->
+                                              <!--data-bind="confirmClick: { message: 'Any Changes on substage assigned form causes loss of previous Submissions data of that substage.\n Are you sure ?', click: save }">-->
+                                          <!--<i class="la la-save"></i> {% trans 'Save' %} {% trans 'Changes' %}</button>-->
 
                                     </div>
                                   </div>
