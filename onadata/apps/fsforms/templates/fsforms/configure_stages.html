@@ -93,6 +93,7 @@
             {% else %}
 			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ obj.name }}</a></li>
             {% endif %}
+            <li class="breadcrumb-item"><a href="{% url 'forms:setup-forms' is_project pk %}"> {% trans 'Manage Forms' %}</a></li>
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage' %} {% trans 'Stages' %}</li>
 		    {% endblock %}
         </ol>
