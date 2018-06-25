@@ -214,10 +214,10 @@ class PDFReport:
                 question_name = r_question+"/"+first_children['name']
                 
                 if first_children['type'] == 'group':
-                    self.parse_group(g_question+"/",first_children)
+                    self.parse_group(r_question+"/",first_children)
 
                 elif first_children['type'] == "repeat":
-                    self.parse_repeat(g_question+"/", first_children)
+                    self.parse_repeat(r_question+"/", first_children)
 
                 else:
                     question_label = question_name
