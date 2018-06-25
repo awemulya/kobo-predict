@@ -1526,7 +1526,7 @@ class ActivateRole(TemplateView):
             user.set_password(request.POST.get('password1'))
             user.save()
             
-            codenames=['add_asset', 'change_asset','delete_asset', 'view_asset', 'share_asset']
+            codenames=['add_asset', 'change_asset','delete_asset', 'view_asset', 'share_asset', 'add_finstance', 'change_finstance', 'add_instance', 'change_instance']
             permissions = Permission.objects.filter(codename__in=codenames)
             user.user_permissions.add(permissions[0], permissions[1], permissions[2], permissions[3], permissions[4])
 
