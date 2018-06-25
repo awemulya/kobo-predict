@@ -214,10 +214,10 @@ class PDFReport:
                 question_name = r_question+"/"+first_children['name']
                 
                 if first_children['type'] == 'group':
-                    self.parse_group(r_question+"/",first_children, nr_answer[question_name])
+                    self.parse_group(r_question+"/",first_children, nr_answer.get('question_name', {}))
 
                 elif first_children['type'] == "repeat":
-                    self.parse_repeat(r_question+"/", first_children, nr_answer[question_name])
+                    self.parse_repeat(r_question+"/", first_children, nr_answer.get('question_name', {}))
 
                 else:
                     question_label = question_name
@@ -232,10 +232,10 @@ class PDFReport:
             question_name = g_question+"/"+first_children['name']
 
             if first_children['type'] == 'group':
-                self.parse_group(g_question+"/",first_children, g_answer[question_name])
+                self.parse_group(g_question+"/",first_children, g_answer.get('question_name', {}))
 
             elif first_children['type'] == "repeat":
-                self.parse_repeat(g_question+"/", first_children, g_answer[question_name])
+                self.parse_repeat(g_question+"/", first_children, g_answer.get('question_name', {}))
 
             else:
                 question_label = question_name
