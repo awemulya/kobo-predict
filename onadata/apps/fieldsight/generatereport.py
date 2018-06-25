@@ -209,15 +209,15 @@ class PDFReport:
     def parse_repeat(self, prev_groupname, r_object, nr_answer):
         
         r_question = prev_groupname + r_object['name']
-        for r_answer in nr_answer[r_question]:
+        for r_answer in nr_answer:
             for first_children in r_object['children']:
                 question_name = r_question+"/"+first_children['name']
                 
                 if first_children['type'] == 'group':
-                    self.parse_group(r_question+"/",first_children, nr_answer.get('question_name', {}))
+                    self.parse_group(r_question+"/",first_children, r_answer.get('question_name', {}))
 
                 elif first_children['type'] == "repeat":
-                    self.parse_repeat(r_question+"/", first_children, nr_answer.get('question_name', []))
+                    self.parse_repeat(r_question+"/", first_children, r_answer.get('question_name', []))
 
                 else:
                     question_label = question_name
