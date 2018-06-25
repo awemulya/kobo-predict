@@ -206,18 +206,18 @@ class PDFReport:
         row=[Paragraph(question_label, styBackground), answer]
         self.data.append(row)
 
-    def parse_repeat(self, prev_groupname, r_object):
+    def parse_repeat(self, prev_groupname, r_object, nr_answer):
         
         r_question = prev_groupname + r_object['name']
-        for r_answer in self.main_answer[r_question]:
+        for r_answer in nr_answer[r_question]:
             for first_children in r_object['children']:
                 question_name = r_question+"/"+first_children['name']
                 
                 if first_children['type'] == 'group':
-                    self.parse_group(r_question+"/",first_children)
+                    self.parse_group(r_question+"/",first_children, nr_answer[question_name])
 
                 elif first_children['type'] == "repeat":
-                    self.parse_repeat(r_question+"/", first_children)
+                    self.parse_repeat(r_question+"/", first_children, nr_answer[question_name])
 
                 else:
                     question_label = question_name
@@ -225,31 +225,31 @@ class PDFReport:
                         question_label = first_children['label']
                     self.append_row(question_name, question_label, first_children['type'], r_answer)
 
-    def parse_group(self, prev_groupname, g_object):
+    def parse_group(self, prev_groupname, g_object, g_answer):
        
         g_question = prev_groupname + g_object['name']
         for first_children in g_object['children']:
             question_name = g_question+"/"+first_children['name']
 
             if first_children['type'] == 'group':
-                self.parse_group(g_question+"/",first_children)
+                self.parse_group(g_question+"/",first_children, g_answer[question_name])
 
             elif first_children['type'] == "repeat":
-                self.parse_repeat(g_question+"/", first_children)
+                self.parse_repeat(g_question+"/", first_children, g_answer[question_name])
 
             else:
                 question_label = question_name
                 if 'label' in first_children:
                     question_label = first_children['label']
-                self.append_row(question_name, question_label, first_children['type'], self.main_answer)
+                self.append_row(question_name, question_label, first_children['type'], g_answer)
 
     def parse_individual_questions(self, parent_object):
        
         for first_children in parent_object:
             if first_children['type'] == "repeat":
-                self.parse_repeat("", first_children)
+                self.parse_repeat("", first_children, self.main_answer[first_children['name']])
             elif first_children['type'] == 'group':
-                self.parse_group("", first_children)
+                self.parse_group("", first_children, self.main_answer[first_children['name']])
             else:
                 question_name = first_children['name']
                 question_label = question_name
