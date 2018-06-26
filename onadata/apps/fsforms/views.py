@@ -58,6 +58,8 @@ from onadata.apps.fieldsight.rolemixins import MyFormMixin, ConditionalFormMixin
 from onadata.apps.fsforms.XFormMediaAttributes import get_questions_and_media_attributes
 from .fieldsight_logger_tools import save_submission
 
+from onadata.apps.fsforms.tasks import copy_schedule_to_sites
+
 import requests
 
 
@@ -866,32 +868,12 @@ class Deploy_survey(SPFmixin, View):
     def post(self, request, is_project, pk):
         data = json.loads(self.request.body)
         id = data.get('id')
-        fxf_status = data.get('is_deployed')
+        fxf_status = data.get('is_deployed',)
         try:
             schedule = Schedule.objects.get(pk=id)
             if is_project == "1":
-                fxf = schedule.schedule_forms
-                selected_days = tuple(schedule.selected_days.all())
-                with transaction.atomic():
-                    if not fxf_status:
-                        # deployed case
-                        fxf.is_deployed = True
-                        fxf.save()
-                        FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project__id=pk).update(is_deployed=True, is_deleted=False)
-                        for site in Site.objects.filter(project__id=pk,is_active=True):
-                            _schedule, created = Schedule.objects.get_or_create(name=schedule.name, site=site)
-                            if created:
-                                _schedule.selected_days.add(*selected_days)
-                                child = FieldSightXF(is_scheduled=True, default_submission_status=fxf.default_submission_status, xf=fxf.xf, site=site, fsform=fxf,
-                                                 schedule=_schedule, is_deployed=True)
-                                child.save()
-
-                    else:
-                        # undeploy
-                        fxf.is_deployed = False
-                        fxf.save()
-                        FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project_id=pk).update(is_deployed=False, is_deleted=True)
-
+                arguments = {'schedule': schedule,  'fxf_status':fxf_status, 'pk':pk}
+                copy_schedule_to_sites.apply_async((), arguments, countdown=2)
                 return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
             else:
                 flag = False if fxf_status else True
