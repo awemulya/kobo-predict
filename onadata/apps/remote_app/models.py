@@ -61,6 +61,7 @@ class RemoteApp(models.Model):
 
 
 class ConnectedProject(models.Model):
+    key = models.CharField(max_length=255)
     project = models.ForeignKey(Project)
     app = models.ForeignKey(RemoteApp)
     updated_at = models.DateTimeField(default=None, blank=True, null=True)

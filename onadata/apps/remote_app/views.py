@@ -96,10 +96,10 @@ class RemoteAppAuthentication(authentication.BaseAuthentication):
 class RemoteProjectView(views.APIView):
     authentication_classes = [RemoteAppAuthentication]
 
-    def get(self, request, project_id):
+    def get(self, request, project_key):
         connected_project = ConnectedProject.objects.filter(
             app=request.auth,
-            project__id=project_id,
+            key=project_key,
         ).first()
 
         if not connected_project:
