@@ -1,11 +1,13 @@
 from __future__ import unicode_literals
 import json
+from django.db import transaction
 
 from rest_framework import viewsets
 
 from onadata.apps.fsforms.models import Stage, FieldSightXF
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormSerializer, FSXFAllDetailSerializer
 from onadata.apps.fsforms.serializers.StageSerializer import StageSerializer
+from onadata.apps.fsforms.tasks import copy_to_sites
 from onadata.apps.fsforms.utils import send_message
 from channels import Group as ChannelGroup
 from rest_framework.pagination import PageNumberPagination
@@ -43,7 +45,6 @@ class SurveyFormsViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(site__id=pk)
         return queryset
 
-
 class GeneralFormsViewSet(viewsets.ModelViewSet):
     """
     General Forms
@@ -76,10 +77,8 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
         if fxf.project:
             if not fxf.is_survey:    
                 org = fxf.project.organization
-                for site in fxf.project.sites.filter(is_active=True):
-                    child, created = FieldSightXF.objects.get_or_create(is_staged=False, is_scheduled=False, default_submission_status=fxf.default_submission_status, xf=fxf.xf, site=site, fsform=fxf)
-                    child.is_deployed = True
-                    child.save()
+                arguments = {'fxf': fxf}
+                copy_to_sites.apply_async((), arguments, countdown=2)
                 noti = fxf.logs.create(source=self.request.user, type=18, title="General",
                                                   organization=org,
                                                   project = fxf.project,
