@@ -93,6 +93,7 @@
             {% else %}
 			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' pk %}">{{ obj.name }}</a></li>
             {% endif %}
+            <li class="breadcrumb-item"><a href="{% url 'forms:setup-forms' is_project pk %}"> {% trans 'Manage Forms' %}</a></li>
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Manage' %} {% trans 'Stages' %}</li>
 		    {% endblock %}
         </ol>
@@ -166,6 +167,6 @@
 <script>
 window.Vue.use(VuejsDialog.default)
 </script>
-<script src="{% static 'js/forms/manage_forms.js' %}?v=3.5"></script>
+<script src="{% static 'js/forms/manage_forms.js' %}?v=4.3"></script>
 
 {% endblock %}
