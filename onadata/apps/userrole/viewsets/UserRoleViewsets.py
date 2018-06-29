@@ -102,8 +102,10 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                     Device = get_device_model()
                     if Device.objects.filter(name=role.user.email).exists():
                         message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
-                        Device.objects.filter(name=role.user.email).send_message(message)
-
+                        try:
+                            Device.objects.filter(name=role.user.email).send_message(message)
+                        except:
+                            pass
                 elif level == "1":
                     project = Project.objects.get(pk=self.kwargs.get('pk'))
                     role, created = UserRole.objects.get_or_create(user_id=user, organization_id=project.organization_id,

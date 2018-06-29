@@ -276,8 +276,8 @@ class Project(models.Model):
 
 
 class Region(models.Model):
-    identifier = models.CharField("ID", max_length=255)
-    parent = models.ForeignKey('Region', blank=True, null=True, default=None)
+    identifier = models.CharField(max_length=255)
+    parent = models.ForeignKey('Region', blank=True, null=True, default=None, related_name="children")
     name = models.CharField(max_length=255, null=True, blank=True,)
     project = models.ForeignKey(Project, related_name="project_region")
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
@@ -289,8 +289,17 @@ class Region(models.Model):
         unique_together = [('identifier', 'project'), ]
 
     def get_sites_count(self):
-        return self.regions.all().count()
+        site_count = self.regions.all().count()
+        if self.children.all().count() > 0:
+            sub_site_count = 0
+            for child in self.children.all():
+                sub_site_count += child.get_sites_count()
+            return sub_site_count + site_count
+        else:
+            return site_count
 
+    def get_concat_identifier(self):       
+        return self.identifier + "_"
 
 class SiteType(models.Model):
     identifier = models.IntegerField("ID")
@@ -324,7 +333,7 @@ class Site(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     region = models.ForeignKey(
         Region, related_name='regions', blank=True, null=True)
-    site_meta_attributes_ans = JSONField(default=list)
+    site_meta_attributes_ans = JSONField(default=dict)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     objects = GeoManager()

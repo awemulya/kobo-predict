@@ -182,6 +182,7 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                                        organization=fs_proj_xf.project.organization,
                                        project=fs_proj_xf.project,
                                                         extra_object=fs_proj_xf.project,
+                                                        extra_message="project",
                                                         content_object=instance.fieldsight_instance)
         else:
             site=Site.objects.get(pk=siteid)

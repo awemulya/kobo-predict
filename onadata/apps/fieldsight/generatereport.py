@@ -206,42 +206,50 @@ class PDFReport:
         row=[Paragraph(question_label, styBackground), answer]
         self.data.append(row)
 
-    def parse_repeat(self, r_object):
+    def parse_repeat(self, prev_groupname, r_object, nr_answer):
         
-        r_question = r_object['name']
-        for r_answer in self.main_answer[r_question]:
+        r_question = prev_groupname + r_object['name']
+        for r_answer in nr_answer:
             for first_children in r_object['children']:
                 question_name = r_question+"/"+first_children['name']
-                question_label = question_name
                 
-                if 'label' in first_children:
-                    question_label = first_children['label']
+                if first_children['type'] == 'group':
+                    self.parse_group(r_question+"/",first_children, r_answer.get('question_name', {}))
 
-                self.append_row(question_name, question_label, first_children['type'], r_answer)
+                elif first_children['type'] == "repeat":
+                    self.parse_repeat(r_question+"/", first_children, r_answer.get('question_name', []))
 
-    def parse_group(self, prev_groupname, g_object):
+                else:
+                    question_label = question_name
+                    if 'label' in first_children:
+                        question_label = first_children['label']
+                    self.append_row(question_name, question_label, first_children['type'], r_answer)
+
+    def parse_group(self, prev_groupname, g_object, g_answer):
        
-        g_question = prev_groupname+g_object['name']
+        g_question = prev_groupname + g_object['name']
         for first_children in g_object['children']:
             question_name = g_question+"/"+first_children['name']
-            question_label = question_name
 
-            if 'label' in first_children:
-                question_label = first_children['label']
-            
-            self.append_row(question_name, question_label, first_children['type'], self.main_answer)
-            
-            # done at the end because wee want to print group name as well in report.
             if first_children['type'] == 'group':
-                self.parse_group(g_question+"/",first_children)
+                self.parse_group(g_question+"/",first_children, g_answer.get('question_name', {}))
+
+            elif first_children['type'] == "repeat":
+                self.parse_repeat(g_question+"/", first_children, g_answer.get('question_name', []))
+
+            else:
+                question_label = question_name
+                if 'label' in first_children:
+                    question_label = first_children['label']
+                self.append_row(question_name, question_label, first_children['type'], g_answer)
 
     def parse_individual_questions(self, parent_object):
        
         for first_children in parent_object:
             if first_children['type'] == "repeat":
-                self.parse_repeat(first_children)
+                self.parse_repeat("", first_children, self.main_answer.get(first_children['name'], []))
             elif first_children['type'] == 'group':
-                self.parse_group("", first_children)
+                self.parse_group("", first_children, self.main_answer)
             else:
                 question_name = first_children['name']
                 question_label = question_name
@@ -368,16 +376,22 @@ class PDFReport:
         elements = []
 
         instance = FInstance.objects.get(instance_id=pk)
-        form = instance.site_fxf
+        
 
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
-        site = instance.site
-        self.project_name = site.project.name
-        self.project_logo = site.project.logo.url
+        if instance.site_fxf:
+            site = instance.site
+            project = site.project
+            form = instance.site_fxf
+        else:
+            form = instance.project_fxf
+            project = instance.project
+        
+        self.project_name = project.name
+        self.project_logo = project.logo.url
         
 
-        
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
 

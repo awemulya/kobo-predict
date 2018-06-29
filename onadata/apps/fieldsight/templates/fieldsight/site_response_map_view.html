@@ -38,13 +38,12 @@
                 <div class="geo-layers">
                     <div class="header">Geo Layers</div>
                     <div class="content">
-                        <label><input type="radio" name="geo-layer" value="" checked> None </label>
                         {% for geo_layer in geo_layers %}
-                        <label><input type="radio" name="geo-layer" value="{{ geo_layer.id }}"> {{ geo_layer.title }} </label>
+                        <label><input type="checkbox" name="geo-layer" value="{{ geo_layer.id }}" data-level="{{ geo_layer.level }}"> {{ geo_layer.title }} </label>
                         {% endfor %}
                     </div>
                 </div>
-
+				
                 <!--<a href="{% url 'dashboard' %}" class="btn btn-success"><i class="la la-reply"></i>{% trans 'Back to dashboard' %}</a>-->
 
 			</div>

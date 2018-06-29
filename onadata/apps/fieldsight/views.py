@@ -59,7 +59,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from onadata.apps.fieldsight.tasks import multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
+from onadata.apps.fieldsight.tasks import generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
 from .generatereport import PDFReport
 from django.utils import translation
 from django.conf import settings
@@ -667,7 +667,31 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
+        
+        main_project = Project.objects.get(pk=self.kwargs.get('pk'))
+        old_meta = main_project.site_meta_attributes
         self.object = form.save(new=False)
+        new_meta = json.loads(self.object.site_meta_attributes)
+        updated_json = None
+
+        if old_meta != new_meta:
+            deleted = []
+
+            for meta in old_meta:
+                if meta not in new_meta:
+                    deleted.append(meta)
+
+        for project in Project.objects.filter(organization_id=main_project.organization_id):
+            
+            for meta in project.site_meta_attributes:
+            
+                if meta['question_type'] == "Link":
+                    if str(main_project.id) in meta.metas:
+                        for del_meta in deleted:
+                            del meta.metas[meta.metas.index(del_meta)]
+            
+            project.save()
+
         noti = self.object.logs.create(source=self.request.user, type=14, title="Edit Project",
                                        organization=self.object.organization,
                                        project=self.object, content_object=self.object,
@@ -680,7 +704,6 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
         ChannelGroup("project-{}".format(self.object.id)).send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
-
 
 
 class ProjectDeleteView(ProjectView, ProjectRoleMixinDeleteView, DeleteView):
@@ -772,8 +795,7 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
         old_meta = site.site_meta_attributes_ans
 
         self.object = form.save(project_id=self.kwargs.get('pk'), new=False)
-        site = Site.objects.get(pk=self.kwargs.get('pk'))
-        new_meta = site.site_meta_attributes_ans
+        new_meta = json.loads(self.object.site_meta_attributes_ans)
 
         extra_json = None
         if old_meta != new_meta:
@@ -783,12 +805,13 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
                 key = question['question_name']
                 label = question['question_text']
                 if old_meta.get(key) != new_meta.get(key):
-                    updated[label] = [old_meta.get(key, 'null'), new_meta.get(key, 'null')]
+                    updated[key] = {'label': label, 'data':[old_meta.get(key, 'null'), new_meta.get(key, 'null')]}
             extra_json = updated
 
         description = '{0} changed the details of site named {1}'.format(
             self.request.user.get_full_name(), self.object.name
         )
+
         noti = self.object.logs.create(
             source=self.request.user, type=15, title="edit Site",
             organization=self.object.project.organization,
@@ -914,11 +937,25 @@ def ajax_save_project(request):
     return Response({'error': 'Invalid Project Data'}, status=status.HTTP_400_BAD_REQUEST)
 
 class UploadSitesView(ProjectRoleMixin, TemplateView):
-
     def get(self, request, pk):
         obj = get_object_or_404(Project, pk=pk)
         form = UploadFileForm()
-        return render(request, 'fieldsight/upload_sites.html',{'obj': obj, 'form':form, 'project':pk})
+        regions = SiteBulkEditView.get_regions_filter(obj)
+
+        selected_regions = request.GET.get('regions')
+        if selected_regions:
+            selected_regions = selected_regions.split(',')
+
+        return render(
+            request, 'fieldsight/upload_sites.html',
+            {
+                'obj': obj,
+                'form': form,
+                'project': pk,
+                'regions': regions,
+                'selected_regions': selected_regions,
+            }
+        )
 
     def post(self, request, pk=id):
         obj = get_object_or_404(Project, pk=pk)
@@ -1100,7 +1137,7 @@ class RolesView(LoginRequiredMixin, TemplateView):
         context['site_supervisor'] = self.request.roles.select_related('site').filter(group__name = "Site Supervisor")
         context['staff_project_manager'] = self.request.roles.select_related('staff_project').filter(group__name = "Staff Project Manager")
         if Team.objects.filter(leader_id = self.request.user.id).exists():
-            context['staff_teams'] = Team.objects.filter(leader_id = self.request.user.id)
+            context['staff_teams'] = Team.objects.filter(leader_id = self.request.user.id, is_deleted=False)
         else:
             context['staff_teams'] = []
         return context
@@ -1489,7 +1526,7 @@ class ActivateRole(TemplateView):
             user.set_password(request.POST.get('password1'))
             user.save()
             
-            codenames=['add_asset', 'change_asset','delete_asset', 'view_asset', 'share_asset']
+            codenames=['add_asset', 'change_asset','delete_asset', 'view_asset', 'share_asset', 'add_finstance', 'change_finstance', 'add_instance', 'change_instance']
             permissions = Permission.objects.filter(codename__in=codenames)
             user.user_permissions.add(permissions[0], permissions[1], permissions[2], permissions[3], permissions[4])
 
@@ -1506,7 +1543,10 @@ class ActivateRole(TemplateView):
                 userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project_id=project_id, site=None)
         if not project_ids:
             userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=None, site=None)
-
+            if invite.group_id == 1:
+                permission = Permission.objects.filter(codename='can_edit_finstance')
+                user.user_permissions.add(permission[0])
+                
         
         invite.is_used = True
         invite.save()
@@ -1920,16 +1960,21 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
         project = Project.objects.get(pk=self.kwargs.get('pk'))
         context['project'] = project
         context['pk'] = self.kwargs.get('pk')
-        context['json_questions'] = json.dumps(project.site_meta_attributes)
+        if self.kwargs.get('parent_pk'):
+            context['parent_identifier'] = Region.objects.get(pk=self.kwargs.get('parent_pk')).get_concat_identifier()
+            print context['parent_identifier']
         return context
 
     def form_valid(self, form):
-        # print form.cleaned_data['identifier']
         self.object = form.save(commit=False)
 
         self.object.project_id = self.kwargs.get('pk')
         self.object.parent_id = self.kwargs.get('parent_pk')
-        existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'))
+        if self.kwargs.get('parent_pk'):
+            parent_identifier = Region.objects.get(pk=self.kwargs.get('parent_pk')).get_concat_identifier()
+            form.cleaned_data['identifier'] = parent_identifier + form.cleaned_data.get('identifier')
+        
+        existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'), project_id=self.kwargs.get('pk'))
         if existing_identifier:
             messages.add_message(self.request, messages.INFO, 'Your identifier conflict with existing region please use different identifier to create region')
 
@@ -1947,6 +1992,7 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
                     }
                 ))
         else:
+            self.object.identifier = form.cleaned_data.get('identifier')
             self.object.save()
             messages.add_message(self.request, messages.INFO, 'Sucessfully new region is created')
             return HttpResponseRedirect(self.get_success_url())
@@ -2002,13 +2048,63 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
         context['subregion_list'] = Region.objects.filter(
             parent__pk=self.kwargs.get('pk')
         )
+        region = Region.objects.get(pk=self.kwargs.get('pk'))
+        if region.parent:
+            context['parent_identifier'] = region.parent.get_concat_identifier()
+            idfs = region.identifier.split('_')
+            context['current_identifier'] = idfs[len(idfs)-1]
         return context
 
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.save()
-        return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk':self.object.project.id}))
+    
 
+    def form_valid(self, form):
+        def replace_idfs(region, previous_identifier, new_identifier):
+            identifier = region.identifier
+            identifiers =  identifier.split(previous_identifier)
+            
+            if len(identifiers) == 2:
+                region.identifier = new_identifier+identifiers[1]
+                region.save()
+
+            for sub_region in region.children.all():
+                replace_idfs(sub_region, previous_identifier, new_identifier)
+
+        previous_identifier = Region.objects.get(pk=self.kwargs.get('pk')).identifier
+        self.object = form.save(commit=False)
+        if self.object.parent:
+            parent_identifier = self.object.parent.get_concat_identifier()
+            form.cleaned_data['identifier'] = parent_identifier + form.cleaned_data.get('identifier')
+
+        existing_identifier = Region.objects.filter(identifier=form.cleaned_data.get('identifier'), project_id=self.kwargs.get('pk'))
+        if existing_identifier:
+            messages.add_message(self.request, messages.INFO, 'Your identifier "'+ form.cleaned_data.get('identifier') +'" conflict with existing region please use different identifier to create region')
+            return HttpResponseRedirect(reverse(
+                'fieldsight:region-update',
+                kwargs={
+                    'pk': self.object.pk,
+                }
+            ))
+        else:
+            self.object.identifier = form.cleaned_data.get('identifier')
+            self.object.save()
+            for sub_region in self.object.children.all():
+                replace_idfs(sub_region, previous_identifier, self.object.identifier)
+            messages.add_message(self.request, messages.INFO, 'Sucessfully saved.')
+        
+        if self.object.parent:
+            return HttpResponseRedirect(reverse(
+                'fieldsight:region-update',
+                kwargs={
+                    'pk': self.object.parent.pk,
+                }
+            ))
+        else:
+            return HttpResponseRedirect(reverse(
+                'fieldsight:region-list',
+                kwargs={
+                    'pk': self.object.project_id,
+                }
+            ))
 
 
 # class RegionalSitelist(ProjectRoleMixin, ListView):
@@ -2289,6 +2385,12 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
 
         if edit:
             sites = Site.objects.filter(project=project)
+            regions = request.GET.get('regions')
+            if regions:
+                regions = regions.split(',')
+                if len(regions) > 0:
+                    sites = sites.filter(region__in=regions)
+
             for i, site in enumerate(sites):
                 self.write_site(i + 1, site, ws)
 
@@ -2303,7 +2405,7 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
         columns = [
             site.identifier,
             site.name,
-            site.type.name,
+            site.type and site.type.name,
             site.phone,
             site.address,
             site.public_desc,
@@ -2468,7 +2570,10 @@ def response_export(request, pk):
     buffer = BytesIO()
     response = HttpResponse(content_type='application/pdf')
     instance = FInstance.objects.get(instance_id=pk)
-    form = instance.site_fxf
+    if instance.site_fxf:
+        form = instance.site_fxf
+    else:
+        form = instance.project_fxf
     file_name= form.xf.title +"_response.pdf"
     response['Content-Disposition'] = 'attachment; filename="'+ file_name +'"'
     base_url = request.get_host()
@@ -2502,30 +2607,23 @@ class FormlistAPI(View):
         survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title')
         general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title')
         content={'general':list(general), 'schedule':list(schedule), 'stage':list(mainstage), 'survey':list(survey)}
-        return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+        return JsonResponse(content, status=200)
 
     def post(self, request, pk, **kwargs):
-        buffer = BytesIO()
-        response = HttpResponse(content_type='application/pdf')
-        site=Site.objects.get(pk=pk)
-        file_name= site.name +"_custom_report.pdf"
-        response['Content-Disposition'] = 'attachment; filename="'+file_name+'"'
         base_url = request.get_host()
-        report = PDFReport(buffer, 'Letter')
         data = json.loads(self.request.body)
         fs_ids = data.get('fs_ids')
         start_date = data.get('startdate')
         end_date = data.get('enddate')
-        print start_date
-        print end_date
-        pdf = report.generateCustomSiteReport(pk, base_url,fs_ids, start_date, end_date)
-        buffer.seek(0)
-        pdf = buffer.getvalue()
-        file = open("media/contract.pdf", "wb")
-        file.write(pdf)
-        response.write(pdf)
-        buffer.close()
-        return response
+        task_obj=CeleryTaskProgress.objects.create(user=request.user, task_type=0)
+        if task_obj:
+            task = generateCustomReportPdf.delay(task_obj.id, request.user, pk, base_url, fs_ids, start_date, end_date)
+            task_obj.task_id = task.id
+            task_obj.save()
+            status, data = 200, {'status':'True','message':'Sucess, the report is being generated. You will be notified after the report is generated. '}
+        else:
+            status, data = 401, {'status':'false','message':'Error occured try again.'}
+        return JsonResponse(data, status=status)
 
 class GenerateCustomReport(ReviewerRoleMixin, View):
     def get(self, request, pk):
@@ -2758,10 +2856,11 @@ def site_refrenced_metas(request, pk):
 
 
 
-    def generate(metas, project_id, metas_to_parse, meta_answer, selected_metas):
+    def generate(metas, project_id, metas_to_parse, meta_answer, selected_metas, project_metas):
 
         for meta in metas_to_parse:
-
+            if project_metas and meta not in project_metas:
+                continue
             if meta.get('question_type') == "Link":
                 if not selected_metas:
                     selected_metas = meta.get('metas')
@@ -2771,18 +2870,19 @@ def site_refrenced_metas(request, pk):
                 if sitenew and str(sitenew[0].project_id) in selected_metas:
                     answer = meta_answer.get(meta.get('question_name'))
                     sub_metas = []
-                    generate(sub_metas, sitenew[0].project_id, selected_metas[str(sitenew[0].project_id)], sitenew[0].site_meta_attributes_ans, selected_metas)
+                    generate(sub_metas, sitenew[0].project_id, selected_metas[str(sitenew[0].project_id)], sitenew[0].site_meta_attributes_ans, selected_metas, sitenew[0].project.site_meta_attributes)
                     metas.append({'question_text': meta.get('question_text'), 'project_id':meta.get('project_id'), 'answer':answer, 'question_type':'Link', 'children':sub_metas})
                     
                 else:
                     answer = "No Site Refrenced"
                     metas.append({'question_text': meta.get('question_text'), 'answer':answer, 'question_type':'Normal'})
+                    
             else:
                 answer = meta_answer.get(meta.get('question_name'), "")
                 metas.append({'question_text': meta.get('question_text'), 'answer':answer, 'question_type':'Normal'})
 
 
-    generate(metas, project.id, project.site_meta_attributes, site.site_meta_attributes_ans, None)
+    generate(metas, project.id, project.site_meta_attributes, site.site_meta_attributes_ans, None, None)
     return JsonResponse(metas, safe=False)
 
 
@@ -2798,7 +2898,8 @@ def redirectToSite(request, pk):
 
 
 class SiteBulkEditView(View):
-    def get_regions(self, project, parent=None, default=[], prefix=''):
+    @staticmethod
+    def get_regions_filter(project, parent=None, default=[], prefix=''):
         regions = Region.objects.filter(project=project, parent=parent)
         if regions.count() == 0:
             return default
@@ -2818,7 +2919,7 @@ class SiteBulkEditView(View):
         ]
 
         for region in regions:
-            result = self.get_regions(
+            result = SiteBulkEditView.get_regions_filter(
                 project,
                 region,
                 result,
@@ -2829,10 +2930,9 @@ class SiteBulkEditView(View):
 
     def get(self, request, pk):
         project = Project.objects.get(pk=pk)
-
         context = {
             'project': project,
-            'regions': self.get_regions(project),
+            'regions': SiteBulkEditView.get_regions_filter(project),
             'form': SiteBulkEditForm(project=project),
         }
 
@@ -2875,3 +2975,40 @@ class SiteBulkEditView(View):
             context,
         )
 
+
+
+# class ProjectRegions(ProjectRoleMixin, View):
+    
+#     def get_regions(self, project, parent=None, default=[], prefix=''):
+        
+#         regions = Region.objects.filter(project=project, parent=parent)
+#         if regions.count() == 0:
+#             return default
+
+#         result = default + [
+#             {
+#                 'id': region.pk,
+#                 'name': '{}{} ({})'.format(
+#                     prefix,
+#                     region.name,
+#                     region.identifier,
+#                 ),
+#                 'sites': [s.id for s in Site.objects.filter(
+#                     region=region
+#                 )],
+#             } for region in regions
+#         ]
+
+#         for region in regions:
+#             result = self.get_regions(
+#                 project,
+#                 region,
+#                 result,
+#                 '{}{} / '.format(prefix, region.name),
+#             )
+
+#         return result
+
+#     def get(self, request, pk)
+
+#         return JsonResponse(metas, safe=False)

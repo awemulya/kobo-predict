@@ -11,20 +11,20 @@
 						</div>
 					{% endfor %}
 				{% endif %}
-				{% if obj.region_set.all %}
+				{% if obj.children.all %}
 		    <section class="panel">
 		        <header class="panel-heading clearfix">
 		            <h3>{% trans 'Sub regions' %}</h3>
 		        </header>
 		        <div class="panel-body">
 		            <div class="row">
-		                {% for child in obj.region_set.all %}
+		                {% for child in obj.children.all %}
 		                <div class="col-md-4 col-sm-6">
 		                    <a class="site-item-wrap margin-top" href="{% url 'fieldsight:regional-sites' child.project.pk child.pk %}">
 		                        <div class="basic-info clearfix">
 		                            <h4 class="detail-text1">{{ child.name }}</h4>
 		                            <h6 class="detail-text0">{{ child.identifier }}</h6>
-		                            <div>Total sites: {{ child.regions.count }}</div>
+		                            <div>Total sites: {{ child.get_sites_count }}</div>
 		                        </div>
 		                    </a>
 		                </div>
@@ -48,10 +48,6 @@
 								<option value="approved">{% trans 'Number of  Approved Submissions' %}</option>
 								<option value="flagged">{% trans 'Number of  Flagged Submissions' %}</option>
 								<option value="rejected">{% trans 'Number of Rejected Submissions' %}</option>
-								
-								
-
-
 							</select> -->
 							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i> {% trans 'Search' %}</a>
 
@@ -60,8 +56,17 @@
 
 							<a href="{% url 'fieldsight:define-site-meta' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
 							<a href="{% url 'fieldsight:site-upload' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-files-o"></i> {% trans 'Bulk' %} {% trans 'Upload' %} {% trans 'Sites' %}</a>
-							<a href="{% url 'fieldsight_export:export_xls_project_sites' pk %}" title="" class="btn btn-sm
-							btn-primary"><i class="la la-plus"></i> {% trans 'Export' %} {% trans 'Sites' %} {% trans 'data' %} </a>
+							<a href="{% url 'fieldsight:bulk-edit-site' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-files-o"></i> {% trans 'Bulk' %} {% trans 'edit' %} {% trans 'Sites' %}</a>
+							{% verbatim %}
+							<div id="export_button"></div>
+							{% endverbatim %}
+							<script>
+							configure_settings = {};
+							configure_settings.is_project_dashboard = false;
+							configure_settings.url = "{% url 'fieldsight_export:export_xls_project_level_sites' pk %}";
+							</script>
+							<!-- <a href="{% url 'fieldsight_export:export_xls_project_sites' pk %}" title="" class="btn btn-sm
+							btn-primary"><i class="la la-plus"></i> {% trans 'Export' %} {% trans 'Sites' %} {% trans 'data' %} </a> -->
 
 						{% endif %}
 						{% if type == "region" %}
@@ -69,15 +74,30 @@
 							<a href="{% url 'fieldsight:regional-site-add' pk region_id %}" title="" class="btn btn-sm
 							btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'New' %} {% trans 'Regional' %} {% trans 'Site' %}</a>
 							<a href="{% url 'fieldsight:define-site-meta' pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-cogs"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
-							<a href="{% url 'fieldsight_export:export_xls_region_sites' pk region_id %}" title="" class="btn btn-sm
-							btn-primary"><i class="la la-plus"></i> {% trans 'Export' %} {% trans 'Sites' %} {% trans 'data' %} </a>
-
+							{% verbatim %}
+							<div id="export_button"></div>
+							{% endverbatim %}
+							<script>
+							configure_settings = {};
+							configure_settings.is_project_dashboard = false;
+							configure_settings.url = "{% url 'fieldsight_export:export_xls_region_sites' pk region_id %}";
+							</script>
+							<!-- <a href="{% url 'fieldsight_export:export_xls_region_sites' pk region_id %}" title="" class="btn btn-sm
+							btn-primary"><i class="la la-plus"></i> {% trans 'Export' %} {% trans 'Sites' %} {% trans 'data' %} </a> -->
 						{% elif type == "Unregioned" %}
 							<a href="{% url 'fieldsight:site-add' project_id %}" title="" class="btn btn-sm
 							btn-primary"><i class="la la-plus"></i> {% trans 'Add' %} {% trans 'New' %} {% trans 'Regional' %} {% trans 'Site' %}</a>
 							<a href="{% url 'fieldsight:define-site-meta' project_id %}" title="" class="btn btn-sm btn-primary"><i class="la la-files-o"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
-							<a href="{% url 'fieldsight_export:export_xls_project_sites' project_id %}" title="" class="btn btn-sm
-							btn-primary"><i class="la la-plus"></i> {% trans 'Export' %} {% trans 'Sites' %} {% trans 'data' %} </a>
+							{% verbatim %}
+							<div id="export_button"></div>
+							{% endverbatim %}
+							<script>
+							configure_settings = {};
+							configure_settings.is_project_dashboard = false;
+							configure_settings.url = "{% url 'fieldsight_export:export_xls_region_sites' project_id 0 %}";
+							</script>
+							<!-- <a href="{% url 'fieldsight_export:export_xls_project_sites' project_id %}" title="" class="btn btn-sm
+							btn-primary"><i class="la la-plus"></i> {% trans 'Export' %} {% trans 'Sites' %} {% trans 'data' %} </a> -->
 
 						{% endif %}
 
@@ -240,4 +260,7 @@
 
 {% endblock %}
 {%block extrascript %}
+	<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
+	<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+	<script src="{% static 'js/fieldsight/site_export.js' %}?v=0.4"></script>
 {% endblock %}

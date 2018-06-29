@@ -79,7 +79,23 @@ class SiteLog(viewsets.ModelViewSet):
     pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
-        return queryset.filter(Q(site_id=self.kwargs.get('pk')) | (Q(content_type=ContentType.objects.get(app_label="fieldsight", model="site")) & Q(object_id=self.kwargs.get('pk'))) | (Q(extra_content_type=ContentType.objects.get(app_label="fieldsight", model="site")) & Q(extra_object_id=self.kwargs.get('pk'))))
+        site = Site.objects.get(pk=self.kwargs.get('pk'))
+        content_site = ContentType.objects.get(app_label="fieldsight", model="site")
+        project = site.project
+        query = Q(site_id=self.kwargs.get('pk')) | (Q(content_type=content_site) & Q(object_id=self.kwargs.get('pk'))) | (Q(extra_content_type=content_site) & Q(extra_object_id=self.kwargs.get('pk')))
+        meta_dict = {}
+        for meta in project.site_meta_attributes:
+            if meta['question_type'] == "Link" and meta['question_name'] in site.site_meta_attributes_ans:
+                meta_site_id = Site.objects.get(identifier=site.site_meta_attributes_ans[meta['question_name']], project_id=meta['project_id']).id
+                selected_metas = [sub_meta['question_name'] for sub_meta in meta['metas'][str(meta['project_id'])]]
+                meta_dict[meta_site_id] = selected_metas
+
+        for key, value in meta_dict.items():
+            for item in value:
+                query |= (Q(type=15) & Q(content_type=content_site) & Q(object_id=key) & Q(extra_json__contains='"'+item +'":'))
+
+        print query
+        return queryset.filter(query)
 
 class NotificationCountnSeen(View):
     def get(self, request):

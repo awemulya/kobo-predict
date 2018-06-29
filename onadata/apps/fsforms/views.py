@@ -1150,6 +1150,12 @@ class FormFillView(View):
         media_files = request.FILES.values()
         new_uuid = finstance.instance.uuid if finstance else str(uuid.uuid4())
 
+        if fs_xf.site:
+            site_id = fs_xf.site_id
+        else:
+            if finstance and finstance.site:
+                site_id = finstance.site_id
+            site_id = None
         with transaction.atomic():
             instance = save_submission(
                 xform=xform,
@@ -1160,10 +1166,35 @@ class FormFillView(View):
                 status='submitted_via_web',
                 date_created_override=None,
                 fxid=fs_xf.id,
-                site=fs_xf.site.id,
+                site=site_id,
             )
-        return HttpResponseRedirect(reverse("forms:site-responses",
-                                            kwargs={'pk': fs_xf.site.pk}))
+            if finstance:
+                noti_type=31
+                title = "editing submission"
+            else:
+                noti_type=16
+                title = "new submission"
+
+            if instance.fieldsight_instance.site:
+                extra_object=instance.fieldsight_instance.site
+                extra_message=""
+            else:
+                extra_object=instance.fieldsight_instance.project
+                extra_message="project"
+            
+            noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=noti_type, title=title,
+                                       organization=instance.fieldsight_instance.site.project.organization,
+                                       project=instance.fieldsight_instance.site.project,
+                                                        site=instance.fieldsight_instance.site,
+                                                        extra_object=extra_object,
+                                                        extra_message=extra_message,
+                                                        content_object=instance.fieldsight_instance)
+        if site_id:
+            return HttpResponseRedirect(reverse("forms:site-responses",
+                                        kwargs={'pk': site_id}))
+        else:
+            return HttpResponseRedirect(reverse("forms:project-responses",
+                                        kwargs={'pk': fs_xf.project_id}))
 
 
 class Configure_forms(SPFmixin, View):
@@ -1582,6 +1613,22 @@ def instance_status(request, instance):
                 fi.save()
                 comment_url = reverse("forms:instance_status_change_detail",
                                                 kwargs={'pk': status_changed.id})
+                if fi.site:
+                    extra_object=fi.site
+                    extra_message=""
+                else:
+                    extra_object=fi.project
+                    extra_message="project"
+
+                org = fi.project.organization if fi.project else fi.site.project.organization
+                noti = status_changed.logs.create(source=request.user, type=17, title="form status changed",
+                                          organization=org,
+                                          project=fi.project,
+                                          site = fi.site,
+                                          content_object=fi,
+                                          extra_object=extra_object,
+                                          extra_message=extra_message
+                                          )
     except Exception as e:
         return Response({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
     else:
@@ -1602,7 +1649,7 @@ def instance_status(request, instance):
         # result['description'] = noti.description
         # result['url'] = noti.get_absolute_url()
         # ChannelGroup("site-{}".format(fi.site.id)).send({"text": json.dumps(result)})
-        if request.method == 'POST':
+        if request.method == 'POST' and fi.site_fxf:
             send_message(fi.site_fxf, fi.form_status, message, comment_url)
         return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
 

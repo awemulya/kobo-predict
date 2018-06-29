@@ -45,6 +45,17 @@ class StaffProjectRoleMixin(LoginRequiredMixin):
             return super(StaffProjectRoleMixin, self).dispatch(request, *args, **kwargs)
         raise PermissionDenied()
 
+class StaffProjectTeamRoleMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if request.group.name == "Super Admin":
+            return super(StaffProjectTeamRoleMixin, self).dispatch(request, *args, **kwargs)
+        staff_team_id = self.kwargs.get('pk')
+        staff_project_id = get_object_or_404(Team, pk=staff_team_id).staffproject_id
+        user_role = request.roles.filter(group_id=8, staff_project_id=staff_project_id)
+        if user_role:
+            return super(StaffProjectTeamRoleMixin, self).dispatch(request, *args, **kwargs)
+        raise PermissionDenied()
+
 class StaffTeamRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         if request.group.name == "Super Admin":

@@ -18,6 +18,7 @@ from onadata.apps.userrole.models import UserRole
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
 from django.db.models import Q
+from onadata.apps.logger.models import XForm
 
 
 
@@ -430,7 +431,7 @@ class MyFormMixin(LoginRequiredMixin):
             return super(MyFormMixin, self).dispatch(request, xf_id, *args, **kwargs)
 
         user_id = request.user.id
-        xform = get_object_or_404(Xform, pk=xf_id)
+        xform = get_object_or_404(XForm, pk=xf_id)
 
         if xform.user_id == user_id:
             return super(MyFormMixin, self).dispatch(request, xf_id, *args, **kwargs)

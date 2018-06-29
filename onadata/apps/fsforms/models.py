@@ -356,6 +356,7 @@ class FieldSightParsedInstance(ParsedInstance):
         created = False
         try:
             fspi = FieldSightParsedInstance.objects.get(instance__pk=instance.pk)
+            fspi.save(update_fs_data=update_data, async=False)
         except FieldSightParsedInstance.DoesNotExist:
             created = True
             fspi = FieldSightParsedInstance(instance=instance)

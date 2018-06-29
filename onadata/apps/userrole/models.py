@@ -158,7 +158,9 @@ def create_messages(sender, instance, created,  **kwargs):
         Device = get_device_model()
         if Device.objects.filter(name=instance.user.email).exists():
             message = {'notify_type':'Assign Site', 'site':{'name': instance.site.name, 'id': instance.site.id}}
-            Device.objects.filter(name=instance.user.email).send_message(message)
-
+            try:
+                Device.objects.filter(name=instance.user.email).send_message(message)
+            except:
+                pass
 
 post_save.connect(create_messages, sender=UserRole)

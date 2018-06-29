@@ -21,29 +21,43 @@
     {% trans 'Successfully applied changes' %}
     </p>
     {% else %}
-
-    <div id="filters">
-        <select id="regions" placeholder="Filter by regions" multiple>
-            {% for region in regions %}
-            <option value="{{ region.id }}">{{ region.name }}</option>
-            {% endfor %}
-        </select>
-
-        <label for="togglesites">
-            <input type="checkbox" id="togglesites">
-            All sites
-        </label>
-    </div>
-
     <form enctype="multipart/form-data" method="post">
         {% csrf_token %}
 
-        {{ form.non_field_errors }}
+        <div class="header">
+            <h4 class="title">
+                Bulk edit sites
+            </h4>
 
-        {% for hidden_field in form.hidden_fields %}
-        {{ hidden_field.errors }}
-        {{ hidden_field }}
-        {% endfor %}
+            <div class="errors">
+                {{ form.non_field_errors }}
+
+                {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field.errors }}
+                {{ hidden_field }}
+                {% endfor %}
+            </div>
+
+            <div class="action">
+                <a id="upload-link" target="_blank" href="{% url 'fieldsight:site-upload' project.pk %}" title="" class="btn btn-sm"><i class="la la-files-o"></i> {% trans 'Bulk' %} {% trans 'Excel' %} {% trans 'Upload' %}</a>
+                <button type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans 'Apply' %}</button>
+            </div>
+        </div>
+
+        <div class="left">
+
+        <div id="filters">
+            <select id="regions" placeholder="Filter by regions" multiple>
+                {% for region in regions %}
+                <option value="{{ region.id }}">{{ region.name }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="togglesites">
+                <input type="checkbox" id="togglesites">
+                All sites
+            </label>
+        </div>
 
         {% for field in form %}
         {% if field.name != "sites" %}
@@ -65,6 +79,8 @@
             {{ field.help_text|safe }}
         </div>
         {% if field.name == "sites" %}
+        </div>
+        <div class="right">
         <p>
         Select the meta attributes that you want to change and set new values:
         </p>
@@ -72,8 +88,7 @@
         {% endif %}
         {% endfor %}
         </div>
-
-        <button type="submit" class="btn btn-primary"><i class="la la-floppy-o"></i>{% trans 'Apply' %}</button>
+        </div>
     </form>
 
     {% endif %}
@@ -104,14 +119,20 @@
 
     $(document).ready(() => {
         $('#filters select').selectize();
+        const uploadAnchor = $('#upload-link');
+        const uploadUrl = "{% url 'fieldsight:site-upload' project.pk %}";
+        uploadAnchor.attr('href', uploadUrl);
 
         $('#regions').change(function() {
-            if (!$(this).val().length) {
+            const regionsVal = $(this).val();
+            if (!regionsVal || regionsVal.length === 0) {
+                uploadAnchor.attr('href', uploadUrl);
                 filterSites(undefined, true);
                 return;
             }
 
-            const sites = $(this).val().reduce((acc, id) => {
+            uploadAnchor.attr('href', uploadUrl + '?regions=' + regionsVal.join(','));
+            const sites = regionsVal.reduce((acc, id) => {
                 return [
                     ...acc,
                     ...regionalSites[id],
@@ -125,6 +146,11 @@
             const selected = $(this).prop('checked');
             $('input[name="sites"]').prop('checked', false);
             $('input[name="sites"]:visible').prop('checked', selected);
+        });
+
+        $('.attributes label').click(function() {
+            const attribute = $(this).attr('for').substr('id_'.length);
+            $('input[name="set_'+attribute+ '"]').click();
         });
     });
 </script>

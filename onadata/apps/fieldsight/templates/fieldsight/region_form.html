@@ -13,12 +13,27 @@
 					<ul class="">
 						{% for message in messages %}
 						<li>
-							<div class="alert alert-danger">{{ message }}</div>
+							<div class="alert alert-info">{{ message }}</div>
 						</li>
 						{% endfor %}
 					</ul>
 					{% endif %}
+
 					<div class="panel-body">
+                    {% if form.errors %}
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <div class="alert alert-danger">
+                                    <strong>{{ error|escape }}</strong>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
 						<!-- Add New Organization-->
 						<div id="newOrganization" class="margin-top">
 							<form form enctype="multipart/form-data" method="post">
@@ -29,7 +44,7 @@
 
 									<div class="form-group col-md-6">
 
-									  <label class="col-form-label">{{ field.label }}</label>
+									  <label class="col-form-label">{{ field.label }}:     {% if field.label == "Identifier"  %}{{ parent_identifier }}<span id=extra_identifier>{{ current_identifier }}</span>{% endif %}</label>
 
                                         {{ field|add_class:"form-control" }}
 									</div>
@@ -63,16 +78,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for obj in subregion_list %}
-                                <tr>
-                                    <td class="text-center">{{ obj.identifier }}</td>
-                                    <td class="text-center">{{ obj.name }}</td>
-                                    <td class="text-center">{{ obj.date_created }}</td>
-                                    <td class="text-center">
-                                        <a class="btn btn-primary btn-sm" href="{% url 'fieldsight:region-update' obj.pk %}"><i class="la la-pencil-square-o"></i>{% trans ' Edit' %}</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
+                            {% for obj in subregion_list %}
+                            <tr>
+                                <td class="text-center">{{ obj.identifier }}</td>
+                                <td class="text-center">{{ obj.name }}</td>
+                                <td class="text-center">{{ obj.date_created }}</td>
+                                <td class="text-center">
+                                    <a class="btn btn-primary btn-sm" href="{% url 'fieldsight:region-update' obj.pk %}"><i class="la la-pencil-square-o"></i>{% trans ' Edit' %}</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                         {% endif %}
@@ -83,7 +98,11 @@
 			</div>
 {% endblock %}
 {%block extrascript %}
-
+<script>
+$( "#id_identifier" ).keyup(function(event) {
+  $( "#extra_identifier" ).html($( this ).val());
+});
+</script>
 {% endblock %}
 
 

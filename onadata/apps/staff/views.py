@@ -4,7 +4,7 @@ from .models import Team, Staff, StaffProject, Attendance
 from onadata.apps.userrole.models import UserRole
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
-from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectRoleMixin, StaffTeamRoleMixin, StaffRoleMixin
+from onadata.apps.staff.staffrolemixin import HasStaffRoleMixin, StaffProjectTeamRoleMixin, StaffProjectRoleMixin, StaffTeamRoleMixin, StaffRoleMixin
 from django.contrib.auth.models import User
 from onadata.apps.staff.forms import TeamForm, StaffEditForm, StaffForm, AttendanceForm, ProjectForm
 import pyexcel as p
@@ -26,7 +26,7 @@ class TeamList(StaffProjectRoleMixin, ListView):
         queryset = Team.objects.filter(is_deleted=False, staffproject_id=self.kwargs.get('pk'))
         return queryset
 
-class TeamDelete(StaffProjectRoleMixin, DeleteView):
+class TeamDelete(StaffProjectTeamRoleMixin, DeleteView):
     model = Team
 
     def delete(self, request, *args, **kwargs):
@@ -284,7 +284,7 @@ class StaffAddProjectUsers(StaffProjectRoleMixin, View):
         role = UserRole.objects.create(user_id = user_id, group_id=8, staff_project_id = staffproject_id)
         return HttpResponseRedirect(reverse('staff:staff-project-users', kwargs={'pk': staffproject_id }))
 
-class StaffAttendanceUpdate(StaffProjectRoleMixin, UpdateView):
+class StaffAttendanceUpdate(StaffProjectTeamRoleMixin, UpdateView):
     model = Attendance
     form_class = AttendanceForm
 
