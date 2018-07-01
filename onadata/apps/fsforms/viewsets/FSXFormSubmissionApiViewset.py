@@ -136,6 +136,9 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                                                                                            description=pms.description,
                                                                                            project_stage_id=pms.id)
                                     for pss in project_sub_stages:
+                                        if pss.tags and site.type:
+                                            if not site.type.id in pss.tags:
+                                                continue
                                         site_sub_stage, created = Stage.objects.get_or_create(name=pss.name, order=pss.order, site=site,
                                                        description=pss.description, stage=site_main_stage, project_stage_id=pss.id, weight=pss.weight)
                                         if FieldSightXF.objects.filter(stage=pss).exists():
