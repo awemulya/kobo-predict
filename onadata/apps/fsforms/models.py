@@ -98,8 +98,8 @@ class Stage(models.Model):
 
     def form(self):
         if not FieldSightXF.objects.filter(stage=self).count():
-            return False
-        return FieldSightXF.objects.filter(stage=self)
+            return None
+        return FieldSightXF.objects.filter(stage=self)[0]
 
     def active_substages(self):
         return self.parent.filter(stage_forms__isnull=False)

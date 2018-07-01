@@ -136,7 +136,14 @@
                       <td>
                       <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 1 obj.id %}">
                           <i class="la la-download" aria-hidden="true"></i> Download</a>
-                      </td>               
+                      </td> 
+                      <td>
+                          {% if obj.form %}
+                            <a target="_blank" href="{% url 'forms:new-submission' obj.id %}">
+                                <i class="la la-plus" aria-hidden="true"></i>
+                            </a>
+                          {% endif %}
+                      </td>              
           
                   </tr>
               {% endfor %}
