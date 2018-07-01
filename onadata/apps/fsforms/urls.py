@@ -56,8 +56,8 @@ from .views import (
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
 
-        url(r'^new-submission/(?P<pk>\d+)/$', FormFillView.as_view(), name='new-submission'),
-        url(r'^edit-submission/(?P<pk>\d+)/(?P<sub_pk>\d+)/$', FormFillView.as_view(), name='edit-submission'),
+        url(r'^new-submission/(?P<fsxf_id>\d+)/$', FormFillView.as_view(), name='new-submission'),
+        url(r'^edit-submission/(?P<fsxf_id>\d+)/(?P<sub_pk>\d+)/$', FormFillView.as_view(), name='edit-submission'),
 
         url(r'^assigned/$', MyOwnFormsListView.as_view(), name='forms-list'),
         url(r'^create/$', CreateKoboFormView.as_view(), name='forms-create'),

@@ -177,6 +177,7 @@
                       <th>{% trans 'Form' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Submissions' %}</th>
                       <th>{% trans 'Download' %}</th>
+                      <th>{% trans 'New' %}</th>
                       </thead>
                       <tbody>
                       {% for obj in stage.active_substages %}
@@ -195,17 +196,23 @@
                               </td>
                               <td>{{obj.stage_forms.xf.title}}</td>
                               <td>
-                                {% with obj.stage_forms.pk|site_submissions as count %}
+                          {% with obj.stage_forms.pk|site_submissions as count %}
                           
-                           <a class="badge badge-primary" href="{% url 'forms:formpack_html_export' obj.stage_forms.pk %}">
+                               <a class="badge badge-primary" href="{% url 'forms:formpack_html_export' obj.stage_forms.pk %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
                                </a>
                           {% endwith %}
                               </td>
                               <td>
-                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.stage_forms.xf.user.username obj.stage_forms.xf.id_string 'xls' 0 obj.stage_forms.id%}">
-                          <i class="la la-download" aria-hidden="true"></i></a>
-                      </td>
+                                <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.stage_forms.xf.user.username obj.stage_forms.xf.id_string 'xls' 0 obj.stage_forms.id%}">
+                                    <i class="la la-download" aria-hidden="true"></i></a>
+                              </td>
+                               <td>
+                                  <a target="_blank" href="{% url 'forms:new-submission' obj.form.id %}">
+                                      <i class="la la-plus" aria-hidden="true"></i>
+                                  </a>
+                              </td>
+
                           </tr>
                       {% endfor %}
                       </tbody>

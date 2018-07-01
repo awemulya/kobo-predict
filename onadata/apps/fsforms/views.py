@@ -1114,9 +1114,9 @@ class Setup_forms(SPFmixin, View):
                    'schedule_form': KoScheduleForm(request=request)})
 
 
-class FormFillView(View):
+class FormFillView(ReadonlyFormMixin, View):
     def get(self, request, *args, **kwargs):
-        pk = self.kwargs.get('pk')
+        pk = self.kwargs.get('fsxf_id')
         sub_pk = self.kwargs.get('sub_pk')
 
         fieldsight_xf = FieldSightXF.objects.get(pk=pk)
@@ -1139,7 +1139,7 @@ class FormFillView(View):
         })
 
     def post(self, request, *args, **kwargs):
-        pk = self.kwargs.get('pk')
+        pk = self.kwargs.get('fsxf_id')
         sub_pk = self.kwargs.get('sub_pk')
 
         fs_xf = FieldSightXF.objects.get(pk=pk)

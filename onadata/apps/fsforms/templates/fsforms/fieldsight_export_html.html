@@ -28,7 +28,6 @@
                 <h3><i class="la la-pencil-square-o"></i>{% if request.GET.q %}Search Results for "{{request.GET.q}}"{% else %}
                 {% trans 'Form' %} {% trans 'Submissions' %}{% endif %} | {{ form_name  }}</h3>
 
-     
 
             <div class="panel-heading-right">
             
@@ -71,47 +70,24 @@
         <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
-        {% if request.user|can_edit_finstance:sub %}
-          <td>{% trans 'Submission' %} {% trans 'Date' %}</td>
-        {% endif %}
+        <td>{% trans 'Edit' %}</td>
       </tr>
     </thead>
     <tbody>
 
     {% for sub in object_list  %}
-            <!--   {% if sub.site_fxf %}
-               <tr>
-                 
-                  <td> <a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.site.identifier }}</a></td>
-                  <td>{{ sub.site_fxf.xf.title }}</td>
-                  <td>{{ sub.site.name }}</td>
-                  <td>{{ sub.site.id }}</td>
-                  <td>{{ sub.submitted_by.username }}</td>
-                  <td>{{ sub.date }}</td>
-                  </tr>
-              {% endif %}
-
-              {% if sub.project_fxf %} -->
-               <tr onclick="redirectto(`{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
-                 
-                  <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
-                  <td>{{ sub.site.name }}</td>
-                  <td>{{ sub.site.identifier }}</td>
-                  <td>{{ sub.instance.id }}</td>
-                  <td>{{ sub.submitted_by.user_profile.getname }}</td>
-                  <td>{{ sub.date }}</td>
-                  {% if request.user|can_edit_finstance:sub %}
-                  <td>
-                      <a href="{% url 'forms:edit-submission' sub.project_fxf.pk sub.id %}">Edit</a>    
-                  </td>
-                  {% endif %}
-                  </tr>
-              <!-- {% endif %} -->
-        
-
+       <tr onclick="redirectto(`{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
+          <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+          <td>{{ sub.site.name }}</td>
+          <td>{{ sub.site.identifier }}</td>
+          <td>{{ sub.instance.id }}</td>
+          <td>{{ sub.submitted_by.user_profile.getname }}</td>
+          <td>{{ sub.date }}</td>
+          <td>
+              <a href="{% url 'forms:edit-submission' sub.project_fxf.pk sub.id %}">Edit</a>    
+          </td>
+        </tr>        
     {% endfor %}
-     
-     
     </tbody>
   </table>
   {% endif %}
@@ -124,37 +100,24 @@
     <thead>
       <tr>
         <th>{% trans 'S.N' %}</th>
-       <!--  <th>{% trans 'Site' %} {% trans 'Name' %}</th>
-        <th>{% trans 'Site' %} {% trans 'Id' %}</th> -->
         <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
-        {% if request.user|can_edit_finstance:sub %}
-          <td>{% trans 'Submission' %} {% trans 'Date' %}</td>
-        {% endif %}
+        <td>{% trans 'Edit' %}</td>
       </tr>
     </thead>
     <tbody>
 
     {% for sub in object_list  %}
-           
-               <tr onclick="redirectto(`{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
-                 
-                  <td>{{ forloop.counter }}</td>
-                  <!-- <td>{{ sub.site.name }}</td>
-                  <td>{{ sub.site.identifier }}</td> -->
-                  <td>{{ sub.instance.id }}</td>
-                  <td>{{ sub.submitted_by.user_profile.getname }}</td>
-                  <td>{{ sub.date }}</td>
-                  {% if request.user|can_edit_finstance:sub %}
-                  <td>
-                      <a href="{% url 'forms:edit-submission' sub.site_fxf.pk sub.id %}">Edit</a>    
-                  </td>
-                  {% endif %}
-                  </tr>
-            
-        
-
+      <tr onclick="redirectto(`{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
+        <td>{{ forloop.counter }}</td>
+        <td>{{ sub.instance.id }}</td>
+        <td>{{ sub.submitted_by.user_profile.getname }}</td>
+        <td>{{ sub.date }}</td>
+        <td>
+            <a href="{% url 'forms:edit-submission' sub.site_fxf.pk sub.id %}">Edit</a>    
+        </td>
+      </tr>
     {% endfor %}
      
      
@@ -179,15 +142,12 @@
                             <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
                           {% endif %}
 
-
-
                           {% if paginator.num_pages > 20 %}
 
                               {% page_offsets page_obj.number paginator.num_pages 21 as data %}
             
                               {% for item in data.front_range %}
                                     <li class="page-item"><a class="page-link" href="?page={{ item }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ item }}</a></li>
-
                               
                               {% endfor %}
                          
@@ -195,23 +155,21 @@
 
                               {% for item in data.back_range %}
                                     <li class="page-item"><a class="page-link" href="?page={{ item }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ item }}</a></li>
-
                               
                               {% endfor %}
 
                           {% else %}
                             {% for i in paginator.page_range %}
+                              
                               {% if page_obj.number == i %}
-                              <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
 
                               {% else %}
-                              <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
                               {% endif %}
                             {% endfor %}
                           {% endif %}
 
-
-                     
                           {% if page_obj.has_next %}
                             <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&raquo;</a></li>
                           {% else %}
@@ -231,9 +189,8 @@
 
           
 
-                </section>
-        
-      </div>
+  </section>      
+</div>
 
 
 {% endblock %}
