@@ -669,28 +669,7 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
     def form_valid(self, form):
         
         main_project = Project.objects.get(pk=self.kwargs.get('pk'))
-        old_meta = main_project.site_meta_attributes
         self.object = form.save(new=False)
-        new_meta = json.loads(self.object.site_meta_attributes)
-        updated_json = None
-
-        if old_meta != new_meta:
-            deleted = []
-
-            for meta in old_meta:
-                if meta not in new_meta:
-                    deleted.append(meta)
-
-        for project in Project.objects.filter(organization_id=main_project.organization_id):
-            
-            for meta in project.site_meta_attributes:
-            
-                if meta['question_type'] == "Link":
-                    if str(main_project.id) in meta.metas:
-                        for del_meta in deleted:
-                            del meta.metas[meta.metas.index(del_meta)]
-            
-            project.save()
 
         noti = self.object.logs.create(source=self.request.user, type=14, title="Edit Project",
                                        organization=self.object.organization,
@@ -2318,7 +2297,31 @@ class DefineProjectSiteMeta(ProjectRoleMixin, TemplateView):
 
     def post(self, request, pk, *args, **kwargs):
         project = Project.objects.get(pk=pk)
+        old_meta = project.site_meta_attributes
+        print old_meta
+        print "----"
         project.site_meta_attributes = request.POST.get('json_questions');
+        new_meta = json.loads(project.site_meta_attributes)
+        print new_meta
+        updated_json = None
+
+        if old_meta != new_meta:
+            deleted = []
+
+            for meta in old_meta:
+                if meta not in new_meta:
+                    deleted.append(meta)
+
+        for other_project in Project.objects.filter(organization_id=project.organization_id):
+            
+            for meta in other_project.site_meta_attributes:
+            
+                if meta['question_type'] == "Link":
+                    if str(project.id) in meta['metas']:
+                        for del_meta in deleted:
+                            del meta['metas'][str(project.id)][meta['metas'][str(project.id)].index(del_meta)]
+            
+            other_project.save()
         project.save()
         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
 
