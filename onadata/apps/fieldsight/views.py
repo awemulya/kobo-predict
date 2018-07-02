@@ -2312,16 +2312,17 @@ class DefineProjectSiteMeta(ProjectRoleMixin, TemplateView):
                 if meta not in new_meta:
                     deleted.append(meta)
 
-        for other_project in Project.objects.filter(organization_id=project.organization_id):
-            
-            for meta in other_project.site_meta_attributes:
-            
-                if meta['question_type'] == "Link":
-                    if str(project.id) in meta['metas']:
-                        for del_meta in deleted:
-                            del meta['metas'][str(project.id)][meta['metas'][str(project.id)].index(del_meta)]
-            
-            other_project.save()
+            for other_project in Project.objects.filter(organization_id=project.organization_id):
+                
+                for meta in other_project.site_meta_attributes:
+                
+                    if meta['question_type'] == "Link":
+                        if str(project.id) in meta['metas']:
+                            for del_meta in deleted:
+                                if del_meta in meta['metas'][str(project.id)]:
+                                    del meta['metas'][str(project.id)][meta['metas'][str(project.id)].index(del_meta)]
+                
+                other_project.save()
         project.save()
         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
 
@@ -2862,8 +2863,8 @@ def site_refrenced_metas(request, pk):
     def generate(metas, project_id, metas_to_parse, meta_answer, selected_metas, project_metas):
 
         for meta in metas_to_parse:
-            if project_metas and meta not in project_metas:
-                continue
+            # if project_metas and meta not in project_metas:
+            #     continue
             if meta.get('question_type') == "Link":
                 if not selected_metas:
                     selected_metas = meta.get('metas')
