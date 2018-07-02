@@ -142,7 +142,8 @@ class TeamAttendanceReport(StaffTeamRoleMixin, View):
             index = index_rows.index(k)
             if index:
                 for staff in v:
-                    pre_data[staff][index] = "P"
+                    if staff in pre_data:
+                        pre_data[staff][index] = "P"
 
         for k,v in pre_data.items():
             data.append(v)
