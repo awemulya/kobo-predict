@@ -667,8 +667,6 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
         return reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
-        
-        main_project = Project.objects.get(pk=self.kwargs.get('pk'))
         self.object = form.save(new=False)
 
         noti = self.object.logs.create(source=self.request.user, type=14, title="Edit Project",
