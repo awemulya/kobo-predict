@@ -8,6 +8,11 @@ from onadata.apps.fieldsight.models import Organization
 from .models import UserProfile
 
 
+import StringIO
+import mimetypes
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+
 class LoginForm(forms.Form):
     email = forms.EmailField(label='Your Email', max_length=100)
     password = forms.CharField(label='Your Email', max_length=100)
@@ -43,10 +48,17 @@ class ProfileForm(forms.ModelForm):
         w = self.cleaned_data.get('width')
         h = self.cleaned_data.get('height')
         if x is not None and y is not None:
-             image = Image.open(photo.profile_picture)
-             cropped_image = image.crop((x, y, w + x, h + y))
-             resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
-             resized_image.save(photo.profile_picture.path)
+            image = Image.open(photo.profile_picture)
+            cropped_image = image.crop((x, y, w+x, h+y))
+            resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+            # resized_image.save(photo.profile_picture.path)
+            resized_image_file = StringIO.StringIO()
+            mime = mimetypes.guess_type(photo.profile_picture.name)[0]
+            plain_ext = mime.split('/')[1]
+            resized_image.save(resized_image_file, plain_ext)
+            default_storage.delete(photo.profile_picture.name)
+            default_storage.save(photo.profile_picture.name, ContentFile(resized_image_file.getvalue()))
+            resized_image_file.close()
         return photo
 
     # def clean_profile_picture(self):
