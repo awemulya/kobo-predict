@@ -185,11 +185,11 @@ class PDFReport:
                 
             elif question_type == 'photo':
                 #photo = '/media/user/attachments/'+ r_answer[r_question+"/"+question]
-                photo = 'http://'+self.base_url+'/attachment/medium?media_file=/'+ self.media_folder +'/attachments/'+ answer_dict[question_name]
+                photo = 'http://'+self.base_url+'/attachment/medium?media_file='+ self.media_folder +'/attachments/'+ answer_dict[question_name]
                 answer = self.create_logo(photo)
                 # answer =''
             elif question_type == 'audio' or question_type == 'video':
-                media_link = 'http://'+self.base_url+'/attachment/medium?media_file=/'+ self.media_folder +'/attachments/'+ answer_dict[question_name]
+                media_link = 'http://'+self.base_url+'/attachment/medium?media_file='+ self.media_folder +'/attachments/'+ answer_dict[question_name]
                 answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
 
             else:
@@ -371,7 +371,9 @@ class PDFReport:
 
     def print_individual_response(self, pk, base_url):
         self.base_url = base_url
- 
+        self.project_name = project.name
+        self.project_logo = project.logo.url
+         
         # Our container for 'Flowable' objects
         elements = []
 
@@ -388,9 +390,7 @@ class PDFReport:
             form = instance.project_fxf
             project = instance.project
         
-        self.project_name = project.name
-        self.project_logo = project.logo.url
-        
+
 
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
@@ -446,7 +446,8 @@ class PDFReport:
 
     def generateCustomSiteReport(self, pk, base_url, fs_ids, startdate, enddate):
         self.base_url = base_url
-        
+        self.project_name = site.project.name
+        self.project_logo = site.project.logo.url
  
         # Our container for 'Flowable' objects
         elements = []
@@ -466,8 +467,7 @@ class PDFReport:
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
         site = Site.objects.select_related('project').get(pk=pk)
-        self.project_name = site.project.name
-        self.project_logo = site.project.logo.url
+        
         
         elements.append(Paragraph(site.name, self.h1))
         elements.append(Paragraph(site.identifier, styles['Normal']))

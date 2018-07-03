@@ -213,7 +213,7 @@ class FinstanceSerializer(serializers.ModelSerializer):
                                 answer = ''
                             elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or \
                                     first_children['type'] == 'video':
-                                answer = 'http://' + base_url + '/attachment/medium?media_file=/' + media_folder + '/attachments/' + gnr_answer[
+                                answer = 'http://' + base_url + '/attachment/medium?media_file=' + media_folder + '/attachments/' + gnr_answer[
                                     r_question + "/" + question]
                             else:
                                 answer = gnr_answer[r_question + "/" + question]
@@ -245,7 +245,7 @@ class FinstanceSerializer(serializers.ModelSerializer):
                     if question_type == 'note':
                         answer = ''
                     elif question_type == 'photo' or question_type == 'audio' or question_type == 'video':
-                        answer = 'http://' + base_url + '/attachment/medium?media_file=/' + media_folder + '/attachments/' + json_answer[
+                        answer = 'http://' + base_url + '/attachment/medium?media_file=' + media_folder + '/attachments/' + json_answer[
                             g_question + "/" + question]
                     else:
                         answer = json_answer[g_question + "/" + question]
@@ -270,7 +270,7 @@ class FinstanceSerializer(serializers.ModelSerializer):
                             answer = ''
                         elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or first_children[
                             'type'] == 'video':
-                            answer = 'http://' + base_url + '/attachment/medium?media_file=/' + media_folder + '/attachments/' + json_answer[
+                            answer = 'http://' + base_url + '/attachment/medium?media_file=' + media_folder + '/attachments/' + json_answer[
                                 question]
                         else:
                             answer = json_answer[question]

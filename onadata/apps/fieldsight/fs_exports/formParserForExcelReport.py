@@ -14,10 +14,10 @@ def parse_form_response(main_question, main_answer, base_url, media_folder):
                 answer=''
                 
             elif question_type == 'photo':
-                answer = 'http://'+base_url+'/attachment/medium?media_file=/'+ media_folder +'/attachments/'+ answer_dict[question_name]
+                answer = 'http://'+base_url+'/attachment/medium?media_file='+ media_folder +'/attachments/'+ answer_dict[question_name]
                 
             elif question_type == 'audio' or question_type == 'video':
-                answer = 'http://'+base_url+'/attachment/medium?media_file=/'+ media_folder +'/attachments/'+ answer_dict[question_name]
+                answer = 'http://'+base_url+'/attachment/medium?media_file='+ media_folder +'/attachments/'+ answer_dict[question_name]
                 
             else:
                 answer=answer_dict[question_name]
