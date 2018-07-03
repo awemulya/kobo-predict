@@ -431,7 +431,7 @@ class FInstance(models.Model):
                             if first_children['type'] == 'note':
                                 answer= ''
                             elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or first_children['type'] == 'video':
-                                answer = 'http://'+base_url+'/media/'+ media_folder +'/attachments/'+gnr_answer[r_question+"/"+question]
+                                answer = 'http://'+base_url+'/attachment/medium?media_file=/'+ media_folder +'/attachments/'+gnr_answer[r_question+"/"+question]
                             else:
                                 answer = gnr_answer[r_question+"/"+question]
                                 
@@ -463,7 +463,7 @@ class FInstance(models.Model):
                     if question_type == 'note':
                         answer= '' 
                     elif question_type == 'photo' or question_type == 'audio' or question_type == 'video':
-                        answer = 'http://'+base_url+'/media/'+ media_folder +'/attachments/'+json_answer[g_question+"/"+question]
+                        answer = 'http://'+base_url+'/attachment/medium?media_file=/'+ media_folder +'/attachments/'+json_answer[g_question+"/"+question]
                     else:
                         answer = json_answer[g_question+"/"+question]
 
@@ -487,7 +487,7 @@ class FInstance(models.Model):
                         if first_children['type'] == 'note':
                             answer= '' 
                         elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or first_children['type'] == 'video':
-                            answer = 'http://'+base_url+'/media/'+ media_folder +'/attachments/'+json_answer[question]
+                            answer = 'http://'+base_url+'/attachment/medium?media_file=/'+ media_folder +'/attachments/'+json_answer[question]
                         else:
                             answer = json_answer[question]
                     if 'label' in first_children:

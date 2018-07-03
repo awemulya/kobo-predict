@@ -161,7 +161,7 @@ class PDFReport:
         fieldsight_logo.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin + 12)
         headerright.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin + 20)
         try:
-            project_logo = Image('http://' + self.base_url + self.project_logo)
+            project_logo = Image(self.project_logo)
             project_logo._restrictSize(0.4 * inch, 0.4 * inch)
             project_logo.drawOn(canvas, headerright.width + doc.leftMargin -0.5 * inch - textWidth, doc.height + doc.topMargin + 10)
         except:
@@ -185,11 +185,11 @@ class PDFReport:
                 
             elif question_type == 'photo':
                 #photo = '/media/user/attachments/'+ r_answer[r_question+"/"+question]
-                photo = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ answer_dict[question_name]
+                photo = 'http://'+self.base_url+'/attachment/medium?media_file=/'+ self.media_folder +'/attachments/'+ answer_dict[question_name]
                 answer = self.create_logo(photo)
                 # answer =''
             elif question_type == 'audio' or question_type == 'video':
-                media_link = 'http://'+self.base_url+'/media/'+ self.media_folder +'/attachments/'+ answer_dict[question_name]
+                media_link = 'http://'+self.base_url+'/attachment/medium?media_file=/'+ self.media_folder +'/attachments/'+ answer_dict[question_name]
                 answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
 
             else:
