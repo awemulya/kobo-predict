@@ -492,7 +492,7 @@
 							<a href="{% url 'fieldsight:all_response_image' obj.pk %}" title="" class="count-holder">
 								<span class="align-middle">{{ next_photos_count }} +</span>
 							</a>
-							<img data-bind="attr:{src: _attachments().download_url}" img-title="" alt="">
+							<img data-bind="attr:{src: '/attachment/medium?media_file='+ _attachments().filename}" img-title="" alt="">
 						</div>
 					</div>
 					<!-- /ko -->
