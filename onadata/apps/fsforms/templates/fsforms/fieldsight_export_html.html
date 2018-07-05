@@ -70,7 +70,8 @@
         <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
-        <td>{% trans 'Edit' %}</td>
+        <th>{% trans 'Edit' %}</th>
+        <th>{% trans 'Delete' %}</th>
       </tr>
     </thead>
     <tbody>
@@ -85,6 +86,9 @@
           <td>{{ sub.date }}</td>
           <td>
               <a href="{% url 'forms:edit-submission' sub.project_fxf.pk sub.id %}">Edit</a>    
+          </td>
+          <td>
+            <a class="btn btn-xs btn-danger" href="{% url 'fsform:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}"><span class="glyphicon glyphicon-remove"></span></a>
           </td>
         </tr>        
     {% endfor %}
@@ -104,6 +108,7 @@
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
         <td>{% trans 'Edit' %}</td>
+        <th>{% trans 'Delete' %}</th>
       </tr>
     </thead>
     <tbody>
@@ -116,6 +121,9 @@
         <td>{{ sub.date }}</td>
         <td>
             <a href="{% url 'forms:edit-submission' sub.site_fxf.pk sub.id %}">Edit</a>    
+        </td>
+        <td>
+            <a class="btn btn-xs btn-danger" href="{% url 'fsform:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}"><span class="glyphicon glyphicon-remove"></span></a>
         </td>
       </tr>
     {% endfor %}

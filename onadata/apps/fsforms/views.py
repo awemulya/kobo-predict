@@ -28,7 +28,7 @@ from rest_framework.response import Response
 from channels import Group as ChannelGroup
 
 from onadata.apps.fieldsight.models import Site, Project
-from onadata.apps.fsforms.reports_util import get_images_for_site_all, get_instances_for_field_sight_form, build_export_context, \
+from onadata.apps.fsforms.reports_util import delete_form_instance, get_images_for_site_all, get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer, \
     SubStageDetailSerializer
@@ -1183,7 +1183,7 @@ class FormFillView(ReadonlyFormMixin, FInstanceRoleMixin, View):
                 extra_message="project"
             
             noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=noti_type, title=title,
-                                       organization=instance.fieldsight_instance.site.project.organization,
+                                       organization=instance.fieldsight_instance.project.organization,
                                        project=instance.fieldsight_instance.site.project,
                                                         site=instance.fieldsight_instance.site,
                                                         extra_object=extra_object,
@@ -2082,7 +2082,34 @@ class CreateKoboFormView(TemplateView, LoginRequiredMixin):
         return data
 
 class DeleteFInstance(FInstanceRoleMixin, View):
-    def post(self, pk):
-        finstance = FInstance.objects.get(instance_pk=instance_pk)
-        finstance.is_deleted = True
-        finstance.save()
+    def get(self, pk):
+        try:
+            finstance = FInstance.objects.get(instance_pk=instance_pk)
+            finstance.is_deleted = True
+            finstance.save()
+            delete_form_instance(int(instance_pk))
+            messages.success(request, 'Form sucessfully Deleted.')
+
+            if finstance.site:
+                extra_object=finstance.site
+                extra_message="site"
+            else:
+                extra_object=finstance.project
+                extra_message="project"
+            extra_json = {}
+            extra_json['submitted_by'] = finstance.submitted_by.getname() 
+            noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=33, title="deleted response" + instance_pk,
+                                       organization=finstance.project.organization,
+                                       project=finstance.site.project,
+                                                        site=finstance.site,
+                                                        extra_object=extra_object,
+                                                        extra_message=extra_message,
+                                                        content_object=finstance)
+
+        except Exception as e:
+            messages.success(request, 'Form deleted unsuccessfull.' + str(e))
+
+        next_url = request.GET.get('next', '/')
+        return HttpResponseRedirect(next_url)
+
+        # <a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">Remove</a>

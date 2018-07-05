@@ -123,7 +123,7 @@ urlpatterns = [
 
         url(r'^last-submissions/$', FInstanceViewset.as_view({'get': 'list'}), name='finstance-lastsubmission'),
 
-
+        url(r'^delete-submission/(?P<is_project>\d)/$', DeleteFInstance.as_view(), name='delete-finstance')
 ]
 
 
