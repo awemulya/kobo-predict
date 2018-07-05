@@ -2103,6 +2103,7 @@ class DeleteFInstance(FInstanceRoleMixin, View):
                                        organization=finstance.project.organization,
                                        project=finstance.site.project,
                                                         site=finstance.site,
+                                                        extra_json=extra_json,
                                                         extra_object=extra_object,
                                                         extra_message=extra_message,
                                                         content_object=finstance)
