@@ -1,7 +1,7 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n staticfiles %}
 {% load filters %}
-
+{% load l10n %}
 {% block content %}
 <link href="{% static 'css/site-bulk-edit.css' %}" rel="stylesheet">
 <div id="main-content" class="padding">
@@ -99,22 +99,27 @@
 <script>
     const regionalSites = {
         {% for region in regions %}
-        {{ region.id }}: [{% for s in region.sites %}'{{ s }}', {% endfor %}],
+        {{ region.id }}: [{% for s in region.sites %}'{{ s|unlocalize }}', {% endfor %}],
         {% endfor %}
     };
 
     function filterSites(siteIds, clear=false) {
         const siteInputs = [];
-
+        console.log(siteIds);
         $('input[name="sites"]').each(function() {
+
+            console.log($(this).attr('value'));
             if (clear || siteIds.indexOf($(this).attr('value')) >= 0) {
                 siteInputs.push($(this));
+                console.log(siteIds.indexOf($(this).attr('value')));
+                console.log($(this).attr('value'));
                 $(this).closest('li').show();
             } else {
                 $(this).prop('checked', false);
                 $(this).closest('li').hide();
             }
         });
+        
     }
 
     $(document).ready(() => {
@@ -127,11 +132,12 @@
             const regionsVal = $(this).val();
             if (!regionsVal || regionsVal.length === 0) {
                 uploadAnchor.attr('href', uploadUrl);
-                filterSites(undefined, true);
+                filterSites([], true);
                 return;
             }
 
             uploadAnchor.attr('href', uploadUrl + '?regions=' + regionsVal.join(','));
+            
             const sites = regionsVal.reduce((acc, id) => {
                 return [
                     ...acc,

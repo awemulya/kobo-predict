@@ -2900,6 +2900,35 @@ def redirectToSite(request, pk):
 
 
 class SiteBulkEditView(View):
+    def get_regions(self, project, parent=None, default=[], prefix=''):
+        
+        regions = Region.objects.filter(project=project, parent=parent)
+        if regions.count() == 0:
+            return default
+
+        result = default + [
+            {
+                'id': region.pk,
+                'name': '{}{} ({})'.format(
+                    prefix,
+                    region.name,
+                    region.identifier,
+                ),
+                'sites': [s.id for s in Site.objects.filter(
+                    region=region
+                )],
+            } for region in regions
+        ]
+
+        for region in regions:
+            result = self.get_regions(
+                project,
+                region,
+                result,
+                '{}{} / '.format(prefix, region.name),
+            )
+
+        return result
     @staticmethod
     def get_regions_filter(project, parent=None, default=[], prefix=''):
         regions = Region.objects.filter(project=project, parent=parent)
@@ -2968,6 +2997,7 @@ class SiteBulkEditView(View):
             new_data.update(data)
             site.site_meta_attributes_ans = new_data
             site.save()
+            print "here"
 
         context['done'] = True
 
