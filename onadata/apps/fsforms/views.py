@@ -2097,7 +2097,7 @@ class DeleteFInstance(FInstanceRoleMixin, View):
                 extra_object=finstance.project
                 extra_message="project"
             extra_json = {}
-            extra_json['submitted_by'] = finstance.submitted_by.getname() 
+            extra_json['submitted_by'] = finstance.submitted_by.user_profile.getname() 
             noti = finstance.fieldsight_instance.logs.create(source=self.request.user, type=33, title="deleted response" + instance_pk,
                                        organization=finstance.project.organization,
                                        project=finstance.site.project,
