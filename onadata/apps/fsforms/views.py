@@ -2097,8 +2097,9 @@ class DeleteFInstance(FInstanceRoleMixin, View):
                 extra_object=finstance.project
                 extra_message="project"
             extra_json = {}
+
             extra_json['submitted_by'] = finstance.submitted_by.user_profile.getname() 
-            noti = finstance.fieldsight_instance.logs.create(source=self.request.user, type=33, title="deleted response" + instance_pk,
+            noti = finstance.logs.create(source=self.request.user, type=33, title="deleted response" + instance_pk,
                                        organization=finstance.project.organization,
                                        project=finstance.site.project,
                                                         site=finstance.site,
@@ -2108,7 +2109,7 @@ class DeleteFInstance(FInstanceRoleMixin, View):
             messages.success(request, 'Form sucessfully Deleted.')
 
         except Exception as e:
-            messages.error(request, 'Form deleted unsuccessfull.' + str(e))
+            messages.warning(request, 'Form deleted unsuccessfull.' + str(e))
 
         next_url = request.GET.get('next', '/')
         return HttpResponseRedirect(next_url)
