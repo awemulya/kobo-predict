@@ -2084,7 +2084,7 @@ class CreateKoboFormView(TemplateView, LoginRequiredMixin):
 class DeleteFInstance(FInstanceRoleMixin, View):
     def get(self, request, *args, **kwargs):
         try:
-            finstance = FInstance.objects.get(instance_pk=self.kwargs.get('instance_pk'))
+            finstance = FInstance.objects.get(instance_id=self.kwargs.get('instance_pk'))
             finstance.is_deleted = True
             finstance.save()
             delete_form_instance(int(self.kwargs.get('instance_pk')))
@@ -2107,7 +2107,7 @@ class DeleteFInstance(FInstanceRoleMixin, View):
                                                         content_object=finstance)
 
         except Exception as e:
-            messages.success(request, 'Form deleted unsuccessfull.' + str(e))
+            messages.error(request, 'Form deleted unsuccessfull.' + str(e))
 
         next_url = request.GET.get('next', '/')
         return HttpResponseRedirect(next_url)
