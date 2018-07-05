@@ -88,7 +88,7 @@
               <a href="{% url 'forms:edit-submission' sub.project_fxf.pk sub.id %}">Edit</a>    
           </td>
           <td>
-            <a class="btn btn-xs btn-danger" href="{% url 'fsforms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}"><span class="glyphicon glyphicon-remove"></span></a>
+            <a class="btn btn-xs btn-danger" href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}"><span class="glyphicon glyphicon-remove"></span></a>
           </td>
         </tr>        
     {% endfor %}
@@ -123,7 +123,7 @@
             <a href="{% url 'forms:edit-submission' sub.site_fxf.pk sub.id %}">Edit</a>    
         </td>
         <td>
-            <a class="btn btn-xs btn-danger" href="{% url 'fsforms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}"><span class="glyphicon glyphicon-remove"></span></a>
+            <a class="btn btn-xs btn-danger" href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}"><span class="glyphicon glyphicon-remove"></span></a>
         </td>
       </tr>
     {% endfor %}
