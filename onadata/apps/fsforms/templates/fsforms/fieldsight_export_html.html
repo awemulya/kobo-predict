@@ -95,7 +95,7 @@
               <a href="{% url 'forms:edit-submission' sub.project_fxf.pk sub.id %}">Edit</a>    
           </td>
           <td>
-            <span class="glyphicon glyphicon-remove" onclick="confirmDelete(`{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}`)">Delete</span>
+            <span class="glyphicon glyphicon-remove" onclick="confirmDelete(`{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}`)"><a>Delete</a></span>
           </td>
         </tr>        
     {% endfor %}
@@ -215,6 +215,7 @@
 <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
 <script type="text/javascript">
   function redirectto(url){
+    console.log(url)
     window.location.href = url
   }
   function confirmDelete(url){
