@@ -54,7 +54,7 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
 from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
     EducationMaterial, EducationalImages, InstanceImages, DeployEvent
 from django.db.models import Q
-from onadata.apps.fieldsight.rolemixins import MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
+from onadata.apps.fieldsight.rolemixins import FInstanceRoleMixin, MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
 from onadata.apps.fsforms.XFormMediaAttributes import get_questions_and_media_attributes
 from .fieldsight_logger_tools import save_submission
 
@@ -1114,10 +1114,10 @@ class Setup_forms(SPFmixin, View):
                    'schedule_form': KoScheduleForm(request=request)})
 
 
-class FormFillView(ReadonlyFormMixin, View):
+class FormFillView(ReadonlyFormMixin, FInstanceRoleMixin, View):
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
-        sub_pk = self.kwargs.get('sub_pk')
+        sub_pk = self.kwargs.get('instance_pk')
 
         fieldsight_xf = FieldSightXF.objects.get(pk=pk)
         xform = fieldsight_xf.xf
@@ -1140,7 +1140,7 @@ class FormFillView(ReadonlyFormMixin, View):
 
     def post(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
-        sub_pk = self.kwargs.get('sub_pk')
+        sub_pk = self.kwargs.get('instance_pk')
 
         fs_xf = FieldSightXF.objects.get(pk=pk)
         xform = fs_xf.xf
@@ -2080,3 +2080,9 @@ class CreateKoboFormView(TemplateView, LoginRequiredMixin):
         data["token_key"] = token
         data["kpi_url"] = settings.KPI_URL
         return data
+
+class DeleteFInstance(FInstanceRoleMixin, View):
+    def post(self, pk):
+        finstance = FInstance.objects.get(instance_pk=instance_pk)
+        finstance.is_deleted = True
+        finstance.save()

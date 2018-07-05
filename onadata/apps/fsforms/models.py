@@ -364,6 +364,15 @@ class FieldSightParsedInstance(ParsedInstance):
         return fspi, created
 
 
+
+class FInstanceManager(models.Manager):
+    def get_queryset(self):
+        return super(FInstanceManager, self).get_queryset().filter(is_deleted=False)
+
+class FInstanceDeletedManager(models.Manager):
+    def get_queryset(self):
+        return super(FInstanceManager, self).get_queryset().filter(is_deleted=True)
+
 class FInstance(models.Model):
     instance = models.OneToOneField(Instance, related_name='fieldsight_instance')
     site = models.ForeignKey(Site, null=True, related_name='site_instances')
@@ -373,6 +382,9 @@ class FInstance(models.Model):
     form_status = models.IntegerField(null=True, blank=True, choices=FORM_STATUS)
     date = models.DateTimeField(auto_now=True)
     submitted_by = models.ForeignKey(User, related_name="supervisor")
+    is_deleted = models.BooleanField(default=False)
+    objects = FInstanceManager()
+    deleted_objects = FInstanceDeletedManager()
     logs = GenericRelation('eventlog.FieldSightLog')
 
     def save(self, *args, **kwargs):
@@ -431,7 +443,7 @@ class FInstance(models.Model):
                             if first_children['type'] == 'note':
                                 answer= ''
                             elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or first_children['type'] == 'video':
-                                answer = 'http://'+base_url+'/attachment/medium?media_file=/'+ media_folder +'/attachments/'+gnr_answer[r_question+"/"+question]
+                                answer = 'http://'+base_url+'/attachment/medium?media_file=/'+ media_folder +'attachments/'+gnr_answer[r_question+"/"+question]
                             else:
                                 answer = gnr_answer[r_question+"/"+question]
                                 
@@ -463,7 +475,7 @@ class FInstance(models.Model):
                     if question_type == 'note':
                         answer= '' 
                     elif question_type == 'photo' or question_type == 'audio' or question_type == 'video':
-                        answer = 'http://'+base_url+'/attachment/medium?media_file=/'+ media_folder +'/attachments/'+json_answer[g_question+"/"+question]
+                        answer = 'http://'+base_url+'/attachment/medium?media_file=/'+ media_folder +'attachments/'+json_answer[g_question+"/"+question]
                     else:
                         answer = json_answer[g_question+"/"+question]
 
@@ -487,7 +499,7 @@ class FInstance(models.Model):
                         if first_children['type'] == 'note':
                             answer= '' 
                         elif first_children['type'] == 'photo' or first_children['type'] == 'audio' or first_children['type'] == 'video':
-                            answer = 'http://'+base_url+'/attachment/medium?media_file=/'+ media_folder +'/attachments/'+json_answer[question]
+                            answer = 'http://'+base_url+'/attachment/medium?media_file=/'+ media_folder +'attachments/'+json_answer[question]
                         else:
                             answer = json_answer[question]
                     if 'label' in first_children:
