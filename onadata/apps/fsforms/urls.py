@@ -47,7 +47,7 @@ from .views import (
     Configure_forms,
     instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
     save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable, DeleteMyForm,
-
+    DeleteFInstance,
     FormFillView, CreateKoboFormView
 
 )
