@@ -57,7 +57,7 @@ urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
 
         url(r'^new-submission/(?P<fsxf_id>\d+)/$', FormFillView.as_view(), name='new-submission'),
-        url(r'^edit-submission/(?P<fsxf_id>\d+)/(?P<sub_pk>\d+)/$', FormFillView.as_view(), name='edit-submission'),
+        url(r'^edit-submission/(?P<fsxf_id>\d+)/(?P<instance_pk>\d+)/$', FormFillView.as_view(), name='edit-submission'),
 
         url(r'^assigned/$', MyOwnFormsListView.as_view(), name='forms-list'),
         url(r'^create/$', CreateKoboFormView.as_view(), name='forms-create'),
@@ -123,7 +123,7 @@ urlpatterns = [
 
         url(r'^last-submissions/$', FInstanceViewset.as_view({'get': 'list'}), name='finstance-lastsubmission'),
 
-        url(r'^delete-submission/(?P<is_project>\d)/$', DeleteFInstance.as_view(), name='delete-finstance')
+        url(r'^delete-submission/(?P<instance_pk>\d+)/$', DeleteFInstance.as_view(), name='delete-finstance')
 ]
 
 
