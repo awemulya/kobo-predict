@@ -103,8 +103,10 @@ def current_user(request):
         for role in roles:
             site = role.site
             site_type = 0
+            site_type_level = ""
             try:
                 site_type = site.type.id
+                site_type_level = site.type.name
             except Exception as e:
                 pass
             data = site.blueprints.all()
@@ -113,7 +115,7 @@ def current_user(request):
             site_info = {'site': {'id': site.id, 'phone': site.phone, 'name': site.name, 'description': site.public_desc,
                                   'address':site.address, 'lat': repr(site.latitude), 'lon': repr(site.longitude),
                                   'identifier':site.identifier, 'progress': site.progress(), 'type_id':site_type,
-                                  'type_label':'',
+                                  'type_label':site_type_level,
                                   'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans},
                          'project': {'name': project.name, 'id': project.id, 'description': project.public_desc,
                                      'address':project.address, 'type_id':project.type.id,
