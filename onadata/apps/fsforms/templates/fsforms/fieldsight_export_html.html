@@ -95,7 +95,7 @@
               <a href="{% url 'forms:edit-submission' sub.project_fxf.pk sub.id %}">Edit</a>    
           </td>
           <td>
-            <a class="btn btn-xs btn-danger" href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}"><span class="glyphicon glyphicon-remove"></span></a>
+            <span class="glyphicon glyphicon-remove" onclick="confirmDelete(`{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}`)"></span>
           </td>
         </tr>        
     {% endfor %}
@@ -130,7 +130,7 @@
             <a href="{% url 'forms:edit-submission' sub.site_fxf.pk sub.id %}">Edit</a>    
         </td>
         <td>
-            <a class="btn btn-xs btn-danger" href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}"><span class="glyphicon glyphicon-remove"></span></a>
+            <span class="glyphicon glyphicon-remove" onclick="confirmDelete(`{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}`)"></span>
         </td>
       </tr>
     {% endfor %}
@@ -212,12 +212,18 @@
 
 
 {% block extrascript %}
-    <script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
-    <script type="text/javascript">
-      function redirectto(url){
-        window.location.href = url
-      }
-    </script>
+<script src="{{STATIC_URL}}lightbox2/dist/js/lightbox.js"></script>
+<script type="text/javascript">
+  function redirectto(url){
+    window.location.href = url
+  }
+  function confirmDelete(url){
+      var ask=confirm("Are you sure you want to delete the response ?");
+      if(ask){
+        redirectto(url);
+       }
+  }
+</script>
 {% endblock %}
 
 <!-- 
