@@ -2087,7 +2087,7 @@ class DeleteFInstance(FInstanceRoleMixin, View):
             finstance = FInstance.objects.get(instance_pk=self.kwargs.get('instance_pk'))
             finstance.is_deleted = True
             finstance.save()
-            delete_form_instance(int(instance_pk))
+            delete_form_instance(int(self.kwargs.get('instance_pk')))
             messages.success(request, 'Form sucessfully Deleted.')
 
             if finstance.site:
