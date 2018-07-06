@@ -2997,8 +2997,7 @@ class SiteBulkEditView(View):
             new_data.update(data)
             site.site_meta_attributes_ans = new_data
             site.save()
-            print "here"
-
+            
         context['done'] = True
 
         return render(
