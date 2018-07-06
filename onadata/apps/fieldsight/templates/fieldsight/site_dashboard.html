@@ -118,12 +118,12 @@
 										<i class="la la-clipboard"></i> {% trans 'Data' %}
 									</a>
 									<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
-										<a class="dropdown-item" href="{% url 'fieldsight:site-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i>{% trans 'Site' %} {% trans 'Summary' %} {% trans 'Report' %}</a>
+										<a class="dropdown-item" href="{% url 'fieldsight:site-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i> {% trans 'Site' %} {% trans 'Summary' %} {% trans 'Report' %}</a>
 										<!-- <a class="dropdown-item" target="_blank" href="{% url 'fieldsight:site-responses-report' obj.pk %}"><i class="la la-reply"></i>{% trans 'Site' %} {% trans 'Responses' %} {% trans 'Report' %}</a> -->
 
-										<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#exportModal"><i class="la la-reply"></i>{% trans 'Site' %} {% trans 'Custom' %} {% trans 'Report' %}</a>
+										<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#exportModal"><i class="la la-file-pdf-o"></i> {% trans 'Site' %} {% trans 'PDF' %} {% trans 'Report' %}</a>
 
-										<a class="dropdown-item" href="{% url 'forms:site-responses' obj.pk %}" target="_blank" ><i class="la la-reply"></i>{% trans 'Responses' %}</a>
+										<a class="dropdown-item" href="{% url 'forms:site-responses' obj.pk %}" target="_blank" ><i class="la la-reply"></i> {% trans 'Responses' %}</a>
 
 
 									</div>
@@ -199,7 +199,7 @@
 
 										{% elif progress <= 10 %}
 										<div class="progress-bar progress-bar" role="progressbar" style="width: {{ progress  }}%;" aria-valuenow="{{progress}}" aria-valuemax="100">
-											<span class="progress-bar-value" style="color:white;">{{ progress }}% </span><
+											<span class="progress-bar-value" style="color:white;">{{ progress }}% </span>
 
 										{% elif progress >= 90 %}
 										<div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ progress  }}%; background-color: green" aria-valuenow="{{progress}}" aria-valuemax="100">
