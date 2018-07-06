@@ -455,6 +455,36 @@ class EndRoleMixin(LoginRequiredMixin):
         raise PermissionDenied() 
 
 
+class FInstanceRoleMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if request.group.name == "Super Admin":
+            return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
+        finstance = get_object_or_404(FInstance, instance_id=instance_pk)
+        if instance.site or instance.project:
+            project = instance.project
+            if instance.site:
+                site_id = instance.site.id
+                user_id = request.user.id
+                user_role = request.roles.filter(user_id = user_id, site_id = site_id, group__name="Reviewer")
+                
+                if user_role:
+                    return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
+                else:
+                    project = instance.site.project
+            
+            if project:
+                project = instance.project
+                user_role_aspadmin = request.roles.filter(user_id = user_id, project_id = project.id, group__name="Project Manager")
+                if user_role_aspadmin:
+                    return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
+
+                organization_id = project.organization.id
+                user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+                if user_role_asorgadmin:
+                    return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
+            
+        raise PermissionDenied() 
+
 # for api mixins/permissions
 
 # class ProjectPermission(BasePermission):

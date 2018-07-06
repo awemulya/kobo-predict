@@ -53,6 +53,7 @@ class FieldSightLog(models.Model):
         (30, 'Project SIte Import From number of region in Project Name Completed SuccessFully'),
         (31, 'User edited a response for Form Type Form Name in Site Name.'),
         (32, 'Report generated sucessfull.'),
+        (33, 'Response Delete sucessfull.'),
         (412, 'Bulk upload of number + sites in Project Name failed.'),
         (421, 'User assign unsuccessful in organization.'),
         (422, 'User assign unsucessfull in project.'),

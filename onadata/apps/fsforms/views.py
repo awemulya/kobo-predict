@@ -28,7 +28,7 @@ from rest_framework.response import Response
 from channels import Group as ChannelGroup
 
 from onadata.apps.fieldsight.models import Site, Project
-from onadata.apps.fsforms.reports_util import get_images_for_site_all, get_instances_for_field_sight_form, build_export_context, \
+from onadata.apps.fsforms.reports_util import delete_form_instance, get_images_for_site_all, get_instances_for_field_sight_form, build_export_context, \
     get_xform_and_perms, query_mongo, get_instance, update_status, get_instances_for_project_field_sight_form
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer, \
     SubStageDetailSerializer
@@ -54,7 +54,7 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
 from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
     EducationMaterial, EducationalImages, InstanceImages, DeployEvent
 from django.db.models import Q
-from onadata.apps.fieldsight.rolemixins import MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
+from onadata.apps.fieldsight.rolemixins import FInstanceRoleMixin, MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
 from onadata.apps.fsforms.XFormMediaAttributes import get_questions_and_media_attributes
 from .fieldsight_logger_tools import save_submission
 
@@ -1114,10 +1114,10 @@ class Setup_forms(SPFmixin, View):
                    'schedule_form': KoScheduleForm(request=request)})
 
 
-class FormFillView(ReadonlyFormMixin, View):
+class FormFillView(ReadonlyFormMixin, FInstanceRoleMixin, View):
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
-        sub_pk = self.kwargs.get('sub_pk')
+        sub_pk = self.kwargs.get('instance_pk')
 
         fieldsight_xf = FieldSightXF.objects.get(pk=pk)
         xform = fieldsight_xf.xf
@@ -1140,7 +1140,7 @@ class FormFillView(ReadonlyFormMixin, View):
 
     def post(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
-        sub_pk = self.kwargs.get('sub_pk')
+        sub_pk = self.kwargs.get('instance_pk')
 
         fs_xf = FieldSightXF.objects.get(pk=pk)
         xform = fs_xf.xf
@@ -1183,7 +1183,7 @@ class FormFillView(ReadonlyFormMixin, View):
                 extra_message="project"
             
             noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=noti_type, title=title,
-                                       organization=instance.fieldsight_instance.site.project.organization,
+                                       organization=instance.fieldsight_instance.project.organization,
                                        project=instance.fieldsight_instance.site.project,
                                                         site=instance.fieldsight_instance.site,
                                                         extra_object=extra_object,
@@ -2080,3 +2080,39 @@ class CreateKoboFormView(TemplateView, LoginRequiredMixin):
         data["token_key"] = token
         data["kpi_url"] = settings.KPI_URL
         return data
+
+class DeleteFInstance(FInstanceRoleMixin, View):
+    def get(self, request, *args, **kwargs):
+        try:
+            finstance = FInstance.objects.get(instance_id=self.kwargs.get('instance_pk'))
+            finstance.is_deleted = True
+            finstance.save()
+            delete_form_instance(int(self.kwargs.get('instance_pk')))
+            
+
+            if finstance.site:
+                extra_object=finstance.site
+                extra_message="site"
+            else:
+                extra_object=finstance.project
+                extra_message="project"
+            extra_json = {}
+
+            extra_json['submitted_by'] = finstance.submitted_by.user_profile.getname() 
+            noti = finstance.logs.create(source=self.request.user, type=33, title="deleted response" + self.kwargs.get('instance_pk'),
+                                       organization=finstance.project.organization,
+                                       project=finstance.site.project,
+                                                        site=finstance.site,
+                                                        extra_json=extra_json,
+                                                        extra_object=extra_object,
+                                                        extra_message=extra_message,
+                                                        content_object=finstance)
+            messages.success(request, 'Form sucessfully Deleted.')
+
+        except Exception as e:
+            messages.warning(request, 'Form deleted unsuccessfull.' + str(e))
+
+        next_url = request.GET.get('next', '/')
+        return HttpResponseRedirect(next_url)
+
+        # <a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">Remove</a>

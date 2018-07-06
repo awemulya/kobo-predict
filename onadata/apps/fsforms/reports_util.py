@@ -30,6 +30,10 @@ def get_instances_for_field_sight_form(fieldsight_form_id, submission=None):
     query = {"$or":[{"_uuid":fieldsight_form_id}, {"fs_uuid":fieldsight_form_id}, {"_uuid":str(fieldsight_form_id)}, {"fs_uuid":str(fieldsight_form_id)}]}
     return settings.MONGO_DB.instances.find(query)
 
+def delete_form_instance(instance_id):
+    query = {'_id': instance_id}
+    return settings.MONGO_DB.instances.remove(query)
+
 def get_instances_for_project_field_sight_form(project_fieldsight_form_id, submission=None):
     query = {'fs_project_uuid': { '$in': [project_fieldsight_form_id, str(project_fieldsight_form_id)]}}
     return settings.MONGO_DB.instances.find(query)
