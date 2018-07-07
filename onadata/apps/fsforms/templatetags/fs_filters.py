@@ -58,19 +58,14 @@ def fsmedia(data_list):
 
 @register.filter
 def project_submissions(formid):
-    if FieldSightXF.objects.filter(id=formid).exists():
-        f = FieldSightXF.objects.get(pk=formid)
-        return f.project_form_instances.count()
-    return 0
+    FIs = FInstance.objects.filter(project_fxf = formid).count()
+    return FIs
 
 
 @register.filter
 def site_submissions(formid):
-    if FieldSightXF.objects.filter(id=formid).exists():
-        f = FieldSightXF.objects.get(pk=formid)
-        return f.site_form_instances.count()
-    return 0
-
+    FIs = FInstance.objects.filter(site_fxf = formid).count()
+    return FIs
 
 @register.filter
 def can_edit_finstance(user, finstance):
