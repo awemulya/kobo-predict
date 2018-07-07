@@ -58,13 +58,13 @@ def fsmedia(data_list):
 
 @register.filter
 def project_submissions(formid):
-    FIs = FInstance.objects.filter(project_fxf = formid).count()
+    FIs = FInstance.objects.filter(project_fxf_id = formid).count()
     return FIs
 
 
 @register.filter
 def site_submissions(formid):
-    FIs = FInstance.objects.filter(site_fxf = formid).count()
+    FIs = FInstance.objects.filter(site_fxf_id = formid).count()
     return FIs
 
 @register.filter
