@@ -75,7 +75,7 @@
                       <td>
                           {% with obj.id|site_submissions as count %}
                           
-                           <a class="badge badge-primary" href="{% url 'forms:formpack_html_export' obj.id %}">
+                           <a class="badge badge-primary" href="{% url 'forms:html_export' obj.id %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
                           {% endwith %}
 
@@ -134,7 +134,7 @@
                       <td>
                            {% with obj.schedule_forms.pk|site_submissions as count %}
                           
-                           <a class="badge badge-primary" href="{% url 'forms:formpack_html_export' obj.schedule_forms.pk %}">
+                           <a class="badge badge-primary" href="{% url 'forms:html_export' obj.schedule_forms.pk %}">
                               <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
                               </a>
                           {% endwith %}
@@ -202,7 +202,7 @@
                               <td>
                           {% with obj.stage_forms.pk|site_submissions as count %}
                           
-                               <a class="badge badge-primary" href="{% url 'forms:formpack_html_export' obj.stage_forms.pk %}">
+                               <a class="badge badge-primary" href="{% url 'forms:html_export' obj.stage_forms.pk %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
                                </a>
                           {% endwith %}
