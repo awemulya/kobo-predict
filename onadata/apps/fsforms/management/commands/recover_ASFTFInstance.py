@@ -5,7 +5,7 @@ class Command(BaseCommand):
     #ASFTFInstance.py
     help = 'Recovery for FInstances of FSForms of type `general`, `scheduled` and `stage` with site and site level form but without site form ids in site_fxf.'
     def handle(self, *args, **options):
-        siteforms = FInstance.objects.all(site__isnull=False, site_fxf__isnull=True)
+        siteforms = FInstance.objects.filter(site__isnull=False, site_fxf__isnull=True)
         print "Total sites to be recovered = " + str(siteforms.count())
         for respo in siteforms:
             if respo.project_fxf:
