@@ -1496,20 +1496,6 @@ class Project_html_export(ReadonlyFormMixin, ListView):
         return new_queryset
 
 
-@group_required('KoboForms')
-def project_html_export(request, fsxf_id):
-    fsxf_id = int(fsxf_id)
-    fsxf = FieldSightXF.objects.get(pk=fsxf_id)
-    cursor = FInstance.objects.filter(project_fxf=fsxf) 
-    context={}
-    context['project_data'] = cursor
-    context['is_project_data'] = True
-    context['form_name'] = fsxf.xf.title
-    context['fsxfid'] = fsxf_id
-    context['obj'] = fsxf
-    # return JsonResponse({'data': cursor})
-    return render(request, 'fsforms/fieldsight_export_html.html', context)
-
 class Instance_detail(FormMixin, View):
     def get(self, request, fsxf_id, instance_id):
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
