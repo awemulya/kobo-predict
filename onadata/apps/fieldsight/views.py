@@ -472,13 +472,13 @@ def alter_proj_status(request, pk):
 
 
 class StageStatus(LoginRequiredMixin, ProjectRoleMixin, View):
-    def get(request, pk):
+    def get(self, request, *args, **kwargs):
         try:
             data = []
             ss_index = {}
             stages_rows = []
             head_row = ["Site ID", "Name", "Address", "Latitude", "longitude", "Status"]
-            project = Project.objects.get(pk=pk)
+            project = Project.objects.get(pk=self.kwargs.get('pk'))
             stages = project.stages.filter(stage__isnull=True)
             for stage in stages:
                 sub_stages = stage.parent.all()
