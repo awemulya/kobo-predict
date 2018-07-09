@@ -62,7 +62,7 @@ class ProjectLog(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing sites.
     """
-    queryset = FieldSightLog.objects.select_related('source__user_profile').all().prefetch_related('seen_by')
+    queryset = FieldSightLog.objects.select_related('source__user_profile').filter(recipient=None)
     serializer_class = NotificationSerializer
     pagination_class = LargeResultsSetPagination
 
@@ -74,7 +74,7 @@ class SiteLog(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing sites.
     """
-    queryset = FieldSightLog.objects.select_related('source__user_profile').all().prefetch_related('seen_by')
+    queryset = FieldSightLog.objects.select_related('source__user_profile').filter(recipient=None)
     serializer_class = NotificationSerializer
     pagination_class = LargeResultsSetPagination
 
