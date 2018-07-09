@@ -1,9 +1,15 @@
 from django.conf.urls import url
 
-from onadata.apps.users.views import ContactViewSet, UsersListView, MyProfile, EndUserRole
+from onadata.apps.users.views import ContactViewSet, UsersListView, MyProfile, EndUserRole, web_login
 from onadata.apps.users.viewsets import UserViewSet, ProfileViewSet, UserListViewSet, SearchableUserListViewSet
 from . import views
 urlpatterns = [
+
+    url(r'^accounts/logout/', 'django.contrib.auth.views.logout',
+        {'next_page': '/'}, name='auth_logout'),
+
+    url(r'^accounts/login/', web_login, name='web_login'),
+
     url(r'^$', UsersListView.as_view(), name='users'),
     url(r'^api/list/all(?:/(?P<level>[1-4]))?(?:/(?P<username>[^/]+))?/$', SearchableUserListViewSet.as_view({'get': 'list'})),
     url(r'^contacts/$', ContactViewSet.as_view({'get': 'list'}), name='contacts'),

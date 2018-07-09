@@ -142,13 +142,7 @@ class MyOrgProjectlistViewSet(viewsets.ModelViewSet):
 
         exclude_pk = self.kwargs.get('exclude_pk', 0)
         org_id = self.kwargs.get('pk', None)
-        if self.request.group.name == "Super Admin":
-            return queryset.filter(organization_id=org_id).exclude(pk=exclude_pk)
-
-        
-        project_ids = self.request.roles.filter(group_id=2).values('project_id')
-        orgqueryset =  queryset.filter(organization_id = pk)
-        return orgqueryset.filter(Q(pk__in=project_ids)).exclude(pk=exclude_pk)
+        return queryset.filter(organization_id=org_id).exclude(pk=exclude_pk)
 
 
 class ProjectRegionslistViewSet(viewsets.ModelViewSet):

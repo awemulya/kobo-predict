@@ -145,35 +145,6 @@ def current_user(request):
 
         return Response(response_data)
 
-# def web_login(request):
-#
-#     if request.user.is_authenticated():
-#         return redirect('/dashboard/')
-#     if request.method == 'POST':
-#         form = LoginForm(request.POST)
-#         if form.is_valid():
-#             email = form.cleaned_data['email']
-#             pwd = form.cleaned_data['password']
-#             user = web_authenticate(username=email, password=pwd)
-#             if user is not None:
-#                 if user.is_active:
-#                     login(request, user)
-#                     # request.__class__.organization = role.organization
-#                     return HttpResponseRedirect('/fieldsight/')
-#                 else:
-#                     return render(request, 'registration/login.html', {'form':form, 'inactive':True})
-#             else:
-#                 return render(request, 'registration/login.html', {'form':form, 'form_errors':True})
-#         else:
-#             return render(request, 'registration/login.html', {'form': form})
-#     else:
-#         form = LoginForm()
-#
-#     return render(request, 'registration/login.html', {'form': form})
-
-# @group_required("admin")
-
-
 
 @group_required("admin")
 @api_view(['GET'])
@@ -273,34 +244,6 @@ class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
         self.object = form.save()
         return HttpResponseRedirect(self.success_url)
 
-        # profile = UserProfile.objects.get(user=user)
-    #     profile.address = form.cleaned_data['address']
-    #     profile.gender = form.cleaned_data['gender']
-    #     profile.phone = form.cleaned_data['phone']
-    #     profile.skype = form.cleaned_data['skype']
-    #     profile.primary_number = form.cleaned_data['primary_number']
-    #     profile.secondary_number = form.cleaned_data['secondary_number']
-    #     profile.office_number = form.cleaned_data['office_number']
-    #     profile.viber = form.cleaned_data['viber']
-    #     profile.whatsapp = form.cleaned_data['whatsapp']
-    #     profile.wechat = form.cleaned_data['wechat']
-    #     profile.line = form.cleaned_data['line']
-    #     profile.tango = form.cleaned_data['tango']
-    #     profile.hike = form.cleaned_data['hike']
-    #     profile.qq = form.cleaned_data['qq']
-    #     profile.google_talk = form.cleaned_data['google_talk']
-    #     profile.profile_picture = form.cleaned_data['profile_picture']
-    #     profile.save()
-    #     # noti = profile.logs.create(source=self.request.user, type=0, title="User",
-    #     #                            organization=profile.organization, description="user {0} updated by {1}".
-    #     #                            format(user.username, self.request.user.username))
-    #     # result = {}
-    #     # result['description'] = 'user {0} updated by {1}'.format(user.username, self.request.user.username)
-    #     # result['url'] = noti.get_absolute_url()
-    #     # ChannelGroup("notify-{}".format(profile.id)).send({"text": json.dumps(result)})
-    #     # ChannelGroup("notify-0").send({"text": json.dumps(result)})
-    #
-    #     return HttpResponseRedirect(self.success_url)
 
 
 class MyProfile(LoginRequiredMixin, View):
@@ -360,3 +303,41 @@ def all_notification(user,  message):
             "msg": message
         })
     })
+
+
+
+def web_authenticate(username=None, password=None):
+        try:
+            if "@" in username:
+                user = User.objects.get(email__iexact=username)
+            else:
+                user = User.objects.get(username__iexact=username)
+            if user.check_password(password):
+                return authenticate(username=user.username, password=password)
+        except User.DoesNotExist:
+            return None
+
+
+def web_login(request):
+    if request.user.is_authenticated():
+        return redirect('/dashboard/')
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            pwd = form.cleaned_data['password']
+            user = web_authenticate(username=username, password=pwd)
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponseRedirect(reverse('kobocat'))
+                else:
+                    return render(request, 'users/login.html', {'form':form, 'inactive':True})
+            else:
+                return render(request, 'users/login.html', {'form':form, 'form_errors':True})
+        else:
+            return render(request, 'users/login.html', {'form': form})
+    else:
+        form = LoginForm()
+
+    return render(request, 'users/login.html', {'form': form})
