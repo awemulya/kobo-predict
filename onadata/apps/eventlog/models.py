@@ -205,7 +205,13 @@ class CeleryTaskProgress(models.Model):
 
     def get_name():
         return self.file.name
-        
+    
+    def get_absolute_url(self):
+        if self.file:
+            return self.file.url
+        else:
+            return ""
+            
     def get_progress(self):
         if self.status == 1:
             if task_id:

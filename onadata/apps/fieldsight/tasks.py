@@ -81,7 +81,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
                 myanswers = {}
                 for question in meta_ques:
                     myanswers[question['question_name']]=site.get(question['question_name'], "")
-                    print site.get(question['question_name'])
+                    
                 
                 _site.site_meta_attributes_ans = myanswers
                 _site.save()
@@ -94,7 +94,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
             task.save()
             noti = project.logs.create(source=source_user, type=12, title="Bulk Sites",
                                        organization=project.organization,
-                                       project=project, content_object=project,
+                                       project=project, content_object=task, extra_object=project,
                                        extra_message=str(count) + " Sites")
     except Exception as e:
         task.status = 3
@@ -218,7 +218,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
         task.file.name = xls_url
         task.save()
         noti = task.logs.create(source=source_user, type=32, title="Xls Report generation in project",
-                                   recipient=source_user, content_object=project,
+                                   recipient=source_user, content_object=task, extra_object=project,
                                    extra_message=" <a href='"+ task.file.url +"'>Xls report</a> generation in project")
 
     except Exception as e:
@@ -254,7 +254,7 @@ def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs
         task.save()
 
         noti = task.logs.create(source=source_user, type=32, title="Pdf Report generation in site",
-                                   recipient=source_user, content_object=site,
+                                   recipient=source_user, content_object=task, extra_object=site,
                                    extra_message=" <a href='"+ task.file.url +"'>Pdf report</a> generation in site")
     except Exception as e:
         task.status = 3
@@ -407,7 +407,6 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         
         for key,site in site_list.iteritems():
             for col_num in range(len(header_columns)):
-                print site
                 ws.write(row_num, col_num, site.get(header_columns[col_num]['id'], ""), font_style_unbold)
             row_num += 1
         wb.save(buffer)
@@ -421,7 +420,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         task.save()
 
         noti = task.logs.create(source=source_user, type=32, title="Site details xls generation in site",
-                                   recipient=source_user, content_object=project,
+                                   recipient=source_user, content_object=task, extra_object=project,
                                    extra_message=" <a href='"+ task.file.url +"'>Xls sites detail report</a> generation in project")
 
     except Exception as e:
@@ -677,9 +676,7 @@ def multiuserassignregion(task_prog_obj_id, source_user, project_id, regions, us
     users_count = len(users)
 
     task_id = multiuserassignregion.request.id
-    print task_id
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
-    print task
     task.content_object = project
     task.description = "Assign "+str(users_count)+" people in "+str(sites_count)+" regions."
     task.status=1
@@ -693,7 +690,7 @@ def multiuserassignregion(task_prog_obj_id, source_user, project_id, regions, us
                 else: 
                     sites = Site.objects.filter(region_id = region_id, project_id=project_id).values('id')
                 for site_id in sites:
-                    print "Assigning to site : " + str(site_id)
+                    
                     for user in users:
                         site = Site.objects.filter(pk=site_id['id']).first()
                         if site and site.project_id == project.id: 
