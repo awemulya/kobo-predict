@@ -469,11 +469,20 @@ class FInstanceRoleMixin(LoginRequiredMixin):
                 
                 if user_role:
                     return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
-                else:
-                    project = finstance.site.project
+                
+                user_role_aspadmin = request.roles.filter(user_id = user_id, project_id = finstance.site.project_id, group__name="Project Manager")
+                if user_role_aspadmin:
+                    return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
+
+                organization_id = finstance.site.project.organization_id
+                user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+                
+                if user_role_asorgadmin:
+                    return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
+
+                project = finstance.site.project
             
             if project:
-                project = finstance.project
                 user_role_aspadmin = request.roles.filter(user_id = user_id, project_id = project.id, group__name="Project Manager")
                 if user_role_aspadmin:
                     return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
