@@ -459,7 +459,7 @@ class FInstanceRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         if request.group.name == "Super Admin":
             return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
-        finstance = get_object_or_404(FInstance, instance_id=instance_pk)
+        finstance = get_object_or_404(FInstance, instance_id=self.kwargs.get('instance_pk'))
         if instance.site or instance.project:
             project = instance.project
             if instance.site:
