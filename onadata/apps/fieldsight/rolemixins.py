@@ -489,7 +489,7 @@ class FInstanceRoleMixin(LoginRequiredMixin):
                     return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
                 print "here project"
                 organization_id = project.organization.id
-                user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group_id=)
+                user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group_id=1)
                 if user_role_asorgadmin:
                     return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
             
