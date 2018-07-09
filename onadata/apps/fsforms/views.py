@@ -1122,7 +1122,7 @@ class FormFillView(ReadonlyFormMixin, FInstanceRoleMixin, View):
         fieldsight_xf = FieldSightXF.objects.get(pk=pk)
         xform = fieldsight_xf.xf
 
-        finstance = FInstance.objects.get(pk=sub_pk) if sub_pk else None
+        finstance = FInstance.objects.get(instance_id=sub_pk) if sub_pk else None
 
         result = requests.post(
             'http://localhost:8085/transform',
@@ -1144,7 +1144,7 @@ class FormFillView(ReadonlyFormMixin, FInstanceRoleMixin, View):
 
         fs_xf = FieldSightXF.objects.get(pk=pk)
         xform = fs_xf.xf
-        finstance = FInstance.objects.get(pk=sub_pk) if sub_pk else None
+        finstance = FInstance.objects.get(instance_id=sub_pk) if sub_pk else None
 
         xml = request.POST['enketo_xml_data']
         media_files = request.FILES.values()

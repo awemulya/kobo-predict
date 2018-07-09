@@ -480,14 +480,12 @@ class FInstanceRoleMixin(LoginRequiredMixin):
                 
                 if user_role_asorgadmin:
                     return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
-                print "here site"
                 project = finstance.site.project
             
             if project:
                 user_role_aspadmin = request.roles.filter(project_id = project.id, group_id=2)
                 if user_role_aspadmin:
                     return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
-                print "here project"
                 organization_id = project.organization.id
                 user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group_id=1)
                 if user_role_asorgadmin:

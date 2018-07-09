@@ -92,7 +92,7 @@
           <td>{{ sub.submitted_by.user_profile.getname }}</td>
           <td>{{ sub.date }}</td>
           <td>
-            <a href="{% url 'forms:edit-submission' sub.project_fxf.pk sub.id %}">Edit</a>    
+            <a href="{% url 'forms:edit-submission' sub.project_fxf.pk sub.instance.id %}">Edit</a>    
           </td>
           <td>
             <a href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}">Delete</a></span>
@@ -127,7 +127,7 @@
         <td>{{ sub.submitted_by.user_profile.getname }}</td>
         <td>{{ sub.date }}</td>
         <td>
-            <a href="{% url 'forms:edit-submission' sub.site_fxf.pk sub.id %}">Edit</a>    
+            <a href="{% url 'forms:edit-submission' sub.site_fxf.pk sub.instance.id %}">Edit</a>    
         </td>
         <td>
             <a href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}">Delete</a></span>
