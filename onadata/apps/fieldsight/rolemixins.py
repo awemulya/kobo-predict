@@ -460,20 +460,20 @@ class FInstanceRoleMixin(LoginRequiredMixin):
         if request.group.name == "Super Admin":
             return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
         finstance = get_object_or_404(FInstance, instance_id=self.kwargs.get('instance_pk'))
-        if instance.site or instance.project:
-            project = instance.project
-            if instance.site:
-                site_id = instance.site.id
+        if finstance.site or finstance.project:
+            project = finstance.project
+            if finstance.site:
+                site_id = finstance.site.id
                 user_id = request.user.id
                 user_role = request.roles.filter(user_id = user_id, site_id = site_id, group__name="Reviewer")
                 
                 if user_role:
                     return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
                 else:
-                    project = instance.site.project
+                    project = finstance.site.project
             
             if project:
-                project = instance.project
+                project = finstance.project
                 user_role_aspadmin = request.roles.filter(user_id = user_id, project_id = project.id, group__name="Project Manager")
                 if user_role_aspadmin:
                     return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
