@@ -203,7 +203,7 @@ class CeleryTaskProgress(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
     logs = GenericRelation('eventlog.FieldSightLog')
 
-    def get_name():
+    def getname():
         return self.file.name
     
     def get_absolute_url(self):
@@ -211,7 +211,7 @@ class CeleryTaskProgress(models.Model):
             return self.file.url
         else:
             return ""
-            
+
     def get_progress(self):
         if self.status == 1:
             if task_id:
