@@ -461,34 +461,35 @@ class FInstanceRoleMixin(LoginRequiredMixin):
             return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
         finstance = get_object_or_404(FInstance, instance_id=self.kwargs.get('instance_pk'))
         if finstance.site or finstance.project:
+            user_id = request.user.id
             project = finstance.project
             if finstance.site:
                 site_id = finstance.site.id
-                user_id = request.user.id
-                user_role = request.roles.filter(user_id = user_id, site_id = site_id, group__name="Reviewer")
+                
+                user_role = request.roles.filter(site_id = site_id, group_id=3)
                 
                 if user_role:
                     return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
                 
-                user_role_aspadmin = request.roles.filter(user_id = user_id, project_id = finstance.site.project_id, group__name="Project Manager")
+                user_role_aspadmin = request.roles.filter(project_id = finstance.site.project_id, group_id=2)
                 if user_role_aspadmin:
                     return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
 
                 organization_id = finstance.site.project.organization_id
-                user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+                user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group_id=1)
                 
                 if user_role_asorgadmin:
                     return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
-
+                print "here site"
                 project = finstance.site.project
             
             if project:
-                user_role_aspadmin = request.roles.filter(user_id = user_id, project_id = project.id, group__name="Project Manager")
+                user_role_aspadmin = request.roles.filter(project_id = project.id, group_id=2)
                 if user_role_aspadmin:
                     return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
-
+                print "here project"
                 organization_id = project.organization.id
-                user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+                user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group_id=)
                 if user_role_asorgadmin:
                     return super(FInstanceRoleMixin, self).dispatch(request, *args, **kwargs)
             
