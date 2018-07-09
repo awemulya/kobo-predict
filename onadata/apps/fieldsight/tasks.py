@@ -211,7 +211,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
         wb.save(buffer)
         buffer.seek(0)
         xls = buffer.getvalue()
-        xls_url = default_storage.save(project.name + '/xls/submissions.xls', ContentFile(xls))
+        xls_url = default_storage.save(project.name + '/xls/'+project.name+'-submissions.xls', ContentFile(xls))
         buffer.close()
 
         task.status = 2
@@ -246,7 +246,7 @@ def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs
         
         buffer.seek(0)
         pdf = buffer.getvalue()
-        pdf_url = default_storage.save(site.name + '/pdf/submissions.pdf', ContentFile(pdf))
+        pdf_url = default_storage.save(site.name + '/pdf/'+site.name+'-submissions.pdf', ContentFile(pdf))
         buffer.close()
         task.file.name = pdf_url
 
@@ -413,7 +413,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         wb.save(buffer)
         buffer.seek(0)
         xls = buffer.getvalue()
-        xls_url = default_storage.save(project.name + '/sites/details.xls', ContentFile(xls))
+        xls_url = default_storage.save(project.name + '/sites/'+project.name+'-details.xls', ContentFile(xls))
         buffer.close()
         task.file.name = xls_url
 
