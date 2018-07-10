@@ -14,6 +14,7 @@ from registration.backends.default.views import ActivationView
 
 from onadata.apps.main.registration_views import FHRegistrationView
 from onadata.apps.main.forms import RegistrationFormUserProfile
+from django.contrib.auth import views as auth_views
 
 urlpatterns = patterns(
     '',
@@ -25,6 +26,7 @@ urlpatterns = patterns(
     # [a-fA-F0-9]{40} because a bad activation key should still get to the view
     # that way it can return a sensible "invalid key" message instead of a
     # confusing 404.
+    
     url(r'^activate/(?P<activation_key>\w+)/$',
         ActivationView.as_view(),
         name='registration_activate'),
@@ -36,4 +38,5 @@ urlpatterns = patterns(
             template_name='registration/registration_complete.html'),
         name='registration_complete'),
     (r'', include('registration.auth_urls')),
+
 )

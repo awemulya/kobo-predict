@@ -14,8 +14,8 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(label='Your Email', max_length=100)
-    password = forms.CharField(label='Your Email', max_length=100)
+    username = forms.CharField(label='Your Email/Username', max_length=100)
+    password = forms.CharField(label='Your Password', max_length=100)
 
 
 class ProfileForm(forms.ModelForm):

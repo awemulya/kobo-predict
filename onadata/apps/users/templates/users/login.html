@@ -11,7 +11,7 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
-		<link rel="stylesheet" href="assets/css/style.css">
+		<link rel="stylesheet" href="{{ STATIC_URL }}dummy/assets/css/style.css">
         <script src="{{ STATIC_URL }}dummy/assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
 		<link href="https://fonts.googleapis.com/css?family=Ubuntu:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
     </head>
@@ -34,7 +34,7 @@
 		  									<img src="{{ STATIC_URL }}dummy/assets/img/fieldsight.png" alt="fieldsight" height="100">
 		  								</a>
 		  								<p class="margin-top d-none d-md-block">
-		  								FieldSight is the first humanitarian digital platform designed for project monitoring and infrastructure quality assurance. Developed iteratively over 2 years, the platform is now being used to monitor more than 50,000 houses, WASH sites, schools, police stations, and other infrastructure.
+		  								FieldSight is the first humanitarian digital platform designed for project monitoring and infrastructure quality assurance. Developed iteratively over 2 years, the platform is now being used to monitor more than 50,000 houses, schools and other infrastructure.
 		  								</p>
 		  							</div>
 		  						</div>
@@ -50,14 +50,15 @@
 										</ul>
 										<div class="tab-content" id="pills-tabContent">
 											<div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="pills-login-tab">
-												<form>
+												<form method="post">
+												{% csrf_token %}
 												  	<div class="form-group">
 												    	<label for="inputEmail">Email address</label>
-												    	<input type="username" class="form-control" id="inputEmail">
+												    	<input type="username" class="form-control" name="username" id="inputEmail">
 												  	</div>
 												  	<div class="form-group">
 												    	<label for="inputPassword">Password</label>
-												    	<input type="password" class="form-control" id="inputPassword">
+												    	<input type="password" name="password" class="form-control" id="inputPassword">
 												  	</div>
 												  	<div class="row">
 												  		<div class="col-sm-6">
@@ -71,7 +72,7 @@
 												  		<div class="col-sm-6">
 												  			<div class="form-group">
 														  		<p class="help">
-														  			<a href="#" title="" id="help-me">Need help?</a>
+														  			<a href="/accounts/password/reset/" title="" id="help-me">Need help?</a>
 														  		</p>
 														  	</div> 
 												  		</div>

@@ -322,6 +322,7 @@ def web_login(request):
     if request.user.is_authenticated():
         return redirect('/dashboard/')
     if request.method == 'POST':
+
         form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
@@ -330,7 +331,7 @@ def web_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return HttpResponseRedirect(reverse('kobocat'))
+                    return HttpResponseRedirect(reverse('dashboard'))
                 else:
                     return render(request, 'users/login.html', {'form':form, 'inactive':True})
             else:
