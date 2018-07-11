@@ -1652,8 +1652,8 @@ def instance_status(request, instance):
         # ChannelGroup("site-{}".format(fi.site.id)).send({"text": json.dumps(result)})
         if request.method == 'POST' and fi.site_fxf:
             try:
-                project_fxf = fi.project_fxf
-                send_message_flagged(fi.site_fxf, project_fxf, fi.form_status, message, comment_url)
+                project_fxf_id = fi.project_fxf.id
+                send_message_flagged(fi.site_fxf, project_fxf_id, fi.form_status, message, comment_url)
             except Exception as e:
                 send_message_flagged(fi.site_fxf, 0, fi.form_status, message, comment_url)
                 # send_message(fi.site_fxf, fi.form_status, message, comment_url)

@@ -31,7 +31,7 @@ def send_message_flagged(fxf, project_fxf, status=None, comment=None, comment_ur
     message = {'notify_type': 'Form',
                'is_delete':is_delete,
                'form_id': fxf.id,
-               'project_form_id': project_fxf.id,
+               'project_form_id': project_fxf,
                'comment': comment,
                'form_name': fxf.xf.title,
                'xfid': fxf.xf.id_string,
