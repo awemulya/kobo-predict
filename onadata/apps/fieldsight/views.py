@@ -2085,39 +2085,43 @@ class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
             ))
 
 
-# class RegionalSitelist(ProjectRoleMixin, ListView):
-#     model = Site
-#     template_name = 'fieldsight/site_list.html'
-#     paginate_by = 180
+class RegionalSitelist(ProjectRoleMixin, ListView):
+    model = Site
+    template_name = 'fieldsight/site_list.html'
+    paginate_by = 180
 
-#     def get_context_data(self, **kwargs):
-#         context = super(RegionalSitelist, self).get_context_data(**kwargs)
-#         context['pk'] = self.kwargs.get('pk')
-#         context['region_id'] = self.kwargs.get('region_id')
-#         context['type'] = "region"
-#         return context
-#     def get_queryset(self, **kwargs):
-#         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
-#         # print self.kwargs.get('region_id')
-#         # print "------------------------------------>>>>>>>>>>"
-#         if self.kwargs.get('region_id') == "0":
-#             object_list = queryset.filter(region=None)
-#         else:    
-#             object_list = queryset.filter(region_id=self.kwargs.get('region_id'))
-#         return object_list
-
-class RegionalSitelist(ProjectRoleMixin, TemplateView):
-    def get(self, request, *args, **kwargs):
+    def get_context_data(self, **kwargs):
+        context = super(RegionalSitelist, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['region_id'] = self.kwargs.get('region_id')
+        if self.kwargs.get('region_id') == "0":
+            context['type'] = "Unregioned"
+            context['project_id'] = self.kwargs.get('pk')
+        else:
+            context['type'] = "region"
+            context['obj'] = get_object_or_404(Region, id=self.kwargs.get('region_id'))
+        return context
+    def get_queryset(self, **kwargs):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
+        
         if self.kwargs.get('region_id') == "0":
             object_list = queryset.filter(region=None)
         else:    
             object_list = queryset.filter(region_id=self.kwargs.get('region_id'))
-        if self.kwargs.get('region_id') == "0":
-            return render(request, 'fieldsight/site_list.html',{'object_list':object_list, 'project_id':self.kwargs.get('pk'),'type':"Unregioned", 'pk': self.kwargs.get('pk'),'region_id':self.kwargs.get('region_id'),})
+        return object_list
+
+# class RegionalSitelist(ProjectRoleMixin, TemplateView):
+#     def get(self, request, *args, **kwargs):
+#         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
+#         if self.kwargs.get('region_id') == "0":
+#             object_list = queryset.filter(region=None)
+#         else:    
+#             object_list = queryset.filter(region_id=self.kwargs.get('region_id'))
+#         if self.kwargs.get('region_id') == "0":
+#             return render(request, 'fieldsight/site_list.html',{'object_list':object_list, 'project_id':self.kwargs.get('pk'),'type':"Unregioned", 'pk': self.kwargs.get('pk'),'region_id':self.kwargs.get('region_id'),})
         
-        obj = get_object_or_404(Region, id=self.kwargs.get('region_id'))
-        return render(request, 'fieldsight/site_list.html',{'object_list':object_list, 'obj':obj, 'type':"region", 'pk': self.kwargs.get('pk'), 'region_id':self.kwargs.get('region_id'),})
+#         obj = get_object_or_404(Region, id=self.kwargs.get('region_id'))
+#         return render(request, 'fieldsight/site_list.html',{'object_list':object_list, 'obj':obj, 'type':"region", 'pk': self.kwargs.get('pk'), 'region_id':self.kwargs.get('region_id'),})
 
 # class RegionalSitelist(ProjectRoleMixin, ListView):
 #     paginate_by = 10
