@@ -34,10 +34,11 @@ from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSeri
     SubStageDetailSerializer
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormListSerializer, StageFormSerializer
 from onadata.apps.fsforms.serializers.StageSerializer import EMSerializer
-from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed, send_bulk_message_stages, \
+from onadata.apps.fsforms.utils import send_message, send_message_stages, send_message_xf_changed, \
+    send_bulk_message_stages, \
     send_message_un_deploy, send_bulk_message_stages_deployed_project, send_bulk_message_stages_deployed_site, \
     send_bulk_message_stage_deployed_project, send_bulk_message_stage_deployed_site, send_sub_stage_deployed_project, \
-    send_sub_stage_deployed_site
+    send_sub_stage_deployed_site, send_message_flagged
 from onadata.apps.logger.models import XForm
 from onadata.apps.main.models import MetaData
 from onadata.apps.main.views import set_xform_owner_data
@@ -1650,7 +1651,12 @@ def instance_status(request, instance):
         # result['url'] = noti.get_absolute_url()
         # ChannelGroup("site-{}".format(fi.site.id)).send({"text": json.dumps(result)})
         if request.method == 'POST' and fi.site_fxf:
-            send_message(fi.site_fxf, fi.form_status, message, comment_url)
+            try:
+                project_fxf_id = fi.project_fxf.id
+                send_message_flagged(fi.site_fxf, project_fxf_id, fi.form_status, message, comment_url)
+            except Exception as e:
+                send_message_flagged(fi.site_fxf, 0, fi.form_status, message, comment_url)
+                # send_message(fi.site_fxf, fi.form_status, message, comment_url)
         return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
 
 
