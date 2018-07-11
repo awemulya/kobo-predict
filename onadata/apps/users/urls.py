@@ -5,9 +5,6 @@ from onadata.apps.users.viewsets import UserViewSet, ProfileViewSet, UserListVie
 from . import views
 urlpatterns = [
 
-    url(r'^accounts/logout/', 'django.contrib.auth.views.logout',
-        {'next_page': '/'}, name='auth_logout'),
-
     url(r'^accounts/login/', web_login, name='web_login'),
 
     url(r'^$', UsersListView.as_view(), name='users'),

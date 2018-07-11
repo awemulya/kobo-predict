@@ -120,8 +120,7 @@ KPI_URL = os.environ.get('KPI_URL', False)
 # specifically for site urls sent to enketo for form retrieval
 ENKETO_PROTOCOL = os.environ.get('ENKETO_PROTOCOL', 'https')
 
-# Login URLs
-LOGIN_URL = '/accounts/login/'
+LOGIN_URL = '/users/accounts/login/'
 LOGIN_REDIRECT_URL = '/login_redirect/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.

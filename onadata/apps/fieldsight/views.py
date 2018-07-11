@@ -1505,7 +1505,8 @@ class ActivateRole(TemplateView):
             
             codenames=['add_asset', 'change_asset','delete_asset', 'view_asset', 'share_asset', 'add_finstance', 'change_finstance', 'add_instance', 'change_instance']
             permissions = Permission.objects.filter(codename__in=codenames)
-            user.user_permissions.add(permissions[0], permissions[1], permissions[2], permissions[3], permissions[4])
+            for permission in permissions:
+                user.user_permissions.add(permission)
 
 
             profile, created = UserProfile.objects.get_or_create(user=user, organization=invite.organization)
