@@ -94,7 +94,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
             task.save()
             noti = project.logs.create(source=source_user, type=12, title="Bulk Sites",
                                        organization=project.organization,
-                                       project=project, content_object=task, extra_object=project,
+                                       project=project, content_object=project, extra_object=project,
                                        extra_message=str(count) + " Sites")
     except Exception as e:
         task.status = 3
