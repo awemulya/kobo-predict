@@ -8,6 +8,8 @@
     margin-top:33px;  
 }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.min.js"></script>
  <script src="{% static 'js/reactjs/react.min.js' %}"></script>
  <script src="{% static 'js/reactjs/browser.min.js' %}"></script>
  <script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
@@ -69,7 +71,7 @@
    
             renderNormal:function(){
                 return(
-                    <select ref={this.props.inputRef} className="form-group col-md-4" name="project" onChange={this.props.onChangeFunction} value={this.props.defaultValue}>
+                    <select ref={this.props.inputRef} className="form-group col-md-4 selectize" name="project" onChange={this.props.onChangeFunction} value={this.props.defaultValue}>
                         {this.props.options.map((e, key) => {
                             return <option key={key} value={this.props.isProject ? key : e.id}>{e.name}</option>;
                         })}
@@ -93,9 +95,7 @@
             },
 
             loadmetas: function(metas, project_id, selected_metas, indent){
-                this.setState({'metas':metas, 'project_id':project_id, 'selected_metas':selected_metas, 'indent':indent})
-                
-                
+                this.setState({'metas':metas, 'project_id':project_id, 'selected_metas':selected_metas, 'indent':indent}) 
             },
             componentDidMount(){
                 this.loadmetas(this.props.metas, this.props.project_id, this.props.selected_metas, this.props.indent || 0);
@@ -407,32 +407,25 @@
                             <label className="col-form-label">Select Project</label>                     
                             <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_index} options={this.props.projects} />
                         </div>
-
                         <CheckboxComponent project_id={this.state.project_id}  selected_metas={this.state.selected_metas} metas={this.state.metas} updateSelectedMetas={this.updateSelectedMetas}/>
-                
-                        
                     </div>
                    ); 
                 }else{
-                     return(<div>
-                        <div className="QuestionContainer form-row">
-                        <div className="form-group col-md-4">
-                        <label className="col-form-label"><h4>Loading</h4></label>                     
-                            
+                     return(
+                        <div>
+                            <div className="QuestionContainer form-row">
+                            <div className="form-group col-md-4">
+                            <label className="col-form-label"><h4>Loading</h4></label>                     
+                            </div>
+                            <div className="form-group col-md-4">
+                            </div>
+                            <div className="form-group col-md-4">
+                            </div>
+                            <div className="form-group col-md-4">
+                            </div>
                         </div>
-                        <div className="form-group col-md-4">
-                        </div>
-                        <div className="form-group col-md-4">
-                        </div>
-                        <div className="form-group col-md-4">
-                        </div>
-
-                        
-                    </div>
                      </div>);
                 }
-                
-                
             },
             render: function () {
                 return this.renderForm();
@@ -442,7 +435,6 @@
     var FormQuestion = React.createClass({
             
             getInitialState: function () {
-                
                 return {questionTypes:questionTypes, isLoaded: false, forms:this.props.forms, form_index:0, selected_question:this.props.selected_question, questions:[], form_id: this.props.link_form_id}
             },
 
@@ -452,9 +444,9 @@
                 if (form_index < 0){ form_index = 0; }
                 this.setState({form_index:form_index, forms:this.props.forms, questions:this.props.forms[form_index].json,  isLoaded: true});
                console.log(this.props, this.state);
-              },
-            componentWillReceiveProps(nextProps) {
+            },
 
+            componentWillReceiveProps(nextProps) {
                 this.setState({isLoaded: false});
                 let form_index=nextProps.projects.indexOf(nextProps.projects.find(temp=>temp.id == nextProps.link_form_id));
                 if (form_index < 0){ form_index = 0; }
@@ -510,13 +502,13 @@
                             <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
                         </div>
                         <div className="form-group col-md-4">
-                            <label className="col-form-label">Select Project</label>                     
+                            <label className="col-form-label">Select a Form</label>                     
                             <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_index} options={this.props.projects} />
                         </div>
-
-                        <CheckboxComponent project_id={this.state.project_id}  selected_metas={this.state.selected_metas} metas={this.state.metas} updateSelectedMetas={this.updateSelectedMetas}/>
-                
-                        
+                        <div className="form-group col-md-4">
+                            <label className="col-form-label">Select a Question</label>                     
+                            <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_index} options={this.props.projects} />
+                        </div>
                     </div>
                    ); 
                 }else{
@@ -801,6 +793,9 @@
     ReactDOM.render(<Form /> , document.getElementById('app'));
 
 </script> 
+<script type="text/javascript">
+    $('.selectize').selectize();
+</script>
 {% endblock %}
 
 

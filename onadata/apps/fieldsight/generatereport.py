@@ -1,4 +1,7 @@
 import json
+import datetime
+from datetime import date
+
 from io import BytesIO
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.platypus import SimpleDocTemplate, Paragraph
@@ -481,7 +484,15 @@ class PDFReport:
         elements.append(PageBreak())
         elements.append(Paragraph('Responses', self.h2))
         
-        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(date__range=[startdate, enddate]))).order_by('-is_staged', 'is_scheduled')
+        split_startdate = startdate.split('-')
+        split_enddate = enddate.split('-')
+
+        new_startdate = date(int(split_startdate[0]), int(split_startdate[1]), int(split_startdate[2]))
+        end = date(int(split_enddate[0]), int(split_enddate[1]), int(split_enddate[2]))
+
+        new_enddate = end + datetime.timedelta(days=1)
+
+        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(date__range=[new_startdate, new_enddate]))).order_by('-is_staged', 'is_scheduled')
         
         if not forms:
             elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))

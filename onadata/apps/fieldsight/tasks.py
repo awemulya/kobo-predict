@@ -36,7 +36,8 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
         count = len(sites)
         task.description = "Bulk Upload of "+str(count)+" Sites."
         task.save()
-        
+        new_sites = 0
+        updated_sites = 0
         with transaction.atomic():
             i=0
             interval = count/20
@@ -69,6 +70,12 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
                                                                 name=site.get("name"),
                                                                 project=project,
                                                                 type=site_type, region_id = region_id)
+
+                if created:
+                    new_sites += 1
+                else:
+                    updated_sites += 1
+
                 _site.phone = site.get("phone")
                 _site.address = site.get("address")
                 _site.public_desc = site.get("public_desc")
@@ -92,10 +99,18 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
                     bulkuploadsites.update_state(state='PROGRESS',meta={'current': i, 'total': count})
             task.status = 2
             task.save()
+
+            if new_sites > 0 and updated_sites > 0:
+                extra_message = " updated " + str(updated_sites) + " Sites and" + " created " + str(new_sites) + " Sites"
+            elif new_sites > 0 and updated_sites == 0:
+                extra_message = " created " + str(new_sites) + " Sites"
+            elif new_sites == 0 and updated_sites > 0:
+                extra_message = " updated " + str(updated_sites) + " Sites"
+
             noti = project.logs.create(source=source_user, type=12, title="Bulk Sites",
                                        organization=project.organization,
                                        project=project, content_object=project, extra_object=project,
-                                       extra_message=str(count) + " Sites")
+                                       extra_message=extra_message)
     except Exception as e:
         task.status = 3
         task.save()
@@ -119,7 +134,16 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
         # fs_ids = FieldSightXF.objects.filter(project_id = project.id).values('id')
         # startdate="2016-05-01"
         # enddate= "2018-06-05"
-        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[start_date, end_date]))).order_by('-is_staged', 'is_scheduled')
+
+        split_startdate = start_date.split('-')
+        split_enddate = end_date.split('-')
+
+        new_startdate = date(int(split_startdate[0]), int(split_startdate[1]), int(split_startdate[2]))
+        end = date(int(split_enddate[0]), int(split_enddate[1]), int(split_enddate[2]))
+
+        new_enddate = end + datetime.timedelta(days=1)
+
+        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[new_startdate, new_enddate]))).order_by('-is_staged', 'is_scheduled')
         wb = xlwt.Workbook(encoding='utf-8')
         form_id = 0
         form_names=[]
