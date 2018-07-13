@@ -443,54 +443,54 @@
             
             getInitialState: function () {
                 
-                return {questionTypes:questionTypes, isLoaded: false, projects:this.props.projects, project_index:0, selected_metas:this.props.selected_metas, metas:[], project_id: this.props.link_project_id}
+                return {questionTypes:questionTypes, isLoaded: false, forms:this.props.forms, form_index:0, selected_question:this.props.selected_question, questions:[], form_id: this.props.link_form_id}
             },
 
             componentDidMount() {
                 this.setState({isLoaded: false});
-                let project_index=this.state.projects.indexOf(this.state.projects.find(temp=>temp.id == this.state.project_id));
-                if (project_index < 0){ project_index = 0; }
-                this.setState({project_index:project_index, projects:this.props.projects, metas:this.props.projects[project_index].site_meta_attributes,  isLoaded: true});
+                let form_index=this.state.projects.indexOf(this.state.projects.find(temp=>temp.id == this.state.form_id));
+                if (form_index < 0){ form_index = 0; }
+                this.setState({form_index:form_index, forms:this.props.forms, questions:this.props.forms[form_index].json,  isLoaded: true});
                console.log(this.props, this.state);
               },
             componentWillReceiveProps(nextProps) {
 
                 this.setState({isLoaded: false});
-                let project_index=nextProps.projects.indexOf(nextProps.projects.find(temp=>temp.id == nextProps.link_project_id));
-                if (project_index < 0){ project_index = 0; }
-                this.setState({project_index:project_index, projects:nextProps.projects, selected_metas:nextProps.selected_metas, metas:nextProps.projects[project_index].site_meta_attributes,  isLoaded: true});
+                let form_index=nextProps.projects.indexOf(nextProps.projects.find(temp=>temp.id == nextProps.link_form_id));
+                if (form_index < 0){ form_index = 0; }
+                this.setState({form_index:form_index, forms:nextProps.pforms, selected_question:nextProps.selected_question, questions:nextProps.forms[form_index].json,  isLoaded: true});
             },
 
-            save: function () {
-                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
-                // console.log('save');
-            },
+            // save: function () {
+            //     this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
+            //     // console.log('save');
+            // },
             
 
-            updateSelectedMetas: function(project_id, obj){
-                this.props.updateLinkMetas(project_id, this.props.index, obj);
-            },
+            // updateSelectedMetas: function(project_id, obj){
+            //     this.props.updateLinkMetas(project_id, this.props.index, obj);
+            // },
 
-            projectChanged: function () {
-                const selectedProject = this.state.projects[this.refs.selectProjectRef.value]
-                if (this.props.selectedProjectLinkIds.indexOf(selectedProject.id) > -1){
-                    alert("Project already selected");
-                    //this.setState({project_index:0});
-                    // console.log(this.props.selectedProjectLinkIds, this.state.project_index);
-                }else{
-                    this.props.updateLinkProject(selectedProject.id, this.props.index);
+            // projectChanged: function () {
+            //     const selectedProject = this.state.projects[this.refs.selectProjectRef.value]
+            //     if (this.props.selectedProjectLinkIds.indexOf(selectedProject.id) > -1){
+            //         alert("Project already selected");
+            //         //this.setState({project_index:0});
+            //         // console.log(this.props.selectedProjectLinkIds, this.state.project_index);
+            //     }else{
+            //         this.props.updateLinkProject(selectedProject.id, this.props.index);
                     
-                    //console.log(selectedProject.site_meta_attributes);
-                    this.setState({project_index:this.refs.selectProjectRef.value, project_id:selectedProject.id, metas:selectedProject.site_meta_attributes});
-                    //console.log(selectedProject.id);
-                    //CLEAR ALL SELECTED METAS ON CHANGE
-                }
-            },
+            //         //console.log(selectedProject.site_meta_attributes);
+            //         this.setState({project_index:this.refs.selectProjectRef.value, project_id:selectedProject.id, metas:selectedProject.site_meta_attributes});
+            //         //console.log(selectedProject.id);
+            //         //CLEAR ALL SELECTED METAS ON CHANGE
+            //     }
+            // },
 
-            remove:function(){
-                // console.log('Delete pressed.')
-                this.props.deleteFromForm(this.props.index);
-            },
+            // remove:function(){
+            //     // console.log('Delete pressed.')
+            //     this.props.deleteFromForm(this.props.index);
+            // },
 
 
             renderForm:function(){
@@ -770,7 +770,14 @@
                         <ExtLinkQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} link_project_id ={question.project_id} updateLinkMetas={this.updateLinkMetas} selected_metas={question.metas} deleteFromForm={this.removeQuestion} selectedProjectLinkIds={this.state.selectedProjectLinkIds} projects={this.state.projects} />                        
                     );
             
-            }else{
+            }
+            else if(question.question_type=="Form"){
+                return(
+                        <ExtLinkQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} link_form_id ={question.form_id} updateSQuestion={this.updateSQuestion} selected_question={question.selected_question} deleteFromForm={this.removeQuestion} forms={this.state.forms} />                        
+                    );
+            
+            }
+            else{
                 return(
                         <NormalQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} deleteFromForm={this.removeQuestion} />
                     );
