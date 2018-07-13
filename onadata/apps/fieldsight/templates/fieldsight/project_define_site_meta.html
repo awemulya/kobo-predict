@@ -15,13 +15,13 @@
 
             <div id="main-content" class="padding">
                 <nav aria-label="breadcrumb" role="navigation">
-					{% block breadcrumbs %}
-					<ol class="breadcrumb">
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
-						<li class="breadcrumb-item active" aria-current="page">{% trans 'Meta' %} {% trans 'Attributes' %} {% trans 'Upload' %}</li>
-					 </ol>
-					{% endblock %}
-				</nav>
+                    {% block breadcrumbs %}
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{% trans 'Meta' %} {% trans 'Attributes' %} {% trans 'Upload' %}</li>
+                     </ol>
+                    {% endblock %}
+                </nav>
 
                 <section class="panel">
                     <header class="panel-heading clearfix">
@@ -439,6 +439,112 @@
             }
         });
 
+    var FormQuestion = React.createClass({
+            
+            getInitialState: function () {
+                
+                return {questionTypes:questionTypes, isLoaded: false, projects:this.props.projects, project_index:0, selected_metas:this.props.selected_metas, metas:[], project_id: this.props.link_project_id}
+            },
+
+            componentDidMount() {
+                this.setState({isLoaded: false});
+                let project_index=this.state.projects.indexOf(this.state.projects.find(temp=>temp.id == this.state.project_id));
+                if (project_index < 0){ project_index = 0; }
+                this.setState({project_index:project_index, projects:this.props.projects, metas:this.props.projects[project_index].site_meta_attributes,  isLoaded: true});
+               console.log(this.props, this.state);
+              },
+            componentWillReceiveProps(nextProps) {
+
+                this.setState({isLoaded: false});
+                let project_index=nextProps.projects.indexOf(nextProps.projects.find(temp=>temp.id == nextProps.link_project_id));
+                if (project_index < 0){ project_index = 0; }
+                this.setState({project_index:project_index, projects:nextProps.projects, selected_metas:nextProps.selected_metas, metas:nextProps.projects[project_index].site_meta_attributes,  isLoaded: true});
+            },
+
+            save: function () {
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
+                // console.log('save');
+            },
+            
+
+            updateSelectedMetas: function(project_id, obj){
+                this.props.updateLinkMetas(project_id, this.props.index, obj);
+            },
+
+            projectChanged: function () {
+                const selectedProject = this.state.projects[this.refs.selectProjectRef.value]
+                if (this.props.selectedProjectLinkIds.indexOf(selectedProject.id) > -1){
+                    alert("Project already selected");
+                    //this.setState({project_index:0});
+                    // console.log(this.props.selectedProjectLinkIds, this.state.project_index);
+                }else{
+                    this.props.updateLinkProject(selectedProject.id, this.props.index);
+                    
+                    //console.log(selectedProject.site_meta_attributes);
+                    this.setState({project_index:this.refs.selectProjectRef.value, project_id:selectedProject.id, metas:selectedProject.site_meta_attributes});
+                    //console.log(selectedProject.id);
+                    //CLEAR ALL SELECTED METAS ON CHANGE
+                }
+            },
+
+            remove:function(){
+                // console.log('Delete pressed.')
+                this.props.deleteFromForm(this.props.index);
+            },
+
+
+            renderForm:function(){
+                if(this.state.isLoaded){
+                    return(
+                    <div className="QuestionContainer form-row">
+                        <div className="form-group col-md-4">
+                            <label for="input1" className="col-form-label">Input Label:</label>
+                            <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
+                        </div>
+                        <div className="form-group col-md-4">
+                            <label for="input2" className="col-form-label">Input Type:</label>
+                            <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
+                        </div>
+                        <div className="form-group col-md-4">
+                            <label className="col-form-label"> &nbsp; </label>                     
+                            <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
+                        </div>
+                        <div className="form-group col-md-4">
+                            <label className="col-form-label">Select Project</label>                     
+                            <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_index} options={this.props.projects} />
+                        </div>
+
+                        <CheckboxComponent project_id={this.state.project_id}  selected_metas={this.state.selected_metas} metas={this.state.metas} updateSelectedMetas={this.updateSelectedMetas}/>
+                
+                        
+                    </div>
+                   ); 
+                }else{
+                     return(<div>
+                        <div className="QuestionContainer form-row">
+                        <div className="form-group col-md-4">
+                        <label className="col-form-label"><h4>Loading</h4></label>                     
+                            
+                        </div>
+                        <div className="form-group col-md-4">
+                        </div>
+                        <div className="form-group col-md-4">
+                        </div>
+                        <div className="form-group col-md-4">
+                        </div>
+
+                        
+                    </div>
+                     </div>);
+                }
+                
+                
+            },
+            render: function () {
+                return this.renderForm();
+            }
+        });
+
 
      var Form = React.createClass({
         getInitialState: function () {
@@ -466,11 +572,10 @@
                   .then(
                     (result) => {
                         const project_options = this.state.projects.concat(result);
-                      this.setState({
-                        
-                        projects: project_options,
-                        selectedProjectLinkIds: linkTypeObjs,
-                        
+                        this.setState({
+                            projects: project_options,
+                            selectedProjectLinkIds: linkTypeObjs,
+                            isLoaded: true,
                         });
                     },
                     (error) => {
@@ -479,6 +584,26 @@
                         projects:[],
                         project_id: 0
                       });
+                    }
+                  )
+
+                  fetch("/fieldsight/api/organization/"+org_id+"/my_projects/"+project_id+"/", {
+                      method: 'GET',
+                      credentials: 'include'
+                    })
+                  .then(res => res.json())
+                  .then(
+                    (result) => {
+                        this.setState({
+                            forms: result,
+                            isLoaded: true,
+                        });
+                    },
+                    (error) => {
+                        this.setState({
+                            isLoaded: true,
+                            forms: []
+                        });
                     }
                   )
 
