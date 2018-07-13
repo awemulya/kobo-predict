@@ -67,8 +67,8 @@ class ProjectMetasSerializer(serializers.ModelSerializer):
         fields = ('site_meta_attributes',)
 
 class ProjectFormsSerializer(serializers.ModelSerializer):
-    title = serializers.SerializerMethodField('get_title', read_only=True)
-    json = serializers.SerializerMethodField('get_json', read_only=True)
+    title = serializers.SerializerMethodField(read_only=True)
+    json = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = FieldSightXF
