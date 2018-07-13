@@ -264,7 +264,7 @@ urlpatterns = [
     url(r'^api/project_graphs/(?P<pk>\d+)/$', project_dashboard_graphs, name='pdg'),
     url(r'^api/project/metas/(?P<pk>\d+)/$', ProjectMetas.as_view({'get':'list'}), name='pmetas'),
     url(r'^api/project/sites/(?P<pk>\d+)/$', SitelistMinimalViewset.as_view({'get':'list'}), name='inimalsitelist'),
-    url(r'^api/project/Forms/(?P<pk>\d+)/$', ProjectForms.as_view({'get':'list'}), name='pforms'),
+    url(r'^api/project/forms/(?P<pk>\d+)/$', ProjectForms.as_view({'get':'list'}), name='pforms'),
     url(r'^api/siteallmetas/(?P<pk>\d+)/$', site_refrenced_metas, name='metas'),
     url(r'^redirect/(?P<pk>\d+)/site/$', redirectToSite, name='identifier_to_site_redirect'),
     
