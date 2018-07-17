@@ -2412,7 +2412,7 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
         columns = [
             site.identifier,
             site.name,
-            site.type and site.type.name,
+            site.type and site.type.identifier,
             site.phone,
             site.address,
             site.public_desc,

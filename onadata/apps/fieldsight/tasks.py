@@ -3,6 +3,7 @@ import time
 import json
 import xlwt
 import datetime
+from datetime import date
 from django.db import transaction
 from django.contrib.gis.geos import Point
 from celery import shared_task
@@ -44,10 +45,16 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
             for site in sites:
                 # time.sleep(0.7)
                 site = dict((k, v) for k, v in site.iteritems() if v is not '')
+
                 lat = site.get("longitude", 85.3240)
                 long = site.get("latitude", 27.7172)
+                
+                if lat == "":
+                    lat = 85.3240
+                if long == "":
+                    long = 27.7172
+
                 location = Point(lat, long, srid=4326)
-            
                 region_idf = site.get("region_id", None)
                 region_id = None
             
@@ -56,31 +63,25 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
                     region_id = region.id
             
                 type_identifier = int(site.get("type", "0"))
-            
-                if type_identifier == 0:
-                    _site, created = Site.objects.get_or_create(identifier=str(site.get("identifier")),
-                                                                name=site.get("name"),
+
+                _site, created = Site.objects.get_or_create(identifier=str(site.get("identifier")),
                                                                 project=project,
                                                                 region_id = region_id)
-                else:
-
-                    site_type = SiteType.objects.get(identifier=type_identifier, project=project)
-
-                    _site, created = Site.objects.get_or_create(identifier=str(site.get("identifier")),
-                                                                name=site.get("name"),
-                                                                project=project,
-                                                                type=site_type, region_id = region_id)
 
                 if created:
                     new_sites += 1
                 else:
                     updated_sites += 1
 
+                if type_identifier > 0:
+                     site_type = SiteType.objects.get(identifier=type_identifier, project=project)
+                     _site.type = site_type
+                _site.name = site.get("name")
                 _site.phone = site.get("phone")
                 _site.address = site.get("address")
                 _site.public_desc = site.get("public_desc")
                 _site.additional_desc = site.get("additional_desc")
-                _site.location = location
+                # _site.location = location
                 _site.logo = "logo/default_site_image.png"
 
                 meta_ques = project.site_meta_attributes

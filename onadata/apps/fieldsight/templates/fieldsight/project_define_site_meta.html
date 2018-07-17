@@ -10,6 +10,8 @@
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.min.js"></script>
+ <script src="{% static 'js/datas.js' %}"></script>
+ <script src="{% static 'js/formparser.js' %}"></script>
  <script src="{% static 'js/reactjs/react.min.js' %}"></script>
  <script src="{% static 'js/reactjs/browser.min.js' %}"></script>
  <script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
@@ -61,7 +63,8 @@
                           {'id': 'Number', 'name': 'Number'},
                           {'id': 'Date', 'name': 'Date'},
                           {'id': 'MCQ', 'name': 'MCQ'},
-                          {'id': 'Link', 'name': 'Link'}, ];
+                          {'id': 'Link', 'name': 'Link'},
+                          {'id': 'Form', 'name': 'Form'}, ];
      
     var SelectComponent = React.createClass({
             
@@ -71,19 +74,37 @@
    
             renderNormal:function(){
                 return(
-                    <select ref={this.props.inputRef} className="form-group col-md-4 selectize" name="project" onChange={this.props.onChangeFunction} value={this.props.defaultValue}>
-                        {this.props.options.map((e, key) => {
-                            return <option key={key} value={this.props.isProject ? key : e.id}>{e.name}</option>;
-                        })}
-                    </select>
-                    
-            );
+                        <select ref={this.props.inputRef} className="form-group col-md-4 selectize" name="project" onChange={this.props.onChangeFunction} value={this.props.defaultValue}>
+                            {this.props.options.map((e, key) => {
+                                return <option key={key} value={this.props.isProject ? key : e.id}>{e.name}</option>;
+                            })}
+                        </select>
+                    );
             },
             render: function () {
                     return this.renderNormal();
             }
         });
 
+    var FormSelectComponent = React.createClass({
+            
+            getInitialState: function () {
+                return {}
+            },
+   
+            renderNormal:function(){
+                return(
+                    <select ref={this.props.inputRef} className="form-group col-md-4 selectize" name="project" onChange={this.props.onChangeFunction} value={this.props.defaultValue}>
+                        {Object.keys(this.props.questions).map((e, key) => {
+                            return <option key={key} value={e}>{this.props.questions[e].label}</option>;
+                        })}
+                    </select>          
+                    );
+            },
+            render: function () {
+                    return this.renderNormal();
+            }
+        });
 
 
 
@@ -117,7 +138,7 @@
                 if(obj.question_type=='Link'){
                     if (obj.project_id.toString() != project_id.toString()){
                     
-                    const submetas = [];
+                    const submetas = [];r
                     if((this.state.selected_metas[this.state.project_id] || []).find(temp=>temp.question_name == obj.question_name)){
                     submetas.push(
                          <CheckboxComponent project_id={obj.project_id} metas={obj.metas[obj.project_id]} selected_metas={this.state.selected_metas} indent={this.state.indent + 20} updateSelectedMetas={this.props.updateSelectedMetas}/>
@@ -252,9 +273,7 @@
                 );
             },
             render: function () {
-              
-                    return this.renderNormal();
-                
+                return this.renderNormal();
             }
         });
 
@@ -435,57 +454,69 @@
     var FormQuestion = React.createClass({
             
             getInitialState: function () {
-                return {questionTypes:questionTypes, isLoaded: false, forms:this.props.forms, form_index:0, selected_question:this.props.selected_question, questions:[], form_id: this.props.link_form_id}
+                console.log(this.props);
+                return {questionTypes:questionTypes, isLoaded: false, forms:this.props.forms, form_index:0, selected_question:this.props.selected_question, questions:[], processed_questions:{}, form_id: this.props.link_form_id}
             },
 
             componentDidMount() {
                 this.setState({isLoaded: false});
-                let form_index=this.state.projects.indexOf(this.state.projects.find(temp=>temp.id == this.state.form_id));
+                let form_index=this.state.forms.indexOf(this.state.forms.find(temp=>temp.id == this.state.form_id));
                 if (form_index < 0){ form_index = 0; }
-                this.setState({form_index:form_index, forms:this.props.forms, questions:this.props.forms[form_index].json,  isLoaded: true});
-               console.log(this.props, this.state);
+                let questions = parse_form_response(this.props.forms[this.state.form_index].json['children']);
+                this.setState({form_index:form_index, forms:this.props.forms,  processed_questions: questions, isLoaded: true});
+                
             },
 
             componentWillReceiveProps(nextProps) {
                 this.setState({isLoaded: false});
-                let form_index=nextProps.projects.indexOf(nextProps.projects.find(temp=>temp.id == nextProps.link_form_id));
+                
+                let form_index=nextProps.forms.indexOf(nextProps.forms.find(temp=>temp.id == nextProps.link_form_id));
+                let questions = parse_form_response(nextProps.forms[form_index].json['children']);
                 if (form_index < 0){ form_index = 0; }
-                this.setState({form_index:form_index, forms:nextProps.pforms, selected_question:nextProps.selected_question, questions:nextProps.forms[form_index].json,  isLoaded: true});
+                this.setState({form_index:form_index, forms:nextProps.forms, processed_questions: questions, selected_question:nextProps.selected_question,  isLoaded: true});
             },
 
-            // save: function () {
-            //     this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
-            //     // console.log('save');
-            // },
+            save: function () {
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
+                // console.log('save');
+            },
             
 
-            // updateSelectedMetas: function(project_id, obj){
-            //     this.props.updateLinkMetas(project_id, this.props.index, obj);
+            questionChanged: function(){
+                let question_name = this.refs.formselectQuestionRef.value;
+                let selected_question = this.state.processed_questions[question_name]
+                console.log(selected_question);
+                this.props.updateSQuestion(selected_question, this.props.index);
+            },
+
+            // updateSelectedQuestion: function(form_id, obj){
+            //     this.props.updateFormQuestion(form_id, this.props.index, obj);
             // },
 
-            // projectChanged: function () {
-            //     const selectedProject = this.state.projects[this.refs.selectProjectRef.value]
-            //     if (this.props.selectedProjectLinkIds.indexOf(selectedProject.id) > -1){
-            //         alert("Project already selected");
-            //         //this.setState({project_index:0});
-            //         // console.log(this.props.selectedProjectLinkIds, this.state.project_index);
-            //     }else{
-            //         this.props.updateLinkProject(selectedProject.id, this.props.index);
+            formChanged: function () {
+                // let questions = parse_form_response(this.props.forms[this.state.form_index].json['children']);
+                // this.setState({processed_questions:questions})
+                console.log(this.refs.selectFormRef.value);
+                console.log(this.state.forms);
+                const selectedForm = this.state.forms[this.refs.selectFormRef.value]
+                
+                this.props.updateForm(selectedForm.id, this.props.index);
                     
-            //         //console.log(selectedProject.site_meta_attributes);
-            //         this.setState({project_index:this.refs.selectProjectRef.value, project_id:selectedProject.id, metas:selectedProject.site_meta_attributes});
-            //         //console.log(selectedProject.id);
-            //         //CLEAR ALL SELECTED METAS ON CHANGE
-            //     }
-            // },
+                    //console.log(selectedProject.site_meta_attributes);
+                this.setState({form_index:this.refs.selectFormRef.value, form_id:selectedForm.id});
+                    //console.log(selectedProject.id);
+                    //CLEAR ALL SELECTED METAS ON CHANGE
+                
+            },
 
-            // remove:function(){
-            //     // console.log('Delete pressed.')
-            //     this.props.deleteFromForm(this.props.index);
-            // },
+            remove:function(){
+                // console.log('Delete pressed.')
+                this.props.deleteFromForm(this.props.index);
+            },
 
 
             renderForm:function(){
+                // console.log(questions);
                 if(this.state.isLoaded){
                     return(
                     <div className="QuestionContainer form-row">
@@ -503,12 +534,14 @@
                         </div>
                         <div className="form-group col-md-4">
                             <label className="col-form-label">Select a Form</label>                     
-                            <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_index} options={this.props.projects} />
+                            <SelectComponent inputRef={el => this.refs.selectFormRef = el} isProject={true} onChangeFunction={this.formChanged} defaultValue={this.state.form_index} options={this.props.forms} />
                         </div>
+
                         <div className="form-group col-md-4">
                             <label className="col-form-label">Select a Question</label>                     
-                            <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_index} options={this.props.projects} />
+                            <FormSelectComponent inputRef={el => this.refs.formselectQuestionRef = el} onChangeFunction={this.questionChanged} defaultValue={this.state.selected_question} questions={this.state.processed_questions} />
                         </div>
+                       
                     </div>
                    ); 
                 }else{
@@ -547,6 +580,7 @@
                 projects: [{id:0, name:"Select project", site_meta_attributes:[]}],
                 selectedProjectLinkIds:[],
                 isLoaded: false,
+                forms: [{id:0, name:"Select form", json:{ children: []}}].concat(datass),
             }
         },
 
@@ -579,25 +613,25 @@
                     }
                   )
 
-                  fetch("/fieldsight/api/organization/"+org_id+"/my_projects/"+project_id+"/", {
-                      method: 'GET',
-                      credentials: 'include'
-                    })
-                  .then(res => res.json())
-                  .then(
-                    (result) => {
-                        this.setState({
-                            forms: result,
-                            isLoaded: true,
-                        });
-                    },
-                    (error) => {
-                        this.setState({
-                            isLoaded: true,
-                            forms: []
-                        });
-                    }
-                  )
+                  // fetch("/fieldsight/api/organization/"+org_id+"/my_projects/"+project_id+"/", {
+                  //     method: 'GET',
+                  //     credentials: 'include'
+                  //   })
+                  // .then(res => res.json())
+                  // .then(
+                  //   (result) => {
+                  //       this.setState({
+                  //           forms: result,
+                  //           isLoaded: true,
+                  //       });
+                  //   },
+                  //   (error) => {
+                  //       this.setState({
+                  //           isLoaded: true,
+                  //           forms: []
+                  //       });
+                  //   }
+                  // )
 
               },
 
@@ -669,6 +703,10 @@
             delete arr[i].project_id;
             delete arr[i].metas;
         }
+        else if(arr[i].question_type == "Form" && questionType != "Form"){
+            delete arr[i].form_id;
+            delete arr[i].question;
+        }
         
         if(questionType == "MCQ" && arr[i].question_type != "MCQ"){
             arr[i].mcq_options=[];
@@ -676,6 +714,10 @@
         else if(questionType == "Link" && arr[i].question_type != "Link"){
             arr[i].project_id = 0;
             arr[i].metas={};
+        }
+        else if(questionType == "Form" && arr[i].question_type != "Form"){
+            arr[i].form_id = 0;
+            arr[i].question={};
         }
         
         
@@ -717,6 +759,27 @@
         //console.log("updatingLinkproject_id");
         //console.log(selectedProjectLinkIds);
     },
+
+    updateForm: function (form_id, i){
+        var arr = this.state.Questions;
+        arr[i].form_id=form_id;
+        arr[i].question = {};
+        this.setState({Questions:arr});
+
+        //console.log("updatingLinkproject_id");
+        // console.log(this.state.forms);
+    },
+
+
+    updateSQuestion: function (obj, i){
+        var arr = this.state.Questions;
+        arr[i].question = obj;
+        this.setState({Questions:arr});
+
+        //console.log("updatingLinkproject_id");
+        // console.log(this.state.forms);
+    },
+
 
     updateIndividualLink: function (project_id, i, obj){
         var arr = this.state.Questions;
@@ -765,7 +828,7 @@
             }
             else if(question.question_type=="Form"){
                 return(
-                        <ExtLinkQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} link_form_id ={question.form_id} updateSQuestion={this.updateSQuestion} selected_question={question.selected_question} deleteFromForm={this.removeQuestion} forms={this.state.forms} />                        
+                        <FormQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateForm={this.updateForm} link_form_id ={question.form_id} updateSQuestion={this.updateSQuestion} selected_question={question.question.name} deleteFromForm={this.removeQuestion} forms={this.state.forms} />                        
                     );
             
             }
