@@ -64,7 +64,8 @@
                           {'id': 'Date', 'name': 'Date'},
                           {'id': 'MCQ', 'name': 'MCQ'},
                           {'id': 'Link', 'name': 'Link'},
-                          {'id': 'Form', 'name': 'Form'}, ];
+                          {'id': 'Form', 'name': 'Form Question'},
+                          {'id': 'FormSubStat', 'name': 'Form Submit Status'}, ];
      
     var SelectComponent = React.createClass({
             
@@ -138,7 +139,7 @@
                 if(obj.question_type=='Link'){
                     if (obj.project_id.toString() != project_id.toString()){
                     
-                    const submetas = [];r
+                    const submetas = [];
                     if((this.state.selected_metas[this.state.project_id] || []).find(temp=>temp.question_name == obj.question_name)){
                     submetas.push(
                          <CheckboxComponent project_id={obj.project_id} metas={obj.metas[obj.project_id]} selected_metas={this.state.selected_metas} indent={this.state.indent + 20} updateSelectedMetas={this.props.updateSelectedMetas}/>
