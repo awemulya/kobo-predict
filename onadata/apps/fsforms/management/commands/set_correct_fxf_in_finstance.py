@@ -12,7 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         organization_id = 13
         # project_id = 30
-        sites = Site.objects.filter().values_list('id', flat=True)
+        sites = Site.objects.filter(project__organization__id=organization_id).values_list('id', flat=True)
         for site_id in sites:
             # self.stdout.write('Operating in site '+str(site_id))
             with transaction.atomic():
@@ -20,7 +20,7 @@ class Command(BaseCommand):
                 for fi in finstances:
                     site_fsxf = fi.site_fxf
                     if site_fsxf.site.id != site_id:
-                        correct_form = FieldSightXF.objects.get(site__id=site_id, is_staged=True, fsform=fi.project_fxf)
+                        correct_form = FieldSightXF.objects.get(site__id=site_id, is_staged=True, fsform=fi.project_fxf, is_deleted=False)
                         fi.site_fxf = correct_form
                         fi.save()
                         parsed_instance = fi.instance.parsed_instance
