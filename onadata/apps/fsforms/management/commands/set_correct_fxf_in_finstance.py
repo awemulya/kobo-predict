@@ -12,7 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         organization_id = 13
         # project_id = 30
-        sites = Site.objects.filter(project__organization__id=organization_id).values_list('id', flat=True)
+        sites = Site.objects.filter().values_list('id', flat=True)
         for site_id in sites:
             # self.stdout.write('Operating in site '+str(site_id))
             with transaction.atomic():
