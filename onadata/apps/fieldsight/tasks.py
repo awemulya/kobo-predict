@@ -3,6 +3,7 @@ import time
 import json
 import xlwt
 import datetime
+from datetime import date
 from django.db import transaction
 from django.contrib.gis.geos import Point
 from celery import shared_task
