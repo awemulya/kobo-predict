@@ -81,7 +81,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
                 _site.address = site.get("address")
                 _site.public_desc = site.get("public_desc")
                 _site.additional_desc = site.get("additional_desc")
-                # _site.location = location
+                _site.location = location
                 _site.logo = "logo/default_site_image.png"
 
                 meta_ques = project.site_meta_attributes
