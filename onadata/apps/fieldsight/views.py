@@ -2895,7 +2895,7 @@ def site_refrenced_metas(request, pk):
                         if sub:
                             sub_answers = json.loads(sub.instace.json)
                             answer = sub_answers.get(meta.get('question').get('name') ,'')
-                            if meta['question']['type'] in ['photo', 'video', 'audio']:
+                            if meta['question']['type'] in ['photo', 'video', 'audio'] and answer is not "":
                                 question_type = "Media"
                                 answer = 'http://'+request.get_host()+'/attachment/medium?media_file='+ fxf.xf.user.username +'/attachments/'+answer
                         else:

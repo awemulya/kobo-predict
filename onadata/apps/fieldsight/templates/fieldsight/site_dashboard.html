@@ -796,6 +796,13 @@
                         </div>
                         )
                 }
+                else if(obj.question_type=='Media'){                  
+                    return(
+		                <div style={style}>
+		                    {obj.question_text} : <a href="{obj.answer}">Attachment</a>
+		                </div>)
+                	
+                }
                 else{
                 return(
                 <div style={style}>
