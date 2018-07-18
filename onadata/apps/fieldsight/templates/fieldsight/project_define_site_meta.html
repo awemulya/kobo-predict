@@ -663,7 +663,7 @@ var FormSubStatQuestion = React.createClass({
                 projects: [{id:0, name:"Select project", site_meta_attributes:[]}],
                 selectedProjectLinkIds:[],
                 isLoaded: false,
-                forms: [{id:0, name:"Select form", json:{ children: []}}].concat(datass),
+                forms: [{id:0, name:"Select form", json:{ children: []}}],
             }
         },
 
@@ -690,31 +690,30 @@ var FormSubStatQuestion = React.createClass({
                     (error) => {
                       this.setState({
                         isLoaded: true,
-                        projects:[],
-                        project_id: 0
                       });
                     }
                   )
 
-                  // fetch("/fieldsight/api/organization/"+org_id+"/my_projects/"+project_id+"/", {
-                  //     method: 'GET',
-                  //     credentials: 'include'
-                  //   })
-                  // .then(res => res.json())
-                  // .then(
-                  //   (result) => {
-                  //       this.setState({
-                  //           forms: result,
-                  //           isLoaded: true,
-                  //       });
-                  //   },
-                  //   (error) => {
-                  //       this.setState({
-                  //           isLoaded: true,
-                  //           forms: []
-                  //       });
-                  //   }
-                  // )
+                  fetch("/fieldsight/api/project/forms/"+project_id+"/", {
+                      method: 'GET',
+                      credentials: 'include'
+                    })
+                  .then(res => res.json())
+                  .then(
+                    (result) => {
+                        const form_options = this.state.forms.concat(result);
+                        this.setState({
+                            forms: form_options,
+                            isLoaded: true,
+                        });
+                    },
+                    (error) => {
+                        this.setState({
+                            isLoaded: true,
+                    
+                        });
+                    }
+                  )
 
               },
 
