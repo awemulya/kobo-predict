@@ -75,7 +75,7 @@ def generate_municipality_data():
         municipalities[municipality]['received_trache_iii'] += site_data.get('received_trache_iii', 0)
 
         municipalities[municipality]['total_houses'] += 1
-        municipalities[municipality]['houses_completed'] += site_data.get('houses_completed', 0)
+        municipalities[municipality]['houses_completed'] += site_data.get('houses_completed', 0
     return municipalities
 
 
