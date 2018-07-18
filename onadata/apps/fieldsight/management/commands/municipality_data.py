@@ -2,8 +2,7 @@ from django.core.management.base import BaseCommand
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.fsforms.models import FInstance
 
-municipalities = {
-}
+
 
 site_municipality_map = {}
 
@@ -51,6 +50,8 @@ def get_site_details(site):
 
 
 def generate_municipality_data():
+    municipalities = {
+    }
     sites = Site.objects.filter(project__id=137)
     for site in sites:
         municipality = site_municipality_map.get(site.id)
@@ -75,7 +76,7 @@ def generate_municipality_data():
         municipalities[municipality]['received_trache_iii'] += site_data.get('received_trache_iii', 0)
 
         municipalities[municipality]['total_houses'] += 1
-        municipalities[municipality]['houses_completed'] += site_data.get('houses_completed', 0
+        municipalities[municipality]['houses_completed'] += site_data.get('houses_completed', 0)
     return municipalities
 
 
