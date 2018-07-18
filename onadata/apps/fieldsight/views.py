@@ -2891,7 +2891,7 @@ def site_refrenced_metas(request, pk):
                 if meta.get('question_type') == "Form":
                     fxf = FieldSightXF.objects.filter(site_id=site.id, fsform_id=int(meta.get('form_id', "0")))
                     if fxf:
-                        sub = fxf.site_form_instances.order_by('-pk')[:1]
+                        sub = fxf[0].site_form_instances.order_by('-pk')[:1]
                         if sub:
                             sub_answers = json.loads(sub.instace.json)
                             answer = sub_answers.get(meta.get('question').get('name') ,'')
@@ -2908,7 +2908,7 @@ def site_refrenced_metas(request, pk):
                 elif meta.get('question_type') == "FormSubStat":
                     fxf = FieldSightXF.objects.filter(site_id=site.id, fsform_id=int(meta.get('form_id', "0")))
                     if fxf:
-                        sub_date = fxf.getlatestsubmittiondate()
+                        sub_date = fxf[0].getlatestsubmittiondate()
                         if sub_date:
                             answer = "Last submitted on " + sub_date[0]['date'].strftime("%d %b %Y %I:%M %P")
                         else:
