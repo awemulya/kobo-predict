@@ -72,7 +72,7 @@ class ProjectFormsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FieldSightXF
-        fields = ('id', 'title', 'json',)
+        fields = ('id', 'name', 'json',)
     
     
     def get_name(self, obj):
