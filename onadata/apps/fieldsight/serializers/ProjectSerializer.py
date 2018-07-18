@@ -67,7 +67,7 @@ class ProjectMetasSerializer(serializers.ModelSerializer):
         fields = ('site_meta_attributes',)
 
 class ProjectFormsSerializer(serializers.ModelSerializer):
-    title = serializers.SerializerMethodField(read_only=True)
+    name = serializers.SerializerMethodField(read_only=True)
     json = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -75,7 +75,7 @@ class ProjectFormsSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'json',)
     
     
-    def get_title(self, obj):
+    def get_name(self, obj):
         return u"%s" % obj.xf.title
 
     def get_json(self, obj):
