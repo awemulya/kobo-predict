@@ -452,10 +452,93 @@
             }
         });
 
+var FormSubStatQuestion = React.createClass({
+            
+            getInitialState: function () {
+                return {questionTypes:questionTypes, isLoaded: false, forms:this.props.forms, form_index:0, form_id: this.props.link_form_id}
+            },
+
+            componentDidMount() {
+                this.setState({isLoaded: false});
+                let form_index=this.state.forms.indexOf(this.state.forms.find(temp=>temp.id == this.state.form_id));
+                if (form_index < 0){ form_index = 0; }
+                this.setState({form_index:form_index, forms:this.props.forms, isLoaded: true});
+            },
+
+            componentWillReceiveProps(nextProps) {
+                this.setState({isLoaded: false});
+                let form_index=nextProps.forms.indexOf(nextProps.forms.find(temp=>temp.id == nextProps.link_form_id));
+                if (form_index < 0){ form_index = 0; }
+                this.setState({form_index:form_index, forms:nextProps.forms, selected_question:nextProps.selected_question,  isLoaded: true});
+            },
+
+            save: function () {
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
+            },
+            
+            formChanged: function () {
+                const selectedForm = this.state.forms[this.refs.selectFormRef.value]    
+                this.props.updateForm(selectedForm.id, this.props.index);
+                this.setState({form_index:this.refs.selectFormRef.value, form_id:selectedForm.id}); 
+            },
+
+            remove:function(){
+                this.props.deleteFromForm(this.props.index);
+            },
+
+
+            renderForm:function(){
+                if(this.state.isLoaded){
+                    return(
+                    <div className="QuestionContainer form-row">
+                        <div className="form-group col-md-4">
+                            <label for="input1" className="col-form-label">Input Label:</label>
+                            <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
+                        </div>
+                        <div className="form-group col-md-4">
+                            <label for="input2" className="col-form-label">Input Type:</label>
+                            <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
+                        </div>
+                        <div className="form-group col-md-4">
+                            <label className="col-form-label"> &nbsp; </label>                     
+                            <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
+                        </div>
+                        <div className="form-group col-md-4">
+                            <label className="col-form-label">Select a Form</label>                     
+                            <SelectComponent inputRef={el => this.refs.selectFormRef = el} isProject={true} onChangeFunction={this.formChanged} defaultValue={this.state.form_index} options={this.props.forms} />
+                        </div>    
+                    </div>
+                   ); 
+                }else{
+                     return(<div>
+                        <div className="QuestionContainer form-row">
+                        <div className="form-group col-md-4">
+                        <label className="col-form-label"><h4>Loading</h4></label>                     
+                            
+                        </div>
+                        <div className="form-group col-md-4">
+                        </div>
+                        <div className="form-group col-md-4">
+                        </div>
+                        <div className="form-group col-md-4">
+                        </div>
+
+                        
+                    </div>
+                     </div>);
+                }
+                
+                
+            },
+            render: function () {
+                return this.renderForm();
+            }
+        });
+
+
     var FormQuestion = React.createClass({
             
             getInitialState: function () {
-                console.log(this.props);
                 return {questionTypes:questionTypes, isLoaded: false, forms:this.props.forms, form_index:0, selected_question:this.props.selected_question, questions:[], processed_questions:{}, form_id: this.props.link_form_id}
             },
 
@@ -470,7 +553,6 @@
 
             componentWillReceiveProps(nextProps) {
                 this.setState({isLoaded: false});
-                
                 let form_index=nextProps.forms.indexOf(nextProps.forms.find(temp=>temp.id == nextProps.link_form_id));
                 let questions = parse_form_response(nextProps.forms[form_index].json['children']);
                 if (form_index < 0){ form_index = 0; }
@@ -655,16 +737,17 @@
         var is_form_valid = true;
         console.log(is_form_valid);
         var json_convertible = this.state.Questions.filter(function(item) {
-            if (item.question_text == ""){
-                console.log(item.question_text);
-                is_form_valid = false;
-                return false;
-            }
-            if (!item.hasOwnProperty('is_deleted')){
-                return item;
-            }
-            else if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
+            
+            if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
                 delete item.is_deleted;
+            }
+
+            if (!item.hasOwnProperty('is_deleted')){
+                if (item.question_text == ""){
+                    console.log(item.question_text);
+                    is_form_valid = false;
+                    return false;
+                }
                 return item;
             }
         });
@@ -708,6 +791,9 @@
             delete arr[i].form_id;
             delete arr[i].question;
         }
+        else if(arr[i].question_type == "FormSubStat" && questionType != "FormSubStat"){
+            delete arr[i].form_id;
+        }
         
         if(questionType == "MCQ" && arr[i].question_type != "MCQ"){
             arr[i].mcq_options=[];
@@ -719,6 +805,9 @@
         else if(questionType == "Form" && arr[i].question_type != "Form"){
             arr[i].form_id = 0;
             arr[i].question={};
+        }
+        else if(questionType == "FormSubStat" && arr[i].question_type != "FormSubStat"){
+            arr[i].form_id = 0;
         }
         
         
@@ -764,7 +853,9 @@
     updateForm: function (form_id, i){
         var arr = this.state.Questions;
         arr[i].form_id=form_id;
-        arr[i].question = {};
+        if (arr[i].question_type == "Form"){
+            arr[i].question = {};
+        }
         this.setState({Questions:arr});
 
         //console.log("updatingLinkproject_id");
@@ -824,6 +915,12 @@
             else if(question.question_type=="Link"){
                 return(
                         <ExtLinkQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} link_project_id ={question.project_id} updateLinkMetas={this.updateLinkMetas} selected_metas={question.metas} deleteFromForm={this.removeQuestion} selectedProjectLinkIds={this.state.selectedProjectLinkIds} projects={this.state.projects} />                        
+                    );
+            
+            }
+            else if(question.question_type=="FormSubStat"){
+                return(
+                        <FormSubStatQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateForm={this.updateForm} link_form_id ={question.form_id} deleteFromForm={this.removeQuestion} forms={this.state.forms} />                        
                     );
             
             }
