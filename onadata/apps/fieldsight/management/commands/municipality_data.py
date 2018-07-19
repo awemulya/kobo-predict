@@ -80,7 +80,7 @@ def generate_municipality_data():
                 municipality = "Kakani"
             elif vdc == "manakamana":
                 municipality = "Kispang"
-            elif vdc in ["khadag_bhanjyang", "kalyanpur", "bidur_municipality"]:
+            elif vdc in ["khadag_bhanjyang", "kalyanpur", "bidur_municipality", "charghare"]:
                 municipality = "Bidur Municipality"
             elif (vdc == "madanpur" and ward in [1, 2, 3, 4, 5, 6, 9]) or vdc == "jiling":
                 municipality = "Belkotgadhi Municipality"
@@ -94,7 +94,7 @@ def generate_municipality_data():
                 municipality = "Likhu"
             elif vdc == "balkumari":
                 municipality = "Dupcheshwore"
-            elif vdc in ["bungtang", "deurali", "kimtang", "samari"]:
+            elif vdc in ["bungtang", "deurali", "kimtang", "samari", "barsunchet"]:
                 municipality = "Meghang"
         if municipality  == "None":
             no_municipalities.append(site.id)
