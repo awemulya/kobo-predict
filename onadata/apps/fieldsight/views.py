@@ -32,6 +32,7 @@ from channels import Group as ChannelGroup
 
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from onadata.apps.fieldsight.bar_data_project import BarGenerator, ProgressBarGenerator
+from onadata.apps.fieldsight.management.commands.municipality_data import generate_municipality_data
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
     LineChartGeneratorSite, ProgressGeneratorSite, LineChartGeneratorProject
@@ -3054,6 +3055,7 @@ class SiteBulkEditView(View):
 @api_view(["GET"])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def municipality_data(request):
-    r = redis.StrictRedis(host=settings.REDIS_HOST, port=6379, db=3)
-    data = r.hgetall("municipality")
-    return Response(data)
+    # r = redis.StrictRedis(host=settings.REDIS_HOST, port=6379, db=3)
+    # data = r.hgetall("municipality")
+    data = generate_municipality_data()
+    return Response(data.values())
