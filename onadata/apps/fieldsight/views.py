@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import json
+import redis
 import xlwt
 from io import BytesIO
 from django.conf import settings
@@ -3048,3 +3049,9 @@ class SiteBulkEditView(View):
 #     def get(self, request, pk)
 
 #         return JsonResponse(metas, safe=False)
+
+@api_view(["GET"])
+def municipality_data(request):
+    r = redis.StrictRedis(host=settings.REDIS_HOST, port=6379, db=3)
+    data = r.hgetall("municipality")
+    return Response(data)
