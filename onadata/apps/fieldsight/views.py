@@ -25,7 +25,8 @@ from fcm.utils import get_device_model
 import django_excel as excel
 from registration.backends.default.views import RegistrationView
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes , authentication_classes
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from channels import Group as ChannelGroup
 
@@ -3051,6 +3052,7 @@ class SiteBulkEditView(View):
 #         return JsonResponse(metas, safe=False)
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def municipality_data(request):
     r = redis.StrictRedis(host=settings.REDIS_HOST, port=6379, db=3)
     data = r.hgetall("municipality")
