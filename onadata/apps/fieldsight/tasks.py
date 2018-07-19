@@ -70,14 +70,12 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
                      site_type = SiteType.objects.get(identifier=type_identifier, project=project)
                      _site.type = site_type
                 
-                if region_idf is not None:
-                    if region_idf == "":
-                        region = None
-                    else:
-                        region = Region.objects.get(identifier=str(region_idf), project = project)
-                        
-                    _site.region = region
+                region = None
                 
+                if region_idf is not None:
+                    region = Region.objects.get(identifier=str(region_idf), project = project)
+                        
+                _site.region = region
                 _site.name = site.get("name")
                 _site.phone = site.get("phone")
                 _site.address = site.get("address")

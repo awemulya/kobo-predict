@@ -161,7 +161,7 @@
 														<p>{{ obj.address }}, {{ obj.get_country_display }}</p>
 														<p>{{ obj.email }}</p>
 														{% if obj.region %}
-															<p>{% if obj.region.name == "" %}{{ obj.region.identifier }}{% else %}{{ obj.region.name }}{% endif %}</p>
+															<p>{% if obj.region.name == "" or obj.region.name == None %}{{ obj.region.identifier }}{% else %}{{ obj.region.name }}{% endif %}</p>
 														{% endif %}
 													</div>
 												</div>
