@@ -10,6 +10,7 @@
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.min.js"></script>
+  <script src="{% static 'js/datas.js' %}"></script>
  <script src="{% static 'js/formparser.js' %}"></script>
  <script src="{% static 'js/reactjs/react.min.js' %}"></script>
  <script src="{% static 'js/reactjs/browser.min.js' %}"></script>
@@ -30,11 +31,9 @@
                     <header class="panel-heading clearfix">
                         <h3><i class="la la-cogs"></i>{% trans 'Site' %} {% trans 'Meta' %} {% trans 'Attributes' %}</h3>
                     </header>
-                    <div class="panel-body">
+                    <div id="app"  class="panel-body">
                       
-                        <div id="newOrganization" class="margin-top">
-                           <div id="app"></div>
-                        </div>
+                        
                     </div>
 
                 </section>
@@ -74,7 +73,7 @@
    
             renderNormal:function(){
                 return(
-                        <select ref={this.props.inputRef} className="form-group col-md-4 selectize" name="project" onChange={this.props.onChangeFunction} value={this.props.defaultValue}>
+                        <select ref={this.props.inputRef} className="form-control" name="project" onChange={this.props.onChangeFunction} value={this.props.defaultValue}>
                             {this.props.options.map((e, key) => {
                                 return <option key={key} value={this.props.isProject ? key : e.id}>{e.name}</option>;
                             })}
@@ -94,7 +93,7 @@
    
             renderNormal:function(){
                 return(
-                    <select ref={this.props.inputRef} className="form-group col-md-4 selectize" name="project" onChange={this.props.onChangeFunction} value={this.props.defaultValue}>
+                    <select ref={this.props.inputRef} className="form-control" name="project" onChange={this.props.onChangeFunction} value={this.props.defaultValue}>
                         {Object.keys(this.props.questions).map((e, key) => {
                             return <option key={key} value={e}>{this.props.questions[e].label}</option>;
                         })}
@@ -144,7 +143,7 @@
                          <CheckboxComponent project_id={obj.project_id} metas={obj.metas[obj.project_id]} selected_metas={this.state.selected_metas} indent={this.state.indent + 20} updateSelectedMetas={this.props.updateSelectedMetas}/>
                         )
                     }
-//add project meta attributes here.
+
                     return (
                         <div>
                         <br/>
@@ -199,7 +198,7 @@
      var NormalQuestion = React.createClass({
             
             getInitialState: function () {
-                return {questionTypes:questionTypes, 'editing':false}
+                return {questionTypes:questionTypes, editing:false | ('editing' in this.props ? this.props.editing:false)}
             },
 
             save: function () {
@@ -212,27 +211,64 @@
                 this.props.deleteFromForm(this.props.index);
             },
 
-            renderForm:function(){
+            renderNormal:function(){
                 return(
-                    <div className="QuestionContainer form-row">
-                        <div className="form-group col-md-4">
-                            <label for="input1" className="col-form-label">Input Label:</label>
-                            <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
+                    <div className="form-field-item">
+                        <div className="form-group">
+                            <label for="input11" className="col-form-label">{this.props.question}:</label>
+                            <span className="field-type"><strong>Type :</strong>{this.props.question_type}</span>
+                            <div className="clearfix"></div>
+                            <input type="text" className="form-control" id="input11" defaultValue="" placeholderText={ 'question_help' in this.props ? this.props.question_help:""}/>
+                            <small id="input1Help" className="form-text text-muted">{ 'question_help' in this.props ? this.props.question_help:""}</small>
                         </div>
-                        <div className="form-group col-md-4">
-                            <label for="input2" className="col-form-label">Input Type:</label>
-                            <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
-                        </div>
-                        <div className="form-group col-md-4">
-                            <label className="col-form-label"> &nbsp; </label>                     
-                            <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
+                        <div className="form-action">
+                            <a href="#" className="btn btn-sm btn-primary" title=""><i className="la la-plus"></i></a>
+                            <br/>
+                            <a href="#" className="btn btn-sm btn-danger" title=""><i className="la la-close"></i></a>
                         </div>
                     </div>
                 );
             },
+            renderForm:function(){
+                return(
+
+                        <div>
+                            <div className="form-group">
+                                <label for="input1" className="col-form-label">Input Label:</label>
+                                <input type="text" ref="newText" className="form-control" placeholderText="Attribute Label" defaultValue={this.props.question}></input>
+                                <small id="input1Help" className="form-text text-muted">Text in this field will appear as a label for your form field.</small>
+                            </div>
+
+                            <div className="form-group">
+                                <label for="input2" className="col-form-label">Input Type:</label>
+                                    <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
+                                <small id="input1Help" className="form-text text-muted">Type of input you want.</small>
+                            </div>
+
+                            <div className="form-group">
+                                <label for="input2" className="col-form-label">Placeholder:</label>
+                                <input type="text" ref="placeholder" className="form-control" placeholderText="Placeholder" defaultValue={this.props.question}></input>
+                                <small id="input1Help" className="form-text text-muted">Description for this field</small>
+                            </div>
+                            <div className="form-group">
+                                <label for="input3" className="col-form-label">Help Text:</label>
+                                <textarea ref="helpText" className="form-control" id="input3"></textarea>
+                                <small id="input1Help" className="form-text text-muted">Description for this field</small>
+                            </div>
+
+                            <button type="submit" className="btn btn-primary"><i className="la la-plus"></i> Add to Form</button>
+                        </div>
+
+                    
+                );
+            },
             render: function () {
-                    return this.renderForm();
-               
+                    if(this.state.editing){
+                        return this.renderForm();
+                    }
+                    else{
+                        return this.renderNormal();   
+                    }
             }
         });
 
@@ -367,7 +403,6 @@
                console.log(this.props, this.state);
               },
             componentWillReceiveProps(nextProps) {
-
                 this.setState({isLoaded: false});
                 let project_index=nextProps.projects.indexOf(nextProps.projects.find(temp=>temp.id == nextProps.link_project_id));
                 if (project_index < 0){ project_index = 0; }
@@ -659,10 +694,16 @@ var FormSubStatQuestion = React.createClass({
             //console.log(linkTypeObjs);
             return {
                 Questions: _json_question,
+                newQuestion: {
+                    "question_text": "",
+                    "question_type": "Text",
+                    "question_name": "",
+                    "is_new": true,
+                },
                 projects: [{id:0, name:"Select project", site_meta_attributes:[]}],
                 selectedProjectLinkIds:[],
                 isLoaded: false,
-                forms: [{id:0, name:"Select form", json:{ children: []}}],
+                forms: [{id:0, name:"Select form", json:{ children: []}}].concat(datass),
             }
         },
 
@@ -693,42 +734,46 @@ var FormSubStatQuestion = React.createClass({
                     }
                   )
 
-                  fetch("/fieldsight/api/project/forms/"+project_id+"/", {
-                      method: 'GET',
-                      credentials: 'include'
-                    })
-                  .then(res => res.json())
-                  .then(
-                    (result) => {
-                        const form_options = this.state.forms.concat(result);
-                        this.setState({
-                            forms: form_options,
-                            isLoaded: true,
-                        });
-                    },
-                    (error) => {
-                        this.setState({
-                            isLoaded: true,
+                  // fetch("/fieldsight/api/project/forms/"+project_id+"/", {
+                  //     method: 'GET',
+                  //     credentials: 'include'
+                  //   })
+                  // .then(res => res.json())
+                  // .then(
+                  //   (result) => {
+                  //       const form_options = this.state.forms.concat(result);
+                  //       this.setState({
+                  //           forms: form_options,
+                  //           isLoaded: true,
+                  //       });
+                  //   },
+                  //   (error) => {
+                  //       this.setState({
+                  //           isLoaded: true,
                     
-                        });
-                    }
-                  )
+                  //       });
+                  //   }
+                  // )
 
               },
 
+    // var question = {
+    //         "question_text": "",
+    //         "question_type": "Text",
+    //         "question_name": ""
+    //     },
+    // addQuestion: function (text) {
+    //     var arr =this.state.Questions;
 
-    addQuestion: function (text) {
-        var arr =this.state.Questions;
+    //     var question = {
+    //         "question_text": "",
+    //         "question_type": "Text",
+    //         "question_name": this.state.Questions.toString()
+    //     }
+    //     arr.push(question);
 
-        var question = {
-            "question_text": "",
-            "question_type": "Text",
-            "question_name": this.state.Questions.toString()
-        }
-        arr.push(question);
-
-        this.setState({Questions: arr});
-    },
+    //     this.setState({Questions: arr});
+    // },
 
     save: function () {  
         if(this.state.Questions.length < 1){ return alert("No Any Questions Found."); } 
@@ -914,19 +959,16 @@ var FormSubStatQuestion = React.createClass({
                 return(
                         <ExtLinkQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} link_project_id ={question.project_id} updateLinkMetas={this.updateLinkMetas} selected_metas={question.metas} deleteFromForm={this.removeQuestion} selectedProjectLinkIds={this.state.selectedProjectLinkIds} projects={this.state.projects} />                        
                     );
-            
             }
             else if(question.question_type=="FormSubStat"){
                 return(
                         <FormSubStatQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateForm={this.updateForm} link_form_id ={question.form_id} deleteFromForm={this.removeQuestion} forms={this.state.forms} />                        
                     );
-            
             }
             else if(question.question_type=="Form"){
                 return(
                         <FormQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateForm={this.updateForm} link_form_id ={question.form_id} updateSQuestion={this.updateSQuestion} selected_question={question.question.name} deleteFromForm={this.removeQuestion} forms={this.state.forms} />                        
                     );
-            
             }
             else{
                 return(
@@ -938,12 +980,22 @@ var FormSubStatQuestion = React.createClass({
 
     render: function () {
         return (
-            <div>
-                {   
-                    this.state.Questions.map(this.eachQuestion)
-                }
-                <button onClick={this.addQuestion.bind(null, 'New Question')} className="btn btn-primary"><i className="la la-plus"></i>Add New</button>         
-                <button onClick={this.save.bind()} className="btn btn-success pull-right"><i className="la la-save"></i>Save Form</button>
+            <div className="row">
+                <div className="col-md-4">
+                    <div className="padding margin-top">
+                        {   
+                            [this.state.newQuestion].map(this.eachQuestion)
+                        }  
+                    </div>
+                </div>
+                <div className="col-md-8">
+                    <ul id="sortable-fields" className="form-field-list bg-gray margin-top">
+                        {   
+                            this.state.Questions.map(this.eachQuestion)
+                        }
+                    </ul>
+                    <button onClick={this.save.bind()} className="btn btn-success pull-right"><i className="la la-save"></i>Save Form</button>
+                </div>
             </div>
             );
         }
