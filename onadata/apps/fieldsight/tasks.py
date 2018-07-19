@@ -56,17 +56,10 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
 
                 location = Point(lat, long, srid=4326)
                 region_idf = site.get("region_id", None)
-                region_id = None
-            
-                if region_idf is not None:
-                    region, created  = Region.objects.get_or_create(identifier=str(region_idf), project = project)
-                    region_id = region.id
-            
                 type_identifier = int(site.get("type", "0"))
 
                 _site, created = Site.objects.get_or_create(identifier=str(site.get("identifier")),
-                                                                project=project,
-                                                                region_id = region_id)
+                                                                project=project)
 
                 if created:
                     new_sites += 1
@@ -76,13 +69,22 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
                 if type_identifier > 0:
                      site_type = SiteType.objects.get(identifier=type_identifier, project=project)
                      _site.type = site_type
+                
+                if region_idf is not None:
+                    if region_idf == "":
+                        region = None
+                    else:
+                        region = Region.objects.get(identifier=str(region_idf), project = project)
+                        
+                    _site.region = region
+                
                 _site.name = site.get("name")
                 _site.phone = site.get("phone")
                 _site.address = site.get("address")
                 _site.public_desc = site.get("public_desc")
                 _site.additional_desc = site.get("additional_desc")
                 _site.location = location
-                _site.logo = "logo/default_site_image.png"
+                # _site.logo = "logo/default_site_image.png"
 
                 meta_ques = project.site_meta_attributes
 
