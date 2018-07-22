@@ -1016,10 +1016,10 @@ var FormSubStatQuestion = React.createClass({
         this.dragged.style.display = "none";
         if(e.target.className === 'elementdrag') return;
         
-        // if(e.target.className !== 'ui-sortable-handle') return;
-        this.over = e.target;
-        e.target.parentNode.insertBefore(dragPlaceholder, e.target);
-        console.log(e.target);
+        if(e.target.parentNode.className !== 'ui-sortable-handle') return;
+        this.over = e.target.parentNode;
+        e.target.parentNode.parentNode.insertBefore(dragPlaceholder, e.target.parentNode);
+        console.log(e.target.parentNode);
     },
     save: function () {  
         if(this.state.Questions.length < 1){ return alert("No Any Questions Found."); } 
@@ -1027,11 +1027,12 @@ var FormSubStatQuestion = React.createClass({
         console.log(is_form_valid);
         var json_convertible = this.state.Questions.filter(function(item) {
             
+           
             if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
                 delete item.is_deleted;
             }
 
-            if (!item.hasOwnProperty('is_deleted')){
+            if (!item.hasOwnProperty('is_deleted') && !item.hasOwnProperty('is_new')){
                 if (item.question_text == ""){
                     console.log(item.question_text);
                     is_form_valid = false;
@@ -1265,23 +1266,14 @@ var FormSubStatQuestion = React.createClass({
     },
 
     render: function () {
-        var listItems = this.state.Questions.map((item, i) => {
-      return (
-        <li 
-          data-id={i}
-          key={i}
-          draggable='true'
-          onDragEnd={this.dragEnd.bind(this)}
-          onDragStart={this.dragStart.bind(this)}>{item.question_type}</li>
-      )
-     });
+        var listItems = this.state.Questions.map(this.eachQuestion.bind(this, false, false));
         return (
 
             <div>
             <header className="panel-heading clearfix">
                 <h3><i className="la la-cogs"></i>Site Meta Attributes</h3>
 
-                <button onClickName={this.save.bind()} className="btn btn-success pull-right"><i className="la la-save"></i>Save Form</button>
+                <button onClick={this.save.bind()} className="btn btn-success pull-right"><i className="la la-save"></i>Save Form</button>
             </header>
             <div className="panel-body">
                 <div className="row">
