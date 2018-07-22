@@ -5,7 +5,17 @@
 {% load filters %}
 <style type="text/css">
     #removebutton{
-    margin-top:33px;  
+    margin-top:33px;
+
+    .dragPlaceholder {
+        padding: 10px 15px;
+      
+      background: rgb(255,240,120);
+      &:before {
+        content: "Drop here";
+        color: rgb(225,210,90);
+      }
+    }  
 }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
@@ -27,14 +37,9 @@
                     {% endblock %}
                 </nav>
 
-                <section class="panel">
-                    <header class="panel-heading clearfix">
-                        <h3><i class="la la-cogs"></i>{% trans 'Site' %} {% trans 'Meta' %} {% trans 'Attributes' %}</h3>
-                    </header>
-                    <div id="app"  class="panel-body">
-                      
-                        
-                    </div>
+                <section id="app" class="panel">
+                   
+                    
 
                 </section>
                    
@@ -143,7 +148,6 @@
                          <CheckboxComponent project_id={obj.project_id} metas={obj.metas[obj.project_id]} selected_metas={this.state.selected_metas} indent={this.state.indent + 20} updateSelectedMetas={this.props.updateSelectedMetas}/>
                         )
                     }
-
                     return (
                         <div>
                         <br/>
@@ -198,12 +202,12 @@
      var NormalQuestion = React.createClass({
             
             getInitialState: function () {
-                return {questionTypes:questionTypes, editing:false | ('editing' in this.props ? this.props.editing:false)}
+                return {questionTypes:questionTypes, editing:false | this.props.is_new}
             },
 
             save: function () {
-                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
-                // console.log('save');
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.refs.placeholder.value, this.refs.helpText.value, this.props.index);
+                 console.log('save', this.refs.helpText.value);
             },
             
             remove:function(){
@@ -211,20 +215,35 @@
                 this.props.deleteFromForm(this.props.index);
             },
 
+            edit: function () {
+                this.setState({editing:true})
+            },
+
+            editDone: function () {
+                if (this.props.is_new){
+                    this.props.addtoForm(this.props.index);
+                    this.setState({editing:false})
+                }
+                else{
+                    this.setState({editing:false})
+                }
+                // console.log('save');
+            },
+
             renderNormal:function(){
                 return(
-                    <div className="form-field-item">
+                    <div className="form-field-item margin-top">
                         <div className="form-group">
                             <label for="input11" className="col-form-label">{this.props.question}:</label>
-                            <span className="field-type"><strong>Type :</strong>{this.props.question_type}</span>
+                            <span className="field-type"><strong>Type : </strong>{this.props.question_type}</span>
                             <div className="clearfix"></div>
-                            <input type="text" className="form-control" id="input11" defaultValue="" placeholderText={ 'question_help' in this.props ? this.props.question_help:""}/>
-                            <small id="input1Help" className="form-text text-muted">{ 'question_help' in this.props ? this.props.question_help:""}</small>
+                            <input type="text" className="form-control" id="input11" defaultValue={ 'question_placeholder' in this.props.question_obj ? this.props.question_obj.question_placeholder:""} placeholderText={ 'question_help' in this.props ? this.props.question_help:""}/>
+                            <small id="input1Help" className="form-text text-muted">{ 'question_help' in this.props.question_obj ? this.props.question_obj.question_help:""}</small>
                         </div>
                         <div className="form-action">
-                            <a href="#" className="btn btn-sm btn-primary" title=""><i className="la la-plus"></i></a>
+                            <button className="btn btn-sm btn-primary" onClick={this.edit}><i className="la la-edit"></i></button>
                             <br/>
-                            <a href="#" className="btn btn-sm btn-danger" title=""><i className="la la-close"></i></a>
+                            <button className="btn btn-sm btn-danger" onClick={this.remove}><i className="la la-close"></i></button>
                         </div>
                     </div>
                 );
@@ -232,31 +251,32 @@
             renderForm:function(){
                 return(
 
-                        <div>
+                        <div className="form-field-item margin-top">
                             <div className="form-group">
                                 <label for="input1" className="col-form-label">Input Label:</label>
-                                <input type="text" ref="newText" className="form-control" placeholderText="Attribute Label" defaultValue={this.props.question}></input>
-                                <small id="input1Help" className="form-text text-muted">Text in this field will appear as a label for your form field.</small>
+                                <input type="text" ref="newText" className="form-control" onChange={this.save} placeholderText="Attribute Label" defaultValue={this.props.question}></input>
+                                <small className="form-text text-muted">Text in this field will appear as a label for your form field.</small>
                             </div>
 
                             <div className="form-group">
-                                <label for="input2" className="col-form-label">Input Type:</label>
+                                <label className="col-form-label">Input Type:</label>
                                     <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
                                 <small id="input1Help" className="form-text text-muted">Type of input you want.</small>
                             </div>
 
                             <div className="form-group">
-                                <label for="input2" className="col-form-label">Placeholder:</label>
-                                <input type="text" ref="placeholder" className="form-control" placeholderText="Placeholder" defaultValue={this.props.question}></input>
-                                <small id="input1Help" className="form-text text-muted">Description for this field</small>
+                                <label className="col-form-label">Placeholder:</label>
+                                <input type="text" ref="placeholder" className="form-control" onChange={this.save} placeholderText="Placeholder" defaultValue={ 'question_placeholder' in this.props.question_obj ? this.props.question_obj.question_placeholder:""}></input>
+                                <small className="form-text text-muted">Description for this field</small>
                             </div>
                             <div className="form-group">
-                                <label for="input3" className="col-form-label">Help Text:</label>
-                                <textarea ref="helpText" className="form-control" id="input3"></textarea>
+                                <label className="col-form-label">Help Text:</label>
+                                <textarea ref="helpText" className="form-control" value={ 'question_help' in this.props.question_obj ? this.props.question_obj.question_help:""} onChange={this.save}/>
                                 <small id="input1Help" className="form-text text-muted">Description for this field</small>
                             </div>
 
-                            <button type="submit" className="btn btn-primary"><i className="la la-plus"></i> Add to Form</button>
+                            <button type="submit" className="btn btn-primary" onClick={this.editDone}><i className="la la-plus"></i>{ this.props.is_new ? 'Add to Form':'Done'}</button>
+
                         </div>
 
                     
@@ -315,7 +335,7 @@
 
       var MCQQuestion = React.createClass({
             getInitialState: function () {
-                return {questionTypes:questionTypes, options:this.props.options}
+                return {questionTypes:questionTypes, options:this.props.options, editing:false | this.props.is_new}
             },
             
             addOption:function () {
@@ -327,7 +347,7 @@
 
             save: function () {
                 this.props.updateMCQOptions(this.state.options, this.props.index);
-                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.refs.placeholder.value, this.refs.helpText.value, this.props.index);
             },
 
             updateOption: function(newTextoption, i){
@@ -350,6 +370,20 @@
                 this.props.deleteFromForm(this.props.index);
             },
             
+            edit: function () {
+                this.setState({editing:true})
+            },
+
+            editDone: function () {
+                if (this.props.is_new){
+                    this.props.addtoForm(this.props.index);
+                    this.setState({editing:false})
+                }
+                else{
+                    this.setState({editing:false})
+                }
+                // console.log('save');
+            },
 
             eachOption: function (obj, j){
                 // console.log(text);
@@ -358,33 +392,70 @@
                     <Option key={j} index={j} option_text={obj.option_text} deleteOption={this.deleteOption} updateOption={this.updateOption}/>
                     );
                  }},
+            renderNormal:function(){
+                return(
+                    <div className="form-field-item margin-top">
+                        <div className="form-group">
+                            <label for="input11" className="col-form-label">{this.props.question}:</label>
+                            <span class="field-type"><strong>Type : </strong> Select</span>
+                                <div class="clearfix"></div>
+                                <select class="form-control" id="input13">
+                                    <option>Site 1</option>
+                                    <option>Site 2</option>
+                                    <option>Site 3</option>
+                                    <option>Site 4</option>
+                                </select>
+                                                
+                            <small id="input1Help" className="form-text text-muted">{ 'question_help' in this.props ? this.props.question_help:""}</small>
+                        </div>
+                        <div className="form-action">
+                            <button className="btn btn-sm btn-primary" onClick={this.edit}><i className="la la-edit"></i></button>
+                            <br/>
+                            <button className="btn btn-sm btn-danger" onClick={this.remove}><i className="la la-close"></i></button>
+                        </div>
+                    </div>
+                );
+            },
 
             renderForm:function(){
                 return(
-                    <div>
-                    <div className="QuestionContainer form-row">
-                        <div className="form-group col-md-4">
-                            <label for="input1" className="col-form-label">Input Label:</label>
-                            <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
+                    <div className="form-field-item margin-top">
+                        <div className="QuestionContainer form-row">
+                            <div className="form-group">
+                                <label for="input1" className="col-form-label">Input Label:</label>
+                                <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
+                            </div>
+                            <div className="form-group">
+                                <label for="input2" className="col-form-label">Input Type:</label>
+                                <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
+                            </div>
+                            <div className="form-group">
+                                <label className="col-form-label">Placeholder:</label>
+                                <input type="text" ref="placeholder" className="form-control" onChange={this.save} placeholderText="Placeholder" defaultValue={ 'question_placeholder' in this.props.question_obj ? this.props.question_obj.question_placeholder:""}></input>
+                                <small className="form-text text-muted">Description for this field</small>
+                            </div>
+                            <div className="form-group">
+                                <label className="col-form-label">Help Text:</label>
+                                <textarea ref="helpText" className="form-control" value={ 'question_help' in this.props.question_obj ? this.props.question_obj.question_help:""} onChange={this.save}/>
+                                <small id="input1Help" className="form-text text-muted">Description for this field</small>
+                            </div>
+                            
                         </div>
-                        <div className="form-group col-md-4">
-                            <label for="input2" className="col-form-label">Input Type:</label>
-                            <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
-                        </div>
-                        <div className="form-group col-md-4">
-                            <label className="col-form-label"> &nbsp; </label>                     
-                            <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
-                        </div>
-                    </div>
-                    {         
-                        this.state.options.map(this.eachOption)
-                    }
-                    <button onClick={this.addOption} className="btn btn-primary"><i className="la la-plus"></i>Add New</button>            
+                        {         
+                            this.state.options.map(this.eachOption)
+                        }
+                    <button onClick={this.addOption} className="btn btn-primary"><i className="la la-plus"></i>Add New</button>
+                    <button className="btn btn-primary" onClick={this.editDone}><i className="la la-plus"></i>{ this.props.is_new ? 'Add to Form':'Done'}</button>            
                     </div>
                 );
             },
             render: function () {
+                if(this.state.editing){
                     return this.renderForm();
+                }
+                else{
+                    return this.renderNormal();   
+                }
             }
         });
 
@@ -392,7 +463,7 @@
             
             getInitialState: function () {
                 
-                return {questionTypes:questionTypes, isLoaded: false, projects:this.props.projects, project_index:0, selected_metas:this.props.selected_metas, metas:[], project_id: this.props.link_project_id}
+                return {questionTypes:questionTypes, editing:false | this.props.is_new, isLoaded: false, projects:this.props.projects, project_index:0, selected_metas:this.props.selected_metas, metas:[], project_id: this.props.link_project_id}
             },
 
             componentDidMount() {
@@ -400,7 +471,7 @@
                 let project_index=this.state.projects.indexOf(this.state.projects.find(temp=>temp.id == this.state.project_id));
                 if (project_index < 0){ project_index = 0; }
                 this.setState({project_index:project_index, projects:this.props.projects, metas:this.props.projects[project_index].site_meta_attributes,  isLoaded: true});
-               console.log(this.props, this.state);
+               
               },
             componentWillReceiveProps(nextProps) {
                 this.setState({isLoaded: false});
@@ -410,7 +481,7 @@
             },
 
             save: function () {
-                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.refs.placeholder.value, this.refs.helpText.value, this.props.index);
                 // console.log('save');
             },
             
@@ -440,56 +511,117 @@
                 this.props.deleteFromForm(this.props.index);
             },
 
+            edit: function () {
+                this.setState({editing:true})
+            },
+
+            editDone: function () {
+                if (this.props.is_new){
+                    this.props.addtoForm(this.props.index);
+                    this.setState({editing:false})
+                }
+                else{
+                    this.setState({editing:false})
+                }
+                // console.log('save');
+            },
+
+            renderNormal:function(){
+                if(this.state.isLoaded){
+                    return(
+
+                             <div className="form-field-item margin-top">
+                                <div className="form-group">
+                                    <label for="input11" className="col-form-label">{this.props.question}:</label>
+                                    <span className="field-type"><strong>Type : </strong> Select</span>
+                                        <div className="clearfix"></div>
+                                        <select className="form-control" id="input13">
+                                            <option>Site 1</option>
+                                            <option>Site 2</option>
+                                            <option>Site 3</option>
+                                            <option>Site 4</option>
+                                        </select>
+                                                        
+                                    <small id="input1Help" className="form-text text-muted">{ 'question_help' in this.props ? this.props.question_help:""}</small>
+                                </div>
+                                <div className="form-action">
+                                    <button className="btn btn-sm btn-primary" onClick={this.edit}><i className="la la-edit"></i></button>
+                                    <br/>
+                                    <button className="btn btn-sm btn-danger" onClick={this.remove}><i className="la la-close"></i></button>
+                                </div>
+                            </div>
+                       
+                   ); 
+                }else{
+                     return(
+                        <div className="form-field-item margin-top"> 
+                            <div className="form-field-item">
+                                <div className="form-group">
+                                    <label for="input11" className="col-form-label">Loading ... </label>
+                                    
+                                </div>
+                            
+                            </div>
+                        </div>
+                        );
+                }
+            },
 
             renderForm:function(){
                 if(this.state.isLoaded){
                     return(
-                    <div className="QuestionContainer form-row">
-                        <div className="form-group col-md-4">
+                    <div className="form-field-item margin-top">
+                        <div className="form-group">
                             <label for="input1" className="col-form-label">Input Label:</label>
                             <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="form-group">
                             <label for="input2" className="col-form-label">Input Type:</label>
                             <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
                         </div>
-                        <div className="form-group col-md-4">
-                            <label className="col-form-label"> &nbsp; </label>                     
-                            <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
+                        <div className="form-group">
+                                <label className="col-form-label">Placeholder:</label>
+                                <input type="text" ref="placeholder" className="form-control" onChange={this.save} placeholderText="Placeholder" defaultValue={ 'question_placeholder' in this.props.question_obj ? this.props.question_obj.question_placeholder:""}></input>
+                                <small className="form-text text-muted">Description for this field</small>
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="form-group">
+                            <label className="col-form-label">Help Text:</label>
+                            <textarea ref="helpText" className="form-control" value={ 'question_help' in this.props.question_obj ? this.props.question_obj.question_help:""} onChange={this.save}/>
+                            <small id="input1Help" className="form-text text-muted">Description for this field</small>
+                        </div>
+                        <div className="form-group">
                             <label className="col-form-label">Select Project</label>                     
                             <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_index} options={this.props.projects} />
                         </div>
                         <CheckboxComponent project_id={this.state.project_id}  selected_metas={this.state.selected_metas} metas={this.state.metas} updateSelectedMetas={this.updateSelectedMetas}/>
+                        <button className="btn btn-primary" onClick={this.editDone}><i className="la la-plus"></i>{ this.props.is_new ? 'Add to Form':'Done'}</button>  
                     </div>
                    ); 
                 }else{
                      return(
-                        <div>
-                            <div className="QuestionContainer form-row">
-                            <div className="form-group col-md-4">
-                            <label className="col-form-label"><h4>Loading</h4></label>                     
+                        <div className="form-field-item">
+                            <div className="form-group">
+                                <label for="input11" className="col-form-label">Loading ... </label>
+                                
                             </div>
-                            <div className="form-group col-md-4">
-                            </div>
-                            <div className="form-group col-md-4">
-                            </div>
-                            <div className="form-group col-md-4">
-                            </div>
-                        </div>
-                     </div>);
+                        
+                        </div>);
                 }
             },
             render: function () {
-                return this.renderForm();
+                if(this.state.editing){
+                        return this.renderForm();
+                    }
+                    else{
+                        return this.renderNormal();   
+                }
             }
         });
 
 var FormSubStatQuestion = React.createClass({
             
             getInitialState: function () {
-                return {questionTypes:questionTypes, isLoaded: false, forms:this.props.forms, form_index:0, form_id: this.props.link_form_id}
+                return {questionTypes:questionTypes, editing:false | this.props.is_new, isLoaded: false, forms:this.props.forms, form_index:0, form_id: this.props.link_form_id}
             },
 
             componentDidMount() {
@@ -507,7 +639,7 @@ var FormSubStatQuestion = React.createClass({
             },
 
             save: function () {
-                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, "","", this.props.index);
             },
             
             formChanged: function () {
@@ -520,52 +652,92 @@ var FormSubStatQuestion = React.createClass({
                 this.props.deleteFromForm(this.props.index);
             },
 
+            edit: function () {
+                this.setState({editing:true})
+            },
 
+            editDone: function () {
+                if (this.props.is_new){
+                    this.props.addtoForm(this.props.index);
+                    this.setState({editing:false})
+                }
+                else{
+                    this.setState({editing:false})
+                }
+                // console.log('save');
+            },
+
+            renderNormal:function(){
+                if(this.state.isLoaded){
+                    return(
+                    
+                        <div className="form-field-item margin-top">
+                            <div className="form-group">
+                                <label className="col-form-label">{this.props.question}:</label>
+                                <span className="field-type"><strong>Type : </strong>{this.props.question_type}</span>
+                                    <div className="clearfix"></div>
+                                    <span>Yes / No</span>            
+                            </div>
+                            <div className="form-action">
+                                <button className="btn btn-sm btn-primary" onClick={this.edit}><i className="la la-edit"></i></button>
+                                <br/>
+                                <button className="btn btn-sm btn-danger" onClick={this.remove}><i className="la la-close"></i></button>
+                            </div>
+                        </div>
+                   
+                   ); 
+                }else{
+                     return(
+                        <div className="form-field-item margin-top"> 
+                            <div className="form-field-item">
+                                <div className="form-group">
+                                    <label for="input11" className="col-form-label">Loading ... </label>
+                                    
+                                </div>
+                            
+                            </div>
+                        </div>);
+                }
+            },    
             renderForm:function(){
                 if(this.state.isLoaded){
                     return(
-                    <div className="QuestionContainer form-row">
-                        <div className="form-group col-md-4">
+                    <div className="form-field-item margin-top">
+                        <div className="form-group">
                             <label for="input1" className="col-form-label">Input Label:</label>
                             <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="form-group">
                             <label for="input2" className="col-form-label">Input Type:</label>
                             <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
                         </div>
-                        <div className="form-group col-md-4">
-                            <label className="col-form-label"> &nbsp; </label>                     
-                            <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
-                        </div>
-                        <div className="form-group col-md-4">
+                        <div className="form-group">
                             <label className="col-form-label">Select a Form</label>                     
                             <SelectComponent inputRef={el => this.refs.selectFormRef = el} isProject={true} onChangeFunction={this.formChanged} defaultValue={this.state.form_index} options={this.props.forms} />
                         </div>    
+                        <button className="btn btn-primary" onClick={this.editDone}><i className="la la-plus"></i>{ this.props.is_new ? 'Add to Form':'Done'}</button>  
                     </div>
                    ); 
                 }else{
-                     return(<div>
-                        <div className="QuestionContainer form-row">
-                        <div className="form-group col-md-4">
-                        <label className="col-form-label"><h4>Loading</h4></label>                     
-                            
-                        </div>
-                        <div className="form-group col-md-4">
-                        </div>
-                        <div className="form-group col-md-4">
-                        </div>
-                        <div className="form-group col-md-4">
-                        </div>
-
+                     return(
+                        <div className="form-field-item">
+                            <div className="form-group">
+                                <label for="input11" className="col-form-label">Loading ... </label>
+                                
+                            </div>
                         
-                    </div>
-                     </div>);
+                        </div>);
                 }
                 
                 
             },
             render: function () {
-                return this.renderForm();
+                if(this.state.editing){
+                        return this.renderForm();
+                    }
+                    else{
+                        return this.renderNormal();   
+                }
             }
         });
 
@@ -573,7 +745,7 @@ var FormSubStatQuestion = React.createClass({
     var FormQuestion = React.createClass({
             
             getInitialState: function () {
-                return {questionTypes:questionTypes, isLoaded: false, forms:this.props.forms, form_index:0, selected_question:this.props.selected_question, questions:[], processed_questions:{}, form_id: this.props.link_form_id}
+                return {questionTypes:questionTypes, editing:false | this.props.is_new, isLoaded: false, forms:this.props.forms, form_index:0, selected_question:this.props.selected_question, questions:[], processed_questions:{}, form_id: this.props.link_form_id}
             },
 
             componentDidMount() {
@@ -594,7 +766,7 @@ var FormSubStatQuestion = React.createClass({
             },
 
             save: function () {
-                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.props.index);
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, "","", this.props.index);
                 // console.log('save');
             },
             
@@ -631,12 +803,59 @@ var FormSubStatQuestion = React.createClass({
                 this.props.deleteFromForm(this.props.index);
             },
 
+            edit: function () {
+                this.setState({editing:true})
+            },
 
+            editDone: function () {
+                if (this.props.is_new){
+                    this.props.addtoForm(this.props.index);
+                    this.setState({editing:false})
+                }
+                else{
+                    this.setState({editing:false})
+                }
+                // console.log('save');
+            },
+
+            renderNormal:function(){
+                if(this.state.isLoaded){
+                    return(
+                     
+                         <div className="form-field-item margin-top">
+                            <div className="form-group">
+                                <label for="input11" className="col-form-label">{this.props.question}:</label>
+                                <span className="field-type pull-right"><strong>Type : </strong>{this.props.question_type}</span>
+                                    <div className="clearfix"></div>
+                                    <span>Yes/No</span>
+                                                    
+                                
+                            </div>
+                            <div className="form-action">
+                                <button className="btn btn-sm btn-primary" onClick={this.edit}><i className="la la-edit"></i></button>
+                                <br/>
+                                <button className="btn btn-sm btn-danger" onClick={this.remove}><i className="la la-close"></i></button>
+                            </div>
+                        </div>
+                    
+                   ); 
+                }else{
+                     return(
+                        <div className="form-field-item margin-top">
+                            <div className="form-field-item">
+                                <div className="form-group">
+                                    <label for="input11" className="col-form-label">Loading ... </label>    
+                                </div>
+                            </div>
+                        </div>
+                        );
+                }
+            },    
             renderForm:function(){
                 // console.log(questions);
                 if(this.state.isLoaded){
                     return(
-                    <div className="QuestionContainer form-row">
+                    <div className="form-field-item margin-top">
                         <div className="form-group col-md-4">
                             <label for="input1" className="col-form-label">Input Label:</label>
                             <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
@@ -644,10 +863,6 @@ var FormSubStatQuestion = React.createClass({
                         <div className="form-group col-md-4">
                             <label for="input2" className="col-form-label">Input Type:</label>
                             <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
-                        </div>
-                        <div className="form-group col-md-4">
-                            <label className="col-form-label"> &nbsp; </label>                     
-                            <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
                         </div>
                         <div className="form-group col-md-4">
                             <label className="col-form-label">Select a Form</label>                     
@@ -658,48 +873,51 @@ var FormSubStatQuestion = React.createClass({
                             <label className="col-form-label">Select a Question</label>                     
                             <FormSelectComponent inputRef={el => this.refs.formselectQuestionRef = el} onChangeFunction={this.questionChanged} defaultValue={this.state.selected_question} questions={this.state.processed_questions} />
                         </div>
-                       
+                        <button className="btn btn-primary" onClick={this.editDone}><i className="la la-plus"></i>{ this.props.is_new ? 'Add to Form':'Done'}</button>  
                     </div>
                    ); 
                 }else{
-                     return(<div>
-                        <div className="QuestionContainer form-row">
-                        <div className="form-group col-md-4">
-                        <label className="col-form-label"><h4>Loading</h4></label>                     
+                     return(
+                        <div className="form-field-item margin-top"> 
+                            <div className="form-field-item">
+                                <div className="form-group">
+                                    <label for="input11" className="col-form-label">Loading ... </label>
+                                    
+                                </div>
                             
+                            </div>
                         </div>
-                        <div className="form-group col-md-4">
-                        </div>
-                        <div className="form-group col-md-4">
-                        </div>
-                        <div className="form-group col-md-4">
-                        </div>
-
-                        
-                    </div>
-                     </div>);
+                        );
                 }
                 
                 
             },
             render: function () {
-                return this.renderForm();
+                if(this.state.editing){
+                        return this.renderForm();
+                    }
+                    else{
+                        return this.renderNormal();   
+                }
             }
         });
 
+        var dragPlaceholder = document.createElement("li");
+        dragPlaceholder.className = "dragPlaceholder ui-sortable-handle";
 
      var Form = React.createClass({
         getInitialState: function () {
             
             //console.log(linkTypeObjs);
             return {
-                Questions: _json_question,
-                newQuestion: {
+                Questions: _json_question.concat([{
                     "question_text": "",
                     "question_type": "Text",
                     "question_name": "",
+                    "question_placeholder": "",
+                    "question_help": "",
                     "is_new": true,
-                },
+                }]),
                 projects: [{id:0, name:"Select project", site_meta_attributes:[]}],
                 selectedProjectLinkIds:[],
                 isLoaded: false,
@@ -774,7 +992,35 @@ var FormSubStatQuestion = React.createClass({
 
     //     this.setState({Questions: arr});
     // },
+    dragStart: function(e) {
+    this.dragged = e.currentTarget;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.dragged);
+    },
 
+    dragEnd: function(e) {
+        this.dragged.style.display = 'block';
+        this.dragged.parentNode.removeChild(dragPlaceholder);
+
+    // update state
+        var questions = this.state.Questions;
+        var from = Number(this.dragged.dataset.id);
+        var to = Number(this.over.dataset.id);
+        if(from < to) to--;
+        questions.splice(to, 0, questions.splice(from, 1)[0]);
+        this.setState({Questions: questions});
+    },
+    
+    dragOver: function(e) {
+        e.preventDefault();
+        this.dragged.style.display = "none";
+        if(e.target.className === 'elementdrag') return;
+        
+        // if(e.target.className !== 'ui-sortable-handle') return;
+        this.over = e.target;
+        e.target.parentNode.insertBefore(dragPlaceholder, e.target);
+        console.log(e.target);
+    },
     save: function () {  
         if(this.state.Questions.length < 1){ return alert("No Any Questions Found."); } 
         var is_form_valid = true;
@@ -819,8 +1065,7 @@ var FormSubStatQuestion = React.createClass({
     },
 
 
-    updateQuestion: function (newtext, questionType, i) {
-        //console.log(this.state.Questions[i]);
+    updateQuestion: function (newtext, questionType, placeholder, help, i) {
         var arr = this.state.Questions;
 
         if (arr[i].question_type == "MCQ" && questionType != "MCQ"){
@@ -852,10 +1097,11 @@ var FormSubStatQuestion = React.createClass({
         else if(questionType == "FormSubStat" && arr[i].question_type != "FormSubStat"){
             arr[i].form_id = 0;
         }
-        
-        
+
         arr[i].question_text=newtext;
         arr[i].question_type=questionType;
+        arr[i].question_placeholder=placeholder;
+        arr[i].question_help=help;
         this.setState({Questions:arr});
     },
 
@@ -866,12 +1112,8 @@ var FormSubStatQuestion = React.createClass({
             return op
             }
         });
-        // console.log(newOptionsArray);
         arr[i].mcq_options=newOptionsArray;
-
         this.setState({Questions:arr});
-        //console.log("updatingmcqoptions");
-        //console.log(arr[i]);
     },
 
     updateLinkProject: function (project_id, i){
@@ -888,9 +1130,6 @@ var FormSubStatQuestion = React.createClass({
         
         console.log(selectedProjectLinkIds);
         this.setState({Questions:arr, selectedProjectLinkIds: selectedProjectLinkIds});
-
-        //console.log("updatingLinkproject_id");
-        //console.log(selectedProjectLinkIds);
     },
 
     updateForm: function (form_id, i){
@@ -947,55 +1186,122 @@ var FormSubStatQuestion = React.createClass({
         
     },
 
+    addtoForm: function (i) {  
+        var arr = this.state.Questions;
+        console.log(arr[i], arr);
+        if (arr[i].hasOwnProperty('is_new')) {
+            delete arr[i].is_new;
+               
+            arr.push({
+                        "question_text": "",
+                        "question_type": "Text",
+                        "question_name": "",
+                        "question_placeholder": "",
+                        "question_help": "",
+                        "is_new": true,
+                    });
+            console.log(arr);
+            
+            this.setState({Questions:arr});
+        }
+    },
 
-    eachQuestion: function (question, i){
-        if(!question.hasOwnProperty('is_deleted') || (question.hasOwnProperty('is_deleted') && question.is_deleted == false)){
+
+    eachQuestion: function (is_new=false, id=false, question, i){
+       console.log(is_new, id, question.question_name, i);
+        if( (!question.hasOwnProperty('is_deleted') || (question.hasOwnProperty('is_deleted') && question.is_deleted == false)) && ( is_new  || !question.hasOwnProperty('is_new')) ){
+            console.log(question);
             if(question.question_type=="MCQ" ){
-                return(
-                        <MCQQuestion key={i} index={i} options={question.mcq_options} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateMCQOptions={this.updateMCQOptions} deleteFromForm={this.removeQuestion} />
-                    );
+                
+                                               
+                        var renderedQuestion= <MCQQuestion key={is_new?id:i} index={is_new?id:i} addtoForm={this.addtoForm} is_new={is_new} question_obj={question} options={question.mcq_options} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateMCQOptions={this.updateMCQOptions} deleteFromForm={this.removeQuestion} />
+                        
+                  
             }
             else if(question.question_type=="Link"){
-                return(
-                        <ExtLinkQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} link_project_id ={question.project_id} updateLinkMetas={this.updateLinkMetas} selected_metas={question.metas} deleteFromForm={this.removeQuestion} selectedProjectLinkIds={this.state.selectedProjectLinkIds} projects={this.state.projects} />                        
-                    );
+               
+                       
+                         var renderedQuestion= <ExtLinkQuestion key={is_new?id:i} index={is_new?id:i} addtoForm={this.addtoForm} is_new={is_new} question_obj={question} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} link_project_id ={question.project_id} updateLinkMetas={this.updateLinkMetas} selected_metas={question.metas} deleteFromForm={this.removeQuestion} selectedProjectLinkIds={this.state.selectedProjectLinkIds} projects={this.state.projects} />                        
+                        
+                   
             }
             else if(question.question_type=="FormSubStat"){
-                return(
-                        <FormSubStatQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateForm={this.updateForm} link_form_id ={question.form_id} deleteFromForm={this.removeQuestion} forms={this.state.forms} />                        
-                    );
+                
+                       
+                        var renderedQuestion= <FormSubStatQuestion key={is_new?id:i} index={is_new?id:i} addtoForm={this.addtoForm} is_new={is_new} question_obj={question} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateForm={this.updateForm} link_form_id ={question.form_id} deleteFromForm={this.removeQuestion} forms={this.state.forms} />                        
+                        
+                   
             }
             else if(question.question_type=="Form"){
-                return(
-                        <FormQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateForm={this.updateForm} link_form_id ={question.form_id} updateSQuestion={this.updateSQuestion} selected_question={question.question.name} deleteFromForm={this.removeQuestion} forms={this.state.forms} />                        
-                    );
+                
+                        
+                        var renderedQuestion= <FormQuestion key={is_new?id:i} index={is_new?id:i} addtoForm={this.addtoForm} is_new={is_new} question_obj={question} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateForm={this.updateForm} link_form_id ={question.form_id} updateSQuestion={this.updateSQuestion} selected_question={question.question.name} deleteFromForm={this.removeQuestion} forms={this.state.forms} />                        
+                       
+                  
             }
             else{
-                return(
-                        <NormalQuestion key={i} index={i} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} deleteFromForm={this.removeQuestion} />
-                    );
+
+                        var renderedQuestion= <NormalQuestion key={is_new?id:i} index={is_new?id:i} addtoForm={this.addtoForm} is_new={is_new} question_obj={question} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} deleteFromForm={this.removeQuestion} />
+                       
+                
             }
+            if(question.hasOwnProperty('is_new')){
+                return (
+                   
+                        renderedQuestion 
+                   
+                    );
+            }else{
+                return (
+                    <li className="ui-sortable-handle" key={is_new?id:i} data-id={is_new?id:i}
+                          draggable='true'
+                          onDragEnd={this.dragEnd.bind(this)}
+                          onDragStart={this.dragStart.bind(this)}>
+                        { renderedQuestion }
+                    </li>
+
+                );}
         }
     },
 
     render: function () {
+        var listItems = this.state.Questions.map((item, i) => {
+      return (
+        <li 
+          data-id={i}
+          key={i}
+          draggable='true'
+          onDragEnd={this.dragEnd.bind(this)}
+          onDragStart={this.dragStart.bind(this)}>{item.question_type}</li>
+      )
+     });
         return (
-            <div className="row">
-                <div className="col-md-4">
-                    <div className="padding margin-top">
-                        {   
-                            [this.state.newQuestion].map(this.eachQuestion)
-                        }  
+
+            <div>
+            <header className="panel-heading clearfix">
+                <h3><i className="la la-cogs"></i>Site Meta Attributes</h3>
+
+                <button onClickName={this.save.bind()} className="btn btn-success pull-right"><i className="la la-save"></i>Save Form</button>
+            </header>
+            <div className="panel-body">
+                <div className="row">
+                    <div className="col-md-4">
+                        <div className="padding margin-top">
+                            {   
+                                [this.state.Questions[this.state.Questions.length - 1]].map(this.eachQuestion.bind(this, true, this.state.Questions.length - 1))
+                            }  
+                        </div>
+                    </div>
+                    <div className="col-md-8">
+                        <ul id="hero" className="hero form-field-list bg-gray margin-top ui-sortable" onDragOver={this.dragOver.bind(this)}>
+                            {   
+                                listItems
+                            }
+                        </ul>
+                        
                     </div>
                 </div>
-                <div className="col-md-8">
-                    <ul id="sortable-fields" className="form-field-list bg-gray margin-top">
-                        {   
-                            this.state.Questions.map(this.eachQuestion)
-                        }
-                    </ul>
-                    <button onClick={this.save.bind()} className="btn btn-success pull-right"><i className="la la-save"></i>Save Form</button>
-                </div>
+            </div>
             </div>
             );
         }
