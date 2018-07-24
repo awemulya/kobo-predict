@@ -50,7 +50,7 @@
         <div class="widget-info">
          
           <div class="widget-body">
-            <table class="table table-responsive table-hover table-striped" id="dynamic-table2">
+            <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2">
               <thead class="thead-default">
                 <tr>
                   <th>{% trans 'Form' %} {% trans 'Name' %}</th>
@@ -102,7 +102,7 @@
          
           <div class="widget-body">
 
-          <table class="table table-responsive table-hover table-striped" id="dynamic-table2" id="dynamic-table3">
+          <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2" id="dynamic-table3">
               <thead class="thead-default">
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
               <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
@@ -159,7 +159,8 @@
          <div class="widget-info">
          
           <div class="widget-body">
-          <table class="table table-responsive table-hover table-striped" id="dynamic-table2" id="dynamic-table1">
+          <div class="table-responsive">
+          <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2" id="dynamic-table1">
               <thead class="thead-default">
               <th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
                <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
@@ -204,6 +205,7 @@
           </table>
           </div>
           </div>
+          </div>
         {% endif %}
       </div>
 
@@ -219,8 +221,8 @@
                   <div class="widget-body">
                
                   {% if stage.active_substages %}
-
-                  <table class="table table-responsive table-hover table-striped" id="dynamic-table2">
+                  <div class="table-responsive">
+                  <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2">
                       <thead class="thead-default">
                       <th>{% trans 'Sub' %} {% trans 'Stage' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
@@ -264,6 +266,7 @@
                       {% endfor %}
                       </tbody>
                   </table>
+                  </div>
                  {% endif %}
                   </div>
                 </div>
