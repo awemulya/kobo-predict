@@ -22,6 +22,8 @@ TRANCHE_I_FORM = "First_Tranche_Received"
 TRANCHE_II_FORM = "Second_Tranche_Received"
 TRANCHE_III_FORM = "Third_Tranche_Received"
 
+COMPLETION = "Status_of_Construction"
+
 tracked_forms = [STAGE_I_FORM, STAGE_II_FORM, STAGE_III_FORM]
 
 def get_site_details(site):
@@ -58,6 +60,8 @@ def get_site_details(site):
     if site.site_meta_attributes_ans.get(TRANCHE_II_FORM, False) in ["yes", "Yes", "YES"]:
         data['received_trache_ii'] = 1
     if site.site_meta_attributes_ans.get(TRANCHE_III_FORM, False) in    ["yes", "Yes", "YES"]:
+        data['received_trache_iii'] = 1
+    if site.site_meta_attributes_ans.get(COMPLETION, False) in    ["Completed"]:
         data['received_trache_iii'] = 1
     return data
 
