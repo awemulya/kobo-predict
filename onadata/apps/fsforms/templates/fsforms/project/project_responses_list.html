@@ -51,7 +51,7 @@
          
           <div class="widget-body">
             <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2">
-              <thead class="thead-default">
+              <thead>
                 <tr>
                   <th>{% trans 'Form' %} {% trans 'Name' %}</th>
                   <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
@@ -103,7 +103,7 @@
           <div class="widget-body">
 
           <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2" id="dynamic-table3">
-              <thead class="thead-default">
+              <thead>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
               <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
@@ -161,7 +161,7 @@
           <div class="widget-body">
           <div class="table-responsive">
           <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2" id="dynamic-table1">
-              <thead class="thead-default">
+              <thead>
               <th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
                <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
@@ -210,6 +210,7 @@
       </div>
 
       <div id="stage3" class="tab-pane fade">
+      <div class="section-wrap">
         {% if stages %}
         
           
@@ -223,7 +224,7 @@
                   {% if stage.active_substages %}
                   <div class="table-responsive">
                   <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2">
-                      <thead class="thead-default">
+                      <thead>
                       <th>{% trans 'Sub' %} {% trans 'Stage' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
                       <th>{% trans 'Order' %}</th>
@@ -273,23 +274,35 @@
               
             
           {% endfor %}
-           <div class="col-sm-4 card">
-                 <div class="well well-sm notice-danger"><h4>{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}</h4></div>
-            {% for obj in deleted_forms %}
-            <div class="row card_inside">{{obj.xf.title}} {% trans 'with' %}
-            {% with  obj.id|project_submissions as count %}
-             <a obj.id|project_submissions href="{% url 'forms:project_html_export' obj.id %}">
-                      {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
-                               </a>
-            {% endwith %}
+
+
+</div>
+              <div class="section-wrap margin-top">
+                <div class="section-header">
+                  <h6 class="clearfix">{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}<a class="btn btn-primary btn-sm pull-right" data-toggle="collapse" href="#collapseDeletedResponses" role="button" aria-expanded="true" aria-controls="collapseDeletedResponses">{% trans 'Show' %} / {% trans 'Hide' %}</a>
+                  </h6>
+                </div>
+                <div class="section-body collapse show" id="collapseDeletedResponses" style="">
+                  <ul class="deleted-responses-list">
+                    
+                  <li>
+                    {% for obj in deleted_forms %}
+                      
+                      {{obj.xf.title}}
+
+                    {% trans 'with' %}
+                      {% with  obj.id|project_submissions as count %}
+                       <a obj.id|project_submissions href="{% if count == 0 %}#{% else %}{% url 'forms:project_html_export' obj.id %}{% endif %}">
+                                {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
+                      </a>
+                      {% endwith %}
+                    {% endfor %}
+                  </li>  
+                  </ul>
+                </div>
+              </div>
             </div>
-            {% endfor %}
-      
-        {% endif %}
-          </div>
-        </div>
-            
-    </div>
+      </div>
     </div>
 </div>
 {% endblock %}
