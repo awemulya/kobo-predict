@@ -903,7 +903,9 @@ var FormSubStatQuestion = React.createClass({
         });
 
         var dragPlaceholder = document.createElement("li");
-        dragPlaceholder.className = "dragPlaceholder ui-sortable-handle";
+        dragPlaceholder.className = "dragPlaceholder ui-sortable-handle margin-top";
+        dragPlaceholder.style.height = "100px";
+        dragPlaceholder.style.background= "rgb(255,240,120)";
 
      var Form = React.createClass({
         getInitialState: function () {
@@ -1013,14 +1015,17 @@ var FormSubStatQuestion = React.createClass({
     
     dragOver: function(e) {
         e.preventDefault();
+        // this.dragged.clientHeight > 0 ? dragPlaceholder.style.height = this.dragged.clientHeight  
         this.dragged.style.display = "none";
+        console.log(e.target.closest("li"));
         if(e.target.className === 'elementdrag') return;
         
-        if(e.target.parentNode.className !== 'ui-sortable-handle') return;
-        this.over = e.target.parentNode;
-        e.target.parentNode.parentNode.insertBefore(dragPlaceholder, e.target.parentNode);
-        console.log(e.target.parentNode);
+        if(e.target.closest("li") == null || e.target.closest("li").className != "ui-sortable-handle") return;
+        this.over = e.target.closest("li");
+        e.target.closest("li").parentNode.insertBefore(dragPlaceholder, e.target.closest("li"));
+        
     },
+
     save: function () {  
         if(this.state.Questions.length < 1){ return alert("No Any Questions Found."); } 
         var is_form_valid = true;
@@ -1040,7 +1045,7 @@ var FormSubStatQuestion = React.createClass({
                 }
                 return item;
             }
-        });
+    });
         console.log(is_form_valid);
         
         if (is_form_valid === false){ return alert("The question text cannot be blank.");}
@@ -1128,7 +1133,6 @@ var FormSubStatQuestion = React.createClass({
           selectedProjectLinkIds.splice(index, 1);
         }
         selectedProjectLinkIds.push(project_id);
-        
         console.log(selectedProjectLinkIds);
         this.setState({Questions:arr, selectedProjectLinkIds: selectedProjectLinkIds});
     },
@@ -1173,7 +1177,6 @@ var FormSubStatQuestion = React.createClass({
             arr[i].metas[project_id]=[obj];
         }
         this.setState({Questions:arr});
-        //console.log(arr);
     },
 
     updateLinkMetas: function (project_id, i, obj){
@@ -1209,7 +1212,9 @@ var FormSubStatQuestion = React.createClass({
 
 
     eachQuestion: function (is_new=false, id=false, question, i){
-       console.log(is_new, id, question.question_name, i);
+        
+        console.log(is_new, id, question.question_name, i);
+
         if( (!question.hasOwnProperty('is_deleted') || (question.hasOwnProperty('is_deleted') && question.is_deleted == false)) && ( is_new  || !question.hasOwnProperty('is_new')) ){
             console.log(question);
             if(question.question_type=="MCQ" ){
