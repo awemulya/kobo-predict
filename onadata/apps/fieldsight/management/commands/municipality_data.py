@@ -62,7 +62,7 @@ def get_site_details(site):
     if site.site_meta_attributes_ans.get(TRANCHE_III_FORM, False) in    ["yes", "Yes", "YES"]:
         data['received_trache_iii'] = 1
     if site.site_meta_attributes_ans.get(COMPLETION, False) in    ["Completed"]:
-        data['received_trache_iii'] = 1
+        data['houses_completed'] = 1
     return data
 
 
