@@ -32,6 +32,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
     task.content_object = project
     task.status=1
     task.save()
+    count = ""
     try:
         sites = file.get_records()
         count = len(sites)
