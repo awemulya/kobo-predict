@@ -163,7 +163,11 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
                 sheet_name = form.xf.title[:29] + ".."
             else:
                 sheet_name = form.xf.title
-
+            
+            for ch in ["[", "]", "*", "?", ":", "/"]:
+                if ch in sheet_name:
+                    sheet_name=sheet_name.replace(ch,"_")
+            
             ws = wb.add_sheet(sheet_name)
             row_num = 1
             font_style = xlwt.XFStyle()
