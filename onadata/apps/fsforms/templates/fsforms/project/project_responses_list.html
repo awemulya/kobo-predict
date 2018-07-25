@@ -210,19 +210,21 @@
       </div>
 
       <div id="stage3" class="tab-pane fade">
-      <div class="section-wrap">
-        {% if stages %}
+      {% if stages %}
+      
+        
         
           
           {% for stage in stages %}
+          <div class="section-wrap">
           
           <div class="section-header">
             <h6>{{stage.name }}</h6>
           </div>
           
-          <div class="widget-info">
+          
          
-                  <div class="widget-body">
+                  <div class="section-body no-padding-bottom">
                
                   {% if stage.active_substages %}
                   <div class="table-responsive">
@@ -273,14 +275,15 @@
                   </div>
                  {% endif %}
                   </div>
-                </div>
+               
               
             
           {% endfor %}
+           </div>
           {% endif %}
 
 
-            </div>
+           
               <div class="section-wrap margin-top">
                 <div class="section-header">
                   <h6 class="clearfix">{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}<a class="btn btn-primary btn-sm pull-right" data-toggle="collapse" href="#collapseDeletedResponses" role="button" aria-expanded="true" aria-controls="collapseDeletedResponses">{% trans 'Show' %} / {% trans 'Hide' %}</a>
