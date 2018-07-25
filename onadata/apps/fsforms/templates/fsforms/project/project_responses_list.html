@@ -50,8 +50,8 @@
         <div class="widget-info">
          
           <div class="widget-body">
-            <table class="table table-responsive table-hover table-striped" id="dynamic-table2">
-              <thead class="thead-default">
+            <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2">
+              <thead>
                 <tr>
                   <th>{% trans 'Form' %} {% trans 'Name' %}</th>
                   <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
@@ -102,8 +102,8 @@
          
           <div class="widget-body">
 
-          <table class="table table-responsive table-hover table-striped" id="dynamic-table2" id="dynamic-table3">
-              <thead class="thead-default">
+          <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2" id="dynamic-table3">
+              <thead>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
               <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
@@ -159,8 +159,9 @@
          <div class="widget-info">
          
           <div class="widget-body">
-          <table class="table table-responsive table-hover table-striped" id="dynamic-table2" id="dynamic-table1">
-              <thead class="thead-default">
+          <div class="table-responsive">
+          <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2" id="dynamic-table1">
+              <thead>
               <th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
                <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
@@ -204,24 +205,29 @@
           </table>
           </div>
           </div>
+          </div>
         {% endif %}
       </div>
 
       <div id="stage3" class="tab-pane fade">
+      <div class="section-wrap">
         {% if stages %}
         
           
           {% for stage in stages %}
+          
+          <div class="section-header">
+            <h6>{{stage.name }}</h6>
+          </div>
+          
           <div class="widget-info">
-          <div class="widget-head">
-            <h3>{{stage.name }}</h3>
-                  </div>
+         
                   <div class="widget-body">
                
                   {% if stage.active_substages %}
-
-                  <table class="table table-responsive table-hover table-striped" id="dynamic-table2">
-                      <thead class="thead-default">
+                  <div class="table-responsive">
+                  <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2">
+                      <thead>
                       <th>{% trans 'Sub' %} {% trans 'Stage' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
                       <th>{% trans 'Order' %}</th>
@@ -264,29 +270,44 @@
                       {% endfor %}
                       </tbody>
                   </table>
+                  </div>
                  {% endif %}
                   </div>
                 </div>
               
             
           {% endfor %}
-           <div class="col-sm-4 card">
-                 <div class="well well-sm notice-danger"><h4>{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}</h4></div>
-            {% for obj in deleted_forms %}
-            <div class="row card_inside">{{obj.xf.title}} {% trans 'with' %}
-            {% with  obj.id|project_submissions as count %}
-             <a obj.id|project_submissions href="{% url 'forms:project_html_export' obj.id %}">
-                      {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
-                               </a>
-            {% endwith %}
+          {% endif %}
+
+
             </div>
-            {% endfor %}
-      
-        {% endif %}
-          </div>
-        </div>
-            
-    </div>
+              <div class="section-wrap margin-top">
+                <div class="section-header">
+                  <h6 class="clearfix">{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}<a class="btn btn-primary btn-sm pull-right" data-toggle="collapse" href="#collapseDeletedResponses" role="button" aria-expanded="true" aria-controls="collapseDeletedResponses">{% trans 'Show' %} / {% trans 'Hide' %}</a>
+                  </h6>
+                </div>
+                <div class="section-body collapse show" id="collapseDeletedResponses" style="">
+                  <ul class="deleted-responses-list">
+                    
+                  
+                    {% for obj in deleted_forms %}
+                      <li>
+                      {{obj.xf.title}}
+
+                    {% trans 'with' %}
+                      {% with  obj.id|project_submissions as count %}
+                       <a obj.id|project_submissions href="{% if count == 0 %}#{% else %}{% url 'forms:project_html_export' obj.id %}{% endif %}">
+                                {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
+                      </a>
+                      {% endwith %}
+                       </li> 
+                    {% endfor %}
+                  
+                  </ul>
+                </div>
+              </div>
+            </div>
+      </div>
     </div>
 </div>
 {% endblock %}
