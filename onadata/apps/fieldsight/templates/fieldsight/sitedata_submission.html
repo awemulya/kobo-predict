@@ -35,15 +35,24 @@
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Submissions' %} {% trans 'Data' %}</li>
 		    {% endblock %}
         </ol>
-        <ol class="breadcrum pull-right">
-         <a href="{% url 'forms:site-responses' pk %}" class="btn btn-sm-primary">View by Forms</a>
-        </ol>
+      
     </nav>
 <div class="row">
 <div class="col-md-12">
     <div class="tabbing">
 
-
+    	 <ul class="tab-right">
+            <li>
+              <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  View by Status
+                </button>
+                <div class="dropdown-menu">
+                   <a href="{% url 'forms:site-responses' pk %}" class="btn btn-sm-primary">View by Forms</a>
+                </div>
+              </div>
+            </li>
+          </ul>
     	<ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
               <a class="nav-link " id ="0" data-toggle="tab" href="#tab0" role="tab">{% trans 'Rejected' %} {% trans 'Submissions' %}</a>
