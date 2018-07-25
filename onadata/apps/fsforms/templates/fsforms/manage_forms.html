@@ -1077,10 +1077,10 @@ assigntoken(csrf_token);
                                                           </div>
                                                         </div>
                                                     </div>
+                                                    <strong><span data-bind="text:$index() +1"></span></span>
                                                     <div class="substage-name" data-bind="visible:!editable()">
-
-                                                        <strong># <span data-bind="text:$parent.order()"></span> .<span data-bind="text:$index() +1"></span>
-                                                        <span data-bind="text:name"></span></strong>
+                                                        <strong>Substage Name:</strong>
+                                                        <span data-bind="text:name"></span>
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
                                                         <strong>{% trans 'Form' %} {% trans 'Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
