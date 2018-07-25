@@ -215,10 +215,13 @@
         
           
           {% for stage in stages %}
+          
+          <div class="section-header">
+            <h6>{{stage.name }}</h6>
+          </div>
+          
           <div class="widget-info">
-          <div class="widget-head">
-            <h3>{{stage.name }}</h3>
-                  </div>
+         
                   <div class="widget-body">
                
                   {% if stage.active_substages %}
@@ -286,9 +289,9 @@
                 <div class="section-body collapse show" id="collapseDeletedResponses" style="">
                   <ul class="deleted-responses-list">
                     
-                  <li>
+                  
                     {% for obj in deleted_forms %}
-                      
+                      <li>
                       {{obj.xf.title}}
 
                     {% trans 'with' %}
@@ -297,8 +300,9 @@
                                 {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
                       </a>
                       {% endwith %}
+                       </li> 
                     {% endfor %}
-                  </li>  
+                  
                   </ul>
                 </div>
               </div>

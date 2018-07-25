@@ -194,7 +194,7 @@ class CeleryTaskProgress(models.Model):
     date_updateded = models.DateTimeField(auto_now=True, blank=True, null=True)
     user = models.ForeignKey(User, related_name="task_owner")
     file = models.FileField(
-        upload_to="celeryFiles", blank=True, null=True)
+        upload_to="celeryFiles", max_length=755, blank=True, null=True)
     status = models.IntegerField(default=0, choices=Task_Status)
     description = models.CharField(max_length=755, blank=True)
     task_type = models.IntegerField(default=0, choices=Task_Type)
