@@ -22,12 +22,21 @@
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Responses' %}</li>
 		    {% endblock %}
         </ol>
-        <ol class="breadcrum pull-right">
-         <a href="{% url 'fieldsight:proj-submission-data' project '1' %}" class="btn btn-sm-primary">View by Status</a>
-        </ol>
+       
     </nav>
     <div class="tabbing">
-
+      <ul class="tab-right">
+            <li>
+              <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  View by Form
+                </button>
+                <div class="dropdown-menu">
+                  <a href="{% url 'fieldsight:proj-submission-data' project '1' %}" class="btn btn-sm-primary">View by Status</a>
+                </div>
+              </div>
+            </li>
+          </ul>
 
     <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
@@ -275,6 +284,7 @@
                   </div>
                  {% endif %}
                   </div>
+                  <br>
                
               
             
