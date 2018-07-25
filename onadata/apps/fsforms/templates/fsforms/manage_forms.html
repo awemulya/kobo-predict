@@ -1079,13 +1079,14 @@ assigntoken(csrf_token);
                                                     </div>
                                                     <div class="substage-name" data-bind="visible:!editable()">
 
-                                                        # <span data-bind="text:$parent.order()"></span> .<span data-bind="text:$index() +1"></span>
-                                                        <span data-bind="text:name"></span>
+                                                        <strong># <span data-bind="text:$parent.order()"></span> .<span data-bind="text:$index() +1"></span>
+                                                        <span data-bind="text:name"></span></strong>
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
                                                         <strong>{% trans 'Form' %} {% trans 'Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
-
-                                                        <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
+                                                    </div>
+                                                    <div class="substage-submission-status">
+                                                        <strong>{% trans 'Default Submission Status:' %}</strong>
 
                                                          <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: stage_forms().default_submission_status"></select>
 
