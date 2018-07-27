@@ -299,8 +299,54 @@
                   <h6 class="clearfix">{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}<a class="btn btn-primary btn-sm pull-right" data-toggle="collapse" href="#collapseDeletedResponses" role="button" aria-expanded="true" aria-controls="collapseDeletedResponses">{% trans 'Show' %} / {% trans 'Hide' %}</a>
                   </h6>
                 </div>
-                <div class="section-body collapse show" id="collapseDeletedResponses" style="">
-                  <ul class="deleted-responses-list">
+                <div class="section-body collapse" id="collapseDeletedResponses" style="">
+                  
+           <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2" id="dynamic-table3">
+              <thead>
+                <th>{% trans 'Form' %} {% trans 'Name' %}</th>
+                <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
+                <th>{% trans 'Created' %} {% trans 'Date' %}</th>
+                <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
+                <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
+              </thead>
+              <tbody>
+                 {% for obj in deleted_forms %}
+              
+                      <tr>
+                        <td>
+                          {{obj.xf.title}}
+                        </td>
+                        <td>
+                          {{ obj.getlatestsubmittiondate.first.date }}
+                        </td>
+
+                        <td>
+                            {{ obj.date_created }}
+                        </td>
+                        <td>
+                          {% trans 'with' %}
+                          {% with  obj.id|project_submissions as count %}
+                           <a obj.id|project_submissions href="{% if count == 0 %}#{% else %}{% url 'forms:project_html_export' obj.id %}{% endif %}">
+                                    {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
+                          </a>
+                          {% endwith %}
+                        </td>
+                        <td>
+                          <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 1 obj.id %}">
+                              <i class="la la-download" aria-hidden="true"></i> Download</a>
+                        </td>
+                      </tr>
+                      
+                  {% endfor %}
+              
+              </tbody>
+          </table>
+
+
+
+
+
+  <!--                 <ul class="deleted-responses-list">
                     
                   
                     {% for obj in deleted_forms %}
@@ -316,7 +362,7 @@
                        </li> 
                     {% endfor %}
                   
-                  </ul>
+                  </ul> -->
                 </div>
               </div>
             </div>

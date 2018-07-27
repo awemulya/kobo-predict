@@ -523,7 +523,7 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.project_id = {{obj.pk|unlocalize}};
 	configure_settings.csrf_token = '{{ csrf_token }}';
 	configure_settings.url = "{% url 'fieldsight_export:export_xls_project_level_sites' obj.pk %}";
-
+	configure_settings.log_url = "{% url 'eventlog:api_project_logs' obj.pk %}";
 	//getlogdata();
 					
 </script>
@@ -538,4 +538,5 @@ var static_url ="{{ STATIC_URL }}";
 <script src="{% static 'vendor/vue-highcharts.min.js' %}"></script>
 <script src="{% static 'js/fieldsight/manage_project_dashboard.js' %}?v=0.6"></script>
 <script src="{% static 'js/fieldsight/site_export.js' %}?v=0.4"></script>
+<script src="{% static 'js/fieldsight/loglist.js' %}?v=0.6"></script>
 {% endblock %}

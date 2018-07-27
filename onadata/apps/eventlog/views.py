@@ -170,21 +170,21 @@ class MyCeleryTaskProgress(TemplateView):
 
 
 class ProjectLogListView(ProjectRoleMixin, TemplateView):
-    template_name = "eventlog/log_list.html"
+    template_name = "eventlog/loglist.html"
 
     def get_context_data(self, **kwargs):
         data = super(ProjectLogListView, self).get_context_data(**kwargs)
         project = Project.objects.get(pk=kwargs.get('pk'))
-        data['type'] = "Project"
+        data['is_project'] = True
         data['obj'] = project
         return data
 
 class SiteLogListView(SiteRoleMixin, TemplateView):
-    template_name = "eventlog/log_list.html"
+    template_name = "eventlog/loglist.html"
 
     def get_context_data(self, **kwargs):
         data = super(SiteLogListView, self).get_context_data(**kwargs)
         site = Site.objects.get(pk=kwargs.get('pk'))
-        data['type'] = "Site"
+        data['is_project'] = False
         data['obj'] = site
         return data

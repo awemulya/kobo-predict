@@ -235,7 +235,7 @@ class PDFReport:
             question_name = g_question+"/"+first_children['name']
 
             if first_children['type'] == 'group':
-                self.parse_group(g_question+"/",first_children, g_answer.get('question_name', {}))
+                self.parse_group(g_question+"/",first_children, g_answer)
 
             elif first_children['type'] == "repeat":
                 self.parse_repeat(g_question+"/", first_children, g_answer.get('question_name', []))
@@ -351,6 +351,7 @@ class PDFReport:
                     self.additional_data=[]
                     self.main_answer = instance.instance.json
                     question = json.loads(json_question)
+
                     self.parse_individual_questions(question['children'])
                     
 
