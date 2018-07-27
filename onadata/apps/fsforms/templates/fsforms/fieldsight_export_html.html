@@ -65,10 +65,10 @@
             </div>
          
 <div class="container">
-    
+    <div class="table-responsive">
    {% if is_project_data %}
           
-  <table class="table table-hover ceter-block sortable">
+  <table class="table table-striped table-bordered table-hover margin-top">
     <thead>
       <tr>
         <th>{% trans 'S.N' %}</th>
@@ -107,7 +107,7 @@
 
   {% if is_site_data %}
 
-  <table class="table table-hover ceter-block sortable">
+  <table class="table table-striped table-bordered table-hover margin-top">
     <thead>
       <tr>
         <th>{% trans 'S.N' %}</th>
@@ -139,6 +139,7 @@
     </tbody>
   </table>
   {% endif %}
+  </div>
 </div>
 
 
