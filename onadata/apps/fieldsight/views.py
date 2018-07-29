@@ -1880,7 +1880,6 @@ class OrganizationdataSubmissionView(TemplateView):
         data['flagged'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='2').order_by('-date')
         data['approved'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='3').order_by('-date')
         data['type'] = self.kwargs.get('type')
-
         return data
 
 
