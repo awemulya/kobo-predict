@@ -74,9 +74,9 @@ vm = new SetUpViewModel(is_project, pk, base_url);
 ko.applyBindings(vm);
 
 
-if (tab == "2"){ function () {setSelectedVm('schedules')} }
-else if (tab == "3"){ function () {setSelectedVm('stages')} }
-else if (tab == "4"){ function () {setSelectedVm('survey')} }
+if (tab == "2"){ vm.setSelectedVm('schedules')} 
+else if (tab == "3"){ vm.setSelectedVm('stages')} 
+else if (tab == "4"){ vm.setSelectedVm('survey')} 
     
     
 });
