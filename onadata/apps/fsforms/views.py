@@ -2138,7 +2138,7 @@ class DeleteFInstance(FInstanceRoleMixin, View):
 class DeleteFieldsightXF(View):
     def get(self, request, *args, **kwargs):
         try:
-            fsform = FieldSightXF.objects.get(pk=self.kwargs.get('fxf_pk'))
+            fsform = FieldSightXF.objects.get(pk=self.kwargs.get('fsxf_id'))
             fsform.is_deleted = True
             fsform.save()
 
@@ -2159,7 +2159,7 @@ class DeleteFieldsightXF(View):
                 organization_id = extra_object.organization_id
                 extra_json['submission_count'] = fsform.project_form_instances.all().count() 
             
-            noti = fsform.logs.create(source=self.request.user, type=34, title="deleted form" + self.kwargs.get('fxf_pk'),
+            noti = fsform.logs.create(source=self.request.user, type=34, title="deleted form" + self.kwargs.get('fsxf_id'),
                                        organization_id=organization_id,
                                        project_id=project_id,
                                                         site_id=site_id,
