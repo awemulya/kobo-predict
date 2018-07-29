@@ -46,9 +46,8 @@
     <div class="tab-content">
       <div id="general1" class="tab-pane active">
         {% if generals %}
-          <h3><b> {% trans 'General' %} {% trans 'Forms' %} </b></h3>
-
-          <table class="table table-striped" id="dynamic-table2">
+          <div class="table-responsive">     
+          <table class="table table-striped table-bordered table-hover margin-top">
               <thead>
               <th>{% trans 'Form' %} {% trans 'Name' %}</th>
               <th>{% trans 'Last' %} {% trans 'Submission' %} {% trans 'On' %}</th>
@@ -75,7 +74,7 @@
                       <td>
                           {% with obj.id|site_submissions as count %}
                           
-                           <a class="badge badge-primary" href="{% url 'forms:html_export' obj.id %}">
+                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.id %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
                           {% endwith %}
 
@@ -95,15 +94,66 @@
               {% endfor %}
               </tbody>
           </table>
+          </div>
         {% endif %}
+        <div class="section-wrap margin-top">
+          <div class="section-header">
+            <h6 class="clearfix">{% trans 'Deleted' %} {% trans 'Forms' %}<a class="btn btn-primary btn-sm pull-right" data-toggle="collapse" href="#collapseDeletedResponses" role="button" aria-expanded="true" aria-controls="collapseDeletedResponses">{% trans 'Show' %} / {% trans 'Hide' %}</a>
+            </h6>
+          </div>
+          <div class="section-body collapse" id="collapseDeletedResponses" style="">
+             <div class="table-responsive">     
+               <table class="table table-striped table-bordered table-hover margin-top">
+                  <thead>
+                    <th>{% trans 'Form' %} {% trans 'Name' %}</th>
+                    <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
+                    <th>{% trans 'Created' %} {% trans 'Date' %}</th>
+                    <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
+                    <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
+                  </thead>
+                  <tbody>
+                     {% for obj in general_deleted_forms %}
+                  
+                          <tr>
+                            <td>
+                              {{obj.xf.title}}
+                            </td>
+                            <td>
+                              {{ obj.getlatestsubmittiondate.first.date }}
+                            </td>
+
+                            <td>
+                                {{ obj.date_created }}
+                            </td>
+                            <td>
+                              
+                              {% with  obj.id|site_submissions as count %}
+                               <a class="badge badge-light" href="{% if count == 0 %}#{% else %}{% url 'forms:html_export' obj.id %}{% endif %}">
+                                        {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
+                              </a>
+                              {% endwith %}
+                            </td>
+                            <td>
+                              <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
+                                  <i class="la la-download" aria-hidden="true"></i> Download</a>
+                            </td>
+                          </tr>
+                          
+                      {% endfor %}
+                  
+                  </tbody>
+               </table>
+            </div>
+          </div>
+        </div>
       </div>
 
 
       <div id="schedule2" class="tab-pane fade">
         {% if schedules %}
-          <h3><b>{% trans 'Scheduled' %} {% trans 'Forms' %}</b></h3>
+          <div class="table-responsive">     
 
-          <table class="table table-striped" id="dynamic-table1">
+          <table class="table table-striped table-bordered table-hover margin-top">
               <thead>
               <th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
               <th>{% trans 'Last' %} {% trans 'Submission' %} {% trans 'On' %}</th>
@@ -134,7 +184,7 @@
                       <td>
                            {% with obj.schedule_forms.pk|site_submissions as count %}
                           
-                           <a class="badge badge-primary" href="{% url 'forms:html_export' obj.schedule_forms.pk %}">
+                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.schedule_forms.pk %}">
                               <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
                               </a>
                           {% endwith %}
@@ -154,26 +204,77 @@
               {% endfor %}
               </tbody>
           </table>
-
+          </div>
         {% endif %}  
+         <div class="section-wrap margin-top">
+          <div class="section-header">
+            <h6 class="clearfix">{% trans 'Deleted' %} {% trans 'Forms' %}<a class="btn btn-primary btn-sm pull-right" data-toggle="collapse" href="#collapseDeletedResponses" role="button" aria-expanded="true" aria-controls="collapseDeletedResponses">{% trans 'Show' %} / {% trans 'Hide' %}</a>
+            </h6>
+          </div>
+          <div class="section-body collapse" id="collapseDeletedResponses">
+             <div class="table-responsive">     
+               <table class="table table-striped table-bordered table-hover margin-top">
+                  <thead>
+                    <th>{% trans 'Form' %} {% trans 'Name' %}</th>
+                    <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
+                    <th>{% trans 'Created' %} {% trans 'Date' %}</th>
+                    <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
+                    <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
+                  </thead>
+                  <tbody>
+                     {% for obj in schedule_deleted_forms %}
+                  
+                          <tr>
+                            <td>
+                              {{obj.xf.title}}
+                            </td>
+                            <td>
+                              {{ obj.getlatestsubmittiondate.first.date }}
+                            </td>
+
+                            <td>
+                                {{ obj.date_created }}
+                            </td>
+                            <td>
+                              
+                              {% with  obj.id|site_submissions as count %}
+                               <a class="badge badge-light" href="{% if count == 0 %}#{% else %}{% url 'forms:html_export' obj.id %}{% endif %}">
+                                        {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
+                              </a>
+                              {% endwith %}
+                            </td>
+                            <td>
+                              <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
+                                  <i class="la la-download" aria-hidden="true"></i> Download</a>
+                            </td>
+                          </tr>
+                          
+                      {% endfor %}
+                  
+                  </tbody>
+               </table>
+            </div>
+          </div>
+        </div>
       </div>
 
 
       <div id="stage3" class="tab-pane fade">
         {% if stages %}
-         <div class="panel-group col-sm-8" id="accordion">
-          {% for stage in stages %}
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href=""><b>{% trans 'Stage' %} {% trans 'Name:' %}</b> {{stage.name }}</a>
-                </h4>
-              </div>
-              <div id="collapse{{stage.id}}">
-                <div class="panel-body">
-                  {% if stage.active_substages %}
 
-                  <table class="table table-striped">
+          {% for stage in stages %}
+          <div class="section-wrap">
+            <div class="section-header">
+              <h6>{{stage.name }}</h6>
+            </div>
+          
+          
+         
+                  <div class="section-body no-padding-bottom">
+               
+                  {% if stage.active_substages %}
+                  <div class="table-responsive">     
+                  <table class="table table-striped table-bordered table-hover margin-top">
                       <thead>
                       <th>{% trans 'Sub' %} {% trans 'Stage' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Last' %} {% trans 'Submission' %} {% trans 'On' %}</th>
@@ -202,7 +303,7 @@
                               <td>
                           {% with obj.stage_forms.pk|site_submissions as count %}
                           
-                               <a class="badge badge-primary" href="{% url 'forms:html_export' obj.stage_forms.pk %}">
+                               <a class="badge badge-light" href="{% url 'forms:html_export' obj.stage_forms.pk %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
                                </a>
                           {% endwith %}
@@ -223,31 +324,64 @@
                       {% endfor %}
                       </tbody>
                   </table>
-
+                  </div>
 
                   {% endif %}
                 </div>
-              </div>
-            </div>
+                <br>
           {% endfor %}  
-            
           </div> 
+
         {% endif %}
-        <div class="col-sm-4 card">
-            <div class="well well-sm notice-danger"><h4>{% trans 'Deleted' %} {% trans 'Form' %} {% trans 'Responses' %}</h4></div>
-            {% for obj in deleted_forms %}
-            <div class="row card_inside">{{obj.xf.title}} {% trans 'with' %}
-             {% with obj.id|site_submissions as count %}
-             <a class="badge badge-primary" href="{% url 'forms:html_export' obj.id%}">
-                               
-                              {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}
+         <div class="section-wrap margin-top">
+          <div class="section-header">
+            <h6 class="clearfix">{% trans 'Deleted' %} {% trans 'Forms' %}<a class="btn btn-primary btn-sm pull-right" data-toggle="collapse" href="#collapseDeletedResponses" role="button" aria-expanded="true" aria-controls="collapseDeletedResponses">{% trans 'Show' %} / {% trans 'Hide' %}</a>
+            </h6>
+          </div>
+          <div class="section-body collapse" id="collapseDeletedResponses">
+             <div class="table-responsive">     
+               <table class="table table-striped table-bordered table-hover margin-top">
+                  <thead>
+                    <th>{% trans 'Form' %} {% trans 'Name' %}</th>
+                    <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
+                    <th>{% trans 'Created' %} {% trans 'Date' %}</th>
+                    <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
+                    <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
+                  </thead>
+                  <tbody>
+                     {% for obj in general_deleted_forms %}
+                  
+                          <tr>
+                            <td>
+                              {{obj.xf.title}}
+                            </td>
+                            <td>
+                              {{ obj.getlatestsubmittiondate.first.date }}
+                            </td>
 
-                               </a>
-
-             {% endwith %}
-
+                            <td>
+                                {{ obj.date_created }}
+                            </td>
+                            <td>
+                              
+                              {% with  obj.id|site_submissions as count %}
+                               <a class="badge badge-light" href="{% if count == 0 %}#{% else %}{% url 'forms:html_export' obj.id %}{% endif %}">
+                                        {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
+                              </a>
+                              {% endwith %}
+                            </td>
+                            <td>
+                              <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
+                                  <i class="la la-download" aria-hidden="true"></i> Download</a>
+                            </td>
+                          </tr>
+                          
+                      {% endfor %}
+                  
+                  </tbody>
+               </table>
             </div>
-            {% endfor %}
+          </div>
         </div>
       </div> 
     </div>

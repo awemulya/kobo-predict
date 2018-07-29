@@ -53,8 +53,24 @@ var is_project = "{{is_project}}";
 var pk = "{{pk}}";
 var csrf_token = '{{ csrf_token }}';
 assigntoken(csrf_token);
- vm = new SetUpViewModel(is_project, pk, base_url);
- ko.applyBindings(vm);
+vm = new SetUpViewModel(is_project, pk, base_url);
+ko.applyBindings(vm);
+    
+    if (is_project == 0){
+        var next_url="/forms/setup-forms/0/"+pk+"/";
+    }else{
+        var next_url="/forms/setup-forms/1/"+pk+"/";
+    }
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var tab = url.searchParams.get("tab");
+    if (tab === null){
+        tab = "0";
+    }
+    $( "#"+tab ).addClass( "active" );
+    $( "#tab00"+tab ).addClass( "active" );
+    $( "#main-content" ).show();
+
 });
 
 </script>
@@ -64,6 +80,13 @@ assigntoken(csrf_token);
 {% csrf_token %}
 
 <div id="main-content" class="padding">
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+      <strong class="text-capitalize">{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}!</strong> {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
     <nav aria-label="breadcrumb" role="navigation">
         <ol class="breadcrumb">
             {% block breadcrumbs %}
@@ -85,24 +108,24 @@ assigntoken(csrf_token);
 				<div class="tabbing">
 					<ul class="nav nav-tabs" role="tablist">
 						<li class="nav-item">
-							<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">{% trans 'General' %} {% trans 'Forms' %}</a>
+							<a class="nav-link" data-toggle="tab" id="1" href="#tab001" role="tab">{% trans 'General' %} {% trans 'Forms' %}</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" data-toggle="tab" href="#tab002" role="tab"
+							<a class="nav-link" data-toggle="tab" id="2" href="#tab002" role="tab"
                             data-bind="click: function () {setSelectedVm('schedules')}">{% trans 'Scheduled' %} {% trans 'Forms' %}</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" data-toggle="tab" href="#tab003" role="tab"
+							<a class="nav-link" data-toggle="tab" id="3" href="#tab003" role="tab"
                             data-bind="click: function () {setSelectedVm('stages')}">{% trans 'Staged' %} {% trans 'Forms' %}</a>
 						</li>
                         <li class="nav-item" data-bind="visible:is_project=='1'">
-							<a class="nav-link" data-toggle="tab" href="#tab004" role="tab"
+							<a class="nav-link" data-toggle="tab" id="4" href="#tab004" role="tab"
                             data-bind="click: function () {setSelectedVm('survey')}">{% trans 'Survey' %} {% trans 'Forms' %}</a>
 						</li>
 					</ul>
 					<!-- Tab panes -->
 					<div class="tab-content">
-						<div class="tab-pane active" id="tab001" role="tabpanel">
+						<div class="tab-pane" id="tab001" role="tabpanel">
                             <div data-bind="with:generalVm">
                             {% csrf_token %}
                                 <!--Assign Form- OLD-->
@@ -283,7 +306,7 @@ assigntoken(csrf_token);
                                             </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text:responses_count"></td>
-                                            <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
+                                            <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                                                     <div data-bind="with: em">
                                                       <div class="modal-dialog form-modal" role="document">
@@ -367,6 +390,13 @@ assigntoken(csrf_token);
                                                 <a href="javascript:void(0);" class="badge badge-success" data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}">
                                                <i class="la la-close" data-bind="visible:is_deployed()==true"></i>
                                                 <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
+                                                <!-- ko if: is_deployed() != true -->
+                                                        <a data-bind="attr: { href:'/fsform/delete-fieldsightxf/'+  id +'/?next='+ next_url +'?tab=1'}" class="badge badge-danger">
+                                                            <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
+                                                            <span>Delete</span>
+                                                        </a>                                                    
+                                                <!-- /ko -->
+
 
                                             </td>
                                         </tr>
@@ -650,7 +680,7 @@ assigntoken(csrf_token);
 										<td data-bind="text: days"></td> -->
                                         <td data-bind="text: schedule_level"></td>
 										<td data-bind="text: responses_count"></td>
-                                        <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
+                                        <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                         <div data-bind="with: em">
                           <div class="modal-dialog form-modal" role="document">
@@ -735,6 +765,13 @@ assigntoken(csrf_token);
                                                 <i class="la la-close"></i> {% trans 'Undeploy ' %}</a>
                                             <a href="javascript:void(0);" role="button" class="badge badge-success" data-bind="click:deploy, visible:is_deployed()!= true">
                                                 <i class="la la-rocket"></i> {% trans 'Deploy ' %}</a>
+                                            <!-- ko if: is_deployed() != true -->
+                                                        <a data-bind="attr: { href:'/fsform/delete-fieldsightxf/'+  id +'/?next='+ next_url +'?tab=2'}" class="badge badge-danger">
+                                                            <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
+                                                            <span>Delete</span>
+                                                        </a>                                                    
+                                            <!-- /ko -->
+
 
 										</td>
 									</tr>
@@ -749,7 +786,7 @@ assigntoken(csrf_token);
                                 <!--<a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:reorder_stage"><i class="la la-reorder" aria-hidden="true"></i> {% trans 'Reorder Stages' %}</a>-->
                                 <!--<a href="javascript:void(0);" title="" class="btn btn-sm btn-success" data-bind="visible:stages().length > 0,-->
                                             <!--click: deployStages"><i class="la la-rocket" aria-hidden="true"></i> {% trans 'Deploy' %} {% trans 'to' %} {% trans 'Mobile' %}</a>-->
-                                <a href="{% url 'forms:configure_stages' is_project pk %}" class="btn btn-sm btn-warning"><i class="la la-asterisk" aria-hidden="true"></i>  {% trans 'Configure Stages' %}</a>
+                                <a href="{% url 'forms:configure_stages' is_project pk %}" class="btn btn-sm btn-primary"><i class="la la-cogs" aria-hidden="true"></i>  {% trans 'Configure Stages' %}</a>
                                 {% csrf_token %}
 
 
@@ -1092,14 +1129,17 @@ assigntoken(csrf_token);
 
                                                     </div>
                                                     <div class="substage-educational-material">
-                                                        <strong>{% trans 'Educational' %} {% trans 'Material' %} : </strong> Yes
+                                                        <strong>{% trans 'Educational' %} {% trans 'Material' %} : </strong> <span data-bind="text: (em === null)? 'No':'Yes'"></span>
                                                     </div>
-                                                    <div class="substage-form-action" data-bind="visible:!editable()">
+                                                    <div class="substage-substage-weight">
+                                                        <strong>{% trans 'Weight' %} : </strong> <span data-bind="text: weight"></span>
+                                                    </div>
+                                                    <!-- <div class="substage-form-action" data-bind="visible:!editable()">
                                                         <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i> {% trans 'Edit' %}</a>
 
                                                         <a href="javascript:void(0);"  class="badge badge-success" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
 
-                                                    </div>
+                                                    </div> -->
 
                                                     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:edit_modal_visibility">
                                                         <div>
@@ -1289,6 +1329,7 @@ assigntoken(csrf_token);
                                                 <button type="button" class="btn btn-primary"><i class="la la-upload"></i> {% trans 'Assign' %} {% trans 'Form' %}</button>
                                                 <a href="#" class="btn btn-secondary"><i class="la la-file-text"></i> {% trans 'New' %} {% trans 'Form' %}</a>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -1339,7 +1380,7 @@ assigntoken(csrf_token);
                                             </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text: responses_count"></td>
-                                            <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
+                                            <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
 
 
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
@@ -1426,6 +1467,13 @@ assigntoken(csrf_token);
                                                 <a href="javascript:void(0);" class="badge badge-success" data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}">
                                                <i class="la la-close" data-bind="visible:is_deployed()==true"></i>
                                                 <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
+
+                                                <!-- ko if: is_deployed() != true -->
+                                                        <a data-bind="attr: { href:'/fsform/delete-fieldsightxf/'+ id +'/?next='+ next_url +'?tab=4'}" class="badge badge-danger">
+                                                            <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
+                                                            <span>Delete</span>
+                                                        </a>                                                    
+                                                <!-- /ko -->
 
                                             </td>
 
