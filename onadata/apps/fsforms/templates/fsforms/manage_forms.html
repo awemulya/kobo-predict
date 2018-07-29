@@ -65,7 +65,7 @@ if (tab === null){
 }
 
 $(document).ready(function() {
-$("#"+tab).trigger('click'); 
+// $("#"+tab).trigger('click'); 
 // $( "#"+tab ).addClass( "active" );
 // $( "#tab00"+tab ).addClass( "active" );
 // $( "#main-content" ).show();
@@ -73,10 +73,15 @@ $("#"+tab).trigger('click');
 assigntoken(csrf_token);
 vm = new SetUpViewModel(is_project, pk, base_url);
 ko.applyBindings(vm);
+
+
+if (tab == "2"){ function () {setSelectedVm('schedules')} }
+else if (tab == "3"){ function () {setSelectedVm('stages')} }
+else if (tab == "4"){ function () {setSelectedVm('survey')} }
     
     
 });
-$("#"+tab).trigger('click'); 
+
 </script>
 {% endblock %}
 
@@ -1133,7 +1138,7 @@ $("#"+tab).trigger('click');
 
                                                     </div>
                                                     <div class="substage-educational-material">
-                                                        <strong>{% trans 'Educational' %} {% trans 'Material' %} : </strong> <span data-bind="text: (em() === null)? 'No':'Yes'"></span>
+                                                        <strong>{% trans 'Educational' %} {% trans 'Material' %} : </strong> <span data-bind="text: (em() == null)? 'No':'Yes'"></span>
                                                     </div>
                                                     <div class="substage-substage-weight">
                                                         <strong>{% trans 'Weight' %} : </strong> <span data-bind="text: weight"></span>
