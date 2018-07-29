@@ -16,7 +16,7 @@ class ScheduleViewset(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing scheduless.
     """
-    queryset = Schedule.objects.filter(schedule_forms__isnull=False)
+    queryset = Schedule.objects.filter(schedule_forms__isnull=False, schedule_forms__is_deleted=False)
     serializer_class = ScheduleSerializer
     # pagination_class = LargeResultsSetPagination
 
@@ -28,7 +28,7 @@ class ScheduleViewset(viewsets.ModelViewSet):
         if is_project == "1":
             queryset = queryset.filter(project__id=pk)
         else:
-            queryset = queryset.filter(site__id=pk, schedule_forms__is_deleted=False)
+            queryset = queryset.filter(site__id=pk)
         return queryset
 
     def get_serializer_context(self):
