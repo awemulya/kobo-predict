@@ -108,18 +108,18 @@ ko.applyBindings(vm);
 				<div class="tabbing">
 					<ul class="nav nav-tabs" role="tablist">
 						<li class="nav-item">
-							<a class="nav-link" data-toggle="tab" id="0" href="#tab001" role="tab">{% trans 'General' %} {% trans 'Forms' %}</a>
+							<a class="nav-link" data-toggle="tab" id="1" href="#tab001" role="tab">{% trans 'General' %} {% trans 'Forms' %}</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" data-toggle="tab" id="1" href="#tab002" role="tab"
+							<a class="nav-link" data-toggle="tab" id="2" href="#tab002" role="tab"
                             data-bind="click: function () {setSelectedVm('schedules')}">{% trans 'Scheduled' %} {% trans 'Forms' %}</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" data-toggle="tab" id="2" href="#tab003" role="tab"
+							<a class="nav-link" data-toggle="tab" id="3" href="#tab003" role="tab"
                             data-bind="click: function () {setSelectedVm('stages')}">{% trans 'Staged' %} {% trans 'Forms' %}</a>
 						</li>
                         <li class="nav-item" data-bind="visible:is_project=='1'">
-							<a class="nav-link" data-toggle="tab" id="3" href="#tab004" role="tab"
+							<a class="nav-link" data-toggle="tab" id="4" href="#tab004" role="tab"
                             data-bind="click: function () {setSelectedVm('survey')}">{% trans 'Survey' %} {% trans 'Forms' %}</a>
 						</li>
 					</ul>
