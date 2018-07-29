@@ -2146,7 +2146,7 @@ class DeleteFieldsightXF(View):
             if fsform.site:
                 extra_object=fsform.site
                 site_id=extra_object.id
-                project_id = extra_object.site.project_id
+                project_id = extra_object.project_id
                 organization_id = extra_object.project.organization_id
                 extra_message="site"
                 extra_json['submission_count'] = fsform.site_form_instances.all().count() 
