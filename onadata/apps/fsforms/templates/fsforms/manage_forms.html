@@ -54,8 +54,10 @@ var pk = "{{pk}}";
 var csrf_token = '{{ csrf_token }}';
 assigntoken(csrf_token);
 if (is_project == 0){
+    console.log('hereeeee');
         var next_url="/forms/setup-forms/0/"+pk+"/";
     }else{
+            console.log('hereeeee');
         var next_url="/forms/setup-forms/1/"+pk+"/";
     }
     var url_string = window.location.href;
