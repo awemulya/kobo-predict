@@ -51,21 +51,20 @@ var is_project = "{{is_project}}";
 var pk = "{{pk}}";
 var csrf_token = '{{ csrf_token }}';
 if (is_project == 0){
-console.log('hereeeee');
+
     var next_url="/forms/setup-forms/0/"+pk;
 }else{
-        console.log('hereeeee');
     var next_url="/forms/setup-forms/1/"+pk;
 }
 var url_string = window.location.href;
 var url = new URL(url_string);
 var tab = url.searchParams.get("tab");
-if (tab === null){
+if (tab === null  || (tab != "1" && tab != "2" && tab != "3" && tab !="4") || (tab =="4" && is_project == 0)){
     tab = "1";
 }
 
 $(document).ready(function() {
-// $("#"+tab).trigger('click'); 
+$("#"+tab).trigger('click'); 
 // $( "#"+tab ).addClass( "active" );
 // $( "#tab00"+tab ).addClass( "active" );
 // $( "#main-content" ).show();
