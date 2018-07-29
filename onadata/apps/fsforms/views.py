@@ -2159,7 +2159,7 @@ class DeleteFieldsightXF(View):
                 organization_id = extra_object.organization_id
                 extra_json['submission_count'] = fsform.project_form_instances.all().count() 
             
-            noti = fsfrom.logs.create(source=self.request.user, type=34, title="deleted form" + self.kwargs.get('fxf_pk'),
+            noti = fsform.logs.create(source=self.request.user, type=34, title="deleted form" + self.kwargs.get('fxf_pk'),
                                        organization_id=organization_id,
                                        project_id=project_id,
                                                         site_id=site_id,
