@@ -394,7 +394,7 @@ ko.applyBindings(vm);
                                                <i class="la la-close" data-bind="visible:is_deployed()==true"></i>
                                                 <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
                                                 <!-- ko if: is_deployed() != true -->
-                                                        <a data-bind="attr: { href:'/fsform/delete-fieldsightxf/'+  id +'/?next='+ next_url +'&tab=1'}" class="badge badge-danger">
+                                                        <a data-bind="attr: { href:'/fsform/delete-fieldsightxf/'+  id() +'/?next='+ next_url +'&tab=1'}" class="badge badge-danger">
                                                             <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
                                                             <span>Delete</span>
                                                         </a>                                                    
@@ -769,7 +769,7 @@ ko.applyBindings(vm);
                                             <a href="javascript:void(0);" role="button" class="badge badge-success" data-bind="click:deploy, visible:is_deployed()!= true">
                                                 <i class="la la-rocket"></i> {% trans 'Deploy ' %}</a>
                                             <!-- ko if: is_deployed() != true -->
-                                                        <a data-bind="attr: { href:'/fsform/delete-fieldsightxf/'+  id +'/?next='+ next_url +'&tab=2'}" class="badge badge-danger">
+                                                        <a data-bind="attr: { href:'/fsform/delete-fieldsightxf/'+  id() +'/?next='+ next_url +'&tab=2'}" class="badge badge-danger">
                                                             <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
                                                             <span>Delete</span>
                                                         </a>                                                    
@@ -1472,7 +1472,7 @@ ko.applyBindings(vm);
                                                 <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
 
                                                 <!-- ko if: is_deployed() != true -->
-                                                        <a data-bind="attr: { href:'/fsform/delete-fieldsightxf/'+id+'/?next='+next_url+'&tab=4'}" class="badge badge-danger">
+                                                        <a data-bind="attr: { href:'/fsform/delete-fieldsightxf/'+id()+'/?next='+next_url+'&tab=4'}" class="badge badge-danger">
                                                             <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
                                                             <span>Delete</span>
                                                         </a>                                                    
