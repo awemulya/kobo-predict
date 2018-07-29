@@ -65,7 +65,7 @@ ko.applyBindings(vm);
     var url = new URL(url_string);
     var tab = url.searchParams.get("tab");
     if (tab === null){
-        tab = "1";
+        tab = "0";
     }
     $( "#"+tab ).addClass( "active" );
     $( "#tab00"+tab ).addClass( "active" );
