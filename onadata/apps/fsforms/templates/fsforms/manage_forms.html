@@ -53,10 +53,7 @@ var is_project = "{{is_project}}";
 var pk = "{{pk}}";
 var csrf_token = '{{ csrf_token }}';
 assigntoken(csrf_token);
-vm = new SetUpViewModel(is_project, pk, base_url);
-ko.applyBindings(vm);
-    
-    if (is_project == 0){
+if (is_project == 0){
         var next_url="/forms/setup-forms/0/"+pk+"/";
     }else{
         var next_url="/forms/setup-forms/1/"+pk+"/";
@@ -71,6 +68,10 @@ ko.applyBindings(vm);
     $( "#tab00"+tab ).addClass( "active" );
     $( "#main-content" ).show();
 
+vm = new SetUpViewModel(is_project, pk, base_url);
+ko.applyBindings(vm);
+    
+    
 });
 
 </script>
