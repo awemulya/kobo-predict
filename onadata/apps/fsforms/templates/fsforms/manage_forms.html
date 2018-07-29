@@ -283,7 +283,7 @@ assigntoken(csrf_token);
                                             </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text:responses_count"></td>
-                                            <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
+                                            <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                                                     <div data-bind="with: em">
                                                       <div class="modal-dialog form-modal" role="document">
@@ -650,7 +650,7 @@ assigntoken(csrf_token);
 										<td data-bind="text: days"></td> -->
                                         <td data-bind="text: schedule_level"></td>
 										<td data-bind="text: responses_count"></td>
-                                        <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
+                                        <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                         <div data-bind="with: em">
                           <div class="modal-dialog form-modal" role="document">
@@ -749,7 +749,7 @@ assigntoken(csrf_token);
                                 <!--<a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:reorder_stage"><i class="la la-reorder" aria-hidden="true"></i> {% trans 'Reorder Stages' %}</a>-->
                                 <!--<a href="javascript:void(0);" title="" class="btn btn-sm btn-success" data-bind="visible:stages().length > 0,-->
                                             <!--click: deployStages"><i class="la la-rocket" aria-hidden="true"></i> {% trans 'Deploy' %} {% trans 'to' %} {% trans 'Mobile' %}</a>-->
-                                <a href="{% url 'forms:configure_stages' is_project pk %}" class="btn btn-sm btn-warning"><i class="la la-asterisk" aria-hidden="true"></i>  {% trans 'Configure Stages' %}</a>
+                                <a href="{% url 'forms:configure_stages' is_project pk %}" class="btn btn-sm btn-primary"><i class="la la-cogs" aria-hidden="true"></i>  {% trans 'Configure Stages' %}</a>
                                 {% csrf_token %}
 
 
@@ -1339,7 +1339,7 @@ assigntoken(csrf_token);
                                             </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text: responses_count"></td>
-                                            <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
+                                            <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
 
 
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
