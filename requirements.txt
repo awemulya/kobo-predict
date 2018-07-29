@@ -168,3 +168,4 @@ xhtml2pdf==0.2b1
 xlrd==0.9.3
 xlwt==0.7.5
 zope.interface==4.4.2
+pyjwt==1.6.4
