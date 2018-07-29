@@ -81,8 +81,10 @@ class RemoteAppAuthentication(authentication.BaseAuthentication):
                 'Application not found'
             )
 
-        domain = request.META['HTTP_HOST']
-        if not ConnectedDomain.objects.filter(
+        domain = request.META.get('HTTP_ORIGIN') or \
+            request.META.get('ORIGINAL_HTTP_REFERER') or \
+            request.META.get('HTTP_REFERRER')
+        if not domain or not ConnectedDomain.objects.filter(
             app=remote_app,
             domain=domain,
         ).exists():
