@@ -27,7 +27,7 @@ class SurveyFormsViewSet(viewsets.ReadOnlyModelViewSet):
     """
     General Forms
     """
-    queryset = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_survey=True)
+    queryset = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_deleted=False, is_survey=True)
     serializer_class = FSXFormSerializer
     # pagination_class = LargeResultsSetPagination
 
@@ -49,7 +49,7 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
     """
     General Forms
     """
-    queryset = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_survey=False)
+    queryset = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_deleted=False, is_survey=False)
     serializer_class = FSXFormSerializer
     # pagination_class = LargeResultsSetPagination
 
@@ -61,7 +61,7 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
         if is_project == "1":
             queryset = queryset.filter(project__id=pk)
         else:
-            queryset = queryset.filter(site__id=pk, is_deleted=False)
+            queryset = queryset.filter(site__id=pk)
         return queryset
 
     def get_serializer_context(self):

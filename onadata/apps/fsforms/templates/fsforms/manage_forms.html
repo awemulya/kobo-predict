@@ -46,31 +46,35 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js?v=15.0"></script>
 
 <script>
-
-$(document).ready(function() {
 var base_url = "{{request.get_host}}";
 var is_project = "{{is_project}}";
 var pk = "{{pk}}";
 var csrf_token = '{{ csrf_token }}';
+if (is_project == 0){
+console.log('hereeeee');
+    var next_url="/forms/setup-forms/0/"+pk;
+}else{
+        console.log('hereeeee');
+    var next_url="/forms/setup-forms/1/"+pk;
+}
+var url_string = window.location.href;
+var url = new URL(url_string);
+var tab = url.searchParams.get("tab");
+if (tab === null){
+    tab = "1";
+}
+
+$(document).ready(function() {
+$("#"+tab).trigger('click'); 
+// $( "#"+tab ).addClass( "active" );
+// $( "#tab00"+tab ).addClass( "active" );
+// $( "#main-content" ).show();
+
 assigntoken(csrf_token);
 vm = new SetUpViewModel(is_project, pk, base_url);
 ko.applyBindings(vm);
     
-    if (is_project == 0){
-        var next_url="/forms/setup-forms/0/"+pk+"/";
-    }else{
-        var next_url="/forms/setup-forms/1/"+pk+"/";
-    }
-    var url_string = window.location.href;
-    var url = new URL(url_string);
-    var tab = url.searchParams.get("tab");
-    if (tab === null){
-        tab = "0";
-    }
-    $( "#"+tab ).addClass( "active" );
-    $( "#tab00"+tab ).addClass( "active" );
-    $( "#main-content" ).show();
-
+    
 });
 
 </script>
@@ -391,7 +395,7 @@ ko.applyBindings(vm);
                                                <i class="la la-close" data-bind="visible:is_deployed()==true"></i>
                                                 <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
                                                 <!-- ko if: is_deployed() != true -->
-                                                        <a data-bind="attr: { href:'/fsform/delete-fieldsightxf/'}" class="badge badge-danger">
+                                                        <a data-bind="attr: { href:'/forms/delete-fieldsightxf/'+  id() +'/?next='+ next_url +'?tab=1'}" class="badge badge-danger">
                                                             <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
                                                             <span>Delete</span>
                                                         </a>                                                    
@@ -766,7 +770,7 @@ ko.applyBindings(vm);
                                             <a href="javascript:void(0);" role="button" class="badge badge-success" data-bind="click:deploy, visible:is_deployed()!= true">
                                                 <i class="la la-rocket"></i> {% trans 'Deploy ' %}</a>
                                             <!-- ko if: is_deployed() != true -->
-                                                        <a data-bind="attr: { href:'/fsform/delete-fieldsightxf/'}" class="badge badge-danger">
+                                                        <a data-bind="attr: { href:'/forms/delete-fieldsightxf/'+  id() +'/?next='+ next_url +'?tab=2'}" class="badge badge-danger">
                                                             <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
                                                             <span>Delete</span>
                                                         </a>                                                    
@@ -1129,7 +1133,7 @@ ko.applyBindings(vm);
 
                                                     </div>
                                                     <div class="substage-educational-material">
-                                                        <strong>{% trans 'Educational' %} {% trans 'Material' %} : </strong> <span data-bind="text: (em === null)? 'No':'Yes'"></span>
+                                                        <strong>{% trans 'Educational' %} {% trans 'Material' %} : </strong> <span data-bind="text: (em() === null)? 'No':'Yes'"></span>
                                                     </div>
                                                     <div class="substage-substage-weight">
                                                         <strong>{% trans 'Weight' %} : </strong> <span data-bind="text: weight"></span>
@@ -1469,7 +1473,7 @@ ko.applyBindings(vm);
                                                 <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
 
                                                 <!-- ko if: is_deployed() != true -->
-                                                        <a data-bind="attr: { href:'/fsform/delete-fieldsightxf/'}" class="badge badge-danger">
+                                                        <a data-bind="attr: { href:'/forms/delete-fieldsightxf/'+id()+'/?next='+next_url+'?tab=4'}" class="badge badge-danger">
                                                             <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
                                                             <span>Delete</span>
                                                         </a>                                                    
