@@ -9,7 +9,10 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from jsonfield import JSONField
+
 
 from onadata.apps.fieldsight.models import Organization, Project, Site
 from onadata.apps.users.models import UserProfile
@@ -17,6 +20,8 @@ from django.http import JsonResponse
 from celery.result import AsyncResult
 from django.contrib.contenttypes.fields import GenericRelation
 # user_type = ContentType.objects.get(app_label="users", model="userprofile")
+
+from channels import Group as ChannelGroup
 
 
 class FieldSightLog(models.Model):
@@ -228,3 +233,8 @@ class CeleryTaskProgress(models.Model):
 
 
 
+@receiver(post_save, sender=FieldSightLog)
+def handle_notification(sender, instance, **kwargs):
+    from onadata.apps.eventlog.serializers.LogSerializer import NotificationSerializer
+    data = NotificationSerializer(instance).data
+    ChannelGroup("user-notify-{}".format(1)).send({"text": json.dumps(data)})

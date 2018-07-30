@@ -1,12 +1,8 @@
 from channels.routing import route_class
-from onadata.apps.fieldsight.consumers import OneToOneConsumer, OneToOneNotifConsumer, GroupConsumer, NotificationConsumer, \
-    ProjectLevelConsumer, SiteLevelConsumer
+from onadata.apps.fieldsight.consumers import SuperAdminConsumer,OrganizationAdminConsumer, ProjectLevelConsumer
 
 channel_routing = [
-    route_class(OneToOneConsumer, path=r"^/chat/(?P<pk>[0-9]+)/$"),
-    route_class(OneToOneNotifConsumer, path=r"^/user-notify/(?P<pk>[0-9]+)/$"),
-    route_class(GroupConsumer, path=r"^/groupchat/(?P<group_id>[^/]+)/$"),
-    route_class(NotificationConsumer, path=r"^/notify/(?P<pk>[0-9]+)/$"),
-    route_class(ProjectLevelConsumer, path=r"^/project/(?P<pk>[0-9]+)/$"),
-    route_class(SiteLevelConsumer, path=r"^/site/(?P<pk>[0-9]+)/$"),
+    route_class(SuperAdminConsumer, path=r"^/user-notify/(?P<pk>[0-9]+)/$"),
+    route_class(OrganizationAdminConsumer, path=r"^/org-notify/(?P<pk>[0-9]+)/$"),
+    route_class(ProjectLevelConsumer, path=r"^/project-notify/(?P<pk>[0-9]+)/$"),
 ]

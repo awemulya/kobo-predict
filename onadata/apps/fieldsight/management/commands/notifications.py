@@ -1,15 +1,7 @@
 import json
 from django.core.management.base import BaseCommand
 from channels import Group as ChannelGroup
-DAY_OF_THE_WEEK = {
-    0 : 'Monday',
-    1 : 'Tuesday',
-    2 : 'Wednesday',
-    3 : 'Thursday',
-    4 : 'Friday',
-    5 : 'Saturday',
-    6 : 'Sunday',
-}
+
 
 
 class Command(BaseCommand):
@@ -36,5 +28,7 @@ class Command(BaseCommand):
             "seen_by": []
         },
         # ChannelGroup("notify-{}".format(1)).send({"text": json.dumps(result)})
-        ChannelGroup("notif-user-{}".format(1)).send({"text": json.dumps(result)})
+        ChannelGroup("user-notify-{}".format(1)).send({"text": json.dumps(result)})
+        ChannelGroup("org-notify-{}".format(1)).send({"text": json.dumps(result)})
+        ChannelGroup("project-notify-{}".format(1)).send({"text": json.dumps(result)})
         self.stdout.write('Successfully created Notification')
