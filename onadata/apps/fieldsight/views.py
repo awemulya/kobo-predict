@@ -366,11 +366,11 @@ class OrganizationCreateView(OrganizationView, SuperUserRoleMixin, CreateView):
                                        organization=self.object, content_object=self.object,
                                        description="{0} created a new organization named {1}".
                                        format(self.request.user, self.object.name))
-        result = {}
-        result['description'] = '{0} created a new organization named {1} '.format(noti.source.get_full_name(), self.object.name)
-        result['url'] = noti.get_absolute_url()
+        # result = {}
+        # result['description'] = '{0} created a new organization named {1} '.format(noti.source.get_full_name(), self.object.name)
+        # result['url'] = noti.get_absolute_url()
         # ChannelGroup("notify-{}".format(self.object.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -385,11 +385,11 @@ class OrganizationUpdateView(OrganizationView, OrganizationRoleMixin, UpdateView
                                        organization=self.object, content_object=self.object,
                                        description="{0} changed the details of organization named {1}".
                                        format(self.request.user.get_full_name(), self.object.name))
-        result = {}
-        result['description'] = noti.description
-        result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{0}".format(self.object.id)).send({"text": json.dumps(result)})
-        ChannelGroup("notify-0").send({"text": json.dumps(result)})
+        # result = {}
+        # result['description'] = noti.description
+        # result['url'] = noti.get_absolute_url()
+        # ChannelGroup("notify-{0}".format(self.object.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -655,10 +655,10 @@ class ProjectCreateView(ProjectView, OrganizationRoleMixin, CreateView):
                                        organization=self.object.organization, content_object=self.object,
                                        description='{0} created new project named {1}'.format(
                                            self.request.user.get_full_name(), self.object.name))
-        result = {}
-        result['description'] = noti.description
-        result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
+        # result = {}
+        # result['description'] = noti.description
+        # result['url'] = noti.get_absolute_url()
+        # ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
         # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
 
@@ -677,11 +677,11 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
                                        project=self.object, content_object=self.object,
                                        description='{0} changed the details of project named {1}'.format(
                                            self.request.user.get_full_name(), self.object.name))
-        result = {}
-        result['description'] = noti.description
-        result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("project-{}".format(self.object.id)).send({"text": json.dumps(result)})
+        # result = {}
+        # result['description'] = noti.description
+        # result['url'] = noti.get_absolute_url()
+        # ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("project-{}".format(self.object.id)).send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -738,11 +738,11 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
                                        project=self.object.project, content_object=self.object, extra_object=self.object.project,
                                        description='{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
                                                                                  self.object.name, self.object.project.name))
-        result = {}
-        result['description'] = '{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
-                                                                                 self.object.name, self.object.project.name)
-        result['url'] = noti.get_absolute_url()
-        ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
+        # result = {}
+        # result['description'] = '{0} created a new site named {1} in {2}'.format(self.request.user.get_full_name(),
+        #                                                                          self.object.name, self.object.project.name)
+        # result['url'] = noti.get_absolute_url()
+        # ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
         # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
@@ -799,12 +799,12 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
             description=description,
             extra_json=extra_json,
         )
-        result = {}
-        result['description'] = 'new site {0} updated by {1}'.format(self.object.name, self.request.user.username)
-        result['url'] = noti.get_absolute_url()
-        ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-        ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
-        ChannelGroup("site-{}".format(self.object.id)).send({"text": json.dumps(result)})
+        # result = {}
+        # result['description'] = 'new site {0} updated by {1}'.format(self.object.name, self.request.user.username)
+        # result['url'] = noti.get_absolute_url()
+        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("site-{}".format(self.object.id)).send({"text": json.dumps(result)})
         # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
         return HttpResponseRedirect(self.get_success_url())
