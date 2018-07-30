@@ -36,7 +36,7 @@ class RemoteAppAuthentication(authentication.BaseAuthentication):
         if isinstance(header, text_type):
             header = header.encode(HTTP_HEADER_ENCODING)
 
-            parts = header.split()
+        parts = header.split()
 
         # No Bearer header at all
         if parts[0] != AUTH_HEADER_TYPE_BYTES:
