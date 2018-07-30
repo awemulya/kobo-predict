@@ -111,7 +111,7 @@ function parseLanguages(children)
         }
     }
     if (languages.length == 0) {
-    	languages.push('en');
+        languages.push('en');
     }
 }
 
@@ -123,7 +123,7 @@ function createTable(canEdit)
     if(languages.length > 1)
     {
         var languageRow = $('<div class="row"></div>');
-        var languageStr = $('<div class="span6"><span>' + gettext("Change Language:") + '</span> </div>');
+        var languageStr = $('<div class="col-md-6"><span>' + gettext("Change Language:") + '</span> </div>');
         var languageSelect = $('<select class="language"></select>');
         var i;
         for(i = 0; i < languages.length; i++)
@@ -138,19 +138,28 @@ function createTable(canEdit)
     }
 
     // status and navigation rows - have to separate top and bottom since jquery doesnt append the same object twice
-    var topStatusNavRows = $('<div class="row"></div>');
-    var statusStr = '<div class="span6"><div class="dataTables_info"><h4 class="record-pos">' + gettext("Record 1 of 6") + '</h4></div></div>';
+    var topStatusNavRows = $('<div class="row margin-top"></div>');
+    var statusStr = '<div class="col-md-6"><div class="dataTables_info"><h5 class="record-pos">' + gettext("Record 1 of 6") + '</h5></div></div>';
     var topStatus = $(statusStr);
     topStatusNavRows.append(topStatus);
 
-    var pagerStr = '<div class="span6"><div class="dataTables_paginate paging_bootstrap pagination"><ul><li class="prev disabled"><a href="#">' + gettext("← Previous") + '</a></li><li class="next disabled"><a href="#">' + gettext("Next →") + '</a></li></ul></div></div>';
+    var pagerStr = '<div class="col-md-6"><div dataTables_paginate paging_bootstrap><nav aria-label="Page navigation example"><ul class="pagination justify-content-end">' +
+    '<li class="page-item prev">' +
+      '<a class="page-link" href="#" tabindex="-1">' + gettext("← Previous") + '</a>' +
+    '</li>' +
+    '<li class="page-item next">' +
+      '<a class="page-link" href="#">' + gettext("Next →") + '</a>' +
+    '</li>' +
+    '</ul>' +
+    '</nav>' +
+    '</div></div>';
     var topPager = $(pagerStr);
 
     topStatusNavRows.append(topPager);
     dataContainer.append(topStatusNavRows);
 
     if(canEdit === true){
-        var editDelete = '<div class="row"><div class="span6"><a id="title_edit" href="#kate" class="btn btn-small bind-edit disabled">' + gettext("edit") + '</a>&nbsp;<a href="#"class="btn btn-small btn-danger">' + gettext("Delete") + '</a></div></div>';
+        var editDelete = '<div class="row"><div class="col-md-6"><a id="title_edit" href="#kate" class="btn btn-small bind-edit disabled">' + gettext("edit") + '</a>&nbsp;<a href="#"class="btn btn-small btn-danger">' + gettext("Delete") + '</a></div></div>';
         dataContainer.append(editDelete);
     }
     var notesSection = '<div id="notes" style="display: none; margin: 10px"> \
@@ -167,7 +176,7 @@ function createTable(canEdit)
     <div id="notes-section"></div></div>';
 //    dataContainer.append(notesSection);
 
-    var table = $('<table id="data-table" class="table table-bordered table-striped"></table');
+    var table = $('<table id="data-table" class="table table-bordered table-striped margin-top"></table');
     var tHead = $('<thead><tr><th class="header" width="50%">' + gettext("Question") + '</th><th class="header">' + gettext("Response") + '</th></tr></thead>');
     var tBody = $('<tbody></tbody>');
     var key;
