@@ -303,7 +303,14 @@ class FieldSightXF(models.Model):
     @property
     def site_name(self):
         if self.site is not None:
+            return u'{}'.format(self.site.name)\
+
+    @property
+    def site_or_project_display(self):
+        if self.site is not None:
             return u'{}'.format(self.site.name)
+        return u'{}'.format(self.project.name)
+
     @property
     def project_info(self):
         if self.fsform:
