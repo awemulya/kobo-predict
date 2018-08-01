@@ -60,8 +60,6 @@ class MyDocTemplate(SimpleDocTemplate):
                  self.notify('TOCEntry', (2, text, self.page, key))
 
 class PDFReport:
-
-
     def __init__(self, buffer, pagesize):
         self.main_answer = {}
         self.question={}
@@ -398,7 +396,11 @@ class PDFReport:
 
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
-
+        if instance.site:
+            elements.append(Paragraph("Site Identifier : " + instance.site.identifier, self.h3))
+            elements.append(Paragraph("Site Name : " + instance.site.name, self.h3))
+            elements.append(Spacer(0,10))
+        
         elements.append(Paragraph(form.xf.title, self.h3))
         elements.append(Paragraph(form.form_type() + " Form", styles['Heading4']))
         if form.stage:
