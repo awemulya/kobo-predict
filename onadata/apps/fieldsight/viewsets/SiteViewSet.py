@@ -359,7 +359,7 @@ class FormResponseSiteViewset(viewsets.ModelViewSet):
     
     def get_queryset(self):
         fs=FInstance.objects.filter(instance_id=self.kwargs.get('pk', None))
-        if fs.site:
+        if fs[0].site:
             return fs
         return None
 
