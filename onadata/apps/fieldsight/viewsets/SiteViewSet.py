@@ -12,7 +12,7 @@ from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthenticat
 from onadata.apps.fieldsight.models import Site, ProjectType, Project, Region, SiteType
 from onadata.apps.fieldsight.serializers.SiteSerializer import SuperMinimalSiteSerializer, MinimalSiteSerializer, SiteSerializer, SiteCreationSurveySerializer, \
     SiteReviewSerializer, ProjectTypeSerializer, SiteUpdateSerializer, ProjectUpdateSerializer, RegionSerializer, \
-    SiteTypeSerializer
+    SiteTypeSerializer, MinimalSiteFInstanceSerializer
 from onadata.apps.userrole.models import UserRole
 from django.contrib.auth.models import Group
 from django.db import transaction
