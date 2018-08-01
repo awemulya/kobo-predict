@@ -1187,14 +1187,21 @@ class FormFillView(ReadonlyFormMixin, FInstanceRoleMixin, View):
             if instance.fieldsight_instance.site:
                 extra_object=instance.fieldsight_instance.site
                 extra_message=""
+                project=extra_object.project
+                site = extra_object
+                organization=extra_object.project.organization
+
             else:
                 extra_object=instance.fieldsight_instance.project
                 extra_message="project"
+                project=extra_object
+                site = None
+                organization=extra_object.organization
             
             noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=noti_type, title=title,
-                                       organization=instance.fieldsight_instance.project.organization,
-                                       project=instance.fieldsight_instance.site.project,
-                                                        site=instance.fieldsight_instance.site,
+                                       organization=organization,
+                                       project=project,
+                                                        site=site,
                                                         extra_object=extra_object,
                                                         extra_message=extra_message,
                                                         content_object=instance.fieldsight_instance)
