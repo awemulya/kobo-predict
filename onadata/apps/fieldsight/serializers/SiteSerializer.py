@@ -174,3 +174,11 @@ class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
         fields = ('id','name', 'identifier', 'get_sites_count', 'parent')
+
+class MinimalSiteFInstanceSerializer(serializers.ModelSerializer):
+    name = serializers.ReadOnlyField(source='site.identifier', read_only=True)
+    identifier = serializers.ReadOnlyField(source='site.name', read_only=True)
+
+    class Meta:
+        model = Site
+        fields = ('name', 'identifier' )
