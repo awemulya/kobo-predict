@@ -192,8 +192,7 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
             'progress_data': [], #bar_graph.data.values(),
             'progress_labels': [] , #bar_graph.data.keys(),
             'roles_org': roles_org,
-            'total_submissions': flagged + approved + rejected + outstanding
-
+            'total_submissions': flagged + approved + rejected + outstanding,
         }
         return dashboard_data
 
@@ -1129,6 +1128,8 @@ class OrgProjectList(OrganizationRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(OrgProjectList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
+        context['tree'] = "organization_projects"
+        context['obj'] = Organization.objects.get(pk=self.kwargs.get('pk'))
         return context
     def get_queryset(self):
         queryset = Project.objects.filter(organization_id=self.kwargs.get('pk'))
