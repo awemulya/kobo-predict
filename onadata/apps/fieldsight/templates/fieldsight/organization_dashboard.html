@@ -35,16 +35,6 @@ var org = "{{obj.pk}}";
 
 {% endblock %}
 {% block content %}
-				<div id="main-content" class="padding">
-					<nav aria-label="breadcrumb" role="navigation">
-						{% block breadcrumbs %}
-					<ol class="breadcrumb">
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organizations' %}</a></li>
-						<li class="breadcrumb-item active" aria-current="page">{{obj.name}}</li>
-					 </ol>
-						{% endblock %}
-					</nav>
-
 				<div class="org-profile-top-action">
 					<div class="action-left">
 					</div>

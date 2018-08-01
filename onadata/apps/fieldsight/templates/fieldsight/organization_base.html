@@ -1,0 +1,47 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+
+
+{% block content %}
+    <div id="main-content" class="padding">
+        <nav aria-label="breadcrumb" role="navigation">
+            {% block breadcrumbs %}
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organizations' %}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{obj.name}}</li>
+         </ol>
+            {% endblock %}
+        </nav>
+
+        <div id="left-tabbing" class="row no-gutters">
+            <div class="col-md-4 col-lg-3 bg-primary-light">
+                <ul class="nav nav-pills flex-column">
+                    <li class="nav-item">
+                        <a {% if tree == "organization_people"  %} class="nav-link active" {% else %} class="nav-link" {% endif %} class="nav-link " href="{% url 'fieldsight:manage-people-organization' obj.pk %}">People</a>
+                    </li>
+                    <li class="nav-item">
+                        <a {% if tree == "organization_projects"  %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'fieldsight:org-project-list' obj.id%}" >Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a {% if tree == "organization_detail"  %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{% url 'fieldsight:organizations-dashboard' obj.pk  %}">Organization Detail</a>
+                    </li>
+                </ul>
+            </div>
+        <div class="col-md-8 col-lg-9">
+            <div id="load-content" class="padding bg-white">
+                <div class="load-info d-none">
+                    <div class="loader">Loading...</div>
+                </div>
+                <div class="load-body">
+                    {% block orgcontent %}
+                    {% endblock %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
