@@ -1525,7 +1525,7 @@ class ActivateRole(TemplateView):
         if not project_ids:
             userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=None, site=None)
             if invite.group_id == 1:
-                permission = Permission.objects.filter(codename='can_edit_finstance')
+                permission = Permission.objects.filter(codename='change_finstance')
                 user.user_permissions.add(permission[0])
                 
         
