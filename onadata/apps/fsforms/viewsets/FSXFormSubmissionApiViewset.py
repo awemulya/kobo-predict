@@ -50,11 +50,16 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
                             headers=self.get_openrosa_headers(request),
                             template_name=self.template_name)
         error, instance = create_instance_from_xml(request, fsxfid, siteid, fs_proj_xf, proj_id, xform)
-
+        extra_message=""
+        
+        if fxf.survey:
+            extra_message="project"
+        
         noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Submission",
                                        organization=instance.fieldsight_instance.site.project.organization,
                                        project=instance.fieldsight_instance.site.project,
                                                         site=instance.fieldsight_instance.site,
+                                                        extra_message=extra_message,
                                                         extra_object=instance.fieldsight_instance.site,
                                                         content_object=instance.fieldsight_instance)
         result = {}
