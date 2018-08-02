@@ -154,6 +154,15 @@ def site_images(request, pk):
 
     return JsonResponse({'images':medias[:5]})
 
+def FormResponseSite(request, pk):
+    fi=FInstance.objects.get(pk=pk)
+    data={}
+    if fi.site:
+        data['name'] = fi.site.name
+        data['pk'] = fi.site.id 
+
+    return JsonResponse(data)
+
 class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
     template_name = "fieldsight/organization_dashboard.html"
     def get_context_data(self, **kwargs):

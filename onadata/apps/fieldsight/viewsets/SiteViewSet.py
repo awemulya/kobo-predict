@@ -353,19 +353,6 @@ class SitelistMinimalViewset(viewsets.ModelViewSet):
     def filter_queryset(self, queryset):
         return queryset.filter(project__id=self.kwargs.get('pk', None))
 
-class FormResponseSiteViewset(viewsets.ModelViewSet):
-    serializer_class = SuperMinimalSiteSerializer
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-    
-    def get_queryset(self):
-        try:
-            fs=FInstance.objects.filter(instance_id=self.kwargs.get('pk', None))
-            if fs.site:
-                return fs.site   
-        except:        
-            return None
-
-
 def all_notification(user,  message):
     ChannelGroup("%s" % user).send({
         "text": json.dumps({
