@@ -158,8 +158,8 @@ def FormResponseSite(request, pk):
     fi=FInstance.objects.get(pk=pk)
     data={}
     if fi.site:
-        data['name'] = site.name
-        data['pk'] = site.id 
+        data['name'] = fi.site.name
+        data['pk'] = fi.site.id 
 
     return JsonResponse(data)
 
