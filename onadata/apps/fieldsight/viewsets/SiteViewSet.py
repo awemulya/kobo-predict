@@ -12,7 +12,7 @@ from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthenticat
 from onadata.apps.fieldsight.models import Site, ProjectType, Project, Region, SiteType
 from onadata.apps.fieldsight.serializers.SiteSerializer import SuperMinimalSiteSerializer, MinimalSiteSerializer, SiteSerializer, SiteCreationSurveySerializer, \
     SiteReviewSerializer, ProjectTypeSerializer, SiteUpdateSerializer, ProjectUpdateSerializer, RegionSerializer, \
-    SiteTypeSerializer, MinimalSiteFInstanceSerializer
+    SiteTypeSerializer
 from onadata.apps.userrole.models import UserRole
 from django.contrib.auth.models import Group
 from django.db import transaction
@@ -352,16 +352,6 @@ class SitelistMinimalViewset(viewsets.ModelViewSet):
     
     def filter_queryset(self, queryset):
         return queryset.filter(project__id=self.kwargs.get('pk', None))
-
-class FormResponseSiteViewset(viewsets.ModelViewSet):
-    serializer_class = MinimalSiteFInstanceSerializer
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-    
-    def get_queryset(self):
-        fs=FInstance.objects.filter(instance_id=self.kwargs.get('pk', None))
-        if fs[0].site:
-            return fs
-        return None
 
 def all_notification(user,  message):
     ChannelGroup("%s" % user).send({

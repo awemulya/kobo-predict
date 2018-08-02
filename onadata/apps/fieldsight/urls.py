@@ -61,7 +61,7 @@ from .views import (
     StageStatus, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
     SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI,
     GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages,
-    SiteSearchView, ProjectDashboardStageResponsesStatus, SiteBulkEditView, site_refrenced_metas, redirectToSite, municipality_data)
+    SiteSearchView, ProjectDashboardStageResponsesStatus, SiteBulkEditView, site_refrenced_metas, redirectToSite, municipality_data, FormResponseSite)
 
     
 
@@ -268,7 +268,7 @@ urlpatterns = [
     url(r'^api/project/sites/(?P<pk>\d+)/$', SitelistMinimalViewset.as_view({'get':'list'}), name='inimalsitelist'),
     url(r'^api/siteallmetas/(?P<pk>\d+)/$', site_refrenced_metas, name='metas'),
     url(r'^redirect/(?P<pk>\d+)/site/$', redirectToSite, name='identifier_to_site_redirect'),
-    url(r'^api/response-site/(?P<pk>\d+)/$',FormResponseSiteViewset.as_view({'get': 'retrieve'}), name='response-site'),
+    url(r'^api/response-site/(?P<pk>\d+)/$',FormResponseSite name='response-site'),
 
     ]
 
