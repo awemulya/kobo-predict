@@ -89,6 +89,7 @@ assigntoken(csrf_token);
 					{% if obj.cluster_sites %}
 						<select  multiple="multiple" id="filterRegion" data-bind="options: allRegions, optionsText: 'identifier', optionsValue: 'id'"></select>
 					{% endif %}
+					<br>
 
 					Start Date:
 					<input type="date" value="{{ obj.date_created.date|date:'Y-m-d'}}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="startdate" id="startdate">
