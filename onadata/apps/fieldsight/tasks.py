@@ -396,27 +396,28 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
 
 
             for formresponse in form.project_form_instances.all():
-                
-                if not formresponse.site_id in response_sites:
-                    response_sites.append(formresponse.site_id)
+                if formresponse.site:
+                    if not formresponse.site_id in response_sites:
+                        response_sites.append(formresponse.site_id)
 
-                questions, answers, r_questions, r_answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url, form.xf.user.username)
-                answers['identifier'] = formresponse.site.identifier
-                answers['name'] = formresponse.site.name
-                answers['status'] = formresponse.get_form_status_display()
-                
-                if r_questions:
-                    if not repeat_questions:
-                        repeat_questions = r_questions
-                    repeat_answers[formresponse.site.identifier] = {'name': formresponse.site.name, 'answers':r_answers}
+                    questions, answers, r_questions, r_answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url, form.xf.user.username)
+                    
+                    answers['identifier'] = formresponse.site.identifier
+                    answers['name'] = formresponse.site.name
+                    answers['status'] = formresponse.get_form_status_display()
+                        
+                    if r_questions:
+                        if not repeat_questions:
+                            repeat_questions = r_questions
+                        repeat_answers[formresponse.site.identifier] = {'name': formresponse.site.name, 'answers':r_answers}
 
-                if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
-                    head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
+                    if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
+                        head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
 
-                for col_num in range(len(head_columns)):
-                    ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
-                
-                row_num += 1
+                    for col_num in range(len(head_columns)):
+                        ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
+                    
+                    row_num += 1
             
 
             font_style.font.bold = True
