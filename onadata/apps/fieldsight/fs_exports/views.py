@@ -44,7 +44,7 @@ class ExportProjectFormsForSites(View):
         start_date = data.get('startdate')
         end_date = data.get('enddate')
         filterRegion = data.get('filterRegion', None)
-        print filterRegion
+        
         task_obj=CeleryTaskProgress.objects.create(user=user, task_type=3)
         if task_obj:
             task = exportProjectSiteResponses.delay(task_obj.pk, user, self.kwargs.get('pk'), base_url, fs_ids, start_date, end_date, filterRegion)

@@ -349,9 +349,12 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
     try:
         buffer = BytesIO()
         if filterRegion:
+            print "inside"
             sites = project.sites.filter(region_id__in=filterRegion).values('id')
         else:
+            print "out"
             sites=project.sites.all().values('id')
+        print filterRegion
         # fs_ids = FieldSightXF.objects.filter(project_id = project.id).values('id')
         # startdate="2016-05-01"
         # enddate= "2018-06-05"
@@ -368,7 +371,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
         wb = xlwt.Workbook(encoding='utf-8')
         form_id = 0
         form_names=[]
-        
+        print forms
         for form in forms:
             form_id += 1
             form_names.append(form.xf.title)
