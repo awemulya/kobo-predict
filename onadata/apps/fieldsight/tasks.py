@@ -396,16 +396,14 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
 
 
             for formresponse in form.project_form_instances.all():
+                
                 if formresponse.site:
-                    if not formresponse.site_id in response_sites:
-                        response_sites.append(formresponse.site_id)
 
                     questions, answers, r_questions, r_answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url, form.xf.user.username)
-                    
                     answers['identifier'] = formresponse.site.identifier
                     answers['name'] = formresponse.site.name
                     answers['status'] = formresponse.get_form_status_display()
-                        
+                    
                     if r_questions:
                         if not repeat_questions:
                             repeat_questions = r_questions
