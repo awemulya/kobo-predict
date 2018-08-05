@@ -90,7 +90,7 @@ assigntoken(csrf_token);
 					</script>
 					Filter by region: 
 					{% if obj.cluster_sites %}
-						<select  multiple="multiple" id="filterRegion" data-bind="options: regions, optionsText: 'identifier', optionsValue: 'id'"></select>
+						<select  multiple="multiple" id="filterRegion" data-bind="options: allRegions, optionsText: 'identifier', optionsValue: 'id'"></select>
 					{% endif %}
 					<br>
 
