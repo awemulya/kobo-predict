@@ -1,4 +1,5 @@
 <!doctype html>
+{% load i18n staticfiles %}
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
@@ -10,8 +11,8 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="stylesheet" href="assets/css/style.css">
-        <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}dummy/assets/css/style.css">
+        <script src="{{ STATIC_URL }}dummy/assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
     </head>
     <body>
@@ -20,7 +21,7 @@
         <![endif]-->
         <div class="login-wrap">
         <div class="login-bg">
-          <img src="assets/img/bg-login.png">
+          <img src="{{ STATIC_URL }}dummy/assets/img/bg-login.png">
         </div>
         <div class="container-fluid">
           <div class="row justify-content-center">
@@ -30,7 +31,7 @@
                   <div class="col-lg-5">
                     <div class="sec-left text-center">
                       <a href="#" title="" target="">
-                        <img src="assets/img/fieldsight.png" alt="fieldsight" height="100">
+                        <img src="{{ STATIC_URL }}dummy/assets/img/fieldsight.png" alt="fieldsight" height="100">
                       </a>
                       <p class="margin-top d-none d-md-block">
                         FieldSight is the first humanitarian digital platform designed for project monitoring and infrastructure quality assurance. The platform is now being used to monitor more than 50,000 houses.
@@ -39,12 +40,13 @@
                   </div>
                   <div class="col-lg-7">
                     <div class="sec-right">
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item">
                           <a class="nav-link active" id="pills-signup-tab" data-toggle="pill" href="#pills-signup" role="tab" aria-controls="pills-signup" aria-selected="false">Register</a>
                       </li>
                     </ul>
                     <div class="tab-content" id="pills-tabContent">
-                      <div class="tab-pane fade" id="pills-signup" role="tabpanel" aria-labelledby="pills-signup-tab">
+                      <div class="tab-pane active" id="pills-signup" role="tabpanel" aria-labelledby="pills-signup-tab">
                         <form id="user_reg_form" method="POST">
                           {% csrf_token %}
                           <div class="form-group">
@@ -110,10 +112,10 @@
     </div>
     <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="assets/js/vendor/jquery-3.2.1.min.js"><\/script>')</script>-->
-    <script>window.jQuery || document.write('<script src="assets/js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
-    <script src="assets/js/vendor/popper.min.js"></script>
-    <script src="assets/js/vendor/bootstrap.min.js"></script>
-    <script src="assets/js/plugins.js"></script>
+    <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}dummy/assets/js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+    <script src="{{ STATIC_URL }}dummy/assets/js/vendor/popper.min.js"></script>
+    <script src="{{ STATIC_URL }}dummy/assets/js/vendor/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}dummy/assets/js/plugins.js"></script>
     <script>
     function validatepass(){
 

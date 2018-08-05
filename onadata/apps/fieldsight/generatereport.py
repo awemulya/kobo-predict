@@ -22,6 +22,8 @@ from  reportlab.lib.styles import ParagraphStyle as PS
 from  reportlab.platypus.tableofcontents import TableOfContents
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from onadata.libs.utils.image_tools import image_url
+from onadata.apps.logger.models import Attachment
 styleSheet = getSampleStyleSheet()
 styles = getSampleStyleSheet()
 
@@ -186,8 +188,21 @@ class PDFReport:
                 
             elif question_type == 'photo':
                 #photo = '/media/user/attachments/'+ r_answer[r_question+"/"+question]
-                photo = 'http://'+self.base_url+'/attachment/medium?media_file='+ self.media_folder +'/attachments/'+ answer_dict[question_name]
-                answer = self.create_logo(photo)
+
+                size = "small"
+                try:
+                    result = Attachment.objects.filter(media_file=self.media_folder +'/attachments/'+ answer_dict[question_name])[0:1]
+                    attachment = result[0]
+
+                    if not attachment.mimetype.startswith('image'):
+                        media_url = 'http://' + self.base_url +'/static/images/img-404.jpg'
+                    
+                    media_url = image_url(attachment, size)
+                
+                except:
+                    media_url = 'http://' + self.base_url +'/static/images/img-404.jpg'
+
+                answer = self.create_logo(media_url)
                 # answer =''
             elif question_type == 'audio' or question_type == 'video':
                 media_link = 'http://'+self.base_url+'/attachment/medium?media_file='+ self.media_folder +'/attachments/'+ answer_dict[question_name]

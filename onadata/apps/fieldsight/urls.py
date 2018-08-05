@@ -207,6 +207,7 @@ urlpatterns = [
     url(r'^region-list/(?P<pk>\d+)/$', RegionListView.as_view(), name='region-list'),
 
     url(r'^api/project-regions/(?P<pk>\d+)/$', RegionViewSet.as_view({'get': 'list'}), name='project_regions_api'),
+    
     url(r'^api/project-pregions/(?P<pk>\d+)/$', RegionPagignatedViewSet.as_view({'get': 'list'}), name='project_regions_p_api'),
     url(r'^api/search-regions/(?P<pk>\d+)/$', RegionSearchViewSet.as_view({'get': 'list'}), name='search_regions_api'),
 
