@@ -52,7 +52,7 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
         error, instance = create_instance_from_xml(request, fsxfid, siteid, fs_proj_xf, proj_id, xform)
         extra_message=""
         
-        if fxf.survey:
+        if fxf.is_survey:
             extra_message="project"
         
         noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Submission",
