@@ -390,7 +390,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
             ws = wb.add_sheet(sheet_name)
             row_num = 1
             font_style = xlwt.XFStyle()
-            head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}, {'question_name':'status','question_label':'status'}]
+            # head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}, {'question_name':'status','question_label':'status'}]
             repeat_questions = []
             repeat_answers = {}
 
@@ -398,7 +398,9 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
             for formresponse in form.project_form_instances.all():
                 
                 if formresponse.site:
-
+                    if not formresponse.site_id in response_sites:
+                        response_sites.append(formresponse.site_id)
+                    
                     questions, answers, r_questions, r_answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url, form.xf.user.username)
                     answers['identifier'] = formresponse.site.identifier
                     answers['name'] = formresponse.site.name
@@ -410,7 +412,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
                         repeat_answers[formresponse.site.identifier] = {'name': formresponse.site.name, 'answers':r_answers}
 
                     if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
-                        head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions  
+                        head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}, {'question_name':'status','question_label':'status'}] + questions  
 
                     for col_num in range(len(head_columns)):
                         ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
@@ -459,6 +461,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
         if not forms:
             ws = wb.add_sheet('No Forms')
         ws=wb.add_sheet('Site Details')
+
         sites = Site.objects.filter(pk__in=response_sites)
         status, message = siteDetailsGenerator(project, sites, ws)
         if not status:
