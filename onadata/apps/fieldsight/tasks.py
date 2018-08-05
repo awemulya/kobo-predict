@@ -390,7 +390,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
             ws = wb.add_sheet(sheet_name)
             row_num = 1
             font_style = xlwt.XFStyle()
-            # head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}, {'question_name':'status','question_label':'status'}]
+            head_columns = [{'question_name':'No Submission','question_label':'No Submission'}]
             repeat_questions = []
             repeat_answers = {}
 
