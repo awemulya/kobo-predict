@@ -1166,17 +1166,32 @@ class FormFillView(ReadonlyFormMixin, FInstanceRoleMixin, View):
                 site_id = finstance.site_id
             site_id = None
         with transaction.atomic():
-            instance = save_submission(
-                xform=xform,
-                xml=xml,
-                media_files=media_files,
-                new_uuid=new_uuid,
-                submitted_by=request.user,
-                status='submitted_via_web',
-                date_created_override=None,
-                fxid=fs_xf.id,
-                site=site_id,
-            )
+            if fs_xf.is_survey:
+                instance = save_submission(
+                    xform=xform,
+                    xml=xml,
+                    media_files=media_files,
+                    new_uuid=new_uuid,
+                    submitted_by=request.user,
+                    status='submitted_via_web',
+                    date_created_override=None,
+                    fxid=None,
+                    site=None,
+                    fs_poj_id=fs_xf.id,
+                    project=fs_xf.project.id,
+                )
+            else:    
+                instance = save_submission(
+                    xform=xform,
+                    xml=xml,
+                    media_files=media_files,
+                    new_uuid=new_uuid,
+                    submitted_by=request.user,
+                    status='submitted_via_web',
+                    date_created_override=None,
+                    fxid=fs_xf.id,
+                    site=site_id,
+                )
             if finstance:
                 noti_type=31
                 title = "editing submission"
