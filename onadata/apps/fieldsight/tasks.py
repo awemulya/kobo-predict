@@ -349,12 +349,9 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
     try:
         buffer = BytesIO()
         if filterRegion:
-            print "inside"
             sites = project.sites.filter(region_id__in=filterRegion).values('id')
         else:
-            print "out"
             sites=project.sites.all().values('id')
-        print filterRegion
         # fs_ids = FieldSightXF.objects.filter(project_id = project.id).values('id')
         # startdate="2016-05-01"
         # enddate= "2018-06-05"
@@ -367,11 +364,11 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
 
         new_enddate = end + datetime.timedelta(days=1)
 
-        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[new_startdate, new_enddate]))).order_by('-is_staged', 'is_scheduled')
+        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('project_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[new_startdate, new_enddate]))).order_by('-is_staged', 'is_scheduled')
         wb = xlwt.Workbook(encoding='utf-8')
         form_id = 0
         form_names=[]
-        print forms
+        
         for form in forms:
             form_id += 1
             form_names.append(form.xf.title)
