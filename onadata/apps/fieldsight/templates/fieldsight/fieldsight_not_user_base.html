@@ -1,0 +1,124 @@
+{% load staticfiles i18n filters %}
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"  lang="en"> <!--<![endif]-->
+    <head>
+    <script src="{% static 'dummy/assets/js/vendor/jquery-1.11.2.min.js' %}"></script>
+        {% load staticfiles %}
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>
+        {% block whole_title %}
+		{% endblock %}
+            {% block title %}{% trans 'Fieldsight' %}
+
+        {% endblock %}
+		</title>
+	
+
+
+		<!--Core CSS -->
+	<link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
+    <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
+    <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
+	<script type="text/javascript" src="{{ STATIC_URL }}js/notificationhandler.js"></script>
+	<style type="text/css">
+    	.unread {
+    		background-color: #e6ecff;
+    	}
+    </style>
+    <script>
+    
+    	{% if request.user.user_profile.timezone.offset_time %}
+    	var offSetTime = "{{ request.user.user_profile.timezone.offset_time }}";
+    	{% else %}
+    	var offSetTime = "UTC +05:45";
+    	{% endif %}
+    	
+    </script>
+	
+		
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		{%block extracss %}
+		{% endblock %}
+
+		<link rel="apple-touch-icon" href="{% static 'dummy/apple-touch-icon.png' %}">
+		<link rel="stylesheet" href="{% static 'dummy/assets/css/style.css' %}">
+        <script src="{% static 'dummy/assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
+
+
+		
+		<script type="text/javascript" src="{{ STATIC_URL }}js/libs/knockout.js" ></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}js/ko_lib.js?v=1.3.1" ></script>
+		{%block kocript %}
+    	{% endblock %}
+    	
+    
+	</head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+		<header id="header" class="main-header clearfix">
+			<div class="brand clearfix">
+				<a href="{% url 'dashboard' %}" title="" class="logo">
+					<img src="{% static 'dummy/assets/img/logo.png' %}" alt="Field Sight" width="168" height="32">
+				</a>
+				<div class="sidebar-toggle-box">
+					<span class="la la-bars"></span>
+				</div>
+			</div>
+		</header>
+		<div id="main-container" class="minified">
+
+			{% block content %}
+			{% endblock %}
+		</div>
+		<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="myModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+			<div class="modal-content modal-lg">
+				<div class="modal-header">
+					<h5 class="modal-title">&nbsp;</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					  <span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+
+				</div>
+			</div>
+		  </div>
+		</div>
+		<script src="{% static 'dummy/assets/js/vendor/popper.min.js' %}"></script>
+
+        <script src="{% static 'dummy/assets/js/vendor/bootstrap.min.js' %}"></script>
+		<script src="{% static 'dummy/assets/js/plugins.js' %}"></script>
+
+		<script src="{% static 'dummy/assets/js/vendor/jquery.cookie.js' %}"></script>
+		<script src="{% static 'dummy/assets/js/vendor/jquery.dcjqaccordion.2.7.min.js' %}"></script>
+		<script src="{% static 'dummy/assets/js/vendor/jquery.slimscroll.min.js' %}"></script>
+		<script src="{% static 'dummy/assets/js/vendor/jquery.nicescroll.min.js' %}"></script>
+		<script src="{% static 'dummy/assets/js/vendor/jquery.matchHeight.js' %}"></script>
+
+		<!--<script src="{% static 'dummy/assets/js/vendor/leaflet.js' %}"></script>-->
+		<script>
+
+			$(document).ready(function(){
+
+				$(".widget-scrolling-large-list > .widget-body, .widget-scrolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e", horizrailenabled:false});
+
+			});
+
+
+			
+		</script>
+
+{%block extrascript %}
+{% endblock %}
+    </body>
+	
+</html>
