@@ -582,7 +582,9 @@ def copy_stages_from_project(sender, **kwargs):
         project = site.project
         project_main_stages = project.stages.filter(stage__isnull=True)
         for pms in project_main_stages:
-            project_sub_stages = Stage.objects.filter(stage__id=pms.pk, stage_forms__is_deleted=False)
+            project_sub_stages = Stage.objects.filter(stage__id=pms.pk, stage_forms__is_deleted=False, stage_forms__is_deployed=True)
+            if not project_sub_stages:
+                continue
             site_main_stage = Stage(name=pms.name, order=pms.order, site=site, description=pms.description,
                                     project_stage_id=pms.id, weight=pms.weight)
             site_main_stage.save()
