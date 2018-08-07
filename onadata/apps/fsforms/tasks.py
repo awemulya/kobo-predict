@@ -41,11 +41,11 @@ def copy_allstages_to_sites(pk):
                     if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
                         fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
                         site_fsxf, created = FieldSightXF.objects.get_or_create(is_staged=True,
-                                                                                default_submission_status=fsxf.default_submission_status,
                                                                                 xf=fsxf.xf, site=site,
                                                                                 fsform=fsxf, stage=site_sub_stage)
                         site_fsxf.is_deleted = False
                         site_fsxf.is_deployed = True
+                        site_fsxf.default_submission_status = fsxf.default_submission_status
                         site_fsxf.save()
     send_bulk_message_stages_deployed_project(project)
 
@@ -80,7 +80,7 @@ def copy_stage_to_sites(main_stage, pk):
             site_data['sub_stage_data'] = []
             for project_sub_stage in project_sub_stages:
                 if project_sub_stage.tags and site.type:
-                    if not site.type.id in project_sub_stage.tags:
+                    if site.type.id not in project_sub_stage.tags:
                         continue
                 sub_stage_data = {}
                 site_sub_stage = Stage(name=project_sub_stage.name, order=project_sub_stage.order, site=site,
@@ -90,11 +90,11 @@ def copy_stage_to_sites(main_stage, pk):
                 if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
                     fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
                     site_fsxf, created = FieldSightXF.objects.get_or_create(is_staged=True,
-                                                                            default_submission_status=fsxf.default_submission_status,
                                                                             xf=fsxf.xf, site=site,
                                                                             fsform=fsxf, stage=site_sub_stage)
                     site_fsxf.is_deleted = False
                     site_fsxf.is_deployed = True
+                    site_fsxf.default_submission_status = fsxf.default_submission_status
                     site_fsxf.save()
                     sub_stage_data['sub_stage'] = StageSerializer(site_sub_stage).data
                     sub_stage_data['sub_stage_form'] = StageFormSerializer(site_fsxf).data
@@ -159,10 +159,10 @@ def copy_sub_stage_to_sites(sub_stage, pk):
             site_sub_stage.save()
             site_fsxf, created = FieldSightXF.objects.get_or_create(
                 is_staged=True,
-                default_submission_status=stage_form.default_submission_status,
                 xf=stage_form.xf, site=site, fsform=stage_form, stage=site_sub_stage)
             site_fsxf.is_deleted = False
             site_fsxf.is_deployed = True
+            site_fsxf.default_submission_status = stage_form.default_submission_status
             site_fsxf.save()
             site_data['sub_stage'] = StageSerializer(site_sub_stage).data
             site_data['main_stage'] = StageSerializer(site_main_stage).data

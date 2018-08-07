@@ -62,6 +62,7 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
     has_stage = serializers.SerializerMethodField()
     has_em = serializers.SerializerMethodField()
     is_deployed = serializers.SerializerMethodField()
+    default_submission_status = serializers.SerializerMethodField()
 
     def get_responses_count(self, obj):
         try:
@@ -92,13 +93,20 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
             return obj.stage_forms.is_deployed
         except:
             return False
+
+    def get_default_submission_status(self, obj):
+        try:
+            return obj.stage_forms.default_submission_status
+        except:
+            return 0
     class Meta:
         model = Stage
         fields = ('weight', 'name', 'description', 'id', 'order', 'date_created', 'em', 'responses_count',
-                  'stage_forms', 'has_stage', 'has_em', 'tags', 'is_deployed')
+                  'stage_forms', 'has_stage', 'has_em', 'tags', 'is_deployed', 'default_submission_status')
 
     def create(self, validated_data):
         stage_id = self.context['kwargs'].get('stage_id')
+        default_submission_status = self.context['request'].data.get('default_submission_status', 0)
         xf = self.context['request'].data.get('xf', {})
         xform = False
         if xf and xf != '':
@@ -111,7 +119,7 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
         main_stage = Stage.objects.get(pk=stage_id)
         if xform:
             FieldSightXF.objects.create(xf=xform, site=main_stage.site,
-                                                      project=main_stage.project, is_staged=True, stage=stage)
+                                                      project=main_stage.project, is_staged=True, stage=stage, default_submission_status=default_submission_status)
         stage.stage = main_stage
         stage.save()
         # tags
@@ -119,6 +127,7 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
 
     def update(self,instance, validated_data):
         xf = self.context['request'].data.get('xf', {})
+        default_submission_status = self.context['request'].data.get('default_submission_status', 0)
         xform = False
         if xf and xf != '':
             xf_id = xf.get('id', False)
@@ -129,17 +138,18 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
             try:
                 old_form = stage.stage_forms
                 if old_form.xf.id == xform.id:
-                    pass
+                    old_form.default_submission_status = default_submission_status
+                    old_form.save()
                 else:
                     old_form.deleted = True
                     old_form.stage = None
                     old_form.save()
                     FieldSightXF.objects.create(xf=xform, site=stage.site,
-                                                  project=stage.project, is_staged=True, stage=stage)
+                                                  project=stage.project, is_staged=True, stage=stage, default_submission_status = default_submission_status)
             except:
                 if xform:
                     FieldSightXF.objects.create(xf=xform, site=stage.site,
-                                                      project=stage.project, is_staged=True, stage=stage)
+                                                      project=stage.project, is_staged=True, stage=stage, default_submission_status = default_submission_status)
         # tags
         return stage
 
