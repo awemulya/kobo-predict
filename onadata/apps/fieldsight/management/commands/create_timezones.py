@@ -13,4 +13,4 @@ class Command(BaseCommand):
         for country_code, country_name, time_zone, gmt_offset, in timezonesreader:
 
             timezone, created = TimeZone.objects.get_or_create(country_code=country_code,country=country_name,time_zone=time_zone,offset_time=gmt_offset)
-            self.stdout.write('Successfully created Timestamp .. "%s"' % timezone)
+            self.stdout.write('Successfully created Timestamp .. "%s"' % timezone.time_zone)
