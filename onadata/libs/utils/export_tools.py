@@ -551,7 +551,7 @@ class ExportBuilder(object):
                                 status=FInstance.objects.get(instance_id=data.get('_id')).get_form_status_display()
                             except:
                                 status="No Status"
-                            data_new.append(data.get(f,''))
+                            data_new.append(status)
                         else:         
                             data_new.append(data.get(f,''))
             work_sheet.append(data_new)
