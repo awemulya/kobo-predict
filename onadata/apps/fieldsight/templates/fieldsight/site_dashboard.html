@@ -715,6 +715,8 @@
 				{% load l10n %}
   				configure_settings.site_id = {{ obj.pk|unlocalize }};
   				configure_settings.log_url = "{% url 'eventlog:api_site_logs' obj.pk %}";
+				configure_settings.full_log_url = "{% url 'eventlog:site_logs' obj.pk %}";
+				
 					var height = 0;
 					$(".gh-col" ).each(function() {
 						height += $(this).height();
