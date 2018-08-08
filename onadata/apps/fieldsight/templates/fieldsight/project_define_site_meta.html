@@ -769,8 +769,13 @@ var FormSubStatQuestion = React.createClass({
             componentWillReceiveProps(nextProps) {
                 this.setState({isLoaded: false});
                 let form_index=nextProps.forms.indexOf(nextProps.forms.find(temp=>temp.id == nextProps.link_form_id));
-                let questions = parse_form_response(nextProps.forms[form_index].json['children']);
-                if (form_index < 0){ form_index = 0; }
+                let questions = {};
+                if (form_index < 0){ 
+                    form_index = 0; 
+                }
+                else{
+                    let questions = parse_form_response(nextProps.forms[form_index].json['children']);
+                }
                 this.setState({form_index:form_index, forms:nextProps.forms, processed_questions: questions, selected_question:nextProps.selected_question,  isLoaded: true});
             },
 
@@ -1292,7 +1297,7 @@ var FormSubStatQuestion = React.createClass({
             <div className="panel-body">
                 <div className="row">
                     <div className="col-md-4">
-                        <div className="padding margin-top">
+                        <div className="">
                             {   
                                 [this.state.Questions[this.state.Questions.length - 1]].map(this.eachQuestion.bind(this, true, this.state.Questions.length - 1))
                             }  
