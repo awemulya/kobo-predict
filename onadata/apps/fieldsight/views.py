@@ -2301,11 +2301,11 @@ class DefineProjectSiteMeta(ProjectRoleMixin, TemplateView):
     def post(self, request, pk, *args, **kwargs):
         project = Project.objects.get(pk=pk)
         old_meta = project.site_meta_attributes
-        print old_meta
-        print "----"
+        # print old_meta
+        # print "----"
         project.site_meta_attributes = request.POST.get('json_questions');
         new_meta = json.loads(project.site_meta_attributes)
-        print new_meta
+        # print new_meta
         updated_json = None
 
         if old_meta != new_meta:
