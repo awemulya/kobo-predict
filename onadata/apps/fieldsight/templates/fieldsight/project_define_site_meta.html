@@ -20,7 +20,6 @@
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.min.js"></script>
-  <script src="{% static 'js/datas.js' %}"></script>
  <script src="{% static 'js/formparser.js' %}"></script>
  <script src="{% static 'js/reactjs/react.min.js' %}"></script>
  <script src="{% static 'js/reactjs/browser.min.js' %}"></script>
@@ -933,7 +932,7 @@ var FormSubStatQuestion = React.createClass({
                 projects: [{id:0, name:"Select project", site_meta_attributes:[]}],
                 selectedProjectLinkIds:[],
                 isLoaded: false,
-                forms: [{id:0, name:"Select form", json:{ children: []}}].concat(datass),
+                forms: [{id:0, name:"Select form", json:{ children: []}}],
             }
         },
 
@@ -964,26 +963,26 @@ var FormSubStatQuestion = React.createClass({
                     }
                   )
 
-                  // fetch("/fieldsight/api/project/forms/"+project_id+"/", {
-                  //     method: 'GET',
-                  //     credentials: 'include'
-                  //   })
-                  // .then(res => res.json())
-                  // .then(
-                  //   (result) => {
-                  //       const form_options = this.state.forms.concat(result);
-                  //       this.setState({
-                  //           forms: form_options,
-                  //           isLoaded: true,
-                  //       });
-                  //   },
-                  //   (error) => {
-                  //       this.setState({
-                  //           isLoaded: true,
+                  fetch("/fieldsight/api/project/forms/"+project_id+"/", {
+                      method: 'GET',
+                      credentials: 'include'
+                    })
+                  .then(res => res.json())
+                  .then(
+                    (result) => {
+                        const form_options = this.state.forms.concat(result);
+                        this.setState({
+                            forms: form_options,
+                            isLoaded: true,
+                        });
+                    },
+                    (error) => {
+                        this.setState({
+                            isLoaded: true,
                     
-                  //       });
-                  //   }
-                  // )
+                        });
+                    }
+                  )
 
               },
 
