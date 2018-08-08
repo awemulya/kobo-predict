@@ -346,7 +346,7 @@
 
             save: function () {
                 this.props.updateMCQOptions(this.state.options, this.props.index);
-                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.refs.placeholder.value, this.refs.helpText.value, this.props.index);
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, "", this.refs.helpText.value, this.props.index);
             },
 
             updateOption: function(newTextoption, i){
@@ -441,11 +441,6 @@
                                 <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
                             </div>
                             <div className="form-group">
-                                <label className="col-form-label">Placeholder:</label>
-                                <input type="text" ref="placeholder" className="form-control" onChange={this.save} placeholderText="Placeholder" defaultValue={ 'question_placeholder' in this.props.question_obj ? this.props.question_obj.question_placeholder:""}></input>
-                                <small className="form-text text-muted">Description for this field</small>
-                            </div>
-                            <div className="form-group">
                                 <label className="col-form-label">Help Text:</label>
                                 <textarea ref="helpText" className="form-control" value={ 'question_help' in this.props.question_obj ? this.props.question_obj.question_help:""} onChange={this.save}/>
                                 <small id="input1Help" className="form-text text-muted">Description for this field</small>
@@ -490,7 +485,7 @@
             },
 
             save: function () {
-                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, this.refs.placeholder.value, this.refs.helpText.value, this.props.index);
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, "", this.refs.helpText.value, this.props.index);
                 // console.log('save');
             },
             
@@ -587,11 +582,6 @@
                         <div className="form-group">
                             <label for="input2" className="col-form-label">Input Type:</label>
                             <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
-                        </div>
-                        <div className="form-group">
-                                <label className="col-form-label">Placeholder:</label>
-                                <input type="text" ref="placeholder" className="form-control" onChange={this.save} placeholderText="Placeholder" defaultValue={ 'question_placeholder' in this.props.question_obj ? this.props.question_obj.question_placeholder:""}></input>
-                                <small className="form-text text-muted">Description for this field</small>
                         </div>
                         <div className="form-group">
                             <label className="col-form-label">Help Text:</label>
@@ -731,14 +721,10 @@ var FormSubStatQuestion = React.createClass({
                      return(
                         <div className="form-field-item">
                             <div className="form-group">
-                                <label for="input11" className="col-form-label">Loading ... </label>
-                                
+                                <label for="input11" className="col-form-label">Loading ... </label>     
                             </div>
-                        
                         </div>);
-                }
-                
-                
+                }   
             },
             render: function () {
                 if(this.state.editing){
@@ -870,20 +856,20 @@ var FormSubStatQuestion = React.createClass({
                 if(this.state.isLoaded){
                     return(
                     <div className="form-field-item margin-top">
-                        <div className="form-group col-md-12">
+                        <div className="form-group">
                             <label for="input1" className="col-form-label">Input Label:</label>
                             <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
                         </div>
-                        <div className="form-group col-md-12">
+                        <div className="form-group">
                             <label for="input2" className="col-form-label">Input Type:</label>
                             <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
                         </div>
-                        <div className="form-group col-md-12">
+                        <div className="form-group">
                             <label className="col-form-label">Select a Form</label>                     
                             <SelectComponent inputRef={el => this.refs.selectFormRef = el} isProject={true} onChangeFunction={this.formChanged} defaultValue={this.state.form_index} options={this.props.forms} />
                         </div>
 
-                        <div className="form-group col-md-12">
+                        <div className="form-group">
                             <label className="col-form-label">Select a Question</label>                     
                             <FormSelectComponent inputRef={el => this.refs.formselectQuestionRef = el} onChangeFunction={this.questionChanged} defaultValue={this.state.selected_question} questions={this.state.processed_questions} />
                         </div>
@@ -984,11 +970,9 @@ var FormSubStatQuestion = React.createClass({
                     (error) => {
                         this.setState({
                             isLoaded: true,
-                    
                         });
                     }
                   )
-
               },
 
     // var question = {
@@ -1045,7 +1029,6 @@ var FormSubStatQuestion = React.createClass({
         var is_form_valid = true;
         console.log(is_form_valid);
         var json_convertible = this.state.Questions.filter(function(item) {
-            
            
             if (item.hasOwnProperty('is_deleted') && item.is_deleted == false){
                 delete item.is_deleted;
@@ -1102,7 +1085,7 @@ var FormSubStatQuestion = React.createClass({
         else if(arr[i].question_type == "FormSubStat" && questionType != "FormSubStat"){
             delete arr[i].form_id;
         }
-        
+
         if(questionType == "MCQ" && arr[i].question_type != "MCQ"){
             arr[i].mcq_options=[];
         }
@@ -1232,16 +1215,14 @@ var FormSubStatQuestion = React.createClass({
         if( (!question.hasOwnProperty('is_deleted') || (question.hasOwnProperty('is_deleted') && question.is_deleted == false)) && ( is_new  || !question.hasOwnProperty('is_new')) ){
             console.log(question);
             if(question.question_type=="MCQ" ){
-                
-                                               
+                                     
                         var renderedQuestion= <MCQQuestion key={is_new?id:i} index={is_new?id:i} addtoForm={this.addtoForm} is_new={is_new} question_obj={question} options={question.mcq_options} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateMCQOptions={this.updateMCQOptions} deleteFromForm={this.removeQuestion} />
                         
                   
             }
             else if(question.question_type=="Link"){
                
-                       
-                         var renderedQuestion= <ExtLinkQuestion key={is_new?id:i} index={is_new?id:i} addtoForm={this.addtoForm} is_new={is_new} question_obj={question} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} link_project_id ={question.project_id} updateLinkMetas={this.updateLinkMetas} selected_metas={question.metas} deleteFromForm={this.removeQuestion} selectedProjectLinkIds={this.state.selectedProjectLinkIds} projects={this.state.projects} />                        
+                        var renderedQuestion= <ExtLinkQuestion key={is_new?id:i} index={is_new?id:i} addtoForm={this.addtoForm} is_new={is_new} question_obj={question} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateLinkProject={this.updateLinkProject} link_project_id ={question.project_id} updateLinkMetas={this.updateLinkMetas} selected_metas={question.metas} deleteFromForm={this.removeQuestion} selectedProjectLinkIds={this.state.selectedProjectLinkIds} projects={this.state.projects} />                        
                         
                    
             }
