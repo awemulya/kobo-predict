@@ -275,7 +275,7 @@
                                 <small id="input1Help" className="form-text text-muted">Description for this field</small>
                             </div>
 
-                            <button type="submit" className="btn btn-primary" onClick={this.editDone}><i className="la la-plus"></i>{ this.props.is_new ? 'Add to Form':'Done'}</button>
+                            <button type="submit" className="btn btn-primary" onClick={this.editDone}><i className={this.props.is_new ? 'la la-plus':'la la-check'}></i> { this.props.is_new ? 'Add to Form':'Preview'}</button>
 
                         </div>
 
@@ -317,11 +317,11 @@
             renderNormal:function(){
                 return(
                     <div className="QuestionContainer form-row">
-                        <div className="form-group col-md-4">
+                        <div className="form-group col-md-9">
                             <label for="input1" className="col-form-label">Option {this.props.index + 1}:</label>
                             <input type="text" ref="newOptionText" className="form-control" onChange={this.save} defaultValue={this.props.option_text} placeholder= "Option Text"></input>
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="form-group col-md-3">
                             <label className="col-form-label"> &nbsp; </label>                     
                             <button className="btn btn-danger" type="button" id="removebutton" onClick={this.remove}><i className="la la-close"></i>Remove</button>
                         </div>
@@ -393,18 +393,31 @@
                     );
                  }},
             renderNormal:function(){
+                var optionslist = [{'option_text' :false}].concat(this.props.options);
+                var options = optionslist.map(function(item) {
+                  
+                      if(item.option_text === false){
+                          return <option value={""}> 
+                              Please select and option
+                             </option>;
+                          }        
+                    return <option value = {
+                      item.option_text
+                    } > {
+                      item.option_text
+                    } </option>;
+                  
+
+                })
                 return(
                     <div className="form-field-item margin-top">
                         <div className="form-group">
                             <label for="input11" className="col-form-label">{this.props.question}:</label>
-                            <span class="field-type"><strong>Type : </strong> Select</span>
-                                <div class="clearfix"></div>
-                                <select class="form-control" id="input13">
-                                    <option>Site 1</option>
-                                    <option>Site 2</option>
-                                    <option>Site 3</option>
-                                    <option>Site 4</option>
-                                </select>
+                            <span className="field-type"><strong>Type : </strong> Select</span>
+                                <div className="clearfix"></div>
+                                <select className="form-control"> 
+                                  {options} 
+                                </select>   
                                                 
                             <small id="input1Help" className="form-text text-muted">{ 'question_help' in this.props ? this.props.question_help:""}</small>
                         </div>
@@ -419,9 +432,8 @@
 
             renderForm:function(){
                 return(
-                    <div className="form-field-item margin-top">
-                        <div className="QuestionContainer form-row">
-                            <div className="form-group">
+                     <div className="form-field-item margin-top">
+                        <div className="form-group">
                                 <label for="input1" className="col-form-label">Input Label:</label>
                                 <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
                             </div>
@@ -439,13 +451,11 @@
                                 <textarea ref="helpText" className="form-control" value={ 'question_help' in this.props.question_obj ? this.props.question_obj.question_help:""} onChange={this.save}/>
                                 <small id="input1Help" className="form-text text-muted">Description for this field</small>
                             </div>
-                            
-                        </div>
                         {         
                             this.state.options.map(this.eachOption)
                         }
-                    <button onClick={this.addOption} className="btn btn-primary"><i className="la la-plus"></i>Add New</button>
-                    <button className="btn btn-primary" onClick={this.editDone}><i className="la la-plus"></i>{ this.props.is_new ? 'Add to Form':'Done'}</button>            
+                    <button onClick={this.addOption} className="btn btn-primary"><i className="la la-plus"></i> Option</button><hr/>
+                    <button className="btn btn-primary" onClick={this.editDone}><i className={this.props.is_new ? 'la la-plus':'la la-check'}></i> { this.props.is_new ? 'Add to Form':'Preview'}</button>            
                     </div>
                 );
             },
@@ -594,7 +604,7 @@
                             <SelectComponent inputRef={el => this.refs.selectProjectRef = el} isProject={true} onChangeFunction={this.projectChanged} defaultValue={this.state.project_index} options={this.props.projects} />
                         </div>
                         <CheckboxComponent project_id={this.state.project_id}  selected_metas={this.state.selected_metas} metas={this.state.metas} updateSelectedMetas={this.updateSelectedMetas}/>
-                        <button className="btn btn-primary" onClick={this.editDone}><i className="la la-plus"></i>{ this.props.is_new ? 'Add to Form':'Done'}</button>  
+                        <button className="btn btn-primary" onClick={this.editDone}><i className={this.props.is_new ? 'la la-plus':'la la-check'}></i> { this.props.is_new ? 'Add to Form':'Preview'}</button>  
                     </div>
                    ); 
                 }else{
@@ -715,7 +725,7 @@ var FormSubStatQuestion = React.createClass({
                             <label className="col-form-label">Select a Form</label>                     
                             <SelectComponent inputRef={el => this.refs.selectFormRef = el} isProject={true} onChangeFunction={this.formChanged} defaultValue={this.state.form_index} options={this.props.forms} />
                         </div>    
-                        <button className="btn btn-primary" onClick={this.editDone}><i className="la la-plus"></i>{ this.props.is_new ? 'Add to Form':'Done'}</button>  
+                        <button className="btn btn-primary" onClick={this.editDone}><i className={this.props.is_new ? 'la la-plus':'la la-check'}></i> { this.props.is_new ? 'Add to Form':'Preview'}</button>  
                     </div>
                    ); 
                 }else{
@@ -856,24 +866,24 @@ var FormSubStatQuestion = React.createClass({
                 if(this.state.isLoaded){
                     return(
                     <div className="form-field-item margin-top">
-                        <div className="form-group col-md-4">
+                        <div className="form-group col-md-12">
                             <label for="input1" className="col-form-label">Input Label:</label>
                             <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="form-group col-md-12">
                             <label for="input2" className="col-form-label">Input Type:</label>
                             <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
                         </div>
-                        <div className="form-group col-md-4">
+                        <div className="form-group col-md-12">
                             <label className="col-form-label">Select a Form</label>                     
                             <SelectComponent inputRef={el => this.refs.selectFormRef = el} isProject={true} onChangeFunction={this.formChanged} defaultValue={this.state.form_index} options={this.props.forms} />
                         </div>
 
-                        <div className="form-group col-md-4">
+                        <div className="form-group col-md-12">
                             <label className="col-form-label">Select a Question</label>                     
                             <FormSelectComponent inputRef={el => this.refs.formselectQuestionRef = el} onChangeFunction={this.questionChanged} defaultValue={this.state.selected_question} questions={this.state.processed_questions} />
                         </div>
-                        <button className="btn btn-primary" onClick={this.editDone}><i className="la la-plus"></i>{ this.props.is_new ? 'Add to Form':'Done'}</button>  
+                        <button className="btn btn-primary" onClick={this.editDone}><i className={this.props.is_new ? 'la la-plus':'la la-check'}></i> { this.props.is_new ? 'Add to Form':'Preview'}</button>  
                     </div>
                    ); 
                 }else{
