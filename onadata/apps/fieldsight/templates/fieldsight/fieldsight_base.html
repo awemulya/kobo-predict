@@ -256,8 +256,9 @@
 			var user_id = {{ request.user.id }};
 			var id = "{{request.user.id}}";
 			var channel_url = "{{channels_url}}";
+			var csrf = "{{ csrf_token }}";
 </script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/notifications.js" ></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/notifications.js?v=1.0" ></script>
 {%block extrascript %}
 {% endblock %}
     </body>
