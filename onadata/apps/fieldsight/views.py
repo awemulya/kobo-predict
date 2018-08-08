@@ -2313,11 +2313,11 @@ class DefineProjectSiteMeta(ProjectRoleMixin, TemplateView):
     def post(self, request, pk, *args, **kwargs):
         project = Project.objects.get(pk=pk)
         old_meta = project.site_meta_attributes
-        print old_meta
-        print "----"
+        # print old_meta
+        # print "----"
         project.site_meta_attributes = request.POST.get('json_questions');
         new_meta = json.loads(project.site_meta_attributes)
-        print new_meta
+        # print new_meta
         updated_json = None
 
         if old_meta != new_meta:
@@ -2424,7 +2424,7 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
         columns = [
             site.identifier,
             site.name,
-            site.type and site.type.name,
+            site.type and site.type.identifier,
             site.phone,
             site.address,
             site.public_desc,
@@ -2897,8 +2897,40 @@ def site_refrenced_metas(request, pk):
                     metas.append({'question_text': meta.get('question_text'), 'answer':answer, 'question_type':'Normal'})
                     
             else:
-                answer = meta_answer.get(meta.get('question_name'), "")
-                metas.append({'question_text': meta.get('question_text'), 'answer':answer, 'question_type':'Normal'})
+                answer=""
+                question_type="Normal"
+
+                if meta.get('question_type') == "Form":
+                    fxf = FieldSightXF.objects.filter(site_id=site.id, fsform_id=int(meta.get('form_id', "0")))
+                    if fxf:
+                        sub = fxf[0].site_form_instances.order_by('-pk')[:1]
+                        if sub:
+                            sub_answers = json.loads(sub.instace.json)
+                            answer = sub_answers.get(meta.get('question').get('name') ,'')
+                            if meta['question']['type'] in ['photo', 'video', 'audio'] and answer is not "":
+                                question_type = "Media"
+                                answer = 'http://'+request.get_host()+'/attachment/medium?media_file='+ fxf.xf.user.username +'/attachments/'+answer
+                        else:
+                            answer = "No Submission Yet."
+                    else:
+                        answer = "No Form"
+
+
+
+                elif meta.get('question_type') == "FormSubStat":
+                    fxf = FieldSightXF.objects.filter(site_id=site.id, fsform_id=int(meta.get('form_id', "0")))
+                    if fxf:
+                        sub_date = fxf[0].getlatestsubmittiondate()
+                        if sub_date:
+                            answer = "Last submitted on " + sub_date[0]['date'].strftime("%d %b %Y %I:%M %P")
+                        else:
+                            answer = "No submission yet."
+                    else:
+                        answer = "No Form"
+                else:
+                    answer = meta_answer.get(meta.get('question_name'), "")
+
+                metas.append({'question_text': meta.get('question_text'), 'answer':answer, 'question_type':question_type})
 
 
     generate(metas, project.id, project.site_meta_attributes, site.site_meta_attributes_ans, None, None)

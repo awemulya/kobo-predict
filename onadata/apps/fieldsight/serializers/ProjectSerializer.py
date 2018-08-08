@@ -1,7 +1,9 @@
 from __future__ import unicode_literals
+import json
 from django.contrib.gis.geos import Point
 from rest_framework import serializers
 from onadata.apps.fieldsight.models import Project, ProjectType, OrganizationType
+from onadata.apps.fsforms.models import FieldSightXF
 
 
 class ProjectTypeSerializer(serializers.ModelSerializer):
@@ -63,3 +65,18 @@ class ProjectMetasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ('site_meta_attributes',)
+
+class ProjectFormsSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField(read_only=True)
+    json = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = FieldSightXF
+        fields = ('id', 'name', 'json',)
+    
+    
+    def get_name(self, obj):
+        return u"%s" % obj.xf.title
+
+    def get_json(self, obj):
+        return json.loads(obj.xf.json)

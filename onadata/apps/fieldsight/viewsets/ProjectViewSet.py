@@ -17,9 +17,9 @@ from rest_framework.permissions import BasePermission
 
 
 from onadata.apps.fieldsight.models import Project, Region
-from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectMetasSerializer, ProjectTypeSerializer, ProjectMiniSerializer, ProjectSerializer, ProjectCreationSerializer
+from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectFormsSerializer, ProjectMetasSerializer, ProjectTypeSerializer, ProjectMiniSerializer, ProjectSerializer, ProjectCreationSerializer
 from onadata.apps.fieldsight.serializers.RegionSerializer import RegionSerializer
-
+from onadata.apps.fsforms.models import FieldSightXF
 from django.db.models import Q
 
 class ProjectPermission(BasePermission):
@@ -178,3 +178,11 @@ class ProjectMetas(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         return queryset.filter(pk=self.kwargs.get('pk'))
+
+class ProjectForms(viewsets.ModelViewSet):
+
+    queryset = FieldSightXF.objects.filter(is_deleted=False, is_survey=False)
+    serializer_class = ProjectFormsSerializer
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(project_id=self.kwargs.get('pk'))
