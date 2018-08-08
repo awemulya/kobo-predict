@@ -61,7 +61,7 @@ from .views import (
     StageStatus, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
     SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI,
     GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages,
-    SiteSearchView, ProjectDashboardStageResponsesStatus, SiteBulkEditView, site_refrenced_metas, redirectToSite )
+    SiteSearchView, ProjectDashboardStageResponsesStatus, SiteBulkEditView, site_refrenced_metas, redirectToSite, municipality_data, FormResponseSite)
 
     
 
@@ -111,7 +111,7 @@ urlpatterns = [
     url(r'^proj-users/(?P<pk>\d+)/$', ProjUserList.as_view(), name='proj-user-list'),
     url(r'^proj-sites/(?P<pk>\d+)/$', ProjSiteList.as_view(), name='proj-site-list'),
     url(r'^donor-proj-sites/(?P<pk>\d+)/$', DonorProjSiteList.as_view(), name='donor-proj-site-list'),
-    
+
     url(r'^site-users/(?P<pk>\d+)/$', SiteUserList.as_view(), name='site-user-list'),
 
 
@@ -185,7 +185,7 @@ urlpatterns = [
     url(r'^org-submission/(?P<pk>[0-9]+)/(?P<type>[0-9]+)/$', OrganizationdataSubmissionView.as_view(), name='org-submission-data'),
     url(r'^proj-submission/(?P<pk>[0-9]+)/(?P<type>[0-9]+)/$', ProjectdataSubmissionView.as_view(), name='proj-submission-data'),
     url(r'^site-submission/(?P<pk>[0-9]+)/(?P<type>[0-9]+)/$', SitedataSubmissionView.as_view(), name='site-submission-data'),
-    
+
     # Site Responses / Report url
     url(r'^site/report/(?P<pk>\d+)/$', project_html_export, name='site-responses-report'),
     url(r'^response/report/(?P<pk>\d+)/$', response_export, name='instance-responses-report'),
@@ -194,7 +194,7 @@ urlpatterns = [
 
     url(r'^api/my_projects/(?P<exclude_pk>\d+)/$', MyProjectlistViewSet.as_view({'get': 'list'}), name='my_projects'),
     url(r'^api/organization/(?P<pk>\d+)/my_projects/(?P<exclude_pk>\d+)/$', MyOrgProjectlistViewSet.as_view({'get': 'list'}), name='my_projects'),
-    
+
 
     url(r'^api/project/(?P<pk>\d+)/regions/$', ProjectRegionslistViewSet.as_view({'get': 'list'}), name='project_regions_list'),
     url(r'^region/add/(?P<pk>\d+)/$', RegionCreateView.as_view(), name='region-add'),
@@ -207,6 +207,7 @@ urlpatterns = [
     url(r'^region-list/(?P<pk>\d+)/$', RegionListView.as_view(), name='region-list'),
 
     url(r'^api/project-regions/(?P<pk>\d+)/$', RegionViewSet.as_view({'get': 'list'}), name='project_regions_api'),
+    
     url(r'^api/project-pregions/(?P<pk>\d+)/$', RegionPagignatedViewSet.as_view({'get': 'list'}), name='project_regions_p_api'),
     url(r'^api/search-regions/(?P<pk>\d+)/$', RegionSearchViewSet.as_view({'get': 'list'}), name='search_regions_api'),
 
@@ -242,7 +243,7 @@ urlpatterns = [
     url(r'^bulksitesample/(?P<pk>\d+)/(?P<edit>\d+)/$', ExcelBulkSiteSample.as_view(), name='excel_bulk_site_sample'),
     url(r'^ProjectStageResponsesStatus/(?P<pk>\d+)/$',ProjectStageResponsesStatus.as_view(), name='ProjectStageResponsesStatus'),
     url(r'^ProjectDashboardStageResponsesStatus/(?P<pk>\d+)/$',ProjectDashboardStageResponsesStatus.as_view(), name='ProjectDashboardStageResponsesStatus'),
-    
+
 
     url(r'^project/report/stage-table/(?P<pk>\d+)/$', StageTemplateView.as_view(), name='ProjectStageDetailtemplate'),
     url(r'^site/report/custom-responses/(?P<pk>\d+)/$', FormlistAPI.as_view(), name='generate_custom_report'),
@@ -259,6 +260,8 @@ urlpatterns = [
 
 
 
+    url(r'^api/municipality/$', municipality_data, name='municipality'),
+
     url(r'^api/project_peoples/(?P<pk>\d+)/$', project_dashboard_peoples, name='pdp'),
     url(r'^api/project_map/(?P<pk>\d+)/$', project_dashboard_map, name='pdm'),
     url(r'^api/project_graphs/(?P<pk>\d+)/$', project_dashboard_graphs, name='pdg'),
@@ -267,7 +270,7 @@ urlpatterns = [
     url(r'^api/project/forms/(?P<pk>\d+)/$', ProjectForms.as_view({'get':'list'}), name='pforms'),
     url(r'^api/siteallmetas/(?P<pk>\d+)/$', site_refrenced_metas, name='metas'),
     url(r'^redirect/(?P<pk>\d+)/site/$', redirectToSite, name='identifier_to_site_redirect'),
-    
+    url(r'^api/response-site/(?P<pk>\d+)/$',FormResponseSite, name='response-site'),
 
     ]
 

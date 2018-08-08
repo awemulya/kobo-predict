@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import json
+import redis
 import xlwt
 from io import BytesIO
 from django.conf import settings
@@ -24,12 +25,14 @@ from fcm.utils import get_device_model
 import django_excel as excel
 from registration.backends.default.views import RegistrationView
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes , authentication_classes
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from channels import Group as ChannelGroup
 
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from onadata.apps.fieldsight.bar_data_project import BarGenerator, ProgressBarGenerator
+from onadata.apps.fieldsight.management.commands.municipality_data import generate_municipality_data
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
     LineChartGeneratorSite, ProgressGeneratorSite, LineChartGeneratorProject
@@ -150,6 +153,15 @@ def site_images(request, pk):
                 medias.append(media.get('download_url', ''))
 
     return JsonResponse({'images':medias[:5]})
+
+def FormResponseSite(request, pk):
+    fi=FInstance.objects.get(pk=pk)
+    data={}
+    if fi.site:
+        data['name'] = fi.site.name
+        data['pk'] = fi.site.id 
+
+    return JsonResponse(data)
 
 class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
     template_name = "fieldsight/organization_dashboard.html"
@@ -1522,7 +1534,7 @@ class ActivateRole(TemplateView):
         if not project_ids:
             userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=None, site=None)
             if invite.group_id == 1:
-                permission = Permission.objects.filter(codename='can_edit_finstance')
+                permission = Permission.objects.filter(codename='change_finstance')
                 user.user_permissions.add(permission[0])
                 
         
@@ -1877,7 +1889,6 @@ class OrganizationdataSubmissionView(TemplateView):
         data['flagged'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='2').order_by('-date')
         data['approved'] = FInstance.objects.filter(project__organization=self.kwargs.get('pk'), form_status='3').order_by('-date')
         data['type'] = self.kwargs.get('type')
-
         return data
 
 
@@ -3080,3 +3091,11 @@ class SiteBulkEditView(View):
 #     def get(self, request, pk)
 
 #         return JsonResponse(metas, safe=False)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def municipality_data(request):
+    # r = redis.StrictRedis(host=settings.REDIS_HOST, port=6379, db=3)
+    # data = r.hgetall("municipality")
+    data = generate_municipality_data()
+    return Response(data.values())

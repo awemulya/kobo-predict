@@ -39,7 +39,7 @@ from onadata.libs.utils.common_tags import (
 from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
 from onadata.apps.fsforms.XFormMediaAttributes import get_questions_and_media_attributes
-
+from onadata.apps.fsforms.models import FInstance
 
 # this is Mongo Collection where we will store the parsed submissions
 xform_instances = settings.MONGO_DB.instances
@@ -545,8 +545,15 @@ class ExportBuilder(object):
             for f in fields:
                     if f in data and f in parsedQuestions.get('media_attributes'):
                         data_new.append('=HYPERLINK("http://'+domain+'/attachment/medium?media_file='+xform.user.username+'/attachments/'+data.get(f)+'", "Attachment")')
-                    else:    
-                        data_new.append(data.get(f,''))
+                    else:
+                        if f == "fs_status":
+                            try:
+                                status=FInstance.objects.get(instance_id=data.get('_id')).get_form_status_display()
+                            except:
+                                status="No Status"
+                            data_new.append(status)
+                        else:         
+                            data_new.append(data.get(f,''))
             work_sheet.append(data_new)
 
         wb = Workbook(optimized_write=True)

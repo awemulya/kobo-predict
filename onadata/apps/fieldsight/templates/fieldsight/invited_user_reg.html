@@ -1,122 +1,122 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-<head>
-    {% load i18n %}
-    
-    
-
-<link rel="stylesheet" href="/static/css/normalize.min.css">
-<link rel="stylesheet" href="/static/bs3/css/bootstrap.min.css">
-<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>{% trans 'KoBoToolbox' %}</title>
-<meta name="description" content="">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/x-icon" href="/static/img/favicon.ico" />
-<!-- iPhone + iPad icons -->
-<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/img/apple-touch-icon-114x114.png">
-<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/img/apple-touch-icon-72x72-precomposed.png">
-<link rel="apple-touch-icon-precomposed" href="/static/img/apple-touch-icon-precomposed.png">
-<link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
-<link rel="stylesheet" href="/static/css/style.css">
-
-  
-
-</head>
-<body>
-
-
-<body class="login-body">
-
-    <div class="container">
-
-
-      <form class="form-signin" id="user_reg_form" method="POST" class="form-horizontal">
-{% csrf_token %}
-        <div class="login-heading-with-image">
-          <img class="form-signin-heading-img" src="/static/images/logo1.png" / >
-          <!-- <h2 class="form-signin-heading">sign in now</h2> -->
-        </div>
+<!doctype html>
+{% load i18n staticfiles %}
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"  lang="en"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Register</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="{{ STATIC_URL }}dummy/assets/css/style.css">
+        <script src="{{ STATIC_URL }}dummy/assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
         <div class="login-wrap">
-        
-            <div class="user-login-info">
-              
-                
-                <p></p>
-                <input type="text" class="form-control" placeholder="Username*" id="username" name="username" value="{{ username }}" autofocus required>
-                
-                <p></p>
-
-                <input type="text" class="form-control" placeholder="First Name*" id="firstname" name="firstname" value="{{ firstname }}" required>
-                
-                       
-                <p></p>
-
-                <input type="text" class="form-control" placeholder="Last Name*" id="lastname" name="lastname" value="{{ lastname }}" required>
-                               
-                <p></p>
-
-                <input type="password" class="form-control" placeholder="Password*" id="password1" name="password1" value="" required>
-                               
-                <p></p>
-
-                <input type="password" class="form-control" placeholder="Re-type Password*" id="password2" name="password2" value="">
-                <center><div id="alert" style="color: red;">
-
-                  {% if status == "error-1" %}
-                    {% trans 'Username must only include alpha-numeric characters.' %}
-                  {% endif %}
-
-                  {% if status == "error-2" %}
-                    {% trans 'Username already taken' %}
-                  {% endif %}
-
-                  {% if status == "error-3" %}
-                    {% trans 'Username must only include small letters' %}
-                  {% endif %}
-
-                  {% if status == "error-4" %}
-                    {% trans 'Passwords did not match.' %}
-                  {% endif %}
-
-
-
-                  {% if status == "error-5" %}
-                    {% trans 'Password must be atleast 8 characters long.' %}
-                  {% endif %}
-
-                  {% if status == "error-6" %}
-                    {% trans 'Username must be atleast 6 characters long.' %}
-                  {% endif %}
-
-                </div></center>
-
-                
-            </div>
-           
-            <button onclick="validatepass()" class="btn btn-lg btn-login btn-block registration__action" type="button" value="Login" >Register</button>
-           
-
-
+        <div class="login-bg">
+          <img src="{{ STATIC_URL }}dummy/assets/img/bg-login.png">
         </div>
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8">
+              <div class="login-section"> 
+                <div class="row">
+                  <div class="col-lg-5">
+                    <div class="sec-left text-center">
+                      <a href="#" title="" target="">
+                        <img src="{{ STATIC_URL }}dummy/assets/img/fieldsight.png" alt="fieldsight" height="100">
+                      </a>
+                      <p class="margin-top d-none d-md-block">
+                        FieldSight is the first humanitarian digital platform designed for project monitoring and infrastructure quality assurance. The platform is now being used to monitor more than 50,000 houses.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-7">
+                    <div class="sec-right">
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item">
+                          <a class="nav-link active" id="pills-signup-tab" data-toggle="pill" href="#pills-signup" role="tab" aria-controls="pills-signup" aria-selected="false">Register</a>
+                      </li>
+                    </ul>
+                    <div class="tab-content" id="pills-tabContent">
+                      <div class="tab-pane active" id="pills-signup" role="tabpanel" aria-labelledby="pills-signup-tab">
+                        <form id="user_reg_form" method="POST">
+                          {% csrf_token %}
+                          <div class="form-group">
+                              <label for="username">Username</label>
+                              <input type="text" class="form-control" id="username" name="username" value="{{ username }}" autofocus required>
+                          </div>
 
-          
-      </form>
- 
+                          <div class="form-group">
+                              <label for="firstname">First Name</label>
+                              <input type="text" class="form-control" id="firstname" name="firstname" value="{{ firstname }}" required>
+                          </div>
+                          <div class="form-group">
+                              <label for="lastname">Last Name</label>
+                              <input type="text" class="form-control" id="lastname" name="lastname" value="{{ lastname }}" required>
+                          </div>
+                          <div class="form-group">
+                              <label for="password1">Your password</label>
+                              <input type="password" class="form-control" id="password1" name="password1" value="" required>
+                          </div>
+                          <div class="form-group">
+                              <label for="password2">One more time?</label>
+                              <input type="password" class="form-control" id="password2" name="password2" value="">
+                          </div>
+                          <center><div class="form-group" id="alert" style="color: red;">
 
+                              {% if status == "error-1" %}
+                                {% trans 'Username must only include alpha-numeric characters.' %}
+                              {% endif %}
+
+                              {% if status == "error-2" %}
+                                {% trans 'Username already taken' %}
+                              {% endif %}
+
+                              {% if status == "error-3" %}
+                                {% trans 'Username must only include small letters' %}
+                              {% endif %}
+
+                              {% if status == "error-4" %}
+                                {% trans 'Passwords did not match.' %}
+                              {% endif %}
+
+
+                              {% if status == "error-5" %}
+                                {% trans 'Password must be atleast 8 characters long.' %}
+                              {% endif %}
+
+                              {% if status == "error-6" %}
+                                {% trans 'Username must be atleast 6 characters long.' %}
+                              {% endif %}
+
+                            </div></center>
+                          <button onclick="validatepass()" class="btn btn-secondary" type="button" value="Login" ><i class="la la-user-plus"></i> Register</button>
+                        </form>
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
-
-
-
-
-
-
-</body>
-<script>
+    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="assets/js/vendor/jquery-3.2.1.min.js"><\/script>')</script>-->
+    <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}dummy/assets/js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+    <script src="{{ STATIC_URL }}dummy/assets/js/vendor/popper.min.js"></script>
+    <script src="{{ STATIC_URL }}dummy/assets/js/vendor/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}dummy/assets/js/plugins.js"></script>
+    <script>
     function validatepass(){
 
       var pass1 = document.getElementById("password1").value;
@@ -160,4 +160,95 @@
 
    
   </script>
+
+    <script>
+
+      
+      $(document).ready(function(){
+        vph = $(window).height();
+        $(".login-wrap").css("min-height", vph);
+        //Converting img tag to parent div bg
+        var imgSrc = $(".login-bg>img").attr("src");
+            $('.login-bg').css({"background" : "url("+imgSrc+")", "background-position": "center", "background-size": "cover"});
+            $(".login-bg>img").remove();
+
+
+            //reset
+
+            
+      });
+      jQuery(window).on('resize', function() {
+        vph = $(window).height();
+        $(".login-wrap").css("min-height", vph);
+      });
+
+       $("#help-me").click(function(){
+        $('#pills-login').removeClass('active show');
+        $('#pills-signup').removeClass('active show');
+        $("#pills-login-tab").removeClass('active');
+        $('#pills-reset').addClass('active show');
+
+        //
+        var lHeight, rHeight;
+        lHeight = $(".sec-left").outerHeight();
+        $(".sec-right" ).css("min-height", lHeight);
+      });
+
+
+      jQuery(document).on('ready', function() {
+            jQuery(window).on('resize', function() {
+                if(jQuery(document).width() > 479) {
+                  
+
+            //Equal Height
+            function fn_login_eqheight(){
+              var lHeight, rHeight;
+          lHeight = $(".sec-left").outerHeight();
+          rHeight = $(".sec-right").outerHeight();
+          $(".sec-left" ).css("min-height", rHeight);
+            }
+
+            fn_login_eqheight();
+            
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+          fn_login_eqheight();
+        })
+        
+        //Background Scrolling Effect
+        var lFollowX = 0,
+          lFollowY = 0,
+          x = 0,
+          y = 0,
+          friction = 1 / 30;
+
+        function moveBackground() {
+          x += (lFollowX - x) * friction;
+          y += (lFollowY - y) * friction;
+          
+          translate = 'translate(' + x + 'px, ' + y + 'px) scale(1.1)';
+
+          $('.login-bg').css({
+            '-webit-transform': translate,
+            '-moz-transform': translate,
+            'transform': translate
+          });
+
+          window.requestAnimationFrame(moveBackground);
+        }
+
+        $(window).on('mousemove click', function(e) {
+
+          var lMouseX = Math.max(-100, Math.min(100, $(window).width() / 2 - e.clientX));
+          var lMouseY = Math.max(-100, Math.min(100, $(window).height() / 2 - e.clientY));
+          lFollowX = (20 * lMouseX) / 100; // 100 : 12 = lMouxeX : lFollow
+          lFollowY = (10 * lMouseY) / 100;
+
+        });
+
+        moveBackground();
+                }
+            }).trigger('resize'); // Trigger resize handlers.       
+        });
+    </script>
+    </body>
 </html>

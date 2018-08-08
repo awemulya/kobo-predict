@@ -78,8 +78,8 @@
                 <nav aria-label="breadcrumb" role="navigation">
                     {% block breadcrumbs %}
 					<ol class="breadcrumb">
-                        {% if form.instance.name %}
-						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' form.instance.pk %}">{{ form.instance.name }}</a></li>
+                        {% if form.instance.id %}
+						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' form.instance.id %}">{{ form.instance.name }}</a></li>
 						{% else %}
                         <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization' %}</a></li>
                         {% endif %}
@@ -107,17 +107,22 @@
                                     {% for field in form.visible_fields %}
 
                                     {% if not field.label == 'Location' %}
-									<div class="form-group col-md-6">
+									<div class="form-group col-md-6 {% if field.errors %} alert alert-danger {% endif %}">
 
 									  <label class="col-form-label">{{ field.label }}</label>
 
                                         {{ field|add_class:"form-control" }}
+
+
+                      {{ field.errors }}
+
+                   
 									</div>
                                     {% endif %}
                                     {% endfor %}
 
                                     {% for field in form.hidden_fields %}
-									     <div style="display:none;">{{ field }}</div>
+									                     <div style="display:none;">{{ field }}</div>
 									 {% endfor %}
 									<div class="form-group col-md-6">
 									  <label class="col-form-label">Latitude :</label>

@@ -48,7 +48,7 @@ from .views import (
     instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
     save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable, DeleteMyForm,
     DeleteFInstance,
-    FormFillView, CreateKoboFormView
+    FormFillView, CreateKoboFormView, DeleteFieldsightXF
 
 )
 
@@ -123,6 +123,7 @@ urlpatterns = [
 
         url(r'^last-submissions/$', FInstanceViewset.as_view({'get': 'list'}), name='finstance-lastsubmission'),
 
+        url(r'^delete-fieldsightxf/(?P<fsxf_id>\d+)/$', DeleteFieldsightXF.as_view(), name='delete-fsform'),
         url(r'^delete-submission/(?P<instance_pk>\d+)/$', DeleteFInstance.as_view(), name='delete-finstance')
 ]
 

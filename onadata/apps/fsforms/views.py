@@ -280,25 +280,33 @@ def stage_add(request, site_id=None):
 class ProjectResponses(ReadonlyProjectLevelRoleMixin, View): 
     def get(self,request, pk=None):
         obj = get_object_or_404(Project, pk=pk)
-        schedules = Schedule.objects.filter(project_id=pk, site__isnull=True, schedule_forms__isnull=False)
+        schedules = Schedule.objects.filter(project_id=pk, schedule_forms__is_deleted=False, site__isnull=True, schedule_forms__isnull=False)
         stages = Stage.objects.filter(stage__isnull=True, project_id=pk, stage_forms__isnull=True).order_by('order')
-        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, project_id=pk, is_survey=False)
-        surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, project_id=pk, is_survey=True)
-        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_deleted=True, project_id=pk)
+        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_deleted=False, project_id=pk, is_survey=False)
+        surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_deleted=False, project_id=pk, is_survey=True)
+        stage_deleted_forms = FieldSightXF.objects.filter(is_staged=True,  is_scheduled=False, is_survey=False ,is_deleted=True, project_id=pk)
+        general_deleted_forms = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_survey=False, is_deleted=True, project_id=pk)
+        schedule_deleted_forms = FieldSightXF.objects.filter(is_staged=False, site__isnull=True, is_survey=False, is_scheduled=True, is_deleted=True, project_id=pk)
+        survey_deleted_forms = FieldSightXF.objects.filter(is_staged=False, is_survey=True, is_scheduled=False, is_deleted=True, project_id=pk)
         return render(request, "fsforms/project/project_responses_list.html",
                       {'obj': obj, 'schedules': schedules, 'stages':stages, 'generals':generals, 'surveys': surveys,
-                       "deleted_forms":deleted_forms, 'project': pk})
+                       "stage_deleted_forms":stage_deleted_forms, "survey_deleted_forms":survey_deleted_forms, "general_deleted_forms":general_deleted_forms, "schedule_deleted_forms":schedule_deleted_forms, 'project': pk})
 
 class Responses(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk=None):
         obj = get_object_or_404(Site, pk=pk)
-        schedules = Schedule.objects.filter(site_id=pk, project__isnull=True, schedule_forms__isnull=False)
+        schedules = Schedule.objects.filter(site_id=pk, schedule_forms__is_deleted=False, project__isnull=True, schedule_forms__isnull=False)
         stages = Stage.objects.filter(stage__isnull=True, site_id=pk).order_by('order')
-        generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, site_id=pk, is_survey=False)
-        deleted_forms = FieldSightXF.objects.filter(is_staged=True, is_scheduled=False, site_id=pk, is_deleted=True)
+        generals = FieldSightXF.objects.filter(is_staged=False, is_deleted=False, is_scheduled=False, site_id=pk, is_survey=False)
+        
+        stage_deleted_forms = FieldSightXF.objects.filter(is_staged=True,  is_scheduled=False, is_survey=False ,is_deleted=True, site_id=pk)
+        general_deleted_forms = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_survey=False, is_deleted=True, site_id=pk)
+        schedule_deleted_forms = FieldSightXF.objects.filter(is_staged=False, project__isnull=True, is_survey=False, is_scheduled=True, is_deleted=True, site_id=pk)
+        
+
         return render(request, "fsforms/responses_list.html",
                       {'obj': obj, 'schedules': schedules, 'stages':stages,'generals':generals,
-                        "deleted_forms":deleted_forms,'site': pk})
+                        "stage_deleted_forms":stage_deleted_forms, "general_deleted_forms":general_deleted_forms, "schedule_deleted_forms":schedule_deleted_forms,'site': pk})
 
 
 @group_required("Project")
@@ -1158,17 +1166,32 @@ class FormFillView(ReadonlyFormMixin, FInstanceRoleMixin, View):
                 site_id = finstance.site_id
             site_id = None
         with transaction.atomic():
-            instance = save_submission(
-                xform=xform,
-                xml=xml,
-                media_files=media_files,
-                new_uuid=new_uuid,
-                submitted_by=request.user,
-                status='submitted_via_web',
-                date_created_override=None,
-                fxid=fs_xf.id,
-                site=site_id,
-            )
+            if fs_xf.is_survey:
+                instance = save_submission(
+                    xform=xform,
+                    xml=xml,
+                    media_files=media_files,
+                    new_uuid=new_uuid,
+                    submitted_by=request.user,
+                    status='submitted_via_web',
+                    date_created_override=None,
+                    fxid=None,
+                    site=None,
+                    fs_poj_id=fs_xf.id,
+                    project=fs_xf.project.id,
+                )
+            else:    
+                instance = save_submission(
+                    xform=xform,
+                    xml=xml,
+                    media_files=media_files,
+                    new_uuid=new_uuid,
+                    submitted_by=request.user,
+                    status='submitted_via_web',
+                    date_created_override=None,
+                    fxid=fs_xf.id,
+                    site=site_id,
+                )
             if finstance:
                 noti_type=31
                 title = "editing submission"
@@ -1179,14 +1202,22 @@ class FormFillView(ReadonlyFormMixin, FInstanceRoleMixin, View):
             if instance.fieldsight_instance.site:
                 extra_object=instance.fieldsight_instance.site
                 extra_message=""
+                project=extra_object.project
+                site = extra_object
+                organization=extra_object.project.organization
+
             else:
                 extra_object=instance.fieldsight_instance.project
                 extra_message="project"
+                project=extra_object
+                site = None
+                organization=extra_object.organization
             
             noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=noti_type, title=title,
-                                       organization=instance.fieldsight_instance.site.project.organization,
-                                       project=instance.fieldsight_instance.site.project,
-                                                        site=instance.fieldsight_instance.site,
+
+                                       organization=organization,
+                                       project=project,
+                                                        site=site,
                                                         extra_object=extra_object,
                                                         extra_message=extra_message,
                                                         content_object=instance.fieldsight_instance)
@@ -2098,21 +2129,67 @@ class DeleteFInstance(FInstanceRoleMixin, View):
 
             if finstance.site:
                 extra_object=finstance.site
+                site_id=extra_object.id
+                project_id = extra_object.site.project_id
+                organization_id = extra_object.project.organization_id
                 extra_message="site"
             else:
                 extra_object=finstance.project
+                site_id=None
+                project_id = extra_object.id
+                organization_id = extra_object.organization_id
                 extra_message="project"
             extra_json = {}
 
             extra_json['submitted_by'] = finstance.submitted_by.user_profile.getname() 
             noti = finstance.logs.create(source=self.request.user, type=33, title="deleted response" + self.kwargs.get('instance_pk'),
-                                       organization=finstance.project.organization,
-                                       project=finstance.site.project,
-                                                        site=finstance.site,
+                                       organization_id=organization_id,
+                                       project_id=project_id,
+                                                        site_id=site_id,
                                                         extra_json=extra_json,
                                                         extra_object=extra_object,
                                                         extra_message=extra_message,
                                                         content_object=finstance)
+            messages.success(request, 'Response sucessfully Deleted.')
+
+        except Exception as e:
+            messages.warning(request, 'Response deleted unsuccessfull.' + str(e))
+
+        next_url = request.GET.get('next', '/')
+        return HttpResponseRedirect(next_url)
+
+class DeleteFieldsightXF(View):
+    def get(self, request, *args, **kwargs):
+        try:
+            fsform = FieldSightXF.objects.get(pk=self.kwargs.get('fsxf_id'))
+            fsform.is_deleted = True
+            fsform.save()
+
+            extra_json = {}
+            if fsform.site:
+                extra_object=fsform.site
+                site_id=extra_object.id
+                project_id = extra_object.project_id
+                organization_id = extra_object.project.organization_id
+                extra_message="site"
+                extra_json['submission_count'] = fsform.site_form_instances.all().count() 
+            
+            else:
+                extra_object=fsform.project
+                extra_message="project"
+                site_id=None
+                project_id = extra_object.id
+                organization_id = extra_object.organization_id
+                extra_json['submission_count'] = fsform.project_form_instances.all().count() 
+            
+            noti = fsform.logs.create(source=self.request.user, type=34, title="deleted form" + self.kwargs.get('fsxf_id'),
+                                       organization_id=organization_id,
+                                       project_id=project_id,
+                                                        site_id=site_id,
+                                                        extra_json=extra_json,
+                                                        extra_object=extra_object,
+                                                        extra_message=extra_message,
+                                                        content_object=fsform)
             messages.success(request, 'Form sucessfully Deleted.')
 
         except Exception as e:
@@ -2120,5 +2197,6 @@ class DeleteFInstance(FInstanceRoleMixin, View):
 
         next_url = request.GET.get('next', '/')
         return HttpResponseRedirect(next_url)
+
 
         # <a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">Remove</a>

@@ -26,10 +26,12 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
 {% if obj.cluster_sites %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_regions.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.min.js"></script>
 <script>
 
+
 $(document).ready(function() {
+
 var csrf_token = "{{ csrf_token }}";
 var project = "{{obj.pk}}";
 assigntoken(csrf_token);
@@ -44,6 +46,7 @@ assigntoken(csrf_token);
 	 <script>
 
 	$(document).ready(function() {
+
 	var project = "{{obj.pk}}";
 	var csrf_token = "{{ csrf_token }}";
 	assigntoken(csrf_token);
@@ -85,6 +88,11 @@ assigntoken(csrf_token);
 							</ul>
 						</li>
 					</script>
+					Filter by region: 
+					{% if obj.cluster_sites %}
+						<select  multiple="multiple" id="filterRegion" data-bind="options: allRegions, optionsText: 'identifier', optionsValue: 'id'"></select>
+					{% endif %}
+					<br>
 
 					Start Date:
 					<input type="date" value="{{ obj.date_created.date|date:'Y-m-d'}}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="startdate" id="startdate">
@@ -523,7 +531,7 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.project_id = {{obj.pk|unlocalize}};
 	configure_settings.csrf_token = '{{ csrf_token }}';
 	configure_settings.url = "{% url 'fieldsight_export:export_xls_project_level_sites' obj.pk %}";
-
+	configure_settings.log_url = "{% url 'eventlog:api_project_logs' obj.pk %}";
 	//getlogdata();
 					
 </script>
@@ -538,4 +546,8 @@ var static_url ="{{ STATIC_URL }}";
 <script src="{% static 'vendor/vue-highcharts.min.js' %}"></script>
 <script src="{% static 'js/fieldsight/manage_project_dashboard.js' %}?v=0.6"></script>
 <script src="{% static 'js/fieldsight/site_export.js' %}?v=0.4"></script>
+<script src="{% static 'js/fieldsight/loglist.js' %}?v=0.6"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
+
+
 {% endblock %}

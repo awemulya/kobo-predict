@@ -17,6 +17,7 @@ from onadata.apps.userrole.models import UserRole
 from django.contrib.auth.models import Group
 from django.db import transaction
 from rest_framework.pagination import PageNumberPagination
+from onadata.apps.fsforms.models import FInstance
 from django.db.models import Q
 
 
@@ -351,7 +352,6 @@ class SitelistMinimalViewset(viewsets.ModelViewSet):
     
     def filter_queryset(self, queryset):
         return queryset.filter(project__id=self.kwargs.get('pk', None))
-
 
 def all_notification(user,  message):
     ChannelGroup("%s" % user).send({

@@ -78,6 +78,9 @@ def parse_form_response(main_question, main_answer, base_url, media_folder):
             if first_children['type'] == 'group':
                 parse_group(g_question+"/",first_children)
 
+            elif first_children['type'] == 'repeat':
+                parse_group(g_question+"/",first_children)
+
     def parse_individual_questions():
        
         for first_children in main_question:

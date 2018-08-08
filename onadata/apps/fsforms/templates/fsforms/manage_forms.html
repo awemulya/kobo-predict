@@ -46,15 +46,39 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js?v=15.0"></script>
 
 <script>
-
-$(document).ready(function() {
 var base_url = "{{request.get_host}}";
 var is_project = "{{is_project}}";
 var pk = "{{pk}}";
 var csrf_token = '{{ csrf_token }}';
+if (is_project == 0){
+
+    var next_url="/forms/setup-forms/0/"+pk;
+}else{
+    var next_url="/forms/setup-forms/1/"+pk;
+}
+var url_string = window.location.href;
+var url = new URL(url_string);
+var tab = url.searchParams.get("tab");
+if (tab === null  || (tab != "1" && tab != "2" && tab != "3" && tab !="4") || (tab =="4" && is_project == 0)){
+    tab = "1";
+}
+
+$(document).ready(function() {
+$("#"+tab).trigger('click'); 
+// $( "#"+tab ).addClass( "active" );
+// $( "#tab00"+tab ).addClass( "active" );
+// $( "#main-content" ).show();
+
 assigntoken(csrf_token);
- vm = new SetUpViewModel(is_project, pk, base_url);
- ko.applyBindings(vm);
+vm = new SetUpViewModel(is_project, pk, base_url);
+ko.applyBindings(vm);
+
+
+if (tab == "2"){ vm.setSelectedVm('schedules')} 
+else if (tab == "3"){ vm.setSelectedVm('stages')} 
+else if (tab == "4"){ vm.setSelectedVm('survey')} 
+    
+    
 });
 
 </script>
@@ -64,6 +88,13 @@ assigntoken(csrf_token);
 {% csrf_token %}
 
 <div id="main-content" class="padding">
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+      <strong class="text-capitalize">{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}!</strong> {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
     <nav aria-label="breadcrumb" role="navigation">
         <ol class="breadcrumb">
             {% block breadcrumbs %}
@@ -85,24 +116,24 @@ assigntoken(csrf_token);
 				<div class="tabbing">
 					<ul class="nav nav-tabs" role="tablist">
 						<li class="nav-item">
-							<a class="nav-link active" data-toggle="tab" href="#tab001" role="tab">{% trans 'General' %} {% trans 'Forms' %}</a>
+							<a class="nav-link" data-toggle="tab" id="1" href="#tab001" role="tab">{% trans 'General' %} {% trans 'Forms' %}</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" data-toggle="tab" href="#tab002" role="tab"
+							<a class="nav-link" data-toggle="tab" id="2" href="#tab002" role="tab"
                             data-bind="click: function () {setSelectedVm('schedules')}">{% trans 'Scheduled' %} {% trans 'Forms' %}</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" data-toggle="tab" href="#tab003" role="tab"
+							<a class="nav-link" data-toggle="tab" id="3" href="#tab003" role="tab"
                             data-bind="click: function () {setSelectedVm('stages')}">{% trans 'Staged' %} {% trans 'Forms' %}</a>
 						</li>
                         <li class="nav-item" data-bind="visible:is_project=='1'">
-							<a class="nav-link" data-toggle="tab" href="#tab004" role="tab"
+							<a class="nav-link" data-toggle="tab" id="4" href="#tab004" role="tab"
                             data-bind="click: function () {setSelectedVm('survey')}">{% trans 'Survey' %} {% trans 'Forms' %}</a>
 						</li>
 					</ul>
 					<!-- Tab panes -->
 					<div class="tab-content">
-						<div class="tab-pane active" id="tab001" role="tabpanel">
+						<div class="tab-pane" id="tab001" role="tabpanel">
                             <div data-bind="with:generalVm">
                             {% csrf_token %}
                                 <!--Assign Form- OLD-->
@@ -254,8 +285,9 @@ assigntoken(csrf_token);
                                     </form>
                                 </div>
                                 <!--Form List-->
-                                <table class="table table-responsive table-hover margin-top">
-                                    <thead class="thead-default">
+                                <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover margin-top">
+                                    <thead>
                                         <tr>
                                             <th>{% trans 'S.N.' %}</th>
                                             <th>{% trans 'Form' %} {% trans 'Title' %}</th>
@@ -276,13 +308,13 @@ assigntoken(csrf_token);
                                             <td>
                                            
 
-
-                                             <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select>
+                                            <span data-bind="text: default_submission_status_text"></span>
+                                            <!--  <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select> -->
                                             
                                             </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text:responses_count"></td>
-                                            <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
+                                            <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                                                     <div data-bind="with: em">
                                                       <div class="modal-dialog form-modal" role="document">
@@ -366,12 +398,20 @@ assigntoken(csrf_token);
                                                 <a href="javascript:void(0);" class="badge badge-success" data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}">
                                                <i class="la la-close" data-bind="visible:is_deployed()==true"></i>
                                                 <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
+                                                <!-- ko if: is_deployed() != true -->
+                                                        <a data-bind="attr: { href:'/forms/delete-fieldsightxf/'+  id() +'/?next='+ next_url +'?tab=1'}" class="badge badge-danger">
+                                                            <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
+                                                            <span>Delete</span>
+                                                        </a>                                                    
+                                                <!-- /ko -->
+
 
                                             </td>
                                         </tr>
 
                                     </tbody>
                                 </table>
+                                </div>
                             </div>
 						</div>
 						<div class="tab-pane" id="tab002" role="tabpanel">
@@ -614,8 +654,9 @@ assigntoken(csrf_token);
 								</form>
 							</div>
 							<!--Form List-->
-							<table class="table table-responsive table-hover margin-top">
-								<thead class="thead-default">
+                            <div class="table-responsive">
+							<table class="table table-striped table-bordered table-hover margin-top">
+								<thead>
 									<tr>
 										<th>{% trans 'S.N.' %}</th>
 										<th>{% trans 'Schedule' %} {% trans 'Name' %}</th>
@@ -638,8 +679,8 @@ assigntoken(csrf_token);
                                         <span data-bind="text: form_name"></span>
                                        </td>
                                         <td>
-
-										<select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select>
+                                         <span data-bind="text: default_submission_status_text"></span>   
+										<!-- <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select> -->
                                         
                                         </td>
                                         <!-- <td data-bind="text: date_range_start"></td>
@@ -647,7 +688,7 @@ assigntoken(csrf_token);
 										<td data-bind="text: days"></td> -->
                                         <td data-bind="text: schedule_level"></td>
 										<td data-bind="text: responses_count"></td>
-                                        <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
+                                        <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                         <div data-bind="with: em">
                           <div class="modal-dialog form-modal" role="document">
@@ -732,11 +773,19 @@ assigntoken(csrf_token);
                                                 <i class="la la-close"></i> {% trans 'Undeploy ' %}</a>
                                             <a href="javascript:void(0);" role="button" class="badge badge-success" data-bind="click:deploy, visible:is_deployed()!= true">
                                                 <i class="la la-rocket"></i> {% trans 'Deploy ' %}</a>
+                                            <!-- ko if: is_deployed() != true -->
+                                                        <a data-bind="attr: { href:'/forms/delete-fieldsightxf/'+  id() +'/?next='+ next_url +'?tab=2'}" class="badge badge-danger">
+                                                            <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
+                                                            <span>Delete</span>
+                                                        </a>                                                    
+                                            <!-- /ko -->
+
 
 										</td>
 									</tr>
 								</tbody>
 							</table>
+                            </div>
                             </div>
 						</div>
 						<div class="tab-pane" id="tab003" role="tabpanel">
@@ -745,7 +794,7 @@ assigntoken(csrf_token);
                                 <!--<a href="javascript:void(0);" title="" class="btn btn-sm btn-primary" data-bind="click:reorder_stage"><i class="la la-reorder" aria-hidden="true"></i> {% trans 'Reorder Stages' %}</a>-->
                                 <!--<a href="javascript:void(0);" title="" class="btn btn-sm btn-success" data-bind="visible:stages().length > 0,-->
                                             <!--click: deployStages"><i class="la la-rocket" aria-hidden="true"></i> {% trans 'Deploy' %} {% trans 'to' %} {% trans 'Mobile' %}</a>-->
-                                <a href="{% url 'forms:configure_stages' is_project pk %}" class="btn btn-sm btn-warning"><i class="la la-asterisk" aria-hidden="true"></i>  {% trans 'Configure Stages' %}</a>
+                                <a href="{% url 'forms:configure_stages' is_project pk %}" class="btn btn-sm btn-primary"><i class="la la-cogs" aria-hidden="true"></i>  {% trans 'Configure Stages' %}</a>
                                 {% csrf_token %}
 
 
@@ -793,7 +842,7 @@ assigntoken(csrf_token);
                                                                  <div class="row">
                                                                     <div class="col-sm-12">
                                                                       <div class="form-group">
-                                                                          <label for="stagename"><span class="stage-label"></span>{% trans 'Stage' %} {% trans 'Name:' %}</label>
+                                                                          <label for="stagename"><span class="stage-label"></span>{% trans 'Stage' %} {% trans 'Name' %}:</label>
                                                                           <input class="form-control"  id="stagename" data-bind="value: name" placeholder="Name" rows="1" required="required">
                                                                           </div>
 
@@ -802,7 +851,7 @@ assigntoken(csrf_token);
 
                                                                     <div class="col-sm-12">
                                                                     <div class="form-group">
-                                                                          <label for="description"><span class="stage-label"fstage data></span>{% trans 'Description:' %}</label>
+                                                                          <label for="description"><span class="stage-label"fstage data></span>{% trans 'Description' %}:</label>
                                                                         <textarea class="form-control my-input" id="description" data-bind="value: description" placeholder="Description" rows="5"></textarea>
                                                                     </div>
                                                                      </div>
@@ -824,7 +873,7 @@ assigntoken(csrf_token);
                                                                             <div class="col-sm-10" data-bind="visible:editable">
                                                                             <div class="sub-stage-name-c">{% trans 'Sub' %} {% trans 'Stage' %}
                                                                                 <span data-bind='text: $index()+1'></span><br>
-                                                                                {% trans 'Name:' %}<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name"><br>
+                                                                                {% trans 'Name' %}:<input class="name-stage-grp substage"  data-bind="value: name" placeholder="Name"><br>
                                                                                 {% trans 'Description:' %}<input class="name-stage-grp substage"  data-bind="value: description" placeholder="Description"><br>
                                                                                 {% trans 'Default' %} {% trans 'Submission' %} {% trans 'status' %}
                                                                                 <select data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id',
@@ -856,7 +905,7 @@ assigntoken(csrf_token);
 
                                                                     <div class="col-sm-12">
                                                                       <div class="form-group">
-                                                                          <label for="stagename"><span class="stage-label"></span>{% trans 'Name:' %}</label>
+                                                                          <label for="stagename"><span class="stage-label"></span>{% trans 'Name' %}:</label>
                                                                          <input class="form-control"  data-bind="value: name" placeholder="Name">
 
                                                                           <div class="gap"></div>
@@ -1073,25 +1122,32 @@ assigntoken(csrf_token);
                                                           </div>
                                                         </div>
                                                     </div>
+                                                    <span data-bind="text:$index() +1 + '.'" style="font-weight:bold;"></span>
                                                     <div class="substage-name" data-bind="visible:!editable()">
-
-                                                        # <span data-bind="text:$parent.order()"></span> .<span data-bind="text:$index() +1"></span>
+                                                        <strong>{% trans 'Substage' %} {% trans 'Name' %}:</strong>
                                                         <span data-bind="text:name"></span>
                                                     </div>
                                                     <div class="substage-form-name" data-bind="visible:!editable()">
-                                                        <strong>{% trans 'Form' %} {% trans 'Name:' %}</strong> <span data-bind="text:stage_forms().xf().title()"></span>
-
-                                                        <span class="pull-right">{% trans 'Default Submission Status:' %}</span>
-
-                                                         <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: stage_forms().default_submission_status"></select>
+                                                        <strong>{% trans 'Form' %} {% trans 'Name' %}:</strong> <span data-bind="text:stage_forms().xf().title()"></span>
+                                                    </div>
+                                                    <div class="substage-submission-status">
+                                                        <strong>{% trans 'Default Submission Status' %}:</strong>
+                                                        <span data-bind="text: default_submission_status_text"></span>
+                                                         <!-- <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: stage_forms().default_submission_status"></select> -->
 
                                                     </div>
-                                                    <div class="substage-form-action" data-bind="visible:!editable()">
-                                                        <!--<a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i>{% trans 'Edit' %}</a>-->
-
-                                                        <!--<a href="javascript:void(0);"  class="badge badge-success" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> Materials</a>-->
-
+                                                    <div class="substage-educational-material">
+                                                        <strong>{% trans 'Educational' %} {% trans 'Material' %} : </strong> <span data-bind="text: (em() == null)? 'No':'Yes'"></span>
                                                     </div>
+                                                    <div class="substage-substage-weight">
+                                                        <strong>{% trans 'Weight' %} : </strong> <span data-bind="text: weight"></span>
+                                                    </div>
+                                                    <!-- <div class="substage-form-action" data-bind="visible:!editable()">
+                                                        <a href="javascript:void(0);"  title="Edit Substage" class="badge badge-primary" data-bind="click:edit"><i class="la la-edit"></i> {% trans 'Edit' %}</a>
+
+                                                        <a href="javascript:void(0);"  class="badge badge-success" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
+
+                                                    </div> -->
 
                                                     <div class="modal" tabindex="-1" role="dialog" data-bind="modal:edit_modal_visibility">
                                                         <div>
@@ -1104,15 +1160,15 @@ assigntoken(csrf_token);
                                                               <div class="modal-body">
                                                                   <form>
                                                                       <div class="form-group">
-																	        <label for="inputEMTitle">{% trans 'Title:' %}</label>
+																	        <label for="inputEMTitle">{% trans 'Title' %}:</label>
 																	        <input type="text" class="form-control name-stage-grp substage" id="inputEMTitle" rows="1" data-bind="value: name" placeholder="Stage Name">
 																      </div>
                                                                       <div class="form-group">
-																	        <label for="inputEMText">{% trans 'Description:' %}</label>
+																	        <label for="inputEMText">{% trans 'Description' %}:</label>
 																	        <textarea class="form-control name-stage-grp substage" id="inputEMText" rows="5" data-bind="value: description" placeholder="Description"></textarea>
 																      </div>
                                                                        <div class="form-group">
-                                                                           <label for="inputEMText">{% trans 'Form' %} {% trans 'Assigned:' %}</label>
+                                                                           <label for="inputEMText">{% trans 'Form' %} {% trans 'Assigned' %}:</label>
                                                                            <select class="form-control" data-bind="options: $root.stagesVm().xforms, optionsText: 'title', optionsValue: 'id', value:stage_forms().xf().id" rows="1">
                                                                            </select>
                                                                        </div>
@@ -1281,6 +1337,7 @@ assigntoken(csrf_token);
                                                 <button type="button" class="btn btn-primary"><i class="la la-upload"></i> {% trans 'Assign' %} {% trans 'Form' %}</button>
                                                 <a href="#" class="btn btn-secondary"><i class="la la-file-text"></i> {% trans 'New' %} {% trans 'Form' %}</a>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -1303,8 +1360,9 @@ assigntoken(csrf_token);
                                     </form>
                                 </div>
                                 <!--Form List-->
-                                <table class="table table-responsive table-hover margin-top">
-                                    <thead class="thead-default">
+                                <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover margin-top">
+                                    <thead>
                                         <tr>
                                             <th>{% trans 'S.N.' %}</th>
                                             <th>{% trans 'Form' %} {% trans 'Title' %}</th>
@@ -1320,17 +1378,17 @@ assigntoken(csrf_token);
                                         <tr>
                                             <th scope="row" data-bind='text: $index()+1'></th>
                                             <td>
-                                             <span data-bind="text: name"></span>
+                                            <span data-bind="text: name"></span>
 
-                                             </td>
-                                             <td>
+                                            </td>
+                                            <td>
+                                            <span data-bind="text: default_submission_status_text"></span>
+                                            <!-- <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select> -->
 
-                                             <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select>
-                                            
-                                             </td>
+                                            </td>
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text: responses_count"></td>
-                                            <td><a href="javascript:void(0);" class="badge badge-info" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i>{% trans 'Materials' %}</a>
+                                            <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
 
 
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
@@ -1418,6 +1476,13 @@ assigntoken(csrf_token);
                                                <i class="la la-close" data-bind="visible:is_deployed()==true"></i>
                                                 <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
 
+                                                <!-- ko if: is_deployed() != true -->
+                                                        <a data-bind="attr: { href:'/forms/delete-fieldsightxf/'+id()+'/?next='+next_url+'?tab=4'}" class="badge badge-danger">
+                                                            <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
+                                                            <span>Delete</span>
+                                                        </a>                                                    
+                                                <!-- /ko -->
+
                                             </td>
 
 
@@ -1427,6 +1492,7 @@ assigntoken(csrf_token);
 
                                     </tbody>
                                 </table>
+                                </div>
                             </div>
 						</div>
 					</div>

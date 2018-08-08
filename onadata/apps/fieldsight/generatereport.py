@@ -22,6 +22,8 @@ from  reportlab.lib.styles import ParagraphStyle as PS
 from  reportlab.platypus.tableofcontents import TableOfContents
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from onadata.libs.utils.image_tools import image_url
+from onadata.apps.logger.models import Attachment
 styleSheet = getSampleStyleSheet()
 styles = getSampleStyleSheet()
 
@@ -60,8 +62,6 @@ class MyDocTemplate(SimpleDocTemplate):
                  self.notify('TOCEntry', (2, text, self.page, key))
 
 class PDFReport:
-
-
     def __init__(self, buffer, pagesize):
         self.main_answer = {}
         self.question={}
@@ -188,8 +188,21 @@ class PDFReport:
                 
             elif question_type == 'photo':
                 #photo = '/media/user/attachments/'+ r_answer[r_question+"/"+question]
-                photo = 'http://'+self.base_url+'/attachment/medium?media_file='+ self.media_folder +'/attachments/'+ answer_dict[question_name]
-                answer = self.create_logo(photo)
+
+                size = "small"
+                try:
+                    result = Attachment.objects.filter(media_file=self.media_folder +'/attachments/'+ answer_dict[question_name])[0:1]
+                    attachment = result[0]
+
+                    if not attachment.mimetype.startswith('image'):
+                        media_url = 'http://' + self.base_url +'/static/images/img-404.jpg'
+                    
+                    media_url = image_url(attachment, size)
+                
+                except:
+                    media_url = 'http://' + self.base_url +'/static/images/img-404.jpg'
+
+                answer = self.create_logo(media_url)
                 # answer =''
             elif question_type == 'audio' or question_type == 'video':
                 media_link = 'http://'+self.base_url+'/attachment/medium?media_file='+ self.media_folder +'/attachments/'+ answer_dict[question_name]
@@ -235,7 +248,7 @@ class PDFReport:
             question_name = g_question+"/"+first_children['name']
 
             if first_children['type'] == 'group':
-                self.parse_group(g_question+"/",first_children, g_answer.get('question_name', {}))
+                self.parse_group(g_question+"/",first_children, g_answer)
 
             elif first_children['type'] == "repeat":
                 self.parse_repeat(g_question+"/", first_children, g_answer.get('question_name', []))
@@ -351,6 +364,7 @@ class PDFReport:
                     self.additional_data=[]
                     self.main_answer = instance.instance.json
                     question = json.loads(json_question)
+
                     self.parse_individual_questions(question['children'])
                     
 
@@ -397,7 +411,11 @@ class PDFReport:
 
         styNormal = styleSheet['Normal']
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
-
+        if instance.site:
+            elements.append(Paragraph("Site Identifier : " + instance.site.identifier, self.h3))
+            elements.append(Paragraph("Site Name : " + instance.site.name, self.h3))
+            elements.append(Spacer(0,10))
+        
         elements.append(Paragraph(form.xf.title, self.h3))
         elements.append(Paragraph(form.form_type() + " Form", styles['Heading4']))
         if form.stage:

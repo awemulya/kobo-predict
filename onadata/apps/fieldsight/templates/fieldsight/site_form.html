@@ -108,13 +108,15 @@
  									{% if not field.label == 'Location' %}
                                     {% if not field.label == 'Is active' %}
 									{% if not field.label == 'Project' %}
-									<div class="form-group col-md-6">
+									<div class="form-group col-md-6 {% if field.errors %} alert alert-danger {% endif %}">
 									  <label class="col-form-label">{{ field.label }}</label>
 									 {{ field|add_class:"form-control" }}
-									</div>
+									 {{ field.errors }}
+                   
+                  </div>
 									{% endif %}
 									{% endif %}
-                                    {% endif %}
+                  {% endif %}
 									{% endfor %}
 									{% for field in form.hidden_fields %}
 									     <div style="display:none;">{{ field }}</div>

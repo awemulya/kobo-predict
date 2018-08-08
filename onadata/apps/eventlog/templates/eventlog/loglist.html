@@ -1,0 +1,70 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block extracss %}
+{% endblock %}
+{%block kocript %}
+
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+
+{% endblock %}
+{% block content %}
+{% csrf_token %}
+
+<div id="main-content" class="padding">
+	<nav aria-label="breadcrumb" role="navigation">
+		{% block breadcrumbs %}
+		<ol class="breadcrumb">
+			{% if is_project %}
+				{% ifrole "Organization" %}
+					<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization' %} {% trans 'List' %}</a></li>
+					<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' obj.organization.pk %}">{{obj.organization.name}}</a></li>
+				{% endrole %}
+				<li class="breadcrumb-item" aria-current="page"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{obj.name}}</a></li>
+				<li class="breadcrumb-item active" aria-current="page">{% trans 'Log List' %}</li>
+
+			{% else %}
+				{% ifrole "Organization" %}
+					<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization' %} {% trans 'List' %}</a></li>
+					<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' obj.project.organization.pk %}">{{obj.project.organization.name}}</a></li>
+				{% endrole %}
+				<li class="breadcrumb-item" aria-current="page"><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">{{obj.project.name}}</a></li>
+				<li class="breadcrumb-item" aria-current="page"><a href="{% url 'fieldsight:site-dashboard' obj.pk %}">{{obj.name}}</a></li>
+				<li class="breadcrumb-item active" aria-current="page">{% trans 'Log List' %}</li>
+			{% endif %}
+		</ol>
+		{% endblock %}
+	</nav>
+	<section class="org-profile-body">
+		{% verbatim %}
+		<div class="row" id="logdatas">
+		</div>
+		{% endverbatim %}
+    </section>
+
+</div>
+
+{% endblock %}
+{%block extrascript %}
+
+
+<script type="text/javascript">
+var static_url ="{{ STATIC_URL }}";
+
+{% load l10n %}
+	configure_settings =  {};
+	{% if is_project %}
+		configure_settings.log_url = "{% url 'eventlog:api_project_logs' obj.pk %}";
+	{% else %}
+		configure_settings.log_url = "{% url 'eventlog:api_site_logs' obj.pk %}";
+	{% endif %}
+
+</script>
+
+
+<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
+<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+<script src="{% static 'js/fieldsight/loglist.js' %}?v=0.6"></script>
+{% endblock %}

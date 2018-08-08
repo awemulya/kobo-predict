@@ -158,12 +158,12 @@
 													<div class="org-profile-basic-info">
 														<h2>{{ obj.name }}</h2>
 														<h6>{{ obj.identifier }}</h6>
-														<p>{{ obj.address }}, {{ obj.get_country_display }}</p>
+														<p>{{ obj.address }}{% if obj.get_country == "" %}, {{ obj.get_country_display }}{% endif %}</p>
 														<p>{{ obj.email }}</p>
 														{% if obj.region %}
-															<p>{% if obj.region.name == "" %}{{ obj.region.identifier }}{% else %}{{ obj.region.name }}{% endif %}</p>
-														{% endif %}
 
+															<p>{% if obj.region.name == "" or obj.region.name == None %}{{ obj.region.identifier }}{% else %}{{ obj.region.name }}{% endif %}</p>
+														{% endif %}
 													</div>
 												</div>
 											</div>
@@ -474,22 +474,16 @@
 				<div class="widget-head">
 					<h4>Recent Pictures</h4>
 				</div>
-
-
 				<div class="row">
 					<!-- ko foreach: allImages  -->
-
 					<!-- ko if: $index() != 5 -->
 					<div class="col-md-4">
-
 						<div class="photo-holder photo-item margin-top">
 							<img data-bind="attr:{src: '/attachment/small?media_file='+ _attachments().filename, submission_by: _submitted_by, submission_url:'/forms/forms/'+fs_uuid()+'#/'+_id()+''}" img-title="" alt="">
 						</div>
 					</div>
-
 					<!-- /ko -->
 					<!-- ko if: $index() == 5 -->
-
 					<div class="col-md-4">
 						<div class="photo-holder margin-top">
 							<a href="{% url 'fieldsight:all_response_image' obj.pk %}" title="" class="count-holder">
@@ -499,25 +493,8 @@
 						</div>
 					</div>
 					<!-- /ko -->
-
 					<!-- /ko-->
-
-
-
 				</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 			</div>
 		</div>
 	</div>
@@ -527,6 +504,40 @@
 </div>
 
 <!--right heree-->
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="widget-info margin-top bg-white padding">
+			<div class="widget-head">
+				<h4>{% trans 'Form' %} {% trans 'Submissions' %}</h4>
+			</div>
+			<div class="widget-body">
+				<div id="submission-chart" style="width:100%; display: block">
+					<canvas id="myChart" width="500" height="300"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="widget-info margin-top bg-white padding">
+			<div class="widget-head">
+				<h4>{% trans 'Site' %} {% trans 'Progress' %}</h4>
+			</div>
+			<div class="widget-body">
+				{% if has_progress_chart %}
+				<div id="siteprogress-chart">
+					<canvas id="progressChart" width="500" height="300"></canvas>
+				</div>
+				{% else %}
+				<div>
+					<h3>No Progress Data</h3>
+
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>
 <div class="row">
 	<div class="col-lg-3 col-md-6 col-sm-12">
 		<a href="{% url 'fieldsight:site-submission-data' obj.pk 2 %}" class="mini-stat padding-large margin-top clearfix">
@@ -568,39 +579,6 @@
 
 </div>
 
-<div class="row">
-	<div class="col-md-6">
-		<div class="widget-info margin-top bg-white padding">
-			<div class="widget-head">
-				<h4>{% trans 'Form' %} {% trans 'Submissions' %}</h4>
-			</div>
-			<div class="widget-body">
-				<div id="submission-chart" style="width:100%; display: block">
-					<canvas id="myChart" width="500" height="300"></canvas>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-6">
-		<div class="widget-info margin-top bg-white padding">
-			<div class="widget-head">
-				<h4>{% trans 'Site' %} {% trans 'Progress' %}</h4>
-			</div>
-			<div class="widget-body">
-				{% if has_progress_chart %}
-				<div id="siteprogress-chart">
-					<canvas id="progressChart" width="500" height="300"></canvas>
-				</div>
-				{% else %}
-				<div>
-					<h3>No Progress Data</h3>
-
-				</div>
-				{% endif %}
-			</div>
-		</div>
-	</div>
-</div>
 {% verbatim %}
 					<div class="row" id="logdatas">
 						
@@ -737,7 +715,7 @@
 				configure_settings =  {};
 				{% load l10n %}
   				configure_settings.site_id = {{ obj.pk|unlocalize }};
-
+  				configure_settings.log_url = "{% url 'eventlog:api_site_logs' obj.pk %}";
 					var height = 0;
 					$(".gh-col" ).each(function() {
 						height += $(this).height();
@@ -757,11 +735,12 @@
 	<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
 	<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
 	<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
-	<script src="{% static 'js/fieldsight/manage_site_dashboard.js' %}?v=0.4"></script>
+	<!-- <script src="{% static 'js/fieldsight/manage_site_dashboard.js' %}?v=0.4"></script> -->
 
 	<script src="{% static 'js/reactjs/react.min.js' %}"></script>
 	<script src="{% static 'js/reactjs/browser.min.js' %}"></script>
 	<script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
+	<script src="{% static 'js/fieldsight/loglist.js' %}?v=0.6"></script>
 
     <script type="text/babel">
      
