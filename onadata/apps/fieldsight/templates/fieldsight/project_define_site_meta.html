@@ -418,7 +418,8 @@
                                   {options} 
                                 </select>   
                                                 
-                            <small id="input1Help" className="form-text text-muted">{ 'question_help' in this.props ? this.props.question_help:""}</small>
+                            <small id="input1Help" className="form-text text-muted">{ 'question_help' in this.props.question_obj ? this.props.question_obj.question_help:""}</small>
+                                
                         </div>
                         <div className="form-action">
                             <button className="btn btn-sm btn-primary" onClick={this.edit}><i className="la la-edit"></i></button>
@@ -546,7 +547,7 @@
                                             <option>Site 4</option>
                                         </select>
                                                         
-                                    <small id="input1Help" className="form-text text-muted">{ 'question_help' in this.props ? this.props.question_help:""}</small>
+                                    <small id="input1Help" className="form-text text-muted">{ 'question_help' in this.props.question_obj ? this.props.question_obj.question_help:""}</small>
                                 </div>
                                 <div className="form-action">
                                     <button className="btn btn-sm btn-primary" onClick={this.edit}><i className="la la-edit"></i></button>
@@ -675,7 +676,8 @@ var FormSubStatQuestion = React.createClass({
                                 <label className="col-form-label">{this.props.question}:</label>
                                 <span className="field-type"><strong>Type : </strong>{this.props.question_type}</span>
                                     <div className="clearfix"></div>
-                                    <span>Yes / No</span>            
+                                    <span>Yes / No</span> 
+
                             </div>
                             <div className="form-action">
                                 <button className="btn btn-sm btn-primary" onClick={this.edit}><i className="la la-edit"></i></button>
