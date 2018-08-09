@@ -275,7 +275,8 @@
                 return(
                     <div className="form-group col-md-6 QuestionContainer ">
                         <label className="col-form-label" ref="newText">{this.props.question}</label>
-                        <input className="form-control" type="text" ref="answer" onChange={this.save} defaultValue={this.props.answer}></input>      
+                        <input className="form-control" type="text" ref="answer" onChange={this.save} placeholder={this.props.question_placeholder} defaultValue={this.props.answer}></input>      
+                        <small id="input1Help" className="form-text text-muted">{ 'question_help' in this.props ? this.props.question_help:""}</small>
                     </div>
 
             );
@@ -333,10 +334,11 @@
                   <div className="form-group col-md-6 QuestionContainer ">
                         <label className="col-form-label" ref="newText">{this.props.question}</label>
                         <select className="form-control" ref="answer" name={this.props.name || ''} id={this.props.id || (this.props.name || '')} onChange = {this._onChange}> 
-                      {options} 
-                    </select>       
+                          {options} 
+                        </select>
+                      <small id="input1Help" className="form-text text-muted">{ 'question_help' in this.props ? this.props.question_help:""}</small>       
                     </div>
-                                  );
+                  );
             }
         });
 
@@ -391,10 +393,11 @@
                   <div className="form-group col-md-6 QuestionContainer ">
                         <label className="col-form-label" ref="newText">{this.props.question}</label>
                         <select className="form-control" ref="answer" name={this.props.name || ''} id={this.props.id || (this.props.name || '')} onChange = {this._onChange}> 
-                      {options} 
-                    </select>       
+                          {options} 
+                        </select>
+                        <small id="input1Help" className="form-text text-muted">{ 'question_help' in this.props ? this.props.question_help:""}</small>       
                     </div>
-                                  );
+                  );
             }
         });
      
@@ -442,7 +445,7 @@
 
         if(item.question_type == "MCQ"){
           return(
-            <MCQQuestion key={i} index={i} options={item.mcq_options} answer={item.answer} question={item.question_text} question_type={item.question_type} updateAnswerText={this.updateAnswer} />   
+            <MCQQuestion key={i} index={i} options={item.mcq_options} answer={item.answer} question={item.question_text} question_type={item.question_type} question_help={item.question_help} updateAnswerText={this.updateAnswer} />   
           );
         }
         else if(item.question_type == "Link"){
@@ -478,12 +481,12 @@
 
           }
           return(
-            <LinkQuestion key={i} index={i} answer={item.answer} question={item.question_text} project_id={item.project_id} sites={this.state.linkQ_options[item.project_id] || []} updateAnswerText={this.updateAnswer} />
+            <LinkQuestion key={i} index={i} answer={item.answer} question={item.question_text} project_id={item.project_id} sites={this.state.linkQ_options[item.project_id] || []} question_help={item.question_help} updateAnswerText={this.updateAnswer} />
           );
         }
         else{
           return(
-            <Question key={i} index={i} answer={item.answer} question={item.question_text} question_type={item.question_type} updateAnswerText={this.updateAnswer} />   
+            <Question key={i} index={i} answer={item.answer} question={item.question_text} question_type={item.question_type} question_help={item.question_help} question_placeholder={item.question_placeholder} updateAnswerText={this.updateAnswer} />   
           );
         }
       },
