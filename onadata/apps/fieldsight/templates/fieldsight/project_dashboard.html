@@ -88,12 +88,11 @@ assigntoken(csrf_token);
 							</ul>
 						</li>
 					</script>
-					Filter by region: 
 					{% if obj.cluster_sites %}
+					Filter by region: 
 						<select  multiple="multiple" id="filterRegion" data-bind="options: allRegions, optionsText: 'identifier', optionsValue: 'id'"></select>
-					{% endif %}
 					<br>
-
+					{% endif %}
 					Start Date:
 					<input type="date" value="{{ obj.date_created.date|date:'Y-m-d'}}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="startdate" id="startdate">
 					<br>
@@ -532,6 +531,7 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.csrf_token = '{{ csrf_token }}';
 	configure_settings.url = "{% url 'fieldsight_export:export_xls_project_level_sites' obj.pk %}";
 	configure_settings.log_url = "{% url 'eventlog:api_project_logs' obj.pk %}";
+	configure_settings.full_log_url = "{% url 'eventlog:project_logs' obj.pk %}";
 	//getlogdata();
 					
 </script>
