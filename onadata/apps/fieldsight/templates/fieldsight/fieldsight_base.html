@@ -257,8 +257,10 @@
 			var id = "{{request.user.id}}";
 			var channel_url = "{{channels_url}}";
 			var csrf = "{{ csrf_token }}";
+			var id_organization = {{ oid }};
+			var id_project = {{ pid }};
 </script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/notifications.js?v=1.0" ></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/notifications.js?v=2.0" ></script>
 {%block extrascript %}
 {% endblock %}
     </body>
