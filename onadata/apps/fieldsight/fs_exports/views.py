@@ -15,6 +15,8 @@ from django.db.models import Prefetch
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 
+
+
 class ExportOptions(ProjectRoleMixin, View):
     def get(self, request):
         return render(request, "fieldsight/fs_export/xls_export.html")

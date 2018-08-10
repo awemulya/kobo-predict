@@ -22,6 +22,63 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.db.models import Prefetch
 from .generatereport import PDFReport
+import os, tempfile, zipfile
+from django.conf import settings
+from django.http import HttpResponse
+from django.core.servers.basehttp import FileWrapper
+
+
+def get_images_for_site_all(id_string):
+    return settings.MONGO_DB.instances.aggregate([{"$match":{"_xform_id_string" : id_string}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
+
+@task()
+def download_zipfile(request, id_string):
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.status = 1
+    site=get_object_or_404(Site, pk=site_id)
+    task.content_object = site
+    task.save()
+
+    try:
+        """ Create a ZIP file on disk and transmit it in chunks of 8KB,                 
+        without loading the whole file into memory. A similar approach can          
+        be used for large dynamic PDF files.                                        
+        """
+        temp = tempfile.TemporaryFile()
+        datas = get_images_for_site_all(id_string)
+        urls = list(datas["result"])
+        archive = zipfile.ZipFile(temp, 'w', zipfile.ZIP_DEFLATED)
+        index=0
+        username=urls[0]['_attachments']['download_url'].split('/')[2]
+        for url in urls:
+            
+            index+=1
+            filename = '/srv/fieldsight/fieldsight-kobocat'+url['_attachments']['download_url'] # Select your files here.                           
+            archive.write(filename, username + '/' + url['_attachments']['download_url'].split('/')[4])
+            
+        archive.close()
+        temp.seek(0)
+        wrapper = FileWrapper(temp)
+        
+        
+        task.file.name = pdf_url
+
+        task.status = 2
+        task.save()
+
+        noti = task.logs.create(source=source_user, type=32, title="Pdf Report generation in site",
+                                   recipient=source_user, content_object=task, extra_object=site,
+                                   extra_message=" <a href='"+ task.file.url +"'>Pdf report</a> generation in site")
+    except Exception as e:
+        task.status = 3
+        task.save()
+        print 'Report Gen Unsuccesfull. %s' % e
+        print e.__dict__
+        noti = task.logs.create(source=source_user, type=432, title="Pdf Report generation in site",
+                                       content_object=site, recipient=source_user,
+                                       extra_message="@error " + u'{}'.format(e.message))
+        buffer.close()                                                                      
+    
 
 @task()
 def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
