@@ -124,6 +124,10 @@ class UserRole(models.Model):
             select_related('project', 'site', 'site__type', 'project__organization', 'project__type')
 
     @staticmethod
+    def get_active_site_roles_exists(user):
+        return UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor").exists()
+
+    @staticmethod
     def get_roles_supervisor(user, project_id):
         return True if UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor",
                                                project__id=project_id).select_related('group', 'project')\
