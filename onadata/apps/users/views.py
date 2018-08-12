@@ -22,7 +22,7 @@ from onadata.apps.fieldsight.mixins import UpdateView, ProfileView, OwnerMixin, 
 from rest_framework import renderers
 from django.contrib import messages
 from channels import Group as ChannelGroup
-from onadata.apps.fieldsight.models import Organization
+from onadata.apps.fieldsight.models import Organization, BluePrints
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from onadata.apps.users.serializers import AuthCustomTokenSerializer
@@ -98,8 +98,10 @@ def current_user(request):
         site_supervisor = False
         field_sight_info = []
         roles = UserRole.get_active_site_roles(user)
+        blue_prints = []
         if roles.exists():
             site_supervisor = True
+            blue_prints = BluePrints.objects.filter(site__project__organization=user.user_profile.organization)
         for role in roles:
             site = role.site
             site_type = 0
@@ -109,12 +111,11 @@ def current_user(request):
                 site_type_level = site.type.name
             except Exception as e:
                 pass
-            data = site.blueprints.all()
-            bp = [m.image.url for m in data]
+            bp = [m.image.url for m in blue_prints if m.site == site]
             project = role.project
             site_info = {'site': {'id': site.id, 'phone': site.phone, 'name': site.name, 'description': site.public_desc,
                                   'address':site.address, 'lat': repr(site.latitude), 'lon': repr(site.longitude),
-                                  'identifier':site.identifier, 'progress': site.progress(), 'type_id':site_type,
+                                  'identifier':site.identifier, 'progress': 0, 'type_id':site_type,
                                   'type_label':site_type_level,
                                   'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans},
                          'project': {'name': project.name, 'id': project.id, 'description': project.public_desc,
