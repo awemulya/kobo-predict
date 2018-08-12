@@ -146,6 +146,65 @@ def current_user(request):
 
         return Response(response_data)
 
+@api_view(['GET'])
+def current_usertwo(request):
+    user = request.user
+    if user.is_anonymous():
+        return Response({'code': 401, 'message': 'Unauthorized User'})
+    elif not user.user_profile.organization:
+        return Response({'code': 403, 'message': 'Sorry, you are not assigned to any organization yet. '
+                                                 'Please contact your project manager.'})
+    else:
+        site_supervisor = False
+        roles = UserRole.get_active_site_roles(user)
+        blue_prints = []
+        if roles.exists():
+            site_supervisor = True
+            blue_prints = BluePrints.objects.filter(site__project__organization=user.user_profile.organization)
+        project_data = {}
+        for role in roles:
+            if role.project.id not in project_data:
+                project = role.project
+                project_data[role.project.id] = {'project':{'name': project.name, 'id': project.id, 'description': project.public_desc,
+                                     'address':project.address, 'type_id':project.type.id,
+                                     'type_label':project.type.name,'phone':project.phone, 'organization_name':project.organization.name,
+                                     'organization_url':project.organization.logo.url,
+                                     'lat': repr(project.latitude), 'lon': repr(project.longitude), 'cluster_sites':project.cluster_sites, 'site_meta_attributes':project.site_meta_attributes}, 'sites':[]}
+            site = role.site
+            site_type = 0
+            site_type_level = ""
+            try:
+                site_type = site.type.id
+                site_type_level = site.type.name
+            except Exception as e:
+                pass
+            bp = [m.image.url for m in blue_prints if m.site == site]
+            site_info = {'id': site.id, 'phone': site.phone, 'name': site.name, 'description': site.public_desc,
+                                  'address':site.address, 'lat': repr(site.latitude), 'lon': repr(site.longitude),
+                                  'identifier':site.identifier, 'progress': 0, 'type_id':site_type,
+                                  'type_label':site_type_level,
+                                  'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans}
+            project_data[role.project.id]['sites'].append(site_info)
+        users_payload = {'username': user.username,
+                         'full_name': user.first_name,
+                         'email': user.email,
+                         'my_projects': project_data.values(),
+                         'server_time': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+                         'is_supervisor': site_supervisor,
+                         'last_login': user.last_login,
+                         'organization': user.user_profile.organization.name,
+                         'organization_url': user.user_profile.organization.logo.url,
+                         'address': user.user_profile.address,
+                         'skype': user.user_profile.skype,
+                         'phone': user.user_profile.phone,
+                         'profile_pic': user.user_profile.profile_picture.url,
+                         # 'languages': settings.LANGUAGES,
+                         # profile data here, role supervisor
+                         }
+        response_data = {'code':200, 'data': users_payload}
+
+        return Response(response_data)
+
 
 @group_required("admin")
 @api_view(['GET'])
