@@ -21,6 +21,26 @@ class ExportOptions(ProjectRoleMixin, View):
     def get(self, request):
         return render(request, "fieldsight/fs_export/xls_export.html")
 
+
+class ImageZipSites(View):
+    def get(self, request, pk, size_code):
+        user = self.request.user
+        site=get_object_or_404(Site, pk=pk)
+        size="-small"
+        if size_code == '1':
+            size="-medium"
+        elif size_code == '2':
+            size = "-large"
+        task_obj=CeleryTaskProgress.objects.create(user=user, content_object=site, task_type=6)
+        if task_obj:
+            task = exportProjectSiteResponses.delay(task_obj.pk, self.kwargs.get('pk'), size)
+            task_obj.task_id = task.id
+            task_obj.save()
+            status, data = 200, {'status':'true','message':'Sucess, the Zip file is being generated. You will be notified after the file is generated.'}
+        else:
+            status, data = 401, {'status':'false','message':'Error occured please try again.'}
+        return JsonResponse(data, status=status)
+
 class ExportProjectFormsForSites(View):
     def get(self, request, pk):
         mainstage=[]
