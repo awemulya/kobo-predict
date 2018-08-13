@@ -97,6 +97,13 @@ def current_user(request):
     else:
         site_supervisor = False
         field_sight_info = []
+        count = UserRole.get_active_site_roles_count(user)
+        if count == 0:
+            return Response({'code': 403, 'message': 'Sorry, you are not assigned to any Sites yet. '
+                                                     'Please contact your project manager.'})
+        if count >= 500:
+            return Response({'code': 403, 'message': 'Sorry, you are assigned Many Sites. > 500 '
+                                                     'Please contact your project manager.'})
         roles = UserRole.get_active_site_roles(user)
         blue_prints = []
         if roles.exists():
