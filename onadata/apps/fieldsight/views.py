@@ -2122,6 +2122,31 @@ class RegionalSitelist(ProjectRoleMixin, ListView):
             object_list = queryset.filter(region_id=self.kwargs.get('region_id'))
         return object_list
 
+class DonorRegionalSitelist(ReadonlyProjectLevelRoleMixin, ListView):
+    model = Site
+    template_name = 'fieldsight/donor_site_list.html'
+    paginate_by = 90
+
+    def get_context_data(self, **kwargs):
+        context = super(RegionalSitelist, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['region_id'] = self.kwargs.get('region_id')
+        if self.kwargs.get('region_id') == "0":
+            context['type'] = "Unregioned"
+            context['project_id'] = self.kwargs.get('pk')
+        else:
+            context['type'] = "region"
+            context['obj'] = get_object_or_404(Region, id=self.kwargs.get('region_id'))
+        return context
+    def get_queryset(self, **kwargs):
+        queryset = Site.objects.filter(project_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
+        
+        if self.kwargs.get('region_id') == "0":
+            object_list = queryset.filter(region=None)
+        else:    
+            object_list = queryset.filter(region_id=self.kwargs.get('region_id'))
+        return object_list
+
 # class RegionalSitelist(ProjectRoleMixin, TemplateView):
 #     def get(self, request, *args, **kwargs):
 #         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
@@ -2644,7 +2669,7 @@ class FormlistAPI(View):
             status, data = 401, {'status':'false','message':'Error occured try again.'}
         return JsonResponse(data, status=status)
 
-class GenerateCustomReport(ReviewerRoleMixin, View):
+class GenerateCustomReport(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk):
         schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title','date_created')
         stage = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=True, is_survey=False).values('id','xf__title','date_created')
@@ -2653,13 +2678,13 @@ class GenerateCustomReport(ReviewerRoleMixin, View):
         content={'general':list(general), 'schedule':list(schedule), 'stage':list(stage), 'survey':list(survey)}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
-class RecentResponseImages(ReviewerRoleMixin, View):
+class RecentResponseImages(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk):
         recent_resp_imgs = get_images_for_site(pk)
         content={'images':list(recent_resp_imgs["result"])}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
-class SiteResponseCoordinates(ReviewerRoleMixin, View):
+class SiteResponseCoordinates(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
@@ -2772,7 +2797,7 @@ class DefineProjectSiteCriteria(ProjectRoleMixin, TemplateView):
         project.save()
         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
 
-class AllResponseImages(ReviewerRoleMixin, View):
+class AllResponseImages(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk):
         all_imgs = get_images_for_site_all(pk)
         return render(request, 'fieldsight/gallery.html', {'all_imgs' : json.dumps(list(all_imgs["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8')})

@@ -218,6 +218,7 @@ urlpatterns = [
     url(r'^api/search-sites/(?P<pk>\d+)/$', SiteSearchViewSet.as_view({'get': 'list'}),name='search_sites_api'),
 
     url(r'^project/(?P<pk>\d+)/regional-sites/(?P<region_id>\d+)/$', RegionalSitelist.as_view(), name='regional-sites'),
+    url(r'^project/(?P<pk>\d+)/donor-regional-sites/(?P<region_id>\d+)/$', DonorRegionalSitelist.as_view(), name='donor-regional-sites'),
     url(r'^api/project/(?P<pk>\d+)/regional-sites/(?P<region_pk>\d+)/$', SiteUnderRegionViewSet.as_view({'get': 'list'}), name='region-sites-list'),
     url(r'^site/add/(?P<pk>[0-9]+)/(?P<region_pk>[0-9]+)/', RegionalSiteCreateView.as_view(), name='regional-site-add'),
 
