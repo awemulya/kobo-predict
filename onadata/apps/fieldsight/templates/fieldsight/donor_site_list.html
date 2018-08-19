@@ -122,7 +122,7 @@
 						{% for site in object_list %}
 						
 							<div class="col-md-4 col-sm-6">
-								<a href= {% url 'fieldsight:site-dashboard-lite' site.pk %} title="" class="site-item-wrap  margin-top clearfix">
+								<a href= {% url 'fieldsight:site-dashboard_lite' site.pk %} title="" class="site-item-wrap  margin-top clearfix">
 									<div class="logo">
 										<img src="{{ site.logo.url }}" alt="" width="100" height="100">
 									</div>
@@ -200,8 +200,6 @@
 						              {% else %}
 						                <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
 						              {% endif %}
-
-
 
 
 						              {% if paginator.num_pages > 21 %}

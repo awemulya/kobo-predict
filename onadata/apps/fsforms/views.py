@@ -1123,7 +1123,7 @@ class Setup_forms(SPFmixin, View):
                    'schedule_form': KoScheduleForm(request=request)})
 
 
-class FormFillView(ReadonlyFormMixin, FInstanceRoleMixin, View):
+class FormFillView(ReadonlyFormMixin, FormMixin, View):
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
         sub_pk = self.kwargs.get('instance_pk')
