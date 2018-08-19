@@ -238,4 +238,10 @@ class CeleryTaskProgress(models.Model):
 def handle_notification(sender, instance, **kwargs):
     from onadata.apps.eventlog.serializers.LogSerializer import NotificationSerializer
     data = NotificationSerializer(instance).data
+    # import ipdb
+    # ipdb.set_trace()
+    if instance.project:
+        ChannelGroup("project-notify-{}".format(instance.project.id)).send({"text": json.dumps(data)})
+    if instance.organization:
+        ChannelGroup("org-notify-{}".format(instance.organization.id)).send({"text": json.dumps(data)})
     ChannelGroup("user-notify-{}".format(1)).send({"text": json.dumps(data)})

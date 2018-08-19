@@ -30,8 +30,8 @@ def events(request):
     else:
         logs = []
         oid = None
-    channels_url = "ws://"+settings.WEBSOCKET_URL+":"+settings.WEBSOCKET_PORT+"/" \
-    if settings.WEBSOCKET_PORT else "ws://"+settings.WEBSOCKET_URL+"/"
+    channels_url = settings.WEBSOCKET_URL+":"+settings.WEBSOCKET_PORT+"/" \
+    if settings.WEBSOCKET_PORT else settings.WEBSOCKET_URL+"/"
     return {
         'notifications': logs,
         'fieldsight_message': messages,

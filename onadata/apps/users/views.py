@@ -22,7 +22,7 @@ from onadata.apps.fieldsight.mixins import UpdateView, ProfileView, OwnerMixin, 
 from rest_framework import renderers
 from django.contrib import messages
 from channels import Group as ChannelGroup
-from onadata.apps.fieldsight.models import Organization
+from onadata.apps.fieldsight.models import Organization, BluePrints
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from onadata.apps.users.serializers import AuthCustomTokenSerializer
@@ -97,9 +97,18 @@ def current_user(request):
     else:
         site_supervisor = False
         field_sight_info = []
+        count = UserRole.get_active_site_roles_count(user)
+        if count == 0:
+            return Response({'code': 403, 'message': 'Sorry, you are not assigned to any Sites yet. '
+                                                     'Please contact your project manager.'})
+        if count >= 500:
+            return Response({'code': 403, 'message': 'Sorry, you are assigned Many Sites. > 500 '
+                                                     'Please contact your project manager.'})
         roles = UserRole.get_active_site_roles(user)
+        blue_prints = []
         if roles.exists():
             site_supervisor = True
+            blue_prints = BluePrints.objects.filter(site__project__organization=user.user_profile.organization)
         for role in roles:
             site = role.site
             site_type = 0
@@ -109,12 +118,11 @@ def current_user(request):
                 site_type_level = site.type.name
             except Exception as e:
                 pass
-            data = site.blueprints.all()
-            bp = [m.image.url for m in data]
+            bp = [m.image.url for m in blue_prints if m.site == site]
             project = role.project
             site_info = {'site': {'id': site.id, 'phone': site.phone, 'name': site.name, 'description': site.public_desc,
                                   'address':site.address, 'lat': repr(site.latitude), 'lon': repr(site.longitude),
-                                  'identifier':site.identifier, 'progress': site.progress(), 'type_id':site_type,
+                                  'identifier':site.identifier, 'progress': 0, 'type_id':site_type,
                                   'type_label':site_type_level,
                                   'add_desc': site.additional_desc, 'blueprints':bp, 'site_meta_attributes_ans':site.site_meta_attributes_ans},
                          'project': {'name': project.name, 'id': project.id, 'description': project.public_desc,
@@ -129,6 +137,35 @@ def current_user(request):
                          'full_name': user.first_name,
                          'email': user.email,
                          'my_sites': field_sight_info,
+                         'server_time': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+                         'is_supervisor': site_supervisor,
+                         'last_login': user.last_login,
+                         'organization': user.user_profile.organization.name,
+                         'organization_url': user.user_profile.organization.logo.url,
+                         'address': user.user_profile.address,
+                         'skype': user.user_profile.skype,
+                         'phone': user.user_profile.phone,
+                         'profile_pic': user.user_profile.profile_picture.url,
+                         # 'languages': settings.LANGUAGES,
+                         # profile data here, role supervisor
+                         }
+        response_data = {'code':200, 'data': users_payload}
+
+        return Response(response_data)
+
+@api_view(['GET'])
+def current_usertwo(request):
+    user = request.user
+    if user.is_anonymous():
+        return Response({'code': 401, 'message': 'Unauthorized User'})
+    elif not user.user_profile.organization:
+        return Response({'code': 403, 'message': 'Sorry, you are not assigned to any organization yet. '
+                                                 'Please contact your project manager.'})
+    else:
+        site_supervisor = UserRole.get_active_site_roles_exists(user)
+        users_payload = {'username': user.username,
+                         'full_name': user.first_name,
+                         'email': user.email,
                          'server_time': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                          'is_supervisor': site_supervisor,
                          'last_login': user.last_login,

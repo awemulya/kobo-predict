@@ -12,6 +12,7 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import detail_route
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.exceptions import ValidationError
@@ -20,12 +21,19 @@ from rest_framework.response import Response
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
 from onadata.apps.eventlog.models import FieldSightLog
 from onadata.apps.fieldsight.mixins import USURPERS
+from onadata.apps.fieldsight.models import BluePrints
 from onadata.apps.userrole.models import UserRole
+from onadata.apps.userrole.serializers.UserRoleSerializer import MySiteRolesSerializer
 from onadata.apps.users.models import User, UserProfile
 from onadata.apps.users.serializers import UserSerializer, UserSerializerProfile, SearchableUserSerializer
 
 SAFE_METHODS = ('GET', 'POST')
 
+
+class MySitesResultsSetPagination(PageNumberPagination):
+    page_size = 25
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
 
 class AddPeoplePermission(BasePermission):
 
@@ -204,3 +212,16 @@ class SearchableUserListViewSet(viewsets.ModelViewSet):
         except:
             queryset = []
         return queryset
+
+
+class MySitesViewset(viewsets.ReadOnlyModelViewSet):
+    serializer_class = MySiteRolesSerializer
+    queryset = UserRole.objects.all()
+    pagination_class = MySitesResultsSetPagination
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user, ended_at=None, group__name="Site Supervisor").select_related('project', 'site', 'site__type', 'project__organization', 'project__type')
+
+    def get_serializer_context(self):
+        blue_prints = BluePrints.objects.filter(site__project__organization=self.request.user.user_profile.organization)
+        return {'request': self.request, 'blue_prints':blue_prints}

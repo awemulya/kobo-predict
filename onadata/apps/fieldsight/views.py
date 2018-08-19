@@ -2834,6 +2834,7 @@ def project_dashboard_peoples(request, pk):
                                   name=role.user.get_full_name(),
                                   email=role.user.email,
                                   phone=role.user.user_profile.phone,
+                                  url=reverse("users:profile",args=(role.user.id,)),
                                   image=role.user.user_profile.profile_picture.url))
             users.append(role.user.username)
 
