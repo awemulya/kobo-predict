@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^xls/project/site/list/metas/(?P<pk>\d+)/$', views.ExportProjectSitesWithRefs.as_view(), name="test"),
     url(r'^xls/project/$', views.ExportOptions.as_view(), name="exportOptions"),
     url(r'^xls/project/responses/(?P<pk>[0-9]+)/$', views.ExportProjectFormsForSites.as_view(), name='export_xls_project_sites'),
+    url(r'^zip/site-images/(?P<pk>[0-9]+)/(?P<size_code>[0-9]+)/$', views.ImageZipSites.as_view(), name='image_zip_sites'),
     
     ]

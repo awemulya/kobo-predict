@@ -22,6 +22,72 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.db.models import Prefetch
 from .generatereport import PDFReport
+import os, tempfile, zipfile
+from django.conf import settings
+from django.http import HttpResponse
+from django.core.servers.basehttp import FileWrapper
+
+
+def get_images_for_site_all(site_id):
+    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : site_id}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
+
+@task()
+def site_download_zipfile(task_prog_obj_id, size):
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.status = 1
+    
+    task.save()
+
+    try:
+        """ Create a ZIP file on disk and transmit it in chunks of 8KB,                 
+        without loading the whole file into memory. A similar approach can          
+        be used for large dynamic PDF files.                                        
+        """
+        default_storage = get_storage_class()() 
+        buffer = BytesIO()
+        datas = get_images_for_site_all(str(site_id))
+        urls = list(datas["result"])
+        archive = zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED)
+        index=0
+        username=urls[0]['_attachments']['download_url'].split('/')[2]
+        for url in urls:        
+            index+=1
+            if default_storage.exists(get_path(url['_attachments']['filename'], "-"+size)):
+                temp = tempfile.TemporaryFile()
+                file = default_storage.open(get_path(url['_attachments']['filename'], "-"+size)) 
+                filecontent = file.read()
+                temp.write(filecontent)
+                
+                # filename = '/srv/fieldsight/fieldsight-kobocat'+url['_attachments']['filename'] # Select your files here.                           
+                
+                archive.write(temp, url['_attachments']['filename'].split('/')[2])
+                temp.close()
+        archive.close()
+        buffer.seek(0)
+        zipFile = buffer.getvalue()
+
+        if default_storage.exists(task.site.identifier + '/files/'+task.site.name+'.zip'):
+            default_storage.delete(task.site.identifier + '/files/'+task.site.name+'.zip')
+
+        zipFile_url = default_storage.save(task.site.identifier + '/files/'+task.site.name+'.zip', ContentFile(zipFile))
+        buffer.close()
+        task.file.name = zipFile_url
+        task.status = 2
+        task.save()
+
+        noti = task.logs.create(source=task.source_user, type=32, title="Pdf Report generation in site",
+                                   recipient=source_user, content_object=task, extra_object=task.site,
+                                   extra_message=" <a href='"+ task.file.url +"'>Pdf report</a> generation in site")
+    except Exception as e:
+        task.status = 3
+        task.save()
+        print 'Report Gen Unsuccesfull. %s' % e
+        print e.__dict__
+        noti = task.logs.create(source=task.source_user, type=432, title="Pdf Report generation in site",
+                                       content_object=task.site, recipient=source_user,
+                                       extra_message="@error " + u'{}'.format(e.message))
+        buffer.close()                                                                      
+    
 
 @task()
 def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
