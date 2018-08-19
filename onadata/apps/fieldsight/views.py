@@ -287,9 +287,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
         myanswers = mylist
 
-        logs = []
-        for log in obj.logs.all()[:50]:
-            logs.append(log)
+
 
         result = get_images_for_sites_count(obj.id)
         
@@ -1929,7 +1927,7 @@ class RegionView(object):
     form_class = RegionForm
 
 
-class RegionListView(RegionView, LoginRequiredMixin, ListView):
+class RegionListView(RegionView, ProjectRoleMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(RegionListView, self).get_context_data(**kwargs)
         project = Project.objects.get(pk=self.kwargs.get('pk'))
@@ -1944,7 +1942,7 @@ class RegionListView(RegionView, LoginRequiredMixin, ListView):
         return queryset
 
 
-class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
+class RegionCreateView(RegionView, ProjectRoleMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(RegionCreateView, self).get_context_data(**kwargs)
         project = Project.objects.get(pk=self.kwargs.get('pk'))
@@ -2005,7 +2003,7 @@ class RegionCreateView(RegionView, LoginRequiredMixin, CreateView):
             )
 
 
-class RegionDeleteView(RegionView, DeleteView):
+class RegionDeleteView(RegionView, ProjectRoleMixin, DeleteView):
     def dispatch(self, request, *args, **kwargs):
         site = Site.objects.filter(region_id=self.kwargs.get('pk'))
         site.update(region_id=None)
@@ -2761,12 +2759,18 @@ class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
             if question['question_name'] in meta_answers:
                 mylist.append({question['question_text'] : meta_answers[question['question_name']]})
 
-        logs = []
-        for log in obj.logs.all()[:50]:
-            logs.append(log)
+        result = get_images_for_sites_count(obj.id)
+        
+        countlist = list(result["result"])
+        if countlist:
+            total_count = countlist[0]['count']
+        else:
+            total_count = 0
 
         myanswers = mylist
         outstanding, flagged, approved, rejected = obj.get_site_submission()
+        response = obj.get_site_submission_count()
+
         dashboard_data = {
             'obj': obj,
             'peoples_involved': peoples_involved,
@@ -2780,8 +2784,11 @@ class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
             'progress_chart_data_data': progress_chart_data.keys(),
             'progress_chart_data_labels': progress_chart_data.values(),
             'meta_data': myanswers,
-            'logs': logs,
+            'next_photos_count':total_count - 5,
+            'total_photos': total_count,
+            'total_submissions': response['flagged'] + response['approved'] + response['rejected'] + response['outstanding']
         }
+
         return dashboard_data
 
 
