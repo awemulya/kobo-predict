@@ -2127,7 +2127,7 @@ class DonorRegionalSitelist(ReadonlyProjectLevelRoleMixin, ListView):
     paginate_by = 90
 
     def get_context_data(self, **kwargs):
-        context = super(RegionalSitelist, self).get_context_data(**kwargs)
+        context = super(DonorRegionalSitelist, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
         context['region_id'] = self.kwargs.get('region_id')
         if self.kwargs.get('region_id') == "0":
