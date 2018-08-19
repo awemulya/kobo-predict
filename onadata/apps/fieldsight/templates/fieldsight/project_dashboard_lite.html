@@ -255,7 +255,7 @@ assigntoken(csrf_token);
 											</div>
 
 											<!-- ko foreach: regions  -->
-											<a data-bind="attr:{ href: '/fieldsight/project/'+ project +'/donor-regional-sites/'+id() }" class="project-item-wrap margin-top clearfix " style="width: 100%;">
+											<a data-bind="attr:{ href: '/fieldsight/project/{{obj.pk}}/donor-regional-sites/'+id() }" class="project-item-wrap margin-top clearfix " style="width: 100%;">
 												<div class="project-logo">
 													<!-- <img data-bind="attr:{src: logo}" width="50" height="50"/> -->
 												</div>
