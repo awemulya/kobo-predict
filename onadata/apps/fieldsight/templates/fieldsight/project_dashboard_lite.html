@@ -1,4 +1,5 @@
 {% extends "fieldsight/fieldsight_base.html" %}
+
 {% load i18n staticfiles %}
 {% load filters %}
 {% block extracss %}
@@ -25,21 +26,31 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
 {% if obj.cluster_sites %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_regions.js"></script>
- <script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.min.js"></script>
+<script>
+
 
 $(document).ready(function() {
+
+var csrf_token = "{{ csrf_token }}";
 var project = "{{obj.pk}}";
- vm = new RegionViewModel(project);
+assigntoken(csrf_token);
+ vm = new RegionViewModel(project, "{% url 'fieldsight_export:export_xls_project_sites' obj.pk %}");
  ko.applyBindings(vm);
+
 });
-    </script>
+</script>
+
 {% else %}
 	<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_sites.js"></script>
 	 <script>
 
 	$(document).ready(function() {
+
 	var project = "{{obj.pk}}";
-	 vm = new SitesViewModel(project);
+	var csrf_token = "{{ csrf_token }}";
+	assigntoken(csrf_token);
+	 vm = new SitesViewModel(project, "{% url 'fieldsight_export:export_xls_project_sites' obj.pk %}");
 	 ko.applyBindings(vm);
 	});
 	 </script>
@@ -48,7 +59,55 @@ var project = "{{obj.pk}}";
 
 {% endblock %}
 {% block content %}
-{% load filters %}
+{% csrf_token %}
+<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exportModalLabel">Export Report</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<div class="modal-body" style="margin-left:15px;">
+				<div class="form-item-wrapper checkbox-listing">
+
+
+					<ul data-bind="template: { name: 'itemTmpl', foreach: allformjson }"></ul>
+
+					<script id="itemTmpl" type="text/html">
+						<li>
+
+							<input style="left:0px !important; margin-top:3px !important;" type='checkbox' data-bind="checked: selected, click: $root.setSelected" />
+							<span data-bind="text: xf_title"></span>
+
+
+							<ul data-bind="template: { name: 'itemTmpl', foreach: $data.forms }">
+								<!--  style: { 'opacity' : (selected() ? 1 : 0.5 ), 'pointer-events':(selected() ? '' : 'none' ) } -->
+							</ul>
+						</li>
+					</script>
+					{% if obj.cluster_sites %}
+					Filter by region: 
+						<select  multiple="multiple" id="filterRegion" data-bind="options: allRegions, optionsText: 'identifier', optionsValue: 'id'"></select>
+					<br>
+					{% endif %}
+					Start Date:
+					<input type="date" value="{{ obj.date_created.date|date:'Y-m-d'}}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="startdate" id="startdate">
+					<br>
+					End Date:
+					<input type="date" value="{% now 'Y-m-d' %}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="enddate" id="enddate">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" data-bind="click: $root.generateReport">Download</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 			<div id="main-content" class="padding">
 				<nav aria-label="breadcrumb" role="navigation">
 					{% block breadcrumbs %}
@@ -61,27 +120,45 @@ var project = "{{obj.pk}}";
 					</ol>
 					{% endblock %}
 				</nav>
+
+
+
+				<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						{% verbatim %}
+						<div class="modal-content">
+						<div id="exportSitesToProject" >
+						</div>
+						</div>
+						{% endverbatim %}
+					</div>
+				</div>
+
+
+
 				<div class="org-profile-top-action">
 					<div class="action-left">
 
 					</div>
 					<div class="action-right">
-						<a href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i>{% trans 'Responses' %}</a>
 
 						<span class="dropdown">
 							<a href="#" id="dropdownMenuButtonManage" class=" btn btn-sm btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<i class="la la-clipboard"></i>{% trans 'Reports' %}
+								<i class="la la-clipboard"></i>{% trans 'Data' %}
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i>{% trans ' Project' %} {% trans 'Summary' %} {% trans 'Report' %}</a>
 								<!--<a class="dropdown-item" href="#"><i class="la la-clipboard"></i>{% trans 'Project Detail Report' %}</a>-->
 								<a class="dropdown-item" href="{% url 'fieldsight:download-stages' obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Excel' %} {% trans 'Report' %}</a>
-
+								
+								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#exportModal"><i class="la la-table"></i>{% trans 'Excel' %} {% trans 'Responses' %} {% trans 'Report' %}</a>
+								
 								<a class="dropdown-item" href="{% url 'fieldsight:ProjectStageDetailtemplate' obj.pk %}"><i class="la la-clipboard"></i>{% trans 'View' %} {% trans 'Tabular' %}{% trans 'Report' %}</a>
+								<a class="dropdown-item" href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i>{% trans 'Responses' %}</a>
+
 							</div>
 						</span>
-						
-						
+	
 					</div>
 				</div>
 				<section class="org-profile-body margin-top">
@@ -94,7 +171,7 @@ var project = "{{obj.pk}}";
 									</div>
 									<div class="org-profile-basic-info">
 										<h2>{{ obj.name }}</h2>
-										<p>{{ obj.address }}, {{ obj.get_country_display }}</p>
+										<p>{{ obj.address }}{% if obj.get_country == "" %}, {{ obj.get_country_display }}{% endif %}</p>
                                         <p>{{ obj.phone }}</p>
 									</div>
 								</div>
@@ -102,16 +179,25 @@ var project = "{{obj.pk}}";
 							<div class="col-lg-6 col-sm-12">
 								<ul class="org-profile-stat-list clearfix margin-top">
 									<li>
+										<a href="{% url 'fieldsight:proj-submission-data' obj.pk 2 %}" class="org-profile-stat-item" title="">
+											<i class="la la-files-o"></i>
+											<div class="org-mini-stat-info">
+												<span>{{ total_submissions }}</span>
+												{% trans 'Submissions' %}
+											</div>
+										</a>
+									</li>
+									<li>
 										<a href="{% url 'fieldsight:proj-user-list' obj.pk %}" class="org-profile-stat-item" title="">
 											<i class="la la-users"></i>
 											<div class="org-mini-stat-info">
-												<span>{{peoples_involved.count}}</span>
+												<span>{{peoples_involved}}</span>
 												{% trans 'Users' %}
 											</div>
 										</a>
 									</li>
 									<li>
-										<a href="{% url 'fieldsight:donor-proj-site-list' obj.id%}" title="" class="org-profile-stat-item">
+										<a href="{% url 'fieldsight:proj-site-list' obj.id%}" title="" class="org-profile-stat-item">
 											<i class="la la-map-marker"></i>
 											<div class="org-mini-stat-info">
 												<span>{{total_sites}}</span>
@@ -124,10 +210,196 @@ var project = "{{obj.pk}}";
 						</div>
                     </div>
 					<div class="row">
+						<div class="col-lg-6 col-sm-12">
+							<div class="widget-info margin-top bg-white padding" data-mh="eq111">
+								<div class="widget-head">
+									<a href="{% url 'fieldsight:proj-loc-map' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map" ></i>{% trans 'Full' %} {% trans 'Map' %}</a>
+									<h4>{% trans 'Site' %} {% trans 'Map' %}</h4>
+								</div>
+								<div class="widget-body">
+									<div class="radio-div card">
+									<div class="radio">
+										<label><input class = "switch" id = "form_status" type="radio" name="status" value="male" checked="checked">{% trans 'Form' %} {% trans 'Status' %}</label><br>
+									</div>
+									<div class="radio">
+									  <label><input class = "switch" id = "project_progress" type="radio" name="progress" value="male">{% trans 'Site' %} {% trans 'Progress' %}</label><br>
+									</div>
+							    </div>
+								<div id="map" class="full-map"></div>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-6 col-sm-12">
+							<div class="row">
+
+								{% if obj.cluster_sites %}
+								<div class="col-md-6 col-sm-12">
+									<div class="widget-info widget-scrolling-large-list margin-top bg-white padding" data-mh="eq111">
+										<div class="widget-head">
+											<h4>{% trans 'Regions' %}</h4>
+											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:region-add' obj.pk %} "><i class="la la-plus"></i></a>
+											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i></a>
+											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:region-list' obj.pk %}"><i class="la la-cogs"></i>{% trans 'Manage' %}</a>
+										</div>
+										<div class="widget-body">
+											<!--Search Sites-->
+											<div class="collapse margin-bottom" id="searchSite">
+												<form>
+													<div class="input-group input-group-sm">
+														<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for..." data-bind="value:search_key, valueUpdate:'afterkeydown'">
+														<span class="input-group-btn">
+														<button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
+														</span>
+													</div>
+												</form>
+											</div>
+
+											<!-- ko foreach: regions  -->
+											<a data-bind="attr:{ href: url }" class="project-item-wrap margin-top clearfix " style="width: 100%;">
+												<div class="project-logo">
+													<!-- <img data-bind="attr:{src: logo}" width="50" height="50"/> -->
+												</div>
+												<div class="project-basic-info">
+													<h4 data-bind="text:identifier()"></h4>
+                            						<p data-bind="text:name()"></p>
+													<p data-bind="text:'Total Sites: '+total_sites_count()"></p>
+												</div>
+											</a>
+											<!-- /ko-->
+											<a href="{% url 'fieldsight:regional-sites' obj.pk 0 %}" class="project-item-wrap margin-top clearfix " style="width: 100%;">
+												<div class="project-logo">
+													<!-- <img data-bind="attr:{src: logo}" width="50" height="50"/> -->
+												</div>
+												<div class="project-basic-info">
+													<h4>{% trans 'Unassigned' %} {% trans 'Sites' %}</h4>
+
+
+												</div>
+											</a>
+										</div>
+									</div>
+								</div>
+
+								{% else %}
+
+								<div class="col-md-6 col-sm-12">
+									<div class="widget-info widget-scrolling-large-list margin-top bg-white padding" data-mh="eq111">
+										<div class="widget-head">
+											<h4>{% trans 'Sites' %}</h4>
+											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:site-add' obj.pk %} "><i class="la la-plus"></i></a>
+											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i></a>
+										</div>
+										<div class="widget-body">
+											<!--Search Sites-->
+											<div class="collapse margin-bottom" id="searchSite">
+												<form>
+													<div class="input-group input-group-sm">
+														<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for..." data-bind="value:search_key, valueUpdate:'afterkeydown'">
+														<span class="input-group-btn">
+														<button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
+														</span>
+													</div>
+												</form>
+											</div>
+											<!-- ko foreach: sites  -->
+
+											<a data-bind="attr:{ href: url }" class="project-item-wrap margin-top clearfix " style="width: 100%;">
+												<div class="project-logo">
+													<img data-bind="attr:{src: logo}" width="50" height="50"/>
+												</div>
+												<div class="project-basic-info">
+
+													<h4 data-bind="text:identifier()"></h4>
+                            						<p data-bind="text:name()"></p>
+
+
+												</div>
+											</a>
+											<!-- /ko-->
+
+										</div>
+									</div>
+								</div>
+
+								{% endif %}
+
+								{% verbatim %}
+								<div class="col-md-6 col-sm-12">
+									<div id="peoples"></div>
+								</div>
+								{% endverbatim %}
+
+							</div>
+
+						</div>
+
+
+					</div>
+
+					{% verbatim %}
+					<div class="row" id="stagedatas">
+						
+					</div>
+					{% endverbatim %}
+					{% verbatim %}
+					<div class="row" id="logdatas">
+						
+					</div>
+					{% endverbatim %}
+					
+					
+					<div class="row">
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 2 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
+								<div class="mini-stat-info">
+									<span>{{outstanding }}</span>
+									{% trans 'Pending' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 3%}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-thumbs-up"></i></span>
+								<div class="mini-stat-info">
+									<span>{{approved}}</span>
+									{% trans 'Approved' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 1 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
+								<div class="mini-stat-info">
+									<span>{{flagged}}</span>
+									{% trans 'Flagged' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+						<div class="col-lg-3 col-md-6 col-sm-12">
+							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 0 %}" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
+								<div class="mini-stat-info">
+									<span>{{rejected}}</span>
+									{% trans 'Rejected' %} {% trans 'Submissions' %}
+								</div>
+							</a>
+						</div>
+
+					</div>
+
+					{% verbatim %}
+						<div class="row" id="graphs">
+
+						</div>
+					{% endverbatim %}
+
+					<div class="row">
 						<div class="col-lg-8 col-md-12">
 							<div class="widget-info widget-scrolling-list margin-top bg-white padding" data-mh="row-1">
 								<div class="widget-head">
-									<h4>{% trans 'About ' %}{% trans 'Us ' %}</h4>
+									<h4><a href="#">{% trans 'About ' %}{% trans 'Us ' %}</a></h4>
 								</div>
 								<div class="widget-body">
 									<p>
@@ -144,7 +416,7 @@ var project = "{{obj.pk}}";
 						<div class="col-lg-4 col-md-12">
 							<div class="widget-info margin-top bg-white padding" data-mh="row-1">
 								<div class="widget-head">
-									<h4>{% trans 'Contact' %} {% trans 'Info' %}</h4>
+									<h4><a href="#">{% trans 'Contact' %} {% trans 'Info' %}</a></h4>
 								</div>
 								<div class="widget-body">
 									<ul class="contact-info-list">
@@ -178,342 +450,78 @@ var project = "{{obj.pk}}";
 							</div>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 0 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-exclamation"></i></span>
-								<div class="mini-stat-info">
-									<span>{{rejected}}</span>
-									{% trans 'Rejected' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 1 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-flag"></i></span>
-								<div class="mini-stat-info">
-									<span>{{flagged}}</span>
-									{% trans 'flagged' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 2 %}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-hourglass-half"></i></span>
-								<div class="mini-stat-info">
-									<span>{{outstanding }}</span>
-									{% trans 'Pending' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-12">
-							<a href="{% url 'fieldsight:proj-submission-data' obj.pk 3%}" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-thumbs-up"></i></span>
-								<div class="mini-stat-info">
-									<span>{{approved}}</span>
-									{% trans 'Approved' %} {% trans 'Submissions' %}
-								</div>
-							</a>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-lg-6 col-sm-12">
-							<div class="widget-info margin-top bg-white padding">
-								<div class="widget-head">
-									<a href="{% url 'fieldsight:proj-loc-map' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary" target="_blank"><i class="la la-map" ></i>{% trans 'Full' %} {% trans 'Map' %}</a>
-									<h4>{% trans 'Site' %} {% trans 'Map' %}</h4>
-								</div>
-								<div class="widget-body">
-									<div class="radio-div card">
-									<div class="radio">
-										<label><input class = "switch" id = "form_status" type="radio" name="status" value="male" checked="checked">{% trans 'Form' %} {% trans 'Status' %}</label><br>
-									</div>
-									<div class="radio">
-									  <label><input class = "switch" id = "project_progress" type="radio" name="progress" value="male">{% trans 'Site' %} {% trans 'Progress' %}</label><br>
-									</div>
-							    </div>
-								<div id="map" class="full-map"></div>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-6 col-sm-12">
-							<div class="row">
-								
-								{% if obj.cluster_sites %}
-								<div class="col-md-6 col-sm-12">
-									<div class="widget-info widget-scrolling-list margin-top bg-white padding">
-										<div class="widget-head">
-											<h4>{% trans 'Regions' %}</h4>
-											
-											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i></a>
-											
-										</div>
-										<div class="widget-body">
-											<!--Search Sites-->
-											<div class="collapse margin-bottom" id="searchSite">
-												<form>
-													<div class="input-group input-group-sm">
-														<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for..." data-bind="value:search_key, valueUpdate:'afterkeydown'">
-														<span class="input-group-btn">
-														<button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
-														</span>
-													</div>
-												</form>
-											</div>
-											<a href="{% url 'fieldsight:regional-sites' obj.pk 0 %}" class="project-item-wrap margin-top clearfix " style="width: 100%;">
-												<div class="project-logo">
-													<!-- <img data-bind="attr:{src: logo}" width="50" height="50"/> -->
-												</div>
-												<div class="project-basic-info">
-													<h4>{% trans 'Un' %} {% trans 'Assigned' %} {% trans 'Sites' %}</h4>
-                            						
-													
-												</div>
-											</a>
-											<!-- ko foreach: regions  -->
-											<a data-bind="attr:{ href: url }" class="project-item-wrap margin-top clearfix " style="width: 100%;">
-												<div class="project-logo">
-													<!-- <img data-bind="attr:{src: logo}" width="50" height="50"/> -->
-												</div>
-												<div class="project-basic-info">
-													<h4 data-bind="text:identifier()"></h4>
-                            						<h6 data-bind="text:name()"></h6>
-													
-												</div>
-											</a>
-											<!-- /ko-->
-										</div>
-									</div>
-								</div>
-
-								{% else %}
-
-								<div class="col-md-6 col-sm-12">
-									<div class="widget-info widget-scrolling-list margin-top bg-white padding">
-										<div class="widget-head">
-											<h4>{% trans 'Sites' %}</h4>
-										
-											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i></a>
-										</div>
-										<div class="widget-body">
-											<!--Search Sites-->
-											<div class="collapse margin-bottom" id="searchSite">
-												<form>
-													<div class="input-group input-group-sm">
-														<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for..." data-bind="value:search_key, valueUpdate:'afterkeydown'">
-														<span class="input-group-btn">
-														<button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
-														</span>
-													</div>
-												</form>
-											</div>
-											<!-- ko foreach: sites  -->
-											
-											<a data-bind="attr:{ href: '/fieldsight/site-dashboard/lite/'+id()+'/' }" class="project-item-wrap margin-top clearfix " style="width: 100%;">
-												<div class="project-logo">
-													<img data-bind="attr:{src: logo}" width="50" height="50"/>
-												</div>
-												<div class="project-basic-info">
-												
-													<h4 data-bind="text:identifier()"></h4>
-                            						<h6 data-bind="text:name()"></h6>
-													
-
-												</div>
-											</a>
-											<!-- /ko-->
-											
-										</div>
-									</div>
-								</div>
-
-								{% endif %}
 
 
-								<div class="col-md-6 col-sm-12">
-									<div class="widget-info widget-scrolling-list margin-top bg-white padding">
-										<div class="widget-head">
-											<h4>{% trans 'People' %}</h4>
-											
-											
-											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchProjectManager" aria-expanded="false" aria-controls="searchProjectManager"><i class="la la-search"></i></a>
-										</div>
-										<div class="widget-body">
-											<!--Search Projects-->
-											<div class="collapse margin-bottom" id="searchProjectManager">
-												<form>
-													<div class="input-group input-group-sm">
-														<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
-														<span class="input-group-btn">
-															<button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
-														</span>
-													</div>
-												</form>
-											</div>
-											{% if roles_project %}
-											{% for role in roles_project %}
-											{% if roles_project.count == 1%}
-											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap clearfix">
-												<div class="project-logo">
-													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
-												</div>
-												<div class="project-basic-info">
-													<h4>{{role.user.get_full_name}}</h4>
-													<p>{{ role.user.email }}</p>
-                                                    <p>{{ role.user.phone }}</p>
-												</div>
-											</a>
-											{% else %}
-											<a href="{% url 'users:profile' role.user.id %}" class="project-item-wrap margin-top clearfix">
-												<div class="project-logo">
-													<img src="{{ role.user.user_profile.profile_picture.url }}" alt="" width="50" height="50">
-												</div>
-												<div class="project-basic-info">
-													<h4>{{role.user.get_full_name}}</h4>
-													<p>{{ role.user.email }}</p>
-                                                    <p>{{ role.user.phone }}</p>
-												</div>
-											</a>
-											{% endif %}
-											{% endfor %}
-											{% endif %}
-											{% if role.has_multiple_project_roles %}
-                                            {% for r in role.both_project_roles %}
-                                            {{ r.group }}
-                                            {% endfor %}
-                                            {% else %}
-                                            {{role.group }}
-                                            {% endif %}
-										</div>
-									</div>
-								</div>
-								<!--<div class="col-md-12">-->
-									<!--<div class="widget-info module-slick-slider margin-top bg-white padding">-->
-										<!--<div class="widget-head">-->
-											<!--<h4>Recent Pictures</h4>-->
-										<!--</div>-->
-										<!--<div class="scrollingSlider">-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}" img-title="test Title1">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
-												<!--</div>-->
-											<!--</div>-->
-											<!--<div>-->
-												<!--<div class="photo-item">-->
-													<!--<img src="{% static 'dummy/assets/img/img-gallery.jpg' %}">-->
-												<!--</div>-->
-											<!--</div>-->
-										<!--</div>-->
+					<!--<div class="row">-->
+						<!--<div class="col-md-6">-->
+							<!--<div class="widget-info margin-top bg-white padding">-->
+								<!--<div class="widget-head">-->
+									<!--<h4>{% trans 'Form' %} {% trans 'Submissions' %}</h4>-->
+								<!--</div>-->
+								<!--<div class="widget-body">-->
+									<!--<div id="submission-chart">-->
+										<!--<canvas id="myChart" width="500" height="388"></canvas>-->
 									<!--</div>-->
 								<!--</div>-->
-							</div>
-
-						</div>
-						
-
-					</div>
-					<!--<div class="row">-->
-						<!--<div class="col-md-12">-->
-							<!--&lt;!&ndash; Nav tabs &ndash;&gt;-->
-							<!--<div class="tabbing margin-top">-->
-								<!--<ul class="nav nav-tabs" role="tablist">-->
-								  <!--<li class="nav-item">-->
-									<!--<a class="nav-link active" data-toggle="tab" href="#tab1" role="tab">Scheduled</a>-->
-								  <!--</li>-->
-								  <!--<li class="nav-item">-->
-									<!--<a class="nav-link" data-toggle="tab" href="#tab2" role="tab">Staged</a>-->
-								  <!--</li>-->
-								  <!--<li class="nav-item">-->
-									<!--<a class="nav-link" data-toggle="tab" href="#tab3" role="tab">General</a>-->
-								  <!--</li>-->
-								<!--</ul>-->
-
-								<!--&lt;!&ndash; Tab panes &ndash;&gt;-->
-								<!--<div class="tab-content">-->
-								  <!--<div class="tab-pane active" id="tab1" role="tabpanel">...</div>-->
-								  <!--<div class="tab-pane" id="tab2" role="tabpanel">...</div>-->
-								  <!--<div class="tab-pane" id="tab3" role="tabpanel">...</div>-->
+							<!--</div>-->
+						<!--</div>-->
+						<!--<div class="col-md-6">-->
+							<!--<div class="widget-info margin-top bg-white padding">-->
+								<!--<div class="widget-head">-->
+									<!--<h4>{% trans 'Site' %} {% trans 'Progress' %}</h4>-->
+								<!--</div>-->
+								<!--<div class="widget-body">-->
+									<!--<div id="siteprogress-chart">-->
+										 <!--<canvas id="myBar" width="500" height="388"></canvas>-->
+									<!--</div>-->
 								<!--</div>-->
 							<!--</div>-->
 						<!--</div>-->
 					<!--</div>-->
-					<div class="row">
-						<div class="col-md-6">
-							<div class="widget-info margin-top bg-white padding">
-								<div class="widget-head">
-									<h4>{% trans 'Form' %} {% trans 'Submissions' %}</h4>
-								</div>
-								<div class="widget-body">
-									<div id="submission-chart">
-										<canvas id="myChart" width="500" height="388"></canvas>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="widget-info margin-top bg-white padding">
-								<div class="widget-head">
-									<h4>{% trans 'Site' %} {% trans 'Progress' %}</h4>
-								</div>
-								<div class="widget-body">
-									<div id="siteprogress-chart">
-										 <canvas id="myBar" width="500" height="388"></canvas>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
                 </section>
 
 			</div>
 {% endblock %}
 {%block extrascript %}
 
-	<script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.ajax.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/map/textLabel.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.markercluster-src.js"></script>
-	<script src="{% static 'dummy/assets/js/vendor/jquery.matchHeight.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.ajax.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/map/textLabel.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.markercluster-src.js"></script>
+<script src="{% static 'dummy/assets/js/vendor/jquery.matchHeight.js' %}"></script>
 
-<!--script for slider pravin-slick-->
-    <!--<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>-->
-    <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
-  	<script type="text/javascript">
-    var static_url ="{{ STATIC_URL }}";
-    var data = {{ data|safe}};
-    var cummulative_labels = {{ cumulative_labels|safe}};
-    var cummulative_data = {{ cumulative_data|safe}};
-    var progress_labels = {{ progress_labels|safe}};
-    var progress_data = {{ progress_data|safe}};
-    </script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/d3.tip.v0.6.3.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_bar-graph.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
+
+<!--<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>-->
+<script src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
+
+	<script type="text/javascript">
+var static_url ="{{ STATIC_URL }}";
+
+{% load l10n %}
+	configure_settings =  {};
+	configure_settings.is_project_dashboard = true;
+	configure_settings.project_id = {{obj.pk|unlocalize}};
+	configure_settings.csrf_token = '{{ csrf_token }}';
+	configure_settings.url = "{% url 'fieldsight_export:export_xls_project_level_sites' obj.pk %}";
+	configure_settings.log_url = "{% url 'eventlog:api_project_logs' obj.pk %}";
+	configure_settings.full_log_url = "{% url 'eventlog:project_logs' obj.pk %}";
+	//getlogdata();
+					
+</script>
+
+<script type="text/javascript" src="{{ STATIC_URL }}js/geo-layers.js"></script>    
+<script type="text/javascript" src="{{ STATIC_URL }}js/ajax_map.js?v=1.1"></script>
+<!--<script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>-->
+
+<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
+<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+<script src="{% static 'vendor/highcharts.js' %}"></script>
+<script src="{% static 'vendor/vue-highcharts.min.js' %}"></script>
+<script src="{% static 'js/fieldsight/manage_project_dashboard.js' %}?v=0.6"></script>
+<script src="{% static 'js/fieldsight/site_export.js' %}?v=0.4"></script>
+<script src="{% static 'js/fieldsight/loglist.js' %}?v=0.6"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
+
+
 {% endblock %}

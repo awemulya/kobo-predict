@@ -1848,7 +1848,7 @@ class OrgFullmap(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
         return dashboard_data
 
 
-class ProjFullmap(ProjectRoleMixin, TemplateView):
+class ProjFullmap(ReadonlyProjectLevelRoleMixin, TemplateView):
     template_name = "fieldsight/map.html"
 
     def get_context_data(self, **kwargs):
@@ -1864,7 +1864,7 @@ class ProjFullmap(ProjectRoleMixin, TemplateView):
         }
         return dashboard_data
 
-class SiteFullmap(ReviewerRoleMixin, TemplateView):
+class SiteFullmap(ReadonlySiteLevelRoleMixin, TemplateView):
     template_name = "fieldsight/map.html"
 
     def get_context_data(self, **kwargs):
