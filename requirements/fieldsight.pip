@@ -3,3 +3,6 @@ django-excel
 pyexcel-xl
 pyexcel-xls
 pyexcel-io
+
+celery==3.1.20
+
