@@ -2601,7 +2601,7 @@ class ProjectDashboardStageResponsesStatus(ProjectRoleMixin, View):
         return HttpResponse(json.dumps(stage_data), status=200)
 
 class StageTemplateView(ReadonlyProjectLevelRoleMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk, **kwargs):
         obj = Project.objects.get(pk=pk)
         return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'obj':obj,})
             # return HttpResponse(table_head)\
@@ -2667,7 +2667,7 @@ class FormlistAPI(View):
         return JsonResponse(data, status=status)
 
 class GenerateCustomReport(ReadonlySiteLevelRoleMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk, **kwargs):
         schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title','date_created')
         stage = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=True, is_survey=False).values('id','xf__title','date_created')
         survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title','date_created')
@@ -2676,13 +2676,13 @@ class GenerateCustomReport(ReadonlySiteLevelRoleMixin, View):
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
 class RecentResponseImages(ReadonlySiteLevelRoleMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk, **kwargs):
         recent_resp_imgs = get_images_for_site(pk)
         content={'images':list(recent_resp_imgs["result"])}
         return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
 class SiteResponseCoordinates(ReadonlySiteLevelRoleMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk, **kwargs):
         coord_datas = get_site_responses_coords(pk)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
         return render(request, 'fieldsight/site_response_map_view.html', {
@@ -2804,7 +2804,7 @@ class DefineProjectSiteCriteria(ProjectRoleMixin, TemplateView):
         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
 
 class AllResponseImages(ReadonlySiteLevelRoleMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk, **kwargs):
         all_imgs = get_images_for_site_all(pk)
         return render(request, 'fieldsight/gallery.html', {'all_imgs' : json.dumps(list(all_imgs["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8')})
 

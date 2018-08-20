@@ -278,7 +278,7 @@ def stage_add(request, site_id=None):
     return render(request, "fsforms/stage_form.html", {'form': form, 'obj': site})
 
 class ProjectResponses(ReadonlyProjectLevelRoleMixin, View): 
-    def get(self,request, pk=None):
+    def get(self,request, pk=None, **kwargs):
         obj = get_object_or_404(Project, pk=pk)
         schedules = Schedule.objects.filter(project_id=pk, schedule_forms__is_deleted=False, site__isnull=True, schedule_forms__isnull=False)
         stages = Stage.objects.filter(stage__isnull=True, project_id=pk, stage_forms__isnull=True).order_by('order')
@@ -293,7 +293,7 @@ class ProjectResponses(ReadonlyProjectLevelRoleMixin, View):
                        "stage_deleted_forms":stage_deleted_forms, "survey_deleted_forms":survey_deleted_forms, "general_deleted_forms":general_deleted_forms, "schedule_deleted_forms":schedule_deleted_forms, 'project': pk})
 
 class Responses(ReadonlySiteLevelRoleMixin, View):
-    def get(self, request, pk=None):
+    def get(self, request, pk=Non, **kwargs):
         obj = get_object_or_404(Site, pk=pk)
         schedules = Schedule.objects.filter(site_id=pk, schedule_forms__is_deleted=False, project__isnull=True, schedule_forms__isnull=False)
         stages = Stage.objects.filter(stage__isnull=True, site_id=pk).order_by('order')

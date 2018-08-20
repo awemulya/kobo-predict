@@ -77,19 +77,24 @@ class ProjectRoleMixin(LoginRequiredMixin):
 class ReadonlyProjectLevelRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         if request.group.name == "Super Admin":
-            return super(ReadonlyProjectLevelRoleMixin, self).dispatch(request, *args, **kwargs)
+            return super(ReadonlyProjectLevelRoleMixin, self).dispatch(request, is_donor_only=False, *args, **kwargs)
         
         project_id = self.kwargs.get('pk')
         user_id = request.user.id
-        user_role = request.roles.filter(project_id = project_id, group_id__in=[2,7])
+        user_role = request.roles.filter(project_id = project_id, group_id=2)
         
         if user_role:
-            return super(ReadonlyProjectLevelRoleMixin, self).dispatch(request, *args, **kwargs)
+            return super(ReadonlyProjectLevelRoleMixin, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+
         organization_id = Project.objects.get(pk=project_id).organization.id
         user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group_id=1)
         
         if user_role_asorgadmin:
-            return super(ReadonlyProjectLevelRoleMixin, self).dispatch(request, *args, **kwargs)
+            return super(ReadonlyProjectLevelRoleMixin, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+
+        user_role_asdonor = request.roles.filter(project_id = project_id, group_id=7)
+        if user_role_asdonor:
+            return super(ReadonlyProjectLevelRoleMixin, self).dispatch(request, is_donor_only=True, *args, **kwargs)
 
         raise PermissionDenied()
 
@@ -97,24 +102,28 @@ class ReadonlySiteLevelRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
 
         if request.group.name == "Super Admin":
-            return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, *args, **kwargs)
+            return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, is_donor_only=False, *args, **kwargs)
         
         site_id = self.kwargs.get('pk')
         user_id = request.user.id
         user_role = request.roles.filter(user_id = user_id, site_id = site_id, group_id__in=[3,4])
         
         if user_role:
-            return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, *args, **kwargs)
+            return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, is_donor_only=False, *args, **kwargs)
         
         project = Site.objects.get(pk=site_id).project
-        user_role_aspadmin = request.roles.filter(user_id = user_id, project_id = project.id, group_id__in=[2,7])
+        user_role_aspadmin = request.roles.filter(user_id = user_id, project_id = project.id, group_id=2)
         if user_role_aspadmin:
-            return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, *args, **kwargs)
+            return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, is_donor_only=False, *args, **kwargs)
 
         organization_id = project.organization.id
         user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
         if user_role_asorgadmin:
-            return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, *args, **kwargs)
+            return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+
+        user_role_asdonor = request.roles.filter(user_id = user_id, project_id = project.id, group_id=7)
+        if user_role_asdonor:
+            return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, is_donor_only=True, *args, **kwargs)
 
         raise PermissionDenied()
 
