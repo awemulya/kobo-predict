@@ -289,11 +289,11 @@ class ProjectResponses(ReadonlyProjectLevelRoleMixin, View):
         schedule_deleted_forms = FieldSightXF.objects.filter(is_staged=False, site__isnull=True, is_survey=False, is_scheduled=True, is_deleted=True, project_id=pk)
         survey_deleted_forms = FieldSightXF.objects.filter(is_staged=False, is_survey=True, is_scheduled=False, is_deleted=True, project_id=pk)
         return render(request, "fsforms/project/project_responses_list.html",
-                      {'obj': obj, 'schedules': schedules, 'stages':stages, 'generals':generals, 'surveys': surveys,
+                      {'is_donor_only': kwargs.get('is_donor_only', False), 'obj': obj, 'schedules': schedules, 'stages':stages, 'generals':generals, 'surveys': surveys,
                        "stage_deleted_forms":stage_deleted_forms, "survey_deleted_forms":survey_deleted_forms, "general_deleted_forms":general_deleted_forms, "schedule_deleted_forms":schedule_deleted_forms, 'project': pk})
 
 class Responses(ReadonlySiteLevelRoleMixin, View):
-    def get(self, request, pk=Non, **kwargs):
+    def get(self, request, pk=None, **kwargs):
         obj = get_object_or_404(Site, pk=pk)
         schedules = Schedule.objects.filter(site_id=pk, schedule_forms__is_deleted=False, project__isnull=True, schedule_forms__isnull=False)
         stages = Stage.objects.filter(stage__isnull=True, site_id=pk).order_by('order')
@@ -303,9 +303,8 @@ class Responses(ReadonlySiteLevelRoleMixin, View):
         general_deleted_forms = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_survey=False, is_deleted=True, site_id=pk)
         schedule_deleted_forms = FieldSightXF.objects.filter(is_staged=False, project__isnull=True, is_survey=False, is_scheduled=True, is_deleted=True, site_id=pk)
         
-
         return render(request, "fsforms/responses_list.html",
-                      {'obj': obj, 'schedules': schedules, 'stages':stages,'generals':generals,
+                      {'is_donor_only': kwargs.get('is_donor_only', False),'obj': obj, 'schedules': schedules, 'stages':stages,'generals':generals,
                         "stage_deleted_forms":stage_deleted_forms, "general_deleted_forms":general_deleted_forms, "schedule_deleted_forms":schedule_deleted_forms,'site': pk})
 
 
