@@ -1180,6 +1180,7 @@ class DonorProjSiteList(ReadonlyProjectLevelRoleMixin, ListView):
         context['pk'] = self.kwargs.get('pk')
         context['type'] = "project"
         context['is_form_proj'] = True
+        context['is_donor_only'] = kwargs.get('is_donor_only', False)
         return context
     def get_queryset(self):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
@@ -1860,6 +1861,7 @@ class ProjFullmap(ReadonlyProjectLevelRoleMixin, TemplateView):
         dashboard_data = {
             'data': data,
             'geo_layers': obj.geo_layers.all(),
+            'is_donor_only': kwargs.get('is_donor_only', False)
         }
         return dashboard_data
 
@@ -1873,6 +1875,7 @@ class SiteFullmap(ReadonlySiteLevelRoleMixin, TemplateView):
         dashboard_data = {
             'data': data,
             'geo_layers': obj.project.geo_layers.all(),
+            'is_donor_only': kwargs.get('is_donor_only', False)
         }
         return dashboard_data
 
@@ -1902,6 +1905,7 @@ class ProjectdataSubmissionView(ReadonlyProjectLevelRoleMixin, TemplateView):
         data['flagged'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), project_fxf_id__isnull=False, form_status='2').order_by('-date')
         data['approved'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), project_fxf_id__isnull=False, form_status='3').order_by('-date')
         data['type'] = self.kwargs.get('type')
+        data['is_donor_only'] = kwargs.get('is_donor_only', False)
 
         return data
 
@@ -1917,6 +1921,7 @@ class SitedataSubmissionView(ReadonlySiteLevelRoleMixin, TemplateView):
         data['flagged'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), site_fxf_id__isnull=False, form_status = '2').order_by('-date')
         data['approved'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), site_fxf_id__isnull=False, form_status = '3').order_by('-date')
         data['type'] = self.kwargs.get('type')
+        data['is_donor_only'] = kwargs.get('is_donor_only', False)
 
         return data
 
@@ -2129,6 +2134,7 @@ class DonorRegionalSitelist(ReadonlyProjectLevelRoleMixin, ListView):
         context = super(DonorRegionalSitelist, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
         context['region_id'] = self.kwargs.get('region_id')
+        context['is_donor_only'] = kwargs.get('is_donor_only', False)
         if self.kwargs.get('region_id') == "0":
             context['type'] = "Unregioned"
             context['project_id'] = self.kwargs.get('pk')
@@ -2602,7 +2608,7 @@ class ProjectDashboardStageResponsesStatus(ProjectRoleMixin, View):
         return HttpResponse(json.dumps(stage_data), status=200)
 
 class StageTemplateView(ReadonlyProjectLevelRoleMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk, **kwargs):
         obj = Project.objects.get(pk=pk)
         return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'obj':obj,})
             # return HttpResponse(table_head)\
@@ -2668,33 +2674,34 @@ class FormlistAPI(View):
         return JsonResponse(data, status=status)
 
 class GenerateCustomReport(ReadonlySiteLevelRoleMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk, **kwargs):
         schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','xf__title','date_created')
         stage = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=True, is_survey=False).values('id','xf__title','date_created')
         survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title','date_created')
         general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title','date_created')
         content={'general':list(general), 'schedule':list(schedule), 'stage':list(stage), 'survey':list(survey)}
-        return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+        return JsonResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
 class RecentResponseImages(ReadonlySiteLevelRoleMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk, **kwargs):
         recent_resp_imgs = get_images_for_site(pk)
         content={'images':list(recent_resp_imgs["result"])}
-        return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+        return JsonResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
 class SiteResponseCoordinates(ReadonlySiteLevelRoleMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk, **kwargs):
         coord_datas = get_site_responses_coords(pk)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
         return render(request, 'fieldsight/site_response_map_view.html', {
             'co_ords': json.dumps(list(coord_datas["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'),
             'geo_layers': obj.project.geo_layers.all(),
+            'is_donor_only' : kwargs.get('is_donor_only', False)
         })
 
     def post(self, request, pk):
         coord_datas = get_site_responses_coords(pk)
         content={'coords-data':list(coord_datas["result"])}
-        return HttpResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+        return JsonResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
 
 
 class DonorProjectDashboard(DonorRoleMixin, TemplateView):
@@ -2734,6 +2741,7 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
             'progress_data': bar_graph.data.values(),
             'progress_labels': bar_graph.data.keys(),
             'roles_project': roles_project,
+            'total_submissions': outstanding + flagged + approved + rejected
     }
         return dashboard_data
 
@@ -2769,7 +2777,7 @@ class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
 
         myanswers = mylist
         outstanding, flagged, approved, rejected = obj.get_site_submission()
-        response = obj.get_site_submission_count()
+        
 
         dashboard_data = {
             'obj': obj,
@@ -2786,7 +2794,7 @@ class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
             'meta_data': myanswers,
             'next_photos_count':total_count - 5,
             'total_photos': total_count,
-            'total_submissions': response['flagged'] + response['approved'] + response['rejected'] + response['outstanding']
+            'total_submissions': outstanding + flagged + approved + rejected
         }
 
         return dashboard_data
@@ -2805,9 +2813,9 @@ class DefineProjectSiteCriteria(ProjectRoleMixin, TemplateView):
         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk': self.kwargs.get('pk')}))
 
 class AllResponseImages(ReadonlySiteLevelRoleMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk, **kwargs):
         all_imgs = get_images_for_site_all(pk)
-        return render(request, 'fieldsight/gallery.html', {'all_imgs' : json.dumps(list(all_imgs["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8')})
+        return render(request, 'fieldsight/gallery.html', {'is_donor_only': kwargs.get('is_donor_only', False), 'all_imgs' : json.dumps(list(all_imgs["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8')})
 
 
 

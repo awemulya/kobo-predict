@@ -22,7 +22,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.http import JsonResponse
 from celery.result import AsyncResult
 from onadata.apps.eventlog.serializers.LogSerializer import NotificationSerializer, LogSerializer
-from onadata.apps.fieldsight.rolemixins import ProjectRoleMixin, SiteRoleMixin
+from onadata.apps.fieldsight.rolemixins import ProjectRoleMixin, SiteRoleMixin, ReadonlySiteLevelRoleMixin, ReadonlyProjectLevelRoleMixin
 from onadata.apps.fieldsight.models import Project, Site
 
 class NotificationListView(LoginRequiredMixin, ListView):
@@ -86,15 +86,15 @@ class SiteLog(viewsets.ModelViewSet):
         meta_dict = {}
         for meta in project.site_meta_attributes:
             if meta['question_type'] == "Link" and meta['question_name'] in site.site_meta_attributes_ans:
-                meta_site_id = Site.objects.get(identifier=site.site_meta_attributes_ans[meta['question_name']], project_id=meta['project_id']).id
-                selected_metas = [sub_meta['question_name'] for sub_meta in meta['metas'][str(meta['project_id'])]]
-                meta_dict[meta_site_id] = selected_metas
+                meta_site_id = Site.objects.filter(identifier=site.site_meta_attributes_ans[meta['question_name']], project_id=meta['project_id'])
+                if meta_site_id:
+                    selected_metas = [sub_meta['question_name'] for sub_meta in meta['metas'][str(meta['project_id'])]]
+                    meta_dict[meta_site_id[0].id] = selected_metas
 
         for key, value in meta_dict.items():
             for item in value:
                 query |= (Q(type=15) & Q(content_type=content_site) & Q(object_id=key) & Q(extra_json__contains='"'+item +'":'))
 
-        print query
         return queryset.filter(query)
 
 class NotificationCountnSeen(View):
@@ -169,7 +169,7 @@ class MyCeleryTaskProgress(TemplateView):
         return render(request, 'eventlog/fieldsight_task_list.html',{'pending':pending, 'ongoing':ongoing, 'completed': completed, 'failed':failed })
 
 
-class ProjectLogListView(ProjectRoleMixin, TemplateView):
+class ProjectLogListView(ReadonlyProjectLevelRoleMixin, TemplateView):
     template_name = "eventlog/loglist.html"
 
     def get_context_data(self, **kwargs):
@@ -177,9 +177,10 @@ class ProjectLogListView(ProjectRoleMixin, TemplateView):
         project = Project.objects.get(pk=kwargs.get('pk'))
         data['is_project'] = True
         data['obj'] = project
+        data['is_donor_only'] = kwargs.get('is_donor_only', False)
         return data
 
-class SiteLogListView(SiteRoleMixin, TemplateView):
+class SiteLogListView(ReadonlySiteLevelRoleMixin, TemplateView):
     template_name = "eventlog/loglist.html"
 
     def get_context_data(self, **kwargs):
@@ -187,4 +188,5 @@ class SiteLogListView(SiteRoleMixin, TemplateView):
         site = Site.objects.get(pk=kwargs.get('pk'))
         data['is_project'] = False
         data['obj'] = site
+        data['is_donor_only'] = kwargs.get('is_donor_only', False)
         return data
