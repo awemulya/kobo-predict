@@ -18,11 +18,9 @@ import sys  # nopep8, used by included files
 from celery.signals import after_setup_logger
 from django.core.exceptions import SuspiciousOperation
 from django.utils.log import AdminEmailHandler
-import djcelery
 from pymongo import MongoClient
 
 
-djcelery.setup_loader()
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 ONADATA_DIR = BASE_DIR
@@ -241,7 +239,6 @@ INSTALLED_APPS = (
     'onadata.apps.geo',
     'onadata.apps.remote_app',
     'guardian',
-    'djcelery',
     'onadata.apps.stats',
     'onadata.apps.sms_support',
     'onadata.libs',
