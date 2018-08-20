@@ -17,8 +17,8 @@
 <div id="main-content" class="padding">
     <nav aria-label="breadcrumb" role="navigation">
 		<ol class="breadcrumb">
-            {% block breadcrumbs %}
-			<li class="breadcrumb-item"><a href="{% url 'fieldsight:site-dashboard' site %}">{{ obj.name }}</a></li>
+      {% block breadcrumbs %}
+			<li class="breadcrumb-item"><a href="{% if is_donor_only %}{% url 'fieldsight:site_dashboard_lite' site %}{% else %}{% url 'fieldsight:site-dashboard' site %}{% endif %}">{{ obj.name }}</a></li>
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Responses' %}</li>
 		    {% endblock %}
         </ol>

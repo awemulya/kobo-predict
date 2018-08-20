@@ -18,7 +18,7 @@
     <nav aria-label="breadcrumb" role="navigation">
 		<ol class="breadcrumb">
             {% block breadcrumbs %}
-			<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' project %}">{{ obj.name }}</a></li>
+			<li class="breadcrumb-item"><a href="{% if is_donor_only %}{% url 'fieldsight:donor_project_dashboard_lite' project %}{% else %}{% url 'fieldsight:project-dashboard' project %}{% endif %}">{{ obj.name }}</a></li>
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Responses' %}</li>
 		    {% endblock %}
         </ol>

@@ -140,6 +140,11 @@
 										{% if not is_supervisor_only %}
 										<a class="dropdown-item" href="{% url 'fieldsight:site-edit' obj.pk %}"><i class="la la-edit"></i>{% trans 'Edit Site' %}</a>
 										{% endif %}
+										{% verbatim %}
+										<div id="export_zip_imgs">
+										
+										</div>
+										{% endverbatim %}
 									</div>
 								</span>
 								{% endif %}
@@ -743,6 +748,7 @@
 	<script src="{% static 'js/reactjs/browser.min.js' %}"></script>
 	<script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
 	<script src="{% static 'js/fieldsight/loglist.js' %}?v=0.6"></script>
+	<script src="{% static 'js/fieldsight/site_images_zip.js' %}?v=0.6"></script>
 
     <script type="text/babel">
      

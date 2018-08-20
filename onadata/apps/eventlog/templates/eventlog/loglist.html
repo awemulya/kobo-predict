@@ -22,7 +22,7 @@
 					<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization' %} {% trans 'List' %}</a></li>
 					<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' obj.organization.pk %}">{{obj.organization.name}}</a></li>
 				{% endrole %}
-				<li class="breadcrumb-item" aria-current="page"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{obj.name}}</a></li>
+				<li class="breadcrumb-item" aria-current="page"><a href="{% if is_donor_only %}{% url 'fieldsight:donor_project_dashboard_lite' obj.pk %}{% else %}{% url 'fieldsight:project-dashboard' obj.pk %}{% endif %}">{{obj.name}}</a></li>
 				<li class="breadcrumb-item active" aria-current="page">{% trans 'Log List' %}</li>
 
 			{% else %}
@@ -30,8 +30,8 @@
 					<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization' %} {% trans 'List' %}</a></li>
 					<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' obj.project.organization.pk %}">{{obj.project.organization.name}}</a></li>
 				{% endrole %}
-				<li class="breadcrumb-item" aria-current="page"><a href="{% url 'fieldsight:project-dashboard' obj.project.pk %}">{{obj.project.name}}</a></li>
-				<li class="breadcrumb-item" aria-current="page"><a href="{% url 'fieldsight:site-dashboard' obj.pk %}">{{obj.name}}</a></li>
+				<li class="breadcrumb-item" aria-current="page"><a href="{% if is_donor_only %}{% url 'fieldsight:donor_project_dashboard_lite' obj.project.pk %}{% else %}{% url 'fieldsight:project-dashboard' obj.project.pk %}{% endif %}">{{obj.project.name}}</a></li>
+				<li class="breadcrumb-item" aria-current="page"><a href="{% if is_donor_only %}{% url 'fieldsight:site_dashboard_lite' obj.pk %}{% else %}{% url 'fieldsight:site-dashboard' obj.pk %}{% endif %}">{{obj.name}}</a></li>
 				<li class="breadcrumb-item active" aria-current="page">{% trans 'Log List' %}</li>
 			{% endif %}
 		</ol>
