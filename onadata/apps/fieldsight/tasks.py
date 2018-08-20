@@ -23,7 +23,7 @@ from django.core.files.base import ContentFile
 from django.db.models import Prefetch
 from .generatereport import PDFReport
 
-@task()
+@shared_task()
 def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
     time.sleep(2)
     project = Project.objects.get(pk=pk)
@@ -123,7 +123,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
                                        extra_message=str(count) + " Sites @error " + u'{}'.format(e.message))
         
 
-@task()
+@shared_task()
 def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs_ids, start_date, end_date):
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
@@ -290,7 +290,7 @@ def siteDetailsGenerator(project, sites, ws):
         return False, e.message
 
 
-@task()
+@shared_task()
 def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id):
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
@@ -338,7 +338,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         buffer.close()
 
 
-@task()
+@shared_task()
 def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_url, fs_ids, start_date, end_date, filterRegion):
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
@@ -490,7 +490,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
                                        extra_message="@error " + u'{}'.format(e.message))
         buffer.close()
         
-@task()
+@shared_task()
 def importSites(task_prog_obj_id, source_user, f_project, t_project, meta_attributes, regions, ignore_region):
     time.sleep(2)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
