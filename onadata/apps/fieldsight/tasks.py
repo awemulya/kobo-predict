@@ -168,12 +168,14 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
             task.status = 2
             task.save()
 
+            extra_message= ""
             if new_sites > 0 and updated_sites > 0:
                 extra_message = " updated " + str(updated_sites) + " Sites and" + " created " + str(new_sites) + " Sites"
             elif new_sites > 0 and updated_sites == 0:
                 extra_message = " created " + str(new_sites) + " Sites"
             elif new_sites == 0 and updated_sites > 0:
                 extra_message = " updated " + str(updated_sites) + " Sites"
+            
 
             noti = project.logs.create(source=source_user, type=12, title="Bulk Sites",
                                        organization=project.organization,
