@@ -10,10 +10,8 @@ from celery import shared_task
 from onadata.apps.fieldsight.models import Organization, Project, Site, Region, SiteType
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
-from django.contrib import messages
 from channels import Group as ChannelGroup
 from django.contrib.auth.models import Group
-from celery import task, current_task
 from onadata.apps.fieldsight.fs_exports.formParserForExcelReport import parse_form_response
 from io import BytesIO
 from django.shortcuts import get_object_or_404
@@ -24,14 +22,12 @@ from django.db.models import Prefetch
 from .generatereport import PDFReport
 import os, tempfile, zipfile
 from django.conf import settings
-from django.http import HttpResponse
-from django.core.servers.basehttp import FileWrapper
 
 
 def get_images_for_site_all(site_id):
     return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : site_id}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
 
-@task()
+@shared_task()
 def site_download_zipfile(task_prog_obj_id, size):
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
