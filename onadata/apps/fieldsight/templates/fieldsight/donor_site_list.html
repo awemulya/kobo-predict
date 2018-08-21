@@ -1,99 +1,101 @@
 {% extends "fieldsight/fieldsight_base.html" %}
 {% load i18n staticfiles %}
 {% load filters %}
-{%block kocript %}
- <script type="text/javascript" src="{{ STATIC_URL }}js/map/leaflet.js"></script>
-    <script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
-<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/sites.js"></script>
 
-    <script>
-
-$(document).ready(function() {
-var type="{{ type }}"
-var id="{{ pk }}"
-if (type == "org"){
-var url = '/fieldsight/api/org-sites/'+id+'/';
- }
- else if (type == "region"){
-var region_proj_id = "{{ obj.project.id }}"
-var url = '/fieldsight/api/project/'+ region_proj_id +'/regional-sites/'+ id +'/';
- }
- else if (type == "Unregioned"){
-var region_proj_id = "{{ project_id }}"
-var url = '/fieldsight/api/project/'+ region_proj_id +'/regional-sites/0/';
- }
- else{
-var url = '/fieldsight/api/project-sites/'+id+'/';
- }
-
- assignsite_id(url);
- vm = new SitesViewModel();
- ko.applyBindings(vm);
-});
-
-    </script>
-<style>
-
-.select-box{
-	padding: 7px;
-}
-	select.form-control{
-		height: 70% !important;
-		margin-top:5px;
-		padding: 3px;
-	}
-	.form-control{
-	font-size: 12px !important;
-	font-weight: 100 !important;
-	font-family: inherit !important;
-	position: relative !important;
-	display:block !important;
-	}
-
-</style>
-{% endblock %}
 {% block content %}
-{% load filters %}
 <div id="main-content" class="padding">
+				{% if messages %}
+					{% for message in messages %}
+						<div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+						  <strong class="text-capitalize">{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}!</strong> {{ message }}
+						</div>
+					{% endfor %}
+				{% endif %}
+				{% if obj.children.all %}
+		    <section class="panel">
+		        <header class="panel-heading clearfix">
+		            <h3>{% trans 'Sub regions' %}</h3>
+		        </header>
+		        <div class="panel-body">
+		            <div class="row">
+		                {% for child in obj.children.all %}
+		                <div class="col-md-4 col-sm-6">
+		                    <a class="site-item-wrap margin-top" href="{% url 'fieldsight:regional-sites' child.project.pk child.pk %}">
+		                        <div class="basic-info clearfix">
+		                            <h4 class="detail-text1">{{ child.name }}</h4>
+		                            <h6 class="detail-text0">{{ child.identifier }}</h6>
+		                            <div>Total sites: {{ child.get_sites_count }}</div>
+		                        </div>
+		                    </a>
+		                </div>
+		                {% endfor %}
+		            </div>
+		        </div>
+		    </section>
+		    {% endif %}
 				<section class="panel">
 
                     <header class="panel-heading clearfix">
-						<div class="container-fluid">
-						<div class="row">
-							<div class="col-md-5">
-                    <div class="panel-heading">
-                        <h3><i class="la la-map-marker"></i>{% trans 'Sites' %}</h3>
-					</div>
-							</div>
+                    <h3><i class="la la-map-marker"></i>{% if request.GET.q %}{% trans 'Search' %} {% trans 'result' %} {% trans 'for' %} "{{request.GET.q}}"{% else %}{% trans 'Sites' %}{% endif %}</h3>
 
-						<div class="col-md-2 select-box">
+                    <div class="panel-heading-right">
+                    		<!-- <select name ="sortby" class="form-control form-control-sm" data-bind="value:sortby, valueUpdate:'afterkeydown'">
+							<option class="dropdown-list" value="sitename" disabled selected>{% trans 'Sort' %} {% trans 'By' %}</option>
+								<option value="progress">{% trans 'Site Progress' %}</option>
+								<option value="identifier">{% trans 'Site Identifier' %}</option>
+								<option value="sitename">{% trans 'Site Name' %}</option>
+								<option value="pending">{% trans 'Number of  Pending Submissions' %}</option>
+								<option value="approved">{% trans 'Number of  Approved Submissions' %}</option>
+								<option value="flagged">{% trans 'Number of  Flagged Submissions' %}</option>
+								<option value="rejected">{% trans 'Number of Rejected Submissions' %}</option>
+							</select> -->
+							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i> {% trans 'Search' %}</a>
 
-							<select name ="sortby" class="form-control no-btn-search" data-bind="value:sortby, valueUpdate:'afterkeydown'">
-							<option class="dropdown-list" value="sitename" disabled selected>{% trans 'Select' %} {% trans 'your' %} {% trans 'option' %}</option>
-								<option value="rejected">{% trans 'Rejected' %}</option>
-								<option value="flagged">{% trans 'Flagged' %}</option>
-								<option value="pending">{% trans 'Pending' %}</option>
-								<option value="approved">{% trans 'Approved' %}</option>
-								<option value="progress">{% trans 'Progress' %}</option>
-								<option value="identifier">{% trans 'Identifier' %}</option>
-								<option value="sitename">{% trans 'Name' %}</option>
+						{% if type == "project" %}
+							
+							{% verbatim %}
+							<div id="export_button"></div>
+							{% endverbatim %}
+							<script>
+							configure_settings = {};
+							configure_settings.is_project_dashboard = false;
+							configure_settings.url = "{% url 'fieldsight_export:export_xls_project_level_sites' pk %}";
+							</script>
+							<!-- <a href="{% url 'fieldsight_export:export_xls_project_sites' pk %}" title="" class="btn btn-sm
+							btn-primary"><i class="la la-plus"></i> {% trans 'Export' %} {% trans 'Sites' %} {% trans 'data' %} </a> -->
+						{% endif %}
+						{% if type == "region" %}
+
+			
+							{% verbatim %}
+							<div id="export_button"></div>
+							{% endverbatim %}
+							<script>
+							configure_settings = {};
+							configure_settings.is_project_dashboard = false;
+							configure_settings.url = "{% url 'fieldsight_export:export_xls_region_sites' pk region_id %}";
+							</script>
+							<!-- <a href="{% url 'fieldsight_export:export_xls_region_sites' pk region_id %}" title="" class="btn btn-sm
+							btn-primary"><i class="la la-plus"></i> {% trans 'Export' %} {% trans 'Sites' %} {% trans 'data' %} </a> -->
+						{% elif type == "Unregioned" %}
+							
+							{% verbatim %}
+							<div id="export_button"></div>
+							{% endverbatim %}
+							<script>
+							configure_settings = {};
+							configure_settings.is_project_dashboard = false;
+							configure_settings.url = "{% url 'fieldsight_export:export_xls_region_sites' project_id 0 %}";
+							</script>
+							<!-- <a href="{% url 'fieldsight_export:export_xls_project_sites' project_id %}" title="" class="btn btn-sm
+							btn-primary"><i class="la la-plus"></i> {% trans 'Export' %} {% trans 'Sites' %} {% trans 'data' %} </a> -->
+
+						{% endif %}
 
 
 
-							</select>
-
-							<!--<select name ="orderbyasce" class="form-control no-btn-search" data-bind="value:orderbyasce, valueUpdate:'afterkeydown'">-->
-								<!--<option value="asce">Ascending</option>-->
-								<!--<option value="desc">Descending</option>-->
-							<!--</select>-->
-						</div>
-					
-					</div>
-						</div>
+                    </div>
+						
                     </header>
 
 					
@@ -101,13 +103,13 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 
 						<!--Search Organization-->
 						<div class="collapse margin-top" id="searchSite">
-							<form class="padding">
+							<form class="padding" action="{% if region_id %}{% url 'fieldsight:search-regional-site-list' pk region_id %}{% else %}{% url 'fieldsight:search-site-list' pk %}{% endif %}" method="GET">
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
-										<input type="text" class="form-control no-btn-search" placeholder="Search . . . . . "  data-bind="value:search_key, valueUpdate:'afterkeydown'">
+										<input type="text" class="form-control" name="q" placeholder="Search for..." required value='{{ request.GET.q }}'/>
 										  <span class="input-group-btn">
-											<button class="btn btn-primary" type="button"><i class="la la-search"></i>{% trans 'Search' %}</button>
+											<button class="btn btn-primary" type="submit"><i class="la la-search"></i> {% trans 'Search' %}</button>
 										  </span>
 										</div>
 									</div>
@@ -115,52 +117,56 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 								</div>
 							</form>
 						</div>
-						<!--Site Listing-->
-						<div class="row" data-bind="foreach: sites">
+						<div class="row" >
+
+						{% for site in object_list %}
+						
 							<div class="col-md-4 col-sm-6">
-								<a data-bind="attr: { href: '/fieldsight/donor/site-dashboard/'+id()+'/' }" title="" class="site-item-wrap  margin-top clearfix">
+
+								<a href= {% url 'fieldsight:site_dashboard_lite' site.pk %} title="" class="site-item-wrap  margin-top clearfix">
 									<div class="logo">
-										<img data-bind="attr:{src: logo}" alt="" width="100" height="100">
+										<img src="{{ site.logo.url }}" alt="" width="100" height="100">
 									</div>
 									<div class="basic-info clearfix">
-										<h4 class="detail-text1" data-bind="text: name"></h4>
-										<h6 class="detail-text0" data-bind="text: identifier"></h6>
-                                 		<p class="address"><i class="fa fa-map-marker" aria-hidden="true"></i> <span  class="detail-text1" data-bind="text: address"></span></p>
-                                 		<p class="phone"><i class="fa fa-phone" aria-hidden="true"></i> <span  class="detail-text1" data-bind="text: phone"></span></p>
+										<h4 class="detail-text1" >{{site.name}}</h4>
+										<h6 class="detail-text0" >{{ site.identifier }}</h6>
+                                 		<p class="address"><i class="fa fa-map-marker" aria-hidden="true"></i> <span  class="detail-text1">{{ site.address }}</span></p>
+                                 		<p class="phone"><i class="fa fa-phone" aria-hidden="true"></i> <span  class="detail-text1">{{ site.phone }}</span></p>
 									</div>
+									{% with site.get_site_submission_count as count %}
 									<ul class="icon-listing clearfix margin-top">
 										<li>
-											<i class="la la-exclamation"></i>
-											<spam data-bind="text: get_site_submission_count().rejected">
-
-											</spam>
+											<i class="la la-thumbs-up"></i>
+											<span>{{ count.approved }}
+											</span>
 										</li>
 										<li>
 											<i class="la la-flag"></i>
-											<spam data-bind="text: get_site_submission_count().flagged">
-
-											</spam>
+											<span>
+											{{ count.flagged }}
+											</span>
 										</li>
 										<li>
 											<i class="la la-hourglass-half"></i>
-											<spam data-bind="text: get_site_submission_count().outstanding">
-
-											</spam>
+											<span>
+												{{ count.outstanding }}
+											</span>
 										</li>
 										<li>
-											<i class="la la-thumbs-up"></i>
-											<spam data-bind="text: get_site_submission_count().approved">
-
-											</spam>
+											<i class="la la-exclamation"></i>
+											<span>
+											{{ count.rejected }}
+											</span>
 										</li>
 									</ul>
+									{% endwith %}
 
 
 							<div class="progress margin-top">
 							<div class="progress progress-striped active progress-sm" style="width:100%;">
 
-							<div class="progress-bar progress-bar-success" role="progressbar" style="" data-bind="style: { width: prog() + '%'}">
-							<span class="progress-bar-value" style="color:grey;" data-bind="text: prog() + '% Complete'"> </span>
+							<div class="progress-bar progress-bar-success" role="progressbar" style="width:{{ site.site_progress }}%;}">
+							<span class="progress-bar-value" style="color:grey;">{{ site.site_progress }}% Complete'"</span>
 
 
 							</div>
@@ -169,12 +175,82 @@ var url = '/fieldsight/api/project-sites/'+id+'/';
 
 							</a>
 							</div>
-
-
+						{% empty %}
+							<div class="col-md-4 col-sm-6">
+								
+							<h3>No Site</h3>
+							
 							</div>
+						
+						{% endfor %}
+						</div>
+					<br>
+
+
+						{% if is_paginated %}
+						            <nav class="pagination justify-content-center" aria-label="page-navigation">
+						              <ul class="pagination">
+						              
+						              {% if page_obj.number == 1 %}
+						              {% else %}
+						                <li class="page-item"><a class="page-link" href="?page={{ 1 }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">First</a></li>
+						              {% endif %}
+
+						              {% if page_obj.has_previous %}
+						                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&laquo;</a></li>
+						              {% else %}
+						                <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+						              {% endif %}
+
+
+						              {% if paginator.num_pages > 21 %}
+
+			                              {% page_offsets page_obj.number paginator.num_pages 20 as data %}
+			            
+			                              {% for item in data.front_range %}
+			                                    <li class="page-item"><a class="page-link" href="?page={{ item }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ item }}</a></li>
+			                              {% endfor %}
+			                         
+			                                <li class="page-item active"><a class="page-link" href="?page={{ page_obj.number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ page_obj.number }}</a></li>
+
+			                              {% for item in data.back_range %}
+			                                    <li class="page-item"><a class="page-link" href="?page={{ item }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">{{ item }}</a></li>                             
+			                              {% endfor %}
+
+			                          {% else %}
+			                            {% for i in paginator.page_range %}
+			                              {% if page_obj.number == i %}
+			                              <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+
+			                              {% else %}
+			                              <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+			                              {% endif %}
+			                            {% endfor %}
+			                          {% endif %}
+
+										 
+						              {% if page_obj.has_next %}
+						                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">&raquo;</a></li>
+						              {% else %}
+						                <li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>
+						              {% endif %}
+
+						              {% if page_obj.number == paginator.num_pages %}
+						              {% else %}
+						                <li class="page-item"><a class="page-link" href="?page={{ paginator.num_pages }}{% if request.GET.q %}&q={{request.GET.q}}{% endif %}">Last</a></li>
+						              {% endif %}
+
+						              </ul>
+						            </nav>
+						{% endif %}
+						
 						</div>
 					</section>
 			</div>
+
 {% endblock %}
 {%block extrascript %}
+	<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
+	<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+	<script src="{% static 'js/fieldsight/site_export.js' %}?v=0.4"></script>
 {% endblock %}
