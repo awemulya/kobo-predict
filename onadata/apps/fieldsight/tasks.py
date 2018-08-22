@@ -70,16 +70,16 @@ def site_download_zipfile(task_prog_obj_id, size):
         task.status = 2
         task.save()
 
-        noti = task.logs.create(source=task.source_user, type=32, title="Pdf Report generation in site",
-                                   recipient=source_user, content_object=task, extra_object=task.site,
+        noti = task.logs.create(source=task.user, type=32, title="Pdf Report generation in site",
+                                   recipient=task.user, content_object=task, extra_object=task.site,
                                    extra_message=" <a href='"+ task.file.url +"'>Pdf report</a> generation in site")
     except Exception as e:
         task.status = 3
         task.save()
         print 'Report Gen Unsuccesfull. %s' % e
         print e.__dict__
-        noti = task.logs.create(source=task.source_user, type=432, title="Pdf Report generation in site",
-                                       content_object=task.site, recipient=source_user,
+        noti = task.logs.create(source=task.user, type=432, title="Pdf Report generation in site",
+                                       content_object=task.site, recipient=task.user,
                                        extra_message="@error " + u'{}'.format(e.message))
         buffer.close()                                                                      
     

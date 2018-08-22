@@ -140,11 +140,7 @@
 										{% if not is_supervisor_only %}
 										<a class="dropdown-item" href="{% url 'fieldsight:site-edit' obj.pk %}"><i class="la la-edit"></i>{% trans 'Edit Site' %}</a>
 										{% endif %}
-										{% verbatim %}
-										<div id="export_zip_imgs">
 										
-										</div>
-										{% endverbatim %}
 									</div>
 								</span>
 								{% endif %}
@@ -478,6 +474,11 @@
 			<div class="widget-info margin-top bg-white padding" id = "recentPicutres" data-mh="eqtd">
 				<div class="widget-head">
 					<h4>Recent Pictures</h4>
+					{% verbatim %}
+					<div id="export_zip_imgs">
+					
+					</div>
+					{% endverbatim %}
 				</div>
 				<div class="row">
 					<!-- ko foreach: allImages  -->
