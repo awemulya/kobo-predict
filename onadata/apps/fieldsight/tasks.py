@@ -31,7 +31,6 @@ def get_images_for_site_all(site_id):
 def site_download_zipfile(task_prog_obj_id, size):
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
-    
     task.save()
 
     try:
@@ -41,7 +40,7 @@ def site_download_zipfile(task_prog_obj_id, size):
         """
         default_storage = get_storage_class()() 
         buffer = BytesIO()
-        datas = get_images_for_site_all(str(site_id))
+        datas = get_images_for_site_all(str(task.object_id))
         urls = list(datas["result"])
         archive = zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED)
         index=0

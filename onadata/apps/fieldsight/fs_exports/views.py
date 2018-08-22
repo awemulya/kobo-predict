@@ -7,7 +7,7 @@ from django.views.generic import TemplateView, View
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
-from onadata.apps.fieldsight.tasks import importSites, exportProjectSiteResponses, generateSiteDetailsXls
+from onadata.apps.fieldsight.tasks import importSites, exportProjectSiteResponses, generateSiteDetailsXls, site_download_zipfile
 from django.http import HttpResponse
 from rest_framework import status
 from onadata.apps.fsforms.models import FieldSightXF, FInstance, Stage
@@ -33,7 +33,7 @@ class ImageZipSites(View):
             size = "-large"
         task_obj=CeleryTaskProgress.objects.create(user=user, content_object=site, task_type=6)
         if task_obj:
-            task = exportProjectSiteResponses.delay(task_obj.pk, self.kwargs.get('pk'), size)
+            task = site_download_zipfile.delay(task_obj.pk, size)
             task_obj.task_id = task.id
             task_obj.save()
             status, data = 200, {'status':'true','message':'Sucess, the Zip file is being generated. You will be notified after the file is generated.'}
