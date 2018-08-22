@@ -51,6 +51,7 @@ def site_download_zipfile(task_prog_obj_id, size):
             if default_storage.exists(get_path(url['_attachments']['filename'], "-"+size)):
                 temp = tempfile.TemporaryFile()
                 file = default_storage.open(get_path(url['_attachments']['filename'], "-"+size)) 
+                print file
                 filecontent = file.read()
                 temp.write(filecontent)
                 
@@ -71,7 +72,7 @@ def site_download_zipfile(task_prog_obj_id, size):
         task.status = 2
         task.save()
         buffer.close()
-        noti = task.logs.create(source=task.user, type=32, title="Pdf Report generation in site",
+        noti = task.logs.create(source=task.user, type=33, title="Image Zip generation in site",
                                    recipient=task.user, content_object=task, extra_object=task.content_object,
                                    extra_message=" <a href='"+ task.file.url +"'>Pdf report</a> generation in site")
     except Exception as e:
@@ -79,7 +80,7 @@ def site_download_zipfile(task_prog_obj_id, size):
         task.save()
         print 'Report Gen Unsuccesfull. %s' % e
         print e.__dict__
-        noti = task.logs.create(source=task.user, type=432, title="Pdf Report generation in site",
+        noti = task.logs.create(source=task.user, type=433, title="Image Zip generation in site",
                                        content_object=task.content_object, recipient=task.user,
                                        extra_message="@error " + u'{}'.format(e.message))
         buffer.close()                                                                      
