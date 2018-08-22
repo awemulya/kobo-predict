@@ -22,6 +22,7 @@ from django.db.models import Prefetch
 from .generatereport import PDFReport
 import os, tempfile, zipfile
 from django.conf import settings
+from django.core.files.storage import get_storage_class
 
 
 def get_images_for_site_all(site_id):
