@@ -155,7 +155,7 @@ def site_images(request, pk):
     return JsonResponse({'images':medias[:5]})
 
 def FormResponseSite(request, pk):
-    fi=FInstance.objects.get(pk=pk)
+    fi=FInstance.objects.get(instance_id=pk)
     data={}
     if fi.site:
         data['name'] = fi.site.name
@@ -2686,7 +2686,7 @@ class RecentResponseImages(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk, **kwargs):
         recent_resp_imgs = get_images_for_site(pk)
         content={'images':list(recent_resp_imgs["result"])}
-        return JsonResponse(json.dumps(content, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'), status=200)
+        return JsonResponse(content, status=200)
 
 class SiteResponseCoordinates(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk, **kwargs):
