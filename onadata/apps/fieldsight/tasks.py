@@ -33,12 +33,7 @@ def site_download_zipfile(task_prog_obj_id, size):
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
     task.save()
-
     try:
-        """ Create a ZIP file on disk and transmit it in chunks of 8KB,                 
-        without loading the whole file into memory. A similar approach can          
-        be used for large dynamic PDF files.                                        
-        """
         default_storage = get_storage_class()() 
         buffer = BytesIO()
         datas = get_images_for_site_all(str(task.object_id))
@@ -48,33 +43,31 @@ def site_download_zipfile(task_prog_obj_id, size):
         username=urls[0]['_attachments']['download_url'].split('/')[2]
         for url in urls:        
             index+=1
-            if default_storage.exists(get_path(url['_attachments']['filename'], "-"+size)):
-                temp = tempfile.TemporaryFile()
-                file = default_storage.open(get_path(url['_attachments']['filename'], "-"+size)) 
+            if default_storage.exists(get_path(url['_attachments']['filename'], size)):
                 
-                filecontent = file.read()
-                temp.write(filecontent)
+                with tempfile.NamedTemporaryFile(mode="wb") as temp:
                 
-                # filename = '/srv/fieldsight/fieldsight-kobocat'+url['_attachments']['filename'] # Select your files here.                           
-                print "hererere"
-                archive.write(temp, url['_attachments']['filename'].split('/')[2])
-                temp.close()
+                    file = default_storage.open(get_path(url['_attachments']['filename'], size)) 
+                    # filecontent = None
+                    # filecontent = file.read()
+                    temp.write(file.read())
+                    # filename = '/srv/fieldsight/fieldsight-kobocat'+url['_attachments']['filename'] # Select your files here.                           
+                    archive.write(temp.name, url['_attachments']['filename'].split('/')[2])
+            else:
+                raise Exception('No Image Found.')
         archive.close()
         buffer.seek(0)
         zipFile = buffer.getvalue()
-
         if default_storage.exists(task.content_object.identifier + '/files/'+task.content_object.name+'.zip'):
             default_storage.delete(task.content_object.identifier + '/files/'+task.content_object.name+'.zip')
-
         zipFile_url = default_storage.save(task.content_object.identifier + '/files/'+task.content_object.name+'.zip', ContentFile(zipFile))
-        
         task.file.name = zipFile_url
         task.status = 2
         task.save()
         buffer.close()
         noti = task.logs.create(source=task.user, type=32, title="Image Zip generation in site",
                                    recipient=task.user, content_object=task, extra_object=task.content_object,
-                                   extra_message=" <a href='"+ task.file.url +"'Image Zip file </a> generation in site")
+                                   extra_message=" <a href='"+ task.file.url +"'>Image Zip file </a> generation in site")
     except Exception as e:
         task.status = 3
         task.save()
