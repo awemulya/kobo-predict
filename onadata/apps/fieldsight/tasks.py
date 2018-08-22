@@ -61,17 +61,17 @@ def site_download_zipfile(task_prog_obj_id, size):
         buffer.seek(0)
         zipFile = buffer.getvalue()
 
-        if default_storage.exists(task.site.identifier + '/files/'+task.site.name+'.zip'):
-            default_storage.delete(task.site.identifier + '/files/'+task.site.name+'.zip')
+        if default_storage.exists(task.content_object.identifier + '/files/'+task.content_object.name+'.zip'):
+            default_storage.delete(task.content_object.identifier + '/files/'+task.content_object.name+'.zip')
 
-        zipFile_url = default_storage.save(task.site.identifier + '/files/'+task.site.name+'.zip', ContentFile(zipFile))
+        zipFile_url = default_storage.save(task.content_object.identifier + '/files/'+task.content_object.name+'.zip', ContentFile(zipFile))
         buffer.close()
         task.file.name = zipFile_url
         task.status = 2
         task.save()
 
         noti = task.logs.create(source=task.user, type=32, title="Pdf Report generation in site",
-                                   recipient=task.user, content_object=task, extra_object=task.site,
+                                   recipient=task.user, content_object=task, extra_object=task.content_object,
                                    extra_message=" <a href='"+ task.file.url +"'>Pdf report</a> generation in site")
     except Exception as e:
         task.status = 3
@@ -79,7 +79,7 @@ def site_download_zipfile(task_prog_obj_id, size):
         print 'Report Gen Unsuccesfull. %s' % e
         print e.__dict__
         noti = task.logs.create(source=task.user, type=432, title="Pdf Report generation in site",
-                                       content_object=task.site, recipient=task.user,
+                                       content_object=task.content_object, recipient=task.user,
                                        extra_message="@error " + u'{}'.format(e.message))
         buffer.close()                                                                      
     
