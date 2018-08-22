@@ -23,7 +23,7 @@ from .generatereport import PDFReport
 import os, tempfile, zipfile
 from django.conf import settings
 from django.core.files.storage import get_storage_class
-
+from onadata.libs.utils.viewer_tools import get_path
 
 def get_images_for_site_all(site_id):
     return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : site_id}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
@@ -66,11 +66,11 @@ def site_download_zipfile(task_prog_obj_id, size):
             default_storage.delete(task.content_object.identifier + '/files/'+task.content_object.name+'.zip')
 
         zipFile_url = default_storage.save(task.content_object.identifier + '/files/'+task.content_object.name+'.zip', ContentFile(zipFile))
-        buffer.close()
+        
         task.file.name = zipFile_url
         task.status = 2
         task.save()
-
+        buffer.close()
         noti = task.logs.create(source=task.user, type=32, title="Pdf Report generation in site",
                                    recipient=task.user, content_object=task, extra_object=task.content_object,
                                    extra_message=" <a href='"+ task.file.url +"'>Pdf report</a> generation in site")
