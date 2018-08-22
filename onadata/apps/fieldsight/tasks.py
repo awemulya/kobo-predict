@@ -56,9 +56,9 @@ def site_download_zipfile(task_prog_obj_id, size):
                 temp.write(filecontent)
                 
                 # filename = '/srv/fieldsight/fieldsight-kobocat'+url['_attachments']['filename'] # Select your files here.                           
-                
+                print "hererere"
                 archive.write(temp, url['_attachments']['filename'].split('/')[2])
-                print "added"
+                temp.close()
         archive.close()
         buffer.seek(0)
         zipFile = buffer.getvalue()
@@ -74,7 +74,7 @@ def site_download_zipfile(task_prog_obj_id, size):
         buffer.close()
         noti = task.logs.create(source=task.user, type=32, title="Image Zip generation in site",
                                    recipient=task.user, content_object=task, extra_object=task.content_object,
-                                   extra_message=" <a href='"+ task.file.url +"'>Pdf report</a> generation in site")
+                                   extra_message=" <a href='"+ task.file.url +"'Image Zip file </a> generation in site")
     except Exception as e:
         task.status = 3
         task.save()
