@@ -24,7 +24,7 @@ import os, tempfile, zipfile
 from django.conf import settings
 from django.core.files.storage import get_storage_class
 from onadata.libs.utils.viewer_tools import get_path
-
+from PIL import Image
 def get_images_for_site_all(site_id):
     return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : site_id}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
 
@@ -47,10 +47,9 @@ def site_download_zipfile(task_prog_obj_id, size):
                 
                 with tempfile.NamedTemporaryFile(mode="wb") as temp:
                 
-                    file = default_storage.open(get_path(url['_attachments']['filename'], size)) 
-                    # filecontent = None
-                    # filecontent = file.read()
-                    temp.write(file.read())
+                    file = default_storage.open(get_path(url['_attachments']['filename'], size))
+                    img=Image.open(file)
+                    img.save(temp, img.format)
                     # filename = '/srv/fieldsight/fieldsight-kobocat'+url['_attachments']['filename'] # Select your files here.                           
                     archive.write(temp.name, url['_attachments']['filename'].split('/')[2])
             else:
