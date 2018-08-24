@@ -2,10 +2,9 @@ def parse_form_response(main_question, main_answer, base_url, media_folder):
 
     parsed_question=[]
     parsed_answer={}
-    repeated_qa=[]
+    repeated_qa={}
     repeat_questions=[]
     
-
 
     def append_row(question_name, question_label, question_type, answer_dict, is_repeat=None):
     
@@ -13,10 +12,7 @@ def parse_form_response(main_question, main_answer, base_url, media_folder):
             if question_type == 'note':
                 answer=''
                 
-            elif question_type == 'photo':
-                answer = 'http://'+base_url+'/attachment/medium?media_file='+ media_folder +'/attachments/'+ answer_dict[question_name]
-                
-            elif question_type == 'audio' or question_type == 'video':
+            elif question_type == 'photo' or question_type == 'audio' or question_type == 'video':
                 answer = 'http://'+base_url+'/attachment/medium?media_file='+ media_folder +'/attachments/'+ answer_dict[question_name]
                 
             else:
@@ -30,39 +26,55 @@ def parse_form_response(main_question, main_answer, base_url, media_folder):
             parsed_question.append({'question_name':question_name, 'question_label':question_label})
             parsed_answer[question_name]=answer
 
-    def parse_repeat( r_object):
-        
-        r_question = r_object['name']
-        if r_question in main_question:
-            repeat = 1
-            for r_answer in main_answer[r_question]:
-                repeated_group = {}
-                for first_children in r_object['children']:
-                    question_name = r_question+"/"+first_children['name']
-                    question_label = question_name
-                    
-                    if 'label' in first_children:
-                        question_label = first_children['label']
-                    
-                    question, answer = append_row(question_name, question_label, first_children['type'], r_answer, True)
-                    if repeat == 1:
-                        repeat_questions.append(question)
-                        append_row(question_name, question_label, first_children['type'], r_answer)
-                    repeat += 1
-                    repeated_group[question['question_name']] = answer
-                repeated_qa.append(repeated_group)
+    def parse_repeat_group( prev_groupname, g_object, answers={} ):
+        question_questions_ = []
+        g_question = prev_groupname+g_object['name']
+        for first_children in g_object['children']:
+            question_name = g_question+"/"+first_children['name']
+            question_label = question_name
 
-        else:
-            for first_children in r_object['children']:
-                question_name = r_question+"/"+first_children['name']
-                question_label = question_name
-                
+            if 'label' in first_children:
+                question_label = first_children['label']
+            if first_children['type'] == 'group':
+                group_questions = parse_repeat_group(g_question+"/",first_children, answers.get('question_name'))
+                repeat_questions_.extend(group_questions)
+            # get all answers form all repeted and generate new answer list to send it to re parse.
+            # elif first_children['type'] == 'repeat':
+            #     parse_repeat(g_question+"/",first_children, answers.get('question_name', []))
+
+            else:
+                repeat_questions_.append({'question_name':question_name, 'question_label':question_label})
+    
+        return questions
+
+    def parse_repeat( prev_groupname, g_object, answers=main_answer):
+        
+        g_question = prev_groupname+g_object['name']
+        repeat_questions_ = []
+        repeat_answers = answers[g_question]
+        for first_children in g_object['children']:
+            question_name = g_question+"/"+first_children['name']
+            question_label = question_name
+            
+
+            if first_children['type'] == 'group':
+                group_question=parse_repeat_group( g_question+"/", first_children, repeat_answers ):
+                repeat_questions_.extend(group_questions)
+
+            elif first_children['type'] == 'repeat':
+                parse_repeat(g_question+"/",first_children, repeat_answers)
+
+            else:
                 if 'label' in first_children:
                     question_label = first_children['label']
+                
+                repeat_questions_.append({'question_name':question_name, 'question_label':question_label})
+            
+            
+        repeat_qa[g_question] = {'questions': repeat_questions_, 'answers': repeat_answers}
+        repeat_questions.append({'g_question':repeat_questions})
 
-                append_row(question_name, question_label, first_children['type'], {})
-
-    def parse_group( prev_groupname, g_object):
+    def parse_group( prev_groupname, g_object, answers=main_answer):
        
         g_question = prev_groupname+g_object['name']
         for first_children in g_object['children']:
@@ -71,21 +83,21 @@ def parse_form_response(main_question, main_answer, base_url, media_folder):
 
             if 'label' in first_children:
                 question_label = first_children['label']
-            
-            append_row(question_name, question_label, first_children['type'], main_answer)
-            
-            # done at the end because wee want to print group name as well in report.
             if first_children['type'] == 'group':
                 parse_group(g_question+"/",first_children)
 
             elif first_children['type'] == 'repeat':
-                parse_group(g_question+"/",first_children)
+                parse_repeat(g_question+"/",first_children)
+
+            else:
+                append_row(question_name, question_label, first_children['type'], answers)
+             
 
     def parse_individual_questions():
        
         for first_children in main_question:
             if first_children['type'] == "repeat":
-                parse_repeat(first_children)
+                parse_repeat("", first_children, self.main_answer.get(first_children['name'], []))
             elif first_children['type'] == 'group':
                 parse_group("", first_children)
             else:

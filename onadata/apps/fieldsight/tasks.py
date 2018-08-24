@@ -468,8 +468,8 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
                             repeat_questions = r_questions
                         repeat_answers[formresponse.site.identifier] = {'name': formresponse.site.name, 'answers':r_answers}
 
-                    if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
-                        head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}, {'question_name':'status','question_label':'status'}] + questions  
+                    # if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
+                    #     head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}, {'question_name':'status','question_label':'status'}] + questions  
 
                     for col_num in range(len(head_columns)):
                         ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
