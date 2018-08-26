@@ -60,6 +60,13 @@ class ProjectMiniSerializer(serializers.ModelSerializer):
         model = Project
         fields = ('id', 'name', 'cluster_sites', 'site_meta_attributes',)
 
+class ProjectMinimalSerializer(serializers.ModelSerializer):
+    label = serializers.ReadOnlyField(source='name', read_only=True)
+    class Meta:
+        model = Project
+        fields = ('id', 'label', 'cluster_sites',)
+
+
 class ProjectMetasSerializer(serializers.ModelSerializer):
     site_meta_attributes = serializers.JSONField(binary=False)
     class Meta:

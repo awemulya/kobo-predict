@@ -6,12 +6,12 @@ from onadata.apps.fieldsight.viewsets.FieldsightFcmViewset import FcmDeviceViewS
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProjectViewSet
 
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
-from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet, ProjectRegionslistViewSet
+from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet, ProjectRegionslistViewSet, UserProjectlistMinimalViewset
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import MyOrgProjectlistViewSet, ProjectMetas, ProjectForms, OrganizationsProjectViewSet, MyProjectlistViewSet
-from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionViewSet, RegionPagignatedViewSet, RegionSearchViewSet
+from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionViewSet, RegionPagignatedViewSet, RegionSearchViewSet, UserMainRegionViewSet
 from onadata.apps.fieldsight.viewsets.SiteViewSet import SitelistMinimalViewset, SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
     SiteReviewViewSet, ProjectTypeViewset, SiteTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet, SiteUpdateViewSet, \
-    ProjectUpdateViewSet, SiteUnderOrgViewSet, SiteUnderRegionViewSet, SitePagignatedViewSet, SiteSearchViewSet
+    ProjectUpdateViewSet, SiteUnderOrgViewSet, SiteUnderRegionViewSet, SitePagignatedViewSet, SiteSearchViewSet, UserSitelistMinimalViewset
 from .forms import RegistrationForm
 
 from .views import (
@@ -61,7 +61,7 @@ from .views import (
     StageStatus, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
     SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI,
     GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages,
-    SiteSearchView, ProjectDashboardStageResponsesStatus, SiteBulkEditView, site_refrenced_metas, redirectToSite, municipality_data, FormResponseSite, DonorRegionalSitelist)
+    SiteSearchView, ProjectDashboardStageResponsesStatus, SiteBulkEditView, site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data, FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI)
 
     
 
@@ -269,11 +269,19 @@ urlpatterns = [
     url(r'^api/project_map/(?P<pk>\d+)/$', project_dashboard_map, name='pdm'),
     url(r'^api/project_graphs/(?P<pk>\d+)/$', project_dashboard_graphs, name='pdg'),
     url(r'^api/project/metas/(?P<pk>\d+)/$', ProjectMetas.as_view({'get':'list'}), name='pmetas'),
-    url(r'^api/project/sites/(?P<pk>\d+)/$', SitelistMinimalViewset.as_view({'get':'list'}), name='inimalsitelist'),
+    url(r'^api/project/sites/(?P<pk>\d+)/$', SitelistMinimalViewset.as_view({'get':'list'}), name='minimalsitelist'),
+    
     url(r'^api/project/forms/(?P<pk>\d+)/$', ProjectForms.as_view({'get':'list'}), name='pforms'),
     url(r'^api/siteallmetas/(?P<pk>\d+)/$', site_refrenced_metas, name='metas'),
     url(r'^redirect/(?P<pk>\d+)/site/$', redirectToSite, name='identifier_to_site_redirect'),
     url(r'^api/response-site/(?P<pk>\d+)/$',FormResponseSite, name='response-site'),
+
+    #user unassign urls
+    url(r'^api/user/projects/(?P<user_id>\d+)/(?P<group_id>\d+)/$', UserProjectlistMinimalViewset.as_view({'get':'list'}), name='userprojectlist'),
+    url(r'^api/project/user/sites/(?P<pk>\d+)/(?P<user_id>\d+)/(?P<group_id>\d+)/$', UserSitelistMinimalViewset.as_view({'get':'list'}), name='usersitelist'),
+    url(r'^api/project/user/regions/(?P<pk>\d+)/(?P<user_id>\d+)/(?P<group_id>\d+)/$', MainRegionsAndSitesAPI.as_view(), name='user_regions'),
+    url(r'^api/region/(?P<pk>\d+)/subregionsandsites/(?P<user_id>\d+)/(?P<group_id>\d+)/$', SubRegionAndSitesAPI.as_view(), name='SubRegionAndSitesAPI'),
+    url(r'^api/remove_roles/(?P<pk>\d+)/$', UnassignUserRegionAndSites.as_view(), name='UnassignUserRegionAndSites'),
 
     ]
 

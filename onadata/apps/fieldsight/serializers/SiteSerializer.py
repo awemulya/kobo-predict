@@ -163,10 +163,18 @@ class MinimalSiteSerializer(serializers.ModelSerializer):
 
 
 class SuperMinimalSiteSerializer(serializers.ModelSerializer):
+    label = serializers.ReadOnlyField(source='name', read_only=True)
+
     class Meta:
         model = Site
-        fields = ('id','name', 'identifier')
+        fields = ('id','label', 'identifier',)
 
+class RegionSerializer(serializers.ModelSerializer):
+    get_sites_count = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Region
+        fields = ('id','name', 'identifier', 'parent')
 
 class RegionSerializer(serializers.ModelSerializer):
     get_sites_count = serializers.ReadOnlyField()

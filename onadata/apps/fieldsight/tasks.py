@@ -78,6 +78,69 @@ def site_download_zipfile(task_prog_obj_id, size):
         buffer.close()                                                                      
     
 
+@shared_task
+def UnassignUser(task_obj_id, user_id, sites, regions, projects, group_id):
+    user_profile = User.objects.get(pk=user_id).user_profile
+    time.sleep(2)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.status=1
+    task.save()
+    
+    try:
+        count = 0
+        with transaction.atomic():
+            
+            if sites:
+                count = count + sites.len()
+                for site_id in sites:
+                    roles=UserRole.objects.filter(user_id=user_id, site_id = site_id, group_id = group_id,ended_at=None)
+                    for role in roles:
+                        userrole.ended_at = datetime.datetime.now()
+                        userrole.save()
+
+
+            if regions:
+                for region_id in regions:
+                    sites = Site.objects.filter(region_id=region_id[1:])    
+                    count = count + sites.count()
+                    for site_id in sites:
+                        roles=UserRole.objects.filter(user_id=user, site_id = site_id, ended_at=None)
+                        for role in roles:
+                            userrole.ended_at = datetime.datetime.now()
+                            userrole.save()
+
+            if projects:
+                for project_id in project: 
+                    regions = Region.objects.get(project_id = project_id[1:])
+                    for region in regions:
+                        sites = Site.objects.filter(region_id=region)    
+                        count = count + sites.count()
+                        for site_id in sites:
+                            roles=UserRole.objects.filter(user_id=user, site_id = site_id, ended_at=None)
+                            for role in roles:
+                                userrole.ended_at = datetime.datetime.now()
+                                userrole.save()
+
+            task.status = 2
+            task.save()
+
+            extra_message= "Removed " + count + " Roles"
+            
+
+            noti = project.logs.create(source=task.user, type=12, title="Remove Roles",
+                                       content_object=user_profile,
+                                       extra_message=extra_message)
+    except Exception as e:
+        task.status = 3
+        task.save()
+        print 'Role Remove Unsuccesfull. %s' % e
+        print e.__dict__
+        noti = project.logs.create(source=task.user, type=412, title="Remove Roles",
+                                       content_object=user_profile, recipient=source_user,
+                                       extra_message=str(count) + " Sites @error " + u'{}'.format(e.message))
+
+
+    
 @shared_task()
 def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
     time.sleep(2)

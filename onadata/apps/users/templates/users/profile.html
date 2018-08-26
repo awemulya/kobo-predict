@@ -3,7 +3,32 @@
 {% load filters %}
 {% block page-title %} {% trans 'Profile '  %}{{obj.user }}{% endblock %}
 {% block content %}
-
+	
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.css">
+    <script type="text/javascript">
+    	
+      Vue.component('my-button', {
+        template: '\
+          <button class="normal"\
+            :class="type"\
+            :disabled="disabled"\
+            @click="callback($event)"\
+            >\
+              <slot></slot>\
+          </button>\
+        ',
+        props: {
+          type: String,
+          disabled: Boolean
+        },
+        methods: {
+          callback: function(e) {
+            this.$emit('click', e);
+          }
+        }
+      });
+    
+    </script>
 	<div id="main-content" class="padding">
 				<section class="panel">
 				{% if messages %}
@@ -232,6 +257,39 @@
 							</div>				
 							{% endif %}
 
+							<div class="widget-info margin-top bg-white padding">
+								<div clas="widget-head">
+									Remove Roles
+								</div>
+								<div class="widget-body">
+									    <div id="app">
+									    	<div>
+									    		<treeselect :multiple="true"
+												  :options="optionsS"
+												  :load-options="loadOptionsSupervisor"
+												  :auto-load-root-options="false"
+												  placeholder="Select Roles to remove ..."
+												  v-model="valueS" />
+									    	</div>
+									    	<div>
+										      <button @click="removeRoles('4')">Remove Supervisor Roles</button>
+										    </div>
+										    <br>
+										    <div>
+									    		<treeselect :multiple="true"
+												  :options="optionsR"
+												  :load-options="loadOptionsReviewer"
+												  :auto-load-root-options="false"
+												  placeholder="Select Roles to remove ..."
+												  v-model="valueR" />
+									    	</div>
+									    	<div>
+										      <button @click="removeRoles('3')">Remove Reviewer Roles</button>
+										    </div>
+
+									    </div>
+								</div>
+
 							</div>
 						{% if responses %}
 						<div class="col-md-12 col-lg-4">
@@ -270,6 +328,11 @@
                 </section>
 				
 			</div>
+
+{%block extrascript %}
+    <script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
+    <!-- include vue-treeselect & its styles. you can change the version tag to better suit your need. -->
+    <script src="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.js"></script>
 		<script src="assets/js/vendor/slick.min.js"></script>
 		<script>
 			$(document).ready(function(){ 
@@ -280,6 +343,216 @@
 			});
 		</script>
         <script src="assets/js/plugins.js"></script>
+        <script>
+
+        	{% load l10n %}
+			configure_settings =  {};
+			configure_settings.user_id = {{ obj.user.id }};
+    
+    // register the component
+    
+
+    Vue.component('treeselect', VueTreeselect.Treeselect)
+    var LOAD_CHILDREN_OPTIONS = this.VueTreeselect.LOAD_CHILDREN_OPTIONS
+    var LOAD_ROOT_OPTIONS = this.VueTreeselect.LOAD_ROOT_OPTIONS
+    data=new Vue({
+      el: '#app',
+
+	  data: () => ({
+	    valueR: null,
+	    optionsR: null,
+	    valueS: null,
+	    optionsS: null,
+	  }),
+
+	  methods: {
+	    loadOptionsSupervisor({ action, parentNode, callback }) {
+	      // Typically, do the AJAX stuff here.
+	      // Once the server has responded,
+	      // assign children options to the parent node & call the callback.
 
 
+		function errorCallback() {
+		    callback(new Error('Failed to load options: network error.'))
+		}
+
+
+
+		  if (action === LOAD_ROOT_OPTIONS) {
+		  	function successCallback(response) {
+	        		console.log(response);
+	        		this.options = response
+				    callback()
+				}
+	        	
+	        	self.$http.get('/fieldsight/api/user/projects/' + configure_settings.user_id + '/4/', {
+				    params: options
+				}).then(successCallback, errorCallback);
+
+		  }
+
+	      else if (action === LOAD_CHILDREN_OPTIONS) {
+	        if (parentNode.level == "project" && parentNode.is_clustered == false)
+	        {
+	        	function successCallback(response) {
+	        		console.log(response);
+	        		parentNode.children = response
+				    callback()
+				}
+	        	
+	        	self.$http.get('/fieldsight/api/project/user/sites/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/4/', {
+				    params: options
+				}).then(successCallback, errorCallback);
+
+				
+
+	        }
+	        else if (parentNode.level == "project" && parentNode.is_clustered == true)
+	        {
+	        	function successCallback(response) {
+				    var regions = response.region
+				    regions.forEach(function(val,index){ 
+					   regions[index]['id'] = 'r'+val.id
+					   regions[index]['level'] = 'region'
+					   regions[index]['children'] = null 
+					})
+					parentNode.children = regions.concat(response.sites)
+				    callback()
+				}
+	        	
+	        	self.$http.get('/fieldsight/api/project/user/regions/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/4/', {
+				    params: options
+				}).then(successCallback, errorCallback);
+
+	        }
+	        else if(parentNode.level == "region")
+	        {
+	        	function successCallback(response) {
+	        		var regions = response.sub_region
+				    regions.forEach(function(val,index){ 
+					   regions[index]['id'] = 'r'+val.id
+					   regions[index]['level'] = 'region'
+					   regions[index]['children'] = null 
+					})
+					parentNode.children = regions.concat(response.sites)
+				    callback()
+
+				}
+	        	
+	        	self.$http.get('/fieldsight/api/project/user/regions/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/4/', {
+				    params: options
+				}).then(successCallback, errorCallback);
+	        }
+
+	      }
+	    },
+
+	    loadOptionsReviewer({ action, parentNode, callback }) {
+	      // Typically, do the AJAX stuff here.
+	      // Once the server has responded,
+	      // assign children options to the parent node & call the callback.
+
+
+		function errorCallback() {
+		    callback(new Error('Failed to load options: network error.'))
+		}
+
+
+
+		  if (action === LOAD_ROOT_OPTIONS) {
+		  	function successCallback(response) {
+	        		console.log(response);
+	        		this.options = response
+				    callback()
+				}
+	        	
+	        	self.$http.get('/fieldsight/api/user/projects/' + configure_settings.user_id + '/3/', {
+				    params: options
+				}).then(successCallback, errorCallback);
+
+		  }
+
+	      else if (action === LOAD_CHILDREN_OPTIONS) {
+	        if (parentNode.level == "project" && parentNode.is_clustered == false)
+	        {
+	        	function successCallback(response) {
+	        		console.log(response);
+	        		parentNode.children = response
+				    callback()
+				}
+	        	
+	        	self.$http.get('/fieldsight/api/project/user/sites/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/3/', {
+				    params: options
+				}).then(successCallback, errorCallback);
+
+				
+
+	        }
+	        else if (parentNode.level == "project" && parentNode.is_clustered == true)
+	        {
+	        	function successCallback(response) {
+				    var regions = response.region
+				    regions.forEach(function(val,index){ 
+					   regions[index]['id'] = 'r'+val.id
+					   regions[index]['level'] = 'region'
+					   regions[index]['children'] = null 
+					})
+					parentNode.children = regions.concat(response.sites)
+				    callback()
+				}
+	        	
+	        	self.$http.get('/fieldsight/api/project/user/regions/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/3/', {
+				    params: options
+				}).then(successCallback, errorCallback);
+
+	        }
+	        else if(parentNode.level == "region")
+	        {
+	        	function successCallback(response) {
+	        		var regions = response.sub_region
+				    regions.forEach(function(val,index){ 
+					   regions[index]['id'] = 'r'+val.id
+					   regions[index]['level'] = 'region'
+					   regions[index]['children'] = null 
+					})
+					parentNode.children = regions.concat(response.sites)
+				    callback()
+
+				}
+	        	
+	        	self.$http.get('/fieldsight/api/project/user/regions/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/3/', {
+				    params: options
+				}).then(successCallback, errorCallback);
+	        }
+
+	      }
+	    },
+
+
+	    removeRoles: function (group_id){
+	    	function successCallback(response) {
+	          alert(response.body);
+	          
+			}
+			
+			function errorCallback() {
+			  alert('Failed to complete the request. Please try again.')
+			  console.log('failed');
+			}
+			
+			options = {headers: {'X-CSRFToken':this.csrf}};
+			if (group_id == '3'){
+				body = {'ids': this.valuesR, 'group': group_id }
+			}
+			else{
+				body = {'ids': this.valuesS, 'group': group_id }
+			}
+			this.$http.post('api/remove_roles/'+configure_settings.user_id, body, options).then(successCallback, errorCallback);     
+
+			}
+		},
+
+	 })
+	  </script>
+{% endblock %}
 {% endblock %}

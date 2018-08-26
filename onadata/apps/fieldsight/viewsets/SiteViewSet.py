@@ -353,6 +353,15 @@ class SitelistMinimalViewset(viewsets.ModelViewSet):
     def filter_queryset(self, queryset):
         return queryset.filter(project__id=self.kwargs.get('pk', None))
 
+class UserSitelistMinimalViewset(viewsets.ModelViewSet):
+    queryset = Site.objects.all()
+    serializer_class = SuperMinimalSiteSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    
+    def filter_queryset(self, queryset):
+        sites = UserRole.objects.filter(user_id=self.kwargs.get('user_id'), project_id=self.kwargs.get('pk'), group_id=self.kwargs.get('group_id'), site_isnull=False, ended_at=None).values('site_id')
+        return queryset.filter(pk__in=sites)
+
 def all_notification(user,  message):
     ChannelGroup("%s" % user).send({
         "text": json.dumps({
