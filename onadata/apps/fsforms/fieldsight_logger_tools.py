@@ -4,6 +4,7 @@ import pytz
 import re
 import tempfile
 import traceback
+from django.db.models import Q
 from xml.dom import Node
 from xml.parsers.expat import ExpatError
 
@@ -52,7 +53,10 @@ from onadata.apps.viewer.models.parsed_instance import _remove_from_mongo,\
     xform_instances, ParsedInstance
 from onadata.libs.utils import common_tags
 from onadata.libs.utils.model_tools import queryset_iterator, set_uuid
-
+from onadata.apps.logger.models.attachment import (
+    generate_attachment_filename,
+    hash_attachment_contents,
+)
 
 OPEN_ROSA_VERSION_HEADER = 'X-OpenRosa-Version'
 HTTP_OPEN_ROSA_VERSION_HEADER = 'HTTP_X_OPENROSA_VERSION'
@@ -81,6 +85,7 @@ def _get_instance(xml, new_uuid, submitted_by, status, xform, fxfid, project_fxf
         instance.save()
     else:
         # new submission
+        print("new submission")
         instance = Instance.objects.create(
             xml=xml, user=submitted_by, status=status, xform=xform)
         if fxfid and site_id and project_fxf and project_id and fxfid:
@@ -90,6 +95,7 @@ def _get_instance(xml, new_uuid, submitted_by, status, xform, fxfid, project_fxf
             FInstance.objects.create(instance=instance, site_id=site_id, project_id=project_id, site_fxf_id=fxfid,
                              submitted_by=submitted_by)
         elif fxfid and site_id:
+            print("create site F instance")
             FInstance.objects.create(instance=instance, site_id=site_id,site_fxf_id=fxfid,
                              submitted_by=submitted_by)
         elif project_id and project_fxf:
@@ -166,6 +172,32 @@ def check_submission_permissions(request, xform):
                   'form_title': xform.title}))
 
 
+def save_attachments(instance, media_files):
+    '''
+    Returns `True` if any new attachment was saved, `False` if all attachments
+    were duplicates or none were provided
+    '''
+    any_new_attachment = False
+    for f in media_files:
+        attachment_filename = generate_attachment_filename(instance, f.name)
+        existing_attachment = Attachment.objects.filter(
+            instance=instance,
+            media_file=attachment_filename,
+            mimetype=f.content_type,
+        ).first()
+        if existing_attachment and (existing_attachment.file_hash ==
+                                    hash_attachment_contents(f.read())):
+            # We already have this attachment!
+            continue
+        f.seek(0)
+        # This is a new attachment; save it!
+        Attachment.objects.create(
+            instance=instance,
+            media_file=f, mimetype=f.content_type)
+        any_new_attachment = True
+    return any_new_attachment
+
+
 def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
                     date_created_override, fxid, site, fs_poj_id=None, project=None):
     if not date_created_override:
@@ -186,6 +218,7 @@ def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
         instance.date_created = date_created_override
         instance.save()
     if instance.xform is not None:
+        print("creationg Parsed Instance")
         if fs_poj_id:
             fs_poj_id = str(fs_poj_id)
         pi, created = FieldSightParsedInstance.get_or_create(instance,
@@ -193,6 +226,7 @@ def save_submission(xform, xml, media_files, new_uuid, submitted_by, status,
                                                                           'fs_site':site, 'fs_project':project,
                                                                           'fs_project_uuid':fs_poj_id})
     if not created:
+        print("not created FPI")
         pi.save(async=False)
     return instance
 
@@ -218,31 +252,53 @@ def create_instance(fsxfid, xml_file, media_files,
         submitted_by = request.user \
             if request and request.user.is_authenticated() else None
         xml = xml_file.read()
-        # fsxform = FieldSightXF.objects.get(pk=fsxfid)
-        # xform = fsxform.xf
-        # existing_instance_count = fsxform.fs_instances.count()
+        xml_hash = Instance.get_hash(xml)
+        print("hash = ", xml_hash)
+        print("has_start_time = ", xform.has_start_time)
 
-        # if(existing_instance_count and same_form_submitted_again_without_schedule(fsxform)):
-        #         raise DuplicateInstance()
+        if xform.has_start_time:
+            # XML matches are identified by identical content hash OR, when a
+            # content hash is not present, by string comparison of the full
+            # content, which is slow! Use the management command
+            # `populate_xml_hashes_for_instances` to hash existing submissions
+            existing_instance = Instance.objects.filter(
+                Q(xml_hash=xml_hash) |
+                Q(xml_hash=Instance.DEFAULT_XML_HASH, xml=xml),
+                xform__user=xform.user,
+            ).first()
+        else:
+            existing_instance = None
 
-        # new_uuid = get_uuid_from_xml(xml) + str(fsxfid)+ schedule_uuid_value(fsxform)
-        # duplicate_instances = Instance.objects.filter(uuid=new_uuid)
+        new_uuid = get_uuid_from_xml(xml)
+        uuid = new_uuid
 
-        # if duplicate_instances:
-        #     # ensure we have saved the extra attachments
-        #     for f in media_files:
-        #         Attachment.objects.get_or_create(
-        #             instance=duplicate_instances[0],
-        #             media_file=f, mimetype=f.content_type)
-        # else:
-        if fsxfid is None:
-            fsxfid = ""
-        if site is None:
-            site = ""
-        instance = save_submission(xform, xml, media_files, uuid,
-                                       submitted_by, status,
-                                       date_created_override, str(fsxfid), str(site), fs_proj_xf, proj_id)
-        return instance
+        if existing_instance:
+            print("exixting Instance")
+            # ensure we have saved the extra attachments
+            any_new_attachment = save_attachments(existing_instance, media_files)
+            if not any_new_attachment:
+                raise DuplicateInstance()
+            else:
+                # Update Mongo via the related ParsedInstance
+                print("updating Parsed Instance")
+                if proj_id:
+                    fs_poj_id = str(proj_id)
+                pi, created = FieldSightParsedInstance.get_or_create(existing_instance,
+                                                                     update_data={'fs_uuid': str(fsxfid), 'fs_status': 0,
+                                                                                  'fs_site': site,
+                                                                                  'fs_project': proj_id,
+                                                                                  'fs_project_uuid': fs_poj_id})
+                return existing_instance
+        else:
+
+            if fsxfid is None:
+                fsxfid = ""
+            if site is None:
+                site = ""
+            instance = save_submission(xform, xml, media_files, uuid,
+                                           submitted_by, status,
+                                           date_created_override, str(fsxfid), str(site), fs_proj_xf, proj_id)
+            return instance
 
     # if duplicate_instances:
     #     # We are now outside the atomic block, so we can raise an exception
