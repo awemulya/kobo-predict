@@ -110,7 +110,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
                             userrole.save()
 
             if projects:
-                for project_id in project: 
+                for project_id in projects: 
                     regions = Region.objects.get(project_id = project_id)
                     for region in regions:
                         sites = Site.objects.filter(region_id=region)    
@@ -129,7 +129,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
                 extra_message= "removed " + count + " Supervisor Roles"
 
             noti = project.logs.create(source=task.user, type=35, title="Remove Roles",
-                                       content_object=user, recipient=task.user,
+                                       content_object=user.user_profile, recipient=task.user,
                                        extra_message=extra_message)
     except Exception as e:
         task.status = 3
@@ -137,7 +137,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
         print 'Role Remove Unsuccesfull. %s' % e
         print e.__dict__
         noti = task.logs.create(source=task.user, type=432, title="Role Remove for ",
-                                       content_object=user, recipient=task.user,
+                                       content_object=user.user_profile, recipient=task.user,
                                        extra_message="@error " + u'{}'.format(e.message))
 
 
