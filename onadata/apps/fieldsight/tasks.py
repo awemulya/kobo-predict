@@ -78,9 +78,9 @@ def site_download_zipfile(task_prog_obj_id, size):
         buffer.close()                                                                      
     
 
-@shared_task
+@shared_task()
 def UnassignUser(task_obj_id, user_id, sites, regions, projects, group_id):
-    user_profile = User.objects.get(pk=user_id).user_profile
+    user = User.objects.get(pk=user_id)
     time.sleep(2)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status=1
@@ -123,21 +123,22 @@ def UnassignUser(task_obj_id, user_id, sites, regions, projects, group_id):
 
             task.status = 2
             task.save()
-
-            extra_message= "Removed " + count + " Roles"
-            
+            if group_id == "3":
+                extra_message= "removed " + count + "Reviewer Roles"
+            else:
+                extra_message= "removed " + count + " Supervisor Roles"
 
             noti = project.logs.create(source=task.user, type=12, title="Remove Roles",
-                                       content_object=user_profile,
+                                       content_object=user, recipient=task.user,
                                        extra_message=extra_message)
     except Exception as e:
         task.status = 3
         task.save()
         print 'Role Remove Unsuccesfull. %s' % e
         print e.__dict__
-        noti = project.logs.create(source=task.user, type=412, title="Remove Roles",
-                                       content_object=user_profile, recipient=source_user,
-                                       extra_message=str(count) + " Sites @error " + u'{}'.format(e.message))
+        noti = task.logs.create(source=task.user, type=432, title="Role Remove for ",
+                                       content_object=user, recipient=task.user,
+                                       extra_message="@error " + u'{}'.format(e.message))
 
 
     

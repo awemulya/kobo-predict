@@ -3146,8 +3146,8 @@ def municipality_data(request):
 class MainRegionsAndSitesAPI(View):
     def get(self, request, pk, **kwargs):
         sites = UserRole.objects.filter(user_id = self.kwargs.get('user_id'), group_id=self.kwargs.get('group_id'), ended_at=None, project_id=pk, site__isnull=False).distinct('site_id').values('site_id')
-        
-        regions = Region.objects.filter(parent = None, project_id=pk).extra(select={'label': 'name'}).values('id','label', 'identifier')
+        regions_ids = UserRole.objects.filter(user_id = self.kwargs.get('user_id'), group_id=self.kwargs.get('group_id'), ended_at=None, project_id=pk, site__isnull=False, site__region_id__isnull=False).distinct('site__region_id').values('site__region_id')
+        regions = Region.objects.filter(parent = None, pk__in=regions_ids, project_id=pk).extra(select={'label': 'name'}).values('id','label', 'identifier')
         sites= Site.objects.filter(pk__in=sites, region=None).extra(select={'label': 'name'}).values('id','label', 'identifier')
         content={'regions':list(regions), 'sites':list(sites)}
         return JsonResponse(content, status=200)
@@ -3156,7 +3156,8 @@ class SubRegionAndSitesAPI(View):
     def get(self, request, pk, **kwargs):
         region = Region.objects.get(pk=pk)
         sites = UserRole.objects.filter(user_id = self.kwargs.get('user_id'), ended_at=None, group_id=self.kwargs.get('group_id'), project_id=region.project_id, site__isnull=False).distinct('site_id').values('site_id')
-        sub_regions = Region.objects.filter(parent_id = pk).extra(select={'label': 'name'}).values('id','label', 'identifier')
+        regions_ids = UserRole.objects.filter(user_id = self.kwargs.get('user_id'), group_id=self.kwargs.get('group_id'), ended_at=None, project_id=pk, site__isnull=False, site__region_id__isnull=False).distinct('site__region_id').values('site__region_id')
+        sub_regions = Region.objects.filter(parent_id = pk, pk__in=regions_ids).extra(select={'label': 'name'}).values('id','label', 'identifier')
         sites= Site.objects.filter(pk__in=sites, region_id=pk).extra(select={'label': 'name'}).values('id','label', 'identifier')
         content={'sub_regions':list(sub_regions), 'sites':list(sites)}
         return JsonResponse(content, status=200)
