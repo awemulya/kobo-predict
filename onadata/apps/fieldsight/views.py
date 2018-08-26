@@ -3173,15 +3173,41 @@ class UnassignUserRegionAndSites(View):
         user_id= pk
         group_id = data.get('group')
 
+        status, data = 403, {'status':'false','message':'PermissionDenied. You do not have sufficient rights.'}
+        
+        if request.group.name != "Super Admin":        
+            
+            request_usr_org_role = UserRole.objects.filter(ended_at = None, group_id=1).distinct('organization_id').values('organization_id')
+            if not request_usr_org_role:
+                return JsonResponse(data, status=status)   
+            
+            if projects:
+                project_ids = [k[1:] for k in projects]
+
+                if len(project_ids) != Project.objects.filter(pk__in=project_ids, organization_id__in=request_usr_org_role).distinct('pk').count(): 
+                    return JsonResponse(data, status=status)         
+            
+            if regions:
+                region_ids = [k[1:] for k in regions]
+
+                if len(region_ids) != Region.objects.filter(pk__in=region_ids, project__organization_id__in=request_usr_org_role).distinct('pk').count(): 
+                    return JsonResponse(data, status=status)   
+
+
+            if sites:
+                if len(sites) != Site.objects.filter(pk__in=sites, project__organization_id__in=request_usr_org_role).distinct('pk').count():
+                    return JsonResponse(data, status=status) 
+
+
         status, data = 401, {'status':'false','message':'Error occured try again.'}
         
         if int(group_id) in [3,4]:
             
             task_obj=CeleryTaskProgress.objects.create(user=request.user, description="Removal of UserRoles", task_type=0)
             if task_obj:
-                task = UnassignUser.delay(task_obj.id,user_id,sites, regions, projects, group_id)
+                task = UnassignUser.delay(task_obj.id, user_id, sites, regions, projects, group_id)
                 task_obj.task_id = task.id
                 task_obj.save()
-                status, data = 200, {'status':'True', 'ids':ids, 'projects':projects, 'regions':regions, 'sites': sites, 'message':'Sucess, the roles are being removed. You will be notified after all the roles are removed. '}
+                status, data = 200, {'status':'True', 'ids':ids, 'projects':project_ids, 'regions':region_ids, 'sites': sites, 'message':'Sucess, the roles are being removed. You will be notified after all the roles are removed. '}
         
         return JsonResponse(data, status=status)

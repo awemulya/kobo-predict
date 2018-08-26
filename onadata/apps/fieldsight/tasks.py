@@ -101,7 +101,7 @@ def UnassignUser(task_obj_id, user_id, sites, regions, projects, group_id):
 
             if regions:
                 for region_id in regions:
-                    sites = Site.objects.filter(region_id=region_id[1:])    
+                    sites = Site.objects.filter(region_id=region_id)    
                     count = count + sites.count()
                     for site_id in sites:
                         roles=UserRole.objects.filter(user_id=user, site_id = site_id, ended_at=None)
@@ -111,7 +111,7 @@ def UnassignUser(task_obj_id, user_id, sites, regions, projects, group_id):
 
             if projects:
                 for project_id in project: 
-                    regions = Region.objects.get(project_id = project_id[1:])
+                    regions = Region.objects.get(project_id = project_id)
                     for region in regions:
                         sites = Site.objects.filter(region_id=region)    
                         count = count + sites.count()
@@ -128,7 +128,7 @@ def UnassignUser(task_obj_id, user_id, sites, regions, projects, group_id):
             else:
                 extra_message= "removed " + count + " Supervisor Roles"
 
-            noti = project.logs.create(source=task.user, type=12, title="Remove Roles",
+            noti = project.logs.create(source=task.user, type=35, title="Remove Roles",
                                        content_object=user, recipient=task.user,
                                        extra_message=extra_message)
     except Exception as e:
