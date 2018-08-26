@@ -1,6 +1,7 @@
 import reversion
 
 from datetime import datetime
+from hashlib import sha256
 
 from django.contrib.gis.db import models
 from django.db.models.signals import post_save
@@ -101,9 +102,12 @@ def update_xform_submission_count_delete(sender, instance, **kwargs):
 
 @reversion.register
 class Instance(models.Model):
+    XML_HASH_LENGTH = 64
+    DEFAULT_XML_HASH = None
     json = JSONField(default={}, null=False)
     xml = models.TextField()
-    # needs site/proj later
+    xml_hash = models.CharField(max_length=XML_HASH_LENGTH, db_index=True, null=True,
+                                default=DEFAULT_XML_HASH)
     user = models.ForeignKey(User, related_name='instances', null=True)
     xform = models.ForeignKey(XForm, null=True, related_name='instances')
     survey_type = models.ForeignKey(SurveyType)
@@ -204,6 +208,13 @@ class Instance(models.Model):
                 self.uuid = uuid
         set_uuid(self)
 
+    def _populate_xml_hash(self):
+        '''
+        Populate the `xml_hash` attribute of this `Instance` based on the content of the `xml`
+        attribute.
+        '''
+        self.xml_hash = self.get_hash(self.xml)
+
     def get(self, abbreviated_xpath):
         self._set_parser()
         return self._parser.get(abbreviated_xpath)
@@ -250,6 +261,19 @@ class Instance(models.Model):
         self._set_parser()
         return self._parser.get_root_node_name()
 
+    @staticmethod
+    def get_hash(input_string):
+        '''
+        Compute the SHA256 hash of the given string. A wrapper to standardize hash computation.
+
+        :param basestring input_sting: The string to be hashed.
+        :return: The resulting hash.
+        :rtype: str
+        '''
+        if isinstance(input_string, unicode):
+            input_string = input_string.encode('utf-8')
+        return sha256(input_string).hexdigest()
+
     @property
     def point(self):
         gc = self.geom
@@ -269,6 +293,7 @@ class Instance(models.Model):
         self._set_json()
         self._set_survey_type()
         self._set_uuid()
+        self._populate_xml_hash()
         super(Instance, self).save(*args, **kwargs)
 
     def set_deleted(self, deleted_at=timezone.now()):

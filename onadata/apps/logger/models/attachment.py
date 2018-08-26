@@ -13,6 +13,18 @@ def upload_to(instance, filename):
         'attachments',
         os.path.split(filename)[1])
 
+def hash_attachment_contents(contents):
+    return u'%s' % md5(contents).hexdigest()
+
+def generate_attachment_filename(instance, filename):
+    xform = instance.xform
+    return os.path.join(
+        xform.user.username,
+        'attachments',
+        xform.uuid or 'form',
+        instance.uuid or 'instance',
+        os.path.split(filename)[1])
+
 
 class Attachment(models.Model):
     instance = models.ForeignKey(Instance, related_name="attachments")
