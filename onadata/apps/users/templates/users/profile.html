@@ -243,7 +243,7 @@
 								</div>
 							</div>
 							{% endif %}
-							{% if own_orgs %}
+							{% if is_super_admin or own_orgs %}
 							<div class="margin-top bg-white padding">
 								<div clas="widget-head">
 									<h5>{% trans 'Remove' %} {% trans 'Supervisor' %} {% trans 'Roles' %}</h5>
