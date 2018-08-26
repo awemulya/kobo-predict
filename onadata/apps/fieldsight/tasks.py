@@ -113,16 +113,13 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
 
             if projects:
                 for project_id in projects: 
-                    regions = Region.objects.filter(project_id = project_id[1:])
-                    for region in regions:
-                        sites = Site.objects.filter(region_id=region)    
-                        
-                        for site_id in sites:
-                            roles=UserRole.objects.filter(user_id=user, site_id = site_id, ended_at=None)
-                            for role in roles:
-                                userrole.ended_at = datetime.datetime.now()
-                                userrole.save()
-                                count = count + 1
+                    sites = Site.objects.filter(project_id = project_id[1:])    
+                    for site_id in sites:
+                        roles=UserRole.objects.filter(user_id=user, site_id = site_id, ended_at=None)
+                        for role in roles:
+                            userrole.ended_at = datetime.datetime.now()
+                            userrole.save()
+                            count = count + 1
 
             task.status = 2
             task.save()
