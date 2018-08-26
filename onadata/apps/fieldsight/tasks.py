@@ -124,9 +124,9 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
             task.status = 2
             task.save()
             if group_id == "3":
-                extra_message= "removed " + count + "Reviewer Roles"
+                extra_message= "removed " + str(count) + "Reviewer Roles"
             else:
-                extra_message= "removed " + count + " Supervisor Roles"
+                extra_message= "removed " + str(count) + " Supervisor Roles"
 
             noti = project.logs.create(source=task.user, type=35, title="Remove Roles",
                                        content_object=user.user_profile, recipient=task.user,
