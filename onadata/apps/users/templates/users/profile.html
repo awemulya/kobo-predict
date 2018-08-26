@@ -243,10 +243,10 @@
 								</div>
 							</div>
 							{% endif %}
-							{% if is_super_admin %}
+							{% if own_orgs %}
 							<div class="margin-top bg-white padding">
 								<div clas="widget-head">
-									<h4>{% trans 'Remove' %} {% trans 'Roles' %}</h4>
+									<h5>{% trans 'Remove' %} {% trans 'Supervisor' %} {% trans 'Roles' %}</h5>
 								</div>
 								<div class="widget-body">
 									    <div id="app">
@@ -260,7 +260,7 @@
 									    	</div>
 									    	<br>
 									    	<div>
-										      <button class="btn btn-xs btn-danger" @click="removeRoles('4')">Remove Supervisor Roles</button>
+										      <button class="btn btn-xs btn-danger" @click="removeRoles('4')">{% trans 'Remove' %} {% trans 'Selected' %} {% trans 'Supervisor' %} {% trans 'Roles' %}</button>
 										    </div>
 										   
 									    </div>
