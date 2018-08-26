@@ -3181,6 +3181,6 @@ class UnassignUserRegionAndSites(View):
                 task = UnassignUser.delay(task_obj.id,user_id,sites, regions, projects, group_id)
                 task_obj.task_id = task.id
                 task_obj.save()
-                status, data = 200, {'status':'True','message':'Sucess, the roles are being removed. You will be notified after all the roles are removed. '}
+                status, data = 200, {'status':'True', 'ids':ids, 'projects':projects, 'regions':regions, 'sites': sites, 'message':'Sucess, the roles are being removed. You will be notified after all the roles are removed. '}
         
         return JsonResponse(data, status=status)

@@ -359,7 +359,7 @@ class UserSitelistMinimalViewset(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     
     def filter_queryset(self, queryset):
-        sites = UserRole.objects.filter(user_id=self.kwargs.get('user_id'), project_id=self.kwargs.get('pk'), group_id=self.kwargs.get('group_id'), site_isnull=False, ended_at=None).values('site_id')
+        sites = UserRole.objects.filter(user_id=self.kwargs.get('user_id'), project_id=self.kwargs.get('pk'), group_id=self.kwargs.get('group_id'), site__isnull=False, ended_at=None).values('site_id')
         return queryset.filter(pk__in=sites)
 
 def all_notification(user,  message):

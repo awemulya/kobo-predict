@@ -243,6 +243,32 @@
 								</div>
 							</div>
 							{% endif %}
+							{% if is_super_admin %}
+							<div class="margin-top bg-white padding">
+								<div clas="widget-head">
+									<h4>{% trans 'Remove' %} {% trans 'Roles' %}</h4>
+								</div>
+								<div class="widget-body">
+									    <div id="app">
+									    	<div>
+									    		<treeselect :multiple="true"
+												  :options="options"
+												  :load-options="loadOptionsSupervisor"
+												  :auto-load-root-options="false"
+												  placeholder="Select Roles to remove ..."
+												  v-model="value" />
+									    	</div>
+									    	<br>
+									    	<div>
+										      <button class="btn btn-xs btn-danger" @click="removeRoles('4')">Remove Supervisor Roles</button>
+										    </div>
+										   
+									    </div>
+								</div>
+
+							</div>
+							{% endif %}
+
 
 							{% if not roles_org and not roles_project and not roles_site and roles == "Super Admin" %}
 							<div class="widget-info margin-top bg-white padding">
@@ -259,28 +285,8 @@
 							</div>				
 							{% endif %}
 
-							<div class="margin-top bg-white padding">
-								<div clas="widget-head">
-									Remove Roles
-								</div>
-								<div class="widget-body">
-									    <div id="app">
-									    	<div>
-									    		<treeselect :multiple="true"
-												  :options="options"
-												  :load-options="loadOptionsSupervisor"
-												  :auto-load-root-options="false"
-												  placeholder="Select Roles to remove ..."
-												  v-model="value" />
-									    	</div>
-									    	<div>
-										      <button @click="removeRoles('4')">Remove Supervisor Roles</button>
-										    </div>
-										   
-									    </div>
-								</div>
 
-							</div>
+						</div>
 						{% if responses %}
 						<div class="col-md-12 col-lg-4">
 							<div class="widget-info margin-top bg-white padding">
@@ -414,7 +420,7 @@
 
 				}
 	        	
-	        	this.$http.get('/fieldsight/api/project/user/regions/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/4/').then(successCallback, errorCallback);
+	        	this.$http.get('/fieldsight/api/region/' + parentNode.id.slice( 1 ) +'/subregionsandsites/' + configure_settings.user_id + '/4/').then(successCallback, errorCallback);
 	        }
 
 	      }
@@ -439,9 +445,9 @@
 				body = {'ids': this.valuesR, 'group': group_id }
 			}
 			else{
-				body = {'ids': this.valuesS, 'group': group_id }
+				body = {'ids': this.values, 'group': group_id }
 			}
-			this.$http.post('api/remove_roles/'+configure_settings.user_id, body, options).then(successCallback, errorCallback);     
+			this.$http.post('api/remove_roles/'+configure_settings.user_id +'/', body, options).then(successCallback, errorCallback);     
 
 			}
 		},
