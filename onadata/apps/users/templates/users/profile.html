@@ -256,7 +256,7 @@
 												  :load-options="loadOptionsSupervisor"
 												  :auto-load-root-options="false"
 												  placeholder="Select Roles to remove ..."
-												  v-model="value" />
+												  v-model="values" />
 									    	</div>
 									    	<br>
 									    	<div>
@@ -330,8 +330,8 @@
 
         	{% load l10n %}
 			configure_settings =  {};
-			configure_settings.user_id = {{ obj.user.id }};
-    
+			configure_settings.user_id = "{{ obj.user.id }}";
+    		configure_settings.csrf_token = "{{ csrf_token }}";
     // register the component
     
 
@@ -342,7 +342,7 @@
       el: '#app',
 
 	  data: () => ({
-	    value: null,
+	    values: null,
 	    options: null,
 	  }),
 
@@ -440,14 +440,15 @@
 			  console.log('failed');
 			}
 			
-			options = {headers: {'X-CSRFToken':this.csrf}};
+			options = {headers: {'X-CSRFToken':configure_settings.csrf_token}};
 			if (group_id == '3'){
 				body = {'ids': this.valuesR, 'group': group_id }
 			}
 			else{
 				body = {'ids': this.values, 'group': group_id }
 			}
-			this.$http.post('api/remove_roles/'+configure_settings.user_id +'/', body, options).then(successCallback, errorCallback);     
+			console.log(body)
+			this.$http.post('/fieldsight/api/remove_roles/'+configure_settings.user_id +'/', body, options).then(successCallback, errorCallback);     
 
 			}
 		},

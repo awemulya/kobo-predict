@@ -3164,13 +3164,13 @@ class SubRegionAndSitesAPI(View):
 class UnassignUserRegionAndSites(View):
     def post(self, request, pk, **kwargs):
         data = json.loads(self.request.body)
-        ids = data.get('fs_ids')
+        ids = data.get('ids')
         projects = [k for k in ids if 'p' in k] 
         ids = list(set(ids) - set(projects))
         regions = [k for k in ids if 'r' in k]
         sites = list(set(ids) - set(regions))
         user_id= pk
-        group_id = data.get('group_id')
+        group_id = data.get('group')
 
         status, data = 401, {'status':'false','message':'Error occured try again.'}
         
