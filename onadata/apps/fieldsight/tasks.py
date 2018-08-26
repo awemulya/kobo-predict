@@ -111,7 +111,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
 
             if projects:
                 for project_id in projects: 
-                    regions = Region.objects.get(project_id = project_id[1:])
+                    regions = Region.objects.filter(project_id = project_id[1:])
                     for region in regions:
                         sites = Site.objects.filter(region_id=region)    
                         count = count + sites.count()
