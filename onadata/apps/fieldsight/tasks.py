@@ -79,7 +79,7 @@ def site_download_zipfile(task_prog_obj_id, size):
     
 
 @shared_task()
-def UnassignUser(task_obj_id, user_id, sites, regions, projects, group_id):
+def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
     user = User.objects.get(pk=user_id)
     time.sleep(2)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
