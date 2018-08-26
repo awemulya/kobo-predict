@@ -128,7 +128,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
             else:
                 extra_message= "removed " + str(count) + " Supervisor Roles"
 
-            noti = project.logs.create(source=task.user, type=35, title="Remove Roles",
+            noti = task.logs.create(source=task.user, type=35, title="Remove Roles",
                                        content_object=user.user_profile, recipient=task.user,
                                        extra_message=extra_message)
     except Exception as e:
