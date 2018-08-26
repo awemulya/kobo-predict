@@ -5,6 +5,8 @@
 {% block content %}
 	
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.css">
+     <script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
+     <script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
     <script type="text/javascript">
     	
       Vue.component('my-button', {
@@ -257,7 +259,7 @@
 							</div>				
 							{% endif %}
 
-							<div class="widget-info margin-top bg-white padding">
+							<div class="margin-top bg-white padding">
 								<div clas="widget-head">
 									Remove Roles
 								</div>
@@ -265,28 +267,16 @@
 									    <div id="app">
 									    	<div>
 									    		<treeselect :multiple="true"
-												  :options="optionsS"
+												  :options="options"
 												  :load-options="loadOptionsSupervisor"
 												  :auto-load-root-options="false"
 												  placeholder="Select Roles to remove ..."
-												  v-model="valueS" />
+												  v-model="value" />
 									    	</div>
 									    	<div>
 										      <button @click="removeRoles('4')">Remove Supervisor Roles</button>
 										    </div>
-										    <br>
-										    <div>
-									    		<treeselect :multiple="true"
-												  :options="optionsR"
-												  :load-options="loadOptionsReviewer"
-												  :auto-load-root-options="false"
-												  placeholder="Select Roles to remove ..."
-												  v-model="valueR" />
-									    	</div>
-									    	<div>
-										      <button @click="removeRoles('3')">Remove Reviewer Roles</button>
-										    </div>
-
+										   
 									    </div>
 								</div>
 
@@ -328,21 +318,8 @@
                 </section>
 				
 			</div>
+			<script src="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.js"></script>
 
-{%block extrascript %}
-    <script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
-    <!-- include vue-treeselect & its styles. you can change the version tag to better suit your need. -->
-    <script src="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.js"></script>
-		<script src="assets/js/vendor/slick.min.js"></script>
-		<script>
-			$(document).ready(function(){ 
-				$(".max-513-scolling").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
-				$(".max-260-scroll").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
-				
-				
-			});
-		</script>
-        <script src="assets/js/plugins.js"></script>
         <script>
 
         	{% load l10n %}
@@ -359,10 +336,8 @@
       el: '#app',
 
 	  data: () => ({
-	    valueR: null,
-	    optionsR: null,
-	    valueS: null,
-	    optionsS: null,
+	    value: null,
+	    options: null,
 	  }),
 
 	  methods: {
@@ -381,152 +356,71 @@
 		  if (action === LOAD_ROOT_OPTIONS) {
 		  	function successCallback(response) {
 	        		console.log(response);
-	        		this.options = response
+	        		var projects = response.body
+				    projects.forEach(function(val,index){ 
+				       projects[index]['id'] = 'p'+val.id
+					   projects[index]['level'] = "project"
+					   projects[index]['children'] = null 
+					})
+					this.options = projects
 				    callback()
 				}
 	        	
-	        	self.$http.get('/fieldsight/api/user/projects/' + configure_settings.user_id + '/4/', {
-				    params: options
-				}).then(successCallback, errorCallback);
+	        	this.$http.get('/fieldsight/api/user/projects/' + configure_settings.user_id + '/4/').then(successCallback, errorCallback);
 
 		  }
 
 	      else if (action === LOAD_CHILDREN_OPTIONS) {
-	        if (parentNode.level == "project" && parentNode.is_clustered == false)
+	        if (parentNode.level == "project" && parentNode.cluster_sites === false)
 	        {
 	        	function successCallback(response) {
 	        		console.log(response);
-	        		parentNode.children = response
+	        		parentNode.children = response.body
 				    callback()
 				}
 	        	
-	        	self.$http.get('/fieldsight/api/project/user/sites/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/4/', {
-				    params: options
-				}).then(successCallback, errorCallback);
+	        	this.$http.get('/fieldsight/api/project/user/sites/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/4/').then(successCallback, errorCallback);
 
 				
 
 	        }
-	        else if (parentNode.level == "project" && parentNode.is_clustered == true)
+	        else if (parentNode.level == "project" && parentNode.cluster_sites === true)
 	        {
 	        	function successCallback(response) {
-				    var regions = response.region
+				    var regions = response.body.regions
 				    regions.forEach(function(val,index){ 
 					   regions[index]['id'] = 'r'+val.id
 					   regions[index]['level'] = 'region'
 					   regions[index]['children'] = null 
 					})
-					parentNode.children = regions.concat(response.sites)
+					parentNode.children = regions.concat(response.body.sites)
 				    callback()
 				}
 	        	
-	        	self.$http.get('/fieldsight/api/project/user/regions/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/4/', {
-				    params: options
-				}).then(successCallback, errorCallback);
+	        	this.$http.get('/fieldsight/api/project/user/regions/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/4/').then(successCallback, errorCallback);
 
 	        }
 	        else if(parentNode.level == "region")
 	        {
 	        	function successCallback(response) {
-	        		var regions = response.sub_region
+	        		var regions = response.body.sub_regions
 				    regions.forEach(function(val,index){ 
 					   regions[index]['id'] = 'r'+val.id
 					   regions[index]['level'] = 'region'
 					   regions[index]['children'] = null 
 					})
-					parentNode.children = regions.concat(response.sites)
+					parentNode.children = regions.concat(response.body.sites)
 				    callback()
 
 				}
 	        	
-	        	self.$http.get('/fieldsight/api/project/user/regions/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/4/', {
-				    params: options
-				}).then(successCallback, errorCallback);
+	        	this.$http.get('/fieldsight/api/project/user/regions/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/4/').then(successCallback, errorCallback);
 	        }
 
 	      }
 	    },
 
-	    loadOptionsReviewer({ action, parentNode, callback }) {
-	      // Typically, do the AJAX stuff here.
-	      // Once the server has responded,
-	      // assign children options to the parent node & call the callback.
-
-
-		function errorCallback() {
-		    callback(new Error('Failed to load options: network error.'))
-		}
-
-
-
-		  if (action === LOAD_ROOT_OPTIONS) {
-		  	function successCallback(response) {
-	        		console.log(response);
-	        		this.options = response
-				    callback()
-				}
-	        	
-	        	self.$http.get('/fieldsight/api/user/projects/' + configure_settings.user_id + '/3/', {
-				    params: options
-				}).then(successCallback, errorCallback);
-
-		  }
-
-	      else if (action === LOAD_CHILDREN_OPTIONS) {
-	        if (parentNode.level == "project" && parentNode.is_clustered == false)
-	        {
-	        	function successCallback(response) {
-	        		console.log(response);
-	        		parentNode.children = response
-				    callback()
-				}
-	        	
-	        	self.$http.get('/fieldsight/api/project/user/sites/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/3/', {
-				    params: options
-				}).then(successCallback, errorCallback);
-
-				
-
-	        }
-	        else if (parentNode.level == "project" && parentNode.is_clustered == true)
-	        {
-	        	function successCallback(response) {
-				    var regions = response.region
-				    regions.forEach(function(val,index){ 
-					   regions[index]['id'] = 'r'+val.id
-					   regions[index]['level'] = 'region'
-					   regions[index]['children'] = null 
-					})
-					parentNode.children = regions.concat(response.sites)
-				    callback()
-				}
-	        	
-	        	self.$http.get('/fieldsight/api/project/user/regions/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/3/', {
-				    params: options
-				}).then(successCallback, errorCallback);
-
-	        }
-	        else if(parentNode.level == "region")
-	        {
-	        	function successCallback(response) {
-	        		var regions = response.sub_region
-				    regions.forEach(function(val,index){ 
-					   regions[index]['id'] = 'r'+val.id
-					   regions[index]['level'] = 'region'
-					   regions[index]['children'] = null 
-					})
-					parentNode.children = regions.concat(response.sites)
-				    callback()
-
-				}
-	        	
-	        	self.$http.get('/fieldsight/api/project/user/regions/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/3/', {
-				    params: options
-				}).then(successCallback, errorCallback);
-	        }
-
-	      }
-	    },
+	  
 
 
 	    removeRoles: function (group_id){
@@ -554,5 +448,19 @@
 
 	 })
 	  </script>
+
+{%block extrascript %}
+   		<script src="assets/js/vendor/slick.min.js"></script>
+		<script>
+			$(document).ready(function(){ 
+				$(".max-513-scolling").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+				$(".max-260-scroll").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+				
+				
+			});
+		</script>
+        <script src="assets/js/plugins.js"></script>
+    <!-- include vue-treeselect & its styles. you can change the version tag to better suit your need. -->
+    
 {% endblock %}
 {% endblock %}
