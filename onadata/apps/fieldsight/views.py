@@ -3165,9 +3165,9 @@ class UnassignUserRegionAndSites(View):
     def post(self, request, pk, **kwargs):
         data = json.loads(self.request.body)
         ids = data.get('ids')
-        projects = [k for k in ids if 'p' in k] 
+        projects = [k for k in ids if 'p' in str(k)] 
         ids = list(set(ids) - set(projects))
-        regions = [k for k in ids if 'r' in k]
+        regions = [k for k in ids if 'r' in str(k)]
         sites = list(set(ids) - set(regions))
         user_id= pk
         group_id = data.get('group')
