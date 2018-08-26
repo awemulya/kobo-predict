@@ -62,7 +62,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from onadata.apps.fieldsight.tasks import generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
+from onadata.apps.fieldsight.tasks import UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
 from .generatereport import PDFReport
 from django.utils import translation
 from django.conf import settings
