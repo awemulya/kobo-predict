@@ -11,7 +11,7 @@ from onadata.apps.fieldsight.models import Organization, Project, Site, Region, 
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from channels import Group as ChannelGroup
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import User, Group
 from onadata.apps.fieldsight.fs_exports.formParserForExcelReport import parse_form_response
 from io import BytesIO
 from django.shortcuts import get_object_or_404
