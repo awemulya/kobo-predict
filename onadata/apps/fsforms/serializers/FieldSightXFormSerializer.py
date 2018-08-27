@@ -211,7 +211,7 @@ class FSXFormSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FieldSightXF
-        exclude = ()
+        exclude = ('shared_level',)
 
     @check_obj
     def get_title(self, obj):
@@ -246,7 +246,6 @@ class FSXFormSerializer(serializers.ModelSerializer):
 
 
 class XformSerializer(serializers.ModelSerializer):
-
 
     class Meta:
         model = XForm

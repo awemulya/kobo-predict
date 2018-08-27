@@ -379,13 +379,16 @@ class FieldSightParsedInstance(ParsedInstance):
 
 
 
+
 class FInstanceManager(models.Manager):
     def get_queryset(self):
         return super(FInstanceManager, self).get_queryset().filter(is_deleted=False)
 
+
 class FInstanceDeletedManager(models.Manager):
     def get_queryset(self):
         return super(FInstanceManager, self).get_queryset().filter(is_deleted=True)
+
 
 class FInstance(models.Model):
     instance = models.OneToOneField(Instance, related_name='fieldsight_instance')
