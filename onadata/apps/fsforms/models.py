@@ -274,6 +274,7 @@ class FieldSightXF(models.Model):
         if self.schedule: return self.schedule.name
 
     def clean(self):
+        print("called")
         if self.is_staged:
             if FieldSightXF.objects.filter(stage=self.stage).exists():
                 if not FieldSightXF.objects.filter(stage=self.stage).pk == self.pk:
@@ -287,13 +288,19 @@ class FieldSightXF(models.Model):
                         'xf': ValidationError(_('Duplicate Schedule Data')),
                     })
         if not self.is_scheduled and not self.is_staged:
-            if FieldSightXF.objects.filter(xf=self.xf, is_scheduled=False, is_staged=False,
-                                           site=self.site, project=self.project).exists():
-                if not FieldSightXF.objects.filter(xf=self.xf, is_scheduled=False, is_staged=False,
-                                           site=self.site, project=self.project)[0].pk == self.pk:
+            if self.site:
+                if FieldSightXF.objects.filter(xf=self.xf, is_scheduled=False, is_staged=False,project=self.site.project).exists():
                     raise ValidationError({
-                        'xf': ValidationError(_('Duplicate General Form Data')),
+                        'xf': ValidationError(_('Form Already Used in Project Level')),
                     })
+            else:
+                if FieldSightXF.objects.filter(xf=self.xf, is_scheduled=False, is_staged=False,
+                                               site=self.site, project=self.project).exists():
+                    if not FieldSightXF.objects.filter(xf=self.xf, is_scheduled=False, is_staged=False,
+                                               site=self.site, project=self.project)[0].pk == self.pk:
+                        raise ValidationError({
+                            'xf': ValidationError(_('Duplicate General Form Data')),
+                        })
 
     @staticmethod
     def get_xform_id_list(site_id):

@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
-from rest_framework import viewsets
+from django.utils.translation import ugettext_lazy as _
+from rest_framework import viewsets, serializers
 from rest_framework.pagination import PageNumberPagination
 from onadata.apps.fsforms.models import Stage, FieldSightXF
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormSerializer, FSXFAllDetailSerializer
@@ -79,8 +80,7 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
                           description='{0} assigned new General form  {1} to {2} '.format(
                               self.request.user.get_full_name(),
                               fxf.xf.title,
-                              fxf.project.name
-                          ))
+                              fxf.project.name))
         else:
             org = fxf.site.project.organization
 
