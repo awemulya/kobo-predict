@@ -238,21 +238,21 @@ def copy_schedule_to_sites(schedule, fxf_status, pk):
         raise copy_schedule_to_sites.retry(countdown=seconds_to_wait)
 
 
-@shared_task(max_retries=10)
-def copy_to_sites(fxf):
-    try:
-        with transaction.atomic():
-            for site in fxf.project.sites.filter(is_active=True):
-                child, created = FieldSightXF.objects.get_or_create(is_staged=False, is_scheduled=False, xf=fxf.xf, site=site, fsform=fxf)
-                child.is_deployed = True
-                child.default_submission_status = fxf.default_submission_status
-                child.save()
-    except Exception as e:
-        print(str(e))
-        num_retries = copy_to_sites.request.retries
-        seconds_to_wait = 2.0 ** num_retries
-        # First countdown will be 1.0, then 2.0, 4.0, etc.
-        raise copy_to_sites.retry(countdown=seconds_to_wait)
+# @shared_task(max_retries=10)
+# def copy_to_sites(fxf):
+#     try:
+#         with transaction.atomic():
+#             for site in fxf.project.sites.filter(is_active=True):
+#                 child, created = FieldSightXF.objects.get_or_create(is_staged=False, is_scheduled=False, xf=fxf.xf, site=site, fsform=fxf)
+#                 child.is_deployed = True
+#                 child.default_submission_status = fxf.default_submission_status
+#                 child.save()
+#     except Exception as e:
+#         print(str(e))
+#         num_retries = copy_to_sites.request.retries
+#         seconds_to_wait = 2.0 ** num_retries
+#         # First countdown will be 1.0, then 2.0, 4.0, etc.
+#         raise copy_to_sites.retry(countdown=seconds_to_wait)
 
 #
 #
@@ -395,26 +395,4 @@ def copy_to_sites(fxf):
 #         raise copy_schedule_to_sites.retry(countdown=seconds_to_wait)
 #
 #
-# @shared_task(max_retries=10)
-# def copy_to_sites(fxf):
-#     try:
-#         print("general form deployed with id", fxf.id)
-#     except Exception as e:
-#         print(str(e))
-#         num_retries = copy_to_sites.request.retries
-#         seconds_to_wait = 2.0 ** num_retries
-#         # First countdown will be 1.0, then 2.0, 4.0, etc.
-#         raise copy_to_sites.retry(countdown=seconds_to_wait)
-#
-#
-#
-# @shared_task
-# def add(x, y):
-#     try:
-#         x + y
-#     except TypeError as e:
-#         num_retries = copy_to_sites.request.retries
-#         seconds_to_wait = 2.0 ** num_retries
-#         raise copy_to_sites.retry(countdown=seconds_to_wait)
-#     return x + y
-#
+

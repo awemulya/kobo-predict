@@ -1,19 +1,13 @@
 from __future__ import unicode_literals
-import json
-from django.db import transaction
-
 from rest_framework import viewsets
-
+from rest_framework.pagination import PageNumberPagination
 from onadata.apps.fsforms.models import Stage, FieldSightXF
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormSerializer, FSXFAllDetailSerializer
-from onadata.apps.fsforms.serializers.StageSerializer import StageSerializer
-from onadata.apps.fsforms.tasks import copy_to_sites
-from onadata.apps.fsforms.utils import send_message
-from channels import Group as ChannelGroup
-from rest_framework.pagination import PageNumberPagination
+
 
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 10
+
 
 class FieldSightXFormViewSet(viewsets.ModelViewSet):
     """
@@ -45,6 +39,7 @@ class SurveyFormsViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(site__id=pk)
         return queryset
 
+
 class GeneralFormsViewSet(viewsets.ModelViewSet):
     """
     General Forms
@@ -73,32 +68,23 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
         if not fxf.project:
             fxf.from_project = False
         fxf.save()
-        org = None
         if fxf.project:
             if not fxf.is_survey:    
                 org = fxf.project.organization
-                arguments = {'fxf': fxf}
-                copy_to_sites.apply_async((), arguments, countdown=2)
-                noti = fxf.logs.create(source=self.request.user, type=18, title="General",
-                                                  organization=org,
-                                                  project = fxf.project,
-                                                  content_object=fxf,
-                                                  extra_object=fxf.project,
-                                                  description='{0} assigned new General form  {1} to {2} '.format(
-                                                      self.request.user.get_full_name(),
-                                                      fxf.xf.title,
-                                                      fxf.project.name
-                                                  ))
-
-                result = {}
-                result['description'] = noti.description
-                result['url'] = noti.get_absolute_url()
-                # ChannelGroup("site-{}".format(fxf.site.id)).send({"text": json.dumps(result)})
-                ChannelGroup("project-{}".format(fxf.project.id)).send({"text": json.dumps(result)})
+                fxf.logs.create(source=self.request.user, type=18, title="General",
+                          organization=org,
+                          project = fxf.project,
+                          content_object=fxf,
+                          extra_object=fxf.project,
+                          description='{0} assigned new General form  {1} to {2} '.format(
+                              self.request.user.get_full_name(),
+                              fxf.xf.title,
+                              fxf.project.name
+                          ))
         else:
             org = fxf.site.project.organization
 
-            noti = fxf.logs.create(source=self.request.user, type=19, title="General",
+            fxf.logs.create(source=self.request.user, type=19, title="General",
                                               organization=org,
                                               project=fxf.site.project,
                                               site = fxf.site,
@@ -109,11 +95,6 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
                                                   fxf.xf.title,
                                                   fxf.site.name
                                               ))
-            result = {}
-            result['description'] = noti.description
-            result['url'] = noti.get_absolute_url()
-            ChannelGroup("site-{}".format(fxf.site.id)).send({"text": json.dumps(result)})
-            ChannelGroup("project-{}".format(fxf.site.project.id)).send({"text": json.dumps(result)})
 
 
 class FormDetailViewset(viewsets.ReadOnlyModelViewSet):
