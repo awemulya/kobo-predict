@@ -4,33 +4,8 @@
 {% block page-title %} {% trans 'Profile '  %}{{obj.user }}{% endblock %}
 {% block content %}
 	
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.css">
-     <script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
-     <script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
-    <script type="text/javascript">
-    	
-      Vue.component('my-button', {
-        template: '\
-          <button class="normal"\
-            :class="type"\
-            :disabled="disabled"\
-            @click="callback($event)"\
-            >\
-              <slot></slot>\
-          </button>\
-        ',
-        props: {
-          type: String,
-          disabled: Boolean
-        },
-        methods: {
-          callback: function(e) {
-            this.$emit('click', e);
-          }
-        }
-      });
-    
-    </script>
+   
+   
 	<div id="main-content" class="padding">
 				<section class="panel">
 				{% if messages %}
@@ -249,21 +224,11 @@
 									<h5>{% trans 'Remove' %} {% trans 'Supervisor' %} {% trans 'Roles' %}</h5>
 								</div>
 								<div class="widget-body">
-									    <div id="app">
-									    	<div>
-									    		<treeselect :multiple="true"
-												  :options="options"
-												  :load-options="loadOptionsSupervisor"
-												  :auto-load-root-options="false"
-												  placeholder="Select Roles to remove ..."
-												  v-model="values" />
-									    	</div>
-									    	<br>
-									    	<div>
-										      <button class="btn btn-xs btn-danger" @click="removeRoles('4')">{% trans 'Remove' %} {% trans 'Selected' %} {% trans 'Supervisor' %} {% trans 'Roles' %}</button>
-										    </div>
-										   
+									    
+									    <div id="removeSRole">
+									    	
 									    </div>
+									   
 								</div>
 
 							</div>
@@ -325,149 +290,26 @@
                 </section>
 				
 			</div>
-			<script src="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.js"></script>
-
-        <script>
-
-        	{% load l10n %}
-			configure_settings =  {};
-			configure_settings.user_id = "{{ obj.user.id }}";
-    		configure_settings.csrf_token = "{{ csrf_token }}";
-    // register the component
-    
-
-    Vue.component('treeselect', VueTreeselect.Treeselect)
-    var LOAD_CHILDREN_OPTIONS = this.VueTreeselect.LOAD_CHILDREN_OPTIONS
-    var LOAD_ROOT_OPTIONS = this.VueTreeselect.LOAD_ROOT_OPTIONS
-    data=new Vue({
-      el: '#app',
-
-	  data: () => ({
-	    values: null,
-	    options: null,
-	  }),
-
-	  methods: {
-	    loadOptionsSupervisor({ action, parentNode, callback }) {
-	      // Typically, do the AJAX stuff here.
-	      // Once the server has responded,
-	      // assign children options to the parent node & call the callback.
-
-
-		function errorCallback() {
-		    callback(new Error('Failed to load options: network error.'))
-		}
-
-
-
-		  if (action === LOAD_ROOT_OPTIONS) {
-		  	function successCallback(response) {
-	        		console.log(response);
-	        		var projects = response.body
-				    projects.forEach(function(val,index){ 
-				       projects[index]['id'] = 'p'+val.id
-					   projects[index]['level'] = "project"
-					   projects[index]['children'] = null 
-					})
-					this.options = projects
-				    callback()
-				}
-	        	
-	        	this.$http.get('/fieldsight/api/user/projects/' + configure_settings.user_id + '/4/').then(successCallback, errorCallback);
-
-		  }
-
-	      else if (action === LOAD_CHILDREN_OPTIONS) {
-	        if (parentNode.level == "project" && parentNode.cluster_sites === false)
-	        {
-	        	function successCallback(response) {
-	        		console.log(response);
-	        		parentNode.children = response.body
-				    callback()
-				}
-	        	
-	        	this.$http.get('/fieldsight/api/project/user/sites/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/4/').then(successCallback, errorCallback);
-
-				
-
-	        }
-	        else if (parentNode.level == "project" && parentNode.cluster_sites === true)
-	        {
-	        	function successCallback(response) {
-				    var regions = response.body.regions
-				    regions.forEach(function(val,index){ 
-					   regions[index]['id'] = 'r'+val.id
-					   regions[index]['level'] = 'region'
-					   regions[index]['children'] = null 
-					})
-					parentNode.children = regions.concat(response.body.sites)
-				    callback()
-				}
-	        	
-	        	this.$http.get('/fieldsight/api/project/user/regions/' + parentNode.id.slice( 1 ) +'/' + configure_settings.user_id + '/4/').then(successCallback, errorCallback);
-
-	        }
-	        else if(parentNode.level == "region")
-	        {
-	        	function successCallback(response) {
-	        		var regions = response.body.sub_regions
-				    regions.forEach(function(val,index){ 
-					   regions[index]['id'] = 'r'+val.id
-					   regions[index]['level'] = 'region'
-					   regions[index]['children'] = null 
-					})
-					parentNode.children = regions.concat(response.body.sites)
-				    callback()
-
-				}
-	        	
-	        	this.$http.get('/fieldsight/api/region/' + parentNode.id.slice( 1 ) +'/subregionsandsites/' + configure_settings.user_id + '/4/').then(successCallback, errorCallback);
-	        }
-
-	      }
-	    },
-
-	  
-
-
-	    removeRoles: function (group_id){
-	    	function successCallback(response) {
-	          alert(response.body.message);
-	          
-			}
 			
-			function errorCallback() {
-			  alert('Failed to complete the request. Please try again.')
-			  console.log('failed');
-			}
-			
-			options = {headers: {'X-CSRFToken':configure_settings.csrf_token}};
-			if (group_id == '3'){
-				body = {'ids': this.valuesR, 'group': group_id }
-			}
-			else{
-				body = {'ids': this.values, 'group': group_id }
-			}
-			console.log(body)
-			this.$http.post('/fieldsight/api/remove_roles/'+configure_settings.user_id +'/', body, options).then(successCallback, errorCallback);     
-
-			}
-		},
-
-	 })
-	  </script>
-
 {%block extrascript %}
-   		<script src="assets/js/vendor/slick.min.js"></script>
-		<script>
-			$(document).ready(function(){ 
-				$(".max-513-scolling").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
-				$(".max-260-scroll").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
-				
-				
-			});
-		</script>
-        <script src="assets/js/plugins.js"></script>
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.css">
+	<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
+	<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+   	<script src="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.js"></script>
+    <script>
+    	{% load l10n %}
+		configure_settings =  {};
+		configure_settings.user_id = "{{ obj.user.id }}";
+		configure_settings.csrf_token = "{{ csrf_token }}";
+		
+		$(document).ready(function(){ 
+			$(".max-513-scolling").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+			$(".max-260-scroll").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+		});
+	</script>
+	<script src="{% static 'js/fieldsight/remove_supervisor_roles.js' %}"></script>
+	<script src="assets/js/vendor/slick.min.js"></script>
+	<script src="assets/js/plugins.js"></script>
     <!-- include vue-treeselect & its styles. you can change the version tag to better suit your need. -->
     
 {% endblock %}
