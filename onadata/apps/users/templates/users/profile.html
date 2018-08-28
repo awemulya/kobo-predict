@@ -271,12 +271,13 @@
 
 
 							{% if is_super_admin %}
-							<div class="widget-info margin-top bg-white padding">
+							<!-- <div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
 									<h4>{% trans 'Super Admin' %}</h4>
 								</div>
-							</div>				
-							{% elif not roles_org and not roles_project and not roles_SA and not roles_reviewer %}
+							</div> -->
+							{% endif %}				
+							{% if not roles_org and not roles_project and not roles_SA and not roles_reviewer %}
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
 									<h4>No Roles yet.</h4>
