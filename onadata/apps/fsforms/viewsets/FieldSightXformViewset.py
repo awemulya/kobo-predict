@@ -7,7 +7,7 @@ from rest_framework import viewsets, serializers
 from rest_framework.pagination import PageNumberPagination
 
 from onadata.apps.fieldsight.models import Site
-from onadata.apps.fsforms.models import Stage, FieldSightXF
+from onadata.apps.fsforms.models import Stage, FieldSightXF, FInstance
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormSerializer, FSXFAllDetailSerializer
 
 
@@ -65,9 +65,17 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
             project_id = get_object_or_404(Site, pk=pk).project.id
             queryset = queryset.filter(Q(site__id=pk, from_project=False)
                                        |Q(project__id=project_id))
-        return queryset.select_related('xf')
+        return queryset.select_related('xf', 'em').prefetch_related("site_form_instances", "project_form_instances")
 
     def get_serializer_context(self):
+        instances = []
+        is_project = self.kwargs.get("is_project")
+        pk = self.kwargs.get("pk")
+        if is_project == "1":
+            instances = FInstance.objects.filter(project__isnull=False, project__id=pk).order_by('-pk')
+        if is_project == "0":
+            instances = FInstance.objects.filter(site__id=pk).order_by('-pk')
+        self.kwargs.update({'instances': instances})
         return self.kwargs
 
     def perform_create(self, serializer):

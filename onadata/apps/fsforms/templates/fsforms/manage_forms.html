@@ -43,7 +43,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/knockout-sortable.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/App.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js?v=16.1.1"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/forms/setup.js?v=16.1.5"></script>
 
 <script>
 var base_url = "{{request.get_host}}";
@@ -295,26 +295,19 @@ else if (tab == "4"){ vm.setSelectedVm('survey')}
                                             <th>{% trans 'Assigned' %} {% trans 'Date' %}</th>
                                             <th>{% trans 'Responses' %}</th>
                                             <th>{% trans 'Education' %} {% trans 'Material' %}</th>
-                                            <th>{% trans 'Actions' %}</th>
+                                            <th>{% trans 'Action' %}</th>
                                         </tr>
                                     </thead>
                                     <tbody data-bind="foreach: forms">
                                         <tr>
                                             <th scope="row" data-bind="text: $index()+1"></th>
-
-
-                                            <td><span data-bind="text: name"></span>
-                                            </td>
-                                            <td>
-                                           
-
-                                            <span data-bind="text: default_submission_status_text"></span>
-                                            <!--  <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select> -->
-                                            
-                                            </td>
+                                            <td><span data-bind="text: name"></span> </td>
+                                            <td><span data-bind="text: default_submission_status_text"></span></td>
                                             <td data-bind="text: date_created"></td>
-                                            <td data-bind="text:responses_count"></td>
-                                            <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
+                                            <td data-bind="text:submission_data().count"></td>
+                                            <td><a href="javascript:void(0);" class="badge badge-light"
+                                                       title="Educational Material" data-bind="click:education_material, visible:is_project=='1' || from_project() ==false ">
+                                                <i class="la la-book"></i> {% trans 'Materials' %}</a>
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                                                     <div data-bind="with: em">
                                                       <div class="modal-dialog form-modal" role="document">
@@ -395,7 +388,8 @@ else if (tab == "4"){ vm.setSelectedVm('survey')}
                                                   </div>
                                             </td>
                                             <td>
-                                                <a href="javascript:void(0);" class="badge badge-success" data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}">
+                                                <a href="javascript:void(0);" class="badge badge-success"
+                                                   data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}, visible: from_project() == false || is_project=='1'">
                                                <i class="la la-close" data-bind="visible:is_deployed()==true"></i>
                                                 <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
                                                 <!-- ko if: is_deployed() != true -->
