@@ -94,6 +94,8 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         siteid = kwargs.get('site_id', None)
         if siteid == '0':
             siteid = None
+        elif Site.objects.filter(pk=siteid).exists() == False:
+            return self.error_response("siteid Invalid", False, request)
         if fsxfid is None:
             return self.error_response("Fieldsight Form ID Not Given", False, request)
         try:
