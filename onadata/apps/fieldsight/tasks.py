@@ -93,7 +93,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
             if sites:
                 
                 for site_id in sites:
-                    roles=UserRole.objects.filter(user_id=user_id, site_id = site_id, group_id = group_id,ended_at=None)
+                    roles=UserRole.objects.filter(user_id=user_id, site_id = site_id, group_id = group_id, ended_at=None)
                     for role in roles:
                         role.ended_at = datetime.datetime.now()
                         role.save()
@@ -105,7 +105,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
                     sites = Site.objects.filter(region_id=region_id[1:])    
                     
                     for site_id in sites:
-                        roles=UserRole.objects.filter(user_id=user, site_id = site_id, ended_at=None)
+                        roles=UserRole.objects.filter(user_id=user, site_id = site_id, group_id = group_id, ended_at=None)
                         for role in roles:
                             role.ended_at = datetime.datetime.now()
                             role.save()
@@ -115,7 +115,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
                 for project_id in projects: 
                     sites = Site.objects.filter(project_id = project_id[1:])    
                     for site_id in sites:
-                        roles=UserRole.objects.filter(user_id=user, site_id = site_id, ended_at=None)
+                        roles=UserRole.objects.filter(user_id=user, site_id = site_id, group_id = group_id, ended_at=None)
                         for role in roles:
                             role.ended_at = datetime.datetime.now()
                             role.save()
