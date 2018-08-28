@@ -52,8 +52,7 @@ def site_download_zipfile(task_prog_obj_id, size):
                     img.save(temp, img.format)
                     # filename = '/srv/fieldsight/fieldsight-kobocat'+url['_attachments']['filename'] # Select your files here.                           
                     archive.write(temp.name, url['_attachments']['filename'].split('/')[2])
-            else:
-                raise Exception('No Image Found.')
+                    
         archive.close()
         buffer.seek(0)
         zipFile = buffer.getvalue()
