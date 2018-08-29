@@ -306,7 +306,7 @@ else if (tab == "4"){ vm.setSelectedVm('survey')}
                                             <td data-bind="text: date_created"></td>
                                             <td data-bind="text:submission_data().count"></td>
                                             <td><a href="javascript:void(0);" class="badge badge-light"
-                                                       title="Educational Material" data-bind="click:education_material, visible:is_project=='1' || from_project() ==false ">
+                                                       title="Educational Material" data-bind="click:education_material, visible:$root.is_project=='1' || from_project() ==false ">
                                                 <i class="la la-book"></i> {% trans 'Materials' %}</a>
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                                                     <div data-bind="with: em">
@@ -389,11 +389,11 @@ else if (tab == "4"){ vm.setSelectedVm('survey')}
                                             </td>
                                             <td>
                                                 <a href="javascript:void(0);" class="badge badge-success"
-                                                   data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}, visible: from_project() == false || is_project=='1'">
+                                                   data-bind="click:deploy, css:{ 'badge-danger': is_deployed()== true}, visible: from_project() == false || $root.is_project=='1'">
                                                <i class="la la-close" data-bind="visible:is_deployed()==true"></i>
-                                                <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy'"></span></a>
+                                                <span data-bind="text: (is_deployed()== true) ? 'Undeploy' : 'Deploy' "></span></a>
                                                 <!-- ko if: is_deployed() != true -->
-                                                        <a data-bind="attr: { href:'/forms/delete-fieldsightxf/'+  id() +'/?next='+ next_url +'?tab=1'}" class="badge badge-danger">
+                                                        <a data-bind="attr: { href:'/forms/delete-fieldsightxf/'+  id() +'/?next='+ next_url +'?tab=1'} ,visible: from_project() == false || $root.is_project=='1'" class="badge badge-danger">
                                                             <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
                                                             <span>Delete</span>
                                                         </a>                                                    
@@ -674,15 +674,11 @@ else if (tab == "4"){ vm.setSelectedVm('survey')}
                                        </td>
                                         <td>
                                          <span data-bind="text: default_submission_status_text"></span>   
-										<!-- <select data-bind="options: availableoptions, optionsText: 'name', optionsValue: 'id', value: default_submission_status"></select> -->
-                                        
                                         </td>
-                                        <!-- <td data-bind="text: date_range_start"></td>
-										<td data-bind="text: date_range_end"></td>
-										<td data-bind="text: days"></td> -->
+
                                         <td data-bind="text: schedule_level"></td>
 										<td data-bind="text: responses_count"></td>
-                                        <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
+                                        <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material, visible:($root.is_project =='1' && project()) || ($root.is_project == '0' && site())"><i class="la la-book"></i> {% trans 'Materials' %}</a>
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                         <div data-bind="with: em">
                           <div class="modal-dialog form-modal" role="document">
@@ -763,13 +759,13 @@ else if (tab == "4"){ vm.setSelectedVm('survey')}
                     </div>
                                         </td>
                                         <td>
-                                            <a href="javascript:void(0);" role="button" class="badge badge-danger" data-bind="click:deploy, visible:is_deployed()== true">
+                                            <a href="javascript:void(0);" role="button" class="badge badge-danger" data-bind="click:deploy, visible:((is_deployed() == true) && (($root.is_project == '1') || (($root.is_project == '0') && site()) ))" >
                                                 <i class="la la-close"></i> {% trans 'Undeploy ' %}</a>
-                                            <a href="javascript:void(0);" role="button" class="badge badge-success" data-bind="click:deploy, visible:is_deployed()!= true">
+                                            <a href="javascript:void(0);" role="button" class="badge badge-success" data-bind="click:deploy, visible:((is_deployed() == false) && (($root.is_project == '1') || (($root.is_project == '0') && site()) ))" >
                                                 <i class="la la-rocket"></i> {% trans 'Deploy ' %}</a>
                                             <!-- ko if: is_deployed() != true -->
-                                                        <a data-bind="attr: { href:'/forms/delete-fieldsightxf/'+  id() +'/?next='+ next_url +'?tab=2'}" class="badge badge-danger">
-                                                            <i class="la la-close" data-bind="visible:is_deployed()!=true"></i>
+                                                        <a data-bind="attr: { href:'/forms/delete-fieldsightxf/'+  id() +'/?next='+ next_url +'?tab=2'}" class="badge badge-danger" data-bind="visible:((is_deployed() == false) && (($root.is_project == '1') || (($root.is_project == '0') && site()) ))" >
+                                                            <i class="la la-close"></i>
                                                             <span>Delete</span>
                                                         </a>                                                    
                                             <!-- /ko -->
