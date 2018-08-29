@@ -1122,7 +1122,7 @@ class Setup_forms(SPFmixin, View):
                    'schedule_form': KoScheduleForm(request=request)})
 
 
-class FormFillView(ReadonlyFormMixin, FormMixin, View):
+class FormFillView(FormMixin, View):
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
         sub_pk = self.kwargs.get('instance_pk')
@@ -2157,7 +2157,7 @@ class DeleteFInstance(FInstanceRoleMixin, View):
         next_url = request.GET.get('next', '/')
         return HttpResponseRedirect(next_url)
 
-class DeleteFieldsightXF(View):
+class DeleteFieldsightXF(FormMixin, View):
     def get(self, request, *args, **kwargs):
         try:
             fsform = FieldSightXF.objects.get(pk=self.kwargs.get('fsxf_id'))
