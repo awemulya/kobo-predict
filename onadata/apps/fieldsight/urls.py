@@ -9,7 +9,7 @@ from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTyp
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet, ProjectRegionslistViewSet, UserProjectlistMinimalViewset
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import DonorMyProjects, MyOrgProjectlistViewSet, ProjectMetas, ProjectForms, OrganizationsProjectViewSet, MyProjectlistViewSet
 from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionViewSet, RegionPagignatedViewSet, RegionSearchViewSet, UserMainRegionViewSet
-from onadata.apps.fieldsight.viewsets.SiteViewSet import SitelistMinimalViewset, SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
+from onadata.apps.fieldsight.viewsets.SiteViewSet import ProjectSitelistViewset, SitelistMinimalViewset, SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
     SiteReviewViewSet, ProjectTypeViewset, SiteTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet, SiteUpdateViewSet, \
     ProjectUpdateViewSet, SiteUnderOrgViewSet, SiteUnderRegionViewSet, SitePagignatedViewSet, SiteSearchViewSet, UserSitelistMinimalViewset
 from .forms import RegistrationForm
