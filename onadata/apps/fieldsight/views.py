@@ -3211,3 +3211,13 @@ class UnassignUserRegionAndSites(View):
                 status, data = 200, {'status':'True', 'ids':ids, 'projects':projects, 'regions':regions, 'sites': sites, 'message':'Sucess, the roles are being removed. You will be notified after all the roles are removed. '}
         
         return JsonResponse(data, status=status)
+
+
+class ProjectSiteListGeoJSON(ReadonlyProjectLevelRoleMixin, View)
+    def get(self, request, **kwargs):
+        data = serialize('full_detail_geojson',
+                         Site.objects.prefetch_related('site_instances').filter(project_id = self.kwargs.get('pk'), is_survey=False, is_active=True),
+                         geometry_field='location',
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+
+        return JsonResponse(data, status=200)

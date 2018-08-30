@@ -61,7 +61,7 @@ from .views import (
     StageStatus, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
     SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI,
     GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages,
-    SiteSearchView, ProjectDashboardStageResponsesStatus, SiteBulkEditView, site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data, FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI)
+    SiteSearchView, ProjectDashboardStageResponsesStatus, ProjectSiteListGeoJSON, SiteBulkEditView, site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data, FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI)
 
     
 
@@ -284,5 +284,6 @@ urlpatterns = [
     url(r'^api/remove_roles/(?P<pk>\d+)/$', UnassignUserRegionAndSites.as_view(), name='UnassignUserRegionAndSites'),
     url(r'^api/donor/myprojects/$', DonorMyProjects.as_view(), name="DonorMyProjectList"),
     url(r'^api/project/myprojects/(?P<pk>\d+)/sites/$', ProjectSitelistViewset.as_view({'get':'list'}), name="ProjectSiteList"),
+    url(r'^api/project/myprojects/(?P<pk>\d+)/sites/geoJSON/$', ProjectSiteListGeoJSON.as_view({'get':'list'}), name="ProjectSiteListGeoJSON"),
     ]
 
