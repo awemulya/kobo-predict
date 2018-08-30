@@ -3213,7 +3213,7 @@ class UnassignUserRegionAndSites(View):
         return JsonResponse(data, status=status)
 
 
-class ProjectSiteListGeoJSON(ReadonlyProjectLevelRoleMixin, View)
+class ProjectSiteListGeoJSON(ReadonlyProjectLevelRoleMixin, View):
     def get(self, request, **kwargs):
         data = serialize('full_detail_geojson',
                          Site.objects.prefetch_related('site_instances').filter(project_id = self.kwargs.get('pk'), is_survey=False, is_active=True),

@@ -284,6 +284,6 @@ urlpatterns = [
     url(r'^api/remove_roles/(?P<pk>\d+)/$', UnassignUserRegionAndSites.as_view(), name='UnassignUserRegionAndSites'),
     url(r'^api/donor/myprojects/$', DonorMyProjects.as_view(), name="DonorMyProjectList"),
     url(r'^api/project/myprojects/(?P<pk>\d+)/sites/$', ProjectSitelistViewset.as_view({'get':'list'}), name="ProjectSiteList"),
-    url(r'^api/project/myprojects/(?P<pk>\d+)/sites/geoJSON/$', ProjectSiteListGeoJSON.as_view({'get':'list'}), name="ProjectSiteListGeoJSON"),
+    url(r'^api/project/myprojects/(?P<pk>\d+)/sites/geoJSON/$', ProjectSiteListGeoJSON.as_view(), name="ProjectSiteListGeoJSON"),
     ]
 
