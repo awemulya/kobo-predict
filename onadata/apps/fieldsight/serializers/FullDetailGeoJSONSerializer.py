@@ -12,7 +12,7 @@ class Serializer(GeoJSONSerializer):
             status = obj.site_instances.order_by('-date').first().form_status
         except:
             status = 4
-        data.properties.update(project=obj.project.name)
+        data.update(project=obj.project.name)
         data.update(status=status)
         data.update(progress=obj.site_progress)
         return data
