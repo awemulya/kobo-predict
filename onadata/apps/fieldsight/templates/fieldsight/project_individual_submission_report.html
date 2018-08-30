@@ -256,7 +256,8 @@ td, th {
     var progress_labels = {{ progress_labels|safe}};
     var progress_data = {{ progress_data|safe}};
     </script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/geo-layers.js"></script>    
+    <script type="text/javascript" src="{{ STATIC_URL }}js/ajax_map.js?v=1.1"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/d3.tip.v0.6.3.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_bar-graph.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
