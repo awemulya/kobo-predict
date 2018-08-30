@@ -83,7 +83,7 @@ def dashboard(request):
         current_role = request.roles[0]
         role_type = request.roles[0].group.name
         if role_type == "Staff Project Manager":
-            return HttpResponseRedirect(reverse("fieldsight:StaffProjectList"))
+            return HttpResponseRedirect(reverse("staff:staff-project-detail"))
         if role_type == "Unassigned":
             return HttpResponseRedirect(reverse("fieldsight:roles-dashboard"))
         if role_type == "Site Supervisor":
