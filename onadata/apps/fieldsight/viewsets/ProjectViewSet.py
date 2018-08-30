@@ -201,3 +201,13 @@ class UserProjectlistMinimalViewset(viewsets.ModelViewSet):
     def filter_queryset(self, queryset):
         projects = UserRole.objects.filter(site__isnull=False, user_id=self.kwargs.get('user_id'), group_id=self.kwargs.get('group_id'), ended_at=None).distinct('project_id').values('project_id') 
         return queryset.filter(id__in=projects)
+
+
+class DonorMyProjects(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
+    def filter_queryset(self, queryset):
+        projects = UserRole.objects.filter(user_id=self.request.user.id, project__isnull=False, group_id=7, ended_at=None).distinct('project_id').values('project_id')
+        return queryset.filter(project_id__in=projects)
