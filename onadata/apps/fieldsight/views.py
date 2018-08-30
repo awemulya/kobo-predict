@@ -3218,6 +3218,6 @@ class ProjectSiteListGeoJSON(ReadonlyProjectLevelRoleMixin, View):
         data = serialize('full_detail_geojson',
                          Site.objects.prefetch_related('site_instances').filter(project_id = self.kwargs.get('pk'), is_survey=False, is_active=True),
                          geometry_field='location',
-                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
+                         fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id', 'identifier', 'project'))
 
-        return JsonResponse(data, status=200)
+        return JsonResponse(json.loads(data), status=200)
