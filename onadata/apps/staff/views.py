@@ -276,7 +276,7 @@ class StaffProjectUsers(StaffProjectRoleMixin, TemplateView):
         context['staffproject'] = StaffProject.objects.get(pk=self.kwargs.get('pk'))
         current_users = UserRole.objects.filter(staff_project_id=self.kwargs.get('pk'), ended_at = None).values('user_id')
         context['staff_list'] = UserRole.objects.filter(staff_project_id=self.kwargs.get('pk'), ended_at = None)
-        context['available_user_list'] = UserRole.objects.filter(project_id__in=[137, 105, 129], ended_at=None).exclude(user_id__in=current_users).distinct('user_id')
+        context['available_user_list'] = UserRole.objects.filter(project_id__in=[183, 137, 105, 129], ended_at=None).exclude(user_id__in=current_users).distinct('user_id')
         return context
 
 class StaffAddProjectUsers(StaffProjectRoleMixin, View):
