@@ -210,4 +210,4 @@ class DonorMyProjects(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         projects = UserRole.objects.filter(user_id=self.request.user.id, project__isnull=False, group_id=7, ended_at=None).distinct('project_id').values('project_id')
-        return queryset.filter(project_id__in=projects)
+        return queryset.filter(pk__in=projects)
