@@ -173,7 +173,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
                 if long == "":
                     long = 27.7172
 
-                location = Point(lat, long, srid=4326)
+                location = Point(round(float(lat), 6), round(float(long), 6), srid=4326)
                 region_idf = site.get("region_id", None)
                 type_identifier = int(site.get("type", "0"))
 

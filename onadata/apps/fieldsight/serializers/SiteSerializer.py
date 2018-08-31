@@ -70,7 +70,7 @@ class SiteUpdateSerializer(serializers.ModelSerializer):
         if lat and long:
             lat = float(lat)
             long = float(long)
-            location = Point(lat, long, srid=4326)
+            location = Point(round(lat, 6), round(long, 6), srid=4326)
             site.location = location
         if type_id:
             site.type = SiteType.objects.get(pk=type_id)
