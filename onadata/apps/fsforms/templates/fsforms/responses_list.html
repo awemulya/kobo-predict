@@ -72,15 +72,15 @@
                           {{ obj.date_created }}
                       </td>
                       <td>
-                          {% with obj.id|site_submissions as count %}
+                          {% with obj|site_submissions:site as count %}
                           
-                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.id %}">
+                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.id site %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
                           {% endwith %}
 
                       </td>
                       <td>
-                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
+                      <a target="_blank" href="{% url 'onadata.apps.viewer.views.export_list' obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
                           <i class="la la-download" aria-hidden="true"></i></a>
                       </td>
                       <td>
@@ -129,7 +129,7 @@
                             </td>
                             <td>
                               
-                              {% with  obj.id|site_submissions as count %}
+                              {% with  obj|site_submissions:site as count %}
                                <a class="badge badge-light" href="{% if count == 0 %}#{% else %}{% url 'forms:html_export' obj.id %}{% endif %}">
                                         {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
                               </a>
@@ -185,9 +185,9 @@
                           {{ obj.date_created }}
                       </td>
                       <td>
-                           {% with obj.schedule_forms.pk|site_submissions as count %}
+                           {% with obj.schedule_forms|site_submissions:site as count %}
                           
-                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.schedule_forms.pk %}">
+                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.schedule_forms.pk site%}">
                               <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
                               </a>
                           {% endwith %}
@@ -241,7 +241,7 @@
                             </td>
                             <td>
                               
-                              {% with  obj.id|site_submissions as count %}
+                              {% with  obj|site_submissions:site as count %}
                                <a class="badge badge-light" href="{% if count == 0 %}#{% else %}{% url 'forms:html_export' obj.id %}{% endif %}">
                                         {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
                               </a>
@@ -306,7 +306,7 @@
                               </td>
                               <td>{{obj.stage_forms.xf.title}}</td>
                               <td>
-                          {% with obj.stage_forms.pk|site_submissions as count %}
+                          {% with obj.stage_forms|site_submissions:site as count %}
                           
                                <a class="badge badge-light" href="{% url 'forms:html_export' obj.stage_forms.pk %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
@@ -370,7 +370,7 @@
                             </td>
                             <td>
                               
-                              {% with  obj.id|site_submissions as count %}
+                              {% with  obj|site_submissions:site as count %}
                                <a class="badge badge-light" href="{% if count == 0 %}#{% else %}{% url 'forms:html_export' obj.id %}{% endif %}">
                                         {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
                               </a>

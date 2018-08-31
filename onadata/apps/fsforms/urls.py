@@ -149,7 +149,8 @@ urlpatterns = urlpatterns + [
 ]
 
 urlpatterns = urlpatterns + [
-        url(r'site-submissions/(?P<fsxf_id>\d+)$', Html_export.as_view(), name='html_export'),
+        url(r'site-submissions/(?P<fsxf_id>\d+)/$', Html_export.as_view(), name='html_export'),
+        url(r'site-submissions/(?P<fsxf_id>\d+)/(?P<site_id>\d+)/$', Html_export.as_view(), name='html_export'),
         url(r'project-submissions/(?P<fsxf_id>\d+)$', Project_html_export.as_view(), name='project_html_export'),
         url(r'^forms/(?P<fsxf_id>\d+)$', InstanceKobo.as_view(), name='instance' ),
         url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', Instance_detail.as_view(), name='instance_detail'),

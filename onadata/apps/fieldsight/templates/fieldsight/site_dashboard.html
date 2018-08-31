@@ -431,7 +431,7 @@
 														{% for instance in approved_data %}
 														<tr>
 															<td class="align-middle">
-																<a title="View submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}"><strong>{{ instance.site_fxf.xf.title}}</strong></a>
+																<a title="View submission detail" href="{% url 'forms:instance' instance.fsxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}"><strong>{{ instance.site_fxf.xf.title}}</strong></a>
 																<br/>
 																<a href="{% url 'users:profile' instance.submitted_by.id %}" title="View details of user"><small><i class="la la-user"></i>{{ instance.submitted_by }}</small></a>
 																&nbsp;

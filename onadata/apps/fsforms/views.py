@@ -292,12 +292,18 @@ class ProjectResponses(ReadonlyProjectLevelRoleMixin, View):
                       {'is_donor_only': kwargs.get('is_donor_only', False), 'obj': obj, 'schedules': schedules, 'stages':stages, 'generals':generals, 'surveys': surveys,
                        "stage_deleted_forms":stage_deleted_forms, "survey_deleted_forms":survey_deleted_forms, "general_deleted_forms":general_deleted_forms, "schedule_deleted_forms":schedule_deleted_forms, 'project': pk})
 
+
 class Responses(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk=None, **kwargs):
         obj = get_object_or_404(Site, pk=pk)
-        schedules = Schedule.objects.filter(site_id=pk, schedule_forms__is_deleted=False, project__isnull=True, schedule_forms__isnull=False)
+        project_id = get_object_or_404(Site, pk=pk).project.id
+        schedules = Schedule.objects.filter(schedule_forms__is_deleted=False,
+                                            schedule_forms__isnull=False).filter(
+            Q(site__id=pk, schedule_forms__from_project=False)
+                                       | Q(project__id=project_id))
         stages = Stage.objects.filter(stage__isnull=True, site_id=pk).order_by('order')
-        generals = FieldSightXF.objects.filter(is_staged=False, is_deleted=False, is_scheduled=False, site_id=pk, is_survey=False)
+        generals = FieldSightXF.objects.filter(is_staged=False, is_deleted=False, is_scheduled=False,  is_survey=False).\
+            filter(Q(site__id=pk, from_project=False)| Q(project__id=project_id))
         
         stage_deleted_forms = FieldSightXF.objects.filter(is_staged=True,  is_scheduled=False, is_survey=False ,is_deleted=True, site_id=pk)
         general_deleted_forms = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_survey=False, is_deleted=True, site_id=pk)
@@ -1481,6 +1487,7 @@ class Html_export(ReadonlyFormMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(Html_export, self).get_context_data(**kwargs)
         fsxf_id = int(self.kwargs.get('fsxf_id'))
+        site_id = int(self.kwargs.get('site_id'), 0)
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         # context['pk'] = self.kwargs.get('pk')
         context['is_site_data'] = True
@@ -1491,8 +1498,13 @@ class Html_export(ReadonlyFormMixin, ListView):
 
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
+        site_id = int(self.kwargs.get('site_id'), 0)
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         query = self.request.GET.get("q", None)
-        queryset = FInstance.objects.filter(site_fxf=fsxf_id)
+        if not fsxf.from_project:
+            queryset = FInstance.objects.filter(site_fxf=fsxf_id)
+        else:
+            queryset = FInstance.objects.filter(project_fxf=fsxf_id, site_id=site_id)
         if query:
             new_queryset = FInstance.objects.filter(Q(submitted_by__first_name__icontains=query) | Q(submitted_by__first_last__icontains=query))
         else:

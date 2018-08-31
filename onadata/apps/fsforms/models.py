@@ -394,7 +394,7 @@ class FInstance(models.Model):
     instance = models.OneToOneField(Instance, related_name='fieldsight_instance')
     site = models.ForeignKey(Site, null=True, related_name='site_instances')
     project = models.ForeignKey(Project, null=True, related_name='project_instances')
-    site_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='site_form_instances')
+    site_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='site_form_instances', on_delete=models.SET_NULL)
     project_fxf = models.ForeignKey(FieldSightXF, null=True, related_name='project_form_instances')
     form_status = models.IntegerField(null=True, blank=True, choices=FORM_STATUS)
     date = models.DateTimeField(auto_now=True)
@@ -417,7 +417,14 @@ class FInstance(models.Model):
         if self.project_fxf:
             return self.project_fxf.id
         else:
-            return self.site_fxf.id
+            return self.site_fxf.id\
+
+    @property
+    def fsxf(self):
+        if self.project_fxf:
+            return self.project_fxf
+        else:
+            return self.site_fxf
 
     def get_absolute_url(self):
         if self.site_fxf is None:

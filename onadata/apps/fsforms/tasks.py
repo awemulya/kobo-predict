@@ -207,29 +207,24 @@ def copy_sub_stage_to_sites(sub_stage, pk):
 def copy_schedule_to_sites(schedule, fxf_status, pk):
     try:
         fxf = schedule.schedule_forms
-        selected_days = tuple(schedule.selected_days.all())
         with transaction.atomic():
             if not fxf_status:
                 # deployed case
                 fxf.is_deployed = True
                 fxf.save()
-                FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project__id=pk).update(is_deployed=True,
-                                                                                                        is_deleted=False)
-                for site in Site.objects.filter(project__id=pk, is_active=True):
-                    _schedule, created = Schedule.objects.get_or_create(name=schedule.name, site=site)
-                    if created:
-                        _schedule.selected_days.add(*selected_days)
-                        child = FieldSightXF(is_scheduled=True, default_submission_status=fxf.default_submission_status,
-                                             xf=fxf.xf, site=site, fsform=fxf,
-                                             schedule=_schedule, is_deployed=True)
-                        child.save()
-
+                FieldSightXF.objects.filter(fsform=fxf,
+                                            is_scheduled=True,
+                                            site__project__id=pk
+                                            ).update(is_deployed=True,
+                                                     is_deleted=False)
             else:
                 # undeploy
                 fxf.is_deployed = False
                 fxf.save()
-                FieldSightXF.objects.filter(fsform=fxf, is_scheduled=True, site__project_id=pk).update(is_deployed=False,
-                                                                                                       is_deleted=True)
+                FieldSightXF.objects.filter(fsform=fxf,
+                                            is_scheduled=True,
+                                            site__project_id=pk).update(
+                    is_deployed=False, is_deleted=True)
     except Exception as e:
         print(str(e))
         num_retries = copy_schedule_to_sites.request.retries
