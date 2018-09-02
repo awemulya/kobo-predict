@@ -161,6 +161,7 @@ def send_sub_stage_deployed_site(site, sub_stage, deploy_id):
     Device.objects.filter(name__in=emails).send_message(message)
 
 
+
 def send_message_un_deploy(fxf):
     roles = UserRole.objects.filter(site=fxf.site, ended_at=None, group__name="Site Supervisor")
     emails = [r.user.email for r in roles]

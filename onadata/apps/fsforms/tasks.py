@@ -139,12 +139,13 @@ def copy_sub_stage_to_sites(sub_stage, pk):
         with transaction.atomic():
             stage_form.is_deployed = True
             stage_form.save()
+            deleted_forms = FieldSightXF.objects.filter(project__id=pk, is_deleted=True, is_staged=True)
 
 
             deploy_data = {'project_forms': [StageFormSerializer(stage_form).data],
                        'project_stage': StageSerializer(main_stage).data,
                        'project_sub_stages': [StageSerializer(sub_stage).data],
-                       'deleted_forms': [],
+                       'deleted_forms': StageFormSerializer(deleted_forms, many=True).data,
                        'deleted_stages': [],
                        'sites_affected': [],
                        }

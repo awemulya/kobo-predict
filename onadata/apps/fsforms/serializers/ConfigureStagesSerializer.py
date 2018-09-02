@@ -113,8 +113,6 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
             xf_id = xf.get('id', False)
             if xf_id:
                 xform = XForm.objects.get(pk=xf_id)
-
-
         stage = super(SubStageDetailSerializer, self).create(validated_data)
         main_stage = Stage.objects.get(pk=stage_id)
         if xform:
@@ -144,13 +142,13 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
                     old_form.deleted = True
                     old_form.stage = None
                     old_form.save()
-                    FieldSightXF.objects.create(xf=xform, site=stage.site,
-                                                  project=stage.project, is_staged=True, stage=stage, default_submission_status = default_submission_status)
+                    #TODO use old_form site or project in new fieldsightform
+                    FieldSightXF.objects.create(xf=xform, site=stage.stage.site,
+                                                  project=stage.stage.project, is_staged=True, stage=stage, default_submission_status = default_submission_status)
             except:
                 if xform:
-                    FieldSightXF.objects.create(xf=xform, site=stage.site,
-                                                      project=stage.project, is_staged=True, stage=stage, default_submission_status = default_submission_status)
-        # tags
+                    FieldSightXF.objects.create(xf=xform, site=stage.stage.site,
+                                                      project=stage.stage.project, is_staged=True, stage=stage, default_submission_status = default_submission_status)
         return stage
 
 
