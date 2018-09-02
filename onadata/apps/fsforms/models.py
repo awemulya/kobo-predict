@@ -15,7 +15,7 @@ from jsonfield import JSONField
 
 from onadata.apps.fieldsight.models import Site, Project, Organization
 from onadata.apps.fsforms.fieldsight_models import IntegerRangeField
-from onadata.apps.fsforms.utils import send_message
+from onadata.apps.fsforms.utils import send_message, send_message_general_form_project
 from onadata.apps.logger.models import XForm, Instance
 from onadata.apps.viewer.models import ParsedInstance
 from onadata.apps.fsforms.fsxform_responses import get_instances_for_field_sight_form
@@ -329,8 +329,8 @@ class FieldSightXF(models.Model):
 
 @receiver(post_save, sender=FieldSightXF)
 def create_messages(sender, instance, created,  **kwargs):
-    if instance.project is not None:
-        pass
+    if instance.project is not None and created and not instance.is_staged and not instance.is_survey and not instance.is_scheduled:
+        send_message_general_form_project(instance)
     elif created and instance.site is not None and not instance.is_staged:
         send_message(instance)
 
