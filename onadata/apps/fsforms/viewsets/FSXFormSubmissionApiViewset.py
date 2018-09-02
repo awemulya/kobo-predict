@@ -51,7 +51,10 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
                             template_name=self.template_name)
         error, instance = create_instance_from_xml(request, fsxfid, siteid, fs_proj_xf, proj_id, xform)
         extra_message=""
-        
+
+        if fxf.is_staged:
+            instance.fieldsight_instance.site.update_current_progress()
+
         if fxf.is_survey:
             extra_message="project"
         
@@ -180,9 +183,13 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         else:
             error, instance = create_instance_from_xml(request, site_fsxf_id, siteid, fs_proj_xf.id, proj_id, xform)
 
+
         
         if error or not instance:
             return self.error_response(error, False, request)
+
+        if fs_proj_xf.is_staged and siteid:
+            site.update_current_progress()
 
         if fs_proj_xf.is_survey:
             noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Project level Submission",
@@ -209,8 +216,6 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
             ChannelGroup("project-{}".format(instance.fieldsight_instance.project.id)).send({"text": json.dumps(result)})
 
         # modify create instance
-
-        
 
         context = self.get_serializer_context()
         serializer = FieldSightSubmissionSerializer(instance, context=context)

@@ -334,6 +334,7 @@ class Site(models.Model):
     region = models.ForeignKey(
         Region, related_name='regions', blank=True, null=True)
     site_meta_attributes_ans = JSONField(default=dict)
+    current_progress = models.IntegerField()
     logs = GenericRelation('eventlog.FieldSightLog')
 
     objects = GeoManager()
@@ -377,6 +378,10 @@ class Site(models.Model):
 
     def get_site_type(self):
         return self.type.name
+
+    def update_current_progress(self):
+        self.current_progress = self.progress()
+        self.save()
 
     def progress(self):
         stages = self.site_forms.filter(xf__isnull=False, is_staged=True, is_deleted=False, is_deployed=True).count()
