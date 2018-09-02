@@ -38,7 +38,7 @@ from onadata.apps.fsforms.utils import send_message, send_message_stages, send_m
     send_bulk_message_stages, \
     send_message_un_deploy, send_bulk_message_stages_deployed_project, send_bulk_message_stages_deployed_site, \
     send_bulk_message_stage_deployed_project, send_bulk_message_stage_deployed_site, send_sub_stage_deployed_project, \
-    send_sub_stage_deployed_site, send_message_flagged
+    send_sub_stage_deployed_site, send_message_flagged, send_message_un_deploy_project
 from onadata.apps.logger.models import XForm
 from onadata.apps.main.models import MetaData
 from onadata.apps.main.views import set_xform_owner_data
@@ -783,19 +783,12 @@ class Deploy_general(SPFmixin, View):
                     if fxf_status:
                         fxf.is_deployed = False
                         fxf.save()
-                        FieldSightXF.objects.filter(fsform=fxf, is_scheduled=False, is_staged=False).update(is_deployed=False, is_deleted=True)
+                        send_message_un_deploy_project(fxf)
+                        # FieldSightXF.objects.filter(fsform=fxf, is_scheduled=False, is_staged=False).update(is_deployed=False, is_deleted=True)
                     else:
                         fxf.is_deployed = True
                         fxf.save()
-                        for site in fxf.project.sites.filter(is_active=True):
-                            child, created = FieldSightXF.objects.get_or_create(is_staged=False,
-                                                                                is_scheduled=False,
-                                                                                is_survey=False,
-                                                                                xf=fxf.xf, site=site, fsform_id=fxf_id)
-                            child.is_deployed = True
-                            child.is_deleted = False
-                            child.from_project = True
-                            child.save()
+                        send_message_un_deploy_project(fxf)
                 return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
             else:
                 fxf = FieldSightXF.objects.get(pk=fxf_id)

@@ -9,7 +9,7 @@ from onadata.apps.fsforms.models import FieldSightXF, Schedule, Stage, DeployEve
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormListSerializer, StageFormSerializer
 from onadata.apps.fsforms.utils import send_sub_stage_deployed_project, send_bulk_message_stage_deployed_project, \
-    send_bulk_message_stages_deployed_project
+    send_bulk_message_stages_deployed_project, send_message_un_deploy_project
 
 
 @shared_task(max_retries=10)
@@ -167,19 +167,11 @@ def copy_schedule_to_sites(schedule, fxf_status, pk):
                 # deployed case
                 fxf.is_deployed = True
                 fxf.save()
-                FieldSightXF.objects.filter(fsform=fxf,
-                                            is_scheduled=True,
-                                            site__project__id=pk
-                                            ).update(is_deployed=True,
-                                                     is_deleted=False)
             else:
                 # undeploy
                 fxf.is_deployed = False
                 fxf.save()
-                FieldSightXF.objects.filter(fsform=fxf,
-                                            is_scheduled=True,
-                                            site__project_id=pk).update(
-                    is_deployed=False, is_deleted=True)
+            send_message_un_deploy_project(fxf)
     except Exception as e:
         print(str(e))
         num_retries = copy_schedule_to_sites.request.retries
