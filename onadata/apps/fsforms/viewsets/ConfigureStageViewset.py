@@ -1,11 +1,13 @@
 from __future__ import unicode_literals
 
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Q
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 import rest_framework.status
 
+from onadata.apps.fieldsight.models import Site
 from onadata.apps.fsforms.models import Stage, EducationMaterial, DeployEvent, FInstance
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer, \
     SubStageDetailSerializer, EMSerializer, DeploySerializer, FinstanceSerializer
@@ -26,7 +28,8 @@ class StageListViewSet(viewsets.ModelViewSet):
         if is_project == "1":
             queryset = queryset.filter(project__id=pk)
         else:
-            queryset = queryset.filter(site__id=pk)
+            project_id = get_object_or_404(Site, pk=pk).project.id
+            queryset = queryset.filter(Q(site__id=pk, project_stage_id=0) |Q(project__id=project_id))
         return queryset.annotate(sub_stage_weight=Sum(F('parent__weight')))
 
     def retrieve_by_id(self, request, *args, **kwargs):

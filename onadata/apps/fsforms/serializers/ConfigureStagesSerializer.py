@@ -21,8 +21,8 @@ class StageSerializer(serializers.ModelSerializer):
         model = Stage
         fields = ('name', 'description', 'id', 'order', 'tags',
                   'weight' ,'sub_stage_weight', 'stage',
-                  'project_stage_id')
-        read_only_fields = ('stage' ,'project_stage_id')
+                  'project_stage_id', 'site')
+        read_only_fields = ('stage' ,'project_stage_id','site')
 
     def get_sub_stage_weight(self, obj):
         if hasattr(obj, 'sub_stage_weight'):

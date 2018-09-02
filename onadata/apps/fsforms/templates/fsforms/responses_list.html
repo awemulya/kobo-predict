@@ -308,7 +308,7 @@
                               <td>
                           {% with obj.stage_forms|site_submissions:site as count %}
                           
-                               <a class="badge badge-light" href="{% url 'forms:html_export' obj.stage_forms.pk %}">
+                               <a class="badge badge-light" href="{% url 'forms:html_export' obj.stage_forms.pk site %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
                                </a>
                           {% endwith %}
