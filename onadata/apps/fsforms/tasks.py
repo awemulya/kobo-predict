@@ -133,65 +133,20 @@ def copy_stage_to_sites(main_stage, pk):
 def copy_sub_stage_to_sites(sub_stage, pk):
     try:
         project = Project.objects.get(pk=pk)
-        sites = project.sites.filter(is_active=True)
-        site_ids = []
         main_stage = sub_stage.stage
         stage_form = sub_stage.stage_forms
 
         with transaction.atomic():
-            FieldSightXF.objects.filter(pk=stage_form.pk).update(is_deployed=True)
             stage_form.is_deployed = True
             stage_form.save()
 
-            FieldSightXF.objects.filter(fsform__id=stage_form.id).update(stage=None, is_deployed=False, is_deleted=True)
 
-            deleted_forms = FieldSightXF.objects.filter(fsform__id=stage_form.id)
-            deleted_stages = Stage.objects.filter(project_stage_id=sub_stage.id, stage__isnull=False)
-
-            Stage.objects.filter(project_stage_id=sub_stage.id, stage__isnull=False).delete()
-            sites_affected = []
-            for site in sites:
-                if sub_stage.tags and site.type:
-                    if not site.type.id in sub_stage.tags:
-                        continue
-                site_data = {}
-                try:
-                    site_main_stage = Stage.objects.get(project_stage_id=main_stage.id, site=site)
-                    site_main_stage.name = main_stage.name
-                    site_main_stage.order = main_stage.order
-                    site_main_stage.description = main_stage.description
-                    site_main_stage.save()
-                    site_data['main_stage'] = StageSerializer(site_main_stage).data
-                    site_data['site'] = site.id
-                except Exception as e:
-                    site_main_stage = Stage(name=main_stage.name, order=main_stage.order, site=site,
-                                            description=main_stage.description, project_stage_id=main_stage.id)
-                    site_main_stage.save()
-                    site_data['main_stage'] = StageSerializer(site_main_stage).data
-                    site_data['site'] = site.id
-
-                site_sub_stage = Stage(name=sub_stage.name, order=sub_stage.order, site=site,
-                                       description=sub_stage.description, project_stage_id=sub_stage.id,
-                                       stage=site_main_stage, weight=sub_stage.weight)
-                site_sub_stage.save()
-                site_fsxf, created = FieldSightXF.objects.get_or_create(
-                    is_staged=True,
-                    xf=stage_form.xf, site=site, fsform=stage_form, stage=site_sub_stage)
-                site_fsxf.is_deleted = False
-                site_fsxf.is_deployed = True
-                site_fsxf.default_submission_status = stage_form.default_submission_status
-                site_fsxf.save()
-                site_data['sub_stage'] = StageSerializer(site_sub_stage).data
-                site_data['main_stage'] = StageSerializer(site_main_stage).data
-                site_data['sub_stage_form'] = StageFormSerializer(site_fsxf).data
-                site_data['id'] = site.id
-                sites_affected.append(site_data)
             deploy_data = {'project_forms': [StageFormSerializer(stage_form).data],
                        'project_stage': StageSerializer(main_stage).data,
                        'project_sub_stages': [StageSerializer(sub_stage).data],
-                       'deleted_forms': StageFormSerializer(deleted_forms, many=True).data,
-                       'deleted_stages': StageSerializer(deleted_stages, many=True).data,
-                       'sites_affected': sites_affected,
+                       'deleted_forms': [],
+                       'deleted_stages': [],
+                       'sites_affected': [],
                        }
         d = DeployEvent(project=project, data=deploy_data)
         d.save()

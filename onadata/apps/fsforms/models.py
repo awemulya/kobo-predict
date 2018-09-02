@@ -591,46 +591,46 @@ class EducationalImages(models.Model):
     image = models.ImageField(upload_to="education-material-images",
                               verbose_name='Education Images',)
 
-@receiver(post_save, sender=Site)
-def copy_stages_from_project(sender, **kwargs):
-    site = kwargs.get('instance')
-    created = kwargs.get('created')
-    if created:
-        project = site.project
-        project_main_stages = project.stages.filter(stage__isnull=True)
-        for pms in project_main_stages:
-            project_sub_stages = Stage.objects.filter(stage__id=pms.pk, stage_forms__is_deleted=False, stage_forms__is_deployed=True)
-            if not project_sub_stages:
-                continue
-            site_main_stage = Stage(name=pms.name, order=pms.order, site=site, description=pms.description,
-                                    project_stage_id=pms.id, weight=pms.weight)
-            site_main_stage.save()
-            for pss in project_sub_stages:
-                if pss.tags and site.type:
-                    if site.type.id not in pss.tags:
-                        continue
-                site_sub_stage = Stage(name=pss.name, order=pss.order, site=site,
-                               description=pss.description, stage=site_main_stage, project_stage_id=pss.id, weight=pss.weight)
-                site_sub_stage.save()
-                if FieldSightXF.objects.filter(stage=pss).exists():
-                    fsxf = pss.stage_forms
-                    site_form = FieldSightXF(is_staged=True, default_submission_status=fsxf.default_submission_status, xf=fsxf.xf, site=site,fsform=fsxf, stage=site_sub_stage, is_deployed=True)
-                    site_form.save()
-        general_forms = project.project_forms.filter(is_staged=False, is_scheduled=False, is_deployed=True, is_deleted=False)
-        for general_form in general_forms:
-            FieldSightXF.objects.create(is_staged=False, default_submission_status=general_form.default_submission_status, is_scheduled=False, is_deployed=True, site=site,
-                                        xf=general_form.xf, fsform=general_form)
-
-        schedule_forms = project.project_forms.filter(is_scheduled=True, is_deployed=True, is_deleted=False)
-        for schedule_form in schedule_forms:
-            schedule = schedule_form.schedule
-            selected_days = tuple(schedule.selected_days.all())
-            s = Schedule.objects.create(name=schedule.name, site=site, date_range_start=schedule.date_range_start,
-                                        date_range_end=schedule.date_range_end)
-            s.selected_days.add(*selected_days)
-            s.save()
-            FieldSightXF.objects.create(is_scheduled=True, default_submission_status=schedule_form.default_submission_status, xf=schedule_form.xf, site=site, fsform=schedule_form,
-                                             schedule=s, is_deployed=True)
+# @receiver(post_save, sender=Site)
+# def copy_stages_from_project(sender, **kwargs):
+#     site = kwargs.get('instance')
+#     created = kwargs.get('created')
+#     if created:
+#         project = site.project
+#         project_main_stages = project.stages.filter(stage__isnull=True)
+#         for pms in project_main_stages:
+#             project_sub_stages = Stage.objects.filter(stage__id=pms.pk, stage_forms__is_deleted=False, stage_forms__is_deployed=True)
+#             if not project_sub_stages:
+#                 continue
+#             site_main_stage = Stage(name=pms.name, order=pms.order, site=site, description=pms.description,
+#                                     project_stage_id=pms.id, weight=pms.weight)
+#             site_main_stage.save()
+#             for pss in project_sub_stages:
+#                 if pss.tags and site.type:
+#                     if site.type.id not in pss.tags:
+#                         continue
+#                 site_sub_stage = Stage(name=pss.name, order=pss.order, site=site,
+#                                description=pss.description, stage=site_main_stage, project_stage_id=pss.id, weight=pss.weight)
+#                 site_sub_stage.save()
+#                 if FieldSightXF.objects.filter(stage=pss).exists():
+#                     fsxf = pss.stage_forms
+#                     site_form = FieldSightXF(is_staged=True, default_submission_status=fsxf.default_submission_status, xf=fsxf.xf, site=site,fsform=fsxf, stage=site_sub_stage, is_deployed=True)
+#                     site_form.save()
+#         general_forms = project.project_forms.filter(is_staged=False, is_scheduled=False, is_deployed=True, is_deleted=False)
+#         for general_form in general_forms:
+#             FieldSightXF.objects.create(is_staged=False, default_submission_status=general_form.default_submission_status, is_scheduled=False, is_deployed=True, site=site,
+#                                         xf=general_form.xf, fsform=general_form)
+#
+#         schedule_forms = project.project_forms.filter(is_scheduled=True, is_deployed=True, is_deleted=False)
+#         for schedule_form in schedule_forms:
+#             schedule = schedule_form.schedule
+#             selected_days = tuple(schedule.selected_days.all())
+#             s = Schedule.objects.create(name=schedule.name, site=site, date_range_start=schedule.date_range_start,
+#                                         date_range_end=schedule.date_range_end)
+#             s.selected_days.add(*selected_days)
+#             s.save()
+#             FieldSightXF.objects.create(is_scheduled=True, default_submission_status=schedule_form.default_submission_status, xf=schedule_form.xf, site=site, fsform=schedule_form,
+#                                              schedule=s, is_deployed=True)
 
 
 class DeployEvent(models.Model):
