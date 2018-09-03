@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import json
+import os, tempfile
 from django.contrib.gis.db.models import PointField
 from django.contrib.gis.db.models import GeoManager
 from django.contrib.contenttypes.fields import GenericRelation
@@ -8,6 +9,8 @@ from django.db import models
 from django.conf import settings
 from django.db.models import IntegerField, Count, Case, When
 from django.db.models.signals import post_save
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from django.utils.text import slugify
 from jsonfield import JSONField
 from .static_lists import COUNTRIES
@@ -15,7 +18,7 @@ from django.contrib.auth.models import Group
 
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-
+from django.core.serializers import serialize
 
 class TimeZone(models.Model):
     time_zone = models.CharField(max_length=255, blank=True, null=True)
@@ -334,7 +337,8 @@ class Site(models.Model):
     region = models.ForeignKey(
         Region, related_name='regions', blank=True, null=True)
     site_meta_attributes_ans = JSONField(default=dict)
-    current_progress = models.IntegerField()
+    current_progress = models.IntegerField(default=0)
+    current_status = models.IntegerField(default=0)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     objects = GeoManager()
@@ -352,6 +356,14 @@ class Site(models.Model):
     def longitude(self):
         if self.location:
             return self.location.x
+
+    def update_status(self):
+        try:
+            status = self.site_instances.order_by('-date').first().form_status
+        except:
+            status = 4
+        self.current_status = status
+        self.save()
 
     def getname(self):
         return self.name
@@ -381,6 +393,11 @@ class Site(models.Model):
 
     def update_current_progress(self):
         self.current_progress = self.progress()
+        try:
+            status = self.site_instances.order_by('-date').first().form_status
+        except:
+            status = 4
+        self.current_status = status
         self.save()
 
     def progress(self):
@@ -513,3 +530,32 @@ class UserInvite(models.Model):
         invite_idb64 = urlsafe_base64_encode(force_bytes(self.pk))
         kwargs = {'invite_idb64': invite_idb64, 'token': self.token}
         return reverse('fieldsight:activate-role', kwargs=kwargs)
+
+class ProjectGeoJSON(models.Model):
+    project = models.OneToOneField(Project, related_name="project_geojson")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    geoJSON = models.FileField(max_length=755, blank=True, null=True)
+
+    def generate_new(self):
+        data = serialize('full_detail_geojson',
+               Site.objects.filter(project_id = self.id, is_survey=False, is_active=True),
+               geometry_field='location',
+               fields=('name', 'location', 'id', 'identifier'))
+
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write(data)
+            temp.seek(0)
+            if default_storage.exists('geojsonFiles/' + str(self.project.id) + '/site-geojson/sites.geojson'):
+                default_storage.delete('geojsonFiles/' + str(self.project.id) + '/site-geojson/sites.geojson')
+            
+            geojson_url = default_storage.save('geojsonFiles/' + str(self.project.id) + '/site-geojson/sites.geojson', temp)
+            self.geoJSON.name = geojson_url
+            self.save()
+
+
+
+
+
+
+    
