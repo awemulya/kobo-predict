@@ -2071,9 +2071,11 @@ def set_deploy_main_stage(request, is_project, pk, stage_id):
             sub_stages_id = [s.id for s in sub_stages]
             stage_forms = FieldSightXF.objects.filter(stage__id__in=sub_stages_id)
             stage_forms.update(is_deployed=True)
+            deleted_forms = FieldSightXF.objects.filter(project__id=pk, is_deleted=True, is_staged=True)
             deploy_data = {'main_stage':StageSerializer(main_stage).data,
                            'sub_stages':StageSerializer(sub_stages, many=True).data,
-                           'stage_forms':StageFormSerializer(stage_forms, many=True).data
+                           'stage_forms':StageFormSerializer(stage_forms, many=True).data,
+                           'deleted_forms': StageFormSerializer(deleted_forms, many=True).data,
                             }
             d = DeployEvent(site=site, data=deploy_data)
             d.save()
@@ -2098,10 +2100,12 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
             stage_form.is_deployed = True
             stage_form.save()
             serializer = SubStageDetailSerializer(sub_stage)
+            deleted_forms = FieldSightXF.objects.filter(site__id=pk, is_deleted=True, is_staged=True)
             deploy_data = {
                 'main_stage':StageSerializer(sub_stage.stage).data,
                 'sub_stages':[StageSerializer(sub_stage).data],
                 'stage_forms':[StageFormSerializer(stage_form).data],
+                'deleted_forms': StageFormSerializer(deleted_forms, many=True).data,
                            }
             d = DeployEvent(site=site, data=deploy_data)
             d.save()

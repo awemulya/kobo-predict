@@ -63,7 +63,6 @@ def copy_allstages_to_sites(pk):
 def copy_stage_to_sites(main_stage, pk):
     try:
         project = Project.objects.get(pk=pk)
-        sites = project.sites.filter(is_active=True)
         project_sub_stages = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
         sub_stages_id = [s.id for s in project_sub_stages]
         project_forms = FieldSightXF.objects.filter(stage__id__in=sub_stages_id, is_deleted=False)
@@ -81,36 +80,6 @@ def copy_stage_to_sites(main_stage, pk):
             Stage.objects.filter(project_stage_id=main_stage.id).delete()
             Stage.objects.filter(project_stage_id__in=sub_stages_id).delete()
             sites_affected = []
-            for site in sites:
-                site_data = {'id': site.id}
-                site_main_stage = Stage(name=main_stage.name, order=main_stage.order, site=site,
-                                        description=main_stage.description, project_stage_id=main_stage.id)
-                site_main_stage.save()
-                site_data['main_stage'] = StageSerializer(site_main_stage).data
-                site_data['sub_stage_data'] = []
-                for project_sub_stage in project_sub_stages:
-                    if project_sub_stage.tags and site.type:
-                        if site.type.id not in project_sub_stage.tags:
-                            continue
-                    sub_stage_data = {}
-                    site_sub_stage = Stage(name=project_sub_stage.name, order=project_sub_stage.order, site=site,
-                                           description=project_sub_stage.description, stage=site_main_stage,
-                                           project_stage_id=project_sub_stage.id, weight=site_main_stage.weight)
-                    site_sub_stage.save()
-                    if FieldSightXF.objects.filter(stage=project_sub_stage).exists():
-                        fsxf = FieldSightXF.objects.filter(stage=project_sub_stage)[0]
-                        site_fsxf, created = FieldSightXF.objects.get_or_create(is_staged=True,
-                                                                                xf=fsxf.xf, site=site,
-                                                                                fsform=fsxf, stage=site_sub_stage)
-                        site_fsxf.is_deleted = False
-                        site_fsxf.is_deployed = True
-                        site_fsxf.default_submission_status = fsxf.default_submission_status
-                        site_fsxf.save()
-                        sub_stage_data['sub_stage'] = StageSerializer(site_sub_stage).data
-                        sub_stage_data['sub_stage_form'] = StageFormSerializer(site_fsxf).data
-                        site_data['sub_stage_data'].append(sub_stage_data)
-                sites_affected.append(site_data)
-
             deploy_data = {
                 'project_stage': StageSerializer(main_stage).data,
                 'project_sub_stages': StageSerializer(project_sub_stages, many=True).data,
