@@ -52,8 +52,7 @@ def site_download_zipfile(task_prog_obj_id, size):
                     img.save(temp, img.format)
                     # filename = '/srv/fieldsight/fieldsight-kobocat'+url['_attachments']['filename'] # Select your files here.                           
                     archive.write(temp.name, url['_attachments']['filename'].split('/')[2])
-            else:
-                raise Exception('No Image Found.')
+                    
         archive.close()
         buffer.seek(0)
         zipFile = buffer.getvalue()
@@ -174,7 +173,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
                 if long == "":
                     long = 27.7172
 
-                location = Point(lat, long, srid=4326)
+                location = Point(round(float(lat), 6), round(float(long), 6), srid=4326)
                 region_idf = site.get("region_id", None)
                 type_identifier = int(site.get("type", "0"))
 
@@ -532,8 +531,8 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
                             repeat_questions = r_questions
                         repeat_answers[formresponse.site.identifier] = {'name': formresponse.site.name, 'answers':r_answers}
 
-                    # if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
-                    #     head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}, {'question_name':'status','question_label':'status'}] + questions  
+                    if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
+                        head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}, {'question_name':'status','question_label':'status'}] + questions  
 
                     for col_num in range(len(head_columns)):
                         ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)

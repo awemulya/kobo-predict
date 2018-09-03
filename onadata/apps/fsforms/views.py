@@ -1122,7 +1122,7 @@ class Setup_forms(SPFmixin, View):
                    'schedule_form': KoScheduleForm(request=request)})
 
 
-class FormFillView(ReadonlyFormMixin, FormMixin, View):
+class FormFillView(FormMixin, View):
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
         sub_pk = self.kwargs.get('instance_pk')
@@ -1645,12 +1645,14 @@ def instance_status(request, instance):
                 comment_url = reverse("forms:instance_status_change_detail",
                                                 kwargs={'pk': status_changed.id})
                 if fi.site:
+                    site.update_current_progress()
                     extra_object=fi.site
                     extra_message=""
                 else:
                     extra_object=fi.project
                     extra_message="project"
 
+                    
                 org = fi.project.organization if fi.project else fi.site.project.organization
                 noti = status_changed.logs.create(source=request.user, type=17, title="form status changed",
                                           organization=org,
@@ -2157,7 +2159,7 @@ class DeleteFInstance(FInstanceRoleMixin, View):
         next_url = request.GET.get('next', '/')
         return HttpResponseRedirect(next_url)
 
-class DeleteFieldsightXF(View):
+class DeleteFieldsightXF(FormMixin, View):
     def get(self, request, *args, **kwargs):
         try:
             fsform = FieldSightXF.objects.get(pk=self.kwargs.get('fsxf_id'))
