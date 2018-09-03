@@ -86,7 +86,7 @@ def send_message_stages(site):
 
 
 def send_bulk_message_stages_deployed_project(project):
-    roles = UserRole.objects.filter(site__project=project, ended_at=None, group__name="Site Supervisor")
+    roles = UserRole.objects.filter(site__project=project, ended_at=None, group__name="Site Supervisor").distinct('user')
     emails = [r.user.email for r in roles]
     Device = get_device_model()
     message = {'notify_type': 'deploy_all',
@@ -110,7 +110,7 @@ def send_bulk_message_stages_deployed_site(site):
 
 
 def send_bulk_message_stage_deployed_project(project, main_stage, deploy_id):
-    roles = UserRole.objects.filter(site__project=project, ended_at=None, group__name="Site Supervisor")
+    roles = UserRole.objects.filter(site__project=project, ended_at=None, group__name="Site Supervisor").distinct('user')
     emails = [r.user.email for r in roles]
     Device = get_device_model()
     message = {'notify_type': 'deploy_ms',
@@ -136,7 +136,7 @@ def send_bulk_message_stage_deployed_site(site, main_stage, deploy_id):
 
 
 def send_sub_stage_deployed_project(project, sub_stage, deploy_id):
-    roles = UserRole.objects.filter(site__project=project, ended_at=None, group__name="Site Supervisor")
+    roles = UserRole.objects.filter(site__project=project, ended_at=None, group__name="Site Supervisor").distinct('user')
     emails = [r.user.email for r in roles]
     Device = get_device_model()
     message = {'notify_type': 'deploy_ss',
@@ -149,7 +149,7 @@ def send_sub_stage_deployed_project(project, sub_stage, deploy_id):
 
 
 def send_sub_stage_deployed_site(site, sub_stage, deploy_id):
-    roles = UserRole.objects.filter(site=site, ended_at=None, group__name="Site Supervisor")
+    roles = UserRole.objects.filter(site=site, ended_at=None, group__name="Site Supervisor").distinct('user')
     emails = [r.user.email for r in roles]
     Device = get_device_model()
     message = {'notify_type': 'deploy_ss',
@@ -163,7 +163,7 @@ def send_sub_stage_deployed_site(site, sub_stage, deploy_id):
 
 
 def send_message_un_deploy(fxf):
-    roles = UserRole.objects.filter(site=fxf.site, ended_at=None, group__name="Site Supervisor")
+    roles = UserRole.objects.filter(site=fxf.site, ended_at=None, group__name="Site Supervisor").distinct('user')
     emails = [r.user.email for r in roles]
     Device = get_device_model()
     message = {'notify_type': 'Form Altered',
@@ -194,7 +194,7 @@ def send_message_un_deploy_project(fxf):
 
 
 def send_message_xf_changed(fxf=None, form_type=None, id=None):
-    roles = UserRole.objects.filter(site=fxf.site, ended_at=None, group__name="Site Supervisor")
+    roles = UserRole.objects.filter(site=fxf.site, ended_at=None, group__name="Site Supervisor").distinct('user')
     emails = [r.user.email for r in roles]
     Device = get_device_model()
     message = {'notify_type': 'Kobo Form Changed',
