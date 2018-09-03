@@ -104,6 +104,9 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         if fsxfid is None:
             return self.error_response("Fieldsight Form ID Not Given", False, request)
         site_or_project_form = get_object_or_404(FieldSightXF, pk=kwargs.get('pk'))
+        if not site_or_project_form.site and not site_or_project_form.project:
+            return self.error_response("Orphan FieldsightXForm No Site or Form ID", False, request)
+
         if site_or_project_form.site and not site_or_project_form.project:
             fsxfid = kwargs.get('pk', None)
             siteid = kwargs.get('site_id', None)

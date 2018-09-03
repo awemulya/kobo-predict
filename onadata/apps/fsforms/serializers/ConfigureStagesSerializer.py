@@ -121,6 +121,8 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
             FieldSightXF.objects.create(xf=xform, site=main_stage.site,
                                                       project=main_stage.project, is_staged=True, stage=stage, default_submission_status=default_submission_status)
         stage.stage = main_stage
+        stage.site = main_stage.site
+        stage.project = main_stage.project
         stage.save()
         # tags
         return stage
