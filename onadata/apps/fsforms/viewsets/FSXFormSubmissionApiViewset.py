@@ -113,7 +113,7 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                 fsxfid = int(fsxfid)
                 fxf = get_object_or_404(FieldSightXF, pk=kwargs.get('pk'))
                 fs_proj_xf = fxf.fsform.pk if fxf.fsform else None
-                proj_id = fxf.fsform.project.pk if fxf.fsform else fxf.site.project.pk
+                proj_id = fxf.site.project.pk
                 xform = fxf.xf
                 # site_id = fxf.site.pk if fxf.site else None
             except:
