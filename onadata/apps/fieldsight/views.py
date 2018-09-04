@@ -3218,12 +3218,17 @@ class UnassignUserRegionAndSites(View):
 class ProjectSiteListGeoJSON(View):
     def get(self, request, **kwargs):
         project = Project.objects.get(pk=self.kwargs.get('pk'))
-        startdate = project.project_geojson.updated_at
-        enddate = datetime.datetime.now() + datetime.timedelta(days=1)
-        #Use updated date as the submissions can be updated any time.
-        sites = FInstance.objects.filter(date__range=[startdate, enddate], site__isnull=False).values('site_id')
+        try: 
+            startdate = project.project_geojson.updated_at
+            enddate = datetime.datetime.now() + datetime.timedelta(days=1)
+            #Use updated date as the submissions can be updated any time.
+            sites_id = FInstance.objects.filter(date__range=[startdate, enddate], site__isnull=False).values('site_id')
+            sites = Site.objects.filter(pk__in=sites, is_survey=False, is_active=True)
+        except:
+            sites = Site.objects.filter(project_id=project.id, is_survey=False, is_active=True)
+
         data = serialize('full_detail_geojson',
-                         Site.objects.filter(pk__in=sites, is_survey=False, is_active=True),
+                         sites,
                          geometry_field='location',
                          fields=('name', 'location', 'id', 'identifier' ))
 
