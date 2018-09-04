@@ -121,6 +121,8 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
             FieldSightXF.objects.create(xf=xform, site=main_stage.site,
                                                       project=main_stage.project, is_staged=True, stage=stage, default_submission_status=default_submission_status)
         stage.stage = main_stage
+        stage.site = main_stage.site
+        stage.project = main_stage.project
         stage.save()
         # tags
         return stage
@@ -141,15 +143,15 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
                     old_form.default_submission_status = default_submission_status
                     old_form.save()
                 else:
-                    old_form.deleted = True
+                    old_form.is_deleted = True
                     old_form.stage = None
                     old_form.save()
-                    FieldSightXF.objects.create(xf=xform, site=stage.site,
-                                                  project=stage.project, is_staged=True, stage=stage, default_submission_status = default_submission_status)
+                    FieldSightXF.objects.create(xf=xform, site=stage.stage.site,
+                                                  project=stage.stage.project, is_staged=True, stage=stage, default_submission_status = default_submission_status)
             except:
                 if xform:
-                    FieldSightXF.objects.create(xf=xform, site=stage.site,
-                                                      project=stage.project, is_staged=True, stage=stage, default_submission_status = default_submission_status)
+                    FieldSightXF.objects.create(xf=xform, site=stage.stage.site,
+                                                      project=stage.stage.project, is_staged=True, stage=stage, default_submission_status = default_submission_status)
         # tags
         return stage
 
