@@ -17,7 +17,7 @@ from rest_framework.permissions import BasePermission
 
 
 from onadata.apps.fieldsight.models import Project, Region
-from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectMinimalSerializer, ProjectFormsSerializer, ProjectMetasSerializer, ProjectTypeSerializer, ProjectMiniSerializer, ProjectSerializer, ProjectCreationSerializer
+from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectMapDataSerializer, ProjectMinimalSerializer, ProjectFormsSerializer, ProjectMetasSerializer, ProjectTypeSerializer, ProjectMiniSerializer, ProjectSerializer, ProjectCreationSerializer
 from onadata.apps.fieldsight.serializers.RegionSerializer import RegionSerializer
 from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.userrole.models import UserRole
@@ -205,7 +205,7 @@ class UserProjectlistMinimalViewset(viewsets.ModelViewSet):
 
 class DonorMyProjects(viewsets.ModelViewSet):
     queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
+    serializer_class = ProjectMapDataSerializer
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def filter_queryset(self, queryset):

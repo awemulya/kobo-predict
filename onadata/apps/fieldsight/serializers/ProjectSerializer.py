@@ -91,23 +91,23 @@ class ProjectFormsSerializer(serializers.ModelSerializer):
 
 
 class ProjectMapDataSerializer(serializers.ModelSerializer):
-    geojson_file = serializers.SerializerMethodField(read_only=True)
-    updated_geojson = serializers.SerializerMethodField(read_only=True)
+    primary_geojson = serializers.SerializerMethodField(read_only=True)
+    secondary_geojson = serializers.SerializerMethodField(read_only=True)
     geo_layers = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
-        model = FieldSightXF
-        fields = ('id', 'name',)
+        model = Project
+        fields = ('id', 'name', 'primary_geojson', 'secondary_geojson', 'geo_layers', )
     
     
-    def get_geojson_file(self, obj):
+    def get_primary_geojson(self, obj):
         try:
             url = obj.project_geojson.geoJSON.url
         except:
             url = None
         return url
 
-    def get_updated_geojson(self, obj):
+    def get_secondary_geojson(self, obj):
         return reverse('fieldsight:ProjectSiteListGeoJSON', kwargs={'pk': obj.id})
 
     def get_geo_layers(self, obj):

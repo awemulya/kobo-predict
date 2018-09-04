@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import datetime
 import json
 import redis
 import xlwt
@@ -3212,10 +3213,11 @@ class UnassignUserRegionAndSites(View):
         
         return JsonResponse(data, status=status)
 
+#class ProjectSiteListGeoJSON(ReadonlyProjectLevelRoleMixin, View):
 
-class ProjectSiteListGeoJSON(ReadonlyProjectLevelRoleMixin, View):
+class ProjectSiteListGeoJSON(View):
     def get(self, request, **kwargs):
-        project = project.objects.get(pk=self.kwargs.get('pk'))
+        project = Project.objects.get(pk=self.kwargs.get('pk'))
         startdate = project.project_geojson.updated_at
         enddate = datetime.datetime.now() + datetime.timedelta(days=1)
         #Use updated date as the submissions can be updated any time.
