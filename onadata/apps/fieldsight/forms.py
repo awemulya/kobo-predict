@@ -116,7 +116,7 @@ class OrganizationForm(forms.ModelForm):
     def clean(self):
         lat = self.data.get("Longitude","85.3240")
         long = self.data.get("Latitude","27.7172")
-        p = Point(float(lat), float(long),srid=4326)
+        p = Point(round(float(lat), 6), round(float(long), 6),srid=4326)
         self.cleaned_data["location"] = p
         super(OrganizationForm, self).clean()
 
@@ -297,7 +297,7 @@ class ProjectForm(forms.ModelForm):
     def clean(self):
         lat = self.data.get("Longitude", "85.3240")
         long = self.data.get("Latitude", "27.7172")
-        p = Point(float(lat), float(long), srid=4326)
+        p = Point(round(float(lat), 6), round(float(long), 6),srid=4326)
         self.cleaned_data["location"] = p
         super(ProjectForm, self).clean()
 
@@ -367,7 +367,7 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
     def clean(self):
         lat = self.data.get("Longitude")
         long = self.data.get("Latitude")
-        p = Point(float(lat), float(long),srid=4326)
+        p = Point(round(float(lat), 6), round(float(long), 6),srid=4326)
         self.cleaned_data["location"] = p
         super(SiteForm, self).clean()
 
@@ -395,7 +395,7 @@ class ProjectFormKo(HTML5BootstrapModelForm, KOModelForm):
     def clean(self):
         lat = self.data.get("Longitude","85.3240")
         long = self.data.get("Latitude","27.7172")
-        p = Point(float(lat), float(long),srid=4326)
+        p = Point(round(float(lat), 6), round(float(long), 6),srid=4326)
         self.cleaned_data["location"] = p
         super(ProjectFormKo, self).clean()
 

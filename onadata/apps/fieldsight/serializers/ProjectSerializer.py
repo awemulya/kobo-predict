@@ -28,7 +28,7 @@ class ProjectCreationSerializer(serializers.ModelSerializer):
         exclude = ()
 
     def create(self, validated_data):
-        p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')), srid=4326)
+        p = Point(round(float(validated_data.pop('longitude')), 6), round(float(validated_data.pop('latitude')), 6), srid=4326)
         validated_data.update({'is_active': True, 'location': p})
         project = Project.objects.create(**validated_data)
         project.save()
@@ -49,7 +49,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
     def create(self, validated_data):
-        p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')),srid=4326)
+        p = Point(round(float(validated_data.pop('longitude')), 6), round(float(validated_data.pop('latitude')), 6), srid=4326)
         validated_data.update({'location':p})
         project = Project.objects.create(**validated_data)
         return project
