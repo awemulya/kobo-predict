@@ -3215,9 +3215,14 @@ class UnassignUserRegionAndSites(View):
 
 class ProjectSiteListGeoJSON(ReadonlyProjectLevelRoleMixin, View):
     def get(self, request, **kwargs):
+        project = project.objects.get(pk=self.kwargs.get('pk'))
+        startdate = project.project_geojson.updated_at
+        enddate = datetime.datetime.now() + datetime.timedelta(days=1)
+        #Use updated date as the submissions can be updated any time.
+        sites = FInstance.objects.filter(date__range=[startdate, enddate], site__isnull=False).values('site_id')
         data = serialize('full_detail_geojson',
-                         Site.objects.prefetch_related('site_instances').filter(project_id = self.kwargs.get('pk'), is_survey=False, is_active=True),
+                         Site.objects.filter(pk__in=sites, is_survey=False, is_active=True),
                          geometry_field='location',
-                         fields=('name','address', 'location', 'phone', 'id', 'identifier' ))
+                         fields=('name', 'location', 'id', 'identifier' ))
 
         return JsonResponse(json.loads(data), status=200)
