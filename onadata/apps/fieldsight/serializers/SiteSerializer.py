@@ -111,6 +111,7 @@ class SiteCreationSurveySerializer(serializers.ModelSerializer):
     class Meta:
         model = Site
         read_only_fields = ('logo', 'location')
+        exclude = ('current_progress', 'current_status')
 
     def create(self, validated_data):
         p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')),srid=4326)

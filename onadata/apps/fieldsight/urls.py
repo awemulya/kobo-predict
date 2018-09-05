@@ -7,9 +7,9 @@ from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProject
 
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet, ProjectRegionslistViewSet, UserProjectlistMinimalViewset
-from onadata.apps.fieldsight.viewsets.ProjectViewSet import MyOrgProjectlistViewSet, ProjectMetas, ProjectForms, OrganizationsProjectViewSet, MyProjectlistViewSet
+from onadata.apps.fieldsight.viewsets.ProjectViewSet import DonorMyProjects, MyOrgProjectlistViewSet, ProjectMetas, ProjectForms, OrganizationsProjectViewSet, MyProjectlistViewSet
 from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionViewSet, RegionPagignatedViewSet, RegionSearchViewSet, UserMainRegionViewSet
-from onadata.apps.fieldsight.viewsets.SiteViewSet import SitelistMinimalViewset, SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
+from onadata.apps.fieldsight.viewsets.SiteViewSet import ProjectSitelistViewset, SitelistMinimalViewset, SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
     SiteReviewViewSet, ProjectTypeViewset, SiteTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet, SiteUpdateViewSet, \
     ProjectUpdateViewSet, SiteUnderOrgViewSet, SiteUnderRegionViewSet, SitePagignatedViewSet, SiteSearchViewSet, UserSitelistMinimalViewset
 from .forms import RegistrationForm
@@ -61,7 +61,7 @@ from .views import (
     StageStatus, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
     SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI,
     GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages,
-    SiteSearchView, ProjectDashboardStageResponsesStatus, SiteBulkEditView, site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data, FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI)
+    SiteSearchView, ProjectDashboardStageResponsesStatus, ProjectSiteListGeoJSON, SiteBulkEditView, site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data, FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI)
 
     
 
@@ -282,6 +282,8 @@ urlpatterns = [
     url(r'^api/project/user/regions/(?P<pk>\d+)/(?P<user_id>\d+)/(?P<group_id>\d+)/$', MainRegionsAndSitesAPI.as_view(), name='user_regions'),
     url(r'^api/region/(?P<pk>\d+)/subregionsandsites/(?P<user_id>\d+)/(?P<group_id>\d+)/$', SubRegionAndSitesAPI.as_view(), name='SubRegionAndSitesAPI'),
     url(r'^api/remove_roles/(?P<pk>\d+)/$', UnassignUserRegionAndSites.as_view(), name='UnassignUserRegionAndSites'),
-
+    url(r'^api/donor/myprojects/$', DonorMyProjects.as_view({'get':'list'}), name="DonorMyProjectList"),
+    url(r'^api/project/myprojects/(?P<pk>\d+)/sites/$', ProjectSitelistViewset.as_view({'get':'list'}), name="ProjectSiteList"),
+    url(r'^api/project/myprojects/(?P<pk>\d+)/sites/geoJSON/$', ProjectSiteListGeoJSON.as_view(), name="ProjectSiteListGeoJSON"),
     ]
 

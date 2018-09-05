@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import datetime
 import json
 import redis
 import xlwt
@@ -3211,3 +3212,24 @@ class UnassignUserRegionAndSites(View):
                 status, data = 200, {'status':'True', 'ids':ids, 'projects':projects, 'regions':regions, 'sites': sites, 'message':'Sucess, the roles are being removed. You will be notified after all the roles are removed. '}
         
         return JsonResponse(data, status=status)
+
+#class ProjectSiteListGeoJSON(ReadonlyProjectLevelRoleMixin, View):
+
+class ProjectSiteListGeoJSON(View):
+    def get(self, request, **kwargs):
+        project = Project.objects.get(pk=self.kwargs.get('pk'))
+        try: 
+            startdate = project.project_geojson.updated_at
+            enddate = datetime.datetime.now() + datetime.timedelta(days=1)
+            #Use updated date as the submissions can be updated any time.
+            sites_id = FInstance.objects.filter(date__range=[startdate, enddate], site__isnull=False).values('site_id')
+            sites = Site.objects.filter(pk__in=sites, is_survey=False, is_active=True)
+        except:
+            sites = Site.objects.filter(project_id=project.id, is_survey=False, is_active=True)
+
+        data = serialize('full_detail_geojson',
+                         sites,
+                         geometry_field='location',
+                         fields=('name', 'location', 'id', 'identifier' ))
+
+        return JsonResponse(json.loads(data), status=200)

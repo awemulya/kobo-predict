@@ -4,6 +4,7 @@ from django.contrib.gis.geos import Point
 from rest_framework import serializers
 from onadata.apps.fieldsight.models import Project, ProjectType, OrganizationType
 from onadata.apps.fsforms.models import FieldSightXF
+from django.core.urlresolvers import reverse
 
 
 class ProjectTypeSerializer(serializers.ModelSerializer):
@@ -87,3 +88,39 @@ class ProjectFormsSerializer(serializers.ModelSerializer):
 
     def get_json(self, obj):
         return json.loads(obj.xf.json)
+
+
+class ProjectMapDataSerializer(serializers.ModelSerializer):
+    primary_geojson = serializers.SerializerMethodField(read_only=True)
+    secondary_geojson = serializers.SerializerMethodField(read_only=True)
+    geo_layers = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Project
+        fields = ('id', 'name', 'primary_geojson', 'secondary_geojson', 'geo_layers', )
+    
+    
+    def get_primary_geojson(self, obj):
+        try:
+            url = obj.project_geojson.geoJSON.url
+        except:
+            url = None
+        return url
+
+    def get_secondary_geojson(self, obj):
+        return reverse('fieldsight:ProjectSiteListGeoJSON', kwargs={'pk': obj.id})
+
+    def get_geo_layers(self, obj):
+        layers = obj.geo_layers.all()
+        geo_layers = []
+        for layer in layers:
+            geo_layer = {}
+            geo_layer['id'] = layer.id
+            geo_layer['title'] = layer.title
+            geo_layer['level'] = layer.level
+            geo_layer['url'] = layer.geo_shape_file.url
+            geo_layers.append(geo_layer)
+        
+        return geo_layers
+
+
