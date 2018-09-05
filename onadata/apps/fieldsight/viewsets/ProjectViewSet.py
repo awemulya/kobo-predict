@@ -209,5 +209,5 @@ class DonorMyProjects(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     
     def filter_queryset(self, queryset):
-        projects = UserRole.objects.filter(user_id=2, project__isnull=False, group_id=7, ended_at=None).distinct('project_id').values('project_id')
+        projects = UserRole.objects.filter(user_id=self.request.user.id, project__isnull=False, group_id=7, ended_at=None).distinct('project_id').values('project_id')
         return queryset.filter(pk__in=projects)
