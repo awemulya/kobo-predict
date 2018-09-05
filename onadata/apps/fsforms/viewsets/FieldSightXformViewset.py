@@ -72,9 +72,14 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
         is_project = self.kwargs.get("is_project")
         pk = self.kwargs.get("pk")
         if is_project == "1":
-            instances = FInstance.objects.filter(project__isnull=False, project__id=pk).order_by('-pk')
+            instances = FInstance.objects.filter(project__isnull=False,
+                                                 project__id=pk,
+                                                 project_fxf__is_staged=False,
+                                                 project_fxf__is_scheduled=False,
+                                                 project_fxf__is_survey=False
+                                                 ).order_by('-pk').select_related("project", "project_fxf")
         if is_project == "0":
-            instances = FInstance.objects.filter(site__id=pk).order_by('-pk')
+            instances = FInstance.objects.filter(site__id=pk).order_by('-pk').select_related("site", "site_fxf")
         self.kwargs.update({'instances': instances})
         return self.kwargs
 

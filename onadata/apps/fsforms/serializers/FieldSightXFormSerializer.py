@@ -234,9 +234,13 @@ class FSXFormSerializer(serializers.ModelSerializer):
                     count += 1
                     if response is None:
                         response = i
-        if is_project =="0":
+        if is_project == "0":
             for i in instances:
-                if i.site_fxf == obj:
+                if i.project_fxf == obj:
+                    count += 1
+                    if response is None:
+                        response = i
+                elif  i.site_fxf == obj:
                     count += 1
                     if response is None:
                         response = i
