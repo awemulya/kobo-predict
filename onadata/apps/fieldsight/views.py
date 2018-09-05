@@ -3245,8 +3245,8 @@ class GeoJSONContent(View):
     def get(self, request, **kwargs):
         geojsonfile = ProjectGeoJSON.objects.get(pk=self.kwargs.get('pk')).geoJSON
         geojsonfile.open(mode='rb') 
-        lines = geojsonfile.readlines()
+        lines = geojsonfile.read()
         geojsonfile.close()
-        return Response(lines)
+        return JsonResponse(lines, status=200)
 
 
