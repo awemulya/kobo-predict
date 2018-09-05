@@ -1645,7 +1645,7 @@ def instance_status(request, instance):
                 comment_url = reverse("forms:instance_status_change_detail",
                                                 kwargs={'pk': status_changed.id})
                 if fi.site:
-                    site.update_current_progress()
+                    fi.site.update_current_progress()
                     extra_object=fi.site
                     extra_message=""
                 else:
@@ -1682,12 +1682,11 @@ def instance_status(request, instance):
         # result['description'] = noti.description
         # result['url'] = noti.get_absolute_url()
         # ChannelGroup("site-{}".format(fi.site.id)).send({"text": json.dumps(result)})
-        if request.method == 'POST' and fi.site_fxf:
+        if request.method == 'POST':
             try:
-                project_fxf_id = fi.project_fxf.id
-                send_message_flagged(fi.site_fxf, project_fxf_id, fi.form_status, message, comment_url)
+                send_message_flagged(fi, message, comment_url)
             except Exception as e:
-                send_message_flagged(fi.site_fxf, 0, fi.form_status, message, comment_url)
+                pass
                 # send_message(fi.site_fxf, fi.form_status, message, comment_url)
         return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
 
