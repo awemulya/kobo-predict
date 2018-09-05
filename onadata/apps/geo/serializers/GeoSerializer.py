@@ -14,4 +14,4 @@ class GeoLayerSerializer(serializers.ModelSerializer):
 
 
     def get_geo_layer(self, obj):
-        reverse('fieldsight:geo-json', kwargs={'pk': obj.id})
+        return reverse('fieldsight:geo-json', kwargs={'pk': obj.id})
