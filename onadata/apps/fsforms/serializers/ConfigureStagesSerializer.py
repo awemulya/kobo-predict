@@ -66,14 +66,25 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
 
     def get_responses_count(self, obj):
         try:
+            request = self.context.get('request', False)
+            params = request.query_params
+            site_id = False
+            if params.get("is_project", False):
+                if params.get("is_project") == "0":
+                    site_id = params.get("pk", False)
+
             fsxf = FieldSightXF.objects.get(stage=obj)
+
             if fsxf.site is None:
+                if site_id:
+                    return fsxf.project_form_instances.filter(site=site_id).count()
                 return fsxf.project_form_instances.count()
             else:
                 return fsxf.site_form_instances.count()
 
         except FieldSightXF.DoesNotExist:
             return 0
+
     def get_has_stage(self, obj):
         try:
             obj.stage_forms
