@@ -3241,3 +3241,12 @@ class DonorFullMap(FullMapViewMixin, View):
         return render(request, 'fieldsight/donor_fullmap.html', {})
 
 
+class GeoJSONContent(View):
+    def get(self, request, **kwargs):
+        geojsonfile = ProjectGeoJSON.objects.get(pk=self.kwargs.get('pk')).geoJSON
+        geojsonfile.open(mode='rb') 
+        lines = geojsonfile.readlines()
+        geojsonfile.close()
+        return JsonResponse(lines, status=200)
+
+
