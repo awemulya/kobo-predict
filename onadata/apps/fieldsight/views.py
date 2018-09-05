@@ -3247,6 +3247,6 @@ class GeoJSONContent(View):
         geojsonfile.open(mode='rb') 
         lines = geojsonfile.readlines()
         geojsonfile.close()
-        return JsonResponse(lines, status=200)
+        return JsonResponse(lines, status=200, , safe=False)
 
 
