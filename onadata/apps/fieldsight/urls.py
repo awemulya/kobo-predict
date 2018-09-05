@@ -7,7 +7,7 @@ from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProject
 
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet, ProjectRegionslistViewSet, UserProjectlistMinimalViewset
-from onadata.apps.fieldsight.viewsets.ProjectViewSet import DonorMyProjects, MyOrgProjectlistViewSet, ProjectMetas, ProjectForms, OrganizationsProjectViewSet, MyProjectlistViewSet
+from onadata.apps.fieldsight.viewsets.ProjectViewSet import DonorMyProjectsLayers, DonorMyProjects, MyOrgProjectlistViewSet, ProjectMetas, ProjectForms, OrganizationsProjectViewSet, MyProjectlistViewSet
 from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionViewSet, RegionPagignatedViewSet, RegionSearchViewSet, UserMainRegionViewSet
 from onadata.apps.fieldsight.viewsets.SiteViewSet import ProjectSitelistViewset, SitelistMinimalViewset, SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
     SiteReviewViewSet, ProjectTypeViewset, SiteTypeViewset, SiteReviewUpdateViewSet, SiteUnderProjectViewSet, SiteUpdateViewSet, \
@@ -285,6 +285,7 @@ urlpatterns = [
     url(r'^api/donor/myprojects/$', DonorMyProjects.as_view({'get':'list'}), name="DonorMyProjectList"),
     url(r'^api/project/myprojects/(?P<pk>\d+)/sites/$', ProjectSitelistViewset.as_view({'get':'list'}), name="ProjectSiteList"),
     url(r'^api/project/myprojects/(?P<pk>\d+)/sites/geoJSON/$', ProjectSiteListGeoJSON.as_view(), name="ProjectSiteListGeoJSON"),
+    url(r'^api/donor/mygeolayers/$', DonorMyProjectsLayers.as_view({'get':'list'}), name='DonorMyProjectsLayers'),
     url(r'^donor/fullmap/$', DonorFullMap.as_view(), name="donorfullmap"),
 
     url(r'^getGeoJson/(?P<pk>\d+)/$', GeoJSONContent.as_view(), name="geojsoncontent"),
