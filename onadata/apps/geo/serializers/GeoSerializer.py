@@ -10,7 +10,7 @@ class GeoLayerSerializer(serializers.ModelSerializer):
 
     class Meta:
     	model = GeoLayer
-        fields = ('id', 'title', )
+        fields = ('id', 'title', 'geo_layer')
 
 
     def get_geo_layer(self, obj):

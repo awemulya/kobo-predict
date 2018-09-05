@@ -94,7 +94,6 @@ class ProjectMapDataSerializer(serializers.ModelSerializer):
     primary_geojson = serializers.SerializerMethodField(read_only=True)
     secondary_geojson = serializers.SerializerMethodField(read_only=True)
     
-
     class Meta:
         model = Project
         fields = ('id', 'name', 'primary_geojson', 'secondary_geojson', 'geo_layers', )
