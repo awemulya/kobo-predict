@@ -45,7 +45,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
-from .rolemixins import SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
+from .rolemixins import FullMapViewMixin, SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
 from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region, SiteType
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm,
@@ -3215,7 +3215,7 @@ class UnassignUserRegionAndSites(View):
 
 #class ProjectSiteListGeoJSON(ReadonlyProjectLevelRoleMixin, View):
 
-class ProjectSiteListGeoJSON(View):
+class ProjectSiteListGeoJSON(FullMapViewMixin, View):
     def get(self, request, **kwargs):
         project = Project.objects.get(pk=self.kwargs.get('pk'))
         try: 
@@ -3233,3 +3233,11 @@ class ProjectSiteListGeoJSON(View):
                          fields=('name', 'location', 'id', 'identifier' ))
 
         return JsonResponse(json.loads(data), status=200)
+
+
+
+class DonorFullMap(FullMapViewMixin, View):
+    def get(self, request, **kwargs):
+        return render(request, 'fieldsight/donor_fullmap.html', {})
+
+

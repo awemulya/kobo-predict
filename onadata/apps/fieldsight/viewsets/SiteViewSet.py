@@ -387,7 +387,7 @@ class ProjectSitelistViewset(viewsets.ModelViewSet):
     queryset = Site.objects.all()
     serializer_class = SuperMinimalSiteSerializer
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-    permission_classes = (ProjectViewPermission,)
+    # permission_classes = (ProjectViewPermission,)
     
     def filter_queryset(self, queryset):
         return queryset.filter(project__id=self.kwargs.get('pk', None))

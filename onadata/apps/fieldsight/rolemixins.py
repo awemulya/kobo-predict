@@ -502,6 +502,20 @@ class FInstanceRoleMixin(LoginRequiredMixin):
             
         raise PermissionDenied() 
 
+
+class FullMapViewMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if request.group.name == "Super Admin":
+            return super(FullMapViewMixin, self).dispatch(request, *args, **kwargs)
+            
+        user_id = request.user.id
+        user_role = request.roles.filter(user_id = user_id, group_id__in=[7, 1, 2])
+        
+        if user_role:
+            return super(FullMapViewMixin, self).dispatch(request, *args, **kwargs)
+        
+        raise PermissionDenied()
+
 # for api mixins/permissions
 
 # class ProjectPermission(BasePermission):

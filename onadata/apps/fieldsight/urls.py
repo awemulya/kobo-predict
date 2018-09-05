@@ -61,7 +61,7 @@ from .views import (
     StageStatus, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
     SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI,
     GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages,
-    SiteSearchView, ProjectDashboardStageResponsesStatus, ProjectSiteListGeoJSON, SiteBulkEditView, site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data, FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI)
+    SiteSearchView, ProjectDashboardStageResponsesStatus, DonorFullMap, ProjectSiteListGeoJSON, SiteBulkEditView, site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data, FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI)
 
     
 
@@ -285,5 +285,8 @@ urlpatterns = [
     url(r'^api/donor/myprojects/$', DonorMyProjects.as_view({'get':'list'}), name="DonorMyProjectList"),
     url(r'^api/project/myprojects/(?P<pk>\d+)/sites/$', ProjectSitelistViewset.as_view({'get':'list'}), name="ProjectSiteList"),
     url(r'^api/project/myprojects/(?P<pk>\d+)/sites/geoJSON/$', ProjectSiteListGeoJSON.as_view(), name="ProjectSiteListGeoJSON"),
+    url(r'^donor/fullmap/$', DonorFullMap.as_view(), name="donorfullmap"),
+
+
     ]
 
