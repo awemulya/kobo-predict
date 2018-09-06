@@ -246,7 +246,8 @@
 		<script src="{% static 'dummy/assets/js/vendor/jquery.nicescroll.min.js' %}"></script>
 		<script src="{% static 'dummy/assets/js/vendor/select2.min.js' %}"></script>
 		<script src="{% static 'dummy/assets/js/leaflet/leaflet-src.js' %}"></script>
-        <script src="{% static 'dummy/assets/js/leaflet/leaflet.ajax.min.js' %}"></script>
+        <!-- <script src="{% static 'dummy/assets/js/leaflet/leaflet.ajax.min.js' %}"></script>
+         -->
         <script src="{% static 'dummy/assets/js/vendor/jQDateRangeSlider-min.js' %}"></script>
         <script src="{% static 'dummy/assets/js/leaflet/leaflet.markercluster-src.js' %}"></script>
         <script src="{% static 'dummy/assets/js/gradstop.js' %}"></script>
@@ -254,49 +255,6 @@
         <script src="{% static 'dummy/assets/js/plugins.js' %}"></script>
         
       <script>
-            let mainGeoJSON = {"crs": {"type": "name", "properties": {"name": "EPSG:4326"}}, "type": "FeatureCollection", "features": []};
-
-            function getApi(url, callback){
-                 $.ajax({
-                    //show loading here
-                    url: url,
-                    type: 'GET',
-                    success: function (data) {
-                        callback(data);    
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                        alert("Status: " + textStatus); alert("Error: " + errorThrown);
-                        return;
-                    }
-                  });
-
-            }
-
-            function loadGeoJSON(geoJSON){
-                let newarray = mainGeoJSON.features.concat(geoJSON.features)
-                mainGeoJSON.features = newarray;
-            } 
-
-            function loadGeoLayers(myProjectList){
-                
-                myProjectList.forEach(function(project,index){ 
-                    console.log(project) 
-                    if (project['primary_geojson']){ 
-                        getApi(project['primary_geojson'], loadGeoJSON);
-                        
-                    }
-                    if (project['secondary_geojson']){ 
-                        getApi(project['secondary_geojson'], loadGeoJSON); 
-                        
-                    }
-
-                });
-
-            }
-
-
-            getApi("/fieldsight/api/donor/myprojects/", loadGeoLayers);
-    
             $(document).ready(function(){
                 
 
@@ -484,29 +442,30 @@
 
                 //var siteListFile = $.getJSON("{% static 'demofile.geojson' %}");
             
-                var total_sites2 = L.geoJSON.ajax("{% static 'dummy/assets/js/blank.geojson' %}",{
-                    pointToLayer: function(feature, latlng){
-                        return L.circleMarker(latlng, geojsonMarkerStyle);
-                                
-                    },
-                    onEachFeature: function onEachFeature(feature, layer){ //console.log(feature);
-                        //markers.addLayer(layer);
-                    }
-                });
+                 var markerArray = [];
+                               function pushFeatures(url){
+                                       $.ajax({
+                                               async: false,
+                                               url: url,
+                                               success: function(data) {
+                                                       $.each(data.features,function(key){ 
+                                                               
+                                                               markerArray.push(data.features[key]);
+                                                       });
+                                                       
+                                                       
+                                               }
+                                       });
+                             }       
                 for(var i=0; i<projectList.length; i++){
-                    total_sites2.addUrl(projectList[i].primary_geojson);
-                    total_sites2.addUrl(projectList[i].secondary_geojson);
+                                       pushFeatures(projectList[i]["primary_geojson"]);
+                                       pushFeatures(projectList[i]["secondary_geojson"]);
                 }
-                var total_sites = null;
-                var counts = 0;
-                total_sites2.on('data:loaded', function() { 
-                    //console.log(counts);
-                    // Add the cluster data after the geojson layer has loaded.
-                    if(counts == projectList.length){
-                        json_data = total_sites2.toGeoJSON();
-                        //console.log(json_data);
-                        
-                        total_sites = L.geoJSON(json_data,{
+                        total_json = {"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"EPSG:4326"}},"features":[]};
+                        total_json.features=markerArray;
+                               console.log(total_json);
+
+                        total_sites = L.geoJSON(total_json,{
                             pointToLayer: function(feature, latlng){
                                 return L.circleMarker(latlng, geojsonMarkerStyle);
                                         
@@ -519,14 +478,10 @@
                         markers.addLayer(total_sites);
                         map.addLayer(markers);
                         map.fitBounds(markers.getBounds());
-                        changeLegend(total_sites,'Projects');
-                    }
-                    counts++;
-                })
-                //console.log(markers);
+                    json_data = total_sites.toGeoJSON();
 
                 
-                var projectColor = ["blue"];
+                var projectColor = [];
                 if(projectList.length<2){
                     projectColor = ['#FF0000'];
                 }
