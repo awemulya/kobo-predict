@@ -2556,6 +2556,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id').only('pk')
         site_list = FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('site__stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
         get_params = "?page="
+
     paginator = Paginator(site_list, page_list) # Show 25 contacts per page
     page = request.GET.get('page')
     try:
@@ -3220,10 +3221,9 @@ class ProjectSiteListGeoJSON(FullMapViewMixin, View):
         project = Project.objects.get(pk=self.kwargs.get('pk'))
         try: 
             startdate = project.project_geojson.updated_at
-            enddate = datetime.datetime.now() + datetime.timedelta(days=1)
             #Use updated date as the submissions can be updated any time.
-            sites_id = FInstance.objects.filter(date__range=[startdate, enddate], site__isnull=False).values('site_id')
-            sites = Site.objects.filter(pk__in=sites, is_survey=False, is_active=True)
+            sites_id = FInstance.objects.filter(project_id=project.id, date__gt=startdate, site__isnull=False).values('site_id')
+            sites = Site.objects.filter(pk__in=sites_id, is_survey=False, is_active=True)
         except:
             sites = Site.objects.filter(project_id=project.id, is_survey=False, is_active=True)
 
