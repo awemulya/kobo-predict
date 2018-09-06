@@ -441,7 +441,7 @@
 
                 //var siteListFile = $.getJSON("{% static 'demofile.geojson' %}");
             
-                var total_sites2 = L.geoJSON.ajax("assets/js/blank.geojson",{
+                var total_sites2 = L.geoJSON.ajax("{% static 'dummy/assets/js/blank.geojson' %}",{
                     pointToLayer: function(feature, latlng){
                         return L.circleMarker(latlng, geojsonMarkerStyle);
                                 
