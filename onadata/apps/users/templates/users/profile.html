@@ -3,7 +3,9 @@
 {% load filters %}
 {% block page-title %} {% trans 'Profile '  %}{{obj.user }}{% endblock %}
 {% block content %}
-
+	
+   
+   
 	<div id="main-content" class="padding">
 				<section class="panel">
 				{% if messages %}
@@ -216,23 +218,41 @@
 								</div>
 							</div>
 							{% endif %}
+							{% if is_super_admin or own_orgs %}
+							<div class="margin-top bg-white padding">
+								<div clas="widget-head">
+									<h5>{% trans 'Remove' %} {% trans 'Supervisor' %} {% trans 'Roles' %}</h5>
+								</div>
+								<div class="widget-body">
+									    
+									    <div id="removeSRole">
+									    	
+									    </div>
+									   
+								</div>
 
-							{% if not roles_org and not roles_project and not roles_site and roles == "Super Admin" %}
-							<div class="widget-info margin-top bg-white padding">
+							</div>
+							{% endif %}
+
+
+							{% if is_super_admin %}
+							<!-- <div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
 									<h4>{% trans 'Super Admin' %}</h4>
 								</div>
-							</div>				
-							{% else%}
+							</div> -->
+							{% endif %}				
+							{% if not roles_org and not roles_project and not roles_SA and not roles_reviewer %}
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">
-									<!--<h4>No Roles yet.</h4>-->
-									{{ role.group.name }}
+									<h4>No Roles yet.</h4>
+									
 								</div>
 							</div>				
 							{% endif %}
 
-							</div>
+
+						</div>
 						{% if responses %}
 						<div class="col-md-12 col-lg-4">
 							<div class="widget-info margin-top bg-white padding">
@@ -270,16 +290,27 @@
                 </section>
 				
 			</div>
-		<script src="assets/js/vendor/slick.min.js"></script>
-		<script>
-			$(document).ready(function(){ 
-				$(".max-513-scolling").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
-				$(".max-260-scroll").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
-				
-				
-			});
-		</script>
-        <script src="assets/js/plugins.js"></script>
-
-
+			
+{%block extrascript %}
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.css">
+	<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
+	<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+   	<script src="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.js"></script>
+    <script>
+    	{% load l10n %}
+		configure_settings =  {};
+		configure_settings.user_id = "{{ obj.user.id }}";
+		configure_settings.csrf_token = "{{ csrf_token }}";
+		
+		$(document).ready(function(){ 
+			$(".max-513-scolling").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+			$(".max-260-scroll").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
+		});
+	</script>
+	<script src="{% static 'js/fieldsight/remove_supervisor_roles.js' %}"></script>
+	<script src="assets/js/vendor/slick.min.js"></script>
+	<script src="assets/js/plugins.js"></script>
+    <!-- include vue-treeselect & its styles. you can change the version tag to better suit your need. -->
+    
+{% endblock %}
 {% endblock %}

@@ -70,7 +70,7 @@ class SiteUpdateSerializer(serializers.ModelSerializer):
         if lat and long:
             lat = float(lat)
             long = float(long)
-            location = Point(lat, long, srid=4326)
+            location = Point(round(lat, 6), round(long, 6), srid=4326)
             site.location = location
         if type_id:
             site.type = SiteType.objects.get(pk=type_id)
@@ -111,6 +111,7 @@ class SiteCreationSurveySerializer(serializers.ModelSerializer):
     class Meta:
         model = Site
         read_only_fields = ('logo', 'location')
+        exclude = ('current_progress', 'current_status')
 
     def create(self, validated_data):
         p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')),srid=4326)
@@ -163,10 +164,18 @@ class MinimalSiteSerializer(serializers.ModelSerializer):
 
 
 class SuperMinimalSiteSerializer(serializers.ModelSerializer):
+    label = serializers.ReadOnlyField(source='name', read_only=True)
+
     class Meta:
         model = Site
-        fields = ('id','name', 'identifier')
+        fields = ('id','label', 'identifier',)
 
+class RegionSerializer(serializers.ModelSerializer):
+    get_sites_count = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Region
+        fields = ('id','name', 'identifier', 'parent')
 
 class RegionSerializer(serializers.ModelSerializer):
     get_sites_count = serializers.ReadOnlyField()

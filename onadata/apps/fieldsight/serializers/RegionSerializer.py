@@ -13,3 +13,10 @@ class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
         fields = ('id', 'name', 'identifier', 'total_sites_count', 'parent')
+
+class AllMainRegionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Region
+        fields = ('id', 'name', 'identifier',)
+

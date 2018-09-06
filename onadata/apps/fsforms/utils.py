@@ -47,22 +47,25 @@ def send_message_project_form(fxf, status=None, comment=None, comment_url=None):
                'project': {'name': fxf.project.name, 'id': fxf.project.id}}
     Device.objects.filter(name__in=emails).send_message(message)
 
-def send_message_flagged(fxf, project_fxf, status=None, comment=None, comment_url=None):
-    roles = UserRole.objects.filter(site=fxf.site, ended_at=None, group__name="Site Supervisor")
-    emails = [r.user.email for r in roles]
+def send_message_flagged(fi=None, comment=None, comment_url=None):
+    if fi.submitted_by:
+        emails = [fi.submitted_by.email]
     Device = get_device_model()
-    is_delete = True if status is None and fxf.fsform is not None else False
+    is_delete = False
     message = {'notify_type': 'Form',
                'is_delete':is_delete,
-               'form_id': fxf.id,
-               'project_form_id': project_fxf,
+               'form_id': fi.fsxf.id,
+               'project_form_id': fi.fsxf.id,
                'comment': comment,
-               'form_name': fxf.xf.title,
-               'xfid': fxf.xf.id_string,
-               'form_type':fxf.form_type(), 'form_type_id':fxf.form_type_id(),
-               'status': FORM_STATUS.get(status,"New Form"),
-               'comment_url': comment_url,
-               'site': {'name': fxf.site.name, 'id': fxf.site.id}}
+               'form_name': fi.fsxf.xf.title,
+               'xfid': fi.fsxf.xf.id_string,
+               'form_type':fi.fsxf.form_type(), 'form_type_id':fi.fsxf.xf.form_type_id(),
+               'status': FORM_STATUS.get(fi.status,"New Form"),
+               'comment_url': comment_url}
+    if fi.site:
+        message['site'] = {'name': fi.site.name, 'id': fi.site.id}
+    if fi.project:
+        message['project'] = {'name': fi.project.name, 'id': fi.project.id}
     Device.objects.filter(name__in=emails).send_message(message)
 
 def send_bulk_message_stages(site_ids):

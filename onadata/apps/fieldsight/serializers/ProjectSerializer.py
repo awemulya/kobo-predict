@@ -4,6 +4,7 @@ from django.contrib.gis.geos import Point
 from rest_framework import serializers
 from onadata.apps.fieldsight.models import Project, ProjectType, OrganizationType
 from onadata.apps.fsforms.models import FieldSightXF
+from django.core.urlresolvers import reverse
 
 
 class ProjectTypeSerializer(serializers.ModelSerializer):
@@ -28,7 +29,7 @@ class ProjectCreationSerializer(serializers.ModelSerializer):
         exclude = ()
 
     def create(self, validated_data):
-        p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')), srid=4326)
+        p = Point(round(float(validated_data.pop('longitude')), 6), round(float(validated_data.pop('latitude')), 6), srid=4326)
         validated_data.update({'is_active': True, 'location': p})
         project = Project.objects.create(**validated_data)
         project.save()
@@ -49,7 +50,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
     def create(self, validated_data):
-        p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')),srid=4326)
+        p = Point(round(float(validated_data.pop('longitude')), 6), round(float(validated_data.pop('latitude')), 6), srid=4326)
         validated_data.update({'location':p})
         project = Project.objects.create(**validated_data)
         return project
@@ -59,6 +60,13 @@ class ProjectMiniSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ('id', 'name', 'cluster_sites', 'site_meta_attributes',)
+
+class ProjectMinimalSerializer(serializers.ModelSerializer):
+    label = serializers.ReadOnlyField(source='name', read_only=True)
+    class Meta:
+        model = Project
+        fields = ('id', 'label', 'cluster_sites',)
+
 
 class ProjectMetasSerializer(serializers.ModelSerializer):
     site_meta_attributes = serializers.JSONField(binary=False)
@@ -80,3 +88,25 @@ class ProjectFormsSerializer(serializers.ModelSerializer):
 
     def get_json(self, obj):
         return json.loads(obj.xf.json)
+
+
+class ProjectMapDataSerializer(serializers.ModelSerializer):
+    primary_geojson = serializers.SerializerMethodField(read_only=True)
+    secondary_geojson = serializers.SerializerMethodField(read_only=True)
+    
+    class Meta:
+        model = Project
+        fields = ('id', 'name', 'primary_geojson', 'secondary_geojson', 'geo_layers', )
+    
+    
+    def get_primary_geojson(self, obj):
+        try:
+            url = reverse('fieldsight:geojsoncontent', kwargs={'pk': obj.project_geojson.id})
+        except:
+            url = None
+        return url
+
+    def get_secondary_geojson(self, obj):
+        return reverse('fieldsight:ProjectSiteListGeoJSON', kwargs={'pk': obj.id})
+
+

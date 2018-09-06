@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import datetime
 import json
 import redis
 import xlwt
@@ -44,8 +45,8 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
-from .rolemixins import SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
-from .models import Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region, SiteType
+from .rolemixins import FullMapViewMixin, SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
+from .models import ProjectGeoJSON, Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region, SiteType
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm,
                     SiteBulkEditForm, SiteTypeForm)
@@ -62,7 +63,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from onadata.apps.fieldsight.tasks import generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
+from onadata.apps.fieldsight.tasks import UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
 from .generatereport import PDFReport
 from django.utils import translation
 from django.conf import settings
@@ -83,7 +84,7 @@ def dashboard(request):
         current_role = request.roles[0]
         role_type = request.roles[0].group.name
         if role_type == "Staff Project Manager":
-            return HttpResponseRedirect(reverse("fieldsight:StaffProjectList"))
+            return HttpResponseRedirect(reverse("staff:staff-project-detail"))
         if role_type == "Unassigned":
             return HttpResponseRedirect(reverse("fieldsight:roles-dashboard"))
         if role_type == "Site Supervisor":
@@ -3141,3 +3142,112 @@ def municipality_data(request):
     # data = r.hgetall("municipality")
     data = generate_municipality_data()
     return Response(data.values())
+
+
+class MainRegionsAndSitesAPI(View):
+    def get(self, request, pk, **kwargs):
+        sites = UserRole.objects.filter(user_id = self.kwargs.get('user_id'), group_id=self.kwargs.get('group_id'), ended_at=None, project_id=pk, site__isnull=False).distinct('site_id').values('site_id')
+        regions_ids = UserRole.objects.filter(user_id = self.kwargs.get('user_id'), group_id=self.kwargs.get('group_id'), ended_at=None, project_id=pk, site__isnull=False, site__region_id__isnull=False).distinct('site__region_id').values('site__region_id')
+        regions = Region.objects.filter(parent = None, pk__in=regions_ids, project_id=pk).extra(select={'label': 'name'}).values('id','label', 'identifier')
+        sites= Site.objects.filter(pk__in=sites, region=None).extra(select={'label': 'name'}).values('id','label', 'identifier')
+        content={'regions':list(regions), 'sites':list(sites)}
+        return JsonResponse(content, status=200)
+
+class SubRegionAndSitesAPI(View):
+    def get(self, request, pk, **kwargs):
+        region = Region.objects.get(pk=pk)
+        sites = UserRole.objects.filter(user_id = self.kwargs.get('user_id'), ended_at=None, group_id=self.kwargs.get('group_id'), project_id=region.project_id, site__isnull=False).distinct('site_id').values('site_id')
+        regions_ids = UserRole.objects.filter(user_id = self.kwargs.get('user_id'), group_id=self.kwargs.get('group_id'), ended_at=None, project_id=pk, site__isnull=False, site__region_id__isnull=False).distinct('site__region_id').values('site__region_id')
+        sub_regions = Region.objects.filter(parent_id = pk, pk__in=regions_ids).extra(select={'label': 'name'}).values('id','label', 'identifier')
+        sites= Site.objects.filter(pk__in=sites, region_id=pk).extra(select={'label': 'name'}).values('id','label', 'identifier')
+        content={'sub_regions':list(sub_regions), 'sites':list(sites)}
+        return JsonResponse(content, status=200)
+
+class UnassignUserRegionAndSites(View):
+    def post(self, request, pk, **kwargs):
+        data = json.loads(self.request.body)
+        ids = data.get('ids')
+        projects = [k for k in ids if 'p' in str(k)] 
+        ids = list(set(ids) - set(projects))
+        regions = [k for k in ids if 'r' in str(k)]
+        sites = list(set(ids) - set(regions))
+        user_id= pk
+        group_id = data.get('group')
+
+        status, data = 403, {'status':'false','message':'PermissionDenied. You do not have sufficient rights.'}
+        
+        if request.group.name != "Super Admin":        
+            
+            request_usr_org_role = UserRole.objects.filter(ended_at = None, group_id=1).distinct('organization_id').values('organization_id')
+            if not request_usr_org_role:
+                return JsonResponse(data, status=status)   
+            
+            if projects:
+                project_ids = [k[1:] for k in projects]
+
+                if len(project_ids) != Project.objects.filter(pk__in=project_ids, organization_id__in=request_usr_org_role).distinct('pk').count(): 
+                    return JsonResponse(data, status=status)         
+            
+            if regions:
+                region_ids = [k[1:] for k in regions]
+
+                if len(region_ids) != Region.objects.filter(pk__in=region_ids, project__organization_id__in=request_usr_org_role).distinct('pk').count(): 
+                    return JsonResponse(data, status=status)   
+
+
+            if sites:
+                if len(sites) != Site.objects.filter(pk__in=sites, project__organization_id__in=request_usr_org_role).distinct('pk').count():
+                    return JsonResponse(data, status=status) 
+
+
+        status, data = 401, {'status':'false','message':'Error occured try again.'}
+        
+        if int(group_id) in [3,4]:
+            
+            task_obj=CeleryTaskProgress.objects.create(user=request.user, description="Removal of UserRoles", task_type=0)
+            if task_obj:
+                task = UnassignUser.delay(task_obj.id, user_id, sites, regions, projects, group_id)
+                task_obj.task_id = task.id
+                task_obj.save()
+                status, data = 200, {'status':'True', 'ids':ids, 'projects':projects, 'regions':regions, 'sites': sites, 'message':'Sucess, the roles are being removed. You will be notified after all the roles are removed. '}
+        
+        return JsonResponse(data, status=status)
+
+#class ProjectSiteListGeoJSON(ReadonlyProjectLevelRoleMixin, View):
+
+class ProjectSiteListGeoJSON(FullMapViewMixin, View):
+    def get(self, request, **kwargs):
+        project = Project.objects.get(pk=self.kwargs.get('pk'))
+        try: 
+            startdate = project.project_geojson.updated_at
+            enddate = datetime.datetime.now() + datetime.timedelta(days=1)
+            #Use updated date as the submissions can be updated any time.
+            sites_id = FInstance.objects.filter(date__range=[startdate, enddate], site__isnull=False).values('site_id')
+            sites = Site.objects.filter(pk__in=sites, is_survey=False, is_active=True)
+        except:
+            sites = Site.objects.filter(project_id=project.id, is_survey=False, is_active=True)
+
+        data = serialize('full_detail_geojson',
+                         sites,
+                         geometry_field='location',
+                         fields=('name', 'location', 'id', 'identifier' ))
+
+        return JsonResponse(json.loads(data), status=200)
+
+
+
+class DonorFullMap(FullMapViewMixin, View):
+    def get(self, request, **kwargs):
+        return render(request, 'fieldsight/donor_fullmap.html', {})
+
+
+class GeoJSONContent(View):
+    def get(self, request, **kwargs):
+        geojsonfile = ProjectGeoJSON.objects.get(pk=self.kwargs.get('pk')).geoJSON
+        geojsonfile.open(mode='rb') 
+        lines = geojsonfile.read()
+        geojsonfile.close()
+        return JsonResponse(json.loads(lines), status=200)
+
+
+

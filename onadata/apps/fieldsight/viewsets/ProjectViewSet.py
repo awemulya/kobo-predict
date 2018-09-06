@@ -14,12 +14,14 @@ from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthenticat
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import BasePermission
-
+from onadata.apps.geo.models import GeoLayer
+from onadata.apps.geo.serializers.GeoSerializer import GeoLayerSerializer
 
 from onadata.apps.fieldsight.models import Project, Region
-from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectFormsSerializer, ProjectMetasSerializer, ProjectTypeSerializer, ProjectMiniSerializer, ProjectSerializer, ProjectCreationSerializer
+from onadata.apps.fieldsight.serializers.ProjectSerializer import ProjectMapDataSerializer, ProjectMinimalSerializer, ProjectFormsSerializer, ProjectMetasSerializer, ProjectTypeSerializer, ProjectMiniSerializer, ProjectSerializer, ProjectCreationSerializer
 from onadata.apps.fieldsight.serializers.RegionSerializer import RegionSerializer
 from onadata.apps.fsforms.models import FieldSightXF
+from onadata.apps.userrole.models import UserRole
 from django.db.models import Q
 
 class ProjectPermission(BasePermission):
@@ -186,3 +188,45 @@ class ProjectForms(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         return queryset.filter(project_id=self.kwargs.get('pk'))
+
+
+class UserProjectlistMinimalViewset(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing Region.
+    """
+    queryset = Project.objects.all()
+    serializer_class = ProjectMinimalSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    # permission_classes = (RegionAccessPermission,)
+
+    def filter_queryset(self, queryset):
+        projects = UserRole.objects.filter(site__isnull=False, user_id=self.kwargs.get('user_id'), group_id=self.kwargs.get('group_id'), ended_at=None).distinct('project_id').values('project_id') 
+        return queryset.filter(id__in=projects)
+
+
+class DonorMyProjects(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectMapDataSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    
+    def filter_queryset(self, queryset):
+        projects = UserRole.objects.filter(user_id=self.request.user.id, project__isnull=False, group_id=7, ended_at=None).distinct('project_id').values('project_id')
+        return queryset.filter(pk__in=projects)
+
+class DonorMyProjectsLayers(viewsets.ModelViewSet):
+    queryset = GeoLayer.objects.all()
+    serializer_class = GeoLayerSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    
+    def filter_queryset(self, queryset):
+        projects = UserRole.objects.filter(user_id=self.request.user.id, project__isnull=False, group_id=7, ended_at=None).distinct('project_id').values('project_id')
+        
+        geolayer_ids = []
+
+        donorprojects = Project.objects.filter(pk__in = projects)
+        
+        for project in donorprojects:
+            for layer in project.geo_layers.all():
+                geolayer_ids.append(layer.id)
+        
+        return queryset.filter(pk__in=geolayer_ids)

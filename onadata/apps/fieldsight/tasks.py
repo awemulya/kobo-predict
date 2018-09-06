@@ -11,7 +11,7 @@ from onadata.apps.fieldsight.models import Organization, Project, Site, Region, 
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from channels import Group as ChannelGroup
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import User, Group
 from onadata.apps.fieldsight.fs_exports.formParserForExcelReport import parse_form_response
 from io import BytesIO
 from django.shortcuts import get_object_or_404
@@ -52,8 +52,7 @@ def site_download_zipfile(task_prog_obj_id, size):
                     img.save(temp, img.format)
                     # filename = '/srv/fieldsight/fieldsight-kobocat'+url['_attachments']['filename'] # Select your files here.                           
                     archive.write(temp.name, url['_attachments']['filename'].split('/')[2])
-            else:
-                raise Exception('No Image Found.')
+                    
         archive.close()
         buffer.seek(0)
         zipFile = buffer.getvalue()
@@ -78,6 +77,70 @@ def site_download_zipfile(task_prog_obj_id, size):
         buffer.close()                                                                      
     
 
+@shared_task()
+def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
+    user = User.objects.get(pk=user_id)
+    time.sleep(2)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.status=1
+    task.save()
+    
+    try:
+        count = 0
+        with transaction.atomic():
+            
+            if sites:
+                
+                for site_id in sites:
+                    roles=UserRole.objects.filter(user_id=user_id, site_id = site_id, group_id = group_id, ended_at=None)
+                    for role in roles:
+                        role.ended_at = datetime.datetime.now()
+                        role.save()
+                        count = count + 1
+
+
+            if regions:
+                for region_id in regions:
+                    sites = Site.objects.filter(region_id=region_id[1:])    
+                    
+                    for site_id in sites:
+                        roles=UserRole.objects.filter(user_id=user, site_id = site_id, group_id = group_id, ended_at=None)
+                        for role in roles:
+                            role.ended_at = datetime.datetime.now()
+                            role.save()
+                            count = count + 1
+
+            if projects:
+                for project_id in projects: 
+                    sites = Site.objects.filter(project_id = project_id[1:])    
+                    for site_id in sites:
+                        roles=UserRole.objects.filter(user_id=user, site_id = site_id, group_id = group_id, ended_at=None)
+                        for role in roles:
+                            role.ended_at = datetime.datetime.now()
+                            role.save()
+                            count = count + 1
+
+            task.status = 2
+            task.save()
+            if group_id == "3":
+                extra_message= "removed " + str(count) + "Reviewer Roles"
+            else:
+                extra_message= "removed " + str(count) + " Supervisor Roles"
+
+            noti = task.logs.create(source=task.user, type=35, title="Remove Roles",
+                                       content_object=user.user_profile, recipient=task.user,
+                                       extra_message=extra_message)
+    except Exception as e:
+        task.status = 3
+        task.save()
+        print 'Role Remove Unsuccesfull. %s' % e
+        print e.__dict__
+        noti = task.logs.create(source=task.user, type=432, title="Role Remove for ",
+                                       content_object=user.user_profile, recipient=task.user,
+                                       extra_message="@error " + u'{}'.format(e.message))
+
+
+    
 @shared_task()
 def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
     time.sleep(2)
@@ -110,7 +173,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
                 if long == "":
                     long = 27.7172
 
-                location = Point(lat, long, srid=4326)
+                location = Point(round(float(lat), 6), round(float(long), 6), srid=4326)
                 region_idf = site.get("region_id", None)
                 type_identifier = int(site.get("type", "0"))
 

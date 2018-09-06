@@ -55,6 +55,7 @@ var static_url ="{{ STATIC_URL }}";
 
 {% load l10n %}
 	configure_settings =  {};
+	configure_settings.is_full_log_page = true;
 	{% if is_project %}
 		configure_settings.log_url = "{% url 'eventlog:api_project_logs' obj.pk %}";
 	{% else %}

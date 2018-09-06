@@ -353,6 +353,46 @@ class SitelistMinimalViewset(viewsets.ModelViewSet):
     def filter_queryset(self, queryset):
         return queryset.filter(project__id=self.kwargs.get('pk', None))
 
+class UserSitelistMinimalViewset(viewsets.ModelViewSet):
+    queryset = Site.objects.all()
+    serializer_class = SuperMinimalSiteSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    
+    def filter_queryset(self, queryset):
+        sites = UserRole.objects.filter(user_id=self.kwargs.get('user_id'), project_id=self.kwargs.get('pk'), group_id=self.kwargs.get('group_id'), site__isnull=False, ended_at=None).values('site_id')
+        return queryset.filter(pk__in=sites)
+
+
+class ProjectViewPermission(BasePermission):
+    def has_permission(self, request, view):
+        if request.group.name == "Super Admin":
+            return True
+        
+        project_id = self.kwargs.get('pk')
+        user_id = request.user.id
+        user_role = request.roles.filter(user_id = user_id, project_id = project_id, group_id__in=[2,7])
+        
+        if user_role:
+            return True
+        organization_id = Project.objects.get(pk=project_id).organization.id
+        user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group__name="Organization Admin")
+        
+        if user_role_asorgadmin:
+            return True
+
+        return False
+
+
+class ProjectSitelistViewset(viewsets.ModelViewSet):
+    queryset = Site.objects.all()
+    serializer_class = SuperMinimalSiteSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    # permission_classes = (ProjectViewPermission,)
+    
+    def filter_queryset(self, queryset):
+        return queryset.filter(project__id=self.kwargs.get('pk', None))
+
+
 def all_notification(user,  message):
     ChannelGroup("%s" % user).send({
         "text": json.dumps({

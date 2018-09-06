@@ -51,7 +51,12 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
                             template_name=self.template_name)
         error, instance = create_instance_from_xml(request, fsxfid, siteid, fs_proj_xf, proj_id, xform)
         extra_message=""
-        
+
+        if fxf.is_staged:
+            instance.fieldsight_instance.site.update_current_progress()
+        else:
+            instance.fieldsight_instance.site.update_status()
+
         if fxf.is_survey:
             extra_message="project"
         
@@ -94,11 +99,98 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         siteid = kwargs.get('site_id', None)
         if siteid == '0':
             siteid = None
+        elif Site.objects.filter(pk=siteid).exists() == False:
+            return self.error_response("siteid Invalid", False, request)
         if fsxfid is None:
             return self.error_response("Fieldsight Form ID Not Given", False, request)
+        deleted_forms = {871066: 894803, 871067: 894804,871068: 894805, }
+        # First tranche deleted case
+        form_pk = kwargs.get('pk')
+        form_pk = int(form_pk)
+        fs_proj_xf = None
+        if deleted_forms.get(form_pk, False):
+            fs_proj_xf = get_object_or_404(FieldSightXF, pk=deleted_forms.get(form_pk))
+        site_or_project_form = None
+        if not fs_proj_xf and FieldSightXF.objects.filter(pk=form_pk).exists():
+            site_or_project_form = FieldSightXF.objects.get(pk=form_pk)
+        if site_or_project_form and not site_or_project_form.site and not site_or_project_form.project and not fs_proj_xf:
+            return self.error_response("Orphan FieldsightXForm No Site or Form ID", False, request)
+
+        if site_or_project_form and site_or_project_form.site and not site_or_project_form.project and not fs_proj_xf:
+            # Project level form submitted by site level form
+            fs_proj_xf = site_or_project_form.fsform
+
         try:
+<<<<<<< HEAD
             fs_proj_xf = get_object_or_404(FieldSightXF, pk=kwargs.get('pk'))
             xform  = fs_proj_xf.xf
+=======
+            if not fs_proj_xf:
+                fs_proj_xf = get_object_or_404(FieldSightXF, pk=kwargs.get('pk'))
+            fxf = None
+            xform  = None
+            try:
+                if fs_proj_xf.is_survey:
+                    xform = fs_proj_xf.xf
+                elif fs_proj_xf.is_scheduled and siteid:
+                    site = Site.objects.get(pk=siteid)
+                    schedule = fs_proj_xf.schedule
+                    selected_days = tuple(schedule.selected_days.all())
+                    s, created = Schedule.objects.get_or_create(name=schedule.name, site=site, date_range_start=schedule.date_range_start,
+                                                date_range_end=schedule.date_range_end)
+                    if created:
+                        s.selected_days.add(*selected_days)
+                        s.save()
+                    fxf, created = FieldSightXF.objects.get_or_create(is_scheduled=True, site=site,
+                                                                      xf=fs_proj_xf.xf, from_project=True,
+                                                                      fsform=fs_proj_xf, schedule=s)
+                    xform = fxf.xf
+                elif (fs_proj_xf.is_scheduled is False and fs_proj_xf.is_staged is False) and siteid:
+                    site = Site.objects.get(pk=siteid)
+                    fxf, created = FieldSightXF.objects.get_or_create(is_scheduled=False,is_staged=False, site=site,
+                                                   xf=fs_proj_xf.xf, from_project=True, fsform=fs_proj_xf)
+                    xform = fxf.xf
+                elif fs_proj_xf.is_staged and siteid:
+                    site = Site.objects.get(pk=siteid)
+                    project_stage = fs_proj_xf.stage
+                    try:
+                        site_stage = Stage.objects.get(site=site, project_stage_id=project_stage.id)
+                        fxf = site_stage.stage_forms
+                        xform = fxf.xf
+                    except Exception as e:
+                        # return self.error_response("This Stage form not deployed in this site. Please Contact Administrators", False, request)
+                        try:
+                            with transaction.atomic():
+                                project = fs_proj_xf.project
+                                project_main_stages = project.stages.filter(stage__isnull=True)
+                                for pms in project_main_stages:
+                                    project_sub_stages = Stage.objects.filter(stage__id=pms.pk, stage_forms__is_deleted=False)
+                                    site_main_stage, created = Stage.objects.get_or_create(name=pms.name, order=pms.order,
+                                                                                           site=site,
+                                                                                           description=pms.description,
+                                                                                           project_stage_id=pms.id)
+                                    for pss in project_sub_stages:
+                                        if pss.tags and site.type:
+                                            if not site.type.id in pss.tags:
+                                                continue
+                                        site_sub_stage, created = Stage.objects.get_or_create(name=pss.name, order=pss.order, site=site,
+                                                       description=pss.description, stage=site_main_stage, project_stage_id=pss.id, weight=pss.weight)
+                                        if FieldSightXF.objects.filter(stage=pss).exists():
+                                            project_fsxf = pss.stage_forms
+                                            site_form, created = FieldSightXF.objects.get_or_create(is_staged=True, xf=project_fsxf.xf,
+                                                                                                    site=site,fsform=project_fsxf,
+                                                                                                    stage=site_sub_stage,
+                                                                                                    is_deployed=True)
+                                            if project_fsxf.id == fs_proj_xf.id:
+                                                fxf = site_form
+                                                xform = fxf.xf
+                        except Exception as e:
+                            return self.error_response("Error Occured in submission {0}".format(str(e)), False, request)
+                        if not (xform and fxf):
+                            return self.error_response("This Stage form not deployed in this site. Please Contact Administrators", False, request)
+            except Exception as e:
+                xform = fs_proj_xf.xf
+>>>>>>> develop
             proj_id = fs_proj_xf.project.id
             if siteid:
                 Site.objects.get(pk=siteid)
@@ -111,6 +203,7 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                             template_name=self.template_name)
         error, instance = create_instance_from_xml(request, None, siteid, fs_proj_xf.id, proj_id, xform)
 
+<<<<<<< HEAD
         if error or not instance:
             return self.error_response(error, False, request)
 
@@ -123,8 +216,43 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
             extra_object=fs_proj_xf.project,
             extra_message="project",
             content_object=instance.fieldsight_instance)
+=======
 
         
+        if error or not instance:
+            return self.error_response(error, False, request)
+
+        if fs_proj_xf.is_staged and siteid:
+            site.update_current_progress()
+        elif siteid:
+            site.update_status()
+
+        if fs_proj_xf.is_survey:
+            noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Project level Submission",
+                                       organization=fs_proj_xf.project.organization,
+                                       project=fs_proj_xf.project,
+                                                        extra_object=fs_proj_xf.project,
+                                                        extra_message="project",
+                                                        content_object=instance.fieldsight_instance)
+        else:
+            site=Site.objects.get(pk=siteid)
+            noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Site level Submission",
+                                       organization=fs_proj_xf.project.organization,
+                                       project=fs_proj_xf.project, site=site,
+                                                        extra_object=site,
+                                                        content_object=instance.fieldsight_instance)
+        result = {}
+        result['description'] = noti.description
+        result['url'] = noti.get_absolute_url()
+        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
+        # ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
+        if instance.fieldsight_instance.site:
+            ChannelGroup("site-{}".format(instance.fieldsight_instance.site.id)).send({"text": json.dumps(result)})
+        else:
+            ChannelGroup("project-{}".format(instance.fieldsight_instance.project.id)).send({"text": json.dumps(result)})
+
+        # modify create instance
+>>>>>>> develop
 
         context = self.get_serializer_context()
         serializer = FieldSightSubmissionSerializer(instance, context=context)
@@ -132,6 +260,4 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                         headers=self.get_openrosa_headers(request),
                         status=status.HTTP_201_CREATED,
                         template_name=self.template_name)
-
-
 
