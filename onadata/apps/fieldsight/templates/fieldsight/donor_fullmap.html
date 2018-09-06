@@ -254,6 +254,49 @@
         <script src="{% static 'dummy/assets/js/plugins.js' %}"></script>
         
       <script>
+            let mainGeoJSON = {"crs": {"type": "name", "properties": {"name": "EPSG:4326"}}, "type": "FeatureCollection", "features": []};
+
+            function getApi(url, callback){
+                 $.ajax({
+                    //show loading here
+                    url: url,
+                    type: 'GET',
+                    success: function (data) {
+                        callback(data);    
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                        alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                        return;
+                    }
+                  });
+
+            }
+
+            function loadGeoJSON(geoJSON){
+                let newarray = mainGeoJSON.features.concat(geoJSON.features)
+                mainGeoJSON.features = newarray;
+            } 
+
+            function loadGeoLayers(myProjectList){
+                
+                myProjectList.forEach(function(project,index){ 
+                    console.log(project) 
+                    if (project['primary_geojson']){ 
+                        getApi(project['primary_geojson'], loadGeoJSON);
+                        
+                    }
+                    if (project['secondary_geojson']){ 
+                        getApi(project['secondary_geojson'], loadGeoJSON); 
+                        
+                    }
+
+                });
+
+            }
+
+
+            getApi("/fieldsight/api/donor/myprojects/", loadGeoLayers);
+    
             $(document).ready(function(){
                 
 
