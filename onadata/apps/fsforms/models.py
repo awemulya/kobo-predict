@@ -407,7 +407,14 @@ class FInstance(models.Model):
         if self.project_fxf:
             return self.project_fxf.id
         else:
-            return self.site_fxf.id
+            return self.site_fxf.id\
+
+    @property
+    def fsxf(self):
+        if self.project_fxf:
+            return self.project_fxf
+        else:
+            return self.site_fxf
 
     def get_absolute_url(self):
         if self.site_fxf is None:
