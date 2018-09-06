@@ -67,7 +67,9 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
     def get_responses_count(self, obj):
         try:
             request = self.context.get('request', False)
-            params = request.query_params
+            params = {}
+            if request:
+                params = request.query_params
             site_id = False
             if params.get("is_project", False):
                 if params.get("is_project") == "0":

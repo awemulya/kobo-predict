@@ -193,7 +193,7 @@ class FSXFormSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """
-        Check that form is unique for general form.
+        Check that form is unique for general form / survey forms in projects.
         """
         if data.has_key('site'):
             if FieldSightXF.objects.filter(

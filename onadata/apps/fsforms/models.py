@@ -274,7 +274,6 @@ class FieldSightXF(models.Model):
         if self.schedule: return self.schedule.name
 
     def clean(self):
-        print("called")
         if self.is_staged:
             if FieldSightXF.objects.filter(stage=self.stage).exists():
                 if not FieldSightXF.objects.filter(stage=self.stage).pk == self.pk:
