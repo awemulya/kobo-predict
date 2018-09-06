@@ -539,7 +539,7 @@ class ProjectGeoJSON(models.Model):
 
     def generate_new(self):
         data = serialize('full_detail_geojson',
-               Site.objects.filter(project_id = self.id, is_survey=False, is_active=True),
+               Site.objects.filter(project_id = self.project.id, is_survey=False, is_active=True),
                geometry_field='location',
                fields=('name', 'location', 'id', 'identifier'))
 
