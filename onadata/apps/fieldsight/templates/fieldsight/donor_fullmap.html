@@ -156,28 +156,8 @@
                             <div class="tab-content bg-white" id="myTabContent">
                                 <div class="tab-pane fade show active" id="tab001" role="tabpanel" aria-labelledby="tab001-tab">
 
-                                    <ul class="toggle-list">
-                                        <li>
-                                            <span><strong>River</strong></span>
-                                            <label class="switch switch-xxs">
-                                                <input type="checkbox">
-                                                <span class="slider"></span>
-                                            </label>
-                                        </li>
-                                        <li>
-                                            <span><strong>Road</strong></span>
-                                            <label class="switch switch-xxs">
-                                                <input type="checkbox">
-                                                <span class="slider"></span>
-                                            </label>
-                                        </li>
-                                        <li>
-                                            <span><strong>Trans</strong></span>
-                                            <label class="switch switch-xxs">
-                                                <input type="checkbox">
-                                                <span class="slider"></span>
-                                            </label>
-                                        </li>
+                                    <ul class="toggle-list layerContainer">
+                                        
                                     </ul>
                                 </div>
                               <div class="tab-pane fade" id="tab002" role="tabpanel" aria-labelledby="tab002-tab">
@@ -272,7 +252,8 @@
         <script src="{% static 'dummy/assets/js/gradstop.js' %}"></script>
 
         <script src="{% static 'dummy/assets/js/plugins.js' %}"></script>
-        <script>
+        
+      <script>
             $(document).ready(function(){
                 
 
@@ -380,32 +361,14 @@
         </script>
         <script>
             $(document).ready(function(){
-            $.getJSON("{% url 'fieldsight:DonorMyProjectList' %}", function (projectList) {
-                $.getJSON( projectList[0]['primary_geojson'], function( geojson_file ) {
-                    $.getJSON( projectList[0]['secondary_geojson'], function( geojson_data ) {
-
-              // var projectList =[
-              //       {
-              //           "id": 1,
-              //           "name": "Durable Solutions - Household Registry",
-              //           "primary_geojson": "https://naxafieldsight.s3.amazonaws.com/geojsonFiles/1/site-geojson/sites.geojson",
-              //           "secondary_geojson": "/fieldsight/api/project/myprojects/1/sites/geoJSON/",
-              //           "geo_layers": []
-              //       },
-              //       {
-              //           "id": 1,
-              //           "name": "Test Project",
-              //           "primary_geojson": "https://naxafieldsight.s3.amazonaws.com/geojsonFiles/1/site-geojson/sites.geojson",
-              //           "secondary_geojson": "/fieldsight/api/project/myprojects/1/sites/geoJSON/",
-              //           "geo_layers": []
-              //       }
-              //   ];
                 
                 
+                
+                    //$.getJSON( "assets/js/data.geojson", function( geojson_data ) {
+            $.getJSON("{% url 'fieldsight:DonorMyProjectList' %}", function (projectList) { 
 
-
-
-
+            $.getJSON("{% url 'fieldsight:DonorMyProjectsLayers' %}", function (geo_layer) {     
+        
                 
                 map = L.map('map', {
                       center: [27.717245,85.323959],
@@ -478,30 +441,47 @@
 
                 //var siteListFile = $.getJSON("{% static 'demofile.geojson' %}");
             
-                var total_sites = L.geoJSON(geojson_file,{
+                var total_sites2 = L.geoJSON.ajax("assets/js/blank.geojson",{
                     pointToLayer: function(feature, latlng){
                         return L.circleMarker(latlng, geojsonMarkerStyle);
                                 
                     },
                     onEachFeature: function onEachFeature(feature, layer){ //console.log(feature);
-                        markers.addLayer(layer);
+                        //markers.addLayer(layer);
                     }
-                });//.addTo(map);
-                //console.log(markers);
-                
-                var total_sites1 = L.geoJSON(geojson_data,{
-                    pointToLayer: function(feature, latlng){ 
-                        return L.circleMarker(latlng, geojsonMarkerStyle);
-                                
-                    },
-                    onEachFeature: function onEachFeature(feature, layer){ //console.log(feature);
-                        markers.addLayer(layer);
+                });
+                for(var i=0; i<projectList.length; i++){
+                    total_sites2.addUrl(projectList[i].primary_geojson);
+                    total_sites2.addUrl(projectList[i].secondary_geojson);
+                }
+                var total_sites = null;
+                var counts = 0;
+                total_sites2.on('data:loaded', function() { 
+                    //console.log(counts);
+                    // Add the cluster data after the geojson layer has loaded.
+                    if(counts == projectList.length){
+                        json_data = total_sites2.toGeoJSON();
+                        //console.log(json_data);
+                        
+                        total_sites = L.geoJSON(json_data,{
+                            pointToLayer: function(feature, latlng){
+                                return L.circleMarker(latlng, geojsonMarkerStyle);
+                                        
+                            },
+                            onEachFeature: function onEachFeature(feature, layer){ //console.log(feature);
+                                //markers.addLayer(layer);
+                            }
+                        });
+                        //console.log(total_sites);
+                        markers.addLayer(total_sites);
+                        map.addLayer(markers);
+                        map.fitBounds(markers.getBounds());
+                        changeLegend(total_sites,'Projects');
                     }
-                });//.addTo(map);
+                    counts++;
+                })
                 //console.log(markers);
 
-                
-                map.addLayer(markers);
                 
                 var projectColor = "blue";
                 if(projectList.length<2){
@@ -568,9 +548,10 @@
 
                 var markers1 = null;
                 
-                function changeColor(map_layer, status){ //console.log(map_layer);
+                function changeColor(map_layer, status){ 
                     var map_layer_json = map_layer._layers;
-                    $.each(map_layer_json,function(key){
+                    //console.log(map_layer_json);
+                    $.each(map_layer_json,function(key){ //console.log(status);
                         //console.log(map_layer_json[key]);
                         if(status == "Projects"){ 
                             for(var i = 0; i<projectList.length; i++){
@@ -623,7 +604,7 @@
                 }
                 
                 
-                changeColorOf = [];
+                changeColorOf = null;
                 function changeLegend(changeColorOfLayer,status){
                     $("#form_legend").html("");
                     if(status == "Projects"){
@@ -651,39 +632,33 @@
                 
                 
                 $("#inputStatus").on('change',function(){
-                    console.log("changed_inputstatus");
                     if(markers1==null){
-                        changeColorOf = [total_sites, total_sites1];
+                        changeColorOf = total_sites;
                     }else{
-                        changeColorOf = [filtered_sites,filtered_sites1];
+                        changeColorOf = filtered_sites;
                     }
                     var choose_status = $("#inputStatus").val();
-                    console.log(choose_status);
-                    changeColor(changeColorOf[0], choose_status);
-                    changeColor(changeColorOf[1], choose_status);
-                    changeLegend(changeColorOf[0],choose_status);
-                    changeLegend(changeColorOf[1],choose_status);
+                    //changeColor(changeColorOf, choose_status);
+                    changeLegend(changeColorOf,choose_status);
                 });
                 
 
                 
-                changeColor(total_sites, 'Projects');
-                changeColor(total_sites1, 'Projects');
-                changeLegend(total_sites,'Projects');
-                changeLegend(total_sites1,'Projects');
+                //changeColor(total_sites, 'Projects');
+                //changeLegend(total_sites,'Projects');
                 
-                function applyFilter(siteListArray1, multi_project, choose_status, progress, form_status){
-                    for(i = siteListArray1.features.length-1; i>=0 ;i--){
+                function applyFilter(siteListArray, multi_project, choose_status, progress, form_status){
+                    for(i = siteListArray.features.length-1; i>=0 ;i--){
                             
                             //console.log(siteList[0].features[i].properties.name);
                             var match = 1;
                             if(multi_project != null && multi_project.length>0){
                                 //console.log("multi_project>0");
                                 for(var j=0; j<multi_project.length;j++){
-                                    //console.log(siteListArray1.features[i]);
+                                    //console.log(siteListArray.features[i]);
                                     //console.log(multi_project[j]);
                                     //console.log(i);
-                                    if(siteListArray1.features[i].project == multi_project[j]){ console.log("entered");
+                                    if(siteListArray.features[i].project == multi_project[j]){ 
                                         match = 0;
                                         
                                         //console.log(multi_project[j]);
@@ -694,8 +669,8 @@
                                     }
                                 }
                             
-                                if(match >= multi_project.length){console.log("sitelistarray>0");
-                                    siteListArray1.features.splice(i, 1);
+                                if(match >= multi_project.length){//console.log("sitelistarray>0");
+                                    siteListArray.features.splice(i, 1);
                                 }
                             }
                             
@@ -706,8 +681,8 @@
                                         progress_max = parseInt(progress[k].split("_")[1]);
                                         progress_min = parseInt(progress[k].split("_")[0]);
                                         //console.log(progress_max);
-                                        if(siteListArray1.features[i] != undefined){
-                                            if(siteListArray1.features[i].progress <= progress_max && siteListArray1.features[i].progress >= progress_min){ //console.log("progress_entered");
+                                        if(siteListArray.features[i] != undefined){
+                                            if(siteListArray.features[i].progress <= progress_max && siteListArray.features[i].progress >= progress_min){ //console.log("progress_entered");
                                                 yes = 0;
                                                 //break;
                                                 //console.log(progress[k]);
@@ -717,8 +692,8 @@
                                             }
                                         }
                                     }
-                                    if(yes >= progress.length){ console.log("progress deleted");
-                                        siteListArray1.features.splice(i, 1);
+                                    if(yes >= progress.length){ //console.log("progress deleted");
+                                        siteListArray.features.splice(i, 1);
                                     }
                                 }
                                 
@@ -727,8 +702,8 @@
                                     //console.log(form_status);
                                     var status_matched = 1;
                                     for(var l = 0; l<form_status.length; l++){//console.log(form_status[i]);
-                                        if(siteListArray1.features[i] != undefined){
-                                            if(siteListArray1.features[i].status == form_status[l]){ //console.log("status_entered");
+                                        if(siteListArray.features[i] != undefined){
+                                            if(siteListArray.features[i].status == form_status[l]){ //console.log("status_entered");
                                                 status_matched = 0;
                                                 //break;
                                                 //console.log(progress[k]);
@@ -738,8 +713,8 @@
                                             }
                                         }
                                     }
-                                    if(status_matched >= form_status.length){ console.log("status deleted");
-                                        siteListArray1.features.splice(i, 1);
+                                    if(status_matched >= form_status.length){ //console.log("status deleted");
+                                        siteListArray.features.splice(i, 1);
                                     }
                                         
                                 }
@@ -757,33 +732,30 @@
                             
                         }
                 }
-                
+                //console.log(total_sites);
                 $("#apply_button").on('click',function(){
-                    var siteListArray = jQuery.extend(true, {}, geojson_data);
-                    var siteListArray1 = jQuery.extend(true, {}, geojson_file);
-                    console.log(siteListArray1);
+                    
+                    var siteListArray = jQuery.extend(true, {}, json_data);
+                    
+                    //var siteListArray = total_sites.toGeoJSON();
+                    //console.log(siteListArray);
                     var multi_project=[];
                     $.each($("input[class='projectinput']:checked"), function(){
                         multi_project.push($(this).parent().siblings().children().children().html());
                     });
-                    console.log(multi_project);
                     //multi_project = $("#multi-prepend-append").val();
 
                     var choose_status = $("#inputStatus").val();
                     progress = $("#multi-prepend-append1").val();
-                    console.log(multi_project);
+                    //console.log(multi_project);
                     form_status = $("#multi-prepend-append2").val();
-                    //console.log(JSON.stringify(siteListArray1));
                     //console.log(JSON.stringify(siteList));
                         
-                        //console.log(siteListArray1);
                         //console.log(multi_project);
                         
                         applyFilter(siteListArray, multi_project, choose_status, progress, form_status);
-                        applyFilter(siteListArray1, multi_project, choose_status, progress, form_status);
-                        //console.log(siteListArray1);
+                        //console.log(siteListArray);
                         map.removeLayer(total_sites);
-                        map.removeLayer(total_sites1);
                         map.removeLayer(markers);
                         //console.log(filtered_sites);
                         
@@ -801,32 +773,19 @@
                             }
                         });
                         
-                        
-                        
-                        filtered_sites1 = L.geoJSON(siteListArray1,{
-                            pointToLayer: function(feature, latlng){
-                                return L.circleMarker(latlng, geojsonMarkerStyle);
-                                
-                            },
-                            onEachFeature: function onEachFeature(feature, layer){
-                                markers1.addLayer(layer);
-                            }
-                        });
-                        
                         map.addLayer(markers1);
-                        console.log(filtered_sites);
-                        console.log(choose_status);
+                        //console.log(filtered_sites);
+                        //console.log(choose_status);
                         if(choose_status==null){
                             choose_status="Projects";
                         }
                         changeLegend(filtered_sites, choose_status);
-                        changeLegend(filtered_sites1, choose_status);
 
                 });
                 //console.log(siteList);
                 
                 $("#clear").on('click',function(){
-                    $("#multi-prepend-append").val(null).trigger('change');
+                    $(".projectinput").prop("checked",false);
                     $("#multi-prepend-append1").val(null).trigger('change');
                     $("#multi-prepend-append2").val(null).trigger('change');
                     var choose_status = $("#inputStatus").val();
@@ -835,15 +794,84 @@
                         markers1 = null;
                     }
                     map.addLayer(markers);
-                    changeColorOf = [total_sites,total_sites1];
-                    changeColor(changeColorOf[0], choose_status);
-                    changeColor(changeColorOf[1], choose_status);
+                    changeColorOf = total_sites;
+                    changeLegend(changeColorOf, choose_status);
                 });
+                
+
+                for(var i=0;i<geo_layer.length;i++){
+                    $(".layerContainer").html($(".layerContainer").html()+'<li>'+
+                                                '<span><strong>'+geo_layer[i]["title"]+'</strong></span>'+
+                                                '<label class="switch switch-xxs">'+
+                                                    '<input class = "layerSwitch" value = "geo_layer'+i+'" type="checkbox">'+
+                                                    '<span class="slider"></span>'+
+                                                '</label>'+
+                                            '</li>');
+                }
+                
+                $(".layerSwitch").on('click', function(event){ 
+                    var layerClicked = window[event.target.value];
+                    console.log(event.target.value);
+                        if (map.hasLayer(layerClicked)) {
+                            map.removeLayer(layerClicked);
+                        }
+                        else{
+                            map.addLayer(layerClicked);
+                        }
                 });
+
+                $(".layerContainer").one('click',function(){
+                    for(var i = 0; i<geo_layer.length;i++){
+                        window["geo_layer"+i] = L.geoJSON.ajax(geo_layer[i]["geo_layer"],{
+                            pointToLayer: function(feature, latlng){
+                                if(feature.geometry.type == "Point" || feature.geometry.type == "point"){
+                                    return L.circleMarker(latlng, geojsonMarkerStyle);
+                                }       
+                            },
+                            onEachFeature: function onEachFeature(feature, layer){ //console.log(feature);
+                                var popUpContent = "";
+                                popUpContent += '<table style="width:100%;" id="District-popup" class="popuptable">';
+                                for (data in layer.feature.properties) {
+                                    popUpContent += "<tr>" + "<td>" + data + "</td>" + "<td>" + "  " + layer.feature.properties[data] + "</td>" + "</tr>";
+                               }
+                                popUpContent += '</table>';
+                                
+                                
+
+                                layer.bindPopup(L.popup({
+                                    closeOnClick: true,
+                                    closeButton: true,
+                                    keepInView: true,
+                                    autoPan: true,
+                                    maxHeight: 200,
+                                    minWidth: 250
+                                }).setContent(popUpContent));
+
+                                layer.setStyle(
+                                {
+                                    fillColor: "green",
+                                    weight: 1,
+                                    opacity: 1,
+                                    color: 'black',
+                                    //dashArray: '3',
+                                    fillOpacity: 0
+                                });
+
+                                
+                            }
+                        });
+                        window["geo_layer"+i].on('data:loaded', function (data) {
+                            
+                            window["geo_layer"+i].addTo(map);
+                            console.log("geo_layer"+i+"Layer Added");
+                            
+                            // 
+                        });
+                        }
+                    });
                 });
             });
         });
-
         </script>
 		
     </body>
