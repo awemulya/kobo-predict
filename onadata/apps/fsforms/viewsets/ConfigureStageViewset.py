@@ -17,7 +17,7 @@ class StageListViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing Main Stages.
     """
-    queryset = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True).order_by('order')
+    queryset = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True).order_by('order', 'date_created')
     serializer_class = StageSerializer
 
     def filter_queryset(self, queryset):
@@ -59,7 +59,7 @@ class SubStageListViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing Main Stages.
     """
-    queryset = Stage.objects.filter(stage__isnull=False).order_by('order')
+    queryset = Stage.objects.filter(stage__isnull=False).order_by('order', 'date_created')
     serializer_class = SubStageSerializer
 
     def filter_queryset(self, queryset):
