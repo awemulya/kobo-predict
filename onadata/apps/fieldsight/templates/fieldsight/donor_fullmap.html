@@ -495,24 +495,35 @@
 
                 //var siteListFile = $.getJSON("{% static 'demofile.geojson' %}");
                 var markerArray = [];
-                function pushFeatures(url){
+                function pushFeatures(url, projectMarkerArray, is_secondary_url, secondary_url){
                     $.ajax({
                         async: false,
                         url: url,
                         success: function(data) {
-                            $.each(data.features,function(key){ 
-                                
-                                markerArray.push(data.features[key]);
-                            });
-                            
-                            
+                            if(is_secondary_url){
+                                $.each(data.features,function(key, value){
+                                    site_exists = projectMarkerArray.findIndex(e => e.id == value.id);
+                                    if(site_exists !== -1){
+                                        projectMarkerArray[site_exists] = value;
+                                    }
+                                    else{
+                                        projectMarkerArray.push(data.features[key]);   
+                                    }  
+                                });
+                                markerArray = markerArray.concat(projectMarkerArray);
+                            }else{
+                                $.each(data.features,function(key){ 
+                                    projectMarkerArray.push(data.features[key]);
+                                });
+                                pushFeatures(secondary_url, projectMarkerArray, true, '');   
+                            }
                         }
                     });
                 }   
                 
                 for(var i=0; i<projectList.length; i++){
-                    pushFeatures(projectList[i]["primary_geojson"]);
-                    pushFeatures(projectList[i]["secondary_geojson"]);
+                    pushFeatures(projectList[i]["primary_geojson"], [], false, projectList[i]["secondary_geojson"]);
+                    
                 }
 
                 
@@ -814,17 +825,15 @@
                     }
 
                     progress = $("#multi-prepend-append1").val();
-                    console.log(progress);
                     form_status = $("#multi-prepend-append2").val();
-                    console.log(JSON.stringify(form_status));
-
+                    
                     if (form_status){
                         filtered_data = filtered_data.filter(site => form_status.includes(String(site.status)));
                     }
 
                     if (progress){
                         var min = parseInt(progress[0].split('_')[0]);
-                        console.log(progress[0].split('_')[0]);
+                        
                         var max = parseInt(progress[progress.length - 1].split('_')[1]);
 
                         filtered_data = filtered_data.filter(site => site.progress >= min && site.progress <= max);   
@@ -948,18 +957,7 @@
                     changeLegend(changeColorOf, choose_status);
                 });
                 
-                var geo_layer = [
-                    {
-                        "id": 1,
-                        "title": "Changu",
-                        "geo_layer": "assets/js/Changunarayan.geojson"
-                    },
-                    {
-                        "id": 1,
-                        "title": "Sankhu",
-                        "geo_layer": "assets/js/Shankharapur.geojson"
-                    }
-                ];
+
 
 
                 for(var i=0;i<geo_layer.length;i++){
