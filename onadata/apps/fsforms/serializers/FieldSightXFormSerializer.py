@@ -246,7 +246,8 @@ class FSXFormSerializer(serializers.ModelSerializer):
                         response = i
         latest_submission_data = {}
         if response:
-            latest_submission_data = FInstanceResponcesSerializer(instance=response).data
+            # latest_submission_data = FInstanceResponcesSerializer(instance=response).data
+            latest_submission_data = dict(user=response.submitted_by.username, date=response.date)
         return dict(count=count, latest=latest_submission_data)
 
 
