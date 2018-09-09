@@ -360,8 +360,10 @@ class Site(models.Model):
     def update_status(self):
         try:
             status = self.site_instances.order_by('-date').first().form_status
+            print status, identifier
+
         except:
-            status = 4
+            status = 0
         self.current_status = status
         self.save()
 
@@ -396,7 +398,7 @@ class Site(models.Model):
         try:
             status = self.site_instances.order_by('-date').first().form_status
         except:
-            status = 4
+            status = 0
         self.current_status = status
         self.save()
 

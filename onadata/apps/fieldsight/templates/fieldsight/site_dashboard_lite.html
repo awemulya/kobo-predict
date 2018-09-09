@@ -156,7 +156,7 @@
 														<a href="{% url 'fieldsight:site-submission-data' obj.pk 2 %}" class="org-profile-stat-item" title="">
 															<i class="la la-files-o"></i>
 															<div class="org-mini-stat-info">
-																<span>{{ total_submissions }}</span>
+																<span>{{ total_submissions.count }}</span>
 																{% trans 'Submissions' %}
 															</div>
 														</a>
