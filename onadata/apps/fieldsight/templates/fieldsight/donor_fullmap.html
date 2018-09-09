@@ -304,10 +304,8 @@
 
         <script src="{% static 'dummy/assets/js/plugins.js' %}"></script>
         
-      <script>
+     <script>
             $(document).ready(function(){
-                
-
                 //Map Height
                 mapHeight();
                 mapInnerContentHeight();
@@ -412,14 +410,19 @@
         </script>
         <script>
             $(document).ready(function(){
-             $('#map').loadingOverlay();   
+            $('#map').loadingOverlay();
                 
                 
-                    //$.getJSON( "assets/js/data.geojson", function( geojson_data ) {
             $.getJSON("{% url 'fieldsight:DonorMyProjectList' %}", function (projectList) { 
 
             $.getJSON("{% url 'fieldsight:DonorMyProjectsLayers' %}", function (geo_layer) {     
-        
+             
+                
+                
+
+
+
+
                 
                 map = L.map('map', {
                       center: [27.717245,85.323959],
@@ -466,11 +469,11 @@
                 
                 for(var i=0;i<projectList.length; i++){
                     $(".projects").html($(".projects").html()+ '<li>'+
-                                          '<span class = "ProjectName"><a href="'+projectList[i].name+'" ' +
-                                           'title=""><input class ="projectinput" type="checkbox" checked><strong>'+ projectList[i].name+'</strong></a></span>'+
+                                            '<span class = "ProjectName"><a href="'+projectList[i].name+'" '+
+                                            'title=""><input class ="projectinput" type="checkbox" checked><strong>'+ projectList[i].name+'</strong></a></span>'+
                                             '<label class="">'+
                                                 ''+
-                                            '<span class=""></span>'+
+                                                '<span class=""></span>'+
                                             '</label>'+
                                         '</li>');
                 }
@@ -488,34 +491,38 @@
                 };
                 
                 markers = L.markerClusterGroup({ animateAddingMarkers : true, disableClusteringAtZoom: 13 });//{ animateAddingMarkers : true }
-
                 
 
                 //var siteListFile = $.getJSON("{% static 'demofile.geojson' %}");
-            
-                 var markerArray = [];
-                               function pushFeatures(url){
-                                       $.ajax({
-                                               async: false,
-                                               url: url,
-                                               success: function(data) {
-                                                       $.each(data.features,function(key){ 
-                                                               
-                                                               markerArray.push(data.features[key]);
-                                                       });
-                                                       
-                                                       
-                                               }
-                                       });
-                             }       
+                var markerArray = [];
+                function pushFeatures(url){
+                    $.ajax({
+                        async: false,
+                        url: url,
+                        success: function(data) {
+                            $.each(data.features,function(key){ 
+                                
+                                markerArray.push(data.features[key]);
+                            });
+                            
+                            
+                        }
+                    });
+                }   
+                
                 for(var i=0; i<projectList.length; i++){
-                                       pushFeatures(projectList[i]["primary_geojson"]);
-                                       pushFeatures(projectList[i]["secondary_geojson"]);
+                    pushFeatures(projectList[i]["primary_geojson"]);
+                    pushFeatures(projectList[i]["secondary_geojson"]);
                 }
-                        total_json = {"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"EPSG:4326"}},"features":[]};
-                        total_json.features=markerArray;
-                               //console.log(total_json);
 
+                
+
+                total_json = {"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"EPSG:4326"}},"features":[]};
+                total_json.features=markerArray;
+                //console.log(total_json);
+
+                
+                        
                         total_sites = L.geoJSON(total_json,{
                             pointToLayer: function(feature, latlng){
                                 return L.circleMarker(latlng, geojsonMarkerStyle);
@@ -523,16 +530,16 @@
                             },
                             onEachFeature: function onEachFeature(feature, layer){ //console.log(feature);
                                 //markers.addLayer(layer);
+                                layer.bindPopup(feature.properties.name);
                             }
                         });
-                        //console.log(total_sites);
                         markers.addLayer(total_sites);
                         map.addLayer(markers);
                         map.fitBounds(markers.getBounds());
-                    json_data = total_sites.toGeoJSON();
+                        json_data = total_sites.toGeoJSON();
 
                 
-                var projectColor = [];
+                projectColor = [];
                 if(projectList.length<2){
                     projectColor = ['#FF0000'];
                 }
@@ -550,7 +557,6 @@
                     projectColor = gradient;
                 
                 }
-
                 var progressColor = ["#FF0000","#f66565","#f4c08c","#FFFF00","#7FFF00","#00FF00","#069806"];
                 var formStatusColor = ["#FF0000","#f4c08c","#FFFF00","#069806"];
                 
@@ -653,12 +659,12 @@
                     });
                 }
                 
-                
+                console.log(projectColor);
                 changeColorOf = null;
                 function changeLegend(changeColorOfLayer,status){
                     $("#form_legend").html("");
                     if(status == "Projects"){
-                        for(var i = 0; i< projectList.length;i++){
+                        for(var i = 0; i< projectList.length;i++){console.log(projectColor);
                             $("#form_legend").html($("#form_legend").html()+'<div class="circle" style = "border:1px solid black; background:'+projectColor[i]+';"></div><span>'+projectList[i].name+'</span><br/>');
                         }
                         changeColor(changeColorOfLayer, status);
@@ -695,20 +701,22 @@
 
                 
                 //changeColor(total_sites, 'Projects');
-                //changeLegend(total_sites,'Projects');
+                changeLegend(total_sites,'Projects');
                 
                 function applyFilter(siteListArray, multi_project, choose_status, progress, form_status){
                     for(i = siteListArray.features.length-1; i>=0 ;i--){
                             
                             //console.log(siteList[0].features[i].properties.name);
+                            
                             var match = 1;
-                            // if(multi_project != null && multi_project.length>0){
-                                //console.log("multi_project>0");
+                            //if(multi_project != null && multi_project.length>0){
+                                
                                 for(var j=0; j<multi_project.length;j++){
-                                    //console.log(siteListArray.features[i]);
+                                    //console.log(siteListArray.features[i].project);
                                     //console.log(multi_project[j]);
                                     //console.log(i);
-                                    if(siteListArray.features[i].project.trim() == multi_project[j]){
+                                    if(siteListArray.features[i].project.trim() == multi_project[j]){ 
+                                        //console.log("entered");
                                         match = 0;
                                         
                                         //console.log(multi_project[j]);
@@ -722,57 +730,52 @@
                                 if(match >= multi_project.length){//console.log("sitelistarray>0");
                                     siteListArray.features.splice(i, 1);
                                 }
-//}
-                                                               else {
-                                                                       if(progress!=null && progress.length>0){ //console.log("progress_length>0");
-                                                                               var yes = 1;
-                                                                               for(var k = 0; k<progress.length; k++){
-                                                                                       //console.log(progress[k]);
-                                                                                       progress_max = parseInt(progress[k].split("_")[1]);
-                                                                                       progress_min = parseInt(progress[k].split("_")[0]);
-                                                                                       //console.log(progress_max);
-                                                                                       if(siteListArray.features[i] != undefined){
-                                                                                               if(siteListArray.features[i].progress <= progress_max && siteListArray.features[i].progress >= progress_min){ //console.log("progress_entered");
-                                                                                                       yes = 0;
-                                                                                                       //break;
-                                                                                                       //console.log(progress[k]);
-                                                                                               }
-                                                                                               else{ //console.log("progress_not_entered");
-                                                                                                       yes++;
-                                                                                               }
-
-                                            }
-                                            if(yes >= progress.length){ //console.log("progress deleted");
-                                                                                       siteListArray.features.splice(i, 1);
-                                                                               }
-
-                                        }
-                                    }
-                                    if(yes >= progress.length){ //console.log("progress deleted");
-                                        siteListArray.features.splice(i, 1);
-                                    }
-                                
-                                
-                                
-                                if(form_status!=null && form_status.length>0){
-                                    //console.log(form_status);
-                                    var status_matched = 1;
-                                    for(var l = 0; l<form_status.length; l++){//console.log(form_status[i]);
-                                        if(siteListArray.features[i] != undefined){
-                                            if(siteListArray.features[i].status == form_status[l]){ //console.log("status_entered");
-                                                status_matched = 0;
-                                                //break;
-                                                //console.log(progress[k]);
-                                            }
-                                            else{//console.log("status_not entered");
-                                                status_matched++;
+                            //}
+                                else {
+                                    if(progress!=null && progress.length>0){ //console.log("progress_length>0");
+                                        var yes = 1;
+                                        for(var k = 0; k<progress.length; k++){
+                                            //console.log(progress[k]);
+                                            progress_max = parseInt(progress[k].split("_")[1]);
+                                            progress_min = parseInt(progress[k].split("_")[0]);
+                                            //console.log(progress_max);
+                                            if(siteListArray.features[i] != undefined){
+                                                if(siteListArray.features[i].progress <= progress_max && siteListArray.features[i].progress >= progress_min){ //console.log("progress_entered");
+                                                    yes = 0;
+                                                    //break;
+                                                    //console.log(progress[k]);
+                                                }
+                                                else{ //console.log("progress_not_entered");
+                                                    yes++;
+                                                }
                                             }
                                         }
+                                        if(yes >= progress.length){ //console.log("progress deleted");
+                                            siteListArray.features.splice(i, 1);
+                                        }
                                     }
-                                    if(status_matched >= form_status.length){ //console.log("status deleted");
-                                        siteListArray.features.splice(i, 1);
+                                    
+                                    
+                                    if(form_status!=null && form_status.length>0){
+                                        //console.log(form_status);
+                                        var status_matched = 1;
+                                        for(var l = 0; l<form_status.length; l++){//console.log(form_status[i]);
+                                            if(siteListArray.features[i] != undefined){
+                                                if(siteListArray.features[i].status == form_status[l]){ //console.log("status_entered");
+                                                    status_matched = 0;
+                                                    //break;
+                                                    //console.log(progress[k]);
+                                                }
+                                                else{//console.log("status_not entered");
+                                                    status_matched++;
+                                                }
+                                            }
+                                        }
+                                        if(status_matched >= form_status.length){ //console.log("status deleted");
+                                            siteListArray.features.splice(i, 1);
+                                        }
+                                            
                                     }
-                                        
                                 }
                                 /*else {
                                     if(choose_status == "Site Progress"){
@@ -783,7 +786,7 @@
                                     }
                                 }*/
                                 
-                               } 
+                                
                                 
                             
                         }
@@ -799,32 +802,29 @@
                     $.each($("input[class='projectinput']:checked"), function(){
                         //multi_project.push($(this).parent().siblings().children().children().html());
                         multi_project.push($(this).siblings().html());
-
                     });
                     //multi_project = $("#multi-prepend-append").val();
 
-                    // var choose_status = $("#inputStatus").val();
                     progress = $("#multi-prepend-append1").val();
                     //console.log(multi_project);
                     form_status = $("#multi-prepend-append2").val();
                     //console.log(JSON.stringify(siteList));
+                    var choose_status = "";
+                    if(form_status.length >= 1){
+                        choose_status = "Form Status";
+                        $("#inputStatus").val("Form Status").trigger('change');
+                    }
+                    else if(progress.length>=1){
+                        choose_status = "Site Progress";
+                        $("#inputStatus").val("Site Progress").trigger('change');
+                    }
+                    else{
+                        choose_status = "Projects";
+                        $("#inputStatus").val("Projects").trigger('change');
+                    }
+                
                         
                         //console.log(multi_project);
-
-                        var choose_status = "";
-                                       if(form_status.length >= 1){
-                                               choose_status = "Form Status";
-                                               $("#inputStatus").val("Form Status").trigger('change');
-                                       }
-                                       else if(progress.length>=1){
-                                               choose_status = "Site Progress";
-                                               $("#inputStatus").val("Site Progress").trigger('change');
-                                       }
-                                       else{
-                                               choose_status = "Projects";
-                                               $("#inputStatus").val("Projects").trigger('change');
-                                       }
-
                         
                         applyFilter(siteListArray, multi_project, choose_status, progress, form_status);
                         //console.log(siteListArray);
@@ -835,8 +835,8 @@
                         if(markers1!=null){
                             map.removeLayer(markers1);
                         }
-                         markers1 = L.markerClusterGroup({ animateAddingMarkers : true, disableClusteringAtZoom: 13 });
-                         filtered_sites = L.geoJSON(siteListArray,{
+                        markers1 = L.markerClusterGroup({ animateAddingMarkers : true, disableClusteringAtZoom: 13 });
+                        filtered_sites = L.geoJSON(siteListArray,{
                             pointToLayer: function(feature, latlng){
                                 return L.circleMarker(latlng, geojsonMarkerStyle);
                                 
@@ -850,7 +850,9 @@
                         map.addLayer(markers1);
                         //console.log(filtered_sites);
                         //console.log(choose_status);
-                        
+                        /*if(choose_status==null){
+                            choose_status="Projects";
+                        }*/
                         changeLegend(filtered_sites, choose_status);
 
                 });
@@ -870,6 +872,19 @@
                     changeLegend(changeColorOf, choose_status);
                 });
                 
+                var geo_layer = [
+                    {
+                        "id": 1,
+                        "title": "Changu",
+                        "geo_layer": "assets/js/Changunarayan.geojson"
+                    },
+                    {
+                        "id": 1,
+                        "title": "Sankhu",
+                        "geo_layer": "assets/js/Shankharapur.geojson"
+                    }
+                ];
+
 
                 for(var i=0;i<geo_layer.length;i++){
                     $(".layerContainer").html($(".layerContainer").html()+'<li>'+
@@ -883,7 +898,7 @@
                 
                 $(".layerSwitch").on('click', function(event){ 
                     var layerClicked = window[event.target.value];
-                    console.log(event.target.value);
+                    //console.log(event.target.value);
                         if (map.hasLayer(layerClicked)) {
                             map.removeLayer(layerClicked);
                         }
@@ -939,12 +954,25 @@
                             
                             // 
                         });
-                        }
-                    });
+                    }
+                });
+                //$('#map').loadingOverlay('remove');
+                
+                
+                map.on('zoomend', function() {
+                    var zoomLevel = map.getZoom();
+                    console.log(zoomLevel);
+                    if(zoomLevel >= 13){
+                        
+                    }
                 });
             });
         });
+    });
+
+
         </script>
+       
 		
     </body>
 </html>
