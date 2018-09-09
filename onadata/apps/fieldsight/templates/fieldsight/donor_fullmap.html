@@ -810,11 +810,11 @@
                     form_status = $("#multi-prepend-append2").val();
                     //console.log(JSON.stringify(siteList));
                     var choose_status = "";
-                    if(form_status.length >= 1){
+                    if(form_status != null && form_status.length >= 1){
                         choose_status = "Form Status";
                         $("#inputStatus").val("Form Status").trigger('change');
                     }
-                    else if(progress.length>=1){
+                    else if(form_status != null && progress.length>=1){
                         choose_status = "Site Progress";
                         $("#inputStatus").val("Site Progress").trigger('change');
                     }
