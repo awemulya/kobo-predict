@@ -1,7 +1,11 @@
 from __future__ import unicode_literals
+
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
-from onadata.apps.fsforms.models import Stage
+from onadata.apps.fieldsight.models import Site
+from onadata.apps.fsforms.models import Stage, FInstance
 from onadata.apps.fsforms.serializers.StageSerializer import StageSerializer, SubStageSerializer, StageSerializer1
 from rest_framework.pagination import PageNumberPagination
 
@@ -27,11 +31,23 @@ class StageViewSet(viewsets.ModelViewSet):
         if is_project == "1":
             queryset = queryset.filter(project__id=pk)
         else:
-            queryset = queryset.filter(site__id=pk)
+            project_id = get_object_or_404(Site, pk=pk).project.id
+            queryset = queryset.filter(Q(site__id=pk, project_stage_id=0) | Q(project__id=project_id))
         return queryset
 
     def get_serializer_context(self):
-        return {'request': self.request, 'kwargs': self.kwargs,}
+        instances = []
+        is_project = self.kwargs.get("is_project")
+        pk = self.kwargs.get("pk")
+        if is_project == "1":
+            instances = FInstance.objects.filter(project__isnull=False,
+                                                 project__id=pk,
+                                                 project_fxf__is_staged=True,
+                                                 ).order_by('-pk').select_related("project", "project_fxf")
+        if is_project == "0":
+            instances = FInstance.objects.filter(site__id=pk).order_by('-pk').select_related("site", "site_fxf")
+        self.kwargs.update({'instances': instances})
+        return {'request': self.request, 'kwargs': self.kwargs,'instances': instances}
 
 
 class MainStageViewSet(viewsets.ModelViewSet):

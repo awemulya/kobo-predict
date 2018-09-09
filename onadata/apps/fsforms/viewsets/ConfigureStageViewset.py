@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.db.models import Sum, F, Q
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 import rest_framework.status
@@ -29,7 +29,7 @@ class StageListViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(project__id=pk)
         else:
             project_id = get_object_or_404(Site, pk=pk).project.id
-            queryset = queryset.filter(Q(site__id=pk, project_stage_id=0) |Q(project__id=project_id))
+            queryset = queryset.filter(Q(site__id=pk, project_stage_id=0) |Q (project__id=project_id))
         return queryset.annotate(sub_stage_weight=Sum(F('parent__weight')))
 
     def retrieve_by_id(self, request, *args, **kwargs):
@@ -46,7 +46,7 @@ class StageListViewSet(viewsets.ModelViewSet):
         desc = self.request.data.get('description', "")
         instance.name = name
         instance.description = desc
-        instance.tags = tags;
+        instance.tags = tags
         instance.save()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
