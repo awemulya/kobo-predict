@@ -2715,7 +2715,7 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
 
         peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
         total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
-        sites = obj.sites.filter(is_active=True, is_survey=False)
+        sites = obj.sites.filter(is_active=True, is_survey=False)[:100]
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('location', 'id',))
 
