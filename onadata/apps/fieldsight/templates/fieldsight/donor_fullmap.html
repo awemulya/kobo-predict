@@ -560,6 +560,18 @@
                         json_data = total_sites.toGeoJSON();
 
                 
+                function getgradient(start, middle, end, gradlength){
+                    var gradient = gradStop({
+                        stops: gradlength,
+                        inputFormat: 'hex',
+                        colorArray: [start, middle, end]
+                    });
+                    //console.log(gradient);
+                    
+                    
+                    return gradient;
+                }
+                ['#FF0000', '#FFFF00', '#008000']
                 projectColor = [];
                 if(projectList.length<2){
                     projectColor = ['#FF0000'];
@@ -568,17 +580,20 @@
                     projectColor = ['#FF0000','#008000'];
                 }
                 else{
-                    var gradient = gradStop({
-                        stops: projectList.length,
-                        inputFormat: 'hex',
-                        colorArray: ['#FF0000', '#FFFF00', '#008000']
-                    });
-                    //console.log(gradient);
+                    var start = '#ff6600';
+                    var medium ='#b76e79';
+                    var end ='#1e90ff';
+
                     
-                    projectColor = gradient;
+                    projectColor =getgradient(start, medium, end, projectList.length);
                 
                 }
-                var progressColor = ["#FF0000","#f66565","#f4c08c","#FFFF00","#7FFF00","#00FF00","#069806"];
+                // var progressColor = ["#FF0000","#f66565","#f4c08c","#FFFF00","#7FFF00","#00FF00","#069806"];
+                var start = '#FF0000';
+                var medium ='#FFFF00';
+                var end ='#008000';
+                
+                progressColor = getgradient(start, medium, end, 7);
                 var formStatusColor = ["#0080ff","#FF0000","#FFFF00","#069806"];
                 
                 //var projectValue = [""];
