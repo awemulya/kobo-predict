@@ -795,10 +795,16 @@
 
 
                 $("#button-search").on('click', function(){
+                    var multi_project=[];
+                    $.each($("input[class='projectinput']:checked"), function(){
+                        //multi_project.push($(this).parent().siblings().children().children().html());
+                        multi_project.push($(this).siblings().children().html());
+                    });
                     var query_string = $("#search_text").val();
-                    var filtered_data=json_data.features.filter(site => site.properties.name.toLowerCase().match(filtered_data.toLowerCase()) || site.properties.identifier.toLowerCase().match(filtered_data.toLowerCase()));
-                    var sitelistarray = {"crs": {"type": "name", "properties": {"name": "EPSG:4326"}}, "type": "FeatureCollection", "features": filtered_data };
+                    var filtered_data=json_data.features.filter(site => multi_project.includes(site.project) && (site.properties.name.toLowerCase().match(query_string.toLowerCase()) || site.properties.identifier.toLowerCase().match(query_string.toLowerCase())));
+                    
 
+                    
                     map.removeLayer(total_sites);
                     map.removeLayer(markers);
                         //console.log(filtered_sites);
@@ -807,8 +813,30 @@
                         map.removeLayer(markers1);
                     }
 
-                    markers1 = L.markerClusterGroup({ animateAddingMarkers : true, disableClusteringAtZoom: 13 });
+                    progress = $("#multi-prepend-append1").val();
+                    console.log(progress);
+                    form_status = $("#multi-prepend-append2").val();
+                    console.log(JSON.stringify(form_status));
+
+                    if (form_status){
+                        filtered_data = filtered_data.filter(site => form_status.includes(String(site.status)));
+                    }
+
+                    if (progress){
+                        var min = parseInt(progress[0].split('_')[0]);
+                        console.log(progress[0].split('_')[0]);
+                        var max = parseInt(progress[progress.length - 1].split('_')[1]);
+
+                        filtered_data = filtered_data.filter(site => site.progress >= min && site.progress <= max);   
+
+                    }
+
+                    var choose_status = "";
                     
+
+                    markers1 = L.markerClusterGroup({ animateAddingMarkers : true, disableClusteringAtZoom: 13 });
+                    var siteListArray = {"crs": {"type": "name", "properties": {"name": "EPSG:4326"}}, "type": "FeatureCollection", "features": filtered_data };
+
                     filtered_sites = L.geoJSON(siteListArray,{
                         pointToLayer: function(feature, latlng){
                             return L.circleMarker(latlng, geojsonMarkerStyle);
@@ -821,13 +849,24 @@
                     });
                     
                     map.addLayer(markers1);
-
+                    if(form_status != null && form_status.length >= 1){
+                        choose_status = "Form Status";
+                        $("#inputStatus").val("Form Status").trigger('change');
+                    }
+                    else if(form_status != null && progress.length>=1){
+                        choose_status = "Site Progress";
+                        $("#inputStatus").val("Site Progress").trigger('change');
+                    }
+                    else{
+                        choose_status = "Projects";
+                        $("#inputStatus").val("Projects").trigger('change');
+                    }
 
                     
                     // a=animals.filter(site => site.name.toLowerCase().match('m'.toLowerCase()));
                 });
 
-                
+
                 //console.log(total_sites);
                 $("#apply_button").on('click',function(){
                     
