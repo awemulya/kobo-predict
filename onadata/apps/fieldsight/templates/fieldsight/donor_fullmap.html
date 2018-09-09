@@ -801,7 +801,7 @@
                     var multi_project=[];
                     $.each($("input[class='projectinput']:checked"), function(){
                         //multi_project.push($(this).parent().siblings().children().children().html());
-                        multi_project.push($(this).siblings().html());
+                        multi_project.push($(this).siblings().children().html());
                     });
                     //multi_project = $("#multi-prepend-append").val();
 
