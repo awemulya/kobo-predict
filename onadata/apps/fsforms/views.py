@@ -301,13 +301,31 @@ class Responses(ReadonlySiteLevelRoleMixin, View):
                                             schedule_forms__isnull=False).filter(
             Q(site__id=pk, schedule_forms__from_project=False)
                                        | Q(project__id=project_id))
-        stages = Stage.objects.filter(stage__isnull=True, site_id=pk).order_by('order')
+        stages = Stage.objects.filter(
+            stage__isnull=True
+        ).filter(Q(site__id=pk,
+                   project_stage_id=0
+                   ) | Q(
+            project__id=project_id
+        )).order_by('order', 'date_created')
         generals = FieldSightXF.objects.filter(is_staged=False, is_deleted=False, is_scheduled=False,  is_survey=False).\
             filter(Q(site__id=pk, from_project=False)| Q(project__id=project_id))
         
-        stage_deleted_forms = FieldSightXF.objects.filter(is_staged=True,  is_scheduled=False, is_survey=False ,is_deleted=True, site_id=pk)
-        general_deleted_forms = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_survey=False, is_deleted=True, site_id=pk)
-        schedule_deleted_forms = FieldSightXF.objects.filter(is_staged=False, project__isnull=True, is_survey=False, is_scheduled=True, is_deleted=True, site_id=pk)
+        stage_deleted_forms = FieldSightXF.objects.filter(is_staged=True,
+                                                          is_scheduled=False,
+                                                          is_survey=False ,
+                                                          is_deleted=True).filter(Q(site__id=pk, from_project=False)| Q(project__id=project_id))
+        general_deleted_forms = FieldSightXF.objects.filter(is_staged=False,
+                                                            is_scheduled=False,
+                                                            is_survey=False,
+                                                            is_deleted=True).filter(Q(site__id=pk, from_project=False)| Q(project__id=project_id))
+        schedule_deleted_forms = FieldSightXF.objects.filter(
+            is_staged=False,
+            project__isnull=True,
+            is_survey=False,
+            is_scheduled=True,
+            is_deleted=True
+        ).filter(Q(site__id=pk, from_project=False)| Q(project__id=project_id))
         
         return render(request, "fsforms/responses_list.html",
                       {'is_donor_only': kwargs.get('is_donor_only', False),'obj': obj, 'schedules': schedules, 'stages':stages,'generals':generals,

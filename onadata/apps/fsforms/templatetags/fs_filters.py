@@ -64,10 +64,10 @@ def project_submissions(formid):
 
 @register.filter
 def site_submissions(fsxf, site_id):
-    if not fsxf.from_project:
-        return FInstance.objects.filter(site_fxf_id = fsxf.id).count()
+    if fsxf.site:
+        return FInstance.objects.filter(site_fxf_id= fsxf.id).count()
     else:
-        return FInstance.objects.filter(project_fxf_id = fsxf.id, site__id=site_id).count()
+        return FInstance.objects.filter(project_fxf_id=fsxf.id, site__id=site_id).count()
 
 @register.filter
 def can_edit_finstance(user, finstance):
