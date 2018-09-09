@@ -129,11 +129,11 @@
                             </td>
                             <td>
                               
-                              {% with  obj|site_submissions:site as count %}
-                               <a class="badge badge-light" href="{% if count == 0 %}#{% else %}{% url 'forms:html_export' obj.id %}{% endif %}">
-                                        {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
-                              </a>
-                              {% endwith %}
+                              {% with obj|site_submissions:site as count %}
+
+                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.id site %}">
+                               <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
+                          {% endwith %}
                             </td>
                             <td>
                               <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
@@ -241,11 +241,11 @@
                             </td>
                             <td>
                               
-                              {% with  obj|site_submissions:site as count %}
-                               <a class="badge badge-light" href="{% if count == 0 %}#{% else %}{% url 'forms:html_export' obj.id %}{% endif %}">
-                                        {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
-                              </a>
-                              {% endwith %}
+                              {% with obj|site_submissions:site as count %}
+
+                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.id site %}">
+                               <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
+                          {% endwith %}
                             </td>
                             <td>
                               <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
