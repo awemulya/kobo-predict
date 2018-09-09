@@ -66,7 +66,9 @@
                           {% endif %}
                       </td>
                       <td>
-                                  {{ obj.getlatestsubmittiondate.first.date }}
+                                  {% with obj|getlatestsubmittiondate:site as sdate %}
+                              {{ sdate.first.date }}
+                                {% endwith %}
                       </td>
                       <td>
                           {{ obj.date_created }}
@@ -121,7 +123,9 @@
                               {{obj.xf.title}}
                             </td>
                             <td>
-                              {{ obj.getlatestsubmittiondate.first.date }}
+                                {% with obj|getlatestsubmittiondate:site as sdate %}
+                              {{ sdate.first.date }}
+                                {% endwith %}
                             </td>
 
                             <td>
@@ -176,7 +180,9 @@
                           {% endif %}
                       </td>
                       <td>
-                                  {{ obj.getlatestsubmittiondate.first.date }}
+                                 {% with obj.schedule_forms|getlatestsubmittiondate:site as sdate %}
+                              {{ sdate.first.date }}
+                                {% endwith %}
                               </td>
                       <td>
                           {{ obj.schedule_forms.xf.title }}
@@ -299,10 +305,12 @@
                                   {% endif %}
                               </td>
                               <td>
-                                  {{ obj.getlatestsubmittiondate.first.date }}
+                                  {% with obj.stage_forms|getlatestsubmittiondate:site as sdate %}
+                              {{ sdate.first.date }}
+                                {% endwith %}
                               </td>
                               <td>
-                                  {{ obj.order }}
+                                  {{ forloop.counter }}
                               </td>
                               <td>{{obj.stage_forms.xf.title}}</td>
                               <td>
@@ -362,7 +370,9 @@
                               {{obj.xf.title}}
                             </td>
                             <td>
-                              {{ obj.getlatestsubmittiondate.first.date }}
+                              {% with obj|getlatestsubmittiondate:site as sdate %}
+                              {{ sdate.first.date }}
+                                {% endwith %}
                             </td>
 
                             <td>
