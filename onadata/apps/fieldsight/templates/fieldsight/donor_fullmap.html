@@ -140,7 +140,7 @@
             <aside class="sidebar sb-top-left togglepanels">
                 <div class="content-holder">
                     <div class="input-group bs-2 mb-3">
-                      <input type="text" class="form-control" placeholder="Search" aria-label="Hydropower" aria-describedby="button-search">
+                      <input type="text" id="search_text" class="form-control" placeholder="Search" aria-label="Hydropower" aria-describedby="button-search">
                       <div class="input-group-append">
                         <button class="btn btn-light" type="button" id="button-search"><i class="la la-search"></i></button>
                       </div>
@@ -179,9 +179,9 @@
                                     <div class="input-group">
                                         <select id="multi-prepend-append2" class="form-control select2-multiple" multiple>
                                             <option value = "0" id="pending">Pending</option>
-                                            <option value = "1" id="outstanding">Outstanding</option>
-                                            <option value = "2" id="approved">Approved</option>
-                                            <option value = "3" id="rejected">Rejected</option>
+                                            <option value = "1" id="rejected">Rejected</option>
+                                            <option value = "2" id="flagged">Flagged</option>
+                                            <option value = "3" id="approved">Approved</option>
                                         </select>
                                     </div>
                                 </div>
@@ -558,11 +558,11 @@
                 
                 }
                 var progressColor = ["#FF0000","#f66565","#f4c08c","#FFFF00","#7FFF00","#00FF00","#069806"];
-                var formStatusColor = ["#FF0000","#f4c08c","#FFFF00","#069806"];
+                var formStatusColor = ["#0080ff","#FF0000","#FFFF00","#069806"];
                 
                 //var projectValue = [""];
                 var progressValue = ["0","1-20","21-40","41-60","61-80","81-99","100"];
-                var formStatusValue = ["Pending","Outstanding","Approved","Rejected"];
+                var formStatusValue = ["Pending","Rejected","Flagged","Approved"];
                 
                 $("#zoomin").on('click',function(){console.log("zoomin");
                     map.setZoom(map.getZoom() + 1);
@@ -791,6 +791,43 @@
                             
                         }
                 }
+
+
+
+                $("#button-search").on('click', function(){
+                    var query_string = $("#search_text").val();
+                    var filtered_data=json_data.features.filter(site => site.properties.name.toLowerCase().match(filtered_data.toLowerCase()) || site.properties.identifier.toLowerCase().match(filtered_data.toLowerCase()));
+                    var sitelistarray = {"crs": {"type": "name", "properties": {"name": "EPSG:4326"}}, "type": "FeatureCollection", "features": filtered_data };
+
+                    map.removeLayer(total_sites);
+                    map.removeLayer(markers);
+                        //console.log(filtered_sites);
+                        
+                    if(markers1!=null){
+                        map.removeLayer(markers1);
+                    }
+
+                    markers1 = L.markerClusterGroup({ animateAddingMarkers : true, disableClusteringAtZoom: 13 });
+                    
+                    filtered_sites = L.geoJSON(siteListArray,{
+                        pointToLayer: function(feature, latlng){
+                            return L.circleMarker(latlng, geojsonMarkerStyle);
+                            
+                        },
+                        onEachFeature: function onEachFeature(feature, layer){
+                            markers1.addLayer(layer);
+                            layer.bindPopup(feature.properties.name);
+                        }
+                    });
+                    
+                    map.addLayer(markers1);
+
+
+                    
+                    // a=animals.filter(site => site.name.toLowerCase().match('m'.toLowerCase()));
+                });
+
+                
                 //console.log(total_sites);
                 $("#apply_button").on('click',function(){
                     
