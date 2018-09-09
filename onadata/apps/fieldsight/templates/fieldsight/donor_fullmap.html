@@ -15,10 +15,49 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
 		<link rel="stylesheet" href="{% static 'dummy/assets/css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'dummy/assets/css/loading.css' %}">
         <script src="{% static 'dummy/assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
         <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css"> -->
 		<link href="https://fonts.googleapis.com/css?family=Ubuntu:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
     </head>
+    <style>
+            .circle {
+              width: 15px;
+              height: 15px;
+              -webkit-border-radius: 25px;
+              -moz-border-radius: 25px;
+              border-radius: 25px;
+              background: red;
+              display: inline-block;
+              float: left;
+              margin-left: 8px;
+              margin-right: 8px;
+            }
+            .marker-cluster{
+                               color:white;
+                       }
+                       .marker-cluster-small {
+                               background-color: rgba(181, 179, 179,0.9);
+                               
+                       }
+                       .marker-cluster-small div {
+                               background-color: rgba(0, 98, 142, 0.8);
+                       }
+                      .marker-cluster-medium {
+                             background-color: rgba(181, 179, 179,0.9);
+                      }
+                      .marker-cluster-medium div {
+                              background-color: rgba(0, 98, 142, 0.9);
+                      }
+                      .marker-cluster-large {
+                              background-color: rgba(181, 179, 179,0.9);
+                      }
+                    .marker-cluster-large div {
+                             background-color: rgba(0, 98, 142, 0.9);
+                      }
+
+
+        </style>
     <body class="donor-page overflow-off">
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -87,7 +126,17 @@
 		</header>
 
 		<div id="main-container">
-            <div id="map" class="map-holder"></div>
+            <div id="map" class="map-holder">
+                <div id="target" class="loading">
+                 <div class="loading-overlay">
+                       <p class="loading-spinner">
+                         <span class="loading-icon"></span>
+                         <span class="loading-text">loading</span>
+                       </p>
+                 </div>
+               </div>
+
+            </div>
             <aside class="sidebar sb-top-left togglepanels">
                 <div class="content-holder">
                     <div class="input-group bs-2 mb-3">
@@ -164,27 +213,27 @@
                                 <ul class="maptype-list">
                                     <li id = "osm" class="baselyr active">
                                         <span class="img-maptype mt-terrain"></span>
-                                        <h6>OpenStreet Map</h6>
+                                        OpenStreet Map
                                     </li>
                                     <li id="osm_style" class = "baselyr">
                                         <span class="img-maptype mt-satellite"></span>
-                                        <h6>Styled OSM</h6>
+                                        Styled OSM
                                     </li>
                                     <li id="googleStreets" class = "baselyr">
                                         <span class="img-maptype mt-openstreet"></span>
-                                        <h6>Google Streets</h6>
+                                        Google Streets
                                     </li>
                                     <li id = "googleTerrain" class = "baselyr">
                                         <span class="img-maptype mt-dark"></span>
-                                        <h6>Google Terrain</h6>
+                                        Google Terrain
                                     </li>
                                     <li id = "googleSat" class = "baselyr">
                                         <span class="img-maptype mt-positron"></span>
-                                        <h6>Google Satellite</h6>
+                                        Google Satellite
                                     </li>
                                     <li id = "googleHybrid" class = "baselyr">
                                         <span class="img-maptype mt-hybrid"></span>
-                                        <h6>Google Hybrid</h6>
+                                        Google Hybrid
                                     </li>
                                 </ul>
                               </div>
@@ -246,11 +295,12 @@
 		<script src="{% static 'dummy/assets/js/vendor/jquery.nicescroll.min.js' %}"></script>
 		<script src="{% static 'dummy/assets/js/vendor/select2.min.js' %}"></script>
 		<script src="{% static 'dummy/assets/js/leaflet/leaflet-src.js' %}"></script>
-        <!-- <script src="{% static 'dummy/assets/js/leaflet/leaflet.ajax.min.js' %}"></script>
-         -->
+        <script src="{% static 'dummy/assets/js/leaflet/leaflet.ajax.min.js' %}"></script>
+        
         <script src="{% static 'dummy/assets/js/vendor/jQDateRangeSlider-min.js' %}"></script>
         <script src="{% static 'dummy/assets/js/leaflet/leaflet.markercluster-src.js' %}"></script>
-        <script src="{% static 'dummy/assets/js/gradstop.js' %}"></script>
+        <script src="assets/js/loading-overlay.min.js"></script>
+        <script src="assets/js/gradstop.js"></script>
 
         <script src="{% static 'dummy/assets/js/plugins.js' %}"></script>
         
@@ -362,7 +412,7 @@
         </script>
         <script>
             $(document).ready(function(){
-                
+             $('#map').loadingOverlay();   
                 
                 
                     //$.getJSON( "assets/js/data.geojson", function( geojson_data ) {
@@ -412,15 +462,15 @@
                   "Google Terrain": googleTerrain
                 };
                 
-                map.addLayer(osm_style);
+                map.addLayer(osm);
                 
                 for(var i=0;i<projectList.length; i++){
                     $(".projects").html($(".projects").html()+ '<li>'+
-                                            '<span class = "ProjectName"><a href="#" '+
-                                            'title=""><strong>'+projectList[i].name+'</strong></a></span>'+
-                                            '<label class="switch switch-xxs">'+
-                                                '<input class ="projectinput" type="checkbox">'+
-                                                '<span class="slider"></span>'+
+                                          '<span class = "ProjectName"><a href="'+projectList[i].name+'" ' +
+                                           'title=""><input class ="projectinput" type="checkbox" checked><strong>'+ projectList[i].name+'</strong></a></span>'+
+                                            '<label class="">'+
+                                                ''+
+                                            '<span class=""></span>'+
                                             '</label>'+
                                         '</li>');
                 }
@@ -437,7 +487,8 @@
                     fillOpacity: 0.8
                 };
                 
-                markers = L.markerClusterGroup({ animateAddingMarkers : true });//{ animateAddingMarkers : true }
+                markers = L.markerClusterGroup({ animateAddingMarkers : true, disableClusteringAtZoom: 13 });//{ animateAddingMarkers : true }
+
                 
 
                 //var siteListFile = $.getJSON("{% static 'demofile.geojson' %}");
@@ -463,7 +514,7 @@
                 }
                         total_json = {"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"EPSG:4326"}},"features":[]};
                         total_json.features=markerArray;
-                               console.log(total_json);
+                               //console.log(total_json);
 
                         total_sites = L.geoJSON(total_json,{
                             pointToLayer: function(feature, latlng){
@@ -651,13 +702,13 @@
                             
                             //console.log(siteList[0].features[i].properties.name);
                             var match = 1;
-                            if(multi_project != null && multi_project.length>0){
+                            // if(multi_project != null && multi_project.length>0){
                                 //console.log("multi_project>0");
                                 for(var j=0; j<multi_project.length;j++){
                                     //console.log(siteListArray.features[i]);
                                     //console.log(multi_project[j]);
                                     //console.log(i);
-                                    if(siteListArray.features[i].project == multi_project[j]){ 
+                                    if(siteListArray.features[i].project.trim() == multi_project[j]){
                                         match = 0;
                                         
                                         //console.log(multi_project[j]);
@@ -671,30 +722,36 @@
                                 if(match >= multi_project.length){//console.log("sitelistarray>0");
                                     siteListArray.features.splice(i, 1);
                                 }
-                            }
-                            
-                                if(progress!=null && progress.length>0){ //console.log("progress_length>0");
-                                    var yes = 1;
-                                    for(var k = 0; k<progress.length; k++){
-                                        //console.log(progress[k]);
-                                        progress_max = parseInt(progress[k].split("_")[1]);
-                                        progress_min = parseInt(progress[k].split("_")[0]);
-                                        //console.log(progress_max);
-                                        if(siteListArray.features[i] != undefined){
-                                            if(siteListArray.features[i].progress <= progress_max && siteListArray.features[i].progress >= progress_min){ //console.log("progress_entered");
-                                                yes = 0;
-                                                //break;
-                                                //console.log(progress[k]);
+//}
+                                                               else {
+                                                                       if(progress!=null && progress.length>0){ //console.log("progress_length>0");
+                                                                               var yes = 1;
+                                                                               for(var k = 0; k<progress.length; k++){
+                                                                                       //console.log(progress[k]);
+                                                                                       progress_max = parseInt(progress[k].split("_")[1]);
+                                                                                       progress_min = parseInt(progress[k].split("_")[0]);
+                                                                                       //console.log(progress_max);
+                                                                                       if(siteListArray.features[i] != undefined){
+                                                                                               if(siteListArray.features[i].progress <= progress_max && siteListArray.features[i].progress >= progress_min){ //console.log("progress_entered");
+                                                                                                       yes = 0;
+                                                                                                       //break;
+                                                                                                       //console.log(progress[k]);
+                                                                                               }
+                                                                                               else{ //console.log("progress_not_entered");
+                                                                                                       yes++;
+                                                                                               }
+
                                             }
-                                            else{ //console.log("progress_not_entered");
-                                                yes++;
-                                            }
+                                            if(yes >= progress.length){ //console.log("progress deleted");
+                                                                                       siteListArray.features.splice(i, 1);
+                                                                               }
+
                                         }
                                     }
                                     if(yes >= progress.length){ //console.log("progress deleted");
                                         siteListArray.features.splice(i, 1);
                                     }
-                                }
+                                
                                 
                                 
                                 if(form_status!=null && form_status.length>0){
@@ -726,7 +783,7 @@
                                     }
                                 }*/
                                 
-                                
+                               } 
                                 
                             
                         }
@@ -740,17 +797,34 @@
                     //console.log(siteListArray);
                     var multi_project=[];
                     $.each($("input[class='projectinput']:checked"), function(){
-                        multi_project.push($(this).parent().siblings().children().children().html());
+                        //multi_project.push($(this).parent().siblings().children().children().html());
+                        multi_project.push($(this).siblings().html());
+
                     });
                     //multi_project = $("#multi-prepend-append").val();
 
-                    var choose_status = $("#inputStatus").val();
+                    // var choose_status = $("#inputStatus").val();
                     progress = $("#multi-prepend-append1").val();
                     //console.log(multi_project);
                     form_status = $("#multi-prepend-append2").val();
                     //console.log(JSON.stringify(siteList));
                         
                         //console.log(multi_project);
+
+                        var choose_status = "";
+                                       if(form_status.length >= 1){
+                                               choose_status = "Form Status";
+                                               $("#inputStatus").val("Form Status").trigger('change');
+                                       }
+                                       else if(progress.length>=1){
+                                               choose_status = "Site Progress";
+                                               $("#inputStatus").val("Site Progress").trigger('change');
+                                       }
+                                       else{
+                                               choose_status = "Projects";
+                                               $("#inputStatus").val("Projects").trigger('change');
+                                       }
+
                         
                         applyFilter(siteListArray, multi_project, choose_status, progress, form_status);
                         //console.log(siteListArray);
@@ -761,30 +835,29 @@
                         if(markers1!=null){
                             map.removeLayer(markers1);
                         }
-                        markers1 = L.markerClusterGroup({ animateAddingMarkers : true });
-                        filtered_sites = L.geoJSON(siteListArray,{
+                         markers1 = L.markerClusterGroup({ animateAddingMarkers : true, disableClusteringAtZoom: 13 });
+                         filtered_sites = L.geoJSON(siteListArray,{
                             pointToLayer: function(feature, latlng){
                                 return L.circleMarker(latlng, geojsonMarkerStyle);
                                 
                             },
                             onEachFeature: function onEachFeature(feature, layer){
                                 markers1.addLayer(layer);
+                                layer.bindPopup(feature.properties.name);
                             }
                         });
                         
                         map.addLayer(markers1);
                         //console.log(filtered_sites);
                         //console.log(choose_status);
-                        if(choose_status==null){
-                            choose_status="Projects";
-                        }
+                        
                         changeLegend(filtered_sites, choose_status);
 
                 });
                 //console.log(siteList);
                 
                 $("#clear").on('click',function(){
-                    $(".projectinput").prop("checked",false);
+                    $(".projectinput").prop("checked",true);
                     $("#multi-prepend-append1").val(null).trigger('change');
                     $("#multi-prepend-append2").val(null).trigger('change');
                     var choose_status = $("#inputStatus").val();
