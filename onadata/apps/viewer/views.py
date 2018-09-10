@@ -45,6 +45,8 @@ from onadata.libs.utils.user_auth import has_permission, get_xform_and_perms,\
 from xls_writer import XlsWriter
 from onadata.libs.utils.chart_tools import build_chart_data
 
+from onadata.apps.fsforms.models import FieldSightXF
+
 
 def _set_submission_time_to_query(query, request):
     query[SUBMISSION_TIME] = {}
@@ -380,6 +382,12 @@ def _get_google_token(request, redirect_to_url):
 
 
 def export_list(request, username, id_string, export_type, is_project=None, id=None,site_id=None):
+    print("username",username)
+    print("id_string",id_string)
+    print("export_type",export_type)
+    print("is_project",is_project)
+    print(" id",  id)
+    print("site_id", site_id)
     if export_type == Export.GDOC_EXPORT:
         return HttpResponseForbidden(_(u'Not shared.'))
         token = _get_google_token(request, redirect_url)
@@ -411,7 +419,7 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
             else:
                 query = {"fs_project_uuid": str(id), "fs_site": str(site_id)}
         force_xlsx = True
-
+        print("query at view", query)
         try:
             create_async_export(xform, export_type, query, force_xlsx, options, is_project, id,site_id)
         except Export.ExportTypeError:

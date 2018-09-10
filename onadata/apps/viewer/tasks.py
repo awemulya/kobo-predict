@@ -21,8 +21,8 @@ def create_async_export(xform, export_type, query, force_xlsx, options=None, is_
     def _create_export(xform, export_type):
         site_id_int = 0
         if site_id is not None:
-            site_id_int = site_id
-        return Export.objects.create(xform=xform, export_type=export_type, fsxf=id, site=site_id_int)
+            site_id_int = int(site_id)
+        return Export.objects.create(xform=xform, export_type=export_type, fsxf=FieldSightXF.objects.get(pk=id), site=site_id_int)
 
     # Generate a placeholder `Export` object to be populated with the export file.
     export = _create_export(xform, export_type)

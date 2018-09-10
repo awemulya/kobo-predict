@@ -67,7 +67,7 @@ class Export(models.Model):
     FAILED = 2
 
     # max no. of export files a user can keep
-    MAX_EXPORTS = 10
+    MAX_EXPORTS = 15
 
     xform = models.ForeignKey(XForm)
     created_on = models.DateTimeField(auto_now_add=True)
