@@ -276,6 +276,42 @@ class PDFReport:
                 self.append_row(question_name, question_label, first_children['type'], self.main_answer)
 
 
+    def append_answers(self, elements, json_question, instance, sub_count)
+        if instance.form_status ==  0:
+            form_status = "Pending"
+        elif instance.form_status == 1:
+            form_status = "Rejected"
+        elif instance.form_status == 2:
+            form_status = "Flagged"
+        elif instance.form_status == 3:
+            form_status = "Approved"
+        sub_count += 1
+        elements.append(Spacer(0,10))
+        elements.append(Paragraph("Submision "+ str(sub_count), self.paragraphstyle))
+        elements.append(Paragraph("Status : "+form_status, self.paragraphstyle))
+        elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, self.paragraphstyle))
+        elements.append(Paragraph("Submitted Date:"+str(instance.date), self.paragraphstyle))
+        elements.append(Spacer(0,10))
+        self.data = []
+        self.additional_data=[]
+        self.main_answer = instance.instance.json
+        question = json.loads(json_question)
+
+        self.parse_individual_questions(question['children'])
+        
+
+        t1 = Table(self.data, colWidths=(60*mm, None))
+        t1.setStyle(self.ts1)
+        elements.append(t1)
+        elements.append(Spacer(0,10))
+
+        if self.additional_data:
+            elements.append(Paragraph("Full Answers", styles['Heading4']))
+            for items in self.additional_data:
+                for k,v in items.items():
+                    elements.append(Paragraph(k + " : ", styles['Heading5']))
+                    elements.append(Paragraph(v, self.paragraphstyle))
+                    elements.append(Spacer(0,10))
 
     def generateFullReport(self, pk, base_url):
         self.base_url = base_url
@@ -314,8 +350,8 @@ class PDFReport:
         elements.append(PageBreak())
         elements.append(Paragraph('Responses', self.h2))
         
-        forms = FieldSightXF.objects.select_related('xf').filter(site_id=pk, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
-        
+        forms = FieldSightXF.objects.select_related('xf').filter(is_survey=False, is_deleted=False).filter(Q(site_id=site.id, from_project=False) | Q(project_id=site.project_id)).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')), Prefetch('project_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
+         
         if not forms:
             elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))
         #a=FieldSightXF.objects.select_related('xf').filter(site_id=291).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')))
@@ -343,43 +379,14 @@ class PDFReport:
             
             
             sub_count = 0
-            if form.site_form_instances.all():
+
+            if not form.from_project and form.site_form_instances.all():
                 for instance in form.site_form_instances.all():
-                    if instance.form_status ==  0:
-                        form_status = "Pending"
-                    elif instance.form_status == 1:
-                        form_status = "Rejected"
-                    elif instance.form_status == 2:
-                        form_status = "Flagged"
-                    elif instance.form_status == 3:
-                        form_status = "Approved"
-                    sub_count += 1
-                    elements.append(Spacer(0,10))
-                    elements.append(Paragraph("Submision "+ str(sub_count), self.paragraphstyle))
-                    elements.append(Paragraph("Status : "+form_status, self.paragraphstyle))
-                    elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, self.paragraphstyle))
-                    elements.append(Paragraph("Submitted Date:"+str(instance.date), self.paragraphstyle))
-                    elements.append(Spacer(0,10))
-                    self.data = []
-                    self.additional_data=[]
-                    self.main_answer = instance.instance.json
-                    question = json.loads(json_question)
+                    self.append_answers(elements, json_question, instance, sub_count)
 
-                    self.parse_individual_questions(question['children'])
-                    
-
-                    t1 = Table(self.data, colWidths=(60*mm, None))
-                    t1.setStyle(self.ts1)
-                    elements.append(t1)
-                    elements.append(Spacer(0,10))
-
-                    if self.additional_data:
-                        elements.append(Paragraph("Full Answers", styles['Heading4']))
-                        for items in self.additional_data:
-                            for k,v in items.items():
-                                elements.append(Paragraph(k + " : ", styles['Heading5']))
-                                elements.append(Paragraph(v, self.paragraphstyle))
-                                elements.append(Spacer(0,10))
+            elif form.project_form_instances.all()
+                for instance in form.project_form_instances.all():
+                    self.append_answers(elements, json_question, instance, sub_count)
 
             else:
                 elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
@@ -510,7 +517,7 @@ class PDFReport:
 
         new_enddate = end + datetime.timedelta(days=1)
 
-        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(date__range=[new_startdate, new_enddate]))).order_by('-is_staged', 'is_scheduled')
+        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(date__range=[new_startdate, new_enddate])), Prefetch('project_form_instances', queryset=FInstance.objects.select_related('instance').filter(date__range=[new_startdate, new_enddate]))).order_by('-is_staged', 'is_scheduled')
         
         if not forms:
             elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))
@@ -541,43 +548,12 @@ class PDFReport:
             
             
             sub_count = 0
-            if form.site_form_instances.all():
+            if not form.from_project and form.site_form_instances.all():
                 for instance in form.site_form_instances.all():
-                    if instance.form_status ==  0:
-                        form_status = "Pending"
-                    elif instance.form_status == 1:
-                        form_status = "Rejected"
-                    elif instance.form_status == 2:
-                        form_status = "Flagged"
-                    elif instance.form_status == 3:
-                        form_status = "Approved"
-                    sub_count += 1
-                    elements.append(Spacer(0,10))
-                    elements.append(Paragraph("Submision "+ str(sub_count), self.paragraphstyle))
-                    elements.append(Paragraph("Status : "+form_status, self.paragraphstyle))
-                    elements.append(Paragraph("Submitted By:"+instance.submitted_by.username, self.paragraphstyle))
-                    elements.append(Paragraph("Submitted Date:"+str(instance.date), self.paragraphstyle))
-                    elements.append(Spacer(0,10))
-                    self.data = []
-                    self.additional_data=[]
-                    self.main_answer = instance.instance.json
-                    question = json.loads(json_question)
-                    self.parse_individual_questions(question['children'])
-                    
-
-                    t1 = Table(self.data, colWidths=(60*mm, None))
-                    t1.setStyle(self.ts1)
-                    elements.append(t1)
-                    elements.append(Spacer(0,10))
-                    
-                    if self.additional_data:
-                        elements.append(Paragraph("Full Answers", styles['Heading4']))
-                        for items in self.additional_data:
-                            for k,v in items.items():
-                                elements.append(Paragraph(k + " : ", styles['Heading5']))
-                                elements.append(Paragraph(v, self.paragraphstyle))
-                                elements.append(Spacer(0,10))
-
+                    self.append_answers(elements, json_question, instance, sub_count)
+            elif form.project_form_instances.all():
+                for instance in form.site_form_instances.all():
+                    self.append_answers(elements, json_question, instance, sub_count)
             else:
                 elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
                 elements.append(Spacer(0,10))
