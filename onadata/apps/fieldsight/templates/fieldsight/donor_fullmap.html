@@ -506,29 +506,33 @@
                 //var siteListFile = $.getJSON("{% static 'demofile.geojson' %}");
                 var markerArray = [];
                 function pushFeatures(url, projectMarkerArray, is_secondary_url, secondary_url){
-                    $.ajax({
-                        async: false,
-                        url: url,
-                        success: function(data) {
-                            if(is_secondary_url){
-                                $.each(data.features,function(key, value){
-                                    site_exists = projectMarkerArray.findIndex(e => e.id == value.id);
-                                    if(site_exists !== -1){
-                                        projectMarkerArray[site_exists] = value;
-                                    }
-                                    else{
-                                        projectMarkerArray.push(data.features[key]);   
-                                    }  
-                                });
-                                markerArray = markerArray.concat(projectMarkerArray);
-                            }else{
-                                $.each(data.features,function(key){ 
-                                    projectMarkerArray.push(data.features[key]);
-                                });
-                                pushFeatures(secondary_url, projectMarkerArray, true, '');   
+                    if (url){
+                        $.ajax({
+                            async: false,
+                            url: url,
+                            success: function(data) {
+                                if(is_secondary_url){
+                                    $.each(data.features,function(key, value){
+                                        site_exists = projectMarkerArray.findIndex(e => e.id == value.id);
+                                        if(site_exists !== -1){
+                                            projectMarkerArray[site_exists] = value;
+                                        }
+                                        else{
+                                            projectMarkerArray.push(data.features[key]);   
+                                        }  
+                                    });
+                                    markerArray = markerArray.concat(projectMarkerArray);
+                                }else{
+                                    $.each(data.features,function(key){ 
+                                        projectMarkerArray.push(data.features[key]);
+                                    });
+                                    pushFeatures(secondary_url, projectMarkerArray, true, '');   
+                                }
                             }
-                        }
-                    });
+                        });
+                    }else if(!is_secondary_url){
+                        pushFeatures(secondary_url, projectMarkerArray, true, '');
+                    }
                 }   
                 
                 for(var i=0; i<projectList.length; i++){
