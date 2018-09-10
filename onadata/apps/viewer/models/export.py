@@ -87,6 +87,7 @@ class Export(models.Model):
     export_url = models.URLField(null=True, default=None)
 
     fsxf = models.ForeignKey(FieldSightXF, null=True, blank=True, related_name="exports")
+    site = models.IntegerField(default=0)
 
     class Meta:
         app_label = "viewer"

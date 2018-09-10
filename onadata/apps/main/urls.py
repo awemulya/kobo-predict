@@ -205,6 +205,8 @@ urlpatterns = patterns(
         "/$", 'onadata.apps.viewer.views.export_list'),
     url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)/(?P<is_project>[\d+^/]+)/(?P<id>[\d+^/]+)"
         "/$", 'onadata.apps.viewer.views.export_list'),
+    url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)/(?P<is_project>[\d+^/]+)/(?P<id>[\d+^/]+)/(?P<site_id>[\d+^/]+)"
+        "/$", 'onadata.apps.viewer.views.export_list'),
     url(r"^(?P<username>\w+)/exports/(?P<id_string>[^/]+)/(?P<export_type>\w+)"
         "/(?P<filename>[^/]+)$",
         'onadata.apps.viewer.views.export_download'),
