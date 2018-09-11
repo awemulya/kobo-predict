@@ -27,7 +27,7 @@ from .views import (
     fill_details_schedule,
     schedule_add_form,
     AssignedFormsListView,
-    html_export, InstanceKobo,
+    InstanceKobo,
     show,
     api,
     download_jsonform,
@@ -154,6 +154,7 @@ urlpatterns = urlpatterns + [
         url(r'site-submissions/(?P<fsxf_id>\d+)/(?P<site_id>\d+)/$', Html_export.as_view(), name='html_export'),
         url(r'project-submissions/(?P<fsxf_id>\d+)$', Project_html_export.as_view(), name='project_html_export'),
         url(r'^forms/(?P<fsxf_id>\d+)$', InstanceKobo.as_view(), name='instance' ),
+        url(r'^forms/(?P<fsxf_id>\d+)/(?P<site_id>\d+)$', InstanceKobo.as_view(), name='instance' ),
         url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', Instance_detail.as_view(), name='instance_detail'),
         url(r'^forms/alter-answer-status/(?P<instance_id>\d+)/(?P<status>\d)/(?P<fsid>\d+)$', alter_answer_status, name='alter-answer-status'),
         url(r'submissions/detailed/(?P<fsxf_id>\d+)$', FullResponseTable.as_view(), name='project_html_table_export'),
@@ -163,6 +164,7 @@ urlpatterns = urlpatterns + [
     # kobo main urls
 
     url(r'^mongo_view_api/(?P<fsxf_id>\d+)/api$', api, name='mongo_view_api'),
+    url(r'^mongo_view_api/(?P<fsxf_id>\d+)/(?P<site_id>\d+)/api$', api, name='mongo_view_api'),
     #  kobo main view
     url(r'^show/(?P<fsxf_id>\d+)$', show, name='show'),
     url(r'^forms/(?P<fsxf_id>\d+)/delete_data$', delete_data, name='delete_data'),

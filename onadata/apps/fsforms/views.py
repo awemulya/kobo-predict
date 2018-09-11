@@ -1495,17 +1495,17 @@ class FullResponseTable(ReadonlyFormMixin, View):
         context['obj'] = fsxf
         return render(request, 'fsforms/full_response_table.html', context)
 
-@group_required('KoboForms')
-def html_export(request, fsxf_id):
-    
-    cursor = FInstance.objects.filter(site_fxf=fsxf)
-    context={}
-    context['is_site_data'] = True
-    context['site_data'] = cursor
-    context['form_name'] = fsxf.xf.title
-    context['fsxfid'] = fsxf_id
-    context['obj'] = fsxf
-    return render(request, 'fsforms/fieldsight_export_html.html', context)
+# @group_required('KoboForms')
+# def html_export(request, fsxf_id):
+#
+#     cursor = FInstance.objects.filter(site_fxf=fsxf)
+#     context={}
+#     context['is_site_data'] = True
+#     context['site_data'] = cursor
+#     context['form_name'] = fsxf.xf.title
+#     context['fsxfid'] = fsxf_id
+#     context['obj'] = fsxf
+#     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
 class Html_export(ReadonlyFormMixin, ListView):
     model =   FInstance
@@ -1522,6 +1522,8 @@ class Html_export(ReadonlyFormMixin, ListView):
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
+        if site_id != 0:
+            context['site_id'] = site_id
         return context
 
     def get_queryset(self, **kwargs):
@@ -1762,7 +1764,7 @@ def alter_answer_status(request, instance_id, status, fsid):
 
 # @group_required('KoboForms')
 class InstanceKobo(ConditionalFormMixin, View):
-    def get(self, request, fsxf_id, is_read_only):
+    def get(self, request, fsxf_id, is_read_only, site_id=None):
         fxf = FieldSightXF.objects.get(pk=fsxf_id)
         xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
         audit = {
@@ -1774,16 +1776,19 @@ class InstanceKobo(ConditionalFormMixin, View):
             {
                 'id_string': xform.id_string,
             }, audit, request)
-        return render(request, 'fs_instance.html', {
+        kwargs = {
             'username': xform.user,
             'fxf': fxf,
             'can_edit': can_edit,
             'is_readonly': is_read_only
-        })
+        }
+        if site_id is not None:
+            kwargs['site_id'] = site_id
+        return render(request, 'fs_instance.html', kwargs)
 
 
 @require_http_methods(["GET", "OPTIONS"])
-def api(request, fsxf_id=None):
+def api(request, fsxf_id=None, site_id=None):
     """
     Returns all results as JSON.  If a parameter string is passed,
     it takes the 'query' parameter, converts this string to a dictionary, an
@@ -1827,6 +1832,8 @@ def api(request, fsxf_id=None):
         if xform:
             if fs_xform.project:
                 args["fs_project_uuid"] = fs_xform.id
+                if site_id is not None:
+                    args['site_id'] = site_id
             else:
                 args["fs_uuid"] = fs_xform.id
         cursor = query_mongo(**args)
