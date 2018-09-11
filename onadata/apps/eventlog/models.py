@@ -102,11 +102,16 @@ class FieldSightLog(models.Model):
         return reverse('eventlog:notification-detail', kwargs={'pk': self.pk})
 
     def get_event_url(self):
-        return self.content_object.get_absolute_url()
-
+        try:
+            return self.content_object.get_absolute_url()
+        except:
+            return None
     def get_event_name(self):
-        return self.content_object.getname()
-
+        try:
+            return self.content_object.getname()
+        except:
+            return None
+            
     def get_extraobj_url(self):
         if self.extra_object is None:
             return None
