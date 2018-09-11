@@ -698,7 +698,7 @@ class ProjectDeleteView(ProjectRoleMixinDeleteView, View):
         project = get_object_or_404(Project, pk=self.kwargs.get('pk'), is_active=True)
         project.is_active = False
         project.save()
-        task_obj=CeleryTaskProgress.objects.create(user=request.user, description="Removal of UserRoles After project delete", task_type=7)
+        task_obj=CeleryTaskProgress.objects.create(user=self.request.user, description="Removal of UserRoles After project delete", task_type=7)
         if task_obj:
             task = UnassignAllProjectRoles(task_obj.id, project.id)
             task_obj.task_id = task.id
@@ -830,7 +830,7 @@ class SiteDeleteView(SiteDeleteRoleMixin, View):
         site = get_object_or_404(Site, pk=self.kwargs.get('pk'), is_active=True)
         site.is_active = False
         site.save()
-        task_obj=CeleryTaskProgress.objects.create(user=request.user, description="Removal of UserRoles After Site delete", task_type=7)
+        task_obj=CeleryTaskProgress.objects.create(user=self.request.user, description="Removal of UserRoles After Site delete", task_type=7)
         if task_obj:
             task = UnassignAllProjectRoles(task_obj.id, site.id)
             task_obj.task_id = task.id
