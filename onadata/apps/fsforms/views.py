@@ -1142,6 +1142,7 @@ class Setup_forms(SPFmixin, View):
 class FormFillView(FormMixin, View):
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
+        site_id = self.kwargs.get('site_id', None)
         sub_pk = self.kwargs.get('instance_pk')
 
         fieldsight_xf = FieldSightXF.objects.get(pk=pk)
@@ -1161,10 +1162,12 @@ class FormFillView(FormMixin, View):
             'html_form': result['form'],
             'model_str': result['model'],
             'existing': finstance,
+            'site_id': site_id,
         })
 
     def post(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
+        site_id = self.kwargs.get('site_id')
         sub_pk = self.kwargs.get('instance_pk')
 
         fs_xf = FieldSightXF.objects.get(pk=pk)
@@ -1180,7 +1183,6 @@ class FormFillView(FormMixin, View):
         else:
             if finstance and finstance.site:
                 site_id = finstance.site_id
-            site_id = None
         with transaction.atomic():
             if fs_xf.is_survey:
                 instance = save_submission(
@@ -1196,18 +1198,33 @@ class FormFillView(FormMixin, View):
                     fs_poj_id=fs_xf.id,
                     project=fs_xf.project.id,
                 )
-            else:    
-                instance = save_submission(
-                    xform=xform,
-                    xml=xml,
-                    media_files=media_files,
-                    new_uuid=new_uuid,
-                    submitted_by=request.user,
-                    status='submitted_via_web',
-                    date_created_override=None,
-                    fxid=fs_xf.id,
-                    site=site_id,
-                )
+            else:
+                if fs_xf.site:
+                    instance = save_submission(
+                        xform=xform,
+                        xml=xml,
+                        media_files=media_files,
+                        new_uuid=new_uuid,
+                        submitted_by=request.user,
+                        status='submitted_via_web',
+                        date_created_override=None,
+                        fxid=fs_xf.id,
+                        site=site_id,
+                    )
+                else:
+                    instance = save_submission(
+                        xform=xform,
+                        xml=xml,
+                        media_files=media_files,
+                        new_uuid=new_uuid,
+                        submitted_by=request.user,
+                        status='submitted_via_web',
+                        date_created_override=None,
+                        fxid=None,
+                        site=site_id,
+                        fs_poj_id=fs_xf.id,
+                        project=fs_xf.project.id,
+                    )
             if finstance:
                 noti_type=31
                 title = "editing submission"
@@ -1229,7 +1246,7 @@ class FormFillView(FormMixin, View):
                 site = None
                 organization=extra_object.organization
             
-            noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=noti_type, title=title,
+            instance.fieldsight_instance.logs.create(source=self.request.user, type=noti_type, title=title,
 
                                        organization=organization,
                                        project=project,

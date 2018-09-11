@@ -352,16 +352,19 @@ def create_export(request, username, id_string, export_type, is_project=None, id
                 'export_type': export_type.upper(),
                 'id_string': xform.id_string,
             }, audit, request)
+        kwargs = {
+            "username": username,
+            "id_string": id_string,
+            "export_type": export_type,
+            "is_project": is_project,
+            "id": id,
+        }
+
+        if site_id is not None:
+            kwargs['site_id'] = site_id
         return HttpResponseRedirect(reverse(
             export_list,
-            kwargs={
-                "username": username,
-                "id_string": id_string,
-                "export_type": export_type,
-                "is_project": is_project,
-                "id": id,
-                "site_id": site_id,
-            })
+            kwargs=kwargs)
         )
 
 
@@ -444,8 +447,9 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
         'metas': metadata,
         'is_project': is_project,
         'id': id,
-        'site_id': site_id
-    }
+            }
+    if site_id is not None:
+        data['site_id'] = site_id
     return render(request, 'export_list.html', data)
 
 
@@ -578,16 +582,20 @@ def delete_export(request, username, id_string, export_type, is_project=None, id
             'filename': export.filename,
             'id_string': xform.id_string,
         }, audit, request)
-    return HttpResponseRedirect(reverse(
-        export_list,
-        kwargs={
+    kwargs =  {
             "username": username,
             "id_string": id_string,
             "export_type": export_type,
             "is_project": is_project,
             "id": id,
-            "site_id": site_id,
-        }))
+            }
+
+    if site_id is not None:
+        kwargs['site_id'] = site_id
+    return HttpResponseRedirect(reverse(
+        export_list,
+        kwargs=kwargs))
+
 
 
 def zip_export(request, username, id_string):
