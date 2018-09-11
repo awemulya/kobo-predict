@@ -104,7 +104,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
                     sites = Site.objects.filter(region_id=region_id[1:])    
                     
                     for site_id in sites:
-                        roles=UserRole.objects.filter(user_id=user, site_id = site_id, group_id = group_id, ended_at=None)
+                        roles=UserRole.objects.filter(user_id=user_id, site_id = site_id, group_id = group_id, ended_at=None)
                         for role in roles:
                             role.ended_at = datetime.datetime.now()
                             role.save()
@@ -114,7 +114,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
                 for project_id in projects: 
                     sites = Site.objects.filter(project_id = project_id[1:])    
                     for site_id in sites:
-                        roles=UserRole.objects.filter(user_id=user, site_id = site_id, group_id = group_id, ended_at=None)
+                        roles=UserRole.objects.filter(user_id=user_id, site_id = site_id, group_id = group_id, ended_at=None)
                         for role in roles:
                             role.ended_at = datetime.datetime.now()
                             role.save()
@@ -137,6 +137,76 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
         print e.__dict__
         noti = task.logs.create(source=task.user, type=432, title="Role Remove for ",
                                        content_object=user.user_profile, recipient=task.user,
+                                       extra_message="@error " + u'{}'.format(e.message))
+
+
+@shared_task()
+def UnassignAllProjectRoles(task_prog_obj_id, project_id):
+    time.sleep(2)
+    project = Project.objects.get(pk=project_id)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.status=1
+    task.save()
+    
+    try:
+        count = 0
+        with transaction.atomic():        
+            roles=UserRole.objects.filter(project_id = project_id, ended_at=None)
+            for role in roles:
+                role.ended_at = datetime.datetime.now()
+                role.save()
+                count = count + 1
+
+            task.status = 2
+            task.save()
+            
+            extra_message= "removed " + str(count) + " User Roles "
+
+            noti = task.logs.create(source=task.user, type=35, title="Remove Roles",
+                                       content_object=project, recipient=task.user,
+                                       extra_message=extra_message)
+    except Exception as e:
+        task.status = 3
+        task.save()
+        print 'Role Remove Unsuccesfull. %s' % e
+        print e.__dict__
+        noti = task.logs.create(source=task.user, type=432, title="Role Remove for ",
+                                       content_object=project, recipient=task.user,
+                                       extra_message="@error " + u'{}'.format(e.message))
+
+
+@shared_task()
+def UnassignAllSiteRoles(task_prog_obj_id, project_id):
+    time.sleep(2)
+    site = Site.objects.get(pk=site_id)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.status=1
+    task.save()
+    
+    try:
+        count = 0
+        with transaction.atomic():        
+            roles=UserRole.objects.filter(site_id = site_id, ended_at=None)
+            for role in roles:
+                role.ended_at = datetime.datetime.now()
+                role.save()
+                count = count + 1
+
+            task.status = 2
+            task.save()
+            
+            extra_message= "removed " + str(count) + " User Roles "
+
+            noti = task.logs.create(source=task.user, type=35, title="Remove Roles",
+                                       content_object=site, recipient=task.user,
+                                       extra_message=extra_message)
+    except Exception as e:
+        task.status = 3
+        task.save()
+        print 'Role Remove Unsuccesfull. %s' % e
+        print e.__dict__
+        noti = task.logs.create(source=task.user, type=432, title="Role Remove for ",
+                                       content_object=site, recipient=task.user,
                                        extra_message="@error " + u'{}'.format(e.message))
 
 

@@ -63,7 +63,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from onadata.apps.fieldsight.tasks import UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
+from onadata.apps.fieldsight.tasks import UnassignAllProjectRoles, UnassignAllSiteRoles, UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
 from .generatereport import PDFReport
 from django.utils import translation
 from django.conf import settings
@@ -693,25 +693,24 @@ class ProjectUpdateView(ProjectView, ProjectRoleMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ProjectDeleteView(ProjectView, ProjectRoleMixinDeleteView, DeleteView):
-    def get_success_url(self):
-        return reverse('fieldsight:org-project-list', kwargs={'pk': self.kwargs['org_id'] })
+class ProjectDeleteView(ProjectRoleMixinDeleteView, View):
+    def get(self, *args, **kwargs):
+        project = get_object_or_404(Project, pk=self.kwargs.get('pk'), is_active=True)
+        project.is_active = False
+        project.save()
+        task_obj=CeleryTaskProgress.objects.create(user=request.user, description="Removal of UserRoles After project delete", task_type=7)
+        if task_obj:
+            task = UnassignAllProjectRoles(task_obj.id, project.id)
+            task_obj.task_id = task.id
+            task_obj.save()
+        
+        noti = self.object.logs.create(source=self.request.user, type=36, title="Delete Project",
+                               organization=project.organization, extra_message="project",
+                               project=project, content_object=project, extra_object=project.organization,
+                               description='{0} deleted of project named {1}'.format(
+                                   self.request.user.get_full_name(), project.name))
 
-    def delete(self,*args, **kwargs):
-        self.kwargs['org_id'] = self.get_object().organization_id
-        self.object = self.get_object().delete()
-        # noti = self.object.logs.create(source=self.request.user, type=4, title="new Site",
-        #                                organization=self.object.organization,
-        #                                description="new project {0} deleted by {1}".
-        #                                format(self.object.name, self.request.user.username))
-        # result = {}
-        # result['description'] = 'new project {0} deleted by {1}'.format(self.object.name, self.request.user.username)
-        # result['url'] = noti.get_absolute_url()
-        # ChannelGroup("notify-{}".format(self.object.organization.id)).send({"text": json.dumps(result)})
-        # ChannelGroup("notify-0").send({"text": json.dumps(result)})
-        return HttpResponseRedirect(self.get_success_url())
-
-
+        return HttpResponseRedirect(reverse('fieldsight:org-project-list', kwargs={'pk': project.organization_id }))
 
 class SiteView(object):
     model = Site
@@ -826,10 +825,23 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
         return form
 
 
-class SiteDeleteView(SiteView, SiteDeleteRoleMixin, DeleteView):
-    def get_success_url(self):
-        return reverse('fieldsight:proj-site-list', kwargs={'pk': self.object.project_id})
-
+class SiteDeleteView(SiteDeleteRoleMixin, View):
+    def get(self, *args, **kwargs):
+        site = get_object_or_404(Site, pk=self.kwargs.get('pk'), is_active=True)
+        site.is_active = False
+        site.save()
+        task_obj=CeleryTaskProgress.objects.create(user=request.user, description="Removal of UserRoles After Site delete", task_type=7)
+        if task_obj:
+            task = UnassignAllProjectRoles(task_obj.id, site.id)
+            task_obj.task_id = task.id
+            task_obj.save()
+        
+        noti = self.object.logs.create(source=self.request.user, type=36, title="Delete Site",
+                               organization=site.project.organization, extra_object=site.project,
+                               project=site.project, extra_message="site", site=site, content_object=site,
+                               description='{0} deleted of site named {1}'.format(
+                                   self.request.user.get_full_name(), site.name))
+        return HttpResponseRedirect(self.get_success_url(reverse('fieldsight:proj-site-list', kwargs={'pk': site.project_id})))
     # def delete(self,*args, **kwargs):
     #     self.kwargs['pk'] = self.get_object().pk
     #     self.object = self.get_object().delete()
@@ -3205,7 +3217,7 @@ class UnassignUserRegionAndSites(View):
         
         if int(group_id) in [3,4]:
             
-            task_obj=CeleryTaskProgress.objects.create(user=request.user, description="Removal of UserRoles", task_type=0)
+            task_obj=CeleryTaskProgress.objects.create(user=request.user, description="Removal of UserRoles", task_type=7)
             if task_obj:
                 task = UnassignUser.delay(task_obj.id, user_id, sites, regions, projects, group_id)
                 task_obj.task_id = task.id

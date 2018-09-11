@@ -317,6 +317,13 @@ class SiteType(models.Model):
         unique_together = [('identifier', 'project'), ]
 
 
+class SiteManager(models.Manager):
+    def get_queryset(self):
+        return super(SiteManager, self).get_queryset().filter(is_active=True)
+
+class SiteDeletedManager(models.Manager):
+    def get_queryset(self):
+        return super(SiteDeletedManager, self).get_queryset().filter(is_active=False)
 
 class Site(models.Model):
     identifier = models.CharField("ID", max_length=255)
@@ -339,6 +346,8 @@ class Site(models.Model):
     site_meta_attributes_ans = JSONField(default=dict)
     current_progress = models.IntegerField(default=0)
     current_status = models.IntegerField(default=0)
+    objects = SiteManager()
+    deleted_objects = SiteDeletedManager()
     logs = GenericRelation('eventlog.FieldSightLog')
 
     objects = GeoManager()
