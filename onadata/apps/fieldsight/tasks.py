@@ -176,7 +176,7 @@ def UnassignAllProjectRoles(task_prog_obj_id, project_id):
 
 
 @shared_task()
-def UnassignAllSiteRoles(task_prog_obj_id, project_id):
+def UnassignAllSiteRoles(task_prog_obj_id, site_id):
     time.sleep(2)
     site = Site.objects.get(pk=site_id)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
