@@ -173,11 +173,11 @@ class Organization(models.Model):
     def get_organization_type(self):
         return self.type.name
 
-class ProjectManager(GeoManager):
+class ProjectManager(models.Manager):
     def get_queryset(self):
         return super(ProjectManager, self).get_queryset().filter(is_active=True)
 
-class ProjectAllManager(GeoManager):
+class ProjectAllManager(models.Manager):
     def get_queryset(self):
         return super(ProjectAllManager, self).get_queryset().all()
 
@@ -325,11 +325,11 @@ class SiteType(models.Model):
         unique_together = [('identifier', 'project'), ]
 
 
-class SiteManager(GeoManager):
+class SiteManager(models.Manager):
     def get_queryset(self):
         return super(SiteManager, self).get_queryset().filter(is_active=True)
 
-class SiteAllManager(GeoManager):
+class SiteAllManager(models.Manager):
     def get_queryset(self):
         return super(SiteAllManager, self).get_queryset().all()
 
