@@ -173,6 +173,13 @@ class Organization(models.Model):
     def get_organization_type(self):
         return self.type.name
 
+class ProjectManager(GeoManager):
+    def get_queryset(self):
+        return super(SiteManager, self).get_queryset().filter(is_active=True)
+
+class ProjectDeletedManager(GeoManager):
+    def get_queryset(self):
+        return super(SiteDeletedManager, self).get_queryset().filter(is_active=False)
 
 class Project(models.Model):
     name = models.CharField(max_length=255)
@@ -195,7 +202,8 @@ class Project(models.Model):
     cluster_sites = models.BooleanField(default=False)
     site_meta_attributes = JSONField(default=list)
     logs = GenericRelation('eventlog.FieldSightLog')
-    objects = GeoManager()
+    objects = ProjectManager()
+    deleted_objects = ProjectDeletedManager()
     geo_layers = models.ManyToManyField('geo.GeoLayer', blank=True)
 
     class Meta:
@@ -317,11 +325,11 @@ class SiteType(models.Model):
         unique_together = [('identifier', 'project'), ]
 
 
-class SiteManager(models.Manager):
+class SiteManager(GeoManager):
     def get_queryset(self):
         return super(SiteManager, self).get_queryset().filter(is_active=True)
 
-class SiteDeletedManager(models.Manager):
+class SiteDeletedManager(GeoManager):
     def get_queryset(self):
         return super(SiteDeletedManager, self).get_queryset().filter(is_active=False)
 
@@ -349,8 +357,6 @@ class Site(models.Model):
     objects = SiteManager()
     deleted_objects = SiteDeletedManager()
     logs = GenericRelation('eventlog.FieldSightLog')
-
-    objects = GeoManager()
 
     class Meta:
         ordering = ['-is_active', '-id']

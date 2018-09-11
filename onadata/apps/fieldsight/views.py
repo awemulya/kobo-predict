@@ -701,7 +701,7 @@ class ProjectDeleteView(ProjectRoleMixinDeleteView, View):
         task_obj=CeleryTaskProgress.objects.create(user=self.request.user, description="Removal of UserRoles After project delete", task_type=7)
         if task_obj:
             task = UnassignAllProjectRoles(task_obj.id, project.id)
-            task_obj.task_id = task.id
+            task_obj.task_id = task_obj.id
             task_obj.save()
         
         noti = self.object.logs.create(source=self.request.user, type=36, title="Delete Project",
