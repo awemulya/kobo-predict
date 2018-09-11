@@ -143,12 +143,13 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
 @shared_task()
 def UnassignAllProjectRoles(task_prog_obj_id, project_id):
     time.sleep(2)
-    project = Project.all_objects.get(pk=project_id)
+    
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status=1
     task.save()
     
     try:
+        project = Project.all_objects.get(pk=project_id)
         count = 0
         with transaction.atomic():        
             roles=UserRole.objects.filter(project_id = project_id, ended_at=None)
