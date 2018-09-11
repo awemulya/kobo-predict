@@ -177,10 +177,6 @@ class ProjectManager(GeoManager):
     def get_queryset(self):
         return super(ProjectManager, self).get_queryset().filter(is_active=True)
 
-class ProjectAllManager(GeoManager):
-    def get_queryset(self):
-        return super(ProjectAllManager, self).get_queryset().all()
-
 class Project(models.Model):
     name = models.CharField(max_length=255)
     type = models.ForeignKey(ProjectType, verbose_name='Type of Project')
@@ -203,7 +199,7 @@ class Project(models.Model):
     site_meta_attributes = JSONField(default=list)
     logs = GenericRelation('eventlog.FieldSightLog')
     objects = ProjectManager()
-    all_objects = ProjectAllManager()
+    all_objects = GeoManager()
     geo_layers = models.ManyToManyField('geo.GeoLayer', blank=True)
 
     class Meta:
