@@ -295,7 +295,7 @@ def data_export(request, username, id_string, export_type):
 
 @login_required
 @require_POST
-def create_export(request, username, id_string, export_type, is_project=None, id=None):
+def create_export(request, username, id_string, export_type, is_project=None, id=None, site_id=None):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
     if not has_forms_permission(xform, owner, request):
@@ -359,7 +359,8 @@ def create_export(request, username, id_string, export_type, is_project=None, id
                 "id_string": id_string,
                 "export_type": export_type,
                 "is_project": is_project,
-                "id": id
+                "id": id,
+                "site_id": site_id,
             })
         )
 
@@ -408,7 +409,7 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
         'meta': export_meta,
         'token': export_token,
     }
-    if should_create_new_export(xform, export_type):    
+    if should_create_new_export(xform, export_type, id, site_id):
 
         if is_project == 1 or is_project == '1':
             query = {"fs_project_uuid": str(id)}
@@ -552,7 +553,7 @@ def export_download(request, username, id_string, export_type, filename):
 
 @login_required
 @require_POST
-def delete_export(request, username, id_string, export_type, is_project=None, id=None):
+def delete_export(request, username, id_string, export_type, is_project=None, id=None, site_id=None):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
     if not has_forms_permission(xform, owner, request):
@@ -584,7 +585,8 @@ def delete_export(request, username, id_string, export_type, is_project=None, id
             "id_string": id_string,
             "export_type": export_type,
             "is_project": is_project,
-            "id": id
+            "id": id,
+            "site_id": site_id,
         }))
 
 
