@@ -211,9 +211,9 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         # dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
-        objs = Project.objects.filter(pk=self.kwargs.get('pk')).select_related("organization")
-        [o for o in objs]
-        obj = objs[0]
+        obj = Project.objects.get(pk=self.kwargs.get('pk')).select_related("organization")
+        # [o for o in objs]
+        # obj = objs[0]
 
         peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user').count()
         # total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
