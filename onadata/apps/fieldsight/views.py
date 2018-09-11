@@ -211,7 +211,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         # dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
-        obj = get_object_or_404(Project, pk=self.kwargs.get('pk'))
+        obj = get_object_or_404(Project, pk=self.kwargs.get('pk'), is_active=True)
         # [o for o in objs]
         # obj = objs[0]
 
@@ -270,7 +270,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
 
     def get_context_data(self, is_supervisor_only, **kwargs):
         dashboard_data = super(SiteDashboardView, self).get_context_data(**kwargs)
-        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        obj =  get_object_or_404(Site, pk=self.kwargs.get('pk'), is_active=True)
         peoples_involved = obj.site_roles.filter(ended_at__isnull=True).distinct('user')
         data = serialize('custom_geojson', [obj], geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
@@ -700,7 +700,7 @@ class ProjectDeleteView(ProjectRoleMixinDeleteView, View):
         project.save()
         task_obj=CeleryTaskProgress.objects.create(user=self.request.user, description="Removal of UserRoles After project delete", task_type=7)
         if task_obj:
-            task = UnassignAllProjectRoles(task_obj.id, project.id)
+            task = UnassignAllProjectRoles.delay(task_obj.id, project.id)
             task_obj.task_id = task.id
             task_obj.save()
         
@@ -832,7 +832,7 @@ class SiteDeleteView(SiteDeleteRoleMixin, View):
         site.save()
         task_obj=CeleryTaskProgress.objects.create(user=self.request.user, description="Removal of UserRoles After Site delete", task_type=7)
         if task_obj:
-            task = UnassignAllProjectRoles(task_obj.id, site.id)
+            task = UnassignAllProjectRoles.delay(task_obj.id, site.id)
             task_obj.task_id = task.id
             task_obj.save()
         
@@ -2723,7 +2723,7 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         dashboard_data = super(DonorProjectDashboard, self).get_context_data(**kwargs)
-        obj = Project.objects.get(pk=self.kwargs.get('pk'))
+        obj = get_object_or_404(Project, pk=self.kwargs.get('pk'), is_active=True)
 
         peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
         total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
@@ -2764,7 +2764,7 @@ class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         dashboard_data = super(DonorSiteDashboard, self).get_context_data(**kwargs)
-        obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        obj =  get_object_or_404(Site, pk=self.kwargs.get('pk'), is_active=True)
         peoples_involved = obj.site_roles.filter(ended_at__isnull=True).distinct('user')
         data = serialize('custom_geojson', [obj], geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
