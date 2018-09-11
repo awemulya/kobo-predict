@@ -143,7 +143,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
 @shared_task()
 def UnassignAllProjectRoles(task_prog_obj_id, project_id):
     time.sleep(2)
-    project = Project.objects.get(pk=project_id)
+    project = Project.all_objects.get(pk=project_id)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status=1
     task.save()
@@ -178,7 +178,7 @@ def UnassignAllProjectRoles(task_prog_obj_id, project_id):
 @shared_task()
 def UnassignAllSiteRoles(task_prog_obj_id, site_id):
     time.sleep(2)
-    site = Site.objects.get(pk=site_id)
+    site = Site.all_objects.get(pk=site_id)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status=1
     task.save()

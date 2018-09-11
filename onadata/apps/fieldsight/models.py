@@ -177,9 +177,9 @@ class ProjectManager(GeoManager):
     def get_queryset(self):
         return super(ProjectManager, self).get_queryset().filter(is_active=True)
 
-class ProjectDeletedManager(GeoManager):
+class ProjectAllManager(GeoManager):
     def get_queryset(self):
-        return super(ProjectDeletedManager, self).get_queryset().filter(is_active=False)
+        return super(ProjectAllManager, self).get_queryset()
 
 class Project(models.Model):
     name = models.CharField(max_length=255)
@@ -203,7 +203,7 @@ class Project(models.Model):
     site_meta_attributes = JSONField(default=list)
     logs = GenericRelation('eventlog.FieldSightLog')
     objects = ProjectManager()
-    deleted_objects = ProjectDeletedManager()
+    all_objects = ProjectAllManager()
     geo_layers = models.ManyToManyField('geo.GeoLayer', blank=True)
 
     class Meta:
@@ -329,9 +329,9 @@ class SiteManager(GeoManager):
     def get_queryset(self):
         return super(SiteManager, self).get_queryset().filter(is_active=True)
 
-class SiteDeletedManager(GeoManager):
+class SiteAllManager(GeoManager):
     def get_queryset(self):
-        return super(SiteDeletedManager, self).get_queryset().filter(is_active=False)
+        return super(SiteAllManager, self).get_queryset()
 
 class Site(models.Model):
     identifier = models.CharField("ID", max_length=255)
@@ -355,7 +355,7 @@ class Site(models.Model):
     current_progress = models.IntegerField(default=0)
     current_status = models.IntegerField(default=0)
     objects = SiteManager()
-    deleted_objects = SiteDeletedManager()
+    all_objects = SiteAllManager()
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
