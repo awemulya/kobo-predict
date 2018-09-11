@@ -179,7 +179,7 @@ class ProjectManager(GeoManager):
 
 class ProjectAllManager(GeoManager):
     def get_queryset(self):
-        return super(ProjectAllManager, self).get_queryset()
+        return super(ProjectAllManager, self).get_queryset().all()
 
 class Project(models.Model):
     name = models.CharField(max_length=255)
@@ -331,7 +331,7 @@ class SiteManager(GeoManager):
 
 class SiteAllManager(GeoManager):
     def get_queryset(self):
-        return super(SiteAllManager, self).get_queryset()
+        return super(SiteAllManager, self).get_queryset().all()
 
 class Site(models.Model):
     identifier = models.CharField("ID", max_length=255)
