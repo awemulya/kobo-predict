@@ -211,7 +211,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         # dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
-        obj = Project.objects.get(pk=self.kwargs.get('pk')).select_related("organization")
+        obj = get_object_or_404(Project, pk=self.kwargs.get('pk'))
         # [o for o in objs]
         # obj = objs[0]
 
