@@ -175,11 +175,11 @@ class Organization(models.Model):
 
 class ProjectManager(GeoManager):
     def get_queryset(self):
-        return super(SiteManager, self).get_queryset().filter(is_active=True)
+        return super(ProjectManager, self).get_queryset().filter(is_active=True)
 
 class ProjectDeletedManager(GeoManager):
     def get_queryset(self):
-        return super(SiteDeletedManager, self).get_queryset().filter(is_active=False)
+        return super(ProjectDeletedManager, self).get_queryset().filter(is_active=False)
 
 class Project(models.Model):
     name = models.CharField(max_length=255)
