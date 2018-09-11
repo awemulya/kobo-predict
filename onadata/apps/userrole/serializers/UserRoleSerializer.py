@@ -25,7 +25,7 @@ class MySiteRolesSerializer(serializers.ModelSerializer):
         site = obj.site
         site_type = 0
         site_type_level = ""
-        region = dict()
+        region_id = ""
         try:
             site_type = site.type.id
             site_type_level = site.type.name
@@ -33,8 +33,6 @@ class MySiteRolesSerializer(serializers.ModelSerializer):
             pass
         try:
             region_id = site.region.id
-            region_name = site.region.name
-            region = dict(id=region_id, name=region_name)
         except Exception as e:
             pass
         bp = [m.image.url for m in self.context['blue_prints'] if m.site == site]
@@ -43,7 +41,7 @@ class MySiteRolesSerializer(serializers.ModelSerializer):
                                   'identifier':site.identifier, 'progress': 0, 'type_id':site_type,
                                   'type_label':site_type_level,
                                   'add_desc': site.additional_desc, 'blueprints':bp,
-                'site_meta_attributes_ans': site.site_meta_attributes_ans, 'region':region}
+                'site_meta_attributes_ans': site.site_meta_attributes_ans, 'region':region_id}
 
     def get_project(self, obj):
         project = obj.project
