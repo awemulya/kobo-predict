@@ -706,7 +706,7 @@ class ProjectDeleteView(ProjectRoleMixinDeleteView, View):
             task_obj.task_id = task.id
             task_obj.save()
         
-        noti = self.object.logs.create(source=self.request.user, type=36, title="Delete Project",
+        noti = task_obj.logs.create(source=self.request.user, type=36, title="Delete Project",
                                organization=project.organization, extra_message="project",
                                project=project, content_object=project, extra_object=project.organization,
                                description='{0} deleted of project named {1}'.format(
@@ -838,7 +838,7 @@ class SiteDeleteView(SiteDeleteRoleMixin, View):
             task_obj.task_id = task.id
             task_obj.save()
         
-        noti = self.object.logs.create(source=self.request.user, type=36, title="Delete Site",
+        noti = task_obj.logs.create(source=self.request.user, type=36, title="Delete Site",
                                organization=site.project.organization, extra_object=site.project,
                                project=site.project, extra_message="site", site=site, content_object=site,
                                description='{0} deleted of site named {1}'.format(
