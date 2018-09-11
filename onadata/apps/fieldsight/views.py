@@ -269,7 +269,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
     template_name = 'fieldsight/site_dashboard.html'
 
     def get_context_data(self, is_supervisor_only, **kwargs):
-        dashboard_data = super(SiteDashboardView, self).get_context_data(**kwargs)
+        # dashboard_data = super(SiteDashboardView, self).get_context_data(**kwargs)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
         peoples_involved = obj.site_roles.filter(ended_at__isnull=True).distinct('user')
         data = serialize('custom_geojson', [obj], geometry_field='location',
