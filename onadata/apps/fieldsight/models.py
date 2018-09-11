@@ -173,11 +173,11 @@ class Organization(models.Model):
     def get_organization_type(self):
         return self.type.name
 
-class ProjectManager(models.Manager, GeoManager):
+class ProjectManager(GeoManager):
     def get_queryset(self):
         return super(ProjectManager, self).get_queryset().filter(is_active=True)
 
-class ProjectAllManager(models.Manager, GeoManager):
+class ProjectAllManager(GeoManager):
     def get_queryset(self):
         return super(ProjectAllManager, self).get_queryset().all()
 
