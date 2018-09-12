@@ -1813,6 +1813,10 @@ def api(request, fsxf_id=None, site_id=None):
 
     if not xform:
         return HttpResponseForbidden(_(u'Not shared.'))
+    # if not request.GET.get('query', False):
+    #     response = HttpResponse( json_util.dumps([{"count": 1}]), content_type='application/json')
+    #     add_cors_headers(response)
+    #     return response
 
     try:
         args = {

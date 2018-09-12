@@ -41,7 +41,7 @@ class MySiteRolesSerializer(serializers.ModelSerializer):
                                   'identifier':site.identifier, 'progress': 0, 'type_id':site_type,
                                   'type_label':site_type_level,
                                   'add_desc': site.additional_desc, 'blueprints':bp,
-                'site_meta_attributes_ans': site.site_meta_attributes_ans, 'region':region_id}
+                'site_meta_attributes_ans': site.site_meta_attributes_ans, 'region':region_id   }
 
     def get_project(self, obj):
         project = obj.project
