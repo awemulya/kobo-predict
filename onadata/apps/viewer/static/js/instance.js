@@ -139,7 +139,7 @@ function createTable(canEdit)
 
     // status and navigation rows - have to separate top and bottom since jquery doesnt append the same object twice
     var topStatusNavRows = $('<div class="row margin-top"></div>');
-    var statusStr = '<div class="col-md-6"><div class="dataTables_info"><h5 class="record-pos">' + gettext("Record 1 of 6") + '</h5></div></div>';
+    var statusStr = '<div class="col-md-6"><div class="dataTables_info"><h5 class="record-pos">' + gettext("loading..") + '</h5></div></div>';
     var topStatus = $(statusStr);
     topStatusNavRows.append(topStatus);
 

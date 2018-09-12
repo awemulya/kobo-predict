@@ -59,8 +59,8 @@ def send_message_flagged(fi=None, comment=None, comment_url=None):
                'comment': comment,
                'form_name': fi.fsxf.xf.title,
                'xfid': fi.fsxf.xf.id_string,
-               'form_type':fi.fsxf.form_type(), 'form_type_id':fi.fsxf.xf.form_type_id(),
-               'status': FORM_STATUS.get(fi.status,"New Form"),
+               'form_type':fi.fsxf.form_type(), 'form_type_id':fi.fsxf.form_type_id(),
+               'status': FORM_STATUS.get(fi.form_status,"New Form"),
                'comment_url': comment_url}
     if fi.site:
         message['site'] = {'name': fi.site.name, 'id': fi.site.id}

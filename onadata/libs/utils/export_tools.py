@@ -827,25 +827,27 @@ def generate_export(export_type, extension, username, id_string,
 
 
 def query_mongo(username, id_string, query=None, hide_deleted=True):
-    print("incoming query", query)
+    # print("incoming query", query)
     qry = query
+    qry["_deleted_at"] = {'$exists': False}
     # query = None
     # query = json.loads(query, object_hook=json_util.object_hook)\
         # if query else {}
     # query = dict_for_mongo(query)
     # query[USERFORM_ID] = u'{0}_{1}'.format(username, id_string)
     # if hide_deleted:
-        # query = {"$and": [query, {"_deleted_at": None}]}
+    #     query = {"$and": [query, {"_deleted_at": None}]}
     # query = {"$and": [query, qry]}
-    print(qry)
+    # print(query)
     print("cpount", xform_instances.find(qry).count())
+    print("qry", qry)
     return xform_instances.find(qry)
 
 
 
-def should_create_new_export(xform, export_type):
+def should_create_new_export(xform, export_type, fsxf=None, site_id=0):
     if Export.objects.filter(
-            xform=xform, export_type=export_type).count() == 0\
+            xform=xform, export_type=export_type, fsxf=fsxf, site=site_id).count() == 0\
             or Export.exports_outdated(xform, export_type=export_type):
         return True
     return False

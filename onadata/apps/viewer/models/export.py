@@ -67,7 +67,7 @@ class Export(models.Model):
     FAILED = 2
 
     # max no. of export files a user can keep
-    MAX_EXPORTS = 10
+    MAX_EXPORTS = 15
 
     xform = models.ForeignKey(XForm)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -87,6 +87,7 @@ class Export(models.Model):
     export_url = models.URLField(null=True, default=None)
 
     fsxf = models.ForeignKey(FieldSightXF, null=True, blank=True, related_name="exports")
+    site = models.IntegerField(default=0)
 
     class Meta:
         app_label = "viewer"

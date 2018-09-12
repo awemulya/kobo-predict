@@ -1142,6 +1142,7 @@ class Setup_forms(SPFmixin, View):
 class FormFillView(FormMixin, View):
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
+        site_id = self.kwargs.get('site_id', None)
         sub_pk = self.kwargs.get('instance_pk')
 
         fieldsight_xf = FieldSightXF.objects.get(pk=pk)
@@ -1161,10 +1162,12 @@ class FormFillView(FormMixin, View):
             'html_form': result['form'],
             'model_str': result['model'],
             'existing': finstance,
+            'site_id': site_id,
         })
 
     def post(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
+        site_id = self.kwargs.get('site_id')
         sub_pk = self.kwargs.get('instance_pk')
 
         fs_xf = FieldSightXF.objects.get(pk=pk)
@@ -1180,7 +1183,6 @@ class FormFillView(FormMixin, View):
         else:
             if finstance and finstance.site:
                 site_id = finstance.site_id
-            site_id = None
         with transaction.atomic():
             if fs_xf.is_survey:
                 instance = save_submission(
@@ -1196,18 +1198,33 @@ class FormFillView(FormMixin, View):
                     fs_poj_id=fs_xf.id,
                     project=fs_xf.project.id,
                 )
-            else:    
-                instance = save_submission(
-                    xform=xform,
-                    xml=xml,
-                    media_files=media_files,
-                    new_uuid=new_uuid,
-                    submitted_by=request.user,
-                    status='submitted_via_web',
-                    date_created_override=None,
-                    fxid=fs_xf.id,
-                    site=site_id,
-                )
+            else:
+                if fs_xf.site:
+                    instance = save_submission(
+                        xform=xform,
+                        xml=xml,
+                        media_files=media_files,
+                        new_uuid=new_uuid,
+                        submitted_by=request.user,
+                        status='submitted_via_web',
+                        date_created_override=None,
+                        fxid=fs_xf.id,
+                        site=site_id,
+                    )
+                else:
+                    instance = save_submission(
+                        xform=xform,
+                        xml=xml,
+                        media_files=media_files,
+                        new_uuid=new_uuid,
+                        submitted_by=request.user,
+                        status='submitted_via_web',
+                        date_created_override=None,
+                        fxid=None,
+                        site=site_id,
+                        fs_poj_id=fs_xf.id,
+                        project=fs_xf.project.id,
+                    )
             if finstance:
                 noti_type=31
                 title = "editing submission"
@@ -1229,7 +1246,7 @@ class FormFillView(FormMixin, View):
                 site = None
                 organization=extra_object.organization
             
-            noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=noti_type, title=title,
+            instance.fieldsight_instance.logs.create(source=self.request.user, type=noti_type, title=title,
 
                                        organization=organization,
                                        project=project,
@@ -1478,17 +1495,17 @@ class FullResponseTable(ReadonlyFormMixin, View):
         context['obj'] = fsxf
         return render(request, 'fsforms/full_response_table.html', context)
 
-@group_required('KoboForms')
-def html_export(request, fsxf_id):
-    
-    cursor = FInstance.objects.filter(site_fxf=fsxf)
-    context={}
-    context['is_site_data'] = True
-    context['site_data'] = cursor
-    context['form_name'] = fsxf.xf.title
-    context['fsxfid'] = fsxf_id
-    context['obj'] = fsxf
-    return render(request, 'fsforms/fieldsight_export_html.html', context)
+# @group_required('KoboForms')
+# def html_export(request, fsxf_id):
+#
+#     cursor = FInstance.objects.filter(site_fxf=fsxf)
+#     context={}
+#     context['is_site_data'] = True
+#     context['site_data'] = cursor
+#     context['form_name'] = fsxf.xf.title
+#     context['fsxfid'] = fsxf_id
+#     context['obj'] = fsxf
+#     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
 class Html_export(ReadonlyFormMixin, ListView):
     model =   FInstance
@@ -1505,6 +1522,8 @@ class Html_export(ReadonlyFormMixin, ListView):
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
+        if site_id != 0:
+            context['site_id'] = site_id
         return context
 
     def get_queryset(self, **kwargs):
@@ -1709,7 +1728,7 @@ def instance_status(request, instance):
             try:
                 send_message_flagged(fi, message, comment_url)
             except Exception as e:
-                pass
+                print(str(e))
                 # send_message(fi.site_fxf, fi.form_status, message, comment_url)
         return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
 
@@ -1745,7 +1764,7 @@ def alter_answer_status(request, instance_id, status, fsid):
 
 # @group_required('KoboForms')
 class InstanceKobo(ConditionalFormMixin, View):
-    def get(self, request, fsxf_id, is_read_only):
+    def get(self, request, fsxf_id, is_read_only, site_id=None):
         fxf = FieldSightXF.objects.get(pk=fsxf_id)
         xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
         audit = {
@@ -1757,16 +1776,19 @@ class InstanceKobo(ConditionalFormMixin, View):
             {
                 'id_string': xform.id_string,
             }, audit, request)
-        return render(request, 'fs_instance.html', {
+        kwargs = {
             'username': xform.user,
             'fxf': fxf,
             'can_edit': can_edit,
             'is_readonly': is_read_only
-        })
+        }
+        if site_id is not None:
+            kwargs['site_id'] = site_id
+        return render(request, 'fs_instance.html', kwargs)
 
 
 @require_http_methods(["GET", "OPTIONS"])
-def api(request, fsxf_id=None):
+def api(request, fsxf_id=None, site_id=None):
     """
     Returns all results as JSON.  If a parameter string is passed,
     it takes the 'query' parameter, converts this string to a dictionary, an
@@ -1791,6 +1813,10 @@ def api(request, fsxf_id=None):
 
     if not xform:
         return HttpResponseForbidden(_(u'Not shared.'))
+    # if not request.GET.get('query', False):
+    #     response = HttpResponse( json_util.dumps([{"count": 1}]), content_type='application/json')
+    #     add_cors_headers(response)
+    #     return response
 
     try:
         args = {
@@ -1810,6 +1836,8 @@ def api(request, fsxf_id=None):
         if xform:
             if fs_xform.project:
                 args["fs_project_uuid"] = fs_xform.id
+                if site_id is not None:
+                    args['site_id'] = site_id
             else:
                 args["fs_uuid"] = fs_xform.id
         cursor = query_mongo(**args)
