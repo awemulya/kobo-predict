@@ -67,6 +67,7 @@ def site_download_zipfile(task_prog_obj_id, size):
                                    recipient=task.user, content_object=task, extra_object=task.content_object,
                                    extra_message=" <a href='"+ task.file.url +"'>Image Zip file </a> generation in site")
     except Exception as e:
+        task.description = "ERROR: " + str(e.message) 
         task.status = 3
         task.save()
         print 'Report Gen Unsuccesfull. %s' % e
@@ -131,6 +132,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
                                        content_object=user.user_profile, recipient=task.user,
                                        extra_message=extra_message)
     except Exception as e:
+        task.description = "ERROR: " + str(e.message) 
         task.status = 3
         task.save()
         print 'Role Remove Unsuccesfull. %s' % e
@@ -141,32 +143,42 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
 
 
 @shared_task()
-def UnassignAllProjectRoles(task_prog_obj_id, project_id):
+def UnassignAllProjectRolesAndSites(task_prog_obj_id, project_id):
     time.sleep(2)
     
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status=1
     task.save()
-    
+    project = Project.all_objects.get(pk=project_id)
     try:
-        project = Project.all_objects.get(pk=project_id)
-        count = 0
+        
+        sites_count = 0
+        roles_count = 0
+
         with transaction.atomic():        
             roles=UserRole.objects.filter(project_id = project_id, ended_at=None)
             for role in roles:
                 role.ended_at = datetime.datetime.now()
                 role.save()
-                count = count + 1
+                roles_count = sites_count + 1
+   
+            sites=Site.objects.filter(project_id = project_id)
+            for site in sites:
+                site.is_active = False
+                site.save()
+                sites_count = sites_count + 1
 
             task.status = 2
             task.save()
             
-            extra_message= "removed " + str(count) + " User Roles "
+            extra_message= "removed " + str(roles_count) + " User Roles and " + str(sites_count) + " sites "
 
+            
             noti = task.logs.create(source=task.user, type=35, title="Remove Roles",
-                                       content_object=project, recipient=task.user,
-                                       extra_message=extra_message)
+                                           content_object=project, recipient=task.user,
+                                           extra_message=extra_message)
     except Exception as e:
+        task.description = "ERROR: " + str(e.message) 
         task.status = 3
         task.save()
         print 'Role Remove Unsuccesfull. %s' % e
@@ -202,6 +214,7 @@ def UnassignAllSiteRoles(task_prog_obj_id, site_id):
                                        content_object=site, recipient=task.user,
                                        extra_message=extra_message)
     except Exception as e:
+        task.description = "ERROR: " + str(e.message) 
         task.status = 3
         task.save()
         print 'Role Remove Unsuccesfull. %s' % e
@@ -305,6 +318,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
                                        project=project, content_object=project, extra_object=project,
                                        extra_message=extra_message)
     except Exception as e:
+        task.description = "ERROR: " + str(e.message) 
         task.status = 3
         task.save()
         print 'Site Upload Unsuccesfull. %s' % e
@@ -340,6 +354,7 @@ def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs
                                    recipient=source_user, content_object=task, extra_object=site,
                                    extra_message=" <a href='"+ task.file.url +"'>Pdf report</a> generation in site")
     except Exception as e:
+        task.description = "ERROR: " + str(e.message) 
         task.status = 3
         task.save()
         print 'Report Gen Unsuccesfull. %s' % e
@@ -520,6 +535,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
                                    extra_message=" <a href='"+ task.file.url +"'>Xls sites detail report</a> generation in project")
 
     except Exception as e:
+        task.description = "ERROR: " + str(e.message) 
         task.status = 3
         print e.__dict__
         task.save()
@@ -672,6 +688,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
                                    extra_message=" <a href='"+ task.file.url +"'>Xls report</a> generation in project")
 
     except Exception as e:
+        task.description = "ERROR: " + str(e.message) 
         task.status = 3
         task.save()
         print 'Report Gen Unsuccesfull. %s' % e
@@ -782,8 +799,10 @@ def importSites(task_prog_obj_id, source_user, f_project, t_project, meta_attrib
                                        content_object=t_project, recipient=source_user,
                                        extra_object=f_project)        
     except Exception as e:
+        task.description = "ERROR: " + str(e.message) 
         task.status = 3
         task.save()
+        print e.__dict__
         if f_project.cluster_sites and not ignore_region:
             noti = FieldSightLog.objects.create(source=source_user, type=430, title="Bulk Project import sites",
                                        content_object=t_project, recipient=source_user,
@@ -842,8 +861,10 @@ def multiuserassignproject(task_prog_obj_id, source_user, org_id, projects, user
                                            extra_message=str(roles_created) + " new Project Manager Roles in " + str(projects_count) + " projects ")
         
     except Exception as e:
+        task.description = "ERROR: " + str(e.message) 
         task.status = 3
         task.save()
+        print e.__dict__
         noti = FieldSightLog.objects.create(source=source_user, type=421, title="Bulk Project User Assign",
                                        content_object=org, recipient=source_user,
                                        extra_message=str(users_count)+" people in "+str(projects_count)+" projects ")
@@ -911,6 +932,8 @@ def multiuserassignsite(task_prog_obj_id, source_user, project_id, sites, users,
         
     except Exception as e:
         task.status = 3
+        task.description = "ERROR: " + str(e.message) 
+        print e.__dict__
         task.save()
         noti = FieldSightLog.objects.create(source=source_user, type=422, title="Bulk Sites User Assign",
                                        content_object=project, recipient=source_user,
@@ -988,6 +1011,7 @@ def multiuserassignregion(task_prog_obj_id, source_user, project_id, regions, us
         task.description = "Assign "+str(users_count)+" people in "+str(sites_count)+" regions. ERROR: " + str(e) 
         task.status = 3
         task.save()
+        print e.__dict__
         noti = FieldSightLog.objects.create(source=source_user, type=422, title="Bulk Region User Assign",
                                        content_object=project, recipient=source_user,
                                        extra_message=group_name +" for "+str(users_count)+" people in "+str(sites_count)+" regions ")
