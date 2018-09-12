@@ -1728,7 +1728,7 @@ def instance_status(request, instance):
             try:
                 send_message_flagged(fi, message, comment_url)
             except Exception as e:
-                pass
+                print(str(e))
                 # send_message(fi.site_fxf, fi.form_status, message, comment_url)
         return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
 
