@@ -3189,30 +3189,52 @@ class UnassignUserRegionAndSites(View):
         user_id= pk
         group_id = data.get('group')
 
-        status, data = 403, {'status':'false','message':'PermissionDenied. You do not have sufficient rights.'}
+        status, data = 200, {'status':'false','message':'PermissionDenied. You do not have sufficient rights.'}
         
         if request.group.name != "Super Admin":        
             
-            request_usr_org_role = UserRole.objects.filter(ended_at = None, group_id=1).distinct('organization_id').values('organization_id')
+            request_usr_org_role = UserRole.objects.filter(user_id=request.user.id, ended_at = None, group_id=1).distinct('organization_id').values_list('organization_id', flat=True)
             if not request_usr_org_role:
-                return JsonResponse(data, status=status)   
-            
-            if projects:
-                project_ids = [k[1:] for k in projects]
+                
+                request_usr_project_role = UserRole.objects.filter(user_id=request.user.id, ended_at = None, group_id=2).distinct('project_id').values_list('project_id', flat=True)
+                if not request_usr_project_role:
+                    return JsonResponse(data, status=status)
 
-                if len(project_ids) != Project.objects.filter(pk__in=project_ids, organization_id__in=request_usr_org_role).distinct('pk').count(): 
-                    return JsonResponse(data, status=status)         
-            
-            if regions:
-                region_ids = [k[1:] for k in regions]
+                if projects:
+                    project_ids = [k[1:] for k in projects]
+                    if not set(project_ids).issubset(set(request_usr_project_role)):
+                        return JsonResponse(data, status=status)  
 
-                if len(region_ids) != Region.objects.filter(pk__in=region_ids, project__organization_id__in=request_usr_org_role).distinct('pk').count(): 
-                    return JsonResponse(data, status=status)   
+                if regions:
+                    region_ids = [k[1:] for k in regions]
+
+                    if len(region_ids) != Region.objects.filter(pk__in=region_ids, project_id__in=request_usr_project_role).distinct('pk').count(): 
+                        return JsonResponse(data, status=status)   
 
 
-            if sites:
-                if len(sites) != Site.objects.filter(pk__in=sites, project__organization_id__in=request_usr_org_role).distinct('pk').count():
-                    return JsonResponse(data, status=status) 
+                if sites:
+                    if len(sites) != Site.objects.filter(pk__in=sites, project_id__in=request_usr_project_role).distinct('pk').count():
+                        return JsonResponse(data, status=status) 
+
+
+            else:
+
+                if projects:
+                    project_ids = [k[1:] for k in projects]
+
+                    if len(project_ids) != Project.objects.filter(pk__in=project_ids, organization_id__in=request_usr_org_role).distinct('pk').count(): 
+                        return JsonResponse(data, status=status)         
+                
+                if regions:
+                    region_ids = [k[1:] for k in regions]
+
+                    if len(region_ids) != Region.objects.filter(pk__in=region_ids, project__organization_id__in=request_usr_org_role).distinct('pk').count(): 
+                        return JsonResponse(data, status=status)   
+
+
+                if sites:
+                    if len(sites) != Site.objects.filter(pk__in=sites, project__organization_id__in=request_usr_org_role).distinct('pk').count():
+                        return JsonResponse(data, status=status) 
 
 
         status, data = 401, {'status':'false','message':'Error occured try again.'}
