@@ -2643,19 +2643,23 @@ def response_export(request, pk):
 
 class FormlistAPI(View):
     def get(self, request, pk):
-        mainstage=[]
-        schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','schedule__name')
-        stages = Stage.objects.filter(site_id=pk)
+        site=get_object_or_404(Site, pk=1, is_active=True)
+        mainstages=[]
+        stages = Stage.objects.filter(stage__isnull=True).filter(Q(site_id=pk, project_stage_id=0) | Q(project_id=site.project_id)).order_by('order', 'date_created')
+        
         for stage in stages:
             if stage.stage_id is None:
                 substages=stage.get_sub_stage_list()
                 main_stage = {'id':stage.id, 'title':stage.name, 'sub_stages':list(substages)}
                 # stagegroup = {'main_stage':main_stage,}
-                mainstage.append(main_stage)
+                mainstages.append(main_stage)
+        
+        generals = FieldSightXF.objects.filter(is_staged=False, is_deleted=False, is_scheduled=False,  is_survey=False).filter(Q(site_id=pk, from_project=False)| Q(project_id=site.project_id)).values('id','xf__title')
 
-        survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title')
-        general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title')
-        content={'general':list(general), 'schedule':list(schedule), 'stage':list(mainstage), 'survey':list(survey)}
+        schedules = FieldSightXF.objects.filter(is_deleted=False, schedule__isnull=False).filter(Q(schedule__site_id=pk, from_project=False) | Q(schedule__project_id=site.project_id)).values('id','schedule__name')
+
+        content={'general':list(generals), 'schedule':list(schedules), 'stage':list(mainstages)}
+
         return JsonResponse(content, status=200)
 
     def post(self, request, pk, **kwargs):
