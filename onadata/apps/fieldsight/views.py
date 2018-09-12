@@ -65,7 +65,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from onadata.apps.fieldsight.tasks import UnassignAllProjectRoles, UnassignAllSiteRoles, UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
+from onadata.apps.fieldsight.tasks import UnassignAllProjectRolesAndSites, UnassignAllSiteRoles, UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
 from .generatereport import PDFReport
 from django.utils import translation
 from django.conf import settings
@@ -702,7 +702,7 @@ class ProjectDeleteView(ProjectRoleMixinDeleteView, View):
         project.save()
         task_obj=CeleryTaskProgress.objects.create(user=self.request.user, description="Removal of UserRoles After project delete", task_type=7)
         if task_obj:
-            task = UnassignAllProjectRoles.delay(task_obj.id, project.id)
+            task = UnassignAllProjectRolesAndSites.delay(task_obj.id, project.id)
             task_obj.task_id = task.id
             task_obj.save()
         
@@ -834,7 +834,7 @@ class SiteDeleteView(SiteDeleteRoleMixin, View):
         site.save()
         task_obj=CeleryTaskProgress.objects.create(user=self.request.user, description="Removal of UserRoles After Site delete", task_type=7)
         if task_obj:
-            task = UnassignAllProjectRoles.delay(task_obj.id, site.id)
+            task = UnassignAllSiteRoles.delay(task_obj.id, site.id)
             task_obj.task_id = task.id
             task_obj.save()
         
