@@ -161,16 +161,22 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                                 project_main_stages = project.stages.filter(stage__isnull=True)
                                 for pms in project_main_stages:
                                     project_sub_stages = Stage.objects.filter(stage__id=pms.pk, stage_forms__is_deleted=False)
-                                    site_main_stage, created = Stage.objects.get_or_create(name=pms.name, order=pms.order,
-                                                                                           site=site,
-                                                                                           description=pms.description,
-                                                                                           project_stage_id=pms.id)
+                                    site_main_stage, created = Stage.objects.get_or_create(site=site,project_stage_id=pms.id)
+                                    site_main_stage.name = pms.name
+                                    site_main_stage.order = pms.order
+                                    site_main_stage.description = pms.description
+                                    site_main_stage.save()
                                     for pss in project_sub_stages:
                                         if pss.tags and site.type:
                                             if not site.type.id in pss.tags:
                                                 continue
-                                        site_sub_stage, created = Stage.objects.get_or_create(name=pss.name, order=pss.order, site=site,
-                                                       description=pss.description, stage=site_main_stage, project_stage_id=pss.id, weight=pss.weight)
+                                        site_sub_stage, created = Stage.objects.get_or_create(site=site, stage=site_main_stage, project_stage_id=pss.id)
+                                        site_sub_stage.name = pss.name
+                                        site_sub_stage.order = pss.order
+                                        site_sub_stage.description = pss.description
+                                        site_sub_stage.weight = pss.weight
+                                        site_sub_stage.save()
+
                                         if FieldSightXF.objects.filter(stage=pss).exists():
                                             project_fsxf = pss.stage_forms
                                             site_form, created = FieldSightXF.objects.get_or_create(is_staged=True, xf=project_fsxf.xf,
