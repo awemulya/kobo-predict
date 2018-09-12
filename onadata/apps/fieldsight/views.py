@@ -3196,7 +3196,7 @@ class UnassignUserRegionAndSites(View):
             request_usr_org_role = UserRole.objects.filter(user_id=request.user.id, ended_at = None, group_id=1).order_by('organization_id').distinct('organization_id').values_list('organization_id', flat=True)
             if not request_usr_org_role:
                 
-                request_usr_project_role = UserRole.objects.filter(user_id=request.user.id, ended_at = None, group_id=2)order_by('project_id').distinct('project_id').values_list('project_id', flat=True)
+                request_usr_project_role = UserRole.objects.filter(user_id=request.user.id, ended_at = None, group_id=2).order_by('project_id').distinct('project_id').values_list('project_id', flat=True)
                 if not request_usr_project_role:
                     return JsonResponse(data, status=status)
 
