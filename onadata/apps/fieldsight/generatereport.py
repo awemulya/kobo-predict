@@ -186,7 +186,8 @@ class PDFReport:
         
         if question_name in answer_dict:
             if question_type == 'note':
-                answer = ''
+                answer = Paragraph('', styBackground)
+                isNull = True
                 
             elif question_type == 'photo':
                 #photo = '/media/user/attachments/'+ r_answer[r_question+"/"+question]
@@ -205,11 +206,12 @@ class PDFReport:
                     media_url = 'http://' + self.base_url +'/static/images/img-404.jpg'
 
                 answer = self.create_logo(media_url)
+                isNull = False
                 # answer =''
             elif question_type == 'audio' or question_type == 'video':
                 media_link = 'http://'+self.base_url+'/attachment/medium?media_file='+ self.media_folder +'/attachments/'+ answer_dict[question_name]
-                answer = '<link href="'+media_link+'">Attachment</link>'
-
+                answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
+                isNull = False
             else:
                 answer_text=answer_dict[question_name]
                 if len(answer_text) > 1200:
@@ -217,11 +219,13 @@ class PDFReport:
                     answer_text = new_answer_text + ".... ( full answer followed after this table. )"
                     self.additional_data.append({question_label : answer_dict[question_name]})
 
-                answer = answer_text
+                answer = Paragraph(answer_text, styBackground)
+                isNull = False
         else:
-            answer=''
+            answer = Paragraph('', styBackground)
+            isNull = True
         
-        if self.removeNullField and answer=="":
+        if self.removeNullField and isNull:
             pass
         else:
             row=[Paragraph(question_label, styBackground), Paragraph(answer, styBackground)]
