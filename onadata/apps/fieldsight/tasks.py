@@ -160,7 +160,7 @@ def UnassignAllProjectRolesAndSites(task_prog_obj_id, project_id):
             for role in roles:
                 role.ended_at = datetime.datetime.now()
                 role.save()
-                roles_count = sites_count + 1
+                roles_count = roles_count + 1
    
             sites=Site.objects.filter(project_id = project_id)
             for site in sites:
