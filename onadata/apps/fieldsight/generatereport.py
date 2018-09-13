@@ -221,7 +221,7 @@ class PDFReport:
         else:
             answer=''
         
-        if self.removeNull and answer=="":
+        if self.removeNullField and answer=="":
             pass
         else:
             row=[Paragraph(question_label, styBackground), Paragraph(answer, styBackground)]
