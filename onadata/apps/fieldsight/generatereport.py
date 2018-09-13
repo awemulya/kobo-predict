@@ -228,7 +228,7 @@ class PDFReport:
         if self.removeNullField and isNull:
             pass
         else:
-            row=[Paragraph(question_label, styBackground), Paragraph(answer, styBackground)]
+            row=[Paragraph(question_label, styBackground), answer]
             self.data.append(row)
 
     def parse_repeat(self, prev_groupname, r_object, nr_answer):
