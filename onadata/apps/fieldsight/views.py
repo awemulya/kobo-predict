@@ -2646,7 +2646,7 @@ def response_export(request, pk, include_null_fields):
 
 class FormlistAPI(View):
     def get(self, request, pk):
-        site=get_object_or_404(Site, pk=1, is_active=True)
+        site=get_object_or_404(Site, pk=pk, is_active=True)
         mainstages=[]
         stages = Stage.objects.filter(stage__isnull=True).filter(Q(site_id=pk, project_stage_id=0) | Q(project_id=site.project_id)).order_by('order', 'date_created')
         
@@ -2956,7 +2956,7 @@ def site_refrenced_metas(request, pk):
                     if fxf:
                         sub = fxf[0].site_form_instances.order_by('-pk')[:1]
                         if sub:
-                            sub_answers = json.loads(sub.instace.json)
+                            sub_answers = json.loads(sub.instance.json)
                             answer = sub_answers.get(meta.get('question').get('name') ,'')
                             if meta['question']['type'] in ['photo', 'video', 'audio'] and answer is not "":
                                 question_type = "Media"
