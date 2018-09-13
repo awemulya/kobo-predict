@@ -21,10 +21,8 @@
 			<li class="breadcrumb-item"><a href="{% if is_donor_only %}{% url 'fieldsight:site_dashboard_lite' site %}{% else %}{% url 'fieldsight:site-dashboard' site %}{% endif %}">{{ obj.name }}</a></li>
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Responses' %}</li>
 		    {% endblock %}
-        </ol>
-      <ol class="breadcrum pull-right">
-         <a href="{% url 'fieldsight:site-submission-data' site '0' %}" class="btn btn-sm-primary">View by Status</a>
-        </ol>
+    </ol>
+      
     </nav>
 
     <div class="tabbing">
