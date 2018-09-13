@@ -189,18 +189,18 @@ class MultiUserAssignRoleViewSet(View):
                                 noti = role.logs.create(source=role.user, type=noti_type, title=description,
                                                         description=description, content_type=site, extra_object=self.request.user,
                                                         site=role.site)
-                                result = {}
-                                result['description'] = description
-                                result['url'] = noti.get_absolute_url()
-                                ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
-                                ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
-                                ChannelGroup("site-{}".format(role.site.id)).send({"text": json.dumps(result)})
-                                ChannelGroup("notify-0").send({"text": json.dumps(result)})
+                                # result = {}
+                                # result['description'] = description
+                                # result['url'] = noti.get_absolute_url()
+                                # ChannelGroup("notify-{}".format(role.organization.id)).send({"text": json.dumps(result)})
+                                # ChannelGroup("project-{}".format(role.project.id)).send({"text": json.dumps(result)})
+                                # ChannelGroup("site-{}".format(role.site.id)).send({"text": json.dumps(result)})
+                                # ChannelGroup("notify-0").send({"text": json.dumps(result)})
 
-                            Device = get_device_model()
-                            if Device.objects.filter(name=role.user.email).exists():
-                                message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
-                                Device.objects.filter(name=role.user.email).send_message(message)
+                            # Device = get_device_model()
+                            # if Device.objects.filter(name=role.user.email).exists():
+                            #     message = {'notify_type':'Assign Site', 'site':{'name': site.name, 'id': site.id}}
+                            #     Device.objects.filter(name=role.user.email).send_message(message)
 
                 elif level == "1":
                     for project_id in data.get('projects'):
