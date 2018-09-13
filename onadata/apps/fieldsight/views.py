@@ -2956,6 +2956,7 @@ def site_refrenced_metas(request, pk):
                     if fxf:
                         sub = fxf[0].site_form_instances.order_by('-pk')[:1]
                         if sub:
+                            data=sub[0].instance.json
                             sub_answers = json.loads(sub[0].instance.json)
                             answer = sub_answers.get(meta.get('question').get('name') ,'')
                             if meta['question']['type'] in ['photo', 'video', 'audio'] and answer is not "":
