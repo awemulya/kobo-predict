@@ -77,6 +77,7 @@ class PDFReport:
         self.media_folder = ''
         self.project_name = ''
         self.project_logo = ''
+        self.removeNullField = False
 
         self.centered = PS(name = 'centered',
         fontSize = 14,
@@ -182,9 +183,10 @@ class PDFReport:
     def append_row(self, question_name, question_label, question_type, answer_dict):
         styNormal = self.bodystyle
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
+        
         if question_name in answer_dict:
             if question_type == 'note':
-                answer=Paragraph('', styBackground)
+                answer = ''
                 
             elif question_type == 'photo':
                 #photo = '/media/user/attachments/'+ r_answer[r_question+"/"+question]
@@ -206,7 +208,7 @@ class PDFReport:
                 # answer =''
             elif question_type == 'audio' or question_type == 'video':
                 media_link = 'http://'+self.base_url+'/attachment/medium?media_file='+ self.media_folder +'/attachments/'+ answer_dict[question_name]
-                answer = Paragraph('<link href="'+media_link+'">Attachment</link>', styBackground)
+                answer = '<link href="'+media_link+'">Attachment</link>'
 
             else:
                 answer_text=answer_dict[question_name]
@@ -215,12 +217,15 @@ class PDFReport:
                     answer_text = new_answer_text + ".... ( full answer followed after this table. )"
                     self.additional_data.append({question_label : answer_dict[question_name]})
 
-                answer = Paragraph(answer_text, styBackground)
+                answer = answer_text
         else:
-            answer=Paragraph('', styBackground)
+            answer=''
         
-        row=[Paragraph(question_label, styBackground), answer]
-        self.data.append(row)
+        if self.removeNull and answer=="":
+            pass
+        else:
+            row=[Paragraph(question_label, styBackground), Paragraph(answer, styBackground)]
+            self.data.append(row)
 
     def parse_repeat(self, prev_groupname, r_object, nr_answer):
         
@@ -276,7 +281,7 @@ class PDFReport:
                 self.append_row(question_name, question_label, first_children['type'], self.main_answer)
 
 
-    def append_answers(self, elements, json_question, instance, sub_count)
+    def append_answers(self, elements, json_question, instance, sub_count):
         if instance.form_status ==  0:
             form_status = "Pending"
         elif instance.form_status == 1:
@@ -350,7 +355,7 @@ class PDFReport:
         elements.append(PageBreak())
         elements.append(Paragraph('Responses', self.h2))
         
-        forms = FieldSightXF.objects.select_related('xf').filter(is_survey=False, is_deleted=False).filter(Q(site_id=site.id, from_project=False) | Q(project_id=site.project_id)).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')), Prefetch('project_form_instances', queryset=FInstance.objects.select_related('instance'))).order_by('-is_staged', 'is_scheduled')
+        forms = FieldSightXF.objects.select_related('xf').filter(is_survey=False, is_deleted=False).filter(Q(site_id=site.id, from_project=False) | Q(project_id=site.project_id)).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance')), Prefetch('project_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id=site.id))).order_by('-is_staged', 'is_scheduled')
          
         if not forms:
             elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))
@@ -384,7 +389,7 @@ class PDFReport:
                 for instance in form.site_form_instances.all():
                     self.append_answers(elements, json_question, instance, sub_count)
 
-            elif form.project_form_instances.all()
+            elif form.project_form_instances.all():
                 for instance in form.project_form_instances.all():
                     self.append_answers(elements, json_question, instance, sub_count)
 
@@ -393,9 +398,10 @@ class PDFReport:
                 elements.append(Spacer(0,10))
         self.doc.multiBuild(elements, onLaterPages=self._header_footer)
 
-    def print_individual_response(self, pk, base_url):
+    def print_individual_response(self, pk, base_url, include_null_fields):
         self.base_url = base_url
- 
+        if include_null_fields == "1";
+            self.removeNullField = True
         # Our container for 'Flowable' objects
         elements = []
 
@@ -472,8 +478,9 @@ class PDFReport:
         self.doc.multiBuild(elements, onFirstPage=self._header_footer, onLaterPages=self._header_footer)
 
 
-    def generateCustomSiteReport(self, pk, base_url, fs_ids, startdate, enddate):
+    def generateCustomSiteReport(self, pk, base_url, fs_ids, startdate, enddate, removeNullField):
         self.base_url = base_url
+        self.removeNullField = removeNullField
         
  
         # Our container for 'Flowable' objects
@@ -517,7 +524,7 @@ class PDFReport:
 
         new_enddate = end + datetime.timedelta(days=1)
 
-        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(date__range=[new_startdate, new_enddate])), Prefetch('project_form_instances', queryset=FInstance.objects.select_related('instance').filter(date__range=[new_startdate, new_enddate]))).order_by('-is_staged', 'is_scheduled')
+        forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('site_form_instances', queryset=FInstance.objects.select_related('instance').filter(date__range=[new_startdate, new_enddate])), Prefetch('project_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id=site.id, date__range=[new_startdate, new_enddate]))).order_by('-is_staged', 'is_scheduled')
         
         if not forms:
             elements.append(Paragraph("No Any Responses Yet.", styles['Heading5']))

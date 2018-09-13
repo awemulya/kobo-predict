@@ -82,6 +82,10 @@
 					<br>
 					End Date:
 					<input type="date" value="{% now 'Y-m-d' %}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="enddate" id="enddate">
+					<br>
+
+					Remove Null Fields : <input type="checkbox" id="removeNullField" style="left: 0px;" name="removeNullValues"
+					>
 				</div>
 			</div>
 			<div class="modal-footer">

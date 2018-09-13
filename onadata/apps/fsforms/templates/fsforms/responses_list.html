@@ -29,7 +29,18 @@
 
     <div class="tabbing">
 
-
+      <ul class="tab-right">
+            <li>
+              <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  View by Form
+                </button>
+                <div class="dropdown-menu">
+                  <a href="{% url 'fieldsight:site-submission-data' site '1' %}" class="btn btn-sm-primary">View by Status</a>
+                </div>
+              </div>
+            </li>
+          </ul>
     <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
               <a class="nav-link active" data-toggle="tab" href="#general1" role="tab">{% trans 'General' %} {% trans 'Forms' %}</a>

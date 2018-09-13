@@ -244,7 +244,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
         
 
 @shared_task()
-def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs_ids, start_date, end_date):
+def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs_ids, start_date, end_date, removeNullField):
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
     site=get_object_or_404(Site, pk=site_id)
@@ -254,7 +254,7 @@ def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs
     try:
         buffer = BytesIO()
         report = PDFReport(buffer, 'Letter')
-        pdf = report.generateCustomSiteReport(site_id, base_url, fs_ids, start_date, end_date)
+        pdf = report.generateCustomSiteReport(site_id, base_url, fs_ids, start_date, end_date, removeNullField)
         
         buffer.seek(0)
         pdf = buffer.getvalue()

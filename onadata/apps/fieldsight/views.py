@@ -1917,10 +1917,10 @@ class SitedataSubmissionView(ReadonlySiteLevelRoleMixin, TemplateView):
     def get_context_data(self, **kwargs):
         data = super(SitedataSubmissionView, self).get_context_data(**kwargs)
         data['obj'] = Site.objects.get(pk=self.kwargs.get('pk'))
-        data['pending'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), site_fxf_id__isnull=False, form_status = '0').order_by('-date')
-        data['rejected'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), site_fxf_id__isnull=False, form_status = '1').order_by('-date')
-        data['flagged'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), site_fxf_id__isnull=False, form_status = '2').order_by('-date')
-        data['approved'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), site_fxf_id__isnull=False, form_status = '3').order_by('-date')
+        data['pending'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '0').order_by('-date')
+        data['rejected'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '1').order_by('-date')
+        data['flagged'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '2').order_by('-date')
+        data['approved'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '3').order_by('-date')
         data['type'] = self.kwargs.get('type')
         data['is_donor_only'] = kwargs.get('is_donor_only', False)
 
@@ -2554,8 +2554,11 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         get_params = "?q="+keyword +"&page="
     else:
         site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id').only('pk')
-        site_list = FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('site__stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
+        # site_list = Site.objects.get()
+
+        FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('project__stages__stage_forms__project_form_instances', queryset=FInstance.objects.filter().order_by('-id')))
         get_params = "?page="
+        
     paginator = Paginator(site_list, page_list) # Show 25 contacts per page
     page = request.GET.get('page')
     try:
@@ -2614,7 +2617,7 @@ class StageTemplateView(ReadonlyProjectLevelRoleMixin, View):
         return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'obj':obj,})
             # return HttpResponse(table_head)\
 
-def response_export(request, pk):
+def response_export(request, pk, include_null_fields):
     
     buffer = BytesIO()
     response = HttpResponse(content_type='application/pdf')
@@ -2627,7 +2630,7 @@ def response_export(request, pk):
     response['Content-Disposition'] = 'attachment; filename="'+ file_name +'"'
     base_url = request.get_host()
     report = PDFReport(buffer, 'Letter')
-    pdf = report.print_individual_response(pk, base_url)
+    pdf = report.print_individual_response(pk, base_url, include_null_fields)
 
     buffer.seek(0)
 
@@ -2668,9 +2671,11 @@ class FormlistAPI(View):
         fs_ids = data.get('fs_ids')
         start_date = data.get('startdate')
         end_date = data.get('enddate')
+        removeNullField = data.get('removeNullField', False)
+
         task_obj=CeleryTaskProgress.objects.create(user=request.user, task_type=0)
         if task_obj:
-            task = generateCustomReportPdf.delay(task_obj.id, request.user, pk, base_url, fs_ids, start_date, end_date)
+            task = generateCustomReportPdf.delay(task_obj.id, request.user, pk, base_url, fs_ids, start_date, end_date, removeNullField)
             task_obj.task_id = task.id
             task_obj.save()
             status, data = 200, {'status':'True','message':'Sucess, the report is being generated. You will be notified after the report is generated. '}
