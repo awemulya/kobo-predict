@@ -417,10 +417,16 @@ class FInstance(models.Model):
             return self.site_fxf
 
     def get_absolute_url(self):
-        if self.site_fxf is None:
-            return reverse('forms:instance', kwargs={'fsxf_id': self.project_fxf.pk})
-        return reverse('forms:instance', kwargs={'fsxf_id': self.site_fxf.pk})
 
+        if self.site_fxf:
+            fxf_id = self.site_fxf_id
+        else:
+            fxf_id = self.project_fxf_id
+            
+        
+        return "/forms/forms/" + str(fxf_id) + "#/" + str(self.instance.id)
+
+        
     def getname(self):
         if self.site_fxf is None:
         
