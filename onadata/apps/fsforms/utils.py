@@ -45,6 +45,7 @@ def send_message_project_form(fxf, status=None, comment=None, comment_url=None):
                'comment_url': comment_url,
                'site': {},
                'project': {'name': fxf.project.name, 'id': fxf.project.id}}
+    print(message)
     Device.objects.filter(name__in=emails).send_message(message)
 
 def send_message_flagged(fi=None, comment=None, comment_url=None):
