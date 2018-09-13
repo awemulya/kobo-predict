@@ -160,6 +160,7 @@ class UserRole(models.Model):
     def both_project_roles(self):
         return UserRole.objects.filter(user=self.user, group__name__in=['Project Manager', 'Reviewer'], organization=self.organization)
 
+
 @receiver(post_save, sender=UserRole)
 def create_messages(sender, instance, created,  **kwargs):
     if created and instance.site is not None and instance.group.name in ["Site Supervisor"]:

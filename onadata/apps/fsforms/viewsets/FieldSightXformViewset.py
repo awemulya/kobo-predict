@@ -95,8 +95,8 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
         return self.kwargs
 
     def perform_create(self, serializer):
-        fxf = serializer.save()
-        fxf.is_deployed = True
+        is_survey = self.request.data.get('is_survey', False)
+        fxf = serializer.save(is_survey=is_survey, is_deployed=True)
         if not fxf.project:
             fxf.from_project = False
         fxf.save()

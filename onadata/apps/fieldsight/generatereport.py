@@ -400,7 +400,7 @@ class PDFReport:
 
     def print_individual_response(self, pk, base_url, include_null_fields):
         self.base_url = base_url
-        if include_null_fields == "1";
+        if include_null_fields == "1":
             self.removeNullField = True
         # Our container for 'Flowable' objects
         elements = []
