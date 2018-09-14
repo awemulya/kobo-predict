@@ -1913,10 +1913,21 @@ class ProjectdataSubmissionView(ReadonlyProjectLevelRoleMixin, TemplateView):
     def get_context_data(self, **kwargs):
         data = super(ProjectdataSubmissionView, self).get_context_data(**kwargs)
         data['obj'] = Project.objects.get(pk=self.kwargs.get('pk'))
-        data['pending'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), project_fxf_id__isnull=False, form_status='0').order_by('-date')
-        data['rejected'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), project_fxf_id__isnull=False, form_status='1').order_by('-date')
-        data['flagged'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), project_fxf_id__isnull=False, form_status='2').order_by('-date')
-        data['approved'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), project_fxf_id__isnull=False, form_status='3').order_by('-date')
+        data['pending'] = []
+        data['rejected'] = []
+        data['flagged'] = []
+        data['approved'] = []
+        project_submissions = FInstance.objects.filter(project_id=self.kwargs.get('pk'), project_fxf_id__isnull=False, form_status__in=[0, 1, 2, 3]). select_related('project_fxf', 'project_fxf__xf', 'instance', 'submitted_by').order_by('-date')[:20]
+        [p for project_submission in project_submissions]
+        for project_submission in project_submissions:
+            if project_submission.form_status == 0:
+                data['pending'].append(project_submission)
+            elif project_submission.form_status ==1:
+                data['rejected'].append(project_submission)
+            elif project_submission.form_status == 2:
+                data['flagged'].append(project_submission)
+            elif project_submission.form_status == 3:
+                data['approved'].append(project_submission)
         data['type'] = self.kwargs.get('type')
         data['is_donor_only'] = kwargs.get('is_donor_only', False)
 
