@@ -2563,7 +2563,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         else: return "Pending", "cell-primary"
     if q_keyword is not None:
         site_list = project.sites.filter(name__icontains=q_keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
-        get_params = "?q="+keyword +"&page="
+        get_params = "?q="+q_keyword +"&page="
     else:
         site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id').only('pk')
         # site_list = Site.objects.get()
