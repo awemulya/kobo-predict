@@ -2649,7 +2649,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     def getStatus(items, site_id):
         el = None
 
-        for item in items:
+        for items in items:
             if item.id == site_id:
                 el=item
                 break
@@ -2660,7 +2660,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         else: return "Pending", "cell-primary"
     if q_keyword is not None:
         site_list = Site.objects.filter(project_id=pk, name__icontains=q_keyword, is_active=True, is_survey=False)
-        stages = project.stages.all().prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list.only('pk')).values('id', 'form_status').order_by('site_id', '-date').distinct('site_id')))
+        stages = project.stages.all().prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list.values('id')).values('id', 'form_status').order_by('site_id', '-date').distinct('site_id')))
         get_params = "?q="+q_keyword +"&page="
     else:
         site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id').only('site_id')
