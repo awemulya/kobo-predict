@@ -59,6 +59,9 @@ class FieldSightLog(models.Model):
         (31, 'User edited a response for Form Type Form Name in Site Name.'),
         (32, 'Report generated sucessfull.'),
         (33, 'Response Delete sucessfull.'),
+        (34, 'Delete form sucessful.'),
+        (35, 'Remove roles.'),
+        (36, 'Delete project/site/org/ .. etc.'),
         (412, 'Bulk upload of number + sites in Project Name failed.'),
         (421, 'User assign unsuccessful in organization.'),
         (422, 'User assign unsucessfull in project.'),
@@ -99,11 +102,16 @@ class FieldSightLog(models.Model):
         return reverse('eventlog:notification-detail', kwargs={'pk': self.pk})
 
     def get_event_url(self):
-        return self.content_object.get_absolute_url()
-
+        try:
+            return self.content_object.get_absolute_url()
+        except:
+            return None
     def get_event_name(self):
-        return self.content_object.getname()
-
+        try:
+            return self.content_object.getname()
+        except:
+            return None
+            
     def get_extraobj_url(self):
         if self.extra_object is None:
             return None
@@ -193,7 +201,8 @@ class CeleryTaskProgress(models.Model):
         (3, 'Report Generation'),
         (4, 'Site Import'),
         (5, 'Xls export'),
-        (6, 'Zip Site Images')
+        (6, 'Zip Site Images'),
+        (7, 'Remove Roles'),
         )
     task_id = models.CharField(max_length=255, blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)

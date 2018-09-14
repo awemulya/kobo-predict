@@ -173,6 +173,13 @@ class Organization(models.Model):
     def get_organization_type(self):
         return self.type.name
 
+class ProjectAllManager(models.Manager):
+    def get_queryset(self):
+        return super(ProjectAllManager, self).get_queryset().all()
+
+class ProjectManager(GeoManager):
+    def get_queryset(self):
+        return super(ProjectManager, self).get_queryset().filter(is_active=True)
 
 class Project(models.Model):
     name = models.CharField(max_length=255)
@@ -195,7 +202,9 @@ class Project(models.Model):
     cluster_sites = models.BooleanField(default=False)
     site_meta_attributes = JSONField(default=list)
     logs = GenericRelation('eventlog.FieldSightLog')
-    objects = GeoManager()
+    all_objects = ProjectAllManager()
+    objects = ProjectManager()
+    
     geo_layers = models.ManyToManyField('geo.GeoLayer', blank=True)
 
     class Meta:
@@ -317,6 +326,14 @@ class SiteType(models.Model):
         unique_together = [('identifier', 'project'), ]
 
 
+class SiteAllManager(models.Manager):
+    def get_queryset(self):
+        return super(SiteAllManager, self).get_queryset().all()
+
+class SiteManager(GeoManager):
+    def get_queryset(self):
+        return super(SiteManager, self).get_queryset().filter(is_active=True)
+
 
 class Site(models.Model):
     identifier = models.CharField("ID", max_length=255)
@@ -339,9 +356,10 @@ class Site(models.Model):
     site_meta_attributes_ans = JSONField(default=dict)
     current_progress = models.IntegerField(default=0)
     current_status = models.IntegerField(default=0)
+    all_objects = SiteAllManager()
+    objects = SiteManager()
+    
     logs = GenericRelation('eventlog.FieldSightLog')
-
-    objects = GeoManager()
 
     class Meta:
         ordering = ['-is_active', '-id']
@@ -360,8 +378,10 @@ class Site(models.Model):
     def update_status(self):
         try:
             status = self.site_instances.order_by('-date').first().form_status
+            print status, identifier
+
         except:
-            status = 4
+            status = 0
         self.current_status = status
         self.save()
 
@@ -396,7 +416,7 @@ class Site(models.Model):
         try:
             status = self.site_instances.order_by('-date').first().form_status
         except:
-            status = 4
+            status = 0
         self.current_status = status
         self.save()
 
@@ -539,7 +559,7 @@ class ProjectGeoJSON(models.Model):
 
     def generate_new(self):
         data = serialize('full_detail_geojson',
-               Site.objects.filter(project_id = self.id, is_survey=False, is_active=True),
+               Site.objects.filter(project_id = self.project.id, is_survey=False, is_active=True),
                geometry_field='location',
                fields=('name', 'location', 'id', 'identifier'))
 

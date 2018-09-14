@@ -390,7 +390,7 @@ class FInstanceManager(models.Manager):
 
 class FInstanceDeletedManager(models.Manager):
     def get_queryset(self):
-        return super(FInstanceManager, self).get_queryset().filter(is_deleted=True)
+        return super(FInstanceDeletedManager, self).get_queryset().filter(is_deleted=True)
 
 
 class FInstance(models.Model):
@@ -642,10 +642,3 @@ class DeployEvent(models.Model):
     date =  models.DateTimeField(auto_now=True)
     site = models.ForeignKey(Site, related_name="deploy_data", null=True)
     project = models.ForeignKey(Project, related_name="deploy_data", null=True)
-
-
-class ProjectGeoJSON(models.Model):
-    project = models.ForeignKey(Project, related_name="geojson")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    jsonfile = models.FileField()
