@@ -2659,7 +2659,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         elif el is not None and el.form_status==1: return "Rejected", "cell-danger"
         else: return "Pending", "cell-primary"
     if q_keyword is not None:
-        site_list = Sites.objects.filter(project_id=pk, name__icontains=q_keyword, is_active=True, is_survey=False)
+        site_list = Site.objects.filter(project_id=pk, name__icontains=q_keyword, is_active=True, is_survey=False)
         stages = project.stages.all().prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list.only('pk')).values('id', 'form_status').order_by('site_id', '-date').distinct('site_id')))
         get_params = "?q="+keyword +"&page="
     else:
