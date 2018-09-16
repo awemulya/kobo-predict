@@ -2646,19 +2646,21 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         for el in seq:
             if el.id==value: yield el
 
-    def getStatus(items, site_id):
+    def getStatus(datas, site_id):
         el = None
+        count = 0 
+        for data in datas:
+            
+            if data.site_id == site_id:
+                if el is None:
+                    el = data
+                count += 1
 
-        for item in items:
-            if item.site_id == site_id:
-                el=item
-                break
-
-        if el is not None and el.form_status==3: return "Approved", "cell-success" 
-        elif el is not None and el.form_status==2: return "Flagged", "cell-warning"
-        elif el is not None and el.form_status==1: return "Rejected", "cell-danger"
-        elif el is not None and el.form_status==0: return "Pending", "cell-primary"
-        else: return "No submission.", "cell-inactive"
+        if el is not None and el.form_status==3: return "Approved", "cell-success", count 
+        elif el is not None and el.form_status==2: return "Flagged", "cell-warning", count 
+        elif el is not None and el.form_status==1: return "Rejected", "cell-danger", count
+        elif el is not None and el.form_status==0: return "Pending", "cell-primary", count
+        else: return "No submission", "cell-inactive", count
 
 
 
@@ -2673,7 +2675,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         # FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('project__stages__stage_forms__project_form_instances', queryset=FInstance.objects.filter().order_by('-id')))
         get_params = "?page="
     
-    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list).order_by('site_id', '-date').distinct('site_id')))
+    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list).order_by('-date')))
     
     paginator = Paginator(site_list, page_list) # Show how many contacts per page
     page = request.GET.get('page')
@@ -2695,9 +2697,9 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
             if substage1 is not None:
                 if  substage1.stage_forms.project_form_instances.all():
 
-                     get_status = getStatus(substage1.stage_forms.site_form_instances.all(), site.id)
-                     status, style_class = get_status
-                     submission_count = substage1.stage_forms.site_form_instances.all().count()
+                    status, style_class, submission_count = getStatus(substage1.stage_forms.project_form_instances.all(), site.id)
+                     
+
                 else:
                     status, style_class = "No submission.", "cell-inactive"
                     submission_count = 0
