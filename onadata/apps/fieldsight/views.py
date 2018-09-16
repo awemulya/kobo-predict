@@ -1913,21 +1913,10 @@ class ProjectdataSubmissionView(ReadonlyProjectLevelRoleMixin, TemplateView):
     def get_context_data(self, **kwargs):
         data = super(ProjectdataSubmissionView, self).get_context_data(**kwargs)
         data['obj'] = Project.objects.get(pk=self.kwargs.get('pk'))
-        data['pending'] = []
-        data['rejected'] = []
-        data['flagged'] = []
-        data['approved'] = []
-        project_submissions = FInstance.objects.filter(project_id=self.kwargs.get('pk'), project_fxf_id__isnull=False, form_status__in=[0, 1, 2, 3]). select_related('project_fxf', 'project_fxf__xf', 'instance', 'submitted_by').order_by('-date')[:20]
-        [p for project_submission in project_submissions]
-        for project_submission in project_submissions:
-            if project_submission.form_status == 0:
-                data['pending'].append(project_submission)
-            elif project_submission.form_status ==1:
-                data['rejected'].append(project_submission)
-            elif project_submission.form_status == 2:
-                data['flagged'].append(project_submission)
-            elif project_submission.form_status == 3:
-                data['approved'].append(project_submission)
+        data['pending'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), project_fxf_id__isnull=False, form_status='0').order_by('-date')
+        data['rejected'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), project_fxf_id__isnull=False, form_status='1').order_by('-date')
+        data['flagged'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), project_fxf_id__isnull=False, form_status='2').order_by('-date')
+        data['approved'] = FInstance.objects.filter(project_id=self.kwargs.get('pk'), project_fxf_id__isnull=False, form_status='3').order_by('-date')
         data['type'] = self.kwargs.get('type')
         data['is_donor_only'] = kwargs.get('is_donor_only', False)
 
@@ -2660,7 +2649,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     def getStatus(items, site_id):
         el = None
 
-        for item in items:
+        for items in items:
             if item.id == site_id:
                 el=item
                 break
@@ -2669,9 +2658,10 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         elif el is not None and el.form_status==2: return "Flagged", "cell-warning"
         elif el is not None and el.form_status==1: return "Rejected", "cell-danger"
         else: return "Pending", "cell-primary"
+
     if q_keyword is not None:
         site_list = Site.objects.filter(project_id=pk, name__icontains=q_keyword, is_active=True, is_survey=False)
-        stages = project.stages.all().prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list.only('pk')).values('id', 'form_status').order_by('site_id', '-date').distinct('site_id')))
+        stages = project.stages.all().prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list.values('id')).values('id', 'form_status').order_by('site_id', '-date').distinct('site_id')))
         get_params = "?q="+q_keyword +"&page="
     else:
         site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id').only('site_id')
@@ -2696,9 +2686,10 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         site_row = ["<a href='"+site.get_absolute_url()+"'>"+site.identifier+"</a>", "<a href='"+site.get_absolute_url()+"'>"+site.name+"</a>"]
         
         for v in ss_id:
-
             substage = filterbyvalue(stages, v)
             substage1 = next(substage, None)
+            substage1 = next(substages, None)
+            
             if substage1 is not None:
                 if  substage1.stage_forms.project_form_instances.all():
 
@@ -2722,6 +2713,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     content={'head_cols':table_head, 'sub_stages':substages, 'rows':data}
     main_body = {'next_page':next_page_url,'content':content}
     return main_body
+
 class ProjectStageResponsesStatus(ProjectRoleMixin, View): 
     def get(self, request, pk):
         q_keyword = self.request.GET.get("q", None)
