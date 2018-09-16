@@ -2650,14 +2650,15 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         el = None
 
         for items in items:
-            if item.id == site_id:
+            if item.site_id == site_id:
                 el=item
                 break
 
         if el is not None and el.form_status==3: return "Approved", "cell-success" 
         elif el is not None and el.form_status==2: return "Flagged", "cell-warning"
         elif el is not None and el.form_status==1: return "Rejected", "cell-danger"
-        else: return "Pending", "cell-primary"
+        elif el is not None and el.form_status==0: return "pending", "cell-primary"
+        else: return "No submission.", "cell-inactive"
 
 
 
@@ -2672,7 +2673,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         # FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('project__stages__stage_forms__project_form_instances', queryset=FInstance.objects.filter().order_by('-id')))
         get_params = "?page="
     
-    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list).values('id', 'form_status').order_by('site_id', '-date').distinct('site_id')))
+    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list).order_by('site_id', '-date').distinct('site_id')))
     
     paginator = Paginator(site_list, page_list) # Show how many contacts per page
     page = request.GET.get('page')
