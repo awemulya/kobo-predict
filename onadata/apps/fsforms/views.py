@@ -1139,6 +1139,24 @@ class Setup_forms(SPFmixin, View):
                    'schedule_form': KoScheduleForm(request=request)})
 
 
+class FormPreviewView(View):
+    def get(self, request, *args, **kwargs):
+        id_string = self.kwargs.get('id_string')
+        xform = XForm.objects.get(id_string=id_string)
+        result = requests.post(
+            'http://localhost:8085/transform',
+            data={
+                'xform': xform.xml,
+            }
+        ).json()
+
+        return render(request, 'fsforms/form_preview.html', {
+            'xform': xform,
+            'html_form': result['form'],
+            'model_str': result['model'],
+            'existing': None,
+        })
+
 class FormFillView(FormMixin, View):
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
