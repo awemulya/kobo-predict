@@ -2672,7 +2672,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         # FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('project__stages__stage_forms__project_form_instances', queryset=FInstance.objects.filter().order_by('-id')))
         get_params = "?page="
     
-    stages = Stage.objects.filter(parent__isnull=False, parent__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list).values('id', 'form_status').order_by('site_id', '-date').distinct('site_id')))
+    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list).values('id', 'form_status').order_by('site_id', '-date').distinct('site_id')))
     
     paginator = Paginator(site_list, page_list) # Show how many contacts per page
     page = request.GET.get('page')
@@ -2690,6 +2690,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         for v in ss_id:
             substage = filterbyvalue(stages, v)
             substage1 = next(substage, None)
+            substage1 = next(substages, None)
             
             if substage1 is not None:
                 if  substage1.stage_forms.project_form_instances.all():
