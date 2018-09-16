@@ -2644,7 +2644,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     # data.append(head_row)
     def filterbyvalue(seq, value):
         for el in seq:
-            if el.project_stage_id==value: yield el
+            if el.id==value: yield el
 
     def getStatus(items, site_id):
         el = None
