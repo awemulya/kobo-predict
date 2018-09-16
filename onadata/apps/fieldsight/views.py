@@ -2690,7 +2690,6 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         for v in ss_id:
             substage = filterbyvalue(stages, v)
             substage1 = next(substage, None)
-            substage1 = next(substages, None)
             
             if substage1 is not None:
                 if  substage1.stage_forms.project_form_instances.all():
