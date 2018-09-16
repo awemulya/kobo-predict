@@ -2649,7 +2649,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     def getStatus(items, site_id):
         el = None
 
-        for items in items:
+        for item in items:
             if item.site_id == site_id:
                 el=item
                 break
@@ -2657,7 +2657,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         if el is not None and el.form_status==3: return "Approved", "cell-success" 
         elif el is not None and el.form_status==2: return "Flagged", "cell-warning"
         elif el is not None and el.form_status==1: return "Rejected", "cell-danger"
-        elif el is not None and el.form_status==0: return "pending", "cell-primary"
+        elif el is not None and el.form_status==0: return "Pending", "cell-primary"
         else: return "No submission.", "cell-inactive"
 
 
