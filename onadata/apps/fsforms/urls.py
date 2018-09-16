@@ -46,16 +46,18 @@ from .views import (
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms,
     Configure_forms,
     instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
-    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable, DeleteMyForm,
+    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus,
+    FullResponseTable, DeleteMyForm,
     DeleteFInstance,
-    FormFillView, CreateKoboFormView, DeleteFieldsightXF
+    FormFillView, CreateKoboFormView, DeleteFieldsightXF,
 
-)
+    FormPreviewView)
 
 
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
 
+        url(r'^preview/(?P<id_string>[^/]+)/$', FormPreviewView.as_view(), name='preview'),
         url(r'^new-submission/(?P<fsxf_id>\d+)/$', FormFillView.as_view(), name='new-submission'),
         url(r'^new-submission/(?P<fsxf_id>\d+)/(?P<site_id>\d+)/$', FormFillView.as_view(), name='new-submission'),
         url(r'^edit-submission/(?P<fsxf_id>\d+)/(?P<instance_pk>\d+)/$', FormFillView.as_view(), name='edit-submission'),
