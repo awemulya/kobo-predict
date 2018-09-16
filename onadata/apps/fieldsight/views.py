@@ -2665,7 +2665,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         site_list = Site.objects.filter(project_id=pk, name__icontains=q_keyword, is_active=True, is_survey=False)
         get_params = "?q="+q_keyword +"&page="
     else:
-        site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id').only('site_id')
+        site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id').values('site_id')
         site_list = Site.objects.filter(pk__in=site_list_pre)
 
         
