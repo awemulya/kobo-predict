@@ -2659,19 +2659,21 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         elif el is not None and el.form_status==1: return "Rejected", "cell-danger"
         else: return "Pending", "cell-primary"
 
+
+
     if q_keyword is not None:
         site_list = Site.objects.filter(project_id=pk, name__icontains=q_keyword, is_active=True, is_survey=False)
-        stages = project.stages.all().prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list.values('id')).values('id', 'form_status').order_by('site_id', '-date').distinct('site_id')))
         get_params = "?q="+q_keyword +"&page="
     else:
         site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id').only('site_id')
         site_list = Site.objects.filter(pk__in=site_list_pre)
 
-        stages = project.stages.all().prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list).values('id', 'form_status').order_by('site_id', '-date').distinct('site_id')))
-
+        
         # FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('project__stages__stage_forms__project_form_instances', queryset=FInstance.objects.filter().order_by('-id')))
         get_params = "?page="
-        
+    
+    stages = Stage.objects.filter(parent__isnull=False, parent__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list).values('id', 'form_status').order_by('site_id', '-date').distinct('site_id')))
+    
     paginator = Paginator(site_list, page_list) # Show how many contacts per page
     page = request.GET.get('page')
     try:
@@ -2688,7 +2690,6 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         for v in ss_id:
             substage = filterbyvalue(stages, v)
             substage1 = next(substage, None)
-            substage1 = next(substages, None)
             
             if substage1 is not None:
                 if  substage1.stage_forms.project_form_instances.all():
