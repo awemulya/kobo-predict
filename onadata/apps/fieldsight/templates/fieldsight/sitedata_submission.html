@@ -5,15 +5,11 @@
 
 {% block page-title %}{% trans 'Responses' %}{% endblock %}
 
-   {%block extracss %}
+{%block extracss %}
 <link rel="stylesheet" href="{% static 'css/knockout-file-bindings.css' %}">
 <link rel="stylesheet" href="{% static 'dummy/assets/css/jquery-ui.css' %}">
 
-    {% endblock %}
-
-
-
-
+{% endblock %}
 
 {% block content %}
 {% load pagination_tags %}
