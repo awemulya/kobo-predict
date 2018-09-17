@@ -290,7 +290,8 @@ class PDFReport:
                 self.append_row(question_name, question_label, first_children['type'], self.main_answer)
 
 
-    def append_answers(self, elements, json_question, instance, sub_count):
+    def append_answers(self, json_question, instance, sub_count):
+        elements = []
         if instance.form_status ==  0:
             form_status = "Pending"
         elif instance.form_status == 1:
@@ -326,6 +327,7 @@ class PDFReport:
                     elements.append(Paragraph(k + " : ", styles['Heading5']))
                     elements.append(Paragraph(v, self.paragraphstyle))
                     elements.append(Spacer(0,10))
+        return elements
 
     def generateFullReport(self, pk, base_url):
         self.base_url = base_url
@@ -566,10 +568,13 @@ class PDFReport:
             sub_count = 0
             if not form.from_project and form.site_form_instances.all():
                 for instance in form.site_form_instances.all():
-                    self.append_answers(elements, json_question, instance, sub_count)
+                    new_elements = self.append_answers(elements, json_question, instance, sub_count)
+                    elements+=new_elements
+
             elif form.project_form_instances.all():
                 for instance in form.site_form_instances.all():
-                    self.append_answers(elements, json_question, instance, sub_count)
+                    new_elements = self.append_answers(elements, json_question, instance, sub_count)
+                    elements+=new_elements
             else:
                 elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
                 elements.append(Spacer(0,10))
