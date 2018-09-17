@@ -142,4 +142,3 @@ class FInstanceViewset(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         sites = UserRole.objects.filter(user=self.request.user, group__name="Site Supervisor").distinct('site').values_list('site', flat=True)
         return self.queryset.filter(site___in=sites).select_related('submitted_by', 'site_fxf',  'project_fxf')
-    

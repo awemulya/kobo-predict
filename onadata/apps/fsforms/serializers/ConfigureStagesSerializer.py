@@ -321,6 +321,9 @@ class FinstanceDataOnlySerializer(serializers.ModelSerializer):
         fields = ('site', 'project', 'site_fxf', 'project_fxf', 'date', 'submitted_by', 'form_type','status_display')
 
     def get_form_type(self, obj):
+        if obj.project_fxf:
+            return {'is_staged': obj.project_fxf.is_staged, 'is_scheduled': obj.project_fxf.is_scheduled,
+                    'is_survey': obj.project_fxf.is_survey}
         return {'is_staged': obj.site_fxf.is_staged, 'is_scheduled': obj.site_fxf.is_scheduled, 'is_survey': obj.site_fxf.is_survey}
 
     # def get_submitted_by(self, obj):
