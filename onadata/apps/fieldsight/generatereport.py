@@ -1,4 +1,5 @@
 import json
+import time
 import datetime
 from datetime import date
 
@@ -24,6 +25,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from onadata.libs.utils.image_tools import image_url
 from onadata.apps.logger.models import Attachment
+
 styleSheet = getSampleStyleSheet()
 styles = getSampleStyleSheet()
 
@@ -136,8 +138,10 @@ class PDFReport:
     def create_logo(self, absolute_path):
         try:
             image = Image(absolute_path)
+            time.sleep(2)
             image._restrictSize(2.5 * inch, 2.5 * inch)
         except:
+            time.sleep(2)
             image = Image('http://' + self.base_url +'/static/images/img-404.jpg')
             image._restrictSize(1.5 * inch, 1.5 * inch)
         return image
