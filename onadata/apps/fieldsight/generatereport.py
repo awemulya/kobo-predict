@@ -1,4 +1,5 @@
 import json
+import time
 import datetime
 from datetime import date
 
@@ -24,6 +25,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from onadata.libs.utils.image_tools import image_url
 from onadata.apps.logger.models import Attachment
+
 styleSheet = getSampleStyleSheet()
 styles = getSampleStyleSheet()
 
@@ -136,8 +138,10 @@ class PDFReport:
     def create_logo(self, absolute_path):
         try:
             image = Image(absolute_path)
+            
             image._restrictSize(2.5 * inch, 2.5 * inch)
         except:
+
             image = Image('http://' + self.base_url +'/static/images/img-404.jpg')
             image._restrictSize(1.5 * inch, 1.5 * inch)
         return image
@@ -206,6 +210,7 @@ class PDFReport:
                     media_url = 'http://' + self.base_url +'/static/images/img-404.jpg'
 
                 answer = self.create_logo(media_url)
+                time.sleep(2)
                 isNull = False
                 # answer =''
             elif question_type == 'audio' or question_type == 'video':
@@ -285,7 +290,8 @@ class PDFReport:
                 self.append_row(question_name, question_label, first_children['type'], self.main_answer)
 
 
-    def append_answers(self, elements, json_question, instance, sub_count):
+    def append_answers(self, json_question, instance, sub_count):
+        elements = []
         if instance.form_status ==  0:
             form_status = "Pending"
         elif instance.form_status == 1:
@@ -321,6 +327,7 @@ class PDFReport:
                     elements.append(Paragraph(k + " : ", styles['Heading5']))
                     elements.append(Paragraph(v, self.paragraphstyle))
                     elements.append(Spacer(0,10))
+        return elements
 
     def generateFullReport(self, pk, base_url):
         self.base_url = base_url
@@ -391,11 +398,11 @@ class PDFReport:
 
             if not form.from_project and form.site_form_instances.all():
                 for instance in form.site_form_instances.all():
-                    self.append_answers(elements, json_question, instance, sub_count)
+                    self.append_answers(json_question, instance, sub_count)
 
             elif form.project_form_instances.all():
                 for instance in form.project_form_instances.all():
-                    self.append_answers(elements, json_question, instance, sub_count)
+                    self.append_answers(json_question, instance, sub_count)
 
             else:
                 elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
@@ -561,10 +568,14 @@ class PDFReport:
             sub_count = 0
             if not form.from_project and form.site_form_instances.all():
                 for instance in form.site_form_instances.all():
-                    self.append_answers(elements, json_question, instance, sub_count)
+                    new_elements = self.append_answers(json_question, instance, sub_count)
+                    elements+=new_elements
+                    print new_elements
             elif form.project_form_instances.all():
-                for instance in form.site_form_instances.all():
-                    self.append_answers(elements, json_question, instance, sub_count)
+                for instance in form.project_form_instances.all():
+                    new_elements = self.append_answers(json_question, instance, sub_count)
+                    elements+=new_elements
+                    print new_elements
             else:
                 elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
                 elements.append(Spacer(0,10))
