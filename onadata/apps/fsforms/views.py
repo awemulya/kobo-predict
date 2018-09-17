@@ -2131,11 +2131,9 @@ def set_deploy_main_stage(request, is_project, pk, stage_id):
         else:
             site = Site.objects.get(pk=pk)
             main_stage = Stage.objects.get(pk=stage_id)
-            FieldSightXF.objects.filter(stage__id=main_stage.pk, is_deleted=False).update(is_deployed=True)
+            FieldSightXF.objects.filter(stage__stage__id=main_stage.pk, is_deleted=False).update(is_deployed=True)
             sub_stages  = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
-            sub_stages_id = [s.id for s in sub_stages]
-            stage_forms = FieldSightXF.objects.filter(stage__id__in=sub_stages_id)
-            stage_forms.update(is_deployed=True)
+            stage_forms = FieldSightXF.objects.filter(stage__stage__id=main_stage.pk, is_deleted=False, is_deployed=True)
             deleted_forms = FieldSightXF.objects.filter(project__id=pk, is_deleted=True, is_staged=True)
             deploy_data = {'main_stage':StageSerializer(main_stage).data,
                            'sub_stages':StageSerializer(sub_stages, many=True).data,
