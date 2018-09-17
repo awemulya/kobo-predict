@@ -35,7 +35,7 @@ def copy_stage_to_sites(main_stage, pk):
         project_forms = FieldSightXF.objects.filter(stage__id__in=sub_stages_id, is_deleted=False)
         project_form_ids = [p.id for p in project_forms]
         with transaction.atomic():
-            FieldSightXF.objects.filter(pk__in=project_form_ids).update(is_deployed=True)  # deploy this stage
+            FieldSightXF.objects.filter(pk__in=project_form_ids).update(is_deployed=True)  # deploy this project  stage substages all forms
 
             deleted_forms = FieldSightXF.objects.filter(is_deleted=True, is_staged=True, project=project)
             sites_affected = []
