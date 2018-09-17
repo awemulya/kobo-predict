@@ -138,10 +138,10 @@ class PDFReport:
     def create_logo(self, absolute_path):
         try:
             image = Image(absolute_path)
-            time.sleep(2)
+            
             image._restrictSize(2.5 * inch, 2.5 * inch)
         except:
-            time.sleep(2)
+
             image = Image('http://' + self.base_url +'/static/images/img-404.jpg')
             image._restrictSize(1.5 * inch, 1.5 * inch)
         return image
@@ -210,6 +210,7 @@ class PDFReport:
                     media_url = 'http://' + self.base_url +'/static/images/img-404.jpg'
 
                 answer = self.create_logo(media_url)
+                time.sleep(2)
                 isNull = False
                 # answer =''
             elif question_type == 'audio' or question_type == 'video':
