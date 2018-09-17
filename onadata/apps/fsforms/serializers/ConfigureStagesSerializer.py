@@ -310,3 +310,18 @@ class FinstanceSerializer(serializers.ModelSerializer):
         parse_individual_questions(json_question['children'])
         return data
 
+
+class FinstanceDataOnlySerializer(serializers.ModelSerializer):
+    form_type = serializers.SerializerMethodField()
+    submitted_by = serializers.CharField(source='submitted_by.username')
+    status_display = serializers.CharField(source='get_form_status_display')
+
+    class Meta:
+        model = FInstance
+        fields = ('site', 'project', 'site_fxf', 'project_fxf', 'date', 'submitted_by', 'form_type','status_display')
+
+    def get_form_type(self, obj):
+        return {'is_staged': obj.site_fxf.is_staged, 'is_scheduled': obj.site_fxf.is_scheduled, 'is_survey': obj.site_fxf.is_survey}
+
+    # def get_submitted_by(self, obj):
+    #     return obj.user.username

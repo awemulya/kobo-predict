@@ -10,7 +10,8 @@ import rest_framework.status
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.fsforms.models import Stage, EducationMaterial, DeployEvent, FInstance
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer, \
-    SubStageDetailSerializer, EMSerializer, DeploySerializer, FinstanceSerializer
+    SubStageDetailSerializer, EMSerializer, DeploySerializer, FinstanceSerializer, FinstanceDataOnlySerializer
+from onadata.apps.userrole.models import UserRole
 
 
 class StageListViewSet(viewsets.ModelViewSet):
@@ -128,14 +129,17 @@ class DeployViewset(viewsets.ModelViewSet):
     serializer_class = DeploySerializer
 
 class LargeResultsSetPagination(PageNumberPagination):
-    page_size = 10
+    page_size = 100
     # page_size_query_param = 'page_size'
     # max_page_size = 10000
 
+
 class FInstanceViewset(viewsets.ReadOnlyModelViewSet):
-    queryset = FInstance.objects.filter(site_fxf__isnull=False).select_related('instance', 'submitted_by' ,'site_fxf',   'site_fxf__xf',  'site_fxf__xf__user')
-    serializer_class = FinstanceSerializer
+    queryset = FInstance.objects.all()
+    serializer_class = FinstanceDataOnlySerializer
     pagination_class = LargeResultsSetPagination
 
     def get_queryset(self):
-        return self.queryset.filter(project=self.request.project)
+        sites = UserRole.objects.filter(user=self.request.user, group__name="Site Supervisor").distinct('site').values_list('site', flat=True)
+        return self.queryset.filter(site___in=sites).select_related('submitted_by', 'site_fxf',  'project_fxf')
+    
