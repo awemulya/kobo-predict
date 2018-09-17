@@ -570,11 +570,12 @@ class PDFReport:
                 for instance in form.site_form_instances.all():
                     new_elements = self.append_answers(elements, json_question, instance, sub_count)
                     elements+=new_elements
-
+                    print new_elements
             elif form.project_form_instances.all():
                 for instance in form.site_form_instances.all():
                     new_elements = self.append_answers(elements, json_question, instance, sub_count)
                     elements+=new_elements
+                    print new_elements
             else:
                 elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
                 elements.append(Spacer(0,10))
