@@ -137,13 +137,13 @@ class Organization(models.Model):
     def get_submissions_count(self):
         from onadata.apps.fsforms.models import FInstance
         outstanding = FInstance.objects.filter(
-            project__organization=self, form_status=0).count()
+            project__organization=self, project__is_active=True, form_status=0).count()
         rejected = FInstance.objects.filter(
-            project__organization=self, form_status=1).count()
+            project__organization=self, project__is_active=True, form_status=1).count()
         flagged = FInstance.objects.filter(
-            project__organization=self, form_status=2).count()
+            project__organization=self, project__is_active=True, form_status=2).count()
         approved = FInstance.objects.filter(
-            project__organization=self, form_status=3).count()
+            project__organization=self, project__is_active=True, form_status=3).count()
 
         return outstanding, flagged, approved, rejected
 
