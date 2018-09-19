@@ -318,7 +318,7 @@ class FinstanceDataOnlySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FInstance
-        fields = ('site', 'project', 'site_fxf', 'project_fxf', 'date', 'submitted_by', 'form_type','status_display')
+        fields = ('id', 'site', 'project', 'site_fxf', 'project_fxf', 'date', 'submitted_by', 'form_type','status_display')
 
     def get_form_type(self, obj):
         if obj.project_fxf:
