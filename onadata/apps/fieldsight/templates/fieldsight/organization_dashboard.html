@@ -85,13 +85,13 @@ var org = "{{obj.pk}}";
 							<div class="col-lg-6 col-sm-12">
 								<ul class="org-profile-stat-list clearfix margin-top">
 									<li>
-										<a href="#" class="org-profile-stat-item" title="">
+										<ul class="org-profile-stat-item" title="">
 											<i class="la la-files-o"></i>
 											<div class="org-mini-stat-info">
 												<span>{{total_submissions}}</span>
 												{% trans 'Submissions ' %}
 											</div>
-										</a>
+										</ul>
 									</li>
 									<li>
 										<a href="{% url 'fieldsight:org-user-list' obj.pk %}" class="org-profile-stat-item" title="">
@@ -112,13 +112,13 @@ var org = "{{obj.pk}}";
 										</a>
 									</li>
 									<li>
-										<a href="#" title="" class="org-profile-stat-item">
+										<ul class="org-profile-stat-item">
 											<i class="la la-map-marker"></i>
 											<div class="org-mini-stat-info">
 												<span>{{total_sites}}</span>
 												{% trans 'Sites ' %}
 											</div>
-										</a>
+										</ul>
 									</li>
 								</ul>
 							</div>
