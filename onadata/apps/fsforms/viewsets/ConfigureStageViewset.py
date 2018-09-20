@@ -140,5 +140,5 @@ class FInstanceViewset(viewsets.ReadOnlyModelViewSet):
     pagination_class = LargeResultsSetPagination
 
     def get_queryset(self):
-        sites = UserRole.objects.filter(user=self.request.user, group__name="Site Supervisor").distinct('site').values_list('site', flat=True)
-        return self.queryset.filter(site___in=sites).select_related('submitted_by', 'site_fxf',  'project_fxf')
+        sites = UserRole.objects.filter(user=self.request.user, group__name="Site Supervisor", ended_at__isnull=False).distinct('site').values_list('site', flat=True)
+        return self.queryset.filter(site___in=sites).select_related('submitted_by', 'site_fxf',  'project_fxf').order_by("-date")
