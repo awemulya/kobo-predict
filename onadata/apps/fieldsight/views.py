@@ -3022,19 +3022,58 @@ def project_dashboard_map(request, pk):
 def project_dashboard_graphs(request, pk):
     project = Project.objects.get(pk=pk)
 
-    bar_graph = ProgressBarGenerator(project)
-    progress_labels = bar_graph.data.keys()
-    progress_data = bar_graph.data.values()
-
     # bar_graph = ProgressBarGenerator(project)
     # progress_labels = bar_graph.data.keys()
     # progress_data = bar_graph.data.values()
+
+    bar_graph = ProgressBarGenerator(project)
+    progress_labels = bar_graph.data.keys()
+    progress_data = bar_graph.data.values()
 
     line_chart = LineChartGeneratorProject(project)
     submissions = line_chart.data()
     submissions_labels = submissions.keys()
     submissions_data = submissions.values()
-
+#     temp_response = {
+#     "sd": [
+#         0,
+#         452,
+#         21549,
+#         22351,
+#         22351,
+#         22351,
+#         22356
+#     ],
+#     "pd": [
+#         23421,
+#         48,
+#         0,
+#         0,
+#         0,
+#         0,
+#         0
+#     ],
+#     "pl": [
+#         "Unstarted",
+#         "< 20",
+#         "20 - 40",
+#         "40 - 60",
+#         "60 - 80",
+#         "80 <",
+#         "Completed"
+#     ],
+#     "sl": [
+#         "2018-03-15",
+#         "2018-04-15",
+#         "2018-05-16",
+#         "2018-06-17",
+#         "2018-07-18",
+#         "2018-08-18",
+#         "2018-09-19"
+#     ]
+# }
+#
+#     return Response(temp_response)
     return Response({'pl':progress_labels, 'pd':progress_data, 'sl': submissions_labels, 'sd':submissions_data})
 
 
