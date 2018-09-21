@@ -64,7 +64,7 @@ def send_message_flagged(fi=None, comment=None, comment_url=None):
                'form_type':fi.fsxf.form_type(), 'form_type_id':fi.fsxf.form_type_id(),
                'status': FORM_STATUS.get(fi.form_status,"New Form"),
                'comment_url': comment_url,
-               'submission_date_time': fi.date,
+               'submission_date_time': fi.date.__str__,
                'submission_id': fi.id,
                }
     if fi.site:
