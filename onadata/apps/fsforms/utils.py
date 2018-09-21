@@ -67,6 +67,7 @@ def send_message_flagged(fi=None, comment=None, comment_url=None):
                'submission_date_time': str(fi.date),
                'submission_id': fi.id,
                }
+    print(message)
     if fi.site:
         message['site'] = {'name': fi.site.name, 'id': fi.site.id}
     if fi.project:
