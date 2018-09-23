@@ -32,17 +32,6 @@ class SurveyFormsViewSet(viewsets.ReadOnlyModelViewSet):
     # pagination_class = LargeResultsSetPagination
 
     def get_serializer_context(self):
-        instances = []
-        is_project = self.kwargs.get("is_project")
-        pk = self.kwargs.get("pk")
-        if is_project == "1":
-            instances = FInstance.objects.filter(project__isnull=False,
-                                                 project__id=pk,
-                                                 project_fxf__is_survey=True
-                                                 ).order_by('-pk').select_related("project", "project_fxf")
-        if is_project == "0":
-            instances = []
-        self.kwargs.update({'instances': instances})
         return self.kwargs
 
     def filter_queryset(self, queryset):
@@ -52,9 +41,8 @@ class SurveyFormsViewSet(viewsets.ReadOnlyModelViewSet):
         pk = self.kwargs.get('pk', None)
         if is_project == "1":
             queryset = queryset.filter(project__id=pk)
-        else:
-            queryset = queryset.filter(site__id=pk)
-        return queryset
+            return queryset.annotate(response_count=Count("project_form_instances")).select_related('xf', 'em')
+        return []
 
 
 class GeneralFormsViewSet(viewsets.ModelViewSet):
