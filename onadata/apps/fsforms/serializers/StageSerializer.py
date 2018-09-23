@@ -1,6 +1,8 @@
 import json
 
 from django.db import transaction
+from django.db.models import Count, Q, Case, When, F, IntegerField
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
@@ -25,7 +27,8 @@ class EMSerializer(serializers.ModelSerializer):
 class SubStageSerializer1(serializers.ModelSerializer):
     stage_forms = FSXFSerializer()
     em = EMSerializer(read_only=True)
-    submission_data = serializers.SerializerMethodField()
+    # response_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Stage
         exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage', 'date_modified', 'date_created')
@@ -44,37 +47,14 @@ class SubStageSerializer1(serializers.ModelSerializer):
         except Exception as e:
             return None
 
-    def get_submission_data(self, obj):
-        is_project = self.context.get('is_project', False)
-        instances = self.context.get('instances', [])
-        count = 0
-        response = None
-        data = dict(count=count, latest_submission={})
-        if not is_project:
-            return data
-        if is_project =="1" or obj.is_survey:
-            for i in instances:
-                if i.project_fxf == obj:
-                    count += 1
-                    if response is None:
-                        response = i
-        if is_project == "0":
-            for i in instances:
-                if i.project_fxf == obj:
-                    count += 1
-                    if response is None:
-                        response = i
-                elif  i.site_fxf == obj:
-                    count += 1
-                    if response is None:
-                        response = i
-        latest_submission_data = {}
-        if response:
-            # latest_submission_data = FInstanceResponcesSerializer(instance=response).data
-            latest_submission_data = dict(user=response.submitted_by.username, date=response.date)
-        return dict(count=count, latest=latest_submission_data)
-
-
+    # def get_response_count(self, obj):
+    #     is_project = self.context.get('is_project', False)
+    #     if is_project:
+    #         return obj.response_count if hasattr(obj, "response_count") else 0
+    #     elif obj.project:
+    #         return obj.response_count if hasattr(obj, "response_count") else 0
+    #     elif obj.site:
+    #         return obj.site_response_count if hasattr(obj, "site_response_count") else 0
 
 class StageSerializer1(serializers.ModelSerializer):
     # parent = SubStageSerializer1(many=True, read_only=True)
@@ -85,7 +65,7 @@ class StageSerializer1(serializers.ModelSerializer):
         exclude = ('shared_level', 'group', 'ready', 'stage',)
 
     def get_substages(self, stage):
-        stages = Stage.objects.filter(stage=stage, stage_forms__is_deleted=False).select_related('em').prefetch_related('stage_forms', 'stage_forms__xf')
+        stages = Stage.objects.filter(stage=stage, stage_forms__is_deleted=False).select_related( 'stage_forms', 'stage_forms__xf', 'em').order_by('order', 'date_created')
         serializer = SubStageSerializer1(instance=stages, context=self.context, many=True)
         return serializer.data
 
