@@ -174,6 +174,7 @@ class StageFormSerializer(serializers.ModelSerializer):
 
 
 class EMImagesSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = EducationalImages
         exclude = ("educational_material",)
@@ -181,15 +182,17 @@ class EMImagesSerializer(serializers.ModelSerializer):
 
 class EMSerializer(serializers.ModelSerializer):
     em_images = EMImagesSerializer(many=True, read_only=True)
+
     class Meta:
         model = EducationMaterial
         exclude = ('stage',)
+
 
 class FSXFormSerializer(serializers.ModelSerializer):
     em = EMSerializer(read_only=True)
     name = serializers.SerializerMethodField('get_title', read_only=True)
     id_string = serializers.SerializerMethodField()
-    submission_data = serializers.SerializerMethodField()
+    responses_count = serializers.SerializerMethodField()
 
     def validate(self, data):
         """
@@ -220,35 +223,14 @@ class FSXFormSerializer(serializers.ModelSerializer):
     def get_id_string(self, obj):
         return u"%s" % obj.xf.id_string
 
-    def get_submission_data(self, obj):
+    def get_responses_count(self, obj):
         is_project = self.context.get('is_project', False)
-        instances = self.context.get('instances', [])
-        count = 0
-        response = None
-        data = dict(count=count, latest_submission={})
-        if not is_project:
-            return data
-        if is_project =="1" or obj.is_survey:
-            for i in instances:
-                if i.project_fxf == obj:
-                    count += 1
-                    if response is None:
-                        response = i
-        if is_project == "0":
-            for i in instances:
-                if i.project_fxf == obj:
-                    count += 1
-                    if response is None:
-                        response = i
-                elif  i.site_fxf == obj:
-                    count += 1
-                    if response is None:
-                        response = i
-        latest_submission_data = {}
-        if response:
-            # latest_submission_data = FInstanceResponcesSerializer(instance=response).data
-            latest_submission_data = dict(user=response.submitted_by.username, date=response.date)
-        return dict(count=count, latest=latest_submission_data)
+        if is_project:
+            return obj.response_count if hasattr(obj, "response_count") else 0
+        elif obj.project:
+            return obj.response_count if hasattr(obj, "response_count") else 0
+        elif obj.site:
+            return obj.site_response_count if hasattr(obj, "site_response_count") else 0
 
 
 class XformSerializer(serializers.ModelSerializer):
