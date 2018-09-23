@@ -27,7 +27,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
     is_deployed = serializers.SerializerMethodField('get_is_deployed_status', read_only=True)
     default_submission_status = serializers.SerializerMethodField()
     schedule_level = serializers.SerializerMethodField('get_schedule_level_type', read_only=True)
-    submission_data = serializers.SerializerMethodField()
+    responses_count = serializers.SerializerMethodField()
 
     def validate(self, data):
         """
@@ -101,44 +101,25 @@ class ScheduleSerializer(serializers.ModelSerializer):
             return FieldSightXF.objects.get(schedule=obj).is_deployed
 
     def get_default_submission_status(self, obj):
-        if not FieldSightXF.objects.filter(schedule=obj).exists():
-            return False
-        else:
-            return FieldSightXF.objects.get(schedule=obj).default_submission_status
+        try:
+            return obj.schedule_forms.default_submission_status
+        except:
+            return 0
 
     def get_education_material(self, obj):
-        if not EducationMaterial.objects.filter(fsxf=obj.schedule_forms).exists():
+        try:
+            em =  obj.schedule_forms.em
+            # em =  EducationMaterial.objects.first()
+            return EMSerializer(em).data
+        except:
             return {}
-        em =  EducationMaterial.objects.get(fsxf=obj.schedule_forms)
-        # em =  EducationMaterial.objects.first()
-        return EMSerializer(em).data
 
-    def get_submission_data(self, obj):
+    def get_responses_count(self, obj):
         is_project = self.context.get('is_project', False)
-        instances = self.context.get('instances', [])
-        count = 0
-        response = None
-        data = dict(count=count, latest_submission={})
-        if not is_project:
-            return data
-        if is_project =="1":
-            for i in instances:
-                if i.project_fxf == obj.schedule_forms:
-                    count += 1
-                    if response is None:
-                        response = i
-        if is_project == "0":
-            for i in instances:
-                if i.project_fxf == obj.schedule_forms:
-                    count += 1
-                    if response is None:
-                        response = i
-                elif i.site_fxf == obj.schedule_forms:
-                    count += 1
-                    if response is None:
-                        response = i
-        latest_submission_data = {}
-        if response:
-            latest_submission_data = dict(user=response.submitted_by.username, date=response.date)
-        return dict(count=count, latest=latest_submission_data)
+        if is_project:
+            return obj.response_count if hasattr(obj, "response_count") else 0
+        elif obj.project:
+            return obj.response_count if hasattr(obj, "response_count") else 0
+        elif obj.site:
+            return obj.site_response_count if hasattr(obj, "site_response_count") else 0
         

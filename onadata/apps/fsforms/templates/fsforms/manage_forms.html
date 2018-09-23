@@ -677,7 +677,7 @@ else if (tab == "4"){ vm.setSelectedVm('survey')}
                                         </td>
 
                                         <td data-bind="text: schedule_level"></td>
-										<td data-bind="text: submission_data().count"></td>
+										<td data-bind="text: responses_count"></td>
                                         <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material, visible:($root.is_project =='1' && project()) || ($root.is_project == '0' && site())"><i class="la la-book"></i> {% trans 'Materials' %}</a>
                                             <div class="modal" tabindex="-1" role="dialog" data-bind="modal:em_form_modal_visibility">
                         <div data-bind="with: em">
@@ -1011,7 +1011,7 @@ else if (tab == "4"){ vm.setSelectedVm('survey')}
 
                                             </td>
                                             <td data-bind="text: date_created"></td>
-                                            <td data-bind="text: submission_data().count"></td>
+                                            <td data-bind="text: responses_count"></td>
                                             <td><a href="javascript:void(0);" class="badge badge-light" title="Educational Material" data-bind="click:education_material"><i class="la la-book"></i> {% trans 'Materials' %}</a>
 
 
