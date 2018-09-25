@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from django.db.models import Q
+from django.db.models import Q, Count, Case, When, F, IntegerField
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets, serializers
@@ -32,17 +32,6 @@ class SurveyFormsViewSet(viewsets.ReadOnlyModelViewSet):
     # pagination_class = LargeResultsSetPagination
 
     def get_serializer_context(self):
-        instances = []
-        is_project = self.kwargs.get("is_project")
-        pk = self.kwargs.get("pk")
-        if is_project == "1":
-            instances = FInstance.objects.filter(project__isnull=False,
-                                                 project__id=pk,
-                                                 project_fxf__is_survey=True
-                                                 ).order_by('-pk').select_related("project", "project_fxf")
-        if is_project == "0":
-            instances = []
-        self.kwargs.update({'instances': instances})
         return self.kwargs
 
     def filter_queryset(self, queryset):
@@ -52,9 +41,8 @@ class SurveyFormsViewSet(viewsets.ReadOnlyModelViewSet):
         pk = self.kwargs.get('pk', None)
         if is_project == "1":
             queryset = queryset.filter(project__id=pk)
-        else:
-            queryset = queryset.filter(site__id=pk)
-        return queryset
+            return queryset.annotate(response_count=Count("project_form_instances")).select_related('xf', 'em')
+        return []
 
 
 class GeneralFormsViewSet(viewsets.ModelViewSet):
@@ -72,26 +60,21 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
         pk = self.kwargs.get('pk', None)
         if is_project == "1":
             queryset = queryset.filter(project__id=pk)
+            return queryset.annotate(response_count=Count("project_form_instances")).select_related('xf', 'em')
         else:
             project_id = get_object_or_404(Site, pk=pk).project.id
             queryset = queryset.filter(Q(site__id=pk, from_project=False)
-                                       |Q(project__id=project_id))
-        return queryset.select_related('xf', 'em').prefetch_related("site_form_instances", "project_form_instances")
+                                       | Q (project__id=project_id))
+            return queryset.annotate(
+                site_response_count=Count("site_form_instances",),
+                response_count=Count(Case(
+                    When(project__isnull=False, project_form_instances__site__id=pk, then=F('project_form_instances')),
+                    output_field=IntegerField(),
+                ), distinct=True)
+
+            ).select_related('xf', 'em')
 
     def get_serializer_context(self):
-        instances = []
-        is_project = self.kwargs.get("is_project")
-        pk = self.kwargs.get("pk")
-        if is_project == "1":
-            instances = FInstance.objects.filter(project__isnull=False,
-                                                 project__id=pk,
-                                                 project_fxf__is_staged=False,
-                                                 project_fxf__is_scheduled=False,
-                                                 project_fxf__is_survey=False
-                                                 ).order_by('-pk').select_related("project", "project_fxf")
-        if is_project == "0":
-            instances = FInstance.objects.filter(site__id=pk).order_by('-pk').select_related("site", "site_fxf")
-        self.kwargs.update({'instances': instances})
         return self.kwargs
 
     def perform_create(self, serializer):

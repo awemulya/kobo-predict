@@ -16,12 +16,8 @@ class StageViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing Stages.
     """
-    queryset = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True)
+    queryset = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True).order_by('order', 'date_created')
     serializer_class = StageSerializer1
-    # pagination_class = LargeResultsSetPagination
-
-    # authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-
 
     def filter_queryset(self, queryset):
         if self.request.user.is_anonymous():
@@ -36,18 +32,7 @@ class StageViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_serializer_context(self):
-        instances = []
-        is_project = self.kwargs.get("is_project")
-        pk = self.kwargs.get("pk")
-        if is_project == "1":
-            instances = FInstance.objects.filter(project__isnull=False,
-                                                 project__id=pk,
-                                                 project_fxf__is_staged=True,
-                                                 ).order_by('-pk').select_related("project", "project_fxf")
-        if is_project == "0":
-            instances = FInstance.objects.filter(site__id=pk).order_by('-pk').select_related("site", "site_fxf")
-        self.kwargs.update({'instances': instances})
-        return {'request': self.request, 'kwargs': self.kwargs,'instances': instances}
+        return self.kwargs
 
 
 class MainStageViewSet(viewsets.ModelViewSet):
