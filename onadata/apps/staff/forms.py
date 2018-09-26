@@ -14,7 +14,7 @@ class ProjectForm(forms.ModelForm):
 class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(TeamForm, self).__init__(*args, **kwargs)
-        self.fields['leader'].choices = [(role.user.id, role.user.username) for role in UserRole.objects.filter(project_id__in=[137,105,129, 119], ended_at=None).distinct('user_id')]
+        self.fields['leader'].choices = [(role.user.id, role.user.user_profile.getname()) for role in UserRole.objects.filter(project_id__in=[137,183, 105,129, 119], ended_at=None).distinct('user_id').order_by('user_id', 'user__first_name')]
     
     class Meta:
         model = Team
