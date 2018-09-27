@@ -210,7 +210,6 @@ class PDFReport:
                     media_url = 'http://' + self.base_url +'/static/images/img-404.jpg'
 
                 answer = self.create_logo(media_url)
-                time.sleep(2)
                 isNull = False
                 # answer =''
             elif question_type == 'audio' or question_type == 'video':
@@ -570,12 +569,12 @@ class PDFReport:
                 for instance in form.site_form_instances.all():
                     new_elements = self.append_answers(json_question, instance, sub_count)
                     elements+=new_elements
-                    print new_elements
+                    
             elif form.project_form_instances.all():
                 for instance in form.project_form_instances.all():
                     new_elements = self.append_answers(json_question, instance, sub_count)
                     elements+=new_elements
-                    print new_elements
+
             else:
                 elements.append(Paragraph("No Submisions Yet. ", styles['Heading5']))
                 elements.append(Spacer(0,10))

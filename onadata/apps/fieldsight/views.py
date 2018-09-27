@@ -3085,13 +3085,15 @@ def site_refrenced_metas(request, pk):
 
 
 
-    def generate(metas, project_id, metas_to_parse, meta_answer, selected_metas, project_metas):
+    def generate(metas, project_id, metas_to_parse, meta_answer, parent_selected_metas, project_metas):
 
         for meta in metas_to_parse:
             # if project_metas and meta not in project_metas:
             #     continue
             if meta.get('question_type') == "Link":
-                if not selected_metas:
+                if parent_selected_metas:
+                    selected_metas = parent_selected_metas
+                else:
                     selected_metas = meta.get('metas')
                 if meta.get('project_id') == main_project:
                     continue
@@ -3105,6 +3107,7 @@ def site_refrenced_metas(request, pk):
                 else:
                     answer = "No Site Refrenced"
                     metas.append({'question_text': meta.get('question_text'), 'answer':answer, 'question_type':'Normal'})
+
                     
             else:
                 answer=""
