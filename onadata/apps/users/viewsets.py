@@ -223,5 +223,6 @@ class MySitesViewset(viewsets.ReadOnlyModelViewSet):
         return self.queryset.filter(user=self.request.user).select_related('project', 'site', 'site__type', 'project__organization', 'project__type', 'site__region')
 
     def get_serializer_context(self):
-        blue_prints = BluePrints.objects.filter(site__project__organization=self.request.user.user_profile.organization)
-        return {'request': self.request, 'blue_prints':blue_prints}
+        sites = UserRole.objects.filter(user=self.request.user).values_list('site', flat=True).distinct()
+        blue_prints = BluePrints.objects.filter(site__in=sites)
+        return {'request': self.request, 'blue_prints': blue_prints}
