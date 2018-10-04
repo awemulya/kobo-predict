@@ -33,35 +33,35 @@ class BarGenerator(object):
 
 class ProgressBarGenerator(object):
     def __init__(self, project):
-        sites_with_stages_submitted = FInstance.objects.filter(site__project=project, form_status=3,
+        sites_with_stages_submitted = FInstance.objects.filter(site__project=project, form_status = 3,
                                                                site_fxf__is_staged=True).distinct('site').count()
         self.data = OrderedDict()
         self.data['Unstarted'] = sites_with_stages_submitted
         
-        data = Site.objects.filter(project_id=project.id).aggregate(
-             first=Sum(
-                 Case(When(current_progress__lt = 10, then=1),
-                      output_field=IntegerField())
+        data = Site.objects.filter(project_id = project.id).aggregate(
+             first = Sum(
+                 Case(When(current_progress__gte = 1, current_progress__lt = 20, then= 1),
+                      output_field = IntegerField())
              ),
-             second=Sum(
-                 Case(When(current_progress__gte=20, current_progress__lt=40, then=1),
-                      output_field=IntegerField())
+             second = Sum(
+                 Case(When(current_progress__gte = 20, current_progress__lt= 40, then= 1),
+                      output_field = IntegerField())
              ),
-             third=Sum(
-                 Case(When(current_progress__gte=40, current_progress__lt=60, then=1),
-                      output_field=IntegerField())
+             third = Sum(
+                 Case(When(current_progress__gte = 40, current_progress__lt= 60, then= 1),
+                      output_field = IntegerField())
              ),
-             fourth=Sum(
-                 Case(When(current_progress__gte=60, current_progress__lt=80, then=1),
-                      output_field=IntegerField())
+             fourth = Sum(
+                 Case(When(current_progress__gte = 60, current_progress__lt= 80, then= 1),
+                      output_field = IntegerField())
              ),
-             fifth=Sum(
-                 Case(When(current_progress__gte=80, current_progress__lt=100, then=1),
-                      output_field=IntegerField())
+             fifth = Sum(
+                 Case(When(current_progress__gte = 80, current_progress__lt= 100, then= 1),
+                      output_field = IntegerField())
              ),
-            sixth=Sum(
-                 Case(When(current_progress=100, then=1),
-                      output_field=IntegerField())
+            sixth = Sum(
+                 Case(When(current_progress = 100, then = 1),
+                      output_field = IntegerField())
              )
         )
 
