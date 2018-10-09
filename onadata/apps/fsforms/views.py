@@ -1308,16 +1308,7 @@ def download_xform(request, pk):
         {
             "pk": pk
         }, audit, request)
-    response = response_with_mimetype_and_name('xml', pk,
-                                               show_date=False)
-    # from xml.etree.cElementTree import fromstring, tostring, ElementTree as ET, Element
-    # tree = fromstring(fs_xform.xf.xml)
-    # head = tree.findall("./")[0]
-    # model = head.findall("./")[1]
-    # # model.append(Element('FormID', {'id': str(fs_xform.id)}))
-    # response.content = tostring(tree,encoding='utf8', method='xml')
-    # # # import ipdb
-    # # # ipdb.set_trace()
+    response = response_with_mimetype_and_name('xml',  show_date=False)
     response.content = fs_xform.xf.xml
 
     return response
