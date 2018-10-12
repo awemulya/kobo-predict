@@ -1857,14 +1857,10 @@ class OrgFullmap(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
     template_name = "fieldsight/map.html"
     def get_context_data(self, **kwargs):
         obj = Organization.objects.get(pk=self.kwargs.get('pk'))
-        sites = Site.objects.filter(project__organization=obj,is_survey=False, is_active=True)
-
-        data = serialize('full_detail_geojson', sites, geometry_field='location',
-               fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id'))
         dashboard_data = {
-            'data': data,
-            'geo_layers': obj.geo_layers.all(),
-        }
+            'obj': obj,
+            'mapfor': "organization"
+            }
         return dashboard_data
 
 
@@ -1873,16 +1869,10 @@ class ProjFullmap(ReadonlyProjectLevelRoleMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         obj = Project.objects.get(pk=self.kwargs.get('pk'))
-        sites = obj.sites.filter(is_active=True, is_survey=False)
-        data = serialize(
-            'full_detail_geojson', sites, geometry_field='location',
-            fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone', 'id',)
-        )
         dashboard_data = {
-            'data': data,
-            'geo_layers': obj.geo_layers.all(),
-            'is_donor_only': kwargs.get('is_donor_only', False)
-        }
+            'obj': obj,
+            'mapfor': "project"
+            }
         return dashboard_data
 
 class SiteFullmap(ReadonlySiteLevelRoleMixin, TemplateView):
@@ -2713,8 +2703,14 @@ class SiteResponseCoordinates(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk, **kwargs):
         coord_datas = get_site_responses_coords(pk)
         obj = Site.objects.get(pk=self.kwargs.get('pk'))
+        response_coords = list(coord_datas["result"])
+        response_coords.append({'geometry': {'coordinates': [obj.latitude, obj.longitude], 'type': 'Point'},
+                                              'properties': {'fs_uuid': 'None',
+                                              'id':'#' ,
+                                              'submitted_by': 'site_origin'},
+                                              'type': 'Feature'})
         return render(request, 'fieldsight/site_response_map_view.html', {
-            'co_ords': json.dumps(list(coord_datas["result"]), cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'),
+            'co_ords': json.dumps(response_coords, cls=DjangoJSONEncoder, ensure_ascii=False).encode('utf8'),
             'geo_layers': obj.project.geo_layers.all(),
             'is_donor_only' : kwargs.get('is_donor_only', False)
         })
