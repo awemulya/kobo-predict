@@ -258,7 +258,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'flagged': flagged,
             'approved': approved,
             'rejected': rejected,
-            'total_submissions': flagged + approved + rejected + outstanding
+            'total_submissions': flagged + approved + rejected + outstanding,
             'sites_visits' : sites_visits,
             'active_supervisors' : active_supervisors,
             'new_submissions' : new_submissions
@@ -2764,7 +2764,7 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
             'progress_data': bar_graph.data.values(),
             'progress_labels': bar_graph.data.keys(),
             'roles_project': roles_project,
-            'total_submissions': outstanding + flagged + approved + rejected
+            'total_submissions': outstanding + flagged + approved + rejected,
             'sites_visits' : sites_visits,
             'active_supervisors' : active_supervisors,
             'new_submissions' : new_submissions
