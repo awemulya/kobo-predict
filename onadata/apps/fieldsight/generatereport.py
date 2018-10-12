@@ -24,6 +24,8 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from onadata.libs.utils.image_tools import image_url
 from onadata.apps.logger.models import Attachment
+from .metaAttribsGenerator import generateSiteMetaAttribs
+
 styleSheet = getSampleStyleSheet()
 styles = getSampleStyleSheet()
 
@@ -498,6 +500,26 @@ class PDFReport:
             elements.append(Paragraph(site.phone, styles['Normal']))
         if site.region:
             elements.append(Paragraph(site.region.name, styles['Normal']))
+        
+        elements.append(Spacer(0,10))
+
+        elements.append(Paragraph("Meta Attributes", styles['Normal']))
+        metas = generateSiteMetaAttribs(pk)
+
+        styBackground = ParagraphStyle('background', parent=self.bodystyle, backColor=colors.white)
+        
+        meta_data=[]
+        if metas:
+            for meta in metas:
+                row=[Paragraph(meta['question_text'], styBackground), meta['answer']]
+                meta_data.append(row)
+            
+            metat1 = Table(meta_data, colWidths=(60*mm, None))
+            metat1.setStyle(self.ts1)
+            elements.append(metat1)
+
+
+        elements.append(PageBreak())
 
         elements.append(PageBreak())
         elements.append(Paragraph('Responses', self.h2))
