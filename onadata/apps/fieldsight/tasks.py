@@ -116,10 +116,10 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
                     site_row[k] = 0
             data.append(site_row)
 
-        p.save_as(array=data, dest_file_name="/srv/fieldsight/fieldsight-kobocat/media/stage-report/{}_stage_data.xls".format(project.id))
-        xl_data = open("/srv/fieldsight/fieldsight-kobocat/media/stage-report/{}_stage_data.xls".format(project.id), "rb")
+        p.save_as(array=data, dest_file_name="media/stage-report/{}_stage_data.xls".format(project.id))
+        xl_data = open("media/stage-report/{}_stage_data.xls".format(project.id), "rb")
         
-        task.file.url = xl_data
+        task.file.name = xl_data
         task.status = 2
         task.save()
         noti = task.logs.create(source=task.user, type=32, title="Site Stage Progress report generation in Project",
