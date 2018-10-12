@@ -15,7 +15,7 @@ from django.contrib.auth.models import User, Group
 from onadata.apps.fieldsight.fs_exports.formParserForExcelReport import parse_form_response
 from io import BytesIO
 from django.shortcuts import get_object_or_404
-from onadata.apps.fsforms.models import FieldSightXF, FInstance
+from onadata.apps.fsforms.models import FieldSightXF, FInstance, Stage
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.db.models import Prefetch
@@ -131,7 +131,7 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
         print 'Report Gen Unsuccesfull. %s' % e
         print e.__dict__
         noti = task.logs.create(source=task.user, type=432, title="Site Stage Progress report generation in Project",
-                                       content_object=task.content_object, recipient=task.user,
+                                       content_object=task, recipient=task.user,
                                        extra_message="@error " + u'{}'.format(e.message))
         
 @shared_task()
