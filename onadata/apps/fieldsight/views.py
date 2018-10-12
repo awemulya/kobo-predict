@@ -226,7 +226,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
 
         one_week_ago = datetime.datetime.today() - datetime.timedelta(days=7)
-        finstances = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago).count()
+        finstances = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago)
         new_submissions = finstances.count()
         sites_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
         active_supervisors = finstances.distinct('submitted_by').count()
@@ -2743,7 +2743,7 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
         roles_project = UserRole.objects.filter(organization__isnull = False, project_id = self.kwargs.get('pk'), site__isnull = True, ended_at__isnull=True)
 
         one_week_ago = datetime.datetime.today() - datetime.timedelta(days=7)
-        finstances = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago).count()
+        finstances = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago)
         new_submissions = finstances.count()
         sites_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
         active_supervisors = finstances.distinct('submitted_by').count()
