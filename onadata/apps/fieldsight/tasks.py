@@ -125,7 +125,7 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
         task.save()
         noti = task.logs.create(source=task.user, type=32, title="Site Stage Progress report generation in Project",
                                    recipient=task.user, content_object=task, extra_object=task.content_object,
-                                   extra_message=" <a href='"+ task.file.url +"'>Site Stage Progress report </a> generation in site")
+                                   extra_message=" <a href='/"+ "media/stage-report/{}_stage_data.xls".format(project.id) +"'>Site Stage Progress report </a> generation in site")
     except Exception as e:
         task.description = "ERROR: " + str(e.message) 
         task.status = 3
