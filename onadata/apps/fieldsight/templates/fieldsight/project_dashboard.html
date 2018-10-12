@@ -367,6 +367,39 @@ assigntoken(csrf_token);
 						
 					</div>
 					{% endverbatim %}
+
+					<div class="row">
+						<div class="col-lg-4 col-md-6 col-sm-12">
+							<a href="/fieldsight/proj-submission/137/2/" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-map-marker"></i></span>
+								<div class="mini-stat-info">
+									<span>{{ site_visits }}</span>
+									Site visits in last 7 days
+								</div>
+							</a>
+						</div>
+
+						<div class="col-lg-4 col-md-6 col-sm-12">
+							<a href="/fieldsight/proj-submission/137/2/" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-files-o"></i></span>
+								<div class="mini-stat-info">
+									<span>{{ new_submissions }}</span>
+									 Submissions in last 7 days
+								</div>
+							</a>
+						</div>
+
+						<div class="col-lg-4 col-md-6 col-sm-12">
+							<a href="/fieldsight/proj-submission/137/2/" class="mini-stat padding-large margin-top clearfix">
+								<span class="mini-stat-icon"><i class="la la-users"></i></span>
+								<div class="mini-stat-info">
+									<span>{{ active_supervisors }}</span>
+									Active Supervisors in last 7 days
+								</div>
+							</a>
+						</div>
+					</div>
+					
 					{% verbatim %}
 					<div class="row" id="logdatas">
 						
@@ -412,38 +445,6 @@ assigntoken(csrf_token);
 								</div>
 							</a>
 						</div>
-
-						<div class="col-lg-4 col-md-6 col-sm-12">
-							<a href="/fieldsight/proj-submission/137/2/" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-map-marker"></i></span>
-								<div class="mini-stat-info">
-									<span>{{ new_sites }}</span>
-									New Sites this week
-								</div>
-							</a>
-						</div>
-
-						<div class="col-lg-4 col-md-6 col-sm-12">
-							<a href="/fieldsight/proj-submission/137/2/" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-files-o"></i></span>
-								<div class="mini-stat-info">
-									<span>{{ new_submissions }}</span>
-									New Submissions this week
-								</div>
-							</a>
-						</div>
-
-						<div class="col-lg-4 col-md-6 col-sm-12">
-							<a href="/fieldsight/proj-submission/137/2/" class="mini-stat padding-large margin-top clearfix">
-								<span class="mini-stat-icon"><i class="la la-users"></i></span>
-								<div class="mini-stat-info">
-									<span>{{ new_userroles }}</span>
-									New Roles this week
-								</div>
-							</a>
-						</div>
-
-
 					</div>
 
 					{% verbatim %}
