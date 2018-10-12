@@ -228,7 +228,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         one_week_ago = datetime.datetime.today() - datetime.timedelta(days=7)
         finstances = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago)
         new_submissions = finstances.count()
-        sites_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
+        site_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
         active_supervisors = finstances.distinct('submitted_by').count()
         
         #     data = []
@@ -259,7 +259,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'approved': approved,
             'rejected': rejected,
             'total_submissions': flagged + approved + rejected + outstanding,
-            'sites_visits' : sites_visits,
+            'site_visits' : site_visits,
             'active_supervisors' : active_supervisors,
             'new_submissions' : new_submissions
     }
@@ -2745,7 +2745,7 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
         one_week_ago = datetime.datetime.today() - datetime.timedelta(days=7)
         finstances = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago)
         new_submissions = finstances.count()
-        sites_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
+        site_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
         active_supervisors = finstances.distinct('submitted_by').count()
         
         dashboard_data = {
@@ -2765,7 +2765,7 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
             'progress_labels': bar_graph.data.keys(),
             'roles_project': roles_project,
             'total_submissions': outstanding + flagged + approved + rejected,
-            'sites_visits' : sites_visits,
+            'site_visits' : site_visits,
             'active_supervisors' : active_supervisors,
             'new_submissions' : new_submissions
     }
