@@ -213,6 +213,23 @@ class DonorMyProjects(viewsets.ModelViewSet):
         projects = UserRole.objects.filter(user_id=self.request.user.id, project__isnull=False, group_id=7, ended_at=None).distinct('project_id').values('project_id')
         return queryset.filter(pk__in=projects)
 
+class OrganizationProjects(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectMapDataSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    
+    def filter_queryset(self, queryset):
+        return queryset.filter(organization_id=self.kwargs.get('pk'))
+
+class IndividualProject(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectMapDataSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    
+    def filter_queryset(self, queryset):
+        return queryset.filter(pk=self.kwargs.get('pk'))
+
+
 class DonorMyProjectsLayers(viewsets.ModelViewSet):
     queryset = GeoLayer.objects.all()
     serializer_class = GeoLayerSerializer
@@ -226,6 +243,38 @@ class DonorMyProjectsLayers(viewsets.ModelViewSet):
         donorprojects = Project.objects.filter(pk__in = projects)
         
         for project in donorprojects:
+            for layer in project.geo_layers.all():
+                geolayer_ids.append(layer.id)
+        
+        return queryset.filter(pk__in=geolayer_ids)
+
+class OrganizationProjectsLayers(viewsets.ModelViewSet):
+    queryset = GeoLayer.objects.all()
+    serializer_class = GeoLayerSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    
+    def filter_queryset(self, queryset):        
+        geolayer_ids = []
+
+        projects = Project.objects.filter(organization_id = self.kwargs.get('pk'))
+        
+        for project in projects:
+            for layer in project.geo_layers.all():
+                geolayer_ids.append(layer.id)
+        
+        return queryset.filter(pk__in=geolayer_ids)
+
+class ProjectLayers(viewsets.ModelViewSet):
+    queryset = GeoLayer.objects.all()
+    serializer_class = GeoLayerSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    
+    def filter_queryset(self, queryset):        
+        geolayer_ids = []
+
+        projects = Project.objects.filter(pk = self.kwargs.get('pk'))
+        
+        for project in projects:
             for layer in project.geo_layers.all():
                 geolayer_ids.append(layer.id)
         

@@ -6,7 +6,7 @@ from onadata.apps.fieldsight.viewsets.FieldsightFcmViewset import FcmDeviceViewS
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationsProjectViewSet
 
 from onadata.apps.fieldsight.viewsets.OrganizationViewset import OrganizationTypeViewSet, OrganizationViewSet
-from onadata.apps.fieldsight.viewsets.ProjectViewSet import ProjectTypeViewSet, ProjectCreationViewSet, ProjectRegionslistViewSet, UserProjectlistMinimalViewset
+from onadata.apps.fieldsight.viewsets.ProjectViewSet import OrganizationProjects, IndividualProject, OrganizationProjectsLayers, ProjectLayers, ProjectTypeViewSet, ProjectCreationViewSet, ProjectRegionslistViewSet, UserProjectlistMinimalViewset
 from onadata.apps.fieldsight.viewsets.ProjectViewSet import DonorMyProjectsLayers, DonorMyProjects, MyOrgProjectlistViewSet, ProjectMetas, ProjectForms, OrganizationsProjectViewSet, MyProjectlistViewSet
 from onadata.apps.fieldsight.viewsets.RegionViewSet import RegionViewSet, RegionPagignatedViewSet, RegionSearchViewSet, UserMainRegionViewSet
 from onadata.apps.fieldsight.viewsets.SiteViewSet import ProjectSitelistViewset, SitelistMinimalViewset, SiteViewSet, AllSiteViewSet, SiteCreationSurveyViewSet, \
@@ -282,12 +282,32 @@ urlpatterns = [
     url(r'^api/project/user/regions/(?P<pk>\d+)/(?P<user_id>\d+)/(?P<group_id>\d+)/$', MainRegionsAndSitesAPI.as_view(), name='user_regions'),
     url(r'^api/region/(?P<pk>\d+)/subregionsandsites/(?P<user_id>\d+)/(?P<group_id>\d+)/$', SubRegionAndSitesAPI.as_view(), name='SubRegionAndSitesAPI'),
     url(r'^api/remove_roles/(?P<pk>\d+)/$', UnassignUserRegionAndSites.as_view(), name='UnassignUserRegionAndSites'),
-    url(r'^api/donor/myprojects/$', DonorMyProjects.as_view({'get':'list'}), name="DonorMyProjectList"),
+
+
+
+
+
+    
     url(r'^api/project/myprojects/(?P<pk>\d+)/sites/$', ProjectSitelistViewset.as_view({'get':'list'}), name="ProjectSiteList"),
-    url(r'^api/project/myprojects/(?P<pk>\d+)/sites/geoJSON/$', ProjectSiteListGeoJSON.as_view(), name="ProjectSiteListGeoJSON"),
-    url(r'^api/donor/mygeolayers/$', DonorMyProjectsLayers.as_view({'get':'list'}), name='DonorMyProjectsLayers'),
+
+
+    
     url(r'^donor/fullmap/$', DonorFullMap.as_view(), name="donorfullmap"),
 
+    
+    url(r'^api/donor/myprojects/$', DonorMyProjects.as_view({'get':'list'}), name="DonorMyProjectList"),
+    url(r'^api/organization/projects/(?P<pk>\d+)/$', OrganizationProjects.as_view({'get':'list'}), name="OrgProjectsMapData"),
+    url(r'^api/organization/project/(?P<pk>\d+)/$', IndividualProject.as_view({'get':'list'}), name="OrgProjectMapData"),
+
+
+
+    url(r'^api/donor/mygeolayers/$', DonorMyProjectsLayers.as_view({'get':'list'}), name='DonorMyProjectsLayers'),
+    url(r'^api/organization/geolayers/(?P<pk>\d+)/$', OrganizationProjectsLayers.as_view({'get':'list'}), name='OrganizationProjectsLayers'),
+    url(r'^api/project/geolayers/(?P<pk>\d+)/$', ProjectLayers.as_view({'get':'list'}), name='ProjectLayers'),
+
+
+
+    url(r'^api/project/(?P<pk>\d+)/sites/geoJSON/$', ProjectSiteListGeoJSON.as_view(), name="ProjectSiteListGeoJSON"),    
     url(r'^getGeoJson/(?P<pk>\d+)/$', GeoJSONContent.as_view(), name="geojsoncontent"),
 
 
