@@ -494,7 +494,7 @@ class StageStatus(LoginRequiredMixin, ProjectRoleMixin, View):
         user = request.user
         task_obj=CeleryTaskProgress.objects.create(user=user, task_type=0)
         if task_obj:
-            task = generate_stage_status_report.delay(task_obj.pk, pk)
+            task = generate_stage_status_report.delay(task_obj.pk, obj.id)
             task_obj.task_id = task.id
             task_obj.save()
             messages.success(request, 'Report is being generated. You will be notified in once completed. (It take up an hour depending upon number of sites.)')
