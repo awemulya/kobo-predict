@@ -65,7 +65,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from onadata.apps.fieldsight.tasks import UnassignAllProjectRolesAndSites, UnassignAllSiteRoles, UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
+from onadata.apps.fieldsight.tasks import generate_stage_status_report, UnassignAllProjectRolesAndSites, UnassignAllSiteRoles, UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
 from .generatereport import PDFReport
 from django.utils import translation
 from django.conf import settings
@@ -490,41 +490,17 @@ def alter_proj_status(request, pk):
 
 class StageStatus(LoginRequiredMixin, ProjectRoleMixin, View):
     def get(self, request, *args, **kwargs):
-        try:
-            data = []
-            ss_index = {}
-            stages_rows = []
-            head_row = ["Site ID", "Name", "Address", "Latitude", "longitude", "Status"]
-            project = Project.objects.get(pk=self.kwargs.get('pk'))
-            stages = project.stages.filter(stage__isnull=True)
-            for stage in stages:
-                sub_stages = stage.parent.all()
-                if len(sub_stages):
-                    head_row.append("Stage :"+stage.name)
-                    stages_rows.append("Stage :"+stage.name)
-
-                    for ss in sub_stages:
-                        head_row.append("Sub Stage :"+ss.name)
-                        ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
-            data.append(head_row)
-            total_cols = len(head_row) - 6 # for non stages
-            for site in project.sites.filter(is_active=True, is_survey=False):
-                site_row = [site.identifier, site.name, site.address, site.latitude, site.longitude, site.status]
-                site_row.extend([None]*total_cols)
-                for k, v in ss_index.items():
-                    if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
-                        site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
-                        site_row[k] = site_sub_stage.form_status
-                data.append(site_row)
-
-            p.save_as(array=data, dest_file_name="media/stage-report/{}_stage_data.xls".format(project.id))
-            xl_data = open("media/stage-report/{}_stage_data.xls".format(project.id), "rb")
-            response = HttpResponse(xl_data, content_type='application/vnd.ms-excel')
-            response['Content-Disposition'] = 'attachment; filename="report.xls"'
-            return response
-        except Exception as e:
-            messages.info(request, 'Data Creattion Failed {}'.format(str(e)))
-        return HttpResponse("failed Data Creattion Failed {}".format(str(e)))
+        obj = get_object_or_404(Project, pk=self.kwargs.get('pk'))
+        user = request.user
+        task_obj=CeleryTaskProgress.objects.create(user=user, task_type=0)
+        if task_obj:
+            task = generate_stage_status_report.delay(task_obj.pk, pk)
+            task_obj.task_id = task.id
+            task_obj.save()
+            messages.success(request, 'Report is being generated. You will be notified in once completed. (It take up an hour depending upon number of sites.)')
+        else:
+            messages.success(request, 'Report cannot be generated a the moment.')
+        return JsonResponse(data, status=200)
 
 
 @login_required

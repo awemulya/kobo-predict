@@ -76,8 +76,64 @@ def site_download_zipfile(task_prog_obj_id, size):
                                        content_object=task.content_object, recipient=task.user,
                                        extra_message="@error " + u'{}'.format(e.message))
         buffer.close()                                                                      
-    
 
+@shared_task()
+def generate_stage_status_report(task_prog_obj_id, project_id):
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.status = 1
+    task.save()
+    try:
+        data = []
+        ss_index = {}
+        stages_rows = []
+        head_row = ["Site ID", "Name", "Address", "Latitude", "longitude", "Status"]
+        project = Project.objects.get(pk=project_id)
+        stages = project.stages.filter(stage__isnull=True)
+        for stage in stages:
+            print "in progress .... "
+            sub_stages = stage.parent.all()
+            if len(sub_stages):
+                head_row.append("Stage :"+stage.name)
+                stages_rows.append("Stage :"+stage.name)
+
+                for ss in sub_stages:
+                    head_row.append("Sub Stage :"+ss.name)
+                    ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
+        data.append(head_row)
+        total_cols = len(head_row) - 6 # for non stages
+        count =0
+        for site in project.sites.filter(is_active=True, is_survey=False):
+            count += 1
+            print count
+            site_row = [site.identifier, site.name, site.address, site.latitude, site.longitude, site.site_status]
+            site_row.extend([None]*total_cols)
+            for k, v in ss_index.items():
+                if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
+                    site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
+                    site_row[k] = site_sub_stage.form_count
+                else:
+                    site_row[k] = 0
+            data.append(site_row)
+
+        p.save_as(array=data, dest_file_name="media/stage-report/{}_stage_data.xls".format(project.id))
+        xl_data = open("media/stage-report/{}_stage_data.xls".format(project.id), "rb")
+        
+        task.file.url = xl_data
+        task.status = 2
+        task.save()
+        noti = task.logs.create(source=task.user, type=32, title="Site Stage Progress report generation in Project",
+                                   recipient=task.user, content_object=task, extra_object=task.content_object,
+                                   extra_message=" <a href='"+ task.file.url +"'>Site Stage Progress report </a> generation in site")
+    except Exception as e:
+        task.description = "ERROR: " + str(e.message) 
+        task.status = 3
+        task.save()
+        print 'Report Gen Unsuccesfull. %s' % e
+        print e.__dict__
+        noti = task.logs.create(source=task.user, type=432, title="Site Stage Progress report generation in Project",
+                                       content_object=task.content_object, recipient=task.user,
+                                       extra_message="@error " + u'{}'.format(e.message))
+        
 @shared_task()
 def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
     user = User.objects.get(pk=user_id)
