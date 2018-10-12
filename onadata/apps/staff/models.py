@@ -12,7 +12,9 @@ STAFF_TYPES = (
         (3, 'Senior Builder-Trainer'),
         (4, 'Junior Builder-Trainer'),
         (5, 'Team Leader'),
-        (6, 'Support Staff'),   
+        (6, 'Support Staff'), 
+        (7, 'Field Supervisor'),
+        (8, 'Community Messenger'),  
     )
 
 STAFF_TYPES_SHORT = (
@@ -22,6 +24,8 @@ STAFF_TYPES_SHORT = (
         (4, 'Jr. B-T'),
         (5, 'TL'),
         (6, 'SS'),
+        (7, 'FS'),
+        (8, 'CM'),
     )
 
 GENDER_TYPES = (
