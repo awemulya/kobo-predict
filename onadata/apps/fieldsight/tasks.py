@@ -81,6 +81,7 @@ def site_download_zipfile(task_prog_obj_id, size):
 @shared_task()
 def generate_stage_status_report(task_prog_obj_id, project_id):
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    project = Project.objects.get(pk=project_id)
     task.status = 1
     task.save()
     try:
@@ -88,7 +89,7 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
         ss_index = {}
         stages_rows = []
         head_row = ["Site ID", "Name", "Address", "Latitude", "longitude", "Status"]
-        project = Project.objects.get(pk=project_id)
+        
         stages = project.stages.filter(stage__isnull=True)
         for stage in stages:
             print "in progress .... "
@@ -118,14 +119,15 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
 
         p.save_as(array=data, dest_file_name="media/stage-report/{}_stage_data.xls".format(project.id))
         xl_data = open("media/stage-report/{}_stage_data.xls".format(project.id), "rb")
-        print xl_data.name
+        
+        #Its only quick fix for now, save it in aws bucket whenever possible.
+
         task.file.name = xl_data.name
-        print task.file.url
         task.status = 2
         task.save()
         noti = task.logs.create(source=task.user, type=32, title="Site Stage Progress report generation in Project",
-                                   recipient=task.user, content_object=task, extra_object=task.content_object,
-                                   extra_message=" <a href='/"+ "media/stage-report/{}_stage_data.xls".format(project.id) +"'>Site Stage Progress report </a> generation in site")
+                                   recipient=task.user, content_object=project,
+                                   extra_message=" <a href='/"+ "media/stage-report/{}_stage_data.xls".format(project.id) +"'>Site Stage Progress report </a> generation in project")
     except Exception as e:
         task.description = "ERROR: " + str(e.message) 
         task.status = 3
@@ -133,7 +135,7 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
         print 'Report Gen Unsuccesfull. %s' % e
         print e.__dict__
         noti = task.logs.create(source=task.user, type=432, title="Site Stage Progress report generation in Project",
-                                       content_object=task, recipient=task.user,
+                                       content_object=project, recipient=task.user,
                                        extra_message="@error " + u'{}'.format(e.message))
         
 @shared_task()
@@ -588,7 +590,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         task.status = 2
         task.save()
 
-        noti = task.logs.create(source=source_user, type=32, title="Site details xls generation in site",
+        noti = task.logs.create(source=source_user, type=32, title="Site details xls generation in project",
                                    recipient=source_user, content_object=task, extra_object=project,
                                    extra_message=" <a href='"+ task.file.url +"'>Xls sites detail report</a> generation in project")
 
