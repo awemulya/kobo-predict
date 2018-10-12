@@ -118,8 +118,9 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
 
         p.save_as(array=data, dest_file_name="media/stage-report/{}_stage_data.xls".format(project.id))
         xl_data = open("media/stage-report/{}_stage_data.xls".format(project.id), "rb")
-        
-        task.file.name = xl_data
+        print xl_data.name
+        task.file.name = xl_data.name
+        print task.file.url
         task.status = 2
         task.save()
         noti = task.logs.create(source=task.user, type=32, title="Site Stage Progress report generation in Project",
