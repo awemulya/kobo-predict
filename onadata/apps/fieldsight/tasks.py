@@ -508,12 +508,12 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         buffer = BytesIO()
         wb = xlwt.Workbook(encoding='utf-8')
         ws = wb.add_sheet('Sites')
-        sites = project.sites.all().order_by('identifier')
+        sites = project.sites.filter(is_active=True).order_by('identifier')
         if region_id:
             if region_id == "0":
-                sites = project.sites.filter(region_id=None).order_by('identifier')
+                sites = project.sites.filter(is_active=True, region_id=None).order_by('identifier')
             else:
-                sites = project.sites.filter(region_id=region_id).order_by('identifier')
+                sites = project.sites.filter(is_active=True, region_id=region_id).order_by('identifier')
 
         status, message = siteDetailsGenerator(project, sites, ws)
 
@@ -556,9 +556,9 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
     try:
         buffer = BytesIO()
         if filterRegion:
-            sites = project.sites.filter(region_id__in=filterRegion).values('id')
+            sites = project.sites.filter(is_active=True, region_id__in=filterRegion).values('id')
         else:
-            sites=project.sites.all().values('id')
+            sites=project.sites.filter(is_active=True).values('id')
         # fs_ids = FieldSightXF.objects.filter(project_id = project.id).values('id')
         # startdate="2016-05-01"
         # enddate= "2018-06-05"
@@ -728,21 +728,21 @@ def importSites(task_prog_obj_id, source_user, f_project, t_project, meta_attrib
                     t_metas.append(f_meta)
         region_map = {}      
 
-        t_project_sites = t_project.sites.all().values_list('identifier', flat=True)
+        t_project_sites = t_project.sites.filter(is_active=True).values_list('identifier', flat=True)
 
         # migrate regions
         if f_project.cluster_sites and not ignore_region:
             
-            t_project_regions = t_project.project_region.all().values_list('identifier', flat=True)
+            t_project_regions = t_project.project_region.filter(is_active=True).values_list('identifier', flat=True)
             t_project.cluster_sites=True
             
             # To handle whole project or a single region migrate
-            region_objs = f_project.project_region.filter(id__in=regions)
+            region_objs = f_project.project_region.filter(id__in=regions, is_active=True)
 
             for region in region_objs:
                 f_region_id = region.id
                 if region.identifier in t_project_regions:
-                    t_region_id = t_project.project_region.get(identifier=region.identifier).id
+                    t_region_id = t_project.project_region.get(identifier=region.identifier, is_active=True).id
                 else:
                     region.id=None
                     region.project_id=t_project.id
@@ -754,15 +754,15 @@ def importSites(task_prog_obj_id, source_user, f_project, t_project, meta_attrib
 
             # getting Sites
         
-            sites = f_project.sites.filter(region_id__in=regions)
+            sites = f_project.sites.filter(is_active=True, region_id__in=regions)
           
             if 0 in regions:
-                unassigned_sites = f_project.sites.filter(region_id=None)
+                unassigned_sites = f_project.sites.filter(is_active=True, region_id=None)
                 sites = sites | unassigned_sites
 
         else:
 
-            sites = f_project.sites.all()
+            sites = f_project.sites.filter(is_active=True)
 
         
         def get_t_region_id(f_region_id):
