@@ -224,11 +224,11 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
         total_survey_sites = obj.sites.filter(is_survey=True)
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
-        # if obj.id == 137:
-        #     progress_data = []
-        #     progress_labels = []
-        #     cumulative_labels = []
-        #     cumulative_data = []
+
+        one_week_ago = datetime.datetime.today() - datetime.timedelta(days=7)
+        new_sites = obj.sites.objects.filter(date_created__gte=one_week_ago).count()
+        new_userroles = UserRole.objects.filter(started_at__gte=one_week_ago).count()
+        new_submissions = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago).count()
         #     data = []
         #     sites = []
         # else:
@@ -257,6 +257,9 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'approved': approved,
             'rejected': rejected,
             'total_submissions': flagged + approved + rejected + outstanding
+            'new_sites' : new_sites,
+            'new_userroles' : new_userroles,
+            'new_submissions' : new_submissions
     }
 
         return dashboard_data
@@ -2741,6 +2744,11 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
         line_chart_data = line_chart.data()
         roles_project = UserRole.objects.filter(organization__isnull = False, project_id = self.kwargs.get('pk'), site__isnull = True, ended_at__isnull=True)
 
+        one_week_ago = datetime.datetime.today() - datetime.timedelta(days=7)
+        new_sites = obj.sites.objects.filter(date_created__gte=one_week_ago).count()
+        new_userroles = UserRole.objects.filter(started_at__gte=one_week_ago).count()
+        new_submissions = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago).count()
+
         dashboard_data = {
             'sites': sites,
             'obj': obj,
@@ -2758,6 +2766,9 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
             'progress_labels': bar_graph.data.keys(),
             'roles_project': roles_project,
             'total_submissions': outstanding + flagged + approved + rejected
+            'new_sites': new_sites,
+            'new_userroles': new_userroles,
+            'new_submissions': new_submissions
     }
         return dashboard_data
 

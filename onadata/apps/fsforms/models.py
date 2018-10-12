@@ -425,7 +425,15 @@ class FInstance(models.Model):
             
         return "/forms/forms/" + str(fxf_id) + "#/" + str(self.instance.id)
 
-        
+    @property
+    def form_count(self):
+        return self.stage_forms.site_form_instances.all().count()
+
+ 
+    def get_abr_form_status(self):
+        return dict(FORM_STATUS)[self.form_status]    
+
+
     def getname(self):
         if self.site_fxf is None:
         
