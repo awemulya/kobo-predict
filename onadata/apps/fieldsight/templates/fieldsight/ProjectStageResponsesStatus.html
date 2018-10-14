@@ -59,7 +59,7 @@ window.app = new Vue({
     <header class="panel-heading clearfix">
                         <h3><i class="la la-tasks"></i>Project Response Status</h3>
             <div class="panel-heading-right">
-              <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSites" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i>{% trans 'Search' %}</a>
+              <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSites" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i>Search</a>
             </div>
           </header>
             <div class="collapse margin-top" id="searchSites">
@@ -69,7 +69,7 @@ window.app = new Vue({
                     <div class="input-group">
                       <input type="text" class="form-control" name="q" v-model="searchQuery" placeholder="Search for..." autofocus />
                       <span class="input-group-btn">
-                        <button class="btn btn-primary" v-on:click="searchDatas" value="Search"><i class="la la-search"></i> {% trans 'Search' %}</button>
+                        <button class="btn btn-primary" v-on:click="searchDatas" value="Search"><i class="la la-search"></i> Search </button>
                       </span>
                     </div>
                   </div>
@@ -180,7 +180,7 @@ window.app = new Vue({
 
     },
     
-    searchDatas : function (){
+    searchDatas: function (){
         var self = this;
         this.rows = [];
         self.loadDatas();
