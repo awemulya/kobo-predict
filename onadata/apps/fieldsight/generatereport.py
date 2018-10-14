@@ -511,7 +511,7 @@ class PDFReport:
         meta_data=[]
         if metas:
             for meta in metas:
-                row=[Paragraph(meta['question_text'], styBackground), Paragraph(meta['answer'], styBackground)]
+                row=[Paragraph(str(meta['question_text']), styBackground), Paragraph(str(meta['answer']), styBackground)]
                 meta_data.append(row)
             
             metat1 = Table(meta_data, colWidths=(60*mm, None))
