@@ -31,9 +31,13 @@
                 <div class="geo-layers">
                     <div class="header">Geo Layers</div>
                     <div class="content">
-                        {% for geo_layer in geo_layers %}
-                        <label><input type="checkbox" name="geo-layer" value="{{ geo_layer.id }}" data-level="{{ geo_layer.level }}"> {{ geo_layer.title }} </label>
-                        {% endfor %}
+                        {% if geo_layers %}
+                            {% for geo_layer in geo_layers %}
+                            <label><input type="checkbox" name="geo-layer" value="{{ geo_layer.id }}" data-level="{{ geo_layer.level }}"> {{ geo_layer.title }} </label>
+                            {% endfor %}
+                        {% else %}
+                            <i> No Geo Layers. </i>
+                        {% endif %}
                     </div>
                 </div>
 				
