@@ -88,7 +88,7 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
         data = []
         ss_index = {}
         stages_rows = []
-        head_row = ["Site ID", "Name", "Address", "Latitude", "longitude", "Status"]
+        head_row = ["Site ID", "Name", "Region ID", "Latitude", "longitude", "Status"]
         
         stages = project.stages.filter(stage__isnull=True)
         for stage in stages:
@@ -107,7 +107,7 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
         for site in project.sites.filter(is_active=True, is_survey=False):
             count += 1
             print count
-            site_row = [site.identifier, site.name, site.address, site.latitude, site.longitude, site.site_status]
+            site_row = [site.identifier, site.name, site.region_id, site.latitude, site.longitude, site.site_status]
             site_row.extend([None]*total_cols)
             for k, v in ss_index.items():
                 if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:

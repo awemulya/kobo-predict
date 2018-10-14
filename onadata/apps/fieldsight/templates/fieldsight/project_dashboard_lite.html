@@ -153,10 +153,10 @@ assigntoken(csrf_token);
 									<div id="export_stage_progress_button"></div>
 								{% endverbatim %}
 								
-								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#exportModal"><i class="la la-table"></i>{% trans 'Excel' %} {% trans 'Responses' %} {% trans 'Report' %}</a>
+								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#exportModal"><i class="la la-table"></i>{% trans 'Custom' %} {% trans 'Report' %} </a>
 								
-								<a class="dropdown-item" href="{% url 'fieldsight:ProjectStageDetailtemplate' obj.pk %}"><i class="la la-clipboard"></i>{% trans 'View' %} {% trans 'Tabular' %}{% trans 'Report' %}</a>
-								<a class="dropdown-item" href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i>{% trans 'Responses' %}</a>
+
+								<a class="dropdown-item" href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i>{% trans 'Form Data' %}</a>
 
 							</div>
 						</span>
