@@ -120,7 +120,10 @@ class Stage(models.Model):
             status = 1
         return status
 
-
+    @property
+    def form_count(self):
+        return self.stage_forms.site_form_instances.all().count()
+        
     @classmethod
     def get_order(cls, site, project, stage):
         if site:
@@ -424,10 +427,6 @@ class FInstance(models.Model):
             fxf_id = self.project_fxf_id
             
         return "/forms/forms/" + str(fxf_id) + "#/" + str(self.instance.id)
-
-    @property
-    def form_count(self):
-        return self.stage_forms.site_form_instances.all().count()
 
  
     def get_abr_form_status(self):

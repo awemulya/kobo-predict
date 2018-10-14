@@ -497,7 +497,7 @@ class StageStatus(LoginRequiredMixin, ProjectRoleMixin, View):
             task = generate_stage_status_report.delay(task_obj.pk, obj.id)
             task_obj.task_id = task.id
             task_obj.save()
-            data = {'status':'true','message':'Report is being generated. You will be notified in once completed. (It take up an hour depending upon number of sites.)'}
+            data = {'status':'true','message':'Report is being generated. You will be notified in once completed. (It take up to an hour depending upon number of sites.)'}
         else:
             data = {'status':'false','message':'Report cannot be generated a the moment.'}
         return JsonResponse(data, status=200)
