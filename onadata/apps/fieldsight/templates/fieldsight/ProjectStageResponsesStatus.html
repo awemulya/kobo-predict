@@ -67,15 +67,14 @@ window.app = new Vue({
   el: '#stagedatas',
   template: `
   <div class="panel-body">
-
             <div class="collapse margin-top" id="searchSites">
-              
                 <div class="row">
                   <div class="col-md-6 ml-md-auto">
                     <div class="input-group">
                       <input type="text" class="form-control" name="q" v-model="searchQuery" placeholder="Search for..." autofocus />
                       <span class="input-group-btn">
                         <button class="btn btn-primary" v-on:click="searchDatas" value="Search"><i class="la la-search"></i> Search </button>
+                        <a class="btn btn-xs btn-primary" v-bind:href="'/fieldsight/project/stages_status_report/'+ project_id +'/'"><i class="la la-table"></i> Export as Xls </a>
                       </span>
                     </div>
                   </div>
@@ -86,12 +85,7 @@ window.app = new Vue({
           
 
     <div class="row"><div class="col-md-12">
-              <div class="widget-info margin-top bg-white padding">
-                <div class="widget-head">
-                  <h4>Tabular Report</h4>
-                  <a class="btn btn-xs btn-primary" v-bind:href="'/fieldsight/project/stages_status_report/'+ project_id +'/'"><i class="la la-table"></i></a>
-                </div>
-                <div class="widget-body">
+              
                   <template v-if="sub_headers.length > 0 && rows.length > 0 ">
                   <div class="table-responsive">
                       <table class="table table-bordered table-hover tabular-report">
@@ -109,7 +103,6 @@ window.app = new Vue({
                           </tr>
                         </thead>
                         <tbody>
-
                           <tr v-for="row in rows">
                           <template v-for="cell in row">
                             <template v-if="typeof cell === 'string'">
@@ -120,10 +113,8 @@ window.app = new Vue({
                             </template>
                           </template>
                           </tr>
-                        
                         </tbody>
                       </table>
-                      
                      
                   </div>
                   <div class="container-fluid">
@@ -139,8 +130,6 @@ window.app = new Vue({
                   </template>
                 </div>
               </div>
-            </div>
-            </div>
             </div>`,
   data: {
         searchQuery: '',
