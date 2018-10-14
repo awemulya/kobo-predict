@@ -145,7 +145,8 @@ window.app = new Vue({
         loading: false,
         project_id: configure_settings.project_id,
         load_next_url : '/fieldsight/ProjectStageResponsesStatus/'+configure_settings.project_id+'/',
-        
+        main_url: '/fieldsight/ProjectStageResponsesStatus/'+configure_settings.project_id+'/',
+
      },
 
   methods:{
@@ -183,6 +184,7 @@ window.app = new Vue({
     searchDatas: function (){
         var self = this;
         this.rows = [];
+        self.load_next_url = self.main_url;
         self.loadDatas(true);
 
     },
