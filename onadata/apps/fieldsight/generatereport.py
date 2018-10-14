@@ -503,7 +503,7 @@ class PDFReport:
         
         elements.append(Spacer(0,10))
 
-        elements.append(Paragraph("Meta Attributes", styles['Normal']))
+        elements.append(Paragraph("Site Information", styles['Normal']))
         metas = generateSiteMetaAttribs(pk)
 
         styBackground = ParagraphStyle('background', parent=self.bodystyle, backColor=colors.white)
@@ -511,15 +511,13 @@ class PDFReport:
         meta_data=[]
         if metas:
             for meta in metas:
-                row=[Paragraph(meta['question_text'], styBackground), meta['answer']]
+                row=[Paragraph(meta['question_text'], styBackground), Paragraph(meta['answer'], styBackground)]
                 meta_data.append(row)
             
             metat1 = Table(meta_data, colWidths=(60*mm, None))
             metat1.setStyle(self.ts1)
             elements.append(metat1)
 
-
-        elements.append(PageBreak())
 
         elements.append(PageBreak())
         elements.append(Paragraph('Responses', self.h2))
