@@ -183,14 +183,14 @@ window.app = new Vue({
     searchDatas: function (){
         var self = this;
         this.rows = [];
-        self.loadDatas();
+        self.loadDatas(true);
 
     },
   },
   created(){
     var self= this;
-    self.loadDatas(true);
-    self.heightLevel();
+    self.loadDatas();
+    
   },
 
 });
