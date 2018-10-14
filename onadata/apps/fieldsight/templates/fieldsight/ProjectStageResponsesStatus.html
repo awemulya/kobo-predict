@@ -40,6 +40,7 @@
                         <h3><i class="la la-tasks"></i>Project Response Status</h3>
             <div class="panel-heading-right">
               <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSites" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i>Search</a>
+              <a class="btn btn-xs btn-primary" href="/fieldsight/project/stages_status_report/{{obj.pk|unlocalize}}/"><i class="la la-table"></i> Export as Xls </a>
             </div>
           </header>
 
@@ -74,13 +75,14 @@ window.app = new Vue({
                       <input type="text" class="form-control" name="q" v-model="searchQuery" placeholder="Search for..." autofocus />
                       <span class="input-group-btn">
                         <button class="btn btn-primary" v-on:click="searchDatas" value="Search"><i class="la la-search"></i> Search </button>
-                        <a class="btn btn-xs btn-primary" v-bind:href="'/fieldsight/project/stages_status_report/'+ project_id +'/'"><i class="la la-table"></i> Export as Xls </a>
+                        
                       </span>
                     </div>
                   </div>
                   <div class="col-md-3"></div>
                 </div>
               </div>
+              <br>
         
           
 
