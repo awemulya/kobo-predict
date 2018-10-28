@@ -2602,9 +2602,15 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
 
         site_row.append([status, len(set(stats.get(site.site.id, {}).get('submission_dates', []))), "cell-inactive"])
         site_row.append([status, stats.get(site.site.id, {}).get('submission_count', 0), "cell-inactive"])
-        site_row.append([status, stats.get(site.site.id, {}).get('flagged', 0), "cell-inactive"])
-        site_row.append([status, stats.get(site.site.id, {}).get('rejected', 0), "cell-inactive"])
-        
+        if 'flagged' in stats.get(site.site.id, {}):
+            site_row.append([status, stats.get(site.site.id, {}).get('flagged', 0), "cell-warning"])
+        else:
+            site_row.append([status, 0, "cell-inactive"])
+
+        if 'rejected' in stats.get(site.site.id, {}):
+            site_row.append([status, stats.get(site.site.id, {}).get('rejected', 0), "cell-danger"])
+        else:
+            site_row.append([status, 0, "cell-inactive"])            
         data.append(site_row)
 
     if sites.has_next():
