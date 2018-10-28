@@ -2497,6 +2497,7 @@ class SiteSearchView(ListView):
 def get_project_stage_status(request, pk, q_keyword,page_list):
     data = []
     ss_id = []
+    stats = {}
     stages_rows = []
     head_row = ["Site ID", "Name"]
     project = get_object_or_404(Project, pk=pk)
@@ -2523,6 +2524,12 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                 ss_id.append(ss.id)
                 substages.append([ss.name, str(stage_count)+"."+str(sub_stage_count)])
 
+    table_head.append({"name":"Site Visits", "rowspan":2, "colspan":1 })
+    table_head.append({"name":"Total Submissions", "rowspan":2, "colspan":1 })
+    table_head.append({"name":"Flagged Submissions", "rowspan":2, "colspan":1 })
+    table_head.append({"name":"Rejected Submissions", "rowspan":2, "colspan":1 }
+    )
+
     
 
     # data.append(head_row)
@@ -2535,9 +2542,26 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         elif el is not None and el.form_status==2: return "Flagged", "cell-warning"
         elif el is not None and el.form_status==1: return "Rejected", "cell-danger"
         else: return "Pending", "cell-primary"
+
+    def setStatistics(submissions):
+        
+        for sub in submissions:
+            stats[sub.site_id] = {}
+
+            if sub.stats == 1:
+                stats[sub.site_id]['rejected'] = stats.get(sub.site_id, {}).get('rejected', 0)
+            elif sub.stats == 2:
+                stats[sub.site_id]['flagged'] = stats.get(sub.site_id, {}).get('flagged', 0)
+
+            stats[sub.site_id]['submission_count'] = stats.get(sub.site_id, {}).get('submission_count', 0) + 1
+            stats[sub.site_id]['submission_dates'] = stats.get(sub.site_id, {}).get('submission_dates', []).append(sub.date)
+
+
+
     if q_keyword is not None:
         site_list = project.sites.filter(name__icontains=q_keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
         get_params = "?q="+q_keyword +"&page="
+    
     else:
         site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id').only('pk')
         site_list = FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('site__stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
@@ -2564,13 +2588,21 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                      get_status = getStatus(substage1.stage_forms.site_form_instances.all()[0])
                      status, style_class = get_status
                      submission_count = substage1.stage_forms.site_form_instances.all().count()
+
+                     setStatistics(substage1.stage_forms.site_form_instances.all())
                 else:
                     status, style_class = "No submission.", "cell-inactive"
                     submission_count = 0
             else:
                  status, style_class = "-", "cell-inactive"
                  submission_count = 0
+            
             site_row.append([status, submission_count, style_class])
+
+        site_row.append([status, len(set(stats.get(site.site.id, {}).get('submission_dates', []))), "cell-inactive"])
+        site_row.append([status, stats.get(site.site.id, {}).get('submission_count', 0), "cell-inactive"])
+        site_row.append([status, stats.get(site.site.id, {}).get('flagged', 0), "cell-inactive"])
+        site_row.append([status, stats.get(site.site.id, {}).get('rejected', 0), "cell-inactive"])
         
         data.append(site_row)
 
