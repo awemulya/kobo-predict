@@ -41,7 +41,8 @@ class Command(BaseCommand):
                     "Century Bank Limited",
                     "Sanima Bank Limited",
                     "Janata Bank Nepal Limited",
-                    "Prabhu Bank Limited"]
+                    "Prabhu Bank Limited",
+                    "Dev Bikas Bank",]
         
         for bank in bank_list:
             new_group, created = Bank.objects.get_or_create(name=bank)

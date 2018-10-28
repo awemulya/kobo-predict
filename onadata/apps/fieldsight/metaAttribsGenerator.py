@@ -39,7 +39,7 @@ def generateSiteMetaAttribs(pk):
                 if meta.get('question_type') == "Form":
                     fxf = FieldSightXF.objects.filter(site_id=site.id, fsform_id=int(meta.get('form_id', "0")))
                     if fxf:
-                        sub = fxf[0].project_form_instances.filter(site_id=pk).order_by('-pk')[:1]
+                        sub = fxf[0].site_form_instances.filter(site_id=pk).order_by('-pk')[:1]
                         if sub:
 
                             sub_answers = sub[0].instance.json
