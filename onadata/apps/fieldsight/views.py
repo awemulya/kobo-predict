@@ -2555,7 +2555,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                 stats[sub.site_id]['flagged'] = stats.get(sub.site_id, {}).get('flagged', 0)
 
             stats[sub.site_id]['submission_count'] = stats.get(sub.site_id, {}).get('submission_count', 0) + 1
-            stats[sub.site_id]['submission_dates'] = stats.get(sub.site_id, {}).get('submission_dates', []).append(sub.date.date())
+            stats[sub.site_id]['submission_dates'] = stats.get(sub.site_id, {}).get('submission_dates', []) + [sub.date.date()]
 
 
 
