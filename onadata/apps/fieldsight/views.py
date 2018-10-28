@@ -2546,7 +2546,8 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     def setStatistics(submissions):
         
         for sub in submissions:
-            stats[sub.site_id] = {}
+            if not sub.site_id in stats:
+                stats[sub.site_id] = {}
 
             if sub.form_status == 1:
                 stats[sub.site_id]['rejected'] = stats.get(sub.site_id, {}).get('rejected', 0)
@@ -2554,7 +2555,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                 stats[sub.site_id]['flagged'] = stats.get(sub.site_id, {}).get('flagged', 0)
 
             stats[sub.site_id]['submission_count'] = stats.get(sub.site_id, {}).get('submission_count', 0) + 1
-            stats[sub.site_id]['submission_dates'] = stats.get(sub.site_id, {}).get('submission_dates', []).append(sub.date)
+            stats[sub.site_id]['submission_dates'] = stats.get(sub.site_id, {}).get('submission_dates', []).append(sub.date.date())
 
 
 
