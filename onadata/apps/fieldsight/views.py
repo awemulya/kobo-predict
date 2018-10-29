@@ -2614,6 +2614,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     data = []
     ss_id = []
     stages_rows = []
+    stats = {}
     head_row = ["Site ID", "Name"]
     project = get_object_or_404(Project, pk=pk)
     
@@ -2639,7 +2640,8 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                 ss_id.append(ss.id)
                 substages.append([ss.name, str(stage_count)+"."+str(sub_stage_count)])
 
-    
+    table_head.extend([{"name":"Site Visits", "rowspan":2, "colspan":1 }, {"name":"Total Submissions", "rowspan":2, "colspan":1 }, {"name":"Flagged Submissions", "rowspan":2, "colspan":1 }, {"name":"Rejected Submissions", "rowspan":2, "colspan":1 }])
+
 
     # data.append(head_row)
     def filterbyvalue(seq, value):
@@ -2662,7 +2664,19 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         elif el is not None and el.form_status==0: return "Pending", "cell-primary", count
         else: return "No submission", "cell-inactive", count
 
+    def setStatistics(submissions):
+        for sub in submissions:
+            if sub.site:
+                if not sub.site_id in stats:
+                    stats[sub.site_id] = {}
 
+                if sub.form_status == 1:
+                    stats[sub.site_id]['rejected'] = stats.get(sub.site_id, {}).get('rejected', 0) + 1
+                elif sub.form_status == 2:
+                    stats[sub.site_id]['flagged'] = stats.get(sub.site_id, {}).get('flagged', 0) + 1
+
+                stats[sub.site_id]['submission_count'] = stats.get(sub.site_id, {}).get('submission_count', 0) + 1
+                stats[sub.site_id]['submission_dates'] = stats.get(sub.site_id, {}).get('submission_dates', []) + [sub.date.date()]
 
     if q_keyword is not None:
         site_list = Site.objects.filter(project_id=pk, name__icontains=q_keyword, is_active=True, is_survey=False)
@@ -2687,19 +2701,24 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     except EmptyPage:
     # If page is out of range (e.g. 9999), deliver last page of results.
         sites = paginator.page(paginator.num_pages)
+
+    initial = True
     for site in sites:
         site_row = ["<a href='"+site.get_absolute_url()+"'>"+site.identifier+"</a>", "<a href='"+site.get_absolute_url()+"'>"+site.name+"</a>"]
         
+
         for v in ss_id:
             substage = filterbyvalue(stages, v)
             substage1 = next(substage, None)
             
-            if substage1 is not None:
-                if  substage1.stage_forms.project_form_instances.all():
 
+            if substage1 is not None:
+            
+                if substage1.stage_forms.project_form_instances.all():
+                    if initial:
+                        setStatistics(substage1.stage_forms.project_form_instances.all())
                     status, style_class, submission_count = getStatus(substage1.stage_forms.project_form_instances.all(), site.id)
                      
-
                 else:
                     status, style_class = "No submission.", "cell-inactive"
                     submission_count = 0
@@ -2708,6 +2727,17 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                  submission_count = 0
             site_row.append([status, submission_count, style_class])
         
+        site_row.append([status, len(set(stats.get(site.id, {}).get('submission_dates', []))), "cell-inactive"])
+        site_row.append([status, stats.get(site.id, {}).get('submission_count', 0), "cell-inactive"])
+        if 'flagged' in stats.get(site.id, {}):
+            site_row.append([status, stats.get(site.id, {}).get('flagged', 0), "cell-warning"])
+        else:
+            site_row.append([status, 0, "cell-inactive"])
+
+        if 'rejected' in stats.get(site.id, {}):
+            site_row.append([status, stats.get(site.id, {}).get('rejected', 0), "cell-danger"])
+        else:
+            site_row.append([status, 0, "cell-inactive"])            
         data.append(site_row)
 
     if sites.has_next():
