@@ -34,7 +34,7 @@ def get_form_sub_status(site_id, meta):
 def get_form_ques_ans_status(site_id, meta):
     fxf = FieldSightXF.objects.filter(pk=int(meta.get('form_id', "0")))
     if fxf:
-        sub = fxf[0].project_form_instances.filter(site_id=site_id).order_by('-pk')[:1]
+        sub = fxf[0].project_form_instances.filter(site_id=site_id).order_by('-pk').values('date')[:1]
         if sub:
 
             sub_answers = sub[0].instance.json
