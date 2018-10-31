@@ -538,13 +538,13 @@ def siteDetailsGenerator(project, sites, ws):
                 if question['question_type'] == ['Form','FormSubStat','FormSubCountQuestion','FormQuestionAnswerStatus']:
                     if question['question_type'] == 'Form':
                         columns[question['question_name']] = get_form_answer(site.id, question)
-                    else if question['question_type'] == 'FormSubStat'
+                    elif question['question_type'] == 'FormSubStat'
                         columns[question['question_name']] = get_form_sub_status(site.id, question)
 
-                    else if question['question_type'] == 'FormSubCountQuestion':
+                    elif question['question_type'] == 'FormSubCountQuestion':
                         columns[question['question_name']] = get_form_submission_count(site.id, question)
 
-                    else if question['question_type'] == 'FormQuestionAnswerStatus':
+                    elif question['question_type'] == 'FormQuestionAnswerStatus':
                         columns[question['question_name']] = get_form_ques_ans_status(site.id, question)
 
                 else:
