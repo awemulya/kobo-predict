@@ -180,7 +180,7 @@ assigntoken(csrf_token);
 								{% else %}
 								<a class="dropdown-item" href="{% url 'fieldsight:proj-site-list' obj.id%}"><i class="la la-map-marker"></i>{% trans ' Sites' %}</a>
 								{% endif %}
-								<a href="{% url 'fieldsight:define-site-meta' obj.pk %}" title="" class="dropdown-item"><i class="la la-cogs"></i> {% trans 'Meta' %} {% trans 'Attributes' %}</a>
+								<a href="{% url 'fieldsight:define-site-meta' obj.pk %}" title="" class="dropdown-item"><i class="la la-cogs"></i>  {% trans 'Meta' %} {% trans 'Attributes' %}</a>
 								<a class="dropdown-item" href="{% url 'fieldsight:region-list' obj.pk %}"><i class="la la-cogs"></i>{% trans 'Manage Regions' %}</a>
 								{% verbatim %}
 									<div id="export_button"></div>
@@ -266,7 +266,8 @@ assigntoken(csrf_token);
 									<div class="widget-info widget-scrolling-large-list margin-top bg-white padding" data-mh="eq111">
 										<div class="widget-head">
 											<h4>{% trans 'Regions' %}</h4>
-											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:region-add' obj.pk %} "><i class="la la-plus"></i></a>
+											<!-- <a class="btn btn-xs btn-primary" href="{% url 'fieldsight:region-add' obj.pk %} "><i class="la la-plus"></i></a> -->
+											<a class="btn btn-xs btn-primary" href="{% url 'fieldsight:region-list' obj.pk %}"><i class="la la-cog"></i></a>
 											<a class="btn btn-xs btn-primary" data-toggle="collapse" href="#searchSite" aria-expanded="false" aria-controls="searchSite"><i class="la la-search"></i></a>
 											
 										</div>
