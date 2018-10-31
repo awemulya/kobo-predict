@@ -67,7 +67,10 @@
                           {'id': 'MCQ', 'name': 'Select one'},
                           {'id': 'Link', 'name': 'Draw from another project'},
                           {'id': 'Form', 'name': 'Draw answer from a form'},
-                          {'id': 'FormSubStat', 'name': 'Form submission'}, ];
+                          {'id': 'FormSubStat', 'name': 'Form submission'},
+                          {'id': 'FormSubCountQuestion', 'name':'Form submissions count'},
+                          {'id': 'FormQuestionAnswerStatus', 'name':'Form question answer status'} ];
+     
      
     var SelectComponent = React.createClass({
             
@@ -738,6 +741,126 @@ var FormSubStatQuestion = React.createClass({
             }
         });
 
+    var FormSubCountQuestion = React.createClass({
+            
+            getInitialState: function () {
+                return {questionTypes:questionTypes, editing:false | this.props.is_new, isLoaded: false, forms:this.props.forms, form_index:0, form_id: this.props.link_form_id}
+            },
+
+            componentDidMount() {
+                this.setState({isLoaded: false});
+                let form_index=this.state.forms.indexOf(this.state.forms.find(temp=>temp.id == this.state.form_id));
+                if (form_index < 0){ form_index = 0; }
+                this.setState({form_index:form_index, forms:this.props.forms, isLoaded: true});
+            },
+
+            componentWillReceiveProps(nextProps) {
+                this.setState({isLoaded: false});
+                let form_index=nextProps.forms.indexOf(nextProps.forms.find(temp=>temp.id == nextProps.link_form_id));
+                if (form_index < 0){ form_index = 0; }
+                this.setState({form_index:form_index, forms:nextProps.forms, selected_question:nextProps.selected_question,  isLoaded: true});
+            },
+
+            save: function () {
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, "","", this.props.index);
+            },
+            
+            formChanged: function () {
+                const selectedForm = this.state.forms[this.refs.selectFormRef.value]    
+                this.props.updateForm(selectedForm.id, this.props.index);
+                this.setState({form_index:this.refs.selectFormRef.value, form_id:selectedForm.id}); 
+            },
+
+            remove:function(){
+                this.props.deleteFromForm(this.props.index);
+            },
+
+            edit: function () {
+                this.setState({editing:true})
+            },
+
+            editDone: function () {
+                if (this.props.is_new){
+                    this.props.addtoForm(this.props.index);
+                    this.setState({editing:false})
+                }
+                else{
+                    this.setState({editing:false})
+                }
+                // console.log('save');
+            },
+
+            renderNormal:function(){
+                if(this.state.isLoaded){
+                    return(
+                    
+                        <div className="form-field-item margin-top">
+                            <div className="form-group">
+                                <label className="col-form-label">{this.props.question}:</label>
+                                <span className="field-type"><strong>Type : </strong>{this.props.question_type}</span>
+                                    <div className="clearfix"></div>
+                                    <span>Number of Submissions</span> 
+
+                            </div>
+                            <div className="form-action">
+                                <button className="btn btn-sm btn-primary" onClick={this.edit}><i className="la la-edit"></i></button>
+                                <br/>
+                                <button className="btn btn-sm btn-danger" onClick={this.remove}><i className="la la-close"></i></button>
+                            </div>
+                        </div>
+                   
+                   ); 
+                }else{
+                     return(
+                        <div className="form-field-item margin-top"> 
+                            <div className="form-field-item">
+                                <div className="form-group">
+                                    <label for="input11" className="col-form-label">Loading ... </label>
+                                    
+                                </div>
+                            
+                            </div>
+                        </div>);
+                }
+            },    
+            renderForm:function(){
+                if(this.state.isLoaded){
+                    return(
+                    <div className="form-field-item margin-top">
+                        <div className="form-group">
+                            <label for="input1" className="col-form-label">Input Label:</label>
+                            <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
+                        </div>
+                        <div className="form-group">
+                            <label for="input2" className="col-form-label">Input Type:</label>
+                            <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
+                        </div>
+                        <div className="form-group">
+                            <label className="col-form-label">Select a Form</label>                     
+                            <SelectComponent inputRef={el => this.refs.selectFormRef = el} isProject={true} onChangeFunction={this.formChanged} defaultValue={this.state.form_index} options={this.props.forms} />
+                        </div>    
+                        <button className="btn btn-primary" onClick={this.editDone}><i className={this.props.is_new ? 'la la-plus':'la la-check'}></i> { this.props.is_new ? 'Add to Form':'Preview'}</button>  
+                    </div>
+                   ); 
+                }else{
+                     return(
+                        <div className="form-field-item">
+                            <div className="form-group">
+                                <label for="input11" className="col-form-label">Loading ... </label>     
+                            </div>
+                        </div>);
+                }   
+            },
+            render: function () {
+                if(this.state.editing){
+                        return this.renderForm();
+                    }
+                    else{
+                        return this.renderNormal();   
+                }
+            }
+        });
+
 
     var FormQuestion = React.createClass({
             
@@ -835,6 +958,177 @@ var FormSubStatQuestion = React.createClass({
                                 <span className="field-type pull-right"><strong>Type : </strong>{this.props.question_type}</span>
                                     <div className="clearfix"></div>
                                     <span>Yes/No</span>
+                                                    
+                                
+                            </div>
+                            <div className="form-action">
+                                <button className="btn btn-sm btn-primary" onClick={this.edit}><i className="la la-edit"></i></button>
+                                <br/>
+                                <button className="btn btn-sm btn-danger" onClick={this.remove}><i className="la la-close"></i></button>
+                            </div>
+                        </div>
+                    
+                   ); 
+                }else{
+                     return(
+                        <div className="form-field-item margin-top">
+                            <div className="form-field-item">
+                                <div className="form-group">
+                                    <label for="input11" className="col-form-label">Loading ... </label>    
+                                </div>
+                            </div>
+                        </div>
+                        );
+                }
+            },    
+            renderForm:function(){
+                // console.log(questions);
+                if(this.state.isLoaded){
+                    return(
+                    <div className="form-field-item margin-top">
+                        <div className="form-group">
+                            <label for="input1" className="col-form-label">Input Label:</label>
+                            <input type="text" ref="newText" className="form-control" onChange={this.save} placeholder="Attribute Label" defaultValue={this.props.question}></input>
+                        </div>
+                        <div className="form-group">
+                            <label for="input2" className="col-form-label">Input Type:</label>
+                            <SelectComponent inputRef={el => this.refs.questionType = el} onChangeFunction={this.save} defaultValue={this.props.question_type} options={this.state.questionTypes}/>
+                        </div>
+                        <div className="form-group">
+                            <label className="col-form-label">Select a Form</label>                     
+                            <SelectComponent inputRef={el => this.refs.selectFormRef = el} isProject={true} onChangeFunction={this.formChanged} defaultValue={this.state.form_index} options={this.props.forms} />
+                        </div>
+
+                        <div className="form-group">
+                            <label className="col-form-label">Select a Question</label>                     
+                            <FormSelectComponent inputRef={el => this.refs.formselectQuestionRef = el} onChangeFunction={this.questionChanged} defaultValue={this.state.selected_question} questions={this.state.processed_questions} />
+                        </div>
+                        <button className="btn btn-primary" onClick={this.editDone}><i className={this.props.is_new ? 'la la-plus':'la la-check'}></i> { this.props.is_new ? 'Add to Form':'Preview'}</button>  
+                    </div>
+                   ); 
+                }else{
+                     return(
+                        <div className="form-field-item margin-top"> 
+                            <div className="form-field-item">
+                                <div className="form-group">
+                                    <label for="input11" className="col-form-label">Loading ... </label>
+                                    
+                                </div>
+                            
+                            </div>
+                        </div>
+                        );
+                }
+                
+                
+            },
+            render: function () {
+                if(this.state.editing){
+                        return this.renderForm();
+                    }
+                    else{
+                        return this.renderNormal();   
+                }
+            }
+        });
+
+
+        var FormQuestionAnswerStatus = React.createClass({
+            
+            getInitialState: function () {
+                return {questionTypes:questionTypes, editing:false | this.props.is_new, isLoaded: false, forms:this.props.forms, form_index:0, selected_question:this.props.selected_question, questions:[], processed_questions:{}, form_id: this.props.link_form_id}
+            },
+
+            componentDidMount() {
+                this.setState({isLoaded: false});
+                let form_index=this.state.forms.indexOf(this.state.forms.find(temp=>temp.id == this.state.form_id));
+                var questions = {};
+                if (form_index < 0){ 
+                    form_index = 0; 
+                }
+                else{
+                    questions = parse_form_response(this.props.forms[form_index].json['children']);
+                }
+                this.setState({form_index:form_index, forms:this.props.forms,  processed_questions: questions, isLoaded: true});
+                
+            },
+
+            componentWillReceiveProps(nextProps) {
+                this.setState({isLoaded: false});
+                let form_index=nextProps.forms.indexOf(nextProps.forms.find(temp=>temp.id == nextProps.link_form_id));
+                var questions = {};
+                if (form_index < 0){ 
+                    form_index = 0; 
+                }
+                else{
+                    questions = parse_form_response(nextProps.forms[form_index].json['children']);
+                }
+                this.setState({form_index:form_index, forms:nextProps.forms, processed_questions: questions, selected_question:nextProps.selected_question,  isLoaded: true});
+            },
+
+            save: function () {
+                this.props.updateQuestionText(this.refs.newText.value, this.refs.questionType.value, "","", this.props.index);
+                // console.log('save');
+            },
+            
+
+            questionChanged: function(){
+                let question_name = this.refs.formselectQuestionRef.value;
+                let selected_question = this.state.processed_questions[question_name]
+                console.log(selected_question);
+                this.props.updateSQuestion(selected_question, this.props.index);
+            },
+
+            // updateSelectedQuestion: function(form_id, obj){
+            //     this.props.updateFormQuestion(form_id, this.props.index, obj);
+            // },
+
+            formChanged: function () {
+                // let questions = parse_form_response(this.props.forms[this.state.form_index].json['children']);
+                // this.setState({processed_questions:questions})
+                console.log(this.refs.selectFormRef.value);
+                console.log(this.state.forms);
+                const selectedForm = this.state.forms[this.refs.selectFormRef.value]
+                
+                this.props.updateForm(selectedForm.id, this.props.index);
+                    
+                    //console.log(selectedProject.site_meta_attributes);
+                this.setState({form_index:this.refs.selectFormRef.value, form_id:selectedForm.id});
+                    //console.log(selectedProject.id);
+                    //CLEAR ALL SELECTED METAS ON CHANGE
+                
+            },
+
+            remove:function(){
+                // console.log('Delete pressed.')
+                this.props.deleteFromForm(this.props.index);
+            },
+
+            edit: function () {
+                this.setState({editing:true})
+            },
+
+            editDone: function () {
+                if (this.props.is_new){
+                    this.props.addtoForm(this.props.index);
+                    this.setState({editing:false})
+                }
+                else{
+                    this.setState({editing:false})
+                }
+                // console.log('save');
+            },
+
+            renderNormal:function(){
+                if(this.state.isLoaded){
+                    return(
+                     
+                         <div className="form-field-item margin-top">
+                            <div className="form-group">
+                                <label for="input11" className="col-form-label">{this.props.question}:</label>
+                                <span className="field-type pull-right"><strong>Type : </strong>{this.props.question_type}</span>
+                                    <div className="clearfix"></div>
+                                    <span>Answered / Not Answered</span>
                                                     
                                 
                             </div>

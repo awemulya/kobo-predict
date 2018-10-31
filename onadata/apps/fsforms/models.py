@@ -123,6 +123,13 @@ class Stage(models.Model):
     @property
     def form_count(self):
         return self.stage_forms.site_form_instances.all().count()
+
+    def rejected_submission_count(self):
+        return self.stage_forms.site_form_instances.filter(form_status=1).count()
+
+    def flagged_submission_count(self):
+        return self.stage_forms.site_form_instances.filter(form_status=2).count()
+    
         
     @classmethod
     def get_order(cls, site, project, stage):
@@ -250,6 +257,7 @@ class FieldSightXF(models.Model):
         else:
             return self.project_form_instances.order_by('-pk').values('date')[:1]
 
+    def 
 
     def get_absolute_url(self):
         if self.project:

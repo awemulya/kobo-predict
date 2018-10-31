@@ -2560,14 +2560,29 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
 
 
     if q_keyword is not None:
-        site_list = project.sites.filter(name__icontains=q_keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
+        site_list = project.sites.filter(name__icontains=q_keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id'))).values_list('pk', flat=True)
+
         get_params = "?q="+q_keyword +"&page="
     
     else:
-        site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id').only('pk')
-        site_list = FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('site__stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
+        site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').values_list('site_id', flat=True)
+        instances_id = FInstance.objects.filter(site_id__in=site_list_pre).order_by('site_id', '-id').distinct('site_id').only('pk')
+        site_list = FInstance.objects.filter(pk__in=instances_id).order_by('-id').prefetch_related(Prefetch('site__stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
         get_params = "?page="
 
+    site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {"$in": site_list_pre }}},  { "$group" : { 
+                      "_id" :  { 
+                        "fs_site": "$fs_site",
+                        "date": { "$substr": [ "$start", 0, 10 ] }
+                      },
+                   }
+                 }, { "$group": { "_id": "$_id.fs_site", "visits": { 
+                          "$push": { 
+                              "date":"$_id.date"
+                          }          
+                     }
+                 }}])['result']
+    
     paginator = Paginator(site_list, page_list) # Show 25 contacts per page
     page = request.GET.get('page')
     try:
@@ -2602,6 +2617,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
 
         site_row.append([status, len(set(stats.get(site.site.id, {}).get('submission_dates', []))), "cell-inactive"])
         site_row.append([status, stats.get(site.site.id, {}).get('submission_count', 0), "cell-inactive"])
+
         if 'flagged' in stats.get(site.site.id, {}):
             site_row.append([status, stats.get(site.site.id, {}).get('flagged', 0), "cell-warning"])
         else:

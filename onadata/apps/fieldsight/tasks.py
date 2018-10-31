@@ -26,6 +26,9 @@ from django.core.files.storage import get_storage_class
 from onadata.libs.utils.viewer_tools import get_path
 from PIL import Image
 import pyexcel as p
+from .metaAttribsGenerator import get_form_answer, get_form_sub_status, get_form_submission_count, get_form_submission_count
+from django.conf import settings
+
 def get_images_for_site_all(site_id):
     return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : site_id}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
 
@@ -100,9 +103,14 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
                 for ss in sub_stages:
                     head_row.append("Sub Stage :"+ss.name)
                     ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
+        head_row.extend(["Site Visits", "Submission Count", "Flagged Submission", "Rejected Submission"])
         data.append(head_row)
         total_cols = len(head_row) - 6 # for non stages
         for site in project.sites.filter(is_active=True, is_survey=False):
+            flagged_count = 0 
+            rejected_count = 0
+            submission_count = 0
+
             if site.region:
                 site_row = [site.identifier, site.name, site.region.identifier, site.latitude, site.longitude, site.site_status]
             else:
@@ -113,8 +121,26 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
                 if Stage.objects.filter(project_stage_id=v, site=site).count() == 1:
                     site_sub_stage = Stage.objects.get(project_stage_id=v, site=site)
                     site_row[k] = site_sub_stage.form_count
+                    submission_count += site_row[k]
+                    flagged_count += site_sub_stage.flagged_submission_count
+                    rejected_count += site_sub_stage.flagged_submission_count
                 else:
                     site_row[k] = 0
+
+
+
+            site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": str(site.id)}},  { "$group" : { 
+                  "_id" :  
+                    { "$substr": [ "$start", 0, 10 ] }
+                  
+               }
+             }])['result']
+
+            site_row[-1] = len(site_visits)
+            site_row[-2] = submission_count
+            site_row[-3] = flagged_count
+            site_row[-4] = rejected_count  
+
             data.append(site_row)
 
         p.save_as(array=data, dest_file_name="media/stage-report/{}_stage_data.xls".format(project.id))
@@ -351,8 +377,8 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
 
                 myanswers = {}
                 for question in meta_ques:
-                    myanswers[question['question_name']]=site.get(question['question_name'], "")
-                    
+                    if question['question_type'] not in ['Form','FormSubStat','FormSubCountQuestion','FormQuestionAnswerStatus']
+                        myanswers[question['question_name']]=site.get(question['question_name'], "")
                 
                 _site.site_meta_attributes_ans = myanswers
                 _site.save()
@@ -447,6 +473,8 @@ def siteDetailsGenerator(project, sites, ws):
 
         site_list={}
         meta_ref_sites={}
+        
+        #Optimized query, only one query per link type meta attribute which covers all site's answers.
 
         def generate(project_id, site_map, meta, identifiers, selected_metas):
             project_id = str(project_id)
@@ -507,16 +535,30 @@ def siteDetailsGenerator(project, sites, ws):
             meta_ques = project.site_meta_attributes
             meta_ans = site.site_meta_attributes_ans
             for question in meta_ques:
-                if question['question_name'] in meta_ans:
-                    columns[question['question_name']] = meta_ans[question['question_name']]
+                if question['question_type'] == ['Form','FormSubStat','FormSubCountQuestion','FormQuestionAnswerStatus']:
+                    if question['question_type'] == 'Form':
+                        columns[question['question_name']] = get_form_answer(site.id, question)
+                    else if question['question_type'] == 'FormSubStat'
+                        columns[question['question_name']] = get_form_sub_status(site.id, question)
 
-                    if question['question_type'] == "Link" and meta_ans[question['question_name']] != "":
-                        if question.get('question_name') in meta_ref_sites:
-                            meta_ref_sites[question.get('question_name')].append(meta_ans[question['question_name']])
-                        else:
-                            meta_ref_sites[question.get('question_name')] = [meta_ans[question['question_name']]]
+                    else if question['question_type'] == 'FormSubCountQuestion':
+                        columns[question['question_name']] = get_form_submission_count(site.id, question)
+
+                    else if question['question_type'] == 'FormQuestionAnswerStatus':
+                        columns[question['question_name']] = get_form_ques_ans_status(site.id, question)
+
                 else:
-                    columns[question['question_name']] = ''
+                    if question['question_name'] in meta_ans:
+                        columns[question['question_name']] = meta_ans[question['question_name']]
+
+                        if question['question_type'] == "Link" and meta_ans[question['question_name']] != "":
+                            if question.get('question_name') in meta_ref_sites:
+                                meta_ref_sites[question.get('question_name')].append(meta_ans[question['question_name']])
+                            else:
+                                meta_ref_sites[question.get('question_name')] = [meta_ans[question['question_name']]]
+                    
+                    else:
+                        columns[question['question_name']] = ''
             
             site_list[site.identifier] = columns
         

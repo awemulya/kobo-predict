@@ -1,5 +1,64 @@
 from .models import Project, Site
 from onadata.apps.fsforms.models import FieldSightXF
+
+def get_form_answer(site_id, meta):
+    fxf = FieldSightXF.objects.filter(site_id=site_id, fsform_id=int(meta.get('form_id', "0")))
+    if fxf:
+        sub = fxf[0].site_form_instances.filter(site_id=site_id).order_by('-pk')[:1]
+        if sub:
+
+            sub_answers = sub[0].instance.json
+            answer = sub_answers.get(meta.get('question').get('name') ,'')
+            if meta['question']['type'] in ['photo', 'video', 'audio'] and answer is not "":
+                question_type = "Media"
+                answer = 'http://app.fieldsight.org/attachment/medium?media_file='+ fxf.xf.user.username +'/attachments/'+answer
+        else:
+            answer = "No Submission Yet."
+    else:
+        answer = "No Form"
+    return answer
+
+def get_form_sub_status(site_id, meta):
+    fxf = FieldSightXF.objects.filter(site_id=site_id, fsform_id=int(meta.get('form_id', "0")))
+    if fxf:
+        sub_date = fxf[0].getlatestsubmittiondate()
+        if sub_date:
+            answer = "Last submitted on " + sub_date[0]['date'].strftime("%d %b %Y %I:%M %P")
+        else:
+            answer = "No submission yet."
+    else:
+        answer = "No Form"
+    return answer
+
+
+def get_form_ques_ans_status(site_id, meta):
+    fxf = FieldSightXF.objects.filter(site_id=site_id, fsform_id=int(meta.get('form_id', "0")))
+    if fxf:
+        sub = fxf[0].site_form_instances.filter(site_id=pk).order_by('-pk')[:1]
+        if sub:
+
+            sub_answers = sub[0].instance.json
+            get_answer = sub_answers.get(meta.get('question').get('name'), None)
+
+            if get_answer:
+                answer = "Answered"
+            else:
+                answer = "Not Answered"
+            
+        else:
+            answer = "No Submission Yet."
+    else:
+        answer = "No Form"
+    return answer
+
+def get_form_submission_count(site_id, meta):
+    fxf = FieldSightXF.objects.filter(site_id=site.id, fsform_id=int(meta.get('form_id', "0")))
+    if fxf:
+        answer = fxf[0].project_form_instances.all().count()
+    else:
+        answer = "No Form"
+    return answer
+
 def generateSiteMetaAttribs(pk):
     metas = []
     site = Site.objects.get(pk=pk)
@@ -37,33 +96,20 @@ def generateSiteMetaAttribs(pk):
                 question_type="Normal"
 
                 if meta.get('question_type') == "Form":
-                    fxf = FieldSightXF.objects.filter(site_id=site.id, fsform_id=int(meta.get('form_id', "0")))
-                    if fxf:
-                        sub = fxf[0].site_form_instances.filter(site_id=pk).order_by('-pk')[:1]
-                        if sub:
-
-                            sub_answers = sub[0].instance.json
-                            answer = sub_answers.get(meta.get('question').get('name') ,'')
-                            if meta['question']['type'] in ['photo', 'video', 'audio'] and answer is not "":
-                                question_type = "Media"
-                                answer = 'http://'+request.get_host()+'/attachment/medium?media_file='+ fxf.xf.user.username +'/attachments/'+answer
-                        else:
-                            answer = "No Submission Yet."
-                    else:
-                        answer = "No Form"
+                    answer = get_form_answer(pk, meta)
 
 
 
                 elif meta.get('question_type') == "FormSubStat":
-                    fxf = FieldSightXF.objects.filter(site_id=site.id, fsform_id=int(meta.get('form_id', "0")))
-                    if fxf:
-                        sub_date = fxf[0].getlatestsubmittiondate()
-                        if sub_date:
-                            answer = "Last submitted on " + sub_date[0]['date'].strftime("%d %b %Y %I:%M %P")
-                        else:
-                            answer = "No submission yet."
-                    else:
-                        answer = "No Form"
+                    answer = get_form_sub_status(pk, meta)
+
+                elif meta.get('question_type') == "FormQuestionAnswerStatus":
+                    answer = get_form_ques_ans_status(pk, meta)
+
+
+
+                elif meta.get('question_type') == "FormSubCountQuestion":
+                    answer = get_form_submission_count(pk, meta)
                 else:
                     answer = meta_answer.get(meta.get('question_name'), "")
 
