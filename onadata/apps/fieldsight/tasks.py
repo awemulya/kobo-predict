@@ -377,7 +377,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
 
                 myanswers = {}
                 for question in meta_ques:
-                    if question['question_type'] not in ['Form','FormSubStat','FormSubCountQuestion','FormQuestionAnswerStatus']
+                    if question['question_type'] not in ['Form','FormSubStat','FormSubCountQuestion','FormQuestionAnswerStatus']:
                         myanswers[question['question_name']]=site.get(question['question_name'], "")
                 
                 _site.site_meta_attributes_ans = myanswers
