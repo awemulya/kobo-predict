@@ -535,7 +535,7 @@ def siteDetailsGenerator(project, sites, ws):
             meta_ques = project.site_meta_attributes
             meta_ans = site.site_meta_attributes_ans
             for question in meta_ques:
-                if question['question_type'] == ['Form','FormSubStat','FormSubCountQuestion','FormQuestionAnswerStatus']:
+                if question['question_type'] in ['Form','FormSubStat','FormSubCountQuestion','FormQuestionAnswerStatus']:
                     if question['question_type'] == 'Form':
                         columns[question['question_name']] = get_form_answer(site.id, question)
                     elif question['question_type'] == 'FormSubStat':

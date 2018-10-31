@@ -2,9 +2,9 @@ from .models import Project, Site
 from onadata.apps.fsforms.models import FieldSightXF
 
 def get_form_answer(site_id, meta):
-    fxf = FieldSightXF.objects.filter(site_id=site_id, fsform_id=int(meta.get('form_id', "0")))
+    fxf = FieldSightXF.objects.filter(pk=int(meta.get('form_id', "0")))
     if fxf:
-        sub = fxf[0].site_form_instances.filter(site_id=site_id).order_by('-pk')[:1]
+        sub = fxf[0].project_form_instances.filter(site_id=site_id).order_by('-pk')[:1]
         if sub:
 
             sub_answers = sub[0].instance.json
@@ -19,9 +19,9 @@ def get_form_answer(site_id, meta):
     return answer
 
 def get_form_sub_status(site_id, meta):
-    fxf = FieldSightXF.objects.filter(site_id=site_id, fsform_id=int(meta.get('form_id', "0")))
+    fxf = FieldSightXF.objects.filter(pk=int(meta.get('form_id', "0")))
     if fxf:
-        sub_date = fxf[0].getlatestsubmittiondate()
+        sub_date = fxf[0].project_form_instances.filter(site_id=site_id).order_by('-pk')[:1]
         if sub_date:
             answer = "Last submitted on " + sub_date[0]['date'].strftime("%d %b %Y %I:%M %P")
         else:
@@ -32,9 +32,9 @@ def get_form_sub_status(site_id, meta):
 
 
 def get_form_ques_ans_status(site_id, meta):
-    fxf = FieldSightXF.objects.filter(site_id=site_id, fsform_id=int(meta.get('form_id', "0")))
+    fxf = FieldSightXF.objects.filter(pk=int(meta.get('form_id', "0")))
     if fxf:
-        sub = fxf[0].site_form_instances.filter(site_id=site_id).order_by('-pk')[:1]
+        sub = fxf[0].project_form_instances.filter(site_id=site_id).order_by('-pk')[:1]
         if sub:
 
             sub_answers = sub[0].instance.json
@@ -52,9 +52,9 @@ def get_form_ques_ans_status(site_id, meta):
     return answer
 
 def get_form_submission_count(site_id, meta):
-    fxf = FieldSightXF.objects.filter(site_id=site_id, fsform_id=int(meta.get('form_id', "0")))
+    fxf = FieldSightXF.objects.filter(pk=int(meta.get('form_id', "0")))
     if fxf:
-        answer = fxf[0].project_form_instances.all().count()
+        answer = fxf[0].project_form_instances.filter(site_id=site_id).count()
     else:
         answer = "No Form"
     return answer
