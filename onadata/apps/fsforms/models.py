@@ -123,10 +123,12 @@ class Stage(models.Model):
     @property
     def form_count(self):
         return self.stage_forms.site_form_instances.all().count()
-
+    
+    @property
     def rejected_submission_count(self):
         return self.stage_forms.site_form_instances.filter(form_status=1).count()
-
+    
+    @property
     def flagged_submission_count(self):
         return self.stage_forms.site_form_instances.filter(form_status=2).count()
     
