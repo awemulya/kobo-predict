@@ -26,7 +26,7 @@ from django.core.files.storage import get_storage_class
 from onadata.libs.utils.viewer_tools import get_path
 from PIL import Image
 import pyexcel as p
-from .metaAttribsGenerator import get_form_answer, get_form_sub_status, get_form_submission_count, get_form_submission_count
+from .metaAttribsGenerator import get_form_answer, get_form_sub_status, get_form_submission_count, get_form_ques_ans_status
 from django.conf import settings
 
 def get_images_for_site_all(site_id):
