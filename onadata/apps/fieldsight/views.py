@@ -2570,7 +2570,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         site_list = FInstance.objects.filter(pk__in=instances_id).order_by('-id').prefetch_related(Prefetch('site__stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
         get_params = "?page="
 
-    site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {"$in": site_list_pre }}},  { "$group" : { 
+    site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {"$in": list(site_list_pre) }}},  { "$group" : { 
                       "_id" :  { 
                         "fs_site": "$fs_site",
                         "date": { "$substr": [ "$start", 0, 10 ] }
