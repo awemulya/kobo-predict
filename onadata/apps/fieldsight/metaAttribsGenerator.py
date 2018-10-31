@@ -52,7 +52,7 @@ def get_form_ques_ans_status(site_id, meta):
     return answer
 
 def get_form_submission_count(site_id, meta):
-    fxf = FieldSightXF.objects.filter(site_id=site.id, fsform_id=int(meta.get('form_id', "0")))
+    fxf = FieldSightXF.objects.filter(site_id=site_id, fsform_id=int(meta.get('form_id', "0")))
     if fxf:
         answer = fxf[0].project_form_instances.all().count()
     else:
