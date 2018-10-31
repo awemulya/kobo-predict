@@ -257,7 +257,6 @@ class FieldSightXF(models.Model):
         else:
             return self.project_form_instances.order_by('-pk').values('date')[:1]
 
-    def 
 
     def get_absolute_url(self):
         if self.project:
