@@ -1379,11 +1379,11 @@ var FormSubStatQuestion = React.createClass({
             delete arr[i].project_id;
             delete arr[i].metas;
         }
-        else if(arr[i].question_type == "Form" && questionType != "Form"){
+        else if((arr[i].question_type == "Form" && questionType != "Form") || (questionType == "FormQuestionAnswerStatus" && arr[i].question_type != "FormQuestionAnswerStatus")){
             delete arr[i].form_id;
             delete arr[i].question;
         }
-        else if(arr[i].question_type == "FormSubStat" && questionType != "FormSubStat"){
+        else if((arr[i].question_type == "FormSubStat" && questionType != "FormSubStat") || (arr[i].question_type == "FormSubCountQuestion" && questionType != "FormSubCountQuestion")){
             delete arr[i].form_id;
         }
 
@@ -1394,11 +1394,11 @@ var FormSubStatQuestion = React.createClass({
             arr[i].project_id = 0;
             arr[i].metas={};
         }
-        else if(questionType == "Form" && arr[i].question_type != "Form"){
+        else if((questionType == "Form" && arr[i].question_type != "Form") || (questionType == "FormQuestionAnswerStatus" && arr[i].question_type != "FormQuestionAnswerStatus")){
             arr[i].form_id = 0;
             arr[i].question={};
         }
-        else if(questionType == "FormSubStat" && arr[i].question_type != "FormSubStat"){
+        else if((questionType == "FormSubStat" && arr[i].question_type != "FormSubStat") || (arr[i].question_type == "FormSubCountQuestion" && questionType != "FormSubCountQuestion")){
             arr[i].form_id = 0;
         }
 
@@ -1540,6 +1540,20 @@ var FormSubStatQuestion = React.createClass({
                         var renderedQuestion= <FormQuestion key={is_new?id:i} index={is_new?id:i} addtoForm={this.addtoForm} is_new={is_new} question_obj={question} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateForm={this.updateForm} link_form_id ={question.form_id} updateSQuestion={this.updateSQuestion} selected_question={question.question.name} deleteFromForm={this.removeQuestion} forms={this.state.forms} />                        
                        
                   
+            }
+            else if(question.question_type=="FormQuestionAnswerStatus"){
+                
+                        
+                        var renderedQuestion= <FormQuestionAnswerStatus key={is_new?id:i} index={is_new?id:i} addtoForm={this.addtoForm} is_new={is_new} question_obj={question} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateForm={this.updateForm} link_form_id ={question.form_id} updateSQuestion={this.updateSQuestion} selected_question={question.question.name} deleteFromForm={this.removeQuestion} forms={this.state.forms} />                        
+                       
+                  
+            }
+            else if(question.question_type=="FormSubCountQuestion"){
+                
+                       
+                        var renderedQuestion= <FormSubCountQuestion key={is_new?id:i} index={is_new?id:i} addtoForm={this.addtoForm} is_new={is_new} question_obj={question} question={question.question_text} question_type={question.question_type}  updateQuestionText={this.updateQuestion} updateForm={this.updateForm} link_form_id ={question.form_id} deleteFromForm={this.removeQuestion} forms={this.state.forms} />                        
+                        
+                   
             }
             else{
 

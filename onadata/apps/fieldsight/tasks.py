@@ -123,7 +123,7 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
                     site_row[k] = site_sub_stage.form_count
                     submission_count += site_row[k]
                     flagged_count += site_sub_stage.flagged_submission_count
-                    rejected_count += site_sub_stage.flagged_submission_count
+                    rejected_count += site_sub_stage.rejected_submission_count
                 else:
                     site_row[k] = 0
 
@@ -136,10 +136,10 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
                }
              }])['result']
 
-            site_row[-1] = len(site_visits)
-            site_row[-2] = submission_count
-            site_row[-3] = flagged_count
-            site_row[-4] = rejected_count  
+            site_row[-1] = rejected_count
+            site_row[-2] = flagged_count
+            site_row[-3] = submission_count
+            site_row[-4] = len(site_visits) 
 
             data.append(site_row)
 
