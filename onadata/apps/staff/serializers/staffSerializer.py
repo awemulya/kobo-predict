@@ -24,12 +24,11 @@ class StaffSerializer(serializers.ModelSerializer):
     class Meta:
         model = Staff
         exclude = ('created_by', 'team', 'created_date', 'updated_date', 'is_deleted',)
-        read_only_fields = ('location')
+        
 
     def create(self, validated_data):
         bank_id = validated_data.pop('bank') if 'bank' in validated_data else None
-        p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')), srid=4326)
-        validated_data.update({'location':p})
+        
         instance = Staff.objects.create(**validated_data)
         try:
             if bank_id:
@@ -51,11 +50,19 @@ class AttendanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendance
         exclude = ('created_date', 'updated_date', 'submitted_by', 'team', 'is_deleted')
+        read_only_fields = ('location')
 
     def create(self, validated_data):
         try:
+
             staffs = validated_data.pop('staffs') if 'staffs' in validated_data else []
             
+            if 'latitude' in validated_data and 'longitude' in validated_data:
+                p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')), srid=4326)
+                validated_data.update({'location':p})
+            else:
+                raise ValidationError("No location coordinates provided.")
+
             if not staffs:
                 raise ValidationError("Got Empty staffs list.")
 

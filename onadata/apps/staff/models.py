@@ -106,7 +106,6 @@ class Staff(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     contract_start = models.DateField(blank=True, null=True)
     contract_end = models.DateField(blank=True, null=True)
-    location = PointField(geography=True, srid=4326, blank=True, null=True)
     logs = GenericRelation('eventlog.FieldSightLog')
     is_deleted = models.BooleanField(default=False)
 
@@ -121,7 +120,7 @@ class Staff(models.Model):
     def longitude(self):
         if self.location:
             return self.location.x
-            
+
     def __unicode__(self):
         return str(self.first_name) +" "+  str(self.last_name)
 
@@ -153,11 +152,21 @@ class Attendance(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)
+    location = PointField(geography=True, srid=4326, blank=True, null=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     class Meta:
         unique_together = [('attendance_date', 'team', 'is_deleted'),]
 
+    @property
+    def latitude(self):
+        if self.location:
+            return self.location.y
+
+    @property
+    def longitude(self):
+        if self.location:
+            return self.location.x
     def save(self, *args, **kwargs):
         attendance_date = datetime.datetime.strptime(str(self.attendance_date), '%Y-%m-%d')
         if attendance_date > datetime.datetime.today():
