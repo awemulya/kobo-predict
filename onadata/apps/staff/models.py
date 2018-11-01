@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import PermissionDenied
+from django.contrib.gis.db.models import PointField
 # Create your models here.
 
 STAFF_TYPES = (
@@ -105,9 +106,22 @@ class Staff(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     contract_start = models.DateField(blank=True, null=True)
     contract_end = models.DateField(blank=True, null=True)
+    location = PointField(geography=True, srid=4326, blank=True, null=True)
     logs = GenericRelation('eventlog.FieldSightLog')
     is_deleted = models.BooleanField(default=False)
 
+
+
+    @property
+    def latitude(self):
+        if self.location:
+            return self.location.y
+
+    @property
+    def longitude(self):
+        if self.location:
+            return self.location.x
+            
     def __unicode__(self):
         return str(self.first_name) +" "+  str(self.last_name)
 

@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^api/staff/(?P<team_id>[0-9]+)/$', StaffViewSet.as_view({'get': 'list', 'post': 'create'}), name='staff-list-api'),
     url(r'^api/staff/(?P<team_id>[0-9]+)/detail/(?P<pk>[0-9]+)/$', StaffUpdateViewSet.as_view({'get': 'list', 'post': 'update'}), name='staff-detail-api'),
     url(r'^api/attendance/(?P<team_id>[0-9]+)/$', AttendanceViewSet.as_view({'get': 'list', 'post': 'create'}), name='attendance-api'),
-    url(r'^api/team/staff/(?P<team_id>[0-9]+)/$',StafflistViewSet.as_view({'get':'list'}), name="api-staffs"),
+    url(r'^api/team/staff/(?P<team_id>[0-9]+)/$', StafflistViewSet.as_view({'get':'list'}), name="api-staffs"),
     
     url(r'^team-list/(?P<pk>[0-9]+)',TeamList.as_view(), name="team-list"),
     url(r'^team/(?P<pk>[0-9]+)/$',TeamDetail.as_view(), name="team-detail"),

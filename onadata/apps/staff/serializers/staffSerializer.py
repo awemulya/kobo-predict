@@ -24,9 +24,12 @@ class StaffSerializer(serializers.ModelSerializer):
     class Meta:
         model = Staff
         exclude = ('created_by', 'team', 'created_date', 'updated_date', 'is_deleted',)
+        read_only_fields = ('location')
 
     def create(self, validated_data):
         bank_id = validated_data.pop('bank') if 'bank' in validated_data else None
+        p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')), srid=4326)
+        validated_data.update({'location':p})
         instance = Staff.objects.create(**validated_data)
         try:
             if bank_id:
@@ -47,31 +50,29 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attendance
-        exclude = ('created_date', 'updated_date', 'submitted_by', 'team')
+        exclude = ('created_date', 'updated_date', 'submitted_by', 'team', 'is_deleted')
 
     def create(self, validated_data):
         try:
             staffs = validated_data.pop('staffs') if 'staffs' in validated_data else []
-            instance = Attendance.objects.create(**validated_data)
-            instance.save()
-        
             
             if not staffs:
-                instance.delete()
                 raise ValidationError("Got Empty staffs list.")
 
             else:
                 for staff in staffs:
-                    if int(staff.team_id) != int(instance.team_id):
-                        instance.delete()
+                    if int(staff.team_id) != int(validated_data.get('team_id')):            
                         raise ValidationError("Got error on: Staffs entered has different team.")
-                
+            
+            instance = Attendance.objects.create(**validated_data)
             instance.staffs = staffs
             instance.save()
         
         except Exception as e:
             raise ValidationError("Got error on: {}".format(e))
-        return instance
+
+        else:
+            return instance
 
 
 
