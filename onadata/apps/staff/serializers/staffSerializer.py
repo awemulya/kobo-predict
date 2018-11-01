@@ -4,7 +4,7 @@ from rest_framework import serializers
 from onadata.apps.staff.models import Staff, Attendance, Team, Bank
 from onadata.apps.users.serializers import UserSerializer
 from rest_framework.exceptions import ValidationError
-
+from django.contrib.gis.geos import Point
 
 class BankSerializer(serializers.ModelSerializer):
 
@@ -46,11 +46,13 @@ class StaffSerializer(serializers.ModelSerializer):
         return instance
 
 class AttendanceSerializer(serializers.ModelSerializer):
+    latitude = serializers.CharField(write_only=True)
+    longitude = serializers.CharField(write_only=True)
 
     class Meta:
         model = Attendance
         exclude = ('created_date', 'updated_date', 'submitted_by', 'team', 'is_deleted')
-        read_only_fields = ('location')
+        read_only_fields = ('location',)
 
     def create(self, validated_data):
         try:

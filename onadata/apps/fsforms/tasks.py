@@ -12,7 +12,7 @@ from onadata.apps.fsforms.utils import send_sub_stage_deployed_project, send_bul
     send_bulk_message_stages_deployed_project
 
 
-@shared_task(max_retries=10)
+@shared_task(max_retries=10, soft_time_limit=4200)
 def copy_allstages_to_sites(pk):
     try:
         project = Project.objects.get(pk=pk)
@@ -59,7 +59,7 @@ def copy_allstages_to_sites(pk):
         raise copy_allstages_to_sites.retry(countdown=seconds_to_wait)
 
 
-@shared_task(max_retries=10)
+@shared_task(max_retries=10, soft_time_limit=4200)
 def copy_stage_to_sites(main_stage, pk):
     try:
         project = Project.objects.get(pk=pk)
@@ -129,7 +129,7 @@ def copy_stage_to_sites(main_stage, pk):
         # First countdown will be 1.0, then 2.0, 4.0, etc.
         raise copy_stage_to_sites.retry(countdown=seconds_to_wait)
 
-@shared_task(max_retries=10)
+@shared_task(max_retries=10, soft_time_limit=4200)
 def copy_sub_stage_to_sites(sub_stage, pk):
     try:
         project = Project.objects.get(pk=pk)
@@ -203,7 +203,7 @@ def copy_sub_stage_to_sites(sub_stage, pk):
         # First countdown will be 1.0, then 2.0, 4.0, etc.
         raise copy_sub_stage_to_sites.retry(countdown=seconds_to_wait)
 
-@shared_task(max_retries=10)
+@shared_task(max_retries=10, soft_time_limit=3200)
 def copy_schedule_to_sites(schedule, fxf_status, pk):
     try:
         fxf = schedule.schedule_forms
@@ -238,7 +238,7 @@ def copy_schedule_to_sites(schedule, fxf_status, pk):
         raise copy_schedule_to_sites.retry(countdown=seconds_to_wait)
 
 
-@shared_task(max_retries=10)
+@shared_task(max_retries=10, soft_time_limit=4200)
 def copy_to_sites(fxf):
     try:
         with transaction.atomic():
