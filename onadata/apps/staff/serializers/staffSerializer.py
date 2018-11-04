@@ -62,8 +62,8 @@ class AttendanceSerializer(serializers.ModelSerializer):
             if 'latitude' in validated_data and 'longitude' in validated_data:
                 p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')), srid=4326)
                 validated_data.update({'location':p})
-            else:
-                raise ValidationError("No location coordinates provided.")
+            # else:
+            #     raise ValidationError("No location coordinates provided.")
 
             if not staffs:
                 raise ValidationError("Got Empty staffs list.")
