@@ -38,14 +38,7 @@
 {% load pagination_tags %}
 {% load filters %}
 
-<!-- <div id="example">
-  <my-component></my-component>
-</div>
- -->
- <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<div id="allmetass"></div> -->
+
 
 
 <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
@@ -219,10 +212,10 @@
 
 									{% endwith %}
 									</div>
-								<div class="widget-info margin-top bg-white padding gh-col">
+								<div class="widget-info widget-scrolling-list margin-top bg-white padding gh-col">
 									<div class="widget-head">
-										<h4><a href="#">{% trans 'About' %}</a></h4>
-										<a href="#" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#moreMetaAttribute">
+										<!-- <h4><a href="#">{% trans 'About' %}</a></h4> -->
+									<!-- 	<a href="#" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#moreMetaAttribute">
 											<i class="la la-plus"></i>
 										</a>
 										<div class="modal fade" id="moreMetaAttribute" tabindex="-1" role="dialog" aria-labelledby="moreMetaAttributeTitle" aria-hidden="true">
@@ -241,25 +234,25 @@
 													</div>
 												</div>
 											</div>
-										</div>
+										</div> -->
 									</div>
 										<div class="widget-body">
 
 											<!-- <p>
 											{{ obj.public_desc}}</p> -->
 
-											<h6><b>{% trans 'Description' %}</b></h6><br>
+											<!-- <h6><b>{% trans 'Description' %}</b></h6><br>
 											<p>{{ obj.public_desc}}</p>
 											<br>
 											<h6><b>{% trans 'Additional Information' %}</b></h6>
 											<br><p>
 											{{ obj.additional_desc}}</p>
-											<br>
+											<br> -->
 
 
-											{% if meta_data %}
+											
 											<h6><strong>Meta Data</strong></h6>
-											<div class="row">
+<!-- 											<div class="row">
 											{% if meta_data|length > 4 %}
 												{% for data in meta_data|slice:":4" %}
 													{% for key, value in data.items %}
@@ -281,9 +274,10 @@
 													{% endfor %}
 												{% endfor %}
 											{% endif %}
+											</div> -->
+											<div class="row" id="allmetas">
+												Loading ...
 											</div>
-											{% endif %}
-
 										</div>
 								</div>
 								
@@ -761,6 +755,8 @@
                 return {}
             },         
 
+				
+
             eachMeta: function (obj, j){            
                
                 const style={
@@ -778,8 +774,10 @@
                     return (
                         <div>
                         <br/>
-                        <div style={style}>
-                                <b>{obj.question_text} :</b> <a href={'/fieldsight/redirect/'+obj.project_id +'/site/?identifier='+obj.answer}>{obj.answer}</a>
+                        <div className="col-md-3">
+                        	<div className="meta-item">
+                                <p><strong>{obj.question_text} :</strong><br> <a href={'/fieldsight/redirect/'+obj.project_id +'/site/?identifier='+obj.answer}>{obj.answer}</a></p>
+                        	<div>
                         </div>
                         {
                             submetas
@@ -787,17 +785,23 @@
                         </div>
                         )
                 }
+
+
                 else if(obj.question_type=='Media'){                  
                     return(
-		                <div style={style}>
-		                    {obj.question_text} : <a href="{obj.answer}">Attachment</a>
+		                <div className="col-md-3">
+		                	<div className="meta-item">
+		                    	<p><strong>{obj.question_text} :</strong><br><a href="{obj.answer}">Attachment</a></p>
+		                	</div>
 		                </div>)
                 	
                 }
                 else{
                 return(
-                <div style={style}>
-                    {obj.question_text} : {obj.answer}
+                <div className = "col-md-3">
+                	<div className = "meta-item">
+                    	<p><strong>{obj.question_text} :</strong><br> {obj.answer}</p>
+                	</div>
                 </div>)
                 }
             },
