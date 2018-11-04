@@ -777,7 +777,7 @@
                         <div className="col-md-3">
                         	<div className="meta-item">
                                 <p><strong>{obj.question_text} :</strong><br/> <a href={'/fieldsight/redirect/'+obj.project_id +'/site/?identifier='+obj.answer}>{obj.answer}</a></p>
-                        	<div>
+                        	</div>
                         </div>
                         {
                             submetas
@@ -787,7 +787,8 @@
                 }
 
 
-                else if(obj.question_type=='Media'){                  
+
+                elif (obj.question_type=='Media'){                  
                     return(
 		                <div className="col-md-3">
 		                	<div className="meta-item">
