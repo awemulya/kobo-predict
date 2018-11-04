@@ -275,7 +275,7 @@
 												{% endfor %}
 											{% endif %}
 											</div> -->
-											<div class="row" id="allmetas">
+											<div id="allmetas">
 												Loading ...
 											</div>
 										</div>
@@ -774,7 +774,7 @@
                     return (
                         <div>
                         <br/>
-                        <div className="col-md-3">
+                        <div className="col-md-3 padding">
                         	<div className="meta-item">
                                 <p><strong>{obj.question_text} :</strong><br/> <a href={'/fieldsight/redirect/'+obj.project_id +'/site/?identifier='+obj.answer}>{obj.answer}</a></p>
                         	</div>
@@ -790,7 +790,7 @@
 
                 else if (obj.question_type=='Media'){                  
                     return(
-		                <div className="col-md-3">
+		                <div className="col-md-3 padding">
 		                	<div className="meta-item">
 		                    	<p><strong>{obj.question_text} :</strong><br/><a href="{obj.answer}">Attachment</a></p>
 		                	</div>
@@ -799,7 +799,7 @@
                 }
                 else{
                 return(
-                <div className = "col-md-3">
+                <div className = "col-md-3 padding">
                 	<div className = "meta-item">
                     	<p><strong>{obj.question_text} :</strong><br/> {obj.answer}</p>
                 	</div>
@@ -857,7 +857,7 @@
             
             render: function () {
                 return (
-                		<div>
+                		<div className="row">
                 		<MetaAttributes children={this.state.metas} indent={0}/>
                 		</div>
                 	)
