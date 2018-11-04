@@ -212,3 +212,12 @@ def send_message_xf_changed(fxf=None, form_type=None, id=None):
                'form':{'xfid': fxf.xf.id_string, 'form_id': fxf.id,
                        'form_type':form_type,'form_source_id':id,'form_name':fxf.xf.title}}
     Device.objects.filter(name__in=emails).send_message(message)
+
+
+def get_version(xml):
+    import re
+    p = re.compile('version="(.*)">')
+    m = p.search(xml)
+    if m:
+        return m.group(1)
+    return None
