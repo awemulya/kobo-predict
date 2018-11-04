@@ -15,7 +15,8 @@ def get_form_answer(site_id, meta):
         else:
             answer = "No Submission Yet."
     else:
-        answer = "No Form"
+        # answer = "No Form"
+        answer = "No Submission Yet."
     return answer
 
 def get_form_sub_status(site_id, meta):
@@ -27,7 +28,8 @@ def get_form_sub_status(site_id, meta):
         else:
             answer = "No submission yet."
     else:
-        answer = "No Form"
+        # answer = "No Form"
+        answer = "No Submission Yet."
     return answer
 
 
@@ -48,7 +50,8 @@ def get_form_ques_ans_status(site_id, meta):
         else:
             answer = "No Submission Yet."
     else:
-        answer = "No Form"
+        # answer = "No Form"
+        answer = "No Submission Yet."
     return answer
 
 def get_form_submission_count(site_id, meta):
@@ -56,7 +59,8 @@ def get_form_submission_count(site_id, meta):
     if fxf:
         answer = fxf[0].project_form_instances.filter(site_id=site_id).count()
     else:
-        answer = "No Form"
+        # answer = "No Form"
+        answer = "No Submission Yet."
     return answer
 
 def generateSiteMetaAttribs(pk):
