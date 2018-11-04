@@ -405,6 +405,7 @@ class FInstance(models.Model):
     date = models.DateTimeField(auto_now=True)
     submitted_by = models.ForeignKey(User, related_name="supervisor")
     is_deleted = models.BooleanField(default=False)
+    version = models.CharField(max_length=32, default=u'')
     objects = FInstanceManager()
     deleted_objects = FInstanceDeletedManager()
     logs = GenericRelation('eventlog.FieldSightLog')
