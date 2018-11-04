@@ -46,8 +46,8 @@ class StaffSerializer(serializers.ModelSerializer):
         return instance
 
 class AttendanceSerializer(serializers.ModelSerializer):
-    latitude = serializers.CharField(write_only=True)
-    longitude = serializers.CharField(write_only=True)
+    latitude = serializers.CharField(write_only=True, required=False)
+    longitude = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = Attendance
