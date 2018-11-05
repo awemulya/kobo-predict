@@ -81,7 +81,7 @@ def site_download_zipfile(task_prog_obj_id, size):
                                        extra_message="@error " + u'{}'.format(e.message))
         buffer.close()                                                                      
 
-@shared_task(time_limit=4200, soft_time_limit=4200)
+@shared_task(time_limit=7200, soft_time_limit=7200)
 def generate_stage_status_report(task_prog_obj_id, project_id):
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     project = Project.objects.get(pk=project_id)
@@ -598,7 +598,7 @@ def siteDetailsGenerator(project, sites, ws):
         return False, e.message
 
 
-@shared_task(time_limit=3200, soft_time_limit=3200)
+@shared_task(time_limit=7200, soft_time_limit=7200)
 def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id):
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
