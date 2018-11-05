@@ -484,7 +484,7 @@
             <LinkQuestion key={i} index={i} answer={item.answer} question={item.question_text} project_id={item.project_id} sites={this.state.linkQ_options[item.project_id] || []} question_help={item.question_help} updateAnswerText={this.updateAnswer} />
           );
         }
-        else if(item.question_type == "Text" || item.question_type="Number" || item.question_type="Date"){
+        else if(item.question_type == "Text" || item.question_type=="Number" || item.question_type=="Date"){
           return(
             <Question key={i} index={i} answer={item.answer} question={item.question_text} question_type={item.question_type} question_help={item.question_help} question_placeholder={item.question_placeholder} updateAnswerText={this.updateAnswer} />   
           );
