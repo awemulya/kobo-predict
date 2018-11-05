@@ -19,4 +19,4 @@ class Command(BaseCommand):
 
         	projectGeoJSON.generate_new()
         self.stdout.write('Created "%s " new projects geo data with success!' % (new_projects))
-        self.stdout.write('DateTime Log "%s " ! ' % (str(datetime.now()))
+        self.stdout.write('DateTime Log "%s " ' % (str(datetime.now()))
