@@ -2267,14 +2267,14 @@ class DeleteFieldsightXF(FormMixin, View):
 
 def download_submission(request, pk):
     finstance = get_object_or_404(FInstance, pk__exact=pk)
-    response = response_with_mimetype_and_name('xml',  show_date=False)
+    response = response_with_mimetype_and_name('xml',  str(finstance.instance.id), show_date=False)
     response.content = finstance.instance.xml
     return response
 
 def download_xml_version(request, pk):
     finstance = get_object_or_404(FInstance, pk__exact=pk)
-    response = response_with_mimetype_and_name('xml',  show_date=False)
-    submission_version = finstance.version
+    response = response_with_mimetype_and_name('xml',  str(finstance.instance.id),  show_date=False)
+    submission_version = finstance.get_version
     if finstance.project_fxf:
         xml = finstance.project_fxf.xf.xml
         xf = finstance.project_fxf.xf
@@ -2292,10 +2292,13 @@ def download_xml_version(request, pk):
 
 @api_view(['GET'])
 def get_attachments_of_finstance(request,pk):
+    from django.core.files.storage import get_storage_class
+    default_storage = get_storage_class()()
     finstance = get_object_or_404(FInstance, pk__exact=pk)
     response_list = []
     attachemtns = Attachment.objects.filter(instance=finstance.instance)
     for a in attachemtns:
-        response_list.append(a.media_file.url)
-        return Response(response_list, status=status.HTTP_200_OK)
+        link = default_storage.url(a.media_file.url)
+        response_list.append(link)
+    return Response(response_list, status=status.HTTP_200_OK)
 
