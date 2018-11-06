@@ -2299,6 +2299,7 @@ def get_attachments_of_finstance(request,pk):
     attachemtns = Attachment.objects.filter(instance=finstance.instance)
     for a in attachemtns:
         link = default_storage.url(a.media_file.url)
-        response_list.append(link)
+        # response_list.append(link)
+        response_list.append(a.media_file.url)
     return Response(response_list, status=status.HTTP_200_OK)
 
