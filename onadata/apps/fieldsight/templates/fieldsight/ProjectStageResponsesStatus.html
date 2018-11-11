@@ -5,56 +5,60 @@
 {% load filters %}
 
 <!-- <div class="collapse" id="searchOrganization">
-							
-								<div class="row">
-									<div class="col-md-6 ml-md-auto">
-										<div class="input-group">
-										  <input type="text" name="q" placeholder="Search for..." data-bind="value: searchKeyword"/>
-										  <span class="input-group-btn">
-											  <button class="btn btn-primary" data-bind="click: dbsearchallsites" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
-										  </span>
-										</div>
-									</div>
-									<div class="col-md-3"></div>
-								</div>
-						</div>		 -->
+              
+                <div class="row">
+                  <div class="col-md-6 ml-md-auto">
+                    <div class="input-group">
+                      <input type="text" name="q" placeholder="Search for..." data-bind="value: searchKeyword"/>
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary" data-bind="click: dbsearchallsites" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-3"></div>
+                </div>
+            </div>     -->
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript">
     var static_url ="{{ STATIC_URL }}";
     configure_settings =  {};
     {% load l10n %}
-  	configure_settings.project_id = {{obj.pk|unlocalize}};						
+    configure_settings.project_id = {{obj.pk|unlocalize}};            
     </script>
-		<div id="main-content" class="padding">
-			<nav aria-label="breadcrumb" role="navigation">
-				<ol class="breadcrumb">
-					{% block breadcrumbs %}
-					<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
-					<li class="breadcrumb-item active" aria-current="page">{% trans 'Submissions' %} {% trans 'Data' %}</li>
-					{% endblock %}
-				</ol>
-			</nav>
-				<section class="panel">
-                    <header class="panel-heading clearfix">
-                        <h3><i class="la la-tasks"></i>{% block page-title %}{% trans 'Projects' %} {% trans 'Response' %} {% trans 'Status' %}{% endblock %}</h3>
-						<div class="panel-heading-right">
-							<a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchOrganization" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i>{% trans 'Search' %}</a>
-						</div>
-                    </header>
-					{% verbatim %}
-					<div id="stagedatas" class="panel-body">
+    <div id="main-content" class="padding">
+      <nav aria-label="breadcrumb" role="navigation">
+        <ol class="breadcrumb">
+          {% block breadcrumbs %}
+          <li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{% trans 'Submissions' %} {% trans 'Data' %}</li>
+          {% endblock %}
+        </ol>
+      </nav>
+        <section class="panel">
+          <header class="panel-heading clearfix">
+                        <h3><i class="la la-tasks"></i>Project Response Status</h3>
+            <div class="panel-heading-right">
+              <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#searchSites" aria-expanded="false" aria-controls="searchOrganization"><i class="la la-search"></i>Search</a>
+              <a class="btn btn-sm btn-primary" href="/fieldsight/project/stages_status_report/{{obj.pk|unlocalize}}/"><i class="la la-table"></i> Export as Xls </a>
+            </div>
+          </header>
 
-							
-					
-	
-						
-					
-					</div>
-					{% endverbatim %}
-                </section>
+          <div id="stagedatas" >
+            {% verbatim %}
+            {% endverbatim %}
+          </div>
 
-			</div>
+          
+              
+          
+  
+            
+          
+          
+        </section>
+
+      </div>
 <script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
 <script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
 
@@ -63,13 +67,27 @@
 window.app = new Vue({
   el: '#stagedatas',
   template: `
-    <div class="row"><div class="col-md-12">
-              <div class="widget-info margin-top bg-white padding">
-                <div class="widget-head">
-                  <h4>Tabular Report</h4>
-                  <a class="btn btn-xs btn-primary" v-bind:href="'/fieldsight/project/report/stage-table/'+ project_id +'/'"><i class="la la-plus"></i></a>
+  <div class="panel-body">
+            <div class="collapse margin-top" id="searchSites">
+                <div class="row">
+                  <div class="col-md-6 ml-md-auto">
+                    <div class="input-group">
+                      <input type="text" class="form-control" name="q" v-model="searchQuery" placeholder="Search for..." autofocus />
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary" v-on:click="searchDatas" value="Search"><i class="la la-search"></i> Search </button>
+                        
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-3"></div>
                 </div>
-                <div class="widget-body">
+              </div>
+              <br>
+        
+          
+
+    <div class="row"><div class="col-md-12">
+              
                   <template v-if="sub_headers.length > 0 && rows.length > 0 ">
                   <div class="table-responsive">
                       <table class="table table-bordered table-hover tabular-report">
@@ -87,7 +105,6 @@ window.app = new Vue({
                           </tr>
                         </thead>
                         <tbody>
-
                           <tr v-for="row in rows">
                           <template v-for="cell in row">
                             <template v-if="typeof cell === 'string'">
@@ -98,17 +115,16 @@ window.app = new Vue({
                             </template>
                           </template>
                           </tr>
-                        
                         </tbody>
                       </table>
-                      <div class="container-fluid">
-		                  <div class="row justify-content-center">
-		                    <div class="col-md-6 col-lg-4">
-		                      <button v-if="load_next_url" v-on:click="loadDatas" class="btn btn-sm btn-block btn-primary margin-top">Load more</button>
-		                    </div>
-		                  </div>
-		              </div>
                      
+                  </div>
+                  <div class="container-fluid">
+                      <div class="row justify-content-center">
+                        <div class="col-md-6 col-lg-4">
+                          <button v-if="load_next_url" v-on:click="loadDatas" class="btn btn-sm btn-block btn-primary margin-top">Load more</button>
+                        </div>
+                      </div>
                   </div>
                   </template>
                   <template v-else>
@@ -116,26 +132,26 @@ window.app = new Vue({
                   </template>
                 </div>
               </div>
-            </div>
             </div>`,
   data: {
+        searchQuery: '',
         headers: [],
         sub_headers :[],
         rows :[],
         loading: false,
         project_id: configure_settings.project_id,
         load_next_url : '/fieldsight/ProjectStageResponsesStatus/'+configure_settings.project_id+'/',
-        
+        main_url: '/fieldsight/ProjectStageResponsesStatus/'+configure_settings.project_id+'/',
+
      },
 
   methods:{
-    loadDatas : function (){
+    loadDatas : function (query = false){
     var self = this;
 
-    var self = this;
     self.loading = true;
-    if(self.search_key){
-        var options = {'name':self.search_key};
+    if(query === true){
+        var options = {'q':this.searchQuery};
 
     }else{
         var options = {};
@@ -161,19 +177,21 @@ window.app = new Vue({
 
     },
     
-    searchChange : function (){
+    searchDatas: function (){
         var self = this;
-        self.loadDatas();
+        this.rows = [];
+        self.load_next_url = self.main_url;
+        self.loadDatas(true);
 
     },
   },
   created(){
     var self= this;
     self.loadDatas();
-    self.heightLevel();
+    
   },
 
 });
 </script>
-{% endverbatim %}	
+{% endverbatim %} 
 {% endblock %}
