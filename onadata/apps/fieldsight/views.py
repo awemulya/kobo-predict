@@ -2689,7 +2689,6 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         # FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('project__stages__stage_forms__project_form_instances', queryset=FInstance.objects.filter().order_by('-id')))
         get_params = "?page="
     
-    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list).order_by('-pk')))
     
     paginator = Paginator(site_list, page_list) # Show how many contacts per page
     page = request.GET.get('page')
@@ -2701,6 +2700,9 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     except EmptyPage:
     # If page is out of range (e.g. 9999), deliver last page of results.
         sites = paginator.page(paginator.num_pages)
+
+    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=sites).order_by('-pk')))
+    
 
     initial = True
     for site in sites:
@@ -2714,10 +2716,10 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
 
             if substage1 is not None:
             
-                if substage1.stage_forms__project_form_instances.all():
+                if substage1.stage_forms.project_form_instances.all():
                     if initial:
-                        setStatistics(substage1.stage_forms__project_form_instances.all())
-                    status, style_class, submission_count = getStatus(substage1.stage_forms__project_form_instances.all(), site.id)
+                        setStatistics(substage1.stage_forms.project_form_instances.all())
+                    status, style_class, submission_count = getStatus(substage1.stage_forms.project_form_instances.all(), site.id)
                      
                 else:
                     status, style_class = "No submission.", "cell-inactive"
