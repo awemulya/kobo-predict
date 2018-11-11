@@ -2648,6 +2648,8 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         for el in seq:
             if el.id==value: yield el
 
+
+
     def getStatus(datas, site_id):
         el = None
         count = 0 
@@ -2703,9 +2705,31 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
 
     stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=sites).order_by('-pk')))
     
+    site_ids = []
+    for site in sites:
+        site_ids.append(str(site.id))
+    
+    site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {"$in": list(site_ids) }}},  { "$group" : { 
+                  "_id" :  { 
+                    "fs_site": "$fs_site",
+                    "date": { "$substr": [ "$start", 0, 10 ] }
+                  },
+               }
+             }, { "$group": { "_id": "$_id.fs_site", "visits": { 
+                      "$push": { 
+                          "date":"$_id.date"
+                      }          
+                 }
+             }}])['result']
+    
+    def filterMongolist(value):
+        for el in site_visits:
+            if el['_id']==value: yield el
 
     initial = True
+    
     for site in sites:
+
         site_row = ["<a href='"+site.get_absolute_url()+"'>"+site.identifier+"</a>", "<a href='"+site.get_absolute_url()+"'>"+site.name+"</a>"]
         
 
@@ -2716,10 +2740,11 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
 
             if substage1 is not None:
             
-                if substage1.stage_forms.project_form_instances:
+                if substage1.stage_forms.project_form_instances.all():
                     if initial:
-                        setStatistics(substage1.stage_forms.project_form_instances)
-                    status, style_class, submission_count = getStatus(substage1.stage_forms.project_form_instances, site.id)
+                        setStatistics(substage1.stage_forms.project_form_instances.all())
+                        initial=False
+                    status, style_class, submission_count = getStatus(substage1.stage_forms.project_form_instances.all(), site.id)
                      
                 else:
                     status, style_class = "No submission.", "cell-inactive"
@@ -2728,8 +2753,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                  status, style_class = "-", "cell-inactive"
                  submission_count = 0
             site_row.append([status, submission_count, style_class])
-        
-        site_row.append([status, len(set(stats.get(site.id, {}).get('submission_dates', []))), "cell-inactive"])
+        site_row.append([status, len(filterMongolist(str(site.id))['visits']), "cell-inactive"])
         site_row.append([status, stats.get(site.id, {}).get('submission_count', 0), "cell-inactive"])
         
         if 'flagged' in stats.get(site.id, {}):
