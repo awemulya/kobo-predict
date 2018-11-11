@@ -2714,10 +2714,10 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
 
             if substage1 is not None:
             
-                if substage1.stage_forms.project_form_instances.all():
+                if substage1.stage_forms__project_form_instances.all():
                     if initial:
-                        setStatistics(substage1.stage_forms.project_form_instances.all())
-                    status, style_class, submission_count = getStatus(substage1.stage_forms.project_form_instances.all(), site.id)
+                        setStatistics(substage1.stage_forms__project_form_instances.all())
+                    status, style_class, submission_count = getStatus(substage1.stage_forms__project_form_instances.all(), site.id)
                      
                 else:
                     status, style_class = "No submission.", "cell-inactive"
