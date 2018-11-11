@@ -2731,6 +2731,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         
         site_row.append([status, len(set(stats.get(site.id, {}).get('submission_dates', []))), "cell-inactive"])
         site_row.append([status, stats.get(site.id, {}).get('submission_count', 0), "cell-inactive"])
+        
         if 'flagged' in stats.get(site.id, {}):
             site_row.append([status, stats.get(site.id, {}).get('flagged', 0), "cell-warning"])
         else:
