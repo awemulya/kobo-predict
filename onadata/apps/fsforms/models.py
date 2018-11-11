@@ -413,11 +413,19 @@ class FInstance(models.Model):
     @property
     def get_version(self):
         import re
-        p = re.compile('version="(.*)">')
+        p = re.compile('<__version__>(.*)</__version__>')
         m = p.search(self.instance.xml)
         if m:
             return m.group(1)
         return None
+
+    def set_version(self):
+        import re
+        p = re.compile('<__version__>(.*)</__version__>')
+        m = p.search(self.instance.xml)
+        if m:
+            self.version = m.group(1)
+            self.save()
 
     def save(self, *args, **kwargs):
         self.version = self.get_version
