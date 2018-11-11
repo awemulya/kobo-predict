@@ -405,7 +405,7 @@ class FInstance(models.Model):
     date = models.DateTimeField(auto_now=True)
     submitted_by = models.ForeignKey(User, related_name="supervisor")
     is_deleted = models.BooleanField(default=False)
-    version = models.CharField(max_length=32, default=u'')
+    version = models.CharField(max_length=255, default=u'')
     objects = FInstanceManager()
     deleted_objects = FInstanceDeletedManager()
     logs = GenericRelation('eventlog.FieldSightLog')
@@ -678,7 +678,7 @@ class XformHistory(models.Model):
         id_string = models.CharField(editable=False, max_length=255)
         title = models.CharField(editable=False, max_length=255)
         uuid = models.CharField(max_length=32, default=u'')
-        version = models.CharField(max_length=32, default=u'')
+        version = models.CharField(max_length=255, default=u'')
 
         @property
         def get_version(self):
