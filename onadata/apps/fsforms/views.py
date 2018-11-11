@@ -38,8 +38,8 @@ from onadata.apps.fsforms.utils import send_message, send_message_stages, send_m
     send_bulk_message_stages, \
     send_message_un_deploy, send_bulk_message_stages_deployed_project, send_bulk_message_stages_deployed_site, \
     send_bulk_message_stage_deployed_project, send_bulk_message_stage_deployed_site, send_sub_stage_deployed_project, \
-    send_sub_stage_deployed_site, send_message_flagged, send_message_un_deploy_project
-from onadata.apps.logger.models import XForm
+    send_sub_stage_deployed_site, send_message_flagged, send_message_un_deploy_project, get_version
+from onadata.apps.logger.models import XForm, Attachment
 from onadata.apps.main.models import MetaData
 from onadata.apps.main.views import set_xform_owner_data
 from onadata.libs.utils.user_auth import add_cors_headers
@@ -52,8 +52,9 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
     AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm, GeneralForm, KoScheduleForm, \
     EducationalmaterialForm
-from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
-    EducationMaterial, EducationalImages, InstanceImages, DeployEvent
+from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, \
+    InstanceStatusChanged, FInstance, \
+    EducationMaterial, EducationalImages, InstanceImages, DeployEvent, XformHistory
 from django.db.models import Q
 from onadata.apps.fieldsight.rolemixins import FInstanceRoleMixin, MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
 from onadata.apps.fsforms.XFormMediaAttributes import get_questions_and_media_attributes
@@ -1308,16 +1309,7 @@ def download_xform(request, pk):
         {
             "pk": pk
         }, audit, request)
-    response = response_with_mimetype_and_name('xml', pk,
-                                               show_date=False)
-    # from xml.etree.cElementTree import fromstring, tostring, ElementTree as ET, Element
-    # tree = fromstring(fs_xform.xf.xml)
-    # head = tree.findall("./")[0]
-    # model = head.findall("./")[1]
-    # # model.append(Element('FormID', {'id': str(fs_xform.id)}))
-    # response.content = tostring(tree,encoding='utf8', method='xml')
-    # # # import ipdb
-    # # # ipdb.set_trace()
+    response = response_with_mimetype_and_name('xml', str(fs_xform.id),  show_date=False)
     response.content = fs_xform.xf.xml
 
     return response
@@ -2271,3 +2263,43 @@ class DeleteFieldsightXF(FormMixin, View):
 
 
         # <a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">Remove</a>
+
+
+def download_submission(request, pk):
+    finstance = get_object_or_404(FInstance, pk__exact=pk)
+    response = response_with_mimetype_and_name('xml',  str(finstance.instance.id), show_date=False)
+    response.content = finstance.instance.xml
+    return response
+
+def download_xml_version(request, pk):
+    finstance = get_object_or_404(FInstance, pk__exact=pk)
+    response = response_with_mimetype_and_name('xml',  str(finstance.instance.id),  show_date=False)
+    submission_version = finstance.get_version
+    if finstance.project_fxf:
+        xml = finstance.project_fxf.xf.xml
+        xf = finstance.project_fxf.xf
+    else:
+        xml = finstance.site_fxf.xf.xml
+        xf = finstance.site_fxf.xf
+    xml_version = get_version(xml)
+    if submission_version and submission_version == xml_version:
+        response.content = xml
+    else:
+        if XformHistory.objects.filter(xform=xf, version=submission_version).exists():
+            xf_history = XformHistory.objects.get(xform=xf, version=submission_version)
+            response.content = xf_history.xml
+    return response
+
+@api_view(['GET'])
+def get_attachments_of_finstance(request,pk):
+    from django.core.files.storage import get_storage_class
+    default_storage = get_storage_class()()
+    finstance = get_object_or_404(FInstance, pk__exact=pk)
+    response_list = []
+    attachemtns = Attachment.objects.filter(instance=finstance.instance)
+    for a in attachemtns:
+        link = default_storage.url(a.media_file.url)
+        # response_list.append(link)
+        response_list.append(a.media_file.url)
+    return Response(response_list, status=status.HTTP_200_OK)
+

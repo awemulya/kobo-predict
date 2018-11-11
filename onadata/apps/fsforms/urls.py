@@ -51,7 +51,7 @@ from .views import (
     DeleteFInstance,
     FormFillView, CreateKoboFormView, DeleteFieldsightXF,
 
-    FormPreviewView)
+    FormPreviewView, download_submission, download_xml_version, get_attachments_of_finstance)
 
 
 urlpatterns = [
@@ -205,6 +205,9 @@ urlpatterns = urlpatterns + [
 
     url(r'^api/days/', DayViewset.as_view({'get': 'list'}), name='days'),
     url(r'^instance/status/(?P<instance>\d+)$', instance_status, name='instance_status'),
+    url(r'^api/instance/download_submission/(?P<pk>\d+)$', download_submission, name='download_submission'),
+    url(r'^api/instance/download_xml_version/(?P<pk>\d+)$', download_xml_version, name='download_xml_version'),
+    url(r'^api/instance/get_attachments_of_finstance/(?P<pk>\d+)$', get_attachments_of_finstance, name='get_attachments_of_finstance'),
     url(r'^api/instance/status-history/(?P<pk>\d+)$', InstanceHistoryViewSet.as_view({'get': 'list'}), name='instance_history'),
     url(r'^api/instance/change_status-detail/(?P<pk>\d+)$', InstanceHistoryDetailViewSet.as_view({'get': 'retrieve'}), name='instance_status_change_detail'),
     url(r'^api/instance/status-detail/(?P<pk>\d+)$', AlterStatusDetailView.as_view(), name='alter-status-detail'),

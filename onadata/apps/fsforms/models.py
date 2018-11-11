@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 import datetime
+import os
+
 import json
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
@@ -403,11 +405,22 @@ class FInstance(models.Model):
     date = models.DateTimeField(auto_now=True)
     submitted_by = models.ForeignKey(User, related_name="supervisor")
     is_deleted = models.BooleanField(default=False)
+    version = models.CharField(max_length=255, default=u'')
     objects = FInstanceManager()
     deleted_objects = FInstanceDeletedManager()
     logs = GenericRelation('eventlog.FieldSightLog')
 
+    @property
+    def get_version(self):
+        import re
+        p = re.compile('version="(.*)">')
+        m = p.search(self.instance.xml)
+        if m:
+            return m.group(1)
+        return None
+
     def save(self, *args, **kwargs):
+        self.version = self.get_version
         if self.form_status is None:
             if self.site_fxf:
                 self.form_status = self.site_fxf.default_submission_status
@@ -647,3 +660,35 @@ class DeployEvent(models.Model):
     date =  models.DateTimeField(auto_now=True)
     site = models.ForeignKey(Site, related_name="deploy_data", null=True)
     project = models.ForeignKey(Project, related_name="deploy_data", null=True)
+
+def upload_to(instance, filename):
+    return os.path.join(
+        'versions', str(instance.pk),
+        'xls',
+        os.path.split(filename)[1])
+
+
+class XformHistory(models.Model):
+        xform = models.ForeignKey(XForm, related_name="fshistory")
+        date = models.DateTimeField(auto_now=True)
+        xls = models.FileField(upload_to=upload_to, null=True)
+        json = models.TextField(default=u'')
+        description = models.TextField(default=u'', null=True)
+        xml = models.TextField()
+        id_string = models.CharField(editable=False, max_length=255)
+        title = models.CharField(editable=False, max_length=255)
+        uuid = models.CharField(max_length=32, default=u'')
+        version = models.CharField(max_length=255, default=u'')
+
+        @property
+        def get_version(self):
+            import re
+            p = re.compile('version="(.*)">')
+            m = p.search(self.xml)
+            if m:
+                return m.group(1)
+            return None
+
+        def save(self, *args, **kwargs):
+            self.version = self.get_version
+            super(XformHistory, self).save(*args, **kwargs)
