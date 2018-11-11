@@ -1309,7 +1309,7 @@ def download_xform(request, pk):
         {
             "pk": pk
         }, audit, request)
-    response = response_with_mimetype_and_name('xml',  show_date=False)
+    response = response_with_mimetype_and_name('xml', 'form',  show_date=False)
     response.content = fs_xform.xf.xml
 
     return response
