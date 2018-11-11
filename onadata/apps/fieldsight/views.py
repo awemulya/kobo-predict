@@ -2646,7 +2646,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     # data.append(head_row)
     def filterbyvalue(seq, value):
         for el in seq:
-            if el.id==value: return el
+            if el.id==value: yield el
 
 
 
@@ -2753,7 +2753,8 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                  status, style_class = "-", "cell-inactive"
                  submission_count = 0
             site_row.append([status, submission_count, style_class])
-        site_row.append([status, len(filterMongolist(str(site.id))['visits']), "cell-inactive"])
+        visits = filterMongolist(str(site.id))
+        site_row.append([status, len(visits['visits']), "cell-inactive"])
         site_row.append([status, stats.get(site.id, {}).get('submission_count', 0), "cell-inactive"])
         
         if 'flagged' in stats.get(site.id, {}):
