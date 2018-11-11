@@ -195,14 +195,17 @@ class CeleryTaskProgress(models.Model):
         (3, 'Failed'),
         )
     Task_Type =(
-        (0, 'Bulk Site Upload'),
-        (1, 'Multi User Assign Project'),
-        (2, 'Multi User Assign Site'),
-        (3, 'Report Generation'),
+        (0, 'Bulk Site Update'),
+        (1, 'User Assign to Project'),
+        (2, 'User Assign to Site'),
+        (3, 'Site Response Xls Report'),
         (4, 'Site Import'),
-        (5, 'Xls export'),
         (6, 'Zip Site Images'),
         (7, 'Remove Roles'),
+        (8, 'Site Data Export'),
+        (9, 'Response Pdf Report'),
+        (10, 'Site Progress Xls Report'),
+
         )
     task_id = models.CharField(max_length=255, blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
@@ -214,7 +217,7 @@ class CeleryTaskProgress(models.Model):
     description = models.CharField(max_length=755, blank=True)
     task_type = models.IntegerField(default=0, choices=Task_Type)
     content_type = models.ForeignKey(ContentType, related_name='task_object', blank=True, null=True)
-    object_id = models.CharField(max_length=255, blank=True, null=True)
+    object_id = models.IntegerField(blank=True, null=True)
     content_object = GenericForeignKey('content_type', 'object_id')
     logs = GenericRelation('eventlog.FieldSightLog')
 
@@ -226,10 +229,32 @@ class CeleryTaskProgress(models.Model):
             return self.file.url
         else:
             return ""
+    
+    def get_source_url(self):
+        try:
+            profile = self.user.user_profile
+        except UserProfile.DoesNotExist:
+            return None
+        else:
+            return profile.get_absolute_url()
+
+    def get_source_name(self):
+        return self.user.first_name + ' ' + self.user.last_name
+
+    def get_event_url(self):
+        try:
+            return self.content_object.get_absolute_url()
+        except:
+            return None
+    def get_event_name(self):
+        try:
+            return self.content_object.getname()
+        except:
+            return None
 
     def get_progress(self):
         if self.status == 1:
-            if task_id:
+            if self.task_id:
                 task = AsyncResult(self.task_id)
                 data = task.result or task.state
                 return json.dumps(data)

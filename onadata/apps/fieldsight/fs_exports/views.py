@@ -138,7 +138,7 @@ class ExportProjectSites(DonorRoleMixin, View):
 class ExportProjectSitesWithRefs(DonorRoleMixin, View):
     def get(self, *args, **kwargs):
         source_user = self.request.user            
-        task_obj=CeleryTaskProgress.objects.create(user=source_user, task_type=5)
+        task_obj=CeleryTaskProgress.objects.create(user=source_user, task_type=8)
         if task_obj:
             task = generateSiteDetailsXls.delay(task_obj.pk, source_user, self.kwargs.get('pk'), self.kwargs.get('region_id', None))
             task_obj.task_id = task.id

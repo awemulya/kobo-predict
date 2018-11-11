@@ -493,7 +493,7 @@ class StageStatus(LoginRequiredMixin, ProjectRoleMixin, View):
     def get(self, request, *args, **kwargs):
         obj = get_object_or_404(Project, pk=self.kwargs.get('pk'))
         user = request.user
-        task_obj=CeleryTaskProgress.objects.create(user=user, task_type=0)
+        task_obj=CeleryTaskProgress.objects.create(user=user, task_type=10)
         if task_obj:
             task = generate_stage_status_report.delay(task_obj.pk, obj.id)
             task_obj.task_id = task.id
@@ -2706,7 +2706,7 @@ class FormlistAPI(View):
         fs_ids = data.get('fs_ids')
         start_date = data.get('startdate')
         end_date = data.get('enddate')
-        task_obj=CeleryTaskProgress.objects.create(user=request.user, task_type=0)
+        task_obj=CeleryTaskProgress.objects.create(user=request.user, task_type=9)
         if task_obj:
             task = generateCustomReportPdf.delay(task_obj.id, request.user, pk, base_url, fs_ids, start_date, end_date)
             task_obj.task_id = task.id

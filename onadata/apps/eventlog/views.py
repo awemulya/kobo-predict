@@ -4,7 +4,7 @@ from django.utils.timezone import now
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, View
 from django.views.generic import ListView, TemplateView
-from onadata.apps.eventlog.models import FieldSightLog, FieldSightMessage
+from onadata.apps.eventlog.models import FieldSightLog, FieldSightMessage, CeleryTaskProgress
 
 from onadata.apps.users.models import UserProfile
 
@@ -21,9 +21,10 @@ from django.contrib.contenttypes.models import ContentType
 
 from django.http import JsonResponse
 from celery.result import AsyncResult
-from onadata.apps.eventlog.serializers.LogSerializer import NotificationSerializer, LogSerializer
+from onadata.apps.eventlog.serializers.LogSerializer import NotificationSerializer, LogSerializer, TaskSerializer
 from onadata.apps.fieldsight.rolemixins import ProjectRoleMixin, SiteRoleMixin, ReadonlySiteLevelRoleMixin, ReadonlyProjectLevelRoleMixin
 from onadata.apps.fieldsight.models import Project, Site
+from onadata.apps.userrole.models import UserRole
 
 class NotificationListView(LoginRequiredMixin, ListView):
     model = FieldSightLog
@@ -56,6 +57,54 @@ class NotificationViewSet(viewsets.ModelViewSet):
         project_ids = self.request.roles.filter(group__name='Project Manager').values('project_id')
         site_ids = self.request.roles.filter(Q(group__name='Site Supervisor') | Q(group__name='Reviewer')).values('site_id')
         return queryset.filter(Q(organization_id__in=org_ids) | Q(project_id__in=project_ids) | Q(site_id__in=site_ids) | Q(recipient_id=self.request.user.id))
+
+class MyTaskListViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing sites.
+    """
+
+    queryset = CeleryTaskProgress.objects.all()
+    serializer_class = TaskSerializer
+    pagination_class = LargeResultsSetPagination
+
+    def filter_queryset(self, queryset):
+        if self.request.group.name == "Super Admin":
+            return queryset 
+
+        return queryset.filter(user_id=self.request.user.id).order_by('date_updateded')
+
+class OtherTaskListViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing sites.
+    """
+
+    queryset = CeleryTaskProgress.objects.all()
+    serializer_class = TaskSerializer
+    pagination_class = LargeResultsSetPagination
+
+    def filter_queryset(self, queryset):
+        # if self.request.group.name == "Super Admin":
+        #     return queryset 
+        self_projects = UserRole.objects.filter(user_id=self.request.user.id, ended_at__isnull=False, project_id__isnull=False).distinct('project_id').values_list('project_id', flat=True)
+        self_orgs = UserRole.objects.filter(user_id=self.request.user.id, ended_at__isnull=False, organization_id__isnull=False).distinct('organization_id').values_list('organization_id', flat=True)
+        self_org_projects = Project.objects.filter(organization_id__in=self_orgs).only('id')
+        return queryset.filter(Q(object_id__in=self_projects) | Q(object_id__in=self_org_projects), status=2, content_type__model="project").exclude(user_id=self.request.user.id).order_by('date_updateded')
+
+
+class MyTaskListViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing sites.
+    """
+
+    queryset = CeleryTaskProgress.objects.all()
+    serializer_class = TaskSerializer
+    pagination_class = LargeResultsSetPagination
+
+    def filter_queryset(self, queryset):
+        if self.request.group.name == "Super Admin":
+            return queryset 
+
+        return queryset.filter(user_id=self.request.user.id)
 
 
 class ProjectLog(viewsets.ModelViewSet):
