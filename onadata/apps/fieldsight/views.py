@@ -2726,8 +2726,8 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         for el in site_visits:
             if el['_id']==value: return el
 
-    initial = True
     
+    setStatisticsChecker=[]
     for site in sites:
 
         site_row = ["<a href='"+site.get_absolute_url()+"'>"+site.identifier+"</a>", "<a href='"+site.get_absolute_url()+"'>"+site.name+"</a>"]
@@ -2741,9 +2741,10 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
             if substage1 is not None:
             
                 if substage1.stage_forms.project_form_instances.all():
-                    if initial:
+                    
+                    if substage1.id not in setStatisticsChecker:
                         setStatistics(substage1.stage_forms.project_form_instances.all())
-                        initial=False
+                        setStatisticsChecker.append(substage1.id)
                     status, style_class, submission_count = getStatus(substage1.stage_forms.project_form_instances.all(), site.id)
                      
                 else:
