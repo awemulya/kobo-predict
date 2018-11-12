@@ -1,4 +1,6 @@
 import json
+from datetime import datetime
+
 from django.db.models import Q
 from django.utils.timezone import now
 from django.shortcuts import render, redirect
@@ -68,11 +70,12 @@ class MyTaskListViewSet(viewsets.ModelViewSet):
     pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
+
         profile = self.request.user.user_profile
         current_filterdate = profile.task_last_view_date
         profile.task_last_view_date = datetime.now()
         profile.save()
-        print profile.task_last_view_date , "---------------------------------------------------"
+        
         if self.request.group.name == "Super Admin":
             return queryset 
 
