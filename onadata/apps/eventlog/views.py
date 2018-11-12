@@ -72,7 +72,7 @@ class MyTaskListViewSet(viewsets.ModelViewSet):
         current_filterdate = profile.task_last_view_date
         profile.task_last_view_date = datetime.now()
         profile.save()
-
+        print profile.task_last_view_date , "---------------------------------------------------"
         if self.request.group.name == "Super Admin":
             return queryset 
 
