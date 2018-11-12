@@ -99,22 +99,6 @@ class OtherTaskListViewSet(viewsets.ModelViewSet):
         return queryset.filter(Q(object_id__in=self_projects) | Q(object_id__in=self_org_projects), status=2, content_type__model="project").exclude(user_id=self.request.user.id).order_by('date_updateded')
 
 
-class MyTaskListViewSet(viewsets.ModelViewSet):
-    """
-    A simple ViewSet for viewing and editing sites.
-    """
-
-    queryset = CeleryTaskProgress.objects.all()
-    serializer_class = TaskSerializer
-    pagination_class = LargeResultsSetPagination
-
-    def filter_queryset(self, queryset):
-        if self.request.group.name == "Super Admin":
-            return queryset 
-
-        return queryset.filter(user_id=self.request.user.id)
-
-
 class ProjectLog(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing sites.
