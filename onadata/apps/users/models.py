@@ -40,6 +40,7 @@ class UserProfile(models.Model):
     organization = models.ForeignKey(Organization, null=True, blank=True)
     notification_seen_date = models.DateTimeField(default=now, blank=True)
     timezone = models.ForeignKey(TimeZone, null=True,blank=True)
+    task_last_view_date = models.DateTimeField(auto_now_add=True, blank=True)
     logs = GenericRelation('eventlog.FieldSightLog')
 
     def __unicode__(self):

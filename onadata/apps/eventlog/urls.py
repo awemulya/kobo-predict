@@ -24,7 +24,7 @@ urlpatterns = [
 
     url(r'^project_logs/(?P<pk>[0-9]+)/$', ProjectLogListView.as_view(), name="project_logs"),
     url(r'^site_logs/(?P<pk>[0-9]+)/$', SiteLogListView.as_view(), name="site_logs"),
-    url(r'^mytasks/$', MyTaskListViewSet.as_view({'get': 'list'}), name="my_task_list"),
-    url(r'^othertasks/$', OtherTaskListViewSet.as_view({'get': 'list'}), name="other_task_list")
+    url(r'^api/mytasks/$', MyTaskListViewSet.as_view({'get': 'list'}), name="my_task_list"),
+    url(r'^api/othertasks/$', OtherTaskListViewSet.as_view({'get': 'list'}), name="other_task_list")
 
     ]
