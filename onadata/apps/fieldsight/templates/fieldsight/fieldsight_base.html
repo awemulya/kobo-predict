@@ -78,7 +78,7 @@
 
 					<li class="dropdown">
 						<a href="#" id="dropdownMenuButtonNotification" onclick="getmytasksdata()" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<i class="la la-hourglass-2"></i>
+							<i class="la la-tasks"></i>
 							<span class="badge badge-warning"><span class="task_count"></span></span>
 						</a>
 						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right pt-0" aria-labelledby="dropdownMenuButtonNotification">
@@ -94,33 +94,9 @@
 								<div class="tab-content" id="notificationTabContent">
 								  	<div class="tab-pane fade show active" id="myTasks" role="tabpanel" aria-labelledby="fnt-tab">
 								  		<div id="mytasks-ul">
+											<h3>Loading ...</h3>
 										</div>
-										<div classs="dropdown-item">
-												<div class="notification-item">
-													<div class="notification-avatar pull-left" href="">
-														<i class="avatar-icon la la-bolt"></i>
-													</div>
-													<div class="notification-highlight">
-														<p class="notification-highlight-excerpt">
-															<a href="#">hemant</a> submitted a response for General form <a href="#"> Daily Activity Report</a> in site <a href="#">Kobarasian (SAPTARI)</a>
-														</p>
-														<p class="notification-highlight-time">Dec 18, 2017, 6:14 PM</p>
-													</div>
-												</div>
-										</div>
-										<div classs="dropdown-item">
-												<div class="notification-item">
-													<div class="notification-avatar pull-left" href="">
-														<i class="avatar-icon la la-bolt"></i>
-													</div>
-													<div class="notification-highlight">
-														<p class="notification-highlight-excerpt">
-															<a href="#">hemant</a> submitted a response for General form <a href="#"> Daily Activity Report</a> in site <a href="#">Kobarasian (SAPTARI)</a>
-														</p>
-														<p class="notification-highlight-time">Dec 18, 2017, 6:14 PM</p>
-													</div>
-												</div>
-										</div>
+										
 										
 										<div class="dropdown-divider"></div>
 										<div class="dropdown-header">
@@ -128,53 +104,25 @@
 												<div class="col text-left">
 													<a href="#" title="">View All</a>
 												</div>
-												<div class="col text-right">
-													<a href="#" title="">Mark all as read</a>
-												</div>
+												
 											</div>
 										</div>
 								  	</div>
 								  	<div class="tab-pane fade" id="otherTasks" role="tabpanel" aria-labelledby="snt-tab">
-								  			<div id="othertasks-ul">
-											</div>
-											<div classs="dropdown-item">
-													<div class="notification-item">
-														<div class="notification-avatar pull-left" href="">
-															<i class="avatar-icon la la-bolt"></i>
-														</div>
-														<div class="notification-highlight">
-															<p class="notification-highlight-excerpt">
-																<a href="#">hemant</a> submitted a response for General form <a href="#"> Daily Activity Report</a> in site <a href="#">Kobarasian (SAPTARI)</a>
-															</p>
-															<p class="notification-highlight-time">Dec 18, 2017, 6:14 PM</p>
-														</div>
-													</div>
-											</div>
-											<div classs="dropdown-item">
-													<div class="notification-item">
-														<div class="notification-avatar pull-left" href="">
-															<i class="avatar-icon la la-bolt"></i>
-														</div>
-														<div class="notification-highlight">
-															<p class="notification-highlight-excerpt">
-																<a href="#">hemant</a> submitted a response for General form <a href="#"> Daily Activity Report</a> in site <a href="#">Kobarasian (SAPTARI)</a>
-															</p>
-															<p class="notification-highlight-time">Dec 18, 2017, 6:14 PM</p>
-														</div>
-													</div>
-											</div>
-									
-											<div class="dropdown-divider"></div>
-											<div class="dropdown-header">
-												<div class="row">
-													<div class="col text-left">
-														<a href="#" title="">View All</a>
-													</div>
-													<div class="col text-right">
-														<a href="#" title="">Mark all as read</a>
-													</div>
+							  			<div id="othertasks-ul">
+											<h3>Loading ...</h3>
+										</div>
+										
+								
+										<div class="dropdown-divider"></div>
+										<div class="dropdown-header">
+											<div class="row">
+												<div class="col text-left">
+													<a href="#" title="">View All</a>
 												</div>
+												
 											</div>
+										</div>
 								  	</div>
 								</div>
 							</div>
@@ -348,8 +296,20 @@
 		<script>
 
 			$(document).ready(function(){
-
+				$('.task-detail-handler').on('click', function(event){
+				   event.stopPropagation();
+				   $(this).siblings('.task-detail-content').collapse('toggle');
+				   var hsText = $(this).text();
+				   if(hsText == 'See Detail'){
+				   		$(this).text('Hide Detail');
+				   }else{
+				   		$(this).text('See Detail');
+				   }
+				 });
+				
 				$(".widget-scrolling-large-list > .widget-body, .widget-scrolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e", horizrailenabled:false});
+
+
 				$('.dropdown-menu li').on('click', function(event){
 				   event.stopPropagation();
 				 });
