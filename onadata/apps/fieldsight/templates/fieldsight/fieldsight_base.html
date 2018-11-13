@@ -75,8 +75,115 @@
 
 			<div class="top-nav clearfix">
 				<ul class="right-nav clearfix">
+
 					<li class="dropdown">
-						<a href="#" id="dropdownMenuButtonNotification" onclick="getnotifdata()"data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<a href="#" id="dropdownMenuButtonNotification" onclick="getmytasksdata()" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<i class="la la-hourglass-2"></i>
+							<span class="badge badge-warning"><span class="task_count"></span></span>
+						</a>
+						<div class="dropdown-menu large-dropdown-menu dropdown-menu-right pt-0" aria-labelledby="dropdownMenuButtonNotification">
+							<div class="notification-tabs">
+								<ul class="nav nav-tabs nav-fill" id="notificationTab" role="tablist">
+								  <li class="nav-item">
+								    <a class="nav-link active" id="fnt-tab" data-toggle="tab" href="#myTasks" role="tab" aria-controls="fnt" aria-selected="true">Your Tasks</a>
+								  </li>
+								  <li class="nav-item">
+								    <a class="nav-link" id="snt-tab" data-toggle="tab" onclick="getothertasksdata()" href="#otherTasks" role="tab" aria-controls="snt" aria-selected="false">Others' Tasks</a>
+								  </li>
+								</ul>
+								<div class="tab-content" id="notificationTabContent">
+								  	<div class="tab-pane fade show active" id="myTasks" role="tabpanel" aria-labelledby="fnt-tab">
+								  		<div id="mytasks-ul">
+										</div>
+										<div classs="dropdown-item">
+												<div class="notification-item">
+													<div class="notification-avatar pull-left" href="">
+														<i class="avatar-icon la la-bolt"></i>
+													</div>
+													<div class="notification-highlight">
+														<p class="notification-highlight-excerpt">
+															<a href="#">hemant</a> submitted a response for General form <a href="#"> Daily Activity Report</a> in site <a href="#">Kobarasian (SAPTARI)</a>
+														</p>
+														<p class="notification-highlight-time">Dec 18, 2017, 6:14 PM</p>
+													</div>
+												</div>
+										</div>
+										<div classs="dropdown-item">
+												<div class="notification-item">
+													<div class="notification-avatar pull-left" href="">
+														<i class="avatar-icon la la-bolt"></i>
+													</div>
+													<div class="notification-highlight">
+														<p class="notification-highlight-excerpt">
+															<a href="#">hemant</a> submitted a response for General form <a href="#"> Daily Activity Report</a> in site <a href="#">Kobarasian (SAPTARI)</a>
+														</p>
+														<p class="notification-highlight-time">Dec 18, 2017, 6:14 PM</p>
+													</div>
+												</div>
+										</div>
+										
+										<div class="dropdown-divider"></div>
+										<div class="dropdown-header">
+											<div class="row">
+												<div class="col text-left">
+													<a href="#" title="">View All</a>
+												</div>
+												<div class="col text-right">
+													<a href="#" title="">Mark all as read</a>
+												</div>
+											</div>
+										</div>
+								  	</div>
+								  	<div class="tab-pane fade" id="otherTasks" role="tabpanel" aria-labelledby="snt-tab">
+								  			<div id="othertasks-ul">
+											</div>
+											<div classs="dropdown-item">
+													<div class="notification-item">
+														<div class="notification-avatar pull-left" href="">
+															<i class="avatar-icon la la-bolt"></i>
+														</div>
+														<div class="notification-highlight">
+															<p class="notification-highlight-excerpt">
+																<a href="#">hemant</a> submitted a response for General form <a href="#"> Daily Activity Report</a> in site <a href="#">Kobarasian (SAPTARI)</a>
+															</p>
+															<p class="notification-highlight-time">Dec 18, 2017, 6:14 PM</p>
+														</div>
+													</div>
+											</div>
+											<div classs="dropdown-item">
+													<div class="notification-item">
+														<div class="notification-avatar pull-left" href="">
+															<i class="avatar-icon la la-bolt"></i>
+														</div>
+														<div class="notification-highlight">
+															<p class="notification-highlight-excerpt">
+																<a href="#">hemant</a> submitted a response for General form <a href="#"> Daily Activity Report</a> in site <a href="#">Kobarasian (SAPTARI)</a>
+															</p>
+															<p class="notification-highlight-time">Dec 18, 2017, 6:14 PM</p>
+														</div>
+													</div>
+											</div>
+									
+											<div class="dropdown-divider"></div>
+											<div class="dropdown-header">
+												<div class="row">
+													<div class="col text-left">
+														<a href="#" title="">View All</a>
+													</div>
+													<div class="col text-right">
+														<a href="#" title="">Mark all as read</a>
+													</div>
+												</div>
+											</div>
+								  	</div>
+								</div>
+							</div>
+							
+						</div>
+					</li>
+
+					<li class="dropdown">
+						<a href="#" id="dropdownMenuButtonNotification" onclick="getnotifdata()" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<i class="la la-bell"></i>
 							<span class="badge badge-warning"><span class="not_count"></span></span>
 						</a>
@@ -243,7 +350,14 @@
 			$(document).ready(function(){
 
 				$(".widget-scrolling-large-list > .widget-body, .widget-scrolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e", horizrailenabled:false});
+				$('.dropdown-menu li').on('click', function(event){
+				   event.stopPropagation();
+				 });
 
+				 $('.notification-tabs > ul > li > a').on('click', function(event){
+				  event.stopPropagation();
+				  $(this).tab('show')
+				 });
 			});
 
 
@@ -259,6 +373,8 @@
 			var csrf = "{{ csrf_token }}";
 			var id_organization = {{ oid }};
 			var id_project = {{ pid }};
+
+
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/notifications.js?v=3.0" ></script>
 {%block extrascript %}

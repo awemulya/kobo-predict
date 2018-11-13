@@ -120,20 +120,20 @@ class UserRole(models.Model):
 
     @staticmethod
     def get_active_site_roles(user):
-        return UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor").\
+        return UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor", site__isnull=False, site__is_active=True).\
             select_related('project', 'site', 'site__type', 'project__organization', 'project__type')\
 
     @staticmethod
     def get_active_site_roles_count(user):
-        return UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor").count()
+        return UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor", site__isnull=False, site__is_active=True).count()
 
     @staticmethod
     def get_active_site_roles_exists(user):
-        return UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor").exists()
+        return UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor", site__isnull=False, site__is_active=True).exists()
 
     @staticmethod
     def get_roles_supervisor(user, project_id):
-        return True if UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor",
+        return True if UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor", site__isnull=False, site__is_active=True,
                                                project__id=project_id).select_related('group', 'project')\
                                                     .exists() else False
 
