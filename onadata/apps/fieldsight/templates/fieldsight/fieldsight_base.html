@@ -311,6 +311,7 @@
 				 });
 
 				 $('.task-detail-handler').on('click', function(event){
+				 	console.log(event);
 				   event.stopPropagation();
 				   $(this).siblings('.task-detail-content').collapse('toggle');
 				   var hsText = $(this).text();
