@@ -78,7 +78,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CeleryTaskProgress
-        exclude = ('content_type', 'object_id', 'user', 'description')
+        exclude = ('content_type', 'object_id', 'user',)
 
     def get_source_name(self, obj):
         return obj.user.first_name + " " + obj.user.last_name
