@@ -86,7 +86,7 @@ class OtherTaskListViewSet(viewsets.ModelViewSet):
     A simple ViewSet for viewing and editing sites.
     """
 
-    queryset = CeleryTaskProgress.objects.filter(status=2, file__isnull=False)
+    queryset = CeleryTaskProgress.objects.filter(status=2, task_type__in=[3,6,8,9,10])
     serializer_class = TaskSerializer
     pagination_class = LargeResultsSetPagination
 
