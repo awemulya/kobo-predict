@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from onadata.apps.eventlog.views import ProjectLogListView, OtherTaskListViewSet,  MyTaskListViewSet, SiteLogListView, SiteLog, ProjectLog, CeleryTaskProgressView, MyCeleryTaskProgress, NotificationListView, NotificationCountnSeen, NotificationViewSet, NotificationDetailView, MessageListView
+from onadata.apps.eventlog.views import ProjectLogListView, TaskListView, OtherTaskListViewSet,  MyTaskListViewSet, SiteLogListView, SiteLog, ProjectLog, CeleryTaskProgressView, MyCeleryTaskProgress, NotificationListView, NotificationCountnSeen, NotificationViewSet, NotificationDetailView, MessageListView
 from onadata.apps.fieldsight.mixins import group_required
 
 
@@ -25,6 +25,6 @@ urlpatterns = [
     url(r'^project_logs/(?P<pk>[0-9]+)/$', ProjectLogListView.as_view(), name="project_logs"),
     url(r'^site_logs/(?P<pk>[0-9]+)/$', SiteLogListView.as_view(), name="site_logs"),
     url(r'^api/mytasks/$', MyTaskListViewSet.as_view({'get': 'list'}), name="my_task_list"),
-    url(r'^api/othertasks/$', OtherTaskListViewSet.as_view({'get': 'list'}), name="other_task_list")
-
+    url(r'^api/othertasks/$', OtherTaskListViewSet.as_view({'get': 'list'}), name="other_task_list"),
+    url(r'^tasks/$', TaskListView.as_view(), name="task_list"),
     ]

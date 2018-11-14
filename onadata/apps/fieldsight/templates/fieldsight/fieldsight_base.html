@@ -106,7 +106,7 @@
 										<div class="dropdown-header">
 											<div class="row">
 												<div class="col text-left">
-													<a href="#" title="">View All</a>
+													<a href="{% url 'eventlog:task_list' %}" title="">View All</a>
 												</div>
 												
 											</div>
@@ -123,7 +123,7 @@
 										<div class="dropdown-header">
 											<div class="row">
 												<div class="col text-left">
-													<a href="#" title="">View All</a>
+													<a href="{% url 'eventlog:task_list' %}" title="">View All</a>
 												</div>
 												
 											</div>
@@ -319,7 +319,6 @@
 			});
 
 
-			
 		</script>
 <script type="text/javascript" src="{{ STATIC_URL }}channels/js/websocketbridge.js" ></script>
 <script>

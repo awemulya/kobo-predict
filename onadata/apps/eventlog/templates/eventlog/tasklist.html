@@ -1,0 +1,85 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% block extracss %}
+{% endblock %}
+{%block kocript %}
+
+<link rel="stylesheet" href="{% static 'css/toastr.css' %}">
+<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/plugin/toastr.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
+
+{% endblock %}
+{% block content %}
+{% csrf_token %}
+
+<div id="main-content" class="padding">
+	<section class="org-profile-body">
+		<div class="notification-tabs">
+			<ul class="nav nav-tabs nav-fill" id="notificationTab" role="tablist">
+			  <li class="nav-item">
+			    <a class="nav-link active" id="fnt-tab" data-toggle="tab" href="#myTasks" role="tab" aria-controls="fnt" aria-selected="true">Your Tasks</a>
+			  </li>
+			  <li class="nav-item">
+			    <a class="nav-link" id="snt-tab" data-toggle="tab" href="#otherTasks" role="tab" aria-controls="snt" aria-selected="false">Others' Tasks</a>
+			  </li>
+			</ul>
+			<div class="tab-content" id="notificationTabContent">
+			  	<div class="tab-pane fade show active" id="myTasks" role="tabpanel" aria-labelledby="fnt-tab">
+			  		{% verbatim %}
+			  		<div id="mytasklist">
+						<div class="loading-content p-3">
+							<span class="loading-divider"></span>
+							<span class="loading-divider"></span>
+							<span class="loading-divider"></span>
+						</div>
+					</div>
+					{% endverbatim %}
+			  	</div>
+			  	<div class="tab-pane fade" id="otherTasks" role="tabpanel" aria-labelledby="snt-tab">
+		  			{% verbatim %}
+		  			<div id="othertasklist">
+						<div class="loading-content p-3">
+							<span class="loading-divider"></span>
+							<span class="loading-divider"></span>
+							<span class="loading-divider"></span>
+						</div>
+					</div>
+					{% endverbatim %}
+			  	</div>
+			</div>
+		</div>
+    </section>
+
+</div>
+
+{% endblock %}
+{%block extrascript %}
+
+
+<script type="text/javascript">
+var static_url ="{{ STATIC_URL }}";
+
+{% load l10n %}
+	configure_settings =  {};
+	configure_settings.mytask_url = "{% url 'eventlog:my_task_list' %}";
+	configure_settings.othertasks_url = "{% url 'eventlog:other_task_list' %}";
+	
+				$(document).ready(function(){
+
+				 $('.notification-tabs > ul > li > a').on('click', function(event){
+				 	console.log('here');
+				  event.stopPropagation();
+				  $(this).tab('show')
+				 });
+
+
+			});
+</script>
+
+
+<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
+<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+<script src="{% static 'js/fieldsight/mytasklist.js' %}?v=0.6"></script>
+<script src="{% static 'js/fieldsight/othertasklist.js' %}?v=0.6"></script>
+{% endblock %}

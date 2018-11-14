@@ -205,6 +205,10 @@ class CeleryTaskProgressView(View):
         data = task.result or task.state
         return JsonResponse(data)
 
+class TaskListView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'eventlog/tasklist.html')
+
 
 class MyCeleryTaskProgress(TemplateView):
     def get(self, request, *args, **kwargs):
