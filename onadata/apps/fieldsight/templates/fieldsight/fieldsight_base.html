@@ -310,17 +310,7 @@
 				  $(this).tab('show')
 				 });
 
-				 $('.task-detail-handler').on('click', function(event){
-				 	console.log(event);
-				   event.stopPropagation();
-				   $(this).siblings('.task-detail-content').collapse('toggle');
-				   var hsText = $(this).text();
-				   if(hsText == 'See Detail'){
-				   		$(this).text('Hide Detail');
-				   }else{
-				   		$(this).text('See Detail');
-				   }
-				 });
+				 
 			});
 
 
