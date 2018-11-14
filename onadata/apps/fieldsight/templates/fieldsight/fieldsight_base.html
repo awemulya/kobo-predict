@@ -94,7 +94,11 @@
 								<div class="tab-content" id="notificationTabContent">
 								  	<div class="tab-pane fade show active" id="myTasks" role="tabpanel" aria-labelledby="fnt-tab">
 								  		<div id="mytasks-ul">
-											<center><h5 style="color:grey;">Loading ...</h5></center>
+											<div class="loading-content p-3">
+												<span class="loading-divider"></span>
+												<span class="loading-divider"></span>
+												<span class="loading-divider"></span>
+											</div>
 										</div>
 										
 										
@@ -110,7 +114,11 @@
 								  	</div>
 								  	<div class="tab-pane fade" id="otherTasks" role="tabpanel" aria-labelledby="snt-tab">
 							  			<div id="othertasks-ul">
-											<center><h5 style="color:grey;">Loading ...</h5></center>
+											<div class="loading-content p-3">
+												<span class="loading-divider"></span>
+												<span class="loading-divider"></span>
+												<span class="loading-divider"></span>
+											</div>
 										</div>
 										<div class="dropdown-header">
 											<div class="row">
@@ -298,7 +306,7 @@
 				$(".widget-scrolling-large-list > .widget-body, .widget-scrolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e", horizrailenabled:false});
 
 
-				$('.dropdown-menu li').on('click', function(event){
+				$('.dropdown-menu li, .loading-content').on('click', function(event){
 				   event.stopPropagation();
 				 });
 
