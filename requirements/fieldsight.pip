@@ -1,8 +1,14 @@
-django-excel
+#django-excel
 
-pyexcel-xl
-pyexcel-xls
-pyexcel-io
+#pyexcel-xl
+#pyexcel-xls
+#pyexcel-io
 
-celery==3.1.20
+#celery==3.1.20
+
+pyexcel==0.5.3
+pyexcel-io==0.5.3
+pyexcel-webio==0.1.2
+pyexcel-xls==0.5.4
+
 
