@@ -156,6 +156,8 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
             site.update_current_progress()
         elif siteid:
             site.update_status()
+
+        if fs_proj_xf.is_survey:
             instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Project level Submission",
                                        organization=fs_proj_xf.project.organization,
                                        project=fs_proj_xf.project,
