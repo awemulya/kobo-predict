@@ -77,7 +77,7 @@ class MyTaskListViewSet(viewsets.ModelViewSet):
         profile.save()
         
         if self.request.group.name == "Super Admin":
-            return queryset 
+            return queryset.order_by('-date_updateded') 
 
         return queryset.filter(user_id=self.request.user.id).order_by('-date_updateded')
 
@@ -86,13 +86,16 @@ class OtherTaskListViewSet(viewsets.ModelViewSet):
     A simple ViewSet for viewing and editing sites.
     """
 
-    queryset = CeleryTaskProgress.objects.all()
+    queryset = CeleryTaskProgress.objects.filter(status=2)
     serializer_class = TaskSerializer
     pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
         # if self.request.group.name == "Super Admin":
         #     return queryset 
+        if self.request.group.name == "Super Admin":
+            return queryset.order_by('-date_updateded')
+
         self_projects = UserRole.objects.filter(user_id=self.request.user.id, ended_at__isnull=False, project_id__isnull=False).distinct('project_id').values_list('project_id', flat=True)
         self_orgs = UserRole.objects.filter(user_id=self.request.user.id, ended_at__isnull=False, organization_id__isnull=False).distinct('organization_id').values_list('organization_id', flat=True)
         self_org_projects = Project.objects.filter(organization_id__in=self_orgs).only('id')
