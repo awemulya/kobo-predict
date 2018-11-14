@@ -79,7 +79,7 @@ class MyTaskListViewSet(viewsets.ModelViewSet):
         if self.request.group.name == "Super Admin":
             return queryset 
 
-        return queryset.filter(user_id=self.request.user.id, date_updateded__gte = current_filterdate).order_by('date_updateded')
+        return queryset.filter(user_id=self.request.user.id).order_by('-date_updateded')
 
 class OtherTaskListViewSet(viewsets.ModelViewSet):
     """
