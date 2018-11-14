@@ -2648,6 +2648,8 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         for el in seq:
             if el.id==value: yield el
 
+
+
     def getStatus(datas, site_id):
         el = None
         count = 0 
@@ -2689,7 +2691,6 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
         # FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('project__stages__stage_forms__project_form_instances', queryset=FInstance.objects.filter().order_by('-id')))
         get_params = "?page="
     
-    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=site_list).order_by('-pk')))
     
     paginator = Paginator(site_list, page_list) # Show how many contacts per page
     page = request.GET.get('page')
@@ -2702,8 +2703,33 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     # If page is out of range (e.g. 9999), deliver last page of results.
         sites = paginator.page(paginator.num_pages)
 
-    initial = True
+    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=sites).order_by('-pk')))
+    
+    site_ids = []
     for site in sites:
+        site_ids.append(str(site.id))
+    
+    site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {"$in": list(site_ids) }}},  { "$group" : { 
+                  "_id" :  { 
+                    "fs_site": "$fs_site",
+                    "date": { "$substr": [ "$start", 0, 10 ] }
+                  },
+               }
+             }, { "$group": { "_id": "$_id.fs_site", "visits": { 
+                      "$push": { 
+                          "date":"$_id.date"
+                      }          
+                 }
+             }}])['result']
+    
+    def filterMongolist(value):
+        for el in site_visits:
+            if el['_id']==value: return el
+
+    
+    setStatisticsChecker=[]
+    for site in sites:
+
         site_row = ["<a href='"+site.get_absolute_url()+"'>"+site.identifier+"</a>", "<a href='"+site.get_absolute_url()+"'>"+site.name+"</a>"]
         
 
@@ -2715,8 +2741,10 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
             if substage1 is not None:
             
                 if substage1.stage_forms.project_form_instances.all():
-                    if initial:
+                    
+                    if substage1.id not in setStatisticsChecker:
                         setStatistics(substage1.stage_forms.project_form_instances.all())
+                        setStatisticsChecker.append(substage1.id)
                     status, style_class, submission_count = getStatus(substage1.stage_forms.project_form_instances.all(), site.id)
                      
                 else:
@@ -2726,9 +2754,10 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                  status, style_class = "-", "cell-inactive"
                  submission_count = 0
             site_row.append([status, submission_count, style_class])
-        
-        site_row.append([status, len(set(stats.get(site.id, {}).get('submission_dates', []))), "cell-inactive"])
+        visits = filterMongolist(str(site.id))
+        site_row.append([status, len(visits['visits']), "cell-inactive"])
         site_row.append([status, stats.get(site.id, {}).get('submission_count', 0), "cell-inactive"])
+        
         if 'flagged' in stats.get(site.id, {}):
             site_row.append([status, stats.get(site.id, {}).get('flagged', 0), "cell-warning"])
         else:
