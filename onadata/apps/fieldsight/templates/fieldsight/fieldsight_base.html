@@ -296,16 +296,7 @@
 		<script>
 
 			$(document).ready(function(){
-				$('.task-detail-handler').on('click', function(event){
-				   event.stopPropagation();
-				   $(this).siblings('.task-detail-content').collapse('toggle');
-				   var hsText = $(this).text();
-				   if(hsText == 'See Detail'){
-				   		$(this).text('Hide Detail');
-				   }else{
-				   		$(this).text('See Detail');
-				   }
-				 });
+				
 				
 				$(".widget-scrolling-large-list > .widget-body, .widget-scrolling-list > .widget-body").niceScroll({cursorborder:"",cursorcolor:"#00628e", horizrailenabled:false});
 
@@ -317,6 +308,17 @@
 				 $('.notification-tabs > ul > li > a').on('click', function(event){
 				  event.stopPropagation();
 				  $(this).tab('show')
+				 });
+
+				 $('.task-detail-handler').on('click', function(event){
+				   event.stopPropagation();
+				   $(this).siblings('.task-detail-content').collapse('toggle');
+				   var hsText = $(this).text();
+				   if(hsText == 'See Detail'){
+				   		$(this).text('Hide Detail');
+				   }else{
+				   		$(this).text('See Detail');
+				   }
 				 });
 			});
 
