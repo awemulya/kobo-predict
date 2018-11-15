@@ -158,7 +158,7 @@ def get_client_ip(request):
     return ip
 
 
-def enketo_url(form_url, id_string, instance_xml=None,
+def enketo_ur_oldl(form_url, id_string, instance_xml=None,
                instance_id=None, return_url=None):
     if not hasattr(settings, 'ENKETO_URL')\
             and not hasattr(settings, 'ENKETO_API_SURVEY_PATH'):
@@ -177,6 +177,58 @@ def enketo_url(form_url, id_string, instance_xml=None,
             'instance_id': instance_id,
             'return_url': return_url
         })
+    req = requests.post(url, data=values,
+                        auth=(settings.ENKETO_API_TOKEN, ''), verify=False)
+    if req.status_code in [200, 201]:
+        try:
+            response = req.json()
+        except ValueError:
+            pass
+        else:
+            if 'edit_url' in response:
+                return response['edit_url']
+            if settings.ENKETO_OFFLINE_SURVEYS and ('offline_url' in response):
+                return response['offline_url']
+            if 'url' in response:
+                return response['url']
+    else:
+        try:
+            response = req.json()
+        except ValueError:
+            pass
+        else:
+            if 'message' in response:
+                raise EnketoError(response['message'])
+    return False
+
+
+def enketo_url(form_url, id_string, instance_xml=None,
+               instance_id=None, return_url=None, instance_attachments=None):
+    if not hasattr(settings, 'ENKETO_URL')\
+            and not hasattr(settings, 'ENKETO_API_SURVEY_PATH'):
+        return False
+
+    if instance_attachments is None:
+        instance_attachments = {}
+
+    url = settings.ENKETO_URL + settings.ENKETO_API_SURVEY_PATH
+
+    values = {
+        'form_id': id_string,
+        'server_url': form_url
+    }
+    if instance_id is not None and instance_xml is not None:
+        url = 'http://enketo.naxa.com.np' + '/api/v2/instance'
+        # url = settings.ENKETO_URL + settings.ENKETO_API_INSTANCE_PATH
+        values.update({
+            'instance': instance_xml,
+            'instance_id': instance_id,
+            'return_url': return_url
+        })
+        for key, value in instance_attachments.iteritems():
+            values.update({
+                'instance_attachments[' + key + ']': value
+            })
     req = requests.post(url, data=values,
                         auth=(settings.ENKETO_API_TOKEN, ''), verify=False)
     if req.status_code in [200, 201]:
@@ -228,6 +280,15 @@ def _get_form_url(request, username, protocol='https'):
         username = settings.TEST_USERNAME
     else:
         http_host = request.META.get('HTTP_HOST', 'ona.io')
+
+    # In case INTERNAL_DOMAIN_NAME is equal to PUBLIC_DOMAIN_NAME,
+    # configuration doesn't use docker internal network.
+    # Don't overwrite `protocol.
+    is_call_internal = settings.KOBOCAT_INTERNAL_HOSTNAME == http_host and \
+                       settings.KOBOCAT_PUBLIC_HOSTNAME != http_host
+
+    # Make sure protocol is enforced to `http` when calling `kc` internally
+    protocol = "http" if is_call_internal else protocol
 
     return '%s://%s/%s' % (protocol, http_host, username)
 
