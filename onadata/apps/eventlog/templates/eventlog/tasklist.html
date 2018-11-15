@@ -18,14 +18,14 @@
 		<div class="notification-tabs">
 			<ul class="nav nav-tabs nav-fill" id="notificationTab" role="tablist">
 			  <li class="nav-item">
-			    <a class="nav-link active" id="fnt-tab" data-toggle="tab" href="#myTasks" role="tab" aria-controls="fnt" aria-selected="true">Your Tasks</a>
+			    <a class="nav-link active" id="fnt-tab" data-toggle="tab" href="#myTasksPage" role="tab" aria-controls="fnt" aria-selected="true">Your Tasks</a>
 			  </li>
 			  <li class="nav-item">
-			    <a class="nav-link" id="snt-tab" data-toggle="tab" href="#otherTasks" role="tab" aria-controls="snt" aria-selected="false">Others' Tasks</a>
+			    <a class="nav-link" id="snt-tab" data-toggle="tab" href="#otherTasksPage" role="tab" aria-controls="snt" aria-selected="false">Others' Tasks</a>
 			  </li>
 			</ul>
 			<div class="tab-content" id="notificationTabContent">
-			  	<div class="tab-pane fade show active" id="myTasks" role="tabpanel" aria-labelledby="fnt-tab">
+			  	<div class="tab-pane fade show active" id="myTasksPage" role="tabpanel" aria-labelledby="fnt-tab">
 			  		{% verbatim %}
 			  		<div id="mytasklist">
 						<div class="loading-content p-3">
@@ -36,7 +36,7 @@
 					</div>
 					{% endverbatim %}
 			  	</div>
-			  	<div class="tab-pane fade" id="otherTasks" role="tabpanel" aria-labelledby="snt-tab">
+			  	<div class="tab-pane fade" id="otherTasksPage" role="tabpanel" aria-labelledby="snt-tab">
 		  			{% verbatim %}
 		  			<div id="othertasklist">
 						<div class="loading-content p-3">
@@ -67,11 +67,11 @@ var static_url ="{{ STATIC_URL }}";
 	
 				$(document).ready(function(){
 
-				 $('.notification-tabs > ul > li > a').on('click', function(event){
-				 	console.log('here');
-				  event.stopPropagation();
-				  $(this).tab('show')
-				 });
+				 // $('.notification-tabs > ul > li > a').on('click', function(event){
+				 // 	console.log('here');
+				 //  event.stopPropagation();
+				 //  $(this).tab('show')
+				 // });
 
 
 			});
