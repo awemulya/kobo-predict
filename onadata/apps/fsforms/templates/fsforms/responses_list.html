@@ -21,13 +21,24 @@
 			<li class="breadcrumb-item"><a href="{% if is_donor_only %}{% url 'fieldsight:site_dashboard_lite' site %}{% else %}{% url 'fieldsight:site-dashboard' site %}{% endif %}">{{ obj.name }}</a></li>
 			<li class="breadcrumb-item active" aria-current="page">{% trans 'Responses' %}</li>
 		    {% endblock %}
-    </ol>
+        </ol>
       
     </nav>
 
     <div class="tabbing">
 
-
+      <ul class="tab-right">
+            <li>
+              <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  View by Form
+                </button>
+                <div class="dropdown-menu">
+                  <a href="{% url 'fieldsight:site-submission-data' site '1' %}" class="btn btn-sm-primary">View by Status</a>
+                </div>
+              </div>
+            </li>
+          </ul>
     <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
               <a class="nav-link active" data-toggle="tab" href="#general1" role="tab">{% trans 'General' %} {% trans 'Forms' %}</a>
@@ -64,26 +75,28 @@
                           {% endif %}
                       </td>
                       <td>
-                                  {{ obj.getlatestsubmittiondate.first.date }}
+                                  {% with obj|getlatestsubmittiondate:site as sdate %}
+                              {{ sdate.first.date }}
+                                {% endwith %}
                       </td>
                       <td>
                           {{ obj.date_created }}
                       </td>
                       <td>
-                          {% with obj.id|site_submissions as count %}
+                          {% with obj|site_submissions:site as count %}
                           
-                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.id %}">
+                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.id site %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
                           {% endwith %}
 
                       </td>
                       <td>
-                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
+                      <a target="_blank" href="{% url 'onadata.apps.viewer.views.export_list' obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id site %}">
                           <i class="la la-download" aria-hidden="true"></i></a>
                       </td>
                       <td>
-                          
-                                  <a target="_blank" href="{% url 'forms:new-submission' obj.id %}">
+
+                                  <a target="_blank" href="{% url 'forms:new-submission' obj.id site %}">
                                       <i class="la la-plus" aria-hidden="true"></i>
                                   </a>
                           
@@ -119,7 +132,9 @@
                               {{obj.xf.title}}
                             </td>
                             <td>
-                              {{ obj.getlatestsubmittiondate.first.date }}
+                                {% with obj|getlatestsubmittiondate:site as sdate %}
+                              {{ sdate.first.date }}
+                                {% endwith %}
                             </td>
 
                             <td>
@@ -127,11 +142,11 @@
                             </td>
                             <td>
                               
-                              {% with  obj.id|site_submissions as count %}
-                               <a class="badge badge-light" href="{% if count == 0 %}#{% else %}{% url 'forms:html_export' obj.id %}{% endif %}">
-                                        {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
-                              </a>
-                              {% endwith %}
+                              {% with obj|site_submissions:site as count %}
+
+                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.id site %}">
+                               <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
+                          {% endwith %}
                             </td>
                             <td>
                               <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
@@ -174,7 +189,9 @@
                           {% endif %}
                       </td>
                       <td>
-                                  {{ obj.getlatestsubmittiondate.first.date }}
+                                 {% with obj.schedule_forms|getlatestsubmittiondate:site as sdate %}
+                              {{ sdate.first.date }}
+                                {% endwith %}
                               </td>
                       <td>
                           {{ obj.schedule_forms.xf.title }}
@@ -183,9 +200,9 @@
                           {{ obj.date_created }}
                       </td>
                       <td>
-                           {% with obj.schedule_forms.pk|site_submissions as count %}
+                           {% with obj.schedule_forms|site_submissions:site as count %}
                           
-                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.schedule_forms.pk %}">
+                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.schedule_forms.pk site%}">
                               <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
                               </a>
                           {% endwith %}
@@ -196,7 +213,7 @@
                       </td>
                       <td>
                           {% if obj.form %}
-                                  <a target="_blank" href="{% url 'forms:new-submission' obj.form.id %}">
+                                  <a target="_blank" href="{% url 'forms:new-submission' obj.form.id site %}">
                                       <i class="la la-plus" aria-hidden="true"></i>
                                   </a>
                           {% endif %}
@@ -239,11 +256,11 @@
                             </td>
                             <td>
                               
-                              {% with  obj.id|site_submissions as count %}
-                               <a class="badge badge-light" href="{% if count == 0 %}#{% else %}{% url 'forms:html_export' obj.id %}{% endif %}">
-                                        {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
-                              </a>
-                              {% endwith %}
+                              {% with obj|site_submissions:site as count %}
+
+                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.id site %}">
+                               <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
+                          {% endwith %}
                             </td>
                             <td>
                               <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
@@ -297,16 +314,18 @@
                                   {% endif %}
                               </td>
                               <td>
-                                  {{ obj.getlatestsubmittiondate.first.date }}
+                                  {% with obj.stage_forms|getlatestsubmittiondate:site as sdate %}
+                              {{ sdate.first.date }}
+                                {% endwith %}
                               </td>
                               <td>
-                                  {{ obj.order }}
+                                  {{ forloop.counter }}
                               </td>
                               <td>{{obj.stage_forms.xf.title}}</td>
                               <td>
-                          {% with obj.stage_forms.pk|site_submissions as count %}
+                          {% with obj.stage_forms|site_submissions:site as count %}
                           
-                               <a class="badge badge-light" href="{% url 'forms:html_export' obj.stage_forms.pk %}">
+                               <a class="badge badge-light" href="{% url 'forms:html_export' obj.stage_forms.pk site %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
                                </a>
                           {% endwith %}
@@ -317,7 +336,7 @@
                               </td>
                                <td>
                                 {% if obj.form %}
-                                  <a target="_blank" href="{% url 'forms:new-submission' obj.form.id %}">
+                                  <a target="_blank" href="{% url 'forms:new-submission' obj.form.id site %}">
                                       <i class="la la-plus" aria-hidden="true"></i>
                                   </a>
                                 {% endif %}
@@ -360,7 +379,9 @@
                               {{obj.xf.title}}
                             </td>
                             <td>
-                              {{ obj.getlatestsubmittiondate.first.date }}
+                              {% with obj|getlatestsubmittiondate:site as sdate %}
+                              {{ sdate.first.date }}
+                                {% endwith %}
                             </td>
 
                             <td>
@@ -368,11 +389,11 @@
                             </td>
                             <td>
                               
-                              {% with  obj.id|site_submissions as count %}
-                               <a class="badge badge-light" href="{% if count == 0 %}#{% else %}{% url 'forms:html_export' obj.id %}{% endif %}">
-                                        {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %} {{ count }} {% trans 'Submission' %} {% else %} {{ count }} {% trans 'Submissions' %}{% endif %}         
-                              </a>
-                              {% endwith %}
+                             {% with obj|site_submissions:site as count %}
+
+                           <a class="badge badge-light" href="{% url 'forms:html_export' obj.id site %}">
+                               <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
+                          {% endwith %}
                             </td>
                             <td>
                               <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">

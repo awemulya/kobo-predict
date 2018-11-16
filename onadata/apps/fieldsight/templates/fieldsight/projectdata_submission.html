@@ -53,6 +53,8 @@
             </li>
           </ul>
 
+
+
     	<ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
               <a class="nav-link " id ="0" data-toggle="tab" href="#tab0" role="tab">{% trans 'Rejected' %} {% trans 'Submissions' %}</a>
@@ -126,18 +128,9 @@
 				  <tr>
 				     
 					  <td style="width:60%;">
-
- 						{% if instance.site_fxf %}
-						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
-						  </a>
-						  {% else %}
 						  <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
 							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
 						  </a>
-						  {% endif %}
-<!-- 						
-
  -->					  </td>
  					  <td>
 							<div class="detail-person-time">
@@ -174,16 +167,9 @@
 				  {% for instance in data %}
 				  <tr>
 					  <td style="width:60%;">
-						   {% if instance.site_fxf %}
-						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
-						  </a>
-						  {% else %}
 						  <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
 							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
 						  </a>
-						  {% endif %}
-
 					  </td>
 					   <td>
 							<div class="detail-person-time">

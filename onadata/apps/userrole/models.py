@@ -160,12 +160,13 @@ class UserRole(models.Model):
     def both_project_roles(self):
         return UserRole.objects.filter(user=self.user, group__name__in=['Project Manager', 'Reviewer'], organization=self.organization)
 
+
 @receiver(post_save, sender=UserRole)
 def create_messages(sender, instance, created,  **kwargs):
     if created and instance.site is not None and instance.group.name in ["Site Supervisor"]:
         Device = get_device_model()
         if Device.objects.filter(name=instance.user.email).exists():
-            message = {'notify_type':'Assign Site', 'site':{'name': instance.site.name, 'id': instance.site.id}}
+            message = {'notify_type':'Assign Site', 'site':{'name': instance.site.name, 'id': instance.site.id}, 'project':{'name': instance.project.name, 'id': instance.project.id}}
             try:
                 Device.objects.filter(name=instance.user.email).send_message(message)
             except:

@@ -5,15 +5,11 @@
 
 {% block page-title %}{% trans 'Responses' %}{% endblock %}
 
-   {%block extracss %}
+{%block extracss %}
 <link rel="stylesheet" href="{% static 'css/knockout-file-bindings.css' %}">
 <link rel="stylesheet" href="{% static 'dummy/assets/css/jquery-ui.css' %}">
 
-    {% endblock %}
-
-
-
-
+{% endblock %}
 
 {% block content %}
 {% load pagination_tags %}
@@ -78,13 +74,13 @@
 				<tr>
 					
 					<td style="width:60%;">
-						 {% if instance.site_fxf %}
-						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
+						  {% if instance.project_fxf %}
+						    <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk  pk%}#/{{ instance.instance.id|stringformat:'d'}}">
+							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
 						  </a>
 						  {% else %}
-						  <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
+						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+							    <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
 						  </a>
 						  {% endif %}
 					</td>
@@ -121,13 +117,13 @@
 				  {% for instance in data %}
 				  <tr>
 					  <td style="width:60%;">
-						   {% if instance.site_fxf %}
-						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
+						   {% if instance.project_fxf %}
+						    <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk  pk%}#/{{ instance.instance.id|stringformat:'d'}}">
+							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
 						  </a>
 						  {% else %}
-						  <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
+						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+							    <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
 						  </a>
 						  {% endif %}
 					  </td>
@@ -166,13 +162,13 @@
 				  <tr>
 				  	
 					  <td style="width:60%;">
-						  {% if instance.site_fxf %}
-						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
+						   {% if instance.project_fxf %}
+						    <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk  pk%}#/{{ instance.instance.id|stringformat:'d'}}">
+							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
 						  </a>
 						  {% else %}
-						  <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
+						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+							    <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
 						  </a>
 						  {% endif %}
 					  </td>
@@ -209,13 +205,13 @@
 				  <tr>
 				    
 					  <td style="width:60%;">
-						  {% if instance.site_fxf %}
-						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							  <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
+						  {% if instance.project_fxf %}
+						    <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk  pk%}#/{{ instance.instance.id|stringformat:'d'}}">
+							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
 						  </a>
 						  {% else %}
-						  <a title="view submission detail" href="{% url 'forms:instance' instance.project_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
-							  <h7 class="address">{{ instance.project_fxf.xf.title}}</h7>
+						  <a title="view submission detail" href="{% url 'forms:instance' instance.site_fxf.pk %}#/{{ instance.instance.id|stringformat:'d'}}">
+							    <h7 class="address">{{ instance.site_fxf.xf.title}}</h7>
 						  </a>
 						  {% endif %}
 					  </td>

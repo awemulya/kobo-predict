@@ -109,7 +109,7 @@ def get_xform_and_perms(fsxf_id, request):
 
 @apply_form_field_names
 def query_mongo(username, id_string, query, fields, sort, start=0,
-                    limit=DEFAULT_LIMIT, count=False, hide_deleted=True, fs_uuid=None, fs_project_uuid=None):
+                    limit=DEFAULT_LIMIT, count=False, hide_deleted=True, fs_uuid=None, fs_project_uuid=None, site_id=None):
     USERFORM_ID = u'_userform_id'
     STATUS = u'_status'
     DEFAULT_BATCHSIZE = 1000
@@ -132,7 +132,10 @@ def query_mongo(username, id_string, query, fields, sort, start=0,
         query = {"$and": [query, {"$or":[ {"_uuid":fs_uuid}, {"fs_uuid":fs_uuid}, {"_uuid":str(fs_uuid)}, {"fs_uuid":str(fs_uuid)}]}]}
         # query['_uuid'] = { '$in': [fs_uuid, str(fs_uuid)] } #fs_uuid
     if fs_project_uuid is not None:
-        query['fs_project_uuid'] = { '$in': [fs_project_uuid, str(fs_project_uuid)] } #fs_project_uuid
+        if site_id is None:
+            query['fs_project_uuid'] = { '$in': [fs_project_uuid, str(fs_project_uuid)] } #fs_project_uuid
+        elif site_id:
+            query = {"fs_project_uuid": str(fs_project_uuid), "fs_site": str(site_id)}
     # if hide_deleted:
     #     # display only active elements
     #     # join existing query with deleted_at_query on an $and

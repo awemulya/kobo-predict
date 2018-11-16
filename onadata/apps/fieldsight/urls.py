@@ -190,7 +190,7 @@ urlpatterns = [
 
     # Site Responses / Report url
     url(r'^site/report/(?P<pk>\d+)/$', project_html_export, name='site-responses-report'),
-    url(r'^response/report/(?P<pk>\d+)/$', response_export, name='instance-responses-report'),
+    url(r'^response/report/(?P<pk>\d+)/(?P<include_null_fields>\d+)/$', response_export, name='instance-responses-report'),
 
     #for Regions
 

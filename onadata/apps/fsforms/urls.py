@@ -27,7 +27,7 @@ from .views import (
     fill_details_schedule,
     schedule_add_form,
     AssignedFormsListView,
-    html_export, InstanceKobo,
+    InstanceKobo,
     show,
     api,
     download_jsonform,
@@ -46,17 +46,20 @@ from .views import (
     edit_share_stages, library_stages, un_deploy_general, un_deploy_survey, deploy_general_part, Setup_forms,
     Configure_forms,
     instance_status, Rearrange_stages, deploy_general_remaining_sites, delete_substage, delete_mainstage,
-    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus, FullResponseTable, DeleteMyForm,
+    save_educational_material, AlterStatusDetailView, Html_export, Project_html_export, AssignFormDefaultStatus,
+    FullResponseTable, DeleteMyForm,
     DeleteFInstance,
-    FormFillView, CreateKoboFormView, DeleteFieldsightXF
+    FormFillView, CreateKoboFormView, DeleteFieldsightXF,
 
-)
+    FormPreviewView, download_submission, download_xml_version, get_attachments_of_finstance)
 
 
 urlpatterns = [
         url(r'^$', LibraryFormsListView.as_view(), name='library-forms-list'),
 
+        url(r'^preview/(?P<id_string>[^/]+)/$', FormPreviewView.as_view(), name='preview'),
         url(r'^new-submission/(?P<fsxf_id>\d+)/$', FormFillView.as_view(), name='new-submission'),
+        url(r'^new-submission/(?P<fsxf_id>\d+)/(?P<site_id>\d+)/$', FormFillView.as_view(), name='new-submission'),
         url(r'^edit-submission/(?P<fsxf_id>\d+)/(?P<instance_pk>\d+)/$', FormFillView.as_view(), name='edit-submission'),
 
         url(r'^assigned/$', MyOwnFormsListView.as_view(), name='forms-list'),
@@ -149,9 +152,11 @@ urlpatterns = urlpatterns + [
 ]
 
 urlpatterns = urlpatterns + [
-        url(r'site-submissions/(?P<fsxf_id>\d+)$', Html_export.as_view(), name='html_export'),
+        url(r'site-submissions/(?P<fsxf_id>\d+)/$', Html_export.as_view(), name='html_export'),
+        url(r'site-submissions/(?P<fsxf_id>\d+)/(?P<site_id>\d+)/$', Html_export.as_view(), name='html_export'),
         url(r'project-submissions/(?P<fsxf_id>\d+)$', Project_html_export.as_view(), name='project_html_export'),
         url(r'^forms/(?P<fsxf_id>\d+)$', InstanceKobo.as_view(), name='instance' ),
+        url(r'^forms/(?P<fsxf_id>\d+)/(?P<site_id>\d+)$', InstanceKobo.as_view(), name='instance' ),
         url(r'^forms/(?P<fsxf_id>\d+)/(?P<instance_id>\d+)$', Instance_detail.as_view(), name='instance_detail'),
         url(r'^forms/alter-answer-status/(?P<instance_id>\d+)/(?P<status>\d)/(?P<fsid>\d+)$', alter_answer_status, name='alter-answer-status'),
         url(r'submissions/detailed/(?P<fsxf_id>\d+)$', FullResponseTable.as_view(), name='project_html_table_export'),
@@ -161,6 +166,7 @@ urlpatterns = urlpatterns + [
     # kobo main urls
 
     url(r'^mongo_view_api/(?P<fsxf_id>\d+)/api$', api, name='mongo_view_api'),
+    url(r'^mongo_view_api/(?P<fsxf_id>\d+)/(?P<site_id>\d+)/api$', api, name='mongo_view_api'),
     #  kobo main view
     url(r'^show/(?P<fsxf_id>\d+)$', show, name='show'),
     url(r'^forms/(?P<fsxf_id>\d+)/delete_data$', delete_data, name='delete_data'),
@@ -199,6 +205,9 @@ urlpatterns = urlpatterns + [
 
     url(r'^api/days/', DayViewset.as_view({'get': 'list'}), name='days'),
     url(r'^instance/status/(?P<instance>\d+)$', instance_status, name='instance_status'),
+    url(r'^api/instance/download_submission/(?P<pk>\d+)$', download_submission, name='download_submission'),
+    url(r'^api/instance/download_xml_version/(?P<pk>\d+)$', download_xml_version, name='download_xml_version'),
+    url(r'^api/instance/get_attachments_of_finstance/(?P<pk>\d+)$', get_attachments_of_finstance, name='get_attachments_of_finstance'),
     url(r'^api/instance/status-history/(?P<pk>\d+)$', InstanceHistoryViewSet.as_view({'get': 'list'}), name='instance_history'),
     url(r'^api/instance/change_status-detail/(?P<pk>\d+)$', InstanceHistoryDetailViewSet.as_view({'get': 'retrieve'}), name='instance_status_change_detail'),
     url(r'^api/instance/status-detail/(?P<pk>\d+)$', AlterStatusDetailView.as_view(), name='alter-status-detail'),

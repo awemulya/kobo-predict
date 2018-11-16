@@ -63,9 +63,18 @@ def project_submissions(formid):
 
 
 @register.filter
-def site_submissions(formid):
-    FIs = FInstance.objects.filter(site_fxf_id = formid).count()
-    return FIs
+def site_submissions(fsxf, site_id):
+    if fsxf.site:
+        return FInstance.objects.filter(site_fxf_id= fsxf.id).count()
+    else:
+        return FInstance.objects.filter(project_fxf_id=fsxf.id, site__id=site_id).count()
+
+@register.filter
+def getlatestsubmittiondate(fsxf, site_id):
+    if fsxf.site is not None:
+        return fsxf.site_form_instances.order_by('-pk').values('date')[:1]
+    else:
+        return fsxf.project_form_instances.filter(site=site_id).order_by('-pk').values('date')[:1]
 
 @register.filter
 def can_edit_finstance(user, finstance):

@@ -18,6 +18,7 @@ from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from rest_framework.viewsets import ModelViewSet
 
+from onadata.apps.fsforms.models import XformHistory
 from onadata.libs import filters
 from onadata.libs.mixins.anonymous_user_public_forms_mixin import (
     AnonymousUserPublicFormsMixin)
@@ -804,6 +805,10 @@ data (instance/submission per row)
                 else:
                     # Something odd; hopefully it can be coerced into a string
                     raise exceptions.ParseError(detail=survey)
+            xf = XformHistory(xform=existing_xform, xls=existing_xform.xls, json=existing_xform.json,
+                              description=existing_xform.description, xml=existing_xform.xml,
+                              id_string=existing_xform.id_string, title=existing_xform.title, uuid=existing_xform.uuid)
+            xf.save()
         # Let the superclass handle updates to the other fields
         # noti = existing_xform.logs.create(source=request.user, type=7, title="Kobo form Updated",
         #                              organization=request.organization,
@@ -815,6 +820,7 @@ data (instance/submission per row)
         # ChannelGroup("notify-0").send({"text":json.dumps(result)})
         # if noti.organization:
         #     ChannelGroup("notify-{}".format(noti.organization.id)).send({"text":json.dumps(result)})
+
         return super(XFormViewSet, self).update(request, pk, *args, **kwargs)
 
     @detail_route(methods=['GET'])

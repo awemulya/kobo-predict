@@ -174,6 +174,7 @@ class StageFormSerializer(serializers.ModelSerializer):
 
 
 class EMImagesSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = EducationalImages
         exclude = ("educational_material",)
@@ -181,25 +182,29 @@ class EMImagesSerializer(serializers.ModelSerializer):
 
 class EMSerializer(serializers.ModelSerializer):
     em_images = EMImagesSerializer(many=True, read_only=True)
+
     class Meta:
         model = EducationMaterial
         exclude = ('stage',)
+
 
 class FSXFormSerializer(serializers.ModelSerializer):
     em = EMSerializer(read_only=True)
     name = serializers.SerializerMethodField('get_title', read_only=True)
     id_string = serializers.SerializerMethodField()
     responses_count = serializers.SerializerMethodField()
-    latest_submission =  serializers.SerializerMethodField()
 
     def validate(self, data):
         """
-        Check that form is unique for general form.
+        Check that form is unique for general form / survey forms in projects.
         """
         if data.has_key('site'):
             if FieldSightXF.objects.filter(
                     xf=data['xf'], is_staged=False, is_scheduled=False, site=data['site']).exists():
                 raise serializers.ValidationError("Form Already Exists, Duplicate General Forms Not Allowded")
+            elif FieldSightXF.objects.filter(
+                    xf=data['xf'], is_staged=False, is_scheduled=False, project=data['site'].project).exists():
+                raise serializers.ValidationError("Form Already Exists In Project, Duplicate General Forms Not Allowded")
         elif data.has_key('project'):
             if FieldSightXF.objects.filter(
                     xf=data['xf'], is_staged=False, is_scheduled=False, project=data['project']).exists():
@@ -208,7 +213,7 @@ class FSXFormSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FieldSightXF
-        exclude = ()
+        exclude = ('shared_level',  'date_modified', 'stage',  'schedule', 'is_survey', 'is_deleted', 'form_status', 'is_staged', 'is_scheduled',)
 
     @check_obj
     def get_title(self, obj):
@@ -220,30 +225,15 @@ class FSXFormSerializer(serializers.ModelSerializer):
 
     def get_responses_count(self, obj):
         is_project = self.context.get('is_project', False)
-        if not is_project:
-            return 0
-        # pk = self.context['pk']
-        if obj.is_survey or is_project == "1":
-            return obj.project_form_instances.count()
-        else:
-            return obj.site_form_instances.count()
-
-    def get_latest_submission(self, obj):
-        is_project = self.context.get('is_project', False)
-        if not is_project:
-            return 0
-        # pk = self.context['pk']
-        if obj.is_survey or is_project == "1":
-            response = obj.project_form_instances.order_by('-id')[:1] 
-        else:
-            response = obj.site_form_instances.order_by('-id')[:1]
-
-        serializer = FInstanceResponcesSerializer(instance=response, many=True)
-        return serializer.data 
+        if is_project:
+            return obj.response_count if hasattr(obj, "response_count") else 0
+        elif obj.project:
+            return obj.response_count if hasattr(obj, "response_count") else 0
+        elif obj.site:
+            return obj.site_response_count if hasattr(obj, "site_response_count") else 0
 
 
 class XformSerializer(serializers.ModelSerializer):
-
 
     class Meta:
         model = XForm

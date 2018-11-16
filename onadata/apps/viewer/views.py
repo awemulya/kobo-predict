@@ -45,6 +45,8 @@ from onadata.libs.utils.user_auth import has_permission, get_xform_and_perms,\
 from xls_writer import XlsWriter
 from onadata.libs.utils.chart_tools import build_chart_data
 
+from onadata.apps.fsforms.models import FieldSightXF
+
 
 def _set_submission_time_to_query(query, request):
     query[SUBMISSION_TIME] = {}
@@ -293,7 +295,7 @@ def data_export(request, username, id_string, export_type):
 
 @login_required
 @require_POST
-def create_export(request, username, id_string, export_type, is_project=None, id=None):
+def create_export(request, username, id_string, export_type, is_project=None, id=None, site_id=None):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
     if not has_forms_permission(xform, owner, request):
@@ -350,15 +352,19 @@ def create_export(request, username, id_string, export_type, is_project=None, id
                 'export_type': export_type.upper(),
                 'id_string': xform.id_string,
             }, audit, request)
+        kwargs = {
+            "username": username,
+            "id_string": id_string,
+            "export_type": export_type,
+            "is_project": is_project,
+            "id": id,
+        }
+
+        if site_id is not None:
+            kwargs['site_id'] = site_id
         return HttpResponseRedirect(reverse(
             export_list,
-            kwargs={
-                "username": username,
-                "id_string": id_string,
-                "export_type": export_type,
-                "is_project": is_project,
-                "id": id
-            })
+            kwargs=kwargs)
         )
 
 
@@ -379,14 +385,15 @@ def _get_google_token(request, redirect_to_url):
     return token
 
 
-def export_list(request, username, id_string, export_type, is_project=None, id=None):
+def export_list(request, username, id_string, export_type, is_project=None, id=None,site_id=None):
+    print("username",username)
+    print("id_string",id_string)
+    print("export_type",export_type)
+    print("is_project",is_project)
+    print(" id",  id)
+    print("site_id", site_id)
     if export_type == Export.GDOC_EXPORT:
         return HttpResponseForbidden(_(u'Not shared.'))
-        redirect_url = reverse(
-            export_list,
-            kwargs={
-                'username': username, 'id_string': id_string,
-                'export_type': export_type})
         token = _get_google_token(request, redirect_url)
         if isinstance(token, HttpResponse):
             return token
@@ -405,17 +412,20 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
         'meta': export_meta,
         'token': export_token,
     }
-    if should_create_new_export(xform, export_type):    
+    if should_create_new_export(xform, export_type, id, site_id):
 
-        query = request.POST.get("query")
         if is_project == 1 or is_project == '1':
-            query = {"fs_project_uuid" : str(id)}
+            query = {"fs_project_uuid": str(id)}
         else:
-            query = {"fs_uuid": str(id)}
+            fsxf = FieldSightXF.objects.get(pk=id)
+            if fsxf.site:
+                query = {"fs_uuid": str(id)}
+            else:
+                query = {"fs_project_uuid": str(id), "fs_site": str(site_id)}
         force_xlsx = True
-
+        print("query at view", query)
         try:
-            create_async_export(xform, export_type, query, force_xlsx, options, is_project, id)
+            create_async_export(xform, export_type, query, force_xlsx, options, is_project, id,site_id)
         except Export.ExportTypeError:
             return HttpResponseBadRequest(
                 _("%s is not a valid export type" % export_type))
@@ -436,8 +446,10 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
             xform=xform, export_type=export_type, fsxf=id).order_by('-created_on'),
         'metas': metadata,
         'is_project': is_project,
-        'id': id
-    }
+        'id': id,
+            }
+    if site_id is not None:
+        data['site_id'] = site_id
     return render(request, 'export_list.html', data)
 
 
@@ -545,7 +557,7 @@ def export_download(request, username, id_string, export_type, filename):
 
 @login_required
 @require_POST
-def delete_export(request, username, id_string, export_type, is_project=None, id=None):
+def delete_export(request, username, id_string, export_type, is_project=None, id=None, site_id=None):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
     if not has_forms_permission(xform, owner, request):
@@ -570,15 +582,20 @@ def delete_export(request, username, id_string, export_type, is_project=None, id
             'filename': export.filename,
             'id_string': xform.id_string,
         }, audit, request)
-    return HttpResponseRedirect(reverse(
-        export_list,
-        kwargs={
+    kwargs =  {
             "username": username,
             "id_string": id_string,
             "export_type": export_type,
             "is_project": is_project,
-            "id": id
-        }))
+            "id": id,
+            }
+
+    if site_id is not None:
+        kwargs['site_id'] = site_id
+    return HttpResponseRedirect(reverse(
+        export_list,
+        kwargs=kwargs))
+
 
 
 def zip_export(request, username, id_string):

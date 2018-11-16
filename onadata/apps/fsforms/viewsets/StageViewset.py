@@ -1,7 +1,11 @@
 from __future__ import unicode_literals
+
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
-from onadata.apps.fsforms.models import Stage
+from onadata.apps.fieldsight.models import Site
+from onadata.apps.fsforms.models import Stage, FInstance
 from onadata.apps.fsforms.serializers.StageSerializer import StageSerializer, SubStageSerializer, StageSerializer1
 from rest_framework.pagination import PageNumberPagination
 
@@ -12,12 +16,8 @@ class StageViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing and editing Stages.
     """
-    queryset = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True)
+    queryset = Stage.objects.filter(stage_forms__isnull=True, stage__isnull=True).order_by('order', 'date_created')
     serializer_class = StageSerializer1
-    # pagination_class = LargeResultsSetPagination
-
-    # authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-
 
     def filter_queryset(self, queryset):
         if self.request.user.is_anonymous():
@@ -27,11 +27,12 @@ class StageViewSet(viewsets.ModelViewSet):
         if is_project == "1":
             queryset = queryset.filter(project__id=pk)
         else:
-            queryset = queryset.filter(site__id=pk)
+            project_id = get_object_or_404(Site, pk=pk).project.id
+            queryset = queryset.filter(Q(site__id=pk, project_stage_id=0) | Q(project__id=project_id))
         return queryset
 
     def get_serializer_context(self):
-        return {'request': self.request, 'kwargs': self.kwargs,}
+        return self.kwargs
 
 
 class MainStageViewSet(viewsets.ModelViewSet):

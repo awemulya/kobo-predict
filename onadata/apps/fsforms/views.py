@@ -38,8 +38,8 @@ from onadata.apps.fsforms.utils import send_message, send_message_stages, send_m
     send_bulk_message_stages, \
     send_message_un_deploy, send_bulk_message_stages_deployed_project, send_bulk_message_stages_deployed_site, \
     send_bulk_message_stage_deployed_project, send_bulk_message_stage_deployed_site, send_sub_stage_deployed_project, \
-    send_sub_stage_deployed_site, send_message_flagged
-from onadata.apps.logger.models import XForm
+    send_sub_stage_deployed_site, send_message_flagged, send_message_un_deploy_project, get_version
+from onadata.apps.logger.models import XForm, Attachment
 from onadata.apps.main.models import MetaData
 from onadata.apps.main.views import set_xform_owner_data
 from onadata.libs.utils.user_auth import add_cors_headers
@@ -52,8 +52,9 @@ from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetail
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
     AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm, GeneralForm, KoScheduleForm, \
     EducationalmaterialForm
-from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, InstanceStatusChanged, FInstance, \
-    EducationMaterial, EducationalImages, InstanceImages, DeployEvent
+from .models import DeletedXForm, FieldSightXF, Stage, Schedule, FormGroup, FieldSightFormLibrary, \
+    InstanceStatusChanged, FInstance, \
+    EducationMaterial, EducationalImages, InstanceImages, DeployEvent, XformHistory
 from django.db.models import Q
 from onadata.apps.fieldsight.rolemixins import FInstanceRoleMixin, MyFormMixin, ConditionalFormMixin, ReadonlyFormMixin, SPFmixin, FormMixin, ReviewerRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
 from onadata.apps.fsforms.XFormMediaAttributes import get_questions_and_media_attributes
@@ -292,16 +293,40 @@ class ProjectResponses(ReadonlyProjectLevelRoleMixin, View):
                       {'is_donor_only': kwargs.get('is_donor_only', False), 'obj': obj, 'schedules': schedules, 'stages':stages, 'generals':generals, 'surveys': surveys,
                        "stage_deleted_forms":stage_deleted_forms, "survey_deleted_forms":survey_deleted_forms, "general_deleted_forms":general_deleted_forms, "schedule_deleted_forms":schedule_deleted_forms, 'project': pk})
 
+
 class Responses(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk=None, **kwargs):
         obj = get_object_or_404(Site, pk=pk)
-        schedules = Schedule.objects.filter(site_id=pk, schedule_forms__is_deleted=False, project__isnull=True, schedule_forms__isnull=False)
-        stages = Stage.objects.filter(stage__isnull=True, site_id=pk).order_by('order')
-        generals = FieldSightXF.objects.filter(is_staged=False, is_deleted=False, is_scheduled=False, site_id=pk, is_survey=False)
+        project_id = get_object_or_404(Site, pk=pk).project.id
+        schedules = Schedule.objects.filter(schedule_forms__is_deleted=False,
+                                            schedule_forms__isnull=False).filter(
+            Q(site__id=pk, schedule_forms__from_project=False)
+                                       | Q(project__id=project_id))
+        stages = Stage.objects.filter(
+            stage__isnull=True
+        ).filter(Q(site__id=pk,
+                   project_stage_id=0
+                   ) | Q(
+            project__id=project_id
+        )).order_by('order', 'date_created')
+        generals = FieldSightXF.objects.filter(is_staged=False, is_deleted=False, is_scheduled=False,  is_survey=False).\
+            filter(Q(site__id=pk, from_project=False)| Q(project__id=project_id))
         
-        stage_deleted_forms = FieldSightXF.objects.filter(is_staged=True,  is_scheduled=False, is_survey=False ,is_deleted=True, site_id=pk)
-        general_deleted_forms = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_survey=False, is_deleted=True, site_id=pk)
-        schedule_deleted_forms = FieldSightXF.objects.filter(is_staged=False, project__isnull=True, is_survey=False, is_scheduled=True, is_deleted=True, site_id=pk)
+        stage_deleted_forms = FieldSightXF.objects.filter(is_staged=True,
+                                                          is_scheduled=False,
+                                                          is_survey=False ,
+                                                          is_deleted=True).filter(Q(site__id=pk, from_project=False)| Q(project__id=project_id))
+        general_deleted_forms = FieldSightXF.objects.filter(is_staged=False,
+                                                            is_scheduled=False,
+                                                            is_survey=False,
+                                                            is_deleted=True).filter(Q(site__id=pk, from_project=False)| Q(project__id=project_id))
+        schedule_deleted_forms = FieldSightXF.objects.filter(
+            is_staged=False,
+            project__isnull=True,
+            is_survey=False,
+            is_scheduled=True,
+            is_deleted=True
+        ).filter(Q(site__id=pk, from_project=False)| Q(project__id=project_id))
         
         return render(request, "fsforms/responses_list.html",
                       {'is_donor_only': kwargs.get('is_donor_only', False),'obj': obj, 'schedules': schedules, 'stages':stages,'generals':generals,
@@ -777,19 +802,12 @@ class Deploy_general(SPFmixin, View):
                     if fxf_status:
                         fxf.is_deployed = False
                         fxf.save()
-                        FieldSightXF.objects.filter(fsform=fxf, is_scheduled=False, is_staged=False).update(is_deployed=False, is_deleted=True)
+                        send_message_un_deploy_project(fxf)
+                        # FieldSightXF.objects.filter(fsform=fxf, is_scheduled=False, is_staged=False).update(is_deployed=False, is_deleted=True)
                     else:
                         fxf.is_deployed = True
                         fxf.save()
-                        for site in fxf.project.sites.filter(is_active=True):
-                            child, created = FieldSightXF.objects.get_or_create(is_staged=False,
-                                                                                is_scheduled=False,
-                                                                                is_survey=False,
-                                                                                xf=fxf.xf, site=site, fsform_id=fxf_id)
-                            child.is_deployed = True
-                            child.is_deleted = False
-                            child.from_project = True
-                            child.save()
+                        send_message_un_deploy_project(fxf)
                 return HttpResponse({'msg': 'ok'}, status=status.HTTP_200_OK)
             else:
                 fxf = FieldSightXF.objects.get(pk=fxf_id)
@@ -1122,9 +1140,28 @@ class Setup_forms(SPFmixin, View):
                    'schedule_form': KoScheduleForm(request=request)})
 
 
+class FormPreviewView(View):
+    def get(self, request, *args, **kwargs):
+        id_string = self.kwargs.get('id_string')
+        xform = XForm.objects.get(id_string=id_string)
+        result = requests.post(
+            'http://localhost:8085/transform',
+            data={
+                'xform': xform.xml,
+            }
+        ).json()
+
+        return render(request, 'fsforms/form_preview.html', {
+            'xform': xform,
+            'html_form': result['form'],
+            'model_str': result['model'],
+            'existing': None,
+        })
+
 class FormFillView(FormMixin, View):
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
+        site_id = self.kwargs.get('site_id', None)
         sub_pk = self.kwargs.get('instance_pk')
 
         fieldsight_xf = FieldSightXF.objects.get(pk=pk)
@@ -1144,10 +1181,12 @@ class FormFillView(FormMixin, View):
             'html_form': result['form'],
             'model_str': result['model'],
             'existing': finstance,
+            'site_id': site_id,
         })
 
     def post(self, request, *args, **kwargs):
         pk = self.kwargs.get('fsxf_id')
+        site_id = self.kwargs.get('site_id')
         sub_pk = self.kwargs.get('instance_pk')
 
         fs_xf = FieldSightXF.objects.get(pk=pk)
@@ -1163,7 +1202,6 @@ class FormFillView(FormMixin, View):
         else:
             if finstance and finstance.site:
                 site_id = finstance.site_id
-            site_id = None
         with transaction.atomic():
             if fs_xf.is_survey:
                 instance = save_submission(
@@ -1179,18 +1217,33 @@ class FormFillView(FormMixin, View):
                     fs_poj_id=fs_xf.id,
                     project=fs_xf.project.id,
                 )
-            else:    
-                instance = save_submission(
-                    xform=xform,
-                    xml=xml,
-                    media_files=media_files,
-                    new_uuid=new_uuid,
-                    submitted_by=request.user,
-                    status='submitted_via_web',
-                    date_created_override=None,
-                    fxid=fs_xf.id,
-                    site=site_id,
-                )
+            else:
+                if fs_xf.site:
+                    instance = save_submission(
+                        xform=xform,
+                        xml=xml,
+                        media_files=media_files,
+                        new_uuid=new_uuid,
+                        submitted_by=request.user,
+                        status='submitted_via_web',
+                        date_created_override=None,
+                        fxid=fs_xf.id,
+                        site=site_id,
+                    )
+                else:
+                    instance = save_submission(
+                        xform=xform,
+                        xml=xml,
+                        media_files=media_files,
+                        new_uuid=new_uuid,
+                        submitted_by=request.user,
+                        status='submitted_via_web',
+                        date_created_override=None,
+                        fxid=None,
+                        site=site_id,
+                        fs_poj_id=fs_xf.id,
+                        project=fs_xf.project.id,
+                    )
             if finstance:
                 noti_type=31
                 title = "editing submission"
@@ -1212,7 +1265,7 @@ class FormFillView(FormMixin, View):
                 site = None
                 organization=extra_object.organization
             
-            noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=noti_type, title=title,
+            instance.fieldsight_instance.logs.create(source=self.request.user, type=noti_type, title=title,
 
                                        organization=organization,
                                        project=project,
@@ -1256,16 +1309,7 @@ def download_xform(request, pk):
         {
             "pk": pk
         }, audit, request)
-    response = response_with_mimetype_and_name('xml', pk,
-                                               show_date=False)
-    # from xml.etree.cElementTree import fromstring, tostring, ElementTree as ET, Element
-    # tree = fromstring(fs_xform.xf.xml)
-    # head = tree.findall("./")[0]
-    # model = head.findall("./")[1]
-    # # model.append(Element('FormID', {'id': str(fs_xform.id)}))
-    # response.content = tostring(tree,encoding='utf8', method='xml')
-    # # # import ipdb
-    # # # ipdb.set_trace()
+    response = response_with_mimetype_and_name('xml', str(fs_xform.id),  show_date=False)
     response.content = fs_xform.xf.xml
 
     return response
@@ -1461,17 +1505,17 @@ class FullResponseTable(ReadonlyFormMixin, View):
         context['obj'] = fsxf
         return render(request, 'fsforms/full_response_table.html', context)
 
-@group_required('KoboForms')
-def html_export(request, fsxf_id):
-    
-    cursor = FInstance.objects.filter(site_fxf=fsxf)
-    context={}
-    context['is_site_data'] = True
-    context['site_data'] = cursor
-    context['form_name'] = fsxf.xf.title
-    context['fsxfid'] = fsxf_id
-    context['obj'] = fsxf
-    return render(request, 'fsforms/fieldsight_export_html.html', context)
+# @group_required('KoboForms')
+# def html_export(request, fsxf_id):
+#
+#     cursor = FInstance.objects.filter(site_fxf=fsxf)
+#     context={}
+#     context['is_site_data'] = True
+#     context['site_data'] = cursor
+#     context['form_name'] = fsxf.xf.title
+#     context['fsxfid'] = fsxf_id
+#     context['obj'] = fsxf
+#     return render(request, 'fsforms/fieldsight_export_html.html', context)
 
 class Html_export(ReadonlyFormMixin, ListView):
     model =   FInstance
@@ -1481,18 +1525,26 @@ class Html_export(ReadonlyFormMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(Html_export, self).get_context_data(**kwargs)
         fsxf_id = int(self.kwargs.get('fsxf_id'))
+        site_id = int(self.kwargs.get('site_id'), 0)
         fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         # context['pk'] = self.kwargs.get('pk')
         context['is_site_data'] = True
         context['form_name'] = fsxf.xf.title
         context['fsxfid'] = fsxf_id
         context['obj'] = fsxf
+        if site_id != 0:
+            context['site_id'] = site_id
         return context
 
     def get_queryset(self, **kwargs):
         fsxf_id = int(self.kwargs.get('fsxf_id'))
+        site_id = int(self.kwargs.get('site_id'), 0)
+        fsxf = FieldSightXF.objects.get(pk=fsxf_id)
         query = self.request.GET.get("q", None)
-        queryset = FInstance.objects.filter(site_fxf=fsxf_id)
+        if not fsxf.from_project:
+            queryset = FInstance.objects.filter(site_fxf=fsxf_id)
+        else:
+            queryset = FInstance.objects.filter(project_fxf=fsxf_id, site_id=site_id)
         if query:
             new_queryset = FInstance.objects.filter(Q(submitted_by__first_name__icontains=query) | Q(submitted_by__first_last__icontains=query))
         else:
@@ -1686,7 +1738,7 @@ def instance_status(request, instance):
             try:
                 send_message_flagged(fi, message, comment_url)
             except Exception as e:
-                pass
+                print(str(e))
                 # send_message(fi.site_fxf, fi.form_status, message, comment_url)
         return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
 
@@ -1722,7 +1774,7 @@ def alter_answer_status(request, instance_id, status, fsid):
 
 # @group_required('KoboForms')
 class InstanceKobo(ConditionalFormMixin, View):
-    def get(self, request, fsxf_id, is_read_only):
+    def get(self, request, fsxf_id, is_read_only, site_id=None):
         fxf = FieldSightXF.objects.get(pk=fsxf_id)
         xform, is_owner, can_edit, can_view = fxf.xf, True, False, True
         audit = {
@@ -1734,16 +1786,19 @@ class InstanceKobo(ConditionalFormMixin, View):
             {
                 'id_string': xform.id_string,
             }, audit, request)
-        return render(request, 'fs_instance.html', {
+        kwargs = {
             'username': xform.user,
             'fxf': fxf,
             'can_edit': can_edit,
             'is_readonly': is_read_only
-        })
+        }
+        if site_id is not None:
+            kwargs['site_id'] = site_id
+        return render(request, 'fs_instance.html', kwargs)
 
 
 @require_http_methods(["GET", "OPTIONS"])
-def api(request, fsxf_id=None):
+def api(request, fsxf_id=None, site_id=None):
     """
     Returns all results as JSON.  If a parameter string is passed,
     it takes the 'query' parameter, converts this string to a dictionary, an
@@ -1768,6 +1823,10 @@ def api(request, fsxf_id=None):
 
     if not xform:
         return HttpResponseForbidden(_(u'Not shared.'))
+    # if not request.GET.get('query', False):
+    #     response = HttpResponse( json_util.dumps([{"count": 1}]), content_type='application/json')
+    #     add_cors_headers(response)
+    #     return response
 
     try:
         args = {
@@ -1787,6 +1846,8 @@ def api(request, fsxf_id=None):
         if xform:
             if fs_xform.project:
                 args["fs_project_uuid"] = fs_xform.id
+                if site_id is not None:
+                    args['site_id'] = site_id
             else:
                 args["fs_uuid"] = fs_xform.id
         cursor = query_mongo(**args)
@@ -2062,14 +2123,14 @@ def set_deploy_main_stage(request, is_project, pk, stage_id):
         else:
             site = Site.objects.get(pk=pk)
             main_stage = Stage.objects.get(pk=stage_id)
-            FieldSightXF.objects.filter(stage__id=main_stage.pk, is_deleted=False).update(is_deployed=True)
+            FieldSightXF.objects.filter(stage__stage__id=main_stage.pk, is_deleted=False).update(is_deployed=True)
             sub_stages  = Stage.objects.filter(stage__id=main_stage.pk, stage_forms__is_deleted=False)
-            sub_stages_id = [s.id for s in sub_stages]
-            stage_forms = FieldSightXF.objects.filter(stage__id__in=sub_stages_id)
-            stage_forms.update(is_deployed=True)
+            stage_forms = FieldSightXF.objects.filter(stage__stage__id=main_stage.pk, is_deleted=False, is_deployed=True)
+            deleted_forms = FieldSightXF.objects.filter(project__id=pk, is_deleted=True, is_staged=True)
             deploy_data = {'main_stage':StageSerializer(main_stage).data,
                            'sub_stages':StageSerializer(sub_stages, many=True).data,
-                           'stage_forms':StageFormSerializer(stage_forms, many=True).data
+                           'stage_forms':StageFormSerializer(stage_forms, many=True).data,
+                           'deleted_forms': StageFormSerializer(deleted_forms, many=True).data,
                             }
             d = DeployEvent(site=site, data=deploy_data)
             d.save()
@@ -2094,10 +2155,12 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
             stage_form.is_deployed = True
             stage_form.save()
             serializer = SubStageDetailSerializer(sub_stage)
+            deleted_forms = FieldSightXF.objects.filter(site__id=pk, is_deleted=True, is_staged=True)
             deploy_data = {
                 'main_stage':StageSerializer(sub_stage.stage).data,
                 'sub_stages':[StageSerializer(sub_stage).data],
                 'stage_forms':[StageFormSerializer(stage_form).data],
+                'deleted_forms': StageFormSerializer(deleted_forms, many=True).data,
                            }
             d = DeployEvent(site=site, data=deploy_data)
             d.save()
@@ -2200,3 +2263,43 @@ class DeleteFieldsightXF(FormMixin, View):
 
 
         # <a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">Remove</a>
+
+
+def download_submission(request, pk):
+    finstance = get_object_or_404(FInstance, pk__exact=pk)
+    response = response_with_mimetype_and_name('xml',  str(finstance.instance.id), show_date=False)
+    response.content = finstance.instance.xml
+    return response
+
+def download_xml_version(request, pk):
+    finstance = get_object_or_404(FInstance, pk__exact=pk)
+    response = response_with_mimetype_and_name('xml',  str(finstance.instance.id),  show_date=False)
+    submission_version = finstance.get_version
+    if finstance.project_fxf:
+        xml = finstance.project_fxf.xf.xml
+        xf = finstance.project_fxf.xf
+    else:
+        xml = finstance.site_fxf.xf.xml
+        xf = finstance.site_fxf.xf
+    xml_version = get_version(xml)
+    if submission_version and submission_version == xml_version:
+        response.content = xml
+    else:
+        if XformHistory.objects.filter(xform=xf, version=submission_version).exists():
+            xf_history = XformHistory.objects.get(xform=xf, version=submission_version)
+            response.content = xf_history.xml
+    return response
+
+@api_view(['GET'])
+def get_attachments_of_finstance(request,pk):
+    from django.core.files.storage import get_storage_class
+    default_storage = get_storage_class()()
+    finstance = get_object_or_404(FInstance, pk__exact=pk)
+    response_list = []
+    attachemtns = Attachment.objects.filter(instance=finstance.instance)
+    for a in attachemtns:
+        link = default_storage.url(a.media_file.url)
+        # response_list.append(link)
+        response_list.append(a.media_file.url)
+    return Response(response_list, status=status.HTTP_200_OK)
+

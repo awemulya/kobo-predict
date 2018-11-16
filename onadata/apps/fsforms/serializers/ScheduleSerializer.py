@@ -26,9 +26,8 @@ class ScheduleSerializer(serializers.ModelSerializer):
     id_string = serializers.SerializerMethodField()
     is_deployed = serializers.SerializerMethodField('get_is_deployed_status', read_only=True)
     default_submission_status = serializers.SerializerMethodField()
-    responses_count = serializers.SerializerMethodField()
-    latest_submission = serializers.SerializerMethodField()
     schedule_level = serializers.SerializerMethodField('get_schedule_level_type', read_only=True)
+    responses_count = serializers.SerializerMethodField()
 
     def validate(self, data):
         """
@@ -102,43 +101,25 @@ class ScheduleSerializer(serializers.ModelSerializer):
             return FieldSightXF.objects.get(schedule=obj).is_deployed
 
     def get_default_submission_status(self, obj):
-        if not FieldSightXF.objects.filter(schedule=obj).exists():
-            return False
-        else:
-            return FieldSightXF.objects.get(schedule=obj).default_submission_status
+        try:
+            return obj.schedule_forms.default_submission_status
+        except:
+            return 0
 
     def get_education_material(self, obj):
-        if not EducationMaterial.objects.filter(fsxf=obj.schedule_forms).exists():
+        try:
+            em =  obj.schedule_forms.em
+            # em =  EducationMaterial.objects.first()
+            return EMSerializer(em).data
+        except:
             return {}
-        em =  EducationMaterial.objects.get(fsxf=obj.schedule_forms)
-        # em =  EducationMaterial.objects.first()
-        return EMSerializer(em).data
 
     def get_responses_count(self, obj):
-        try:
-            fsxf = FieldSightXF.objects.get(schedule=obj)
-            
-            if fsxf.site is None:
-                return fsxf.project_form_instances.count()
-            else:
-                return fsxf.site_form_instances.filter(site_id=self.context.get('pk')).count()
-
-        except FieldSightXF.DoesNotExist:
-            return 0
-
-    
-    def get_latest_submission(self, obj):
-        try:
-            fsxf = FieldSightXF.objects.get(schedule=obj)
-            
-            if fsxf.site is None:
-                response = fsxf.project_form_instances.order_by('-id')[:1]
-            else:
-                response = fsxf.site_form_instances.filter(site_id=self.context.get('pk')).order_by('-id')[:1]
-            serializer = FInstanceResponcesSerializer(instance=response, many=True)
-            return serializer.data 
-
-        except FieldSightXF.DoesNotExist:
-            return 0
-
+        is_project = self.context.get('is_project', False)
+        if is_project:
+            return obj.response_count if hasattr(obj, "response_count") else 0
+        elif obj.project:
+            return obj.response_count if hasattr(obj, "response_count") else 0
+        elif obj.site:
+            return obj.site_response_count if hasattr(obj, "site_response_count") else 0
         

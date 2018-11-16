@@ -1,6 +1,8 @@
 import json
 
 from django.db import transaction
+from django.db.models import Count, Q, Case, When, F, IntegerField
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
@@ -25,64 +27,34 @@ class EMSerializer(serializers.ModelSerializer):
 class SubStageSerializer1(serializers.ModelSerializer):
     stage_forms = FSXFSerializer()
     em = EMSerializer(read_only=True)
-    responses_count = serializers.SerializerMethodField()
-    latest_submission = serializers.SerializerMethodField()
+    # response_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Stage
-        exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage', 'date_modified', 'date_created',)
+        exclude = ('shared_level', 'site', 'group', 'ready', 'project','stage', 'date_modified', 'date_created')
 
     def get_assigned_form(self, obj):
-        if not FieldSightXF.objects.filter(stage=obj).exists():
+        try:
+            id = obj.stage_forms.id
+            return id
+        except Exception as e:
             return None
-        else:
-            fsxf = FieldSightXF.objects.get(stage=obj)
-            if fsxf.xf:
-                return fsxf.id
-        return None
 
     def get_assigned_form_name(self, obj):
-        if not FieldSightXF.objects.filter(stage=obj).exists():
-            return None
-        else:
-            fsxf = FieldSightXF.objects.get(stage=obj)
-            if fsxf.xf:
-                return fsxf.xf.title
-        return None
-
-    def get_assigned_form(self, obj):
-        if not FieldSightXF.objects.filter(stage=obj).exists():
-            return None
-        else:
-            fsxf = FieldSightXF.objects.get(stage=obj)
-            if fsxf.xf:
-                return fsxf.id
-        return None
-
-    def get_responses_count(self, obj):
         try:
-            fsxf = FieldSightXF.objects.get(stage=obj)
-            if fsxf.site is None:
-                return fsxf.project_form_instances.count()
-            else:
-                return fsxf.site_form_instances.count()
+            title = obj.stage_forms.xf.title
+            return title
+        except Exception as e:
+            return None
 
-        except FieldSightXF.DoesNotExist:
-            return 0
-
-
-    def get_latest_submission(self, obj):
-        try:
-            fsxf = FieldSightXF.objects.get(stage=obj)
-            
-            if fsxf.site is None:
-                response = fsxf.project_form_instances.order_by('-id')[:1]
-            else:
-                response = fsxf.site_form_instances.order_by('-id')[:1]
-            serializer = FInstanceResponcesSerializer(instance=response, many=True)
-            return serializer.data 
-
-        except FieldSightXF.DoesNotExist:
-            return 0
+    # def get_response_count(self, obj):
+    #     is_project = self.context.get('is_project', False)
+    #     if is_project:
+    #         return obj.response_count if hasattr(obj, "response_count") else 0
+    #     elif obj.project:
+    #         return obj.response_count if hasattr(obj, "response_count") else 0
+    #     elif obj.site:
+    #         return obj.site_response_count if hasattr(obj, "site_response_count") else 0
 
 class StageSerializer1(serializers.ModelSerializer):
     # parent = SubStageSerializer1(many=True, read_only=True)
@@ -93,8 +65,8 @@ class StageSerializer1(serializers.ModelSerializer):
         exclude = ('shared_level', 'group', 'ready', 'stage',)
 
     def get_substages(self, stage):
-        stages = Stage.objects.filter(stage=stage, stage_forms__is_deleted=False)
-        serializer = SubStageSerializer1(instance=stages, context={'request':self.context['request'], 'kwargs':self.context['kwargs']}, many=True)
+        stages = Stage.objects.filter(stage=stage, stage_forms__is_deleted=False).select_related( 'stage_forms', 'stage_forms__xf', 'em').order_by('order', 'date_created')
+        serializer = SubStageSerializer1(instance=stages, context=self.context, many=True)
         return serializer.data
 
     def create(self, validated_data):

@@ -1,16 +1,20 @@
 from __future__ import unicode_literals
 import json
+from django.db.models import Q, Count, Case, IntegerField, F, When
+from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from onadata.apps.fsforms.models import Schedule, Days, FieldSightXF
+from onadata.apps.fieldsight.models import Site
+from onadata.apps.fsforms.models import Schedule, Days, FieldSightXF, FInstance
 from onadata.apps.fsforms.serializers.ScheduleSerializer import ScheduleSerializer, DaysSerializer
 from channels import Group as ChannelGroup
 from rest_framework.pagination import PageNumberPagination
 
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 10
+
 
 class ScheduleViewset(viewsets.ModelViewSet):
     """
@@ -27,9 +31,19 @@ class ScheduleViewset(viewsets.ModelViewSet):
         pk = self.kwargs.get('pk', None)
         if is_project == "1":
             queryset = queryset.filter(project__id=pk)
+            return queryset.annotate(response_count=Count("schedule_forms__project_form_instances")).select_related('schedule_forms', 'schedule_forms__xf', 'schedule_forms__em')
         else:
-            queryset = queryset.filter(site__id=pk)
-        return queryset
+            project_id = get_object_or_404(Site, pk=pk).project.id
+            queryset = queryset.filter(Q(site__id=pk, schedule_forms__from_project=False)
+                                       | Q(project__id=project_id))
+            return queryset.annotate(
+                site_response_count=Count("schedule_forms__site_form_instances", ),
+                response_count=Count(Case(
+                    When(project__isnull=False, schedule_forms__project_form_instances__site__id=pk, then=F('schedule_forms__project_form_instances')),
+                    output_field=IntegerField(),
+                ), distinct=True)
+
+            ).select_related('schedule_forms','schedule_forms__xf', 'schedule_forms__em')
 
     def get_serializer_context(self):
         return self.kwargs

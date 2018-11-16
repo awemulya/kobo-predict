@@ -91,6 +91,9 @@ def _get_instance(xml, new_uuid, submitted_by, status, xform, fxfid, project_fxf
         if fxfid and site_id and project_fxf and project_id and fxfid:
             FInstance.objects.create(instance=instance, site_id=site_id, project_id=project_id, site_fxf_id=fxfid,
                                      project_fxf_id=project_fxf, submitted_by=submitted_by)
+        elif site_id and project_fxf and project_id:
+            FInstance.objects.create(instance=instance, site_id=site_id, project_id=project_id,
+                                     project_fxf_id=project_fxf, submitted_by=submitted_by)
         elif fxfid and site_id and project_id:
             FInstance.objects.create(instance=instance, site_id=site_id, project_id=project_id, site_fxf_id=fxfid,
                              submitted_by=submitted_by)

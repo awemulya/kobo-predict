@@ -21,8 +21,8 @@ class StageSerializer(serializers.ModelSerializer):
         model = Stage
         fields = ('name', 'description', 'id', 'order', 'tags',
                   'weight' ,'sub_stage_weight', 'stage',
-                  'project_stage_id')
-        read_only_fields = ('stage' ,'project_stage_id')
+                  'project_stage_id', 'site')
+        read_only_fields = ('stage' ,'project_stage_id','site')
 
     def get_sub_stage_weight(self, obj):
         if hasattr(obj, 'sub_stage_weight'):
@@ -66,14 +66,27 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
 
     def get_responses_count(self, obj):
         try:
+            request = self.context.get('request', False)
+            params = {}
+            if request:
+                params = request.query_params
+            site_id = False
+            if params.get("is_project", False):
+                if params.get("is_project") == "0":
+                    site_id = params.get("pk", False)
+
             fsxf = FieldSightXF.objects.get(stage=obj)
+
             if fsxf.site is None:
+                if site_id:
+                    return fsxf.project_form_instances.filter(site=site_id).count()
                 return fsxf.project_form_instances.count()
             else:
                 return fsxf.site_form_instances.count()
 
         except FieldSightXF.DoesNotExist:
             return 0
+
     def get_has_stage(self, obj):
         try:
             obj.stage_forms
@@ -113,8 +126,6 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
             xf_id = xf.get('id', False)
             if xf_id:
                 xform = XForm.objects.get(pk=xf_id)
-
-
         stage = super(SubStageDetailSerializer, self).create(validated_data)
         main_stage = Stage.objects.get(pk=stage_id)
         if xform:
@@ -152,7 +163,6 @@ class SubStageDetailSerializer(serializers.ModelSerializer):
                 if xform:
                     FieldSightXF.objects.create(xf=xform, site=stage.stage.site,
                                                       project=stage.stage.project, is_staged=True, stage=stage, default_submission_status = default_submission_status)
-        # tags
         return stage
 
 
@@ -300,3 +310,21 @@ class FinstanceSerializer(serializers.ModelSerializer):
         parse_individual_questions(json_question['children'])
         return data
 
+
+class FinstanceDataOnlySerializer(serializers.ModelSerializer):
+    form_type = serializers.SerializerMethodField()
+    submitted_by = serializers.CharField(source='submitted_by.username')
+    status_display = serializers.CharField(source='get_form_status_display')
+
+    class Meta:
+        model = FInstance
+        fields = ('id', 'site', 'project', 'site_fxf', 'project_fxf', 'date', 'submitted_by', 'form_type','status_display')
+
+    def get_form_type(self, obj):
+        if obj.project_fxf:
+            return {'is_staged': obj.project_fxf.is_staged, 'is_scheduled': obj.project_fxf.is_scheduled,
+                    'is_survey': obj.project_fxf.is_survey}
+        return {'is_staged': obj.site_fxf.is_staged, 'is_scheduled': obj.site_fxf.is_scheduled, 'is_survey': obj.site_fxf.is_survey}
+
+    # def get_submitted_by(self, obj):
+    #     return obj.user.username

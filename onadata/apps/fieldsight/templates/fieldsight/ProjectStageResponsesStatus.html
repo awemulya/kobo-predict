@@ -5,27 +5,28 @@
 {% load filters %}
 
 <!-- <div class="collapse" id="searchOrganization">
-							
-								<div class="row">
-									<div class="col-md-6 ml-md-auto">
-										<div class="input-group">
-										  <input type="text" name="q" placeholder="Search for..." data-bind="value: searchKeyword"/>
-										  <span class="input-group-btn">
-											  <button class="btn btn-primary" data-bind="click: dbsearchallsites" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
-										  </span>
-										</div>
-									</div>
-									<div class="col-md-3"></div>
-								</div>
-						</div>		 -->
+              
+                <div class="row">
+                  <div class="col-md-6 ml-md-auto">
+                    <div class="input-group">
+                      <input type="text" name="q" placeholder="Search for..." data-bind="value: searchKeyword"/>
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary" data-bind="click: dbsearchallsites" value="Search"><i class="la la-search"></i>{% trans 'Search' %}</button>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-3"></div>
+                </div>
+            </div>     -->
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.blockUI.js"></script>
 <script type="text/javascript">
     var static_url ="{{ STATIC_URL }}";
     configure_settings =  {};
     {% load l10n %}
-  	configure_settings.project_id = {{obj.pk|unlocalize}};						
+    configure_settings.project_id = {{obj.pk|unlocalize}};            
     </script>
+<<<<<<< HEAD
 		<div id="main-content" class="padding">
 			<nav aria-label="breadcrumb" role="navigation">
 				<ol class="breadcrumb">
@@ -36,6 +37,18 @@
 				</ol>
 			</nav>
 				<section class="panel">
+=======
+    <div id="main-content" class="padding">
+      <nav aria-label="breadcrumb" role="navigation">
+        <ol class="breadcrumb">
+          {% block breadcrumbs %}
+          <li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{% trans 'Submissions' %} {% trans 'Data' %}</li>
+          {% endblock %}
+        </ol>
+      </nav>
+        <section class="panel">
+>>>>>>> d4c5032a2dd9d98c09f554903063cdd8b421d33d
           <header class="panel-heading clearfix">
                         <h3><i class="la la-tasks"></i>Project Response Status</h3>
             <div class="panel-heading-right">
@@ -50,6 +63,7 @@
           </div>
 
           
+<<<<<<< HEAD
 							
 					
 	
@@ -59,6 +73,17 @@
         </section>
 
 			</div>
+=======
+              
+          
+  
+            
+          
+          
+        </section>
+
+      </div>
+>>>>>>> d4c5032a2dd9d98c09f554903063cdd8b421d33d
 <script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
 <script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
 
@@ -193,5 +218,5 @@ window.app = new Vue({
 
 });
 </script>
-{% endverbatim %}	
+{% endverbatim %} 
 {% endblock %}

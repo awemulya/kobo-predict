@@ -25,7 +25,7 @@ from channels import Group as ChannelGroup
 from onadata.apps.fieldsight.models import Organization, BluePrints
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
-from onadata.apps.users.serializers import AuthCustomTokenSerializer
+from onadata.apps.users.serializers import AuthCustomTokenSerializer, UserSerializerProfile
 from .forms import LoginForm, ProfileForm, UserEditForm
 from rest_framework import viewsets
 from onadata.apps.fsforms.models import FInstance
@@ -175,6 +175,7 @@ def current_usertwo(request):
                          'skype': user.user_profile.skype,
                          'phone': user.user_profile.phone,
                          'profile_pic': user.user_profile.profile_picture.url,
+                         'profile_data':UserSerializerProfile(user.user_profile).data
                          # 'languages': settings.LANGUAGES,
                          # profile data here, role supervisor
                          }

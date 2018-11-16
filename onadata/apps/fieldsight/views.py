@@ -1,5 +1,3 @@
-
-
 from __future__ import unicode_literals
 import datetime
 import json
@@ -277,7 +275,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
     template_name = 'fieldsight/site_dashboard.html'
 
     def get_context_data(self, is_supervisor_only, **kwargs):
-        dashboard_data = super(SiteDashboardView, self).get_context_data(**kwargs)
+        # dashboard_data = super(SiteDashboardView, self).get_context_data(**kwargs)
         obj =  get_object_or_404(Site, pk=self.kwargs.get('pk'), is_active=True)
         peoples_involved = obj.site_roles.filter(ended_at__isnull=True).distinct('user')
         data = serialize('custom_geojson', [obj], geometry_field='location',
@@ -1903,10 +1901,10 @@ class SitedataSubmissionView(ReadonlySiteLevelRoleMixin, TemplateView):
     def get_context_data(self, **kwargs):
         data = super(SitedataSubmissionView, self).get_context_data(**kwargs)
         data['obj'] = Site.objects.get(pk=self.kwargs.get('pk'))
-        data['pending'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), site_fxf_id__isnull=False, form_status = '0').order_by('-date')
-        data['rejected'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), site_fxf_id__isnull=False, form_status = '1').order_by('-date')
-        data['flagged'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), site_fxf_id__isnull=False, form_status = '2').order_by('-date')
-        data['approved'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), site_fxf_id__isnull=False, form_status = '3').order_by('-date')
+        data['pending'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '0').order_by('-date')
+        data['rejected'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '1').order_by('-date')
+        data['flagged'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '2').order_by('-date')
+        data['approved'] = FInstance.objects.filter(site_id = self.kwargs.get('pk'), form_status = '3').order_by('-date')
         data['type'] = self.kwargs.get('type')
         data['is_donor_only'] = kwargs.get('is_donor_only', False)
 
@@ -2494,11 +2492,102 @@ class SiteSearchView(ListView):
         # import pdb; pdb.set_trace()
         return filtered_objects.filter(Q(name__icontains=query) | Q(identifier__icontains=query))
 
+# def get_project_stage_status(request, pk, q_keyword,page_list):
+#     data = []
+#     ss_id = []
+#     stages_rows = []
+#     head_row = ["Site ID", "Name"]
+#     project = get_object_or_404(Project, pk=pk)
+    
+#     stages = project.stages.filter(stage__isnull=True).prefetch_related('parent')
+    
+#     table_head = []
+#     substages =[]
+#     table_head.append({"name":"Site Id", "rowspan":2, "colspan":1 })
+#     table_head.append({"name":"Site Name", "rowspan":2, "colspan":1 })
+    
+#     stage_count=0
+#     for stage in stages:
+#         stage_count+=1
+
+#         sub_stages = stage.parent.filter(stage_forms__is_deleted=False)
+#         if len(sub_stages) > 0:
+#             stages_rows.append("Stage :"+stage.name)
+#             table_head.append({"name":stage.name, "stage_order": "Stage " +str(stage_count), "rowspan":1, "colspan":len(sub_stages) })
+#             sub_stage_count=0
+#             for ss in sub_stages:
+#                 sub_stage_count+=1
+#                 head_row.append("Sub Stage :"+ss.name)
+#                 ss_id.append(ss.id)
+#                 substages.append([ss.name, str(stage_count)+"."+str(sub_stage_count)])
+
+    
+
+#     # data.append(head_row)
+#     def filterbyvalue(seq, value):
+#         for el in seq:
+#             if el.project_stage_id==value: yield el
+
+#     def getStatus(el):
+#         if el is not None and el.form_status==3: return "Approved", "cell-success" 
+#         elif el is not None and el.form_status==2: return "Flagged", "cell-warning"
+#         elif el is not None and el.form_status==1: return "Rejected", "cell-danger"
+#         else: return "Pending", "cell-primary"
+#     if q_keyword is not None:
+#         site_list = project.sites.filter(name__icontains=q_keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
+#         get_params = "?q="+q_keyword +"&page="
+#     else:
+#         site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id').only('pk')
+#         # site_list = Site.objects.get()
+
+#         FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('project__stages__stage_forms__project_form_instances', queryset=FInstance.objects.filter().order_by('-id')))
+#         get_params = "?page="
+#     paginator = Paginator(site_list, page_list) # Show 25 contacts per page
+#     page = request.GET.get('page')
+#     try:
+#         sites = paginator.page(page)
+#     except PageNotAnInteger:
+#         # If page is not an integer, deliver first page.
+#         sites = paginator.page(1)
+#     except EmptyPage:
+#     # If page is out of range (e.g. 9999), deliver last page of results.
+#         sites = paginator.page(paginator.num_pages)
+#     for site in sites:
+#         site_row = ["<a href='"+site.site.get_absolute_url()+"'>"+site.site.identifier+"</a>", "<a href='"+site.site.get_absolute_url()+"'>"+site.site.name+"</a>"]
+#         for v in ss_id:
+
+#             substage = filterbyvalue(site.site.stages.all(), v)
+#             substage1 = next(substage, None)
+#             if substage1 is not None:
+#                 if  substage1.stage_forms.site_form_instances.all():
+#                      get_status = getStatus(substage1.stage_forms.site_form_instances.all()[0])
+#                      status, style_class = get_status
+#                      submission_count = substage1.stage_forms.site_form_instances.all().count()
+#                 else:
+#                     status, style_class = "No submission.", "cell-inactive"
+#                     submission_count = 0
+#             else:
+#                  status, style_class = "-", "cell-inactive"
+#                  submission_count = 0
+#             site_row.append([status, submission_count, style_class])
+        
+#         data.append(site_row)
+
+#     if sites.has_next():
+#         next_page_url = request.build_absolute_uri(reverse('fieldsight:ProjectStageResponsesStatus', kwargs={'pk': pk})) + get_params + str(sites.next_page_number())
+#     else:
+#         next_page_url =  None
+#     content={'head_cols':table_head, 'sub_stages':substages, 'rows':data}
+#     main_body = {'next_page':next_page_url,'content':content}
+#     return main_body
+
+
 def get_project_stage_status(request, pk, q_keyword,page_list):
     data = []
     ss_id = []
     stats = {}
     stages_rows = []
+    stats = {}
     head_row = ["Site ID", "Name"]
     project = get_object_or_404(Project, pk=pk)
     
@@ -2524,66 +2613,59 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                 ss_id.append(ss.id)
                 substages.append([ss.name, str(stage_count)+"."+str(sub_stage_count)])
 
-    table_head.append({"name":"Site Visits", "rowspan":2, "colspan":1 })
-    table_head.append({"name":"Total Submissions", "rowspan":2, "colspan":1 })
-    table_head.append({"name":"Flagged Submissions", "rowspan":2, "colspan":1 })
-    table_head.append({"name":"Rejected Submissions", "rowspan":2, "colspan":1 }
-    )
+    table_head.extend([{"name":"Site Visits", "rowspan":2, "colspan":1 }, {"name":"Total Submissions", "rowspan":2, "colspan":1 }, {"name":"Flagged Submissions", "rowspan":2, "colspan":1 }, {"name":"Rejected Submissions", "rowspan":2, "colspan":1 }])
 
-    
 
     # data.append(head_row)
     def filterbyvalue(seq, value):
         for el in seq:
-            if el.project_stage_id==value: yield el
+            if el.id==value: yield el
 
-    def getStatus(el):
-        if el is not None and el.form_status==3: return "Approved", "cell-success" 
-        elif el is not None and el.form_status==2: return "Flagged", "cell-warning"
-        elif el is not None and el.form_status==1: return "Rejected", "cell-danger"
-        else: return "Pending", "cell-primary"
+
+
+    def getStatus(datas, site_id):
+        el = None
+        count = 0 
+        for data in datas:
+            
+            if data.site_id == site_id:
+                if el is None:
+                    el = data
+                count += 1
+
+        if el is not None and el.form_status==3: return "Approved", "cell-success", count 
+        elif el is not None and el.form_status==2: return "Flagged", "cell-warning", count 
+        elif el is not None and el.form_status==1: return "Rejected", "cell-danger", count
+        elif el is not None and el.form_status==0: return "Pending", "cell-primary", count
+        else: return "No submission", "cell-inactive", count
 
     def setStatistics(submissions):
-        
         for sub in submissions:
-            if not sub.site_id in stats:
-                stats[sub.site_id] = {}
+            if sub.site:
+                if not sub.site_id in stats:
+                    stats[sub.site_id] = {}
 
-            if sub.form_status == 1:
-                stats[sub.site_id]['rejected'] = stats.get(sub.site_id, {}).get('rejected', 0) + 1
-            elif sub.form_status == 2:
-                stats[sub.site_id]['flagged'] = stats.get(sub.site_id, {}).get('flagged', 0) + 1
+                if sub.form_status == 1:
+                    stats[sub.site_id]['rejected'] = stats.get(sub.site_id, {}).get('rejected', 0) + 1
+                elif sub.form_status == 2:
+                    stats[sub.site_id]['flagged'] = stats.get(sub.site_id, {}).get('flagged', 0) + 1
 
-            stats[sub.site_id]['submission_count'] = stats.get(sub.site_id, {}).get('submission_count', 0) + 1
-            stats[sub.site_id]['submission_dates'] = stats.get(sub.site_id, {}).get('submission_dates', []) + [sub.date.date()]
-
-
+                stats[sub.site_id]['submission_count'] = stats.get(sub.site_id, {}).get('submission_count', 0) + 1
+                stats[sub.site_id]['submission_dates'] = stats.get(sub.site_id, {}).get('submission_dates', []) + [sub.date.date()]
 
     if q_keyword is not None:
-        site_list = project.sites.filter(name__icontains=q_keyword, is_active=True, is_survey=False).prefetch_related(Prefetch('stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id'))).values_list('pk', flat=True)
-
+        site_list = Site.objects.filter(project_id=pk, name__icontains=q_keyword, is_active=True, is_survey=False)
         get_params = "?q="+q_keyword +"&page="
-    
     else:
-        site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').values_list('site_id', flat=True)
-        instances_id = FInstance.objects.filter(site_id__in=site_list_pre).order_by('site_id', '-id').distinct('site_id').only('pk')
-        site_list = FInstance.objects.filter(pk__in=instances_id).order_by('-id').prefetch_related(Prefetch('site__stages__stage_forms__site_form_instances', queryset=FInstance.objects.order_by('-id')))
-        get_params = "?page="
+        site_list_pre = FInstance.objects.filter(project_id=pk, project_fxf_id__is_staged=True, site__is_active=True, site__is_survey=False).distinct('site_id').order_by('site_id').values('site_id')
+        site_list = Site.objects.filter(pk__in=site_list_pre)
 
-    site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {"$in": list(site_list_pre) }}},  { "$group" : { 
-                      "_id" :  { 
-                        "fs_site": "$fs_site",
-                        "date": { "$substr": [ "$start", 0, 10 ] }
-                      },
-                   }
-                 }, { "$group": { "_id": "$_id.fs_site", "visits": { 
-                          "$push": { 
-                              "date":"$_id.date"
-                          }          
-                     }
-                 }}])['result']
+        
+        # FInstance.objects.filter(pk__in=site_list_pre).order_by('-id').prefetch_related(Prefetch('project__stages__stage_forms__project_form_instances', queryset=FInstance.objects.filter().order_by('-id')))
+        get_params = "?page="
     
-    paginator = Paginator(site_list, page_list) # Show 25 contacts per page
+    
+    paginator = Paginator(site_list, page_list) # Show how many contacts per page
     page = request.GET.get('page')
     try:
         sites = paginator.page(page)
@@ -2593,19 +2675,51 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     except EmptyPage:
     # If page is out of range (e.g. 9999), deliver last page of results.
         sites = paginator.page(paginator.num_pages)
+
+    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=sites).order_by('-pk')))
+    
+    site_ids = []
     for site in sites:
-        site_row = ["<a href='"+site.site.get_absolute_url()+"'>"+site.site.identifier+"</a>", "<a href='"+site.site.get_absolute_url()+"'>"+site.site.name+"</a>"]
+        site_ids.append(str(site.id))
+    
+    site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {"$in": list(site_ids) }}},  { "$group" : { 
+                  "_id" :  { 
+                    "fs_site": "$fs_site",
+                    "date": { "$substr": [ "$start", 0, 10 ] }
+                  },
+               }
+             }, { "$group": { "_id": "$_id.fs_site", "visits": { 
+                      "$push": { 
+                          "date":"$_id.date"
+                      }          
+                 }
+             }}])['result']
+    
+    def filterMongolist(value):
+        for el in site_visits:
+            if el['_id']==value: return el
+
+    
+    setStatisticsChecker=[]
+    for site in sites:
+
+        site_row = ["<a href='"+site.get_absolute_url()+"'>"+site.identifier+"</a>", "<a href='"+site.get_absolute_url()+"'>"+site.name+"</a>"]
+        
+
         for v in ss_id:
-
-            substage = filterbyvalue(site.site.stages.all(), v)
+            substage = filterbyvalue(stages, v)
             substage1 = next(substage, None)
-            if substage1 is not None:
-                if  substage1.stage_forms.site_form_instances.all():
-                     get_status = getStatus(substage1.stage_forms.site_form_instances.all()[0])
-                     status, style_class = get_status
-                     submission_count = substage1.stage_forms.site_form_instances.all().count()
+            
 
-                     setStatistics(substage1.stage_forms.site_form_instances.all())
+            if substage1 is not None:
+            
+                if substage1.stage_forms.project_form_instances.all():
+                    
+                    if substage1.id not in setStatisticsChecker:
+                        setStatistics(substage1.stage_forms.project_form_instances.all())
+                        setStatisticsChecker.append(substage1.id)
+                    status, style_class, submission_count = getStatus(substage1.stage_forms.project_form_instances.all(), site.id)
+                     
                 else:
                     status, style_class = "No submission.", "cell-inactive"
                     submission_count = 0
@@ -2614,17 +2728,17 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                  submission_count = 0
             
             site_row.append([status, submission_count, style_class])
-
-        site_row.append([status, len(set(stats.get(site.site.id, {}).get('submission_dates', []))), "cell-inactive"])
-        site_row.append([status, stats.get(site.site.id, {}).get('submission_count', 0), "cell-inactive"])
-
-        if 'flagged' in stats.get(site.site.id, {}):
-            site_row.append([status, stats.get(site.site.id, {}).get('flagged', 0), "cell-warning"])
+        visits = filterMongolist(str(site.id))
+        site_row.append([status, len(visits['visits']), "cell-inactive"])
+        site_row.append([status, stats.get(site.id, {}).get('submission_count', 0), "cell-inactive"])
+        
+        if 'flagged' in stats.get(site.id, {}):
+            site_row.append([status, stats.get(site.id, {}).get('flagged', 0), "cell-warning"])
         else:
             site_row.append([status, 0, "cell-inactive"])
 
-        if 'rejected' in stats.get(site.site.id, {}):
-            site_row.append([status, stats.get(site.site.id, {}).get('rejected', 0), "cell-danger"])
+        if 'rejected' in stats.get(site.id, {}):
+            site_row.append([status, stats.get(site.id, {}).get('rejected', 0), "cell-danger"])
         else:
             site_row.append([status, 0, "cell-inactive"])            
         data.append(site_row)
@@ -2656,7 +2770,7 @@ class StageTemplateView(ReadonlyProjectLevelRoleMixin, View):
         return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'obj':obj,})
             # return HttpResponse(table_head)\
 
-def response_export(request, pk):
+def response_export(request, pk, include_null_fields):
     
     buffer = BytesIO()
     response = HttpResponse(content_type='application/pdf')
@@ -2669,7 +2783,7 @@ def response_export(request, pk):
     response['Content-Disposition'] = 'attachment; filename="'+ file_name +'"'
     base_url = request.get_host()
     report = PDFReport(buffer, 'Letter')
-    pdf = report.print_individual_response(pk, base_url)
+    pdf = report.print_individual_response(pk, base_url, include_null_fields)
 
     buffer.seek(0)
 
@@ -2685,19 +2799,23 @@ def response_export(request, pk):
 
 class FormlistAPI(View):
     def get(self, request, pk):
-        mainstage=[]
-        schedule = FieldSightXF.objects.filter(site_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','schedule__name')
-        stages = Stage.objects.filter(site_id=pk)
+        site=get_object_or_404(Site, pk=pk, is_active=True)
+        mainstages=[]
+        stages = Stage.objects.filter(stage__isnull=True).filter(Q(site_id=pk, project_stage_id=0) | Q(project_id=site.project_id)).order_by('order', 'date_created')
+        
         for stage in stages:
             if stage.stage_id is None:
                 substages=stage.get_sub_stage_list()
                 main_stage = {'id':stage.id, 'title':stage.name, 'sub_stages':list(substages)}
                 # stagegroup = {'main_stage':main_stage,}
-                mainstage.append(main_stage)
+                mainstages.append(main_stage)
+        
+        generals = FieldSightXF.objects.filter(is_staged=False, is_deleted=False, is_scheduled=False,  is_survey=False).filter(Q(site_id=pk, from_project=False)| Q(project_id=site.project_id)).values('id','xf__title')
 
-        survey = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title')
-        general = FieldSightXF.objects.filter(site_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title')
-        content={'general':list(general), 'schedule':list(schedule), 'stage':list(mainstage), 'survey':list(survey)}
+        schedules = FieldSightXF.objects.filter(is_deleted=False, schedule__isnull=False).filter(Q(schedule__site_id=pk, from_project=False) | Q(schedule__project_id=site.project_id)).values('id','schedule__name')
+
+        content={'general':list(generals), 'schedule':list(schedules), 'stage':list(mainstages)}
+
         return JsonResponse(content, status=200)
 
     def post(self, request, pk, **kwargs):
@@ -2706,9 +2824,11 @@ class FormlistAPI(View):
         fs_ids = data.get('fs_ids')
         start_date = data.get('startdate')
         end_date = data.get('enddate')
-        task_obj=CeleryTaskProgress.objects.create(user=request.user, task_type=9)
+        removeNullField = data.get('removeNullField', False)
+
+        task_obj=CeleryTaskProgress.objects.create(user=request.user, task_type=0)
         if task_obj:
-            task = generateCustomReportPdf.delay(task_obj.id, request.user, pk, base_url, fs_ids, start_date, end_date)
+            task = generateCustomReportPdf.delay(task_obj.id, request.user, pk, base_url, fs_ids, start_date, end_date, removeNullField)
             task_obj.task_id = task.id
             task_obj.save()
             status, data = 200, {'status':'True','message':'Sucess, the report is being generated. You will be notified after the report is generated. '}
@@ -2950,19 +3070,58 @@ def project_dashboard_map(request, pk):
 def project_dashboard_graphs(request, pk):
     project = Project.objects.get(pk=pk)
 
-    bar_graph = ProgressBarGenerator(project)
-    progress_labels = bar_graph.data.keys()
-    progress_data = bar_graph.data.values()
-
     # bar_graph = ProgressBarGenerator(project)
     # progress_labels = bar_graph.data.keys()
     # progress_data = bar_graph.data.values()
+
+    bar_graph = ProgressBarGenerator(project)
+    progress_labels = bar_graph.data.keys()
+    progress_data = bar_graph.data.values()
 
     line_chart = LineChartGeneratorProject(project)
     submissions = line_chart.data()
     submissions_labels = submissions.keys()
     submissions_data = submissions.values()
-
+#     temp_response = {
+#     "sd": [
+#         0,
+#         452,
+#         21549,
+#         22351,
+#         22351,
+#         22351,
+#         22356
+#     ],
+#     "pd": [
+#         23421,
+#         48,
+#         0,
+#         0,
+#         0,
+#         0,
+#         0
+#     ],
+#     "pl": [
+#         "Unstarted",
+#         "< 20",
+#         "20 - 40",
+#         "40 - 60",
+#         "60 - 80",
+#         "80 <",
+#         "Completed"
+#     ],
+#     "sl": [
+#         "2018-03-15",
+#         "2018-04-15",
+#         "2018-05-16",
+#         "2018-06-17",
+#         "2018-07-18",
+#         "2018-08-18",
+#         "2018-09-19"
+#     ]
+# }
+#
+#     return Response(temp_response)
     return Response({'pl':progress_labels, 'pd':progress_data, 'sl': submissions_labels, 'sd':submissions_data})
 
 

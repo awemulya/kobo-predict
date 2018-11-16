@@ -121,13 +121,17 @@
     <tbody>
 
     {% for sub in object_list  %}
-      <tr onclick="redirectto(`{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
+    {% if site_id %}
+      <tr onclick="redirectto(`{% url 'forms:instance' sub.fsxfid site_id %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
+          {% else %}
+          <tr onclick="redirectto(`{% url 'forms:instance' sub.fsxfid  %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
+          {% endif %}
         <td>{{ forloop.counter }}</td>
         <td>{{ sub.instance.id }}</td>
         <td>{{ sub.submitted_by.user_profile.getname }}</td>
         <td>{{ sub.date }}</td>
         <td>
-            <a href="{% url 'forms:edit-submission' sub.site_fxf.pk sub.instance.id %}">Edit</a>    
+            <a href="{% url 'forms:edit-submission' sub.fsxfid sub.instance.id %}">Edit</a>
         </td>
         <td>
             <a href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}">Delete</a></span>
