@@ -65,7 +65,7 @@ class MyTaskListViewSet(viewsets.ModelViewSet):
     A simple ViewSet for viewing and editing sites.
     """
 
-    queryset = CeleryTaskProgress.objects.filter(date_updateded__gte="2018-11-11")
+    queryset = CeleryTaskProgress.objects.filter(date_updateded__gte="2018-11-16")
     serializer_class = TaskSerializer
     pagination_class = LargeResultsSetPagination
 
@@ -99,7 +99,7 @@ class OtherTaskListViewSet(viewsets.ModelViewSet):
         self_projects = UserRole.objects.filter(user_id=self.request.user.id, ended_at__isnull=False, project_id__isnull=False).distinct('project_id').values_list('project_id', flat=True)
         self_orgs = UserRole.objects.filter(user_id=self.request.user.id, ended_at__isnull=False, organization_id__isnull=False).distinct('organization_id').values_list('organization_id', flat=True)
         self_org_projects = Project.objects.filter(organization_id__in=self_orgs).only('id')
-        return queryset.filter(Q(object_id__in=self_projects) | Q(object_id__in=self_org_projects), status=2, content_type__model="project").exclude(user_id=self.request.user.id).order_by('date_updateded')
+        return queryset.filter(Q(object_id__in=self_projects) | Q(object_id__in=self_org_projects), status=2, content_type__isnull=False, content_type__model="project").exclude(user_id=self.request.user.id).order_by('date_updateded')
 
 
 class ProjectLog(viewsets.ModelViewSet):

@@ -2826,7 +2826,7 @@ class FormlistAPI(View):
         end_date = data.get('enddate')
         removeNullField = data.get('removeNullField', False)
 
-        task_obj=CeleryTaskProgress.objects.create(user=request.user, task_type=0)
+        task_obj=CeleryTaskProgress.objects.create(user=request.user, task_type=9)
         if task_obj:
             task = generateCustomReportPdf.delay(task_obj.id, request.user, pk, base_url, fs_ids, start_date, end_date, removeNullField)
             task_obj.task_id = task.id
