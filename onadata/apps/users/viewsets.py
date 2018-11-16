@@ -220,11 +220,7 @@ class MySitesViewset(viewsets.ReadOnlyModelViewSet):
     pagination_class = MySitesResultsSetPagination
 
     def get_queryset(self):
-<<<<<<< HEAD
         return self.queryset.filter(user=self.request.user, ended_at=None, site__isnull=False, site__is_active=True, group__name="Site Supervisor").select_related('project', 'site', 'site__type', 'project__organization', 'project__type')
-=======
-        return self.queryset.filter(user=self.request.user).select_related('project', 'site', 'site__type', 'project__organization', 'project__type', 'site__region')
->>>>>>> d4c5032a2dd9d98c09f554903063cdd8b421d33d
 
     def get_serializer_context(self):
         sites = UserRole.objects.filter(user=self.request.user).values_list('site', flat=True).distinct()

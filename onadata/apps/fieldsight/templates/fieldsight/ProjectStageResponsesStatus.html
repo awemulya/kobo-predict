@@ -26,18 +26,6 @@
     {% load l10n %}
     configure_settings.project_id = {{obj.pk|unlocalize}};            
     </script>
-<<<<<<< HEAD
-		<div id="main-content" class="padding">
-			<nav aria-label="breadcrumb" role="navigation">
-				<ol class="breadcrumb">
-					{% block breadcrumbs %}
-					<li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{ obj.name }}</a></li>
-					<li class="breadcrumb-item active" aria-current="page">{% trans 'Submissions' %} {% trans 'Data' %}</li>
-					{% endblock %}
-				</ol>
-			</nav>
-				<section class="panel">
-=======
     <div id="main-content" class="padding">
       <nav aria-label="breadcrumb" role="navigation">
         <ol class="breadcrumb">
@@ -48,7 +36,6 @@
         </ol>
       </nav>
         <section class="panel">
->>>>>>> d4c5032a2dd9d98c09f554903063cdd8b421d33d
           <header class="panel-heading clearfix">
                         <h3><i class="la la-tasks"></i>Project Response Status</h3>
             <div class="panel-heading-right">
@@ -63,17 +50,6 @@
           </div>
 
           
-<<<<<<< HEAD
-							
-					
-	
-						
-					
-					
-        </section>
-
-			</div>
-=======
               
           
   
@@ -83,7 +59,6 @@
         </section>
 
       </div>
->>>>>>> d4c5032a2dd9d98c09f554903063cdd8b421d33d
 <script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
 <script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
 
