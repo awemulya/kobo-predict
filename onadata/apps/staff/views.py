@@ -10,8 +10,11 @@ from onadata.apps.staff.forms import TeamForm, StaffEditForm, StaffForm, Attenda
 import pyexcel as p
 import datetime
 import calendar
-from django.http import HttpResponse
 import json
+
+from django.http import HttpResponse
+import django_excel as excel
+
 # Team views:
 class TeamList(StaffProjectRoleMixin, ListView):
     model = Team
@@ -149,11 +152,9 @@ class TeamAttendanceReport(StaffTeamRoleMixin, View):
             data.append(v)
         
 
-        p.save_as(array=data, dest_file_name="media/attendance_data.xls".format(team), sheet_name=monthName)
-        xl_data = open("media/attendance_data.xls".format(team), "rb")
-        response = HttpResponse(xl_data, content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="'+monthName+' '+ str(year) +' attendance '+team.name+'.xls"'
-        return response
+        sheet = excel.pe.Sheet(data)
+        return excel.make_response(sheet, "xls", file_name=monthName+' '+ str(year) +' attendance of '+team.name+'.xls')
+
 
 
 
