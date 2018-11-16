@@ -409,9 +409,9 @@ class PDFReport:
                 elements.append(Spacer(0,10))
         self.doc.multiBuild(elements, onLaterPages=self._header_footer)
 
-    def print_individual_response(self, pk, base_url, include_null_fields):
+    def print_individual_response(self, pk, base_url, remove_null_fields):
         self.base_url = base_url
-        if include_null_fields == "1":
+        if remove_null_fields == "1":
             self.removeNullField = True
         # Our container for 'Flowable' objects
         elements = []

@@ -2770,7 +2770,7 @@ class StageTemplateView(ReadonlyProjectLevelRoleMixin, View):
         return render(request, 'fieldsight/ProjectStageResponsesStatus.html', {'obj':obj,})
             # return HttpResponse(table_head)\
 
-def response_export(request, pk, include_null_fields):
+def response_export(request, pk, remove_null_fields):
     
     buffer = BytesIO()
     response = HttpResponse(content_type='application/pdf')
@@ -2783,7 +2783,7 @@ def response_export(request, pk, include_null_fields):
     response['Content-Disposition'] = 'attachment; filename="'+ file_name +'"'
     base_url = request.get_host()
     report = PDFReport(buffer, 'Letter')
-    pdf = report.print_individual_response(pk, base_url, include_null_fields)
+    pdf = report.print_individual_response(pk, base_url, remove_null_fields)
 
     buffer.seek(0)
 
