@@ -2729,7 +2729,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
             
             site_row.append([status, submission_count, style_class])
         visits = filterMongolist(str(site.id))
-        site_row.append([status, len(visits['visits']), "cell-inactive"])
+        site_row.append([status, len(visits['visits']) if visits else 0, "cell-inactive"])
         site_row.append([status, stats.get(site.id, {}).get('submission_count', 0), "cell-inactive"])
         
         if 'flagged' in stats.get(site.id, {}):
