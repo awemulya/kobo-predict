@@ -65,7 +65,7 @@ class MyTaskListViewSet(viewsets.ModelViewSet):
     A simple ViewSet for viewing and editing sites.
     """
 
-    queryset = CeleryTaskProgress.objects.filter(date_updateded__gte="2018-11-16")
+    queryset = CeleryTaskProgress.objects.filter(date_updateded__gte="2018-11-17")
     serializer_class = TaskSerializer
     pagination_class = LargeResultsSetPagination
 
