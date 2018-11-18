@@ -93,11 +93,24 @@ assigntoken(csrf_token);
 						<select  multiple="multiple" id="filterRegion" data-bind="options: allRegions, optionsText: 'identifier', optionsValue: 'id'"></select>
 					<br>
 					{% endif %}
-					Start Date:
-					<input type="date" value="{{ obj.date_created.date|date:'Y-m-d'}}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="startdate" id="startdate">
-					<br>
-					End Date:
-					<input type="date" value="{% now 'Y-m-d' %}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="enddate" id="enddate">
+					<div class="p-3 border bg-light">
+				    <div class="row">
+				      <div class="col-md-6 col-lg-4">
+				        <div class="form-group">
+				          <label for="startdate">Start Date:</label> <input type="date" class=
+				          "form-control" value="{{ obj.date_created.date|date:'Y-m-d'}}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name=
+				          "startdate" id="startdate" />
+				        </div>
+				      </div>
+
+				      <div class="col-md-6 col-lg-4">
+				        <div class="form-group">
+				          <label for="enddate">End Date:</label> <input type="date" class="form-control"
+				          value="{% now 'Y-m-d' %}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="enddate" id="enddate" />
+				        </div>
+				      </div>
+				    </div>
+				  </div>
 				</div>
 			</div>
 			<div class="modal-footer">

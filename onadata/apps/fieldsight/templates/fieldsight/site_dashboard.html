@@ -69,16 +69,34 @@
 							</ul>
 						</li>
 					</script>
+					<div class="p-3 border bg-light">
+				    <div class="row">
+				      <div class="col-md-6 col-lg-4">
+				        <div class="form-group">
+				          <label for="startdate">Start Date:</label> <input type="date" class=
+				          "form-control" value="{{ obj.date_created.date|date:'Y-m-d'}}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name=
+				          "startdate" id="startdate" />
+				        </div>
+				      </div>
 
-					Start Date:
-					<input type="date" value="{{ obj.date_created.date|date:'Y-m-d'}}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="startdate" id="startdate">
-					<br>
-					End Date:
-					<input type="date" value="{% now 'Y-m-d' %}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="enddate" id="enddate">
-					<br>
+				      <div class="col-md-6 col-lg-4">
+				        <div class="form-group">
+				          <label for="enddate">End Date:</label> <input type="date" class="form-control"
+				          value="{% now 'Y-m-d' %}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="enddate" id="enddate" />
+				        </div>
+				      </div>
 
-					Remove Null Fields : <input type="checkbox" id="removeNullField" style="left: 0px;" name="removeNullValues"
-					>
+				      <div class="col-md-12 col-lg-4">
+				        <label>&nbsp;</label>
+
+				        <div class="form-group form-check" style="margin-top: 7px;">
+				          <input type="checkbox" class="form-check-input" id="removeNullField" name=
+				          "removeNullValues" /> <label class="form-check-label" for=
+				          "removeNullField">Hide Null Fields</label>
+				        </div>
+				      </div>
+				    </div>
+				  </div>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -192,7 +210,7 @@
 									
 									<div class="progress">
 
-										{% with progress=obj.progress %}
+										{% with progress=obj.current_progress %}
 										<div class="progress progress-striped active progress-sm" style="width:100%;">
 										{% if progress = 0 %}
 										<div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ progress  }}%;" aria-valuenow="{{progress}}" aria-valuemax="100">
