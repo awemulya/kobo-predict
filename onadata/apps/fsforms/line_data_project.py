@@ -97,13 +97,24 @@ class ProgressGeneratorSite(object):
 
     def data(self):
         d = OrderedDict()
-        main_stages = self.site.stages.filter(stage__isnull=True)
-        for ms in main_stages:
+        main_stages_site = self.site.stages.filter(stage__isnull=True)
+        for ms in main_stages_site:
             sub_stages = ms.parent.filter(stage_forms__isnull=False)
             for sub_stage in sub_stages:
                 try:
                     fsform = sub_stage.stage_forms
                     approved_submission = fsform.site_form_instances.filter().order_by("-date").first()
+                    if approved_submission.form_status == 3:
+                        d[ms.order + sub_stage.order * 0.1] = approved_submission.date.strftime('%Y-%m-%d')
+                except:
+                    pass
+        main_stages_project = self.site.project.stages.filter(stage__isnull=True)
+        for ms in main_stages_project:
+            sub_stages = ms.parent.filter(stage_forms__isnull=False)
+            for sub_stage in sub_stages:
+                try:
+                    fsform = sub_stage.stage_forms
+                    approved_submission = fsform.project_form_instances.filter(site_id=site.id).order_by("-date").first()
                     if approved_submission.form_status == 3:
                         d[ms.order + sub_stage.order * 0.1] = approved_submission.date.strftime('%Y-%m-%d')
                 except:
