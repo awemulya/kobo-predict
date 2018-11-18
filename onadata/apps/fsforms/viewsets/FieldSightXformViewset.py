@@ -60,7 +60,7 @@ class GeneralFormsViewSet(viewsets.ModelViewSet):
         pk = self.kwargs.get('pk', None)
         if is_project == "1":
             queryset = queryset.filter(project__id=pk)
-            return queryset.annotate(response_count=Count("project_form_instances")).select_related('xf', 'em')
+            return queryset.select_related('xf', 'em')
         else:
             project_id = get_object_or_404(Site, pk=pk).project.id
             queryset = queryset.filter(Q(site__id=pk, from_project=False)
