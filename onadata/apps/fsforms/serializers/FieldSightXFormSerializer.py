@@ -226,9 +226,11 @@ class FSXFormSerializer(serializers.ModelSerializer):
     def get_responses_count(self, obj):
         is_project = self.context.get('is_project', False)
         if is_project:
-            return obj.response_count if hasattr(obj, "response_count") else 0
+            return obj.project_form_instances.count()
+            # return obj.response_count if hasattr(obj, "response_count") else 0
         elif obj.project:
-            return obj.response_count if hasattr(obj, "response_count") else 0
+            return obj.project_form_instances.count()
+            # return obj.response_count if hasattr(obj, "response_count") else 0
         elif obj.site:
             return obj.site_response_count if hasattr(obj, "site_response_count") else 0
 
