@@ -133,17 +133,17 @@ class Stage(models.Model):
         return self.stage_forms.site_form_instances.all().count()
     
     @property
-    def site_submission_count(self, site_id):
-        return self.stage_forms.project_form_instances.filter(site_id=site_id).count()
+    def site_submission_count(id, site_id):
+        return Stage.objects.get(pk=id).stage_forms.project_form_instances.filter(site_id=site_id).count()
     
     
     @property
-    def rejected_submission_count(self, site_id):
-        return self.stage_forms.project_form_instances.filter(form_status=1, site_id=site_id).count()
+    def rejected_submission_count(id, site_id):
+        return Stage.objects.get(pk=id).stage_forms.project_form_instances.filter(form_status=1, site_id=site_id).count()
     
     @property
-    def flagged_submission_count(self, site_id):
-        return self.stage_forms.project_form_instances.filter(form_status=2, site_id=site_id).count()
+    def flagged_submission_count(id, site_id):
+        return Stage.objects.get(pk=id).stage_forms.project_form_instances.filter(form_status=2, site_id=site_id).count()
     
         
     @classmethod
