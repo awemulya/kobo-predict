@@ -114,7 +114,7 @@ class ProgressGeneratorSite(object):
             for sub_stage in sub_stages:
                 try:
                     fsform = sub_stage.stage_forms
-                    approved_submission = fsform.project_form_instances.filter(site_id=site.id).order_by("-date").first()
+                    approved_submission = fsform.project_form_instances.filter(site_id=self.site.id).order_by("-date").first()
                     if approved_submission.form_status == 3:
                         d[ms.order + sub_stage.order * 0.1] = approved_submission.date.strftime('%Y-%m-%d')
                 except:
