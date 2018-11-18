@@ -139,19 +139,6 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         if error or not instance:
             return self.error_response(error, False, request)
 
-        instance.fieldsight_instance.logs.create(
-            source=self.request.user,
-            type=16,
-            title="new Project level Submission",
-            organization=fs_proj_xf.project.organization,
-            project=fs_proj_xf.project,
-            extra_object=fs_proj_xf.project,
-            extra_message="project",
-            content_object=instance.fieldsight_instance)
-
-        if error or not instance:
-            return self.error_response(error, False, request)
-
         if fs_proj_xf.is_staged and siteid:
             site.update_current_progress()
         elif siteid:

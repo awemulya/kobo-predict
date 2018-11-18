@@ -66,8 +66,9 @@ class ExportProjectFormsForSites(View):
         start_date = data.get('startdate')
         end_date = data.get('enddate')
         filterRegion = data.get('filterRegion', None)
+        project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
         
-        task_obj=CeleryTaskProgress.objects.create(user=user, task_type=3)
+        task_obj=CeleryTaskProgress.objects.create(user=user, content_object=project, task_type=3)
         if task_obj:
             task = exportProjectSiteResponses.delay(task_obj.pk, user, self.kwargs.get('pk'), base_url, fs_ids, start_date, end_date, filterRegion)
             task_obj.task_id = task.id
@@ -137,8 +138,10 @@ class ExportProjectSites(DonorRoleMixin, View):
 
 class ExportProjectSitesWithRefs(DonorRoleMixin, View):
     def get(self, *args, **kwargs):
-        source_user = self.request.user            
-        task_obj=CeleryTaskProgress.objects.create(user=source_user, task_type=8)
+        source_user = self.request.user   
+        project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
+                 
+        task_obj=CeleryTaskProgress.objects.create(user=source_user, content_object=project, task_type=8)
         if task_obj:
             task = generateSiteDetailsXls.delay(task_obj.pk, source_user, self.kwargs.get('pk'), self.kwargs.get('region_id', None))
             task_obj.task_id = task.id
@@ -159,7 +162,7 @@ class CloneProjectSites(ProjectRoleMixin, View):
             regions = body.get('regions', [])
             ignore_region = body.get('ignore_region', [])
             source_user = self.request.user            
-            task_obj=CeleryTaskProgress.objects.create(user=source_user, task_type=4)
+            task_obj=CeleryTaskProgress.objects.create(user=source_user, content_object=t_project, task_type=4)
             if task_obj:
                 task = importSites.delay(task_obj.pk, source_user, f_project, t_project, meta_attributes, regions, ignore_region)
                 task_obj.task_id = task.id

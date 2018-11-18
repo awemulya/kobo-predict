@@ -489,9 +489,9 @@ def alter_proj_status(request, pk):
 
 class StageStatus(LoginRequiredMixin, ProjectRoleMixin, View):
     def get(self, request, *args, **kwargs):
-        obj = get_object_or_404(Project, pk=self.kwargs.get('pk'))
+        obj = get_object_or_404(Project, pk=self.kwargs.get('pk'), is_active=True)
         user = request.user
-        task_obj=CeleryTaskProgress.objects.create(user=user, task_type=10)
+        task_obj=CeleryTaskProgress.objects.create(user=user, task_type=10, content_object = obj)
         if task_obj:
             task = generate_stage_status_report.delay(task_obj.pk, obj.id)
             task_obj.task_id = task.id
@@ -506,7 +506,7 @@ class StageStatus(LoginRequiredMixin, ProjectRoleMixin, View):
 @group_required('Project')
 def add_proj_manager(request, pk):
     obj = get_object_or_404(
-        Project, pk=pk)
+        Project, pk=pk, is_active=True)
     group = Group.objects.get(name__exact="Project Manager")
     role_obj = UserRole(project=obj, group=group)
     scenario = 'Assign'
@@ -545,7 +545,7 @@ def alter_site_status(request, pk):
 @group_required('Reviewer')
 def add_supervisor(request, pk):
     obj = get_object_or_404(
-        Site, pk=int(pk))
+        Site, pk=int(pk), is_active=True)
     group = Group.objects.get(name__exact="Site Supervisor")
     role_obj = UserRole(site=obj, group=group)
     if request.method == 'POST':
@@ -566,7 +566,7 @@ def add_supervisor(request, pk):
 @group_required('Project')
 def add_central_engineer(request, pk):
     obj = get_object_or_404(
-        Project, pk=pk)
+        Project, pk=pk, is_active=True)
     group = Group.objects.get(name__exact="Reivewer")
     role_obj = UserRole(project=obj, group=group)
     scenario = 'Assign'
@@ -588,7 +588,7 @@ def add_central_engineer(request, pk):
 @group_required('Project')
 def add_project_role(request, pk):
     obj = get_object_or_404(
-        Project, pk=pk)
+        Project, pk=pk, is_active=True)
     role_obj = UserRole(project=obj)
     scenario = 'Assign People'
     form = SetProjectRoleForm(instance=role_obj, request=request)
@@ -680,7 +680,7 @@ class ProjectDeleteView(ProjectRoleMixinDeleteView, View):
         project = get_object_or_404(Project, pk=self.kwargs.get('pk'), is_active=True)
         project.is_active = False
         project.save()
-        task_obj=CeleryTaskProgress.objects.create(user=self.request.user, description="Removal of UserRoles After project delete", task_type=7)
+        task_obj=CeleryTaskProgress.objects.create(user=self.request.user, description="Removal of UserRoles After project delete", task_type=7, content_object = project)
         if task_obj:
             task = UnassignAllProjectRolesAndSites.delay(task_obj.id, project.id)
             task_obj.task_id = task.id
@@ -812,7 +812,7 @@ class SiteDeleteView(SiteDeleteRoleMixin, View):
         site = get_object_or_404(Site, pk=self.kwargs.get('pk'), is_active=True)
         site.is_active = False
         site.save()
-        task_obj=CeleryTaskProgress.objects.create(user=self.request.user, description="Removal of UserRoles After Site delete", task_type=7)
+        task_obj=CeleryTaskProgress.objects.create(user=self.request.user, description="Removal of UserRoles After Site delete", task_type=7, content_object = site)
         if task_obj:
             task = UnassignAllSiteRoles.delay(task_obj.id, site.id)
             task_obj.task_id = task.id
@@ -919,7 +919,7 @@ def ajax_save_project(request):
 
 class UploadSitesView(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
-        obj = get_object_or_404(Project, pk=pk)
+        obj = get_object_or_404(Project, pk=pk, is_active=True)
         form = UploadFileForm()
         regions = SiteBulkEditView.get_regions_filter(obj)
 
@@ -939,14 +939,14 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
         )
 
     def post(self, request, pk=id):
-        obj = get_object_or_404(Project, pk=pk)
+        obj = get_object_or_404(Project, pk=pk, is_active=True)
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             try:
                 sitefile = request.FILES['file']
                 user = request.user
                 # print sitefile
-                task_obj=CeleryTaskProgress.objects.create(user=user, task_type=0)
+                task_obj=CeleryTaskProgress.objects.create(user=user, content_object = obj, task_type=0)
                 if task_obj:
                     task = bulkuploadsites.delay(task_obj.pk, user, sitefile, pk)
                     task_obj.task_id = task.id
@@ -1081,14 +1081,14 @@ class BluePrintsView(LoginRequiredMixin, TemplateView):
 
 class ManagePeopleSiteView(LoginRequiredMixin, ReviewerRoleMixin, TemplateView):
     def get(self, request, pk):
-        obj = get_object_or_404(Site, id=self.kwargs.get('pk'))
+        obj = get_object_or_404(Site, id=self.kwargs.get('pk'), is_active=True)
         project = Site.objects.get(pk=pk).project
         return render(request, 'fieldsight/manage_people_site.html', {'obj': obj, 'pk':pk, 'level': "0", 'category':"site", 'organization': project.organization.id, 'project':project.id, 'site':pk})
 
 
 class ManagePeopleProjectView(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
-        obj = get_object_or_404(Project, id=self.kwargs.get('pk'))
+        obj = get_object_or_404(Project, id=self.kwargs.get('pk'), is_active=True)
         project = Project.objects.get(pk=pk)
         organization=project.organization_id
         return render(request, 'fieldsight/manage_people_site.html', {'obj': obj, 'pk': pk, 'level': "1", 'category':"Project Manager", 'organization': organization, 'project': pk, 'type':'project', 'obj':project, })
@@ -1702,7 +1702,8 @@ class MultiUserAssignSiteView(ProjectRoleMixin, TemplateView):
         users = data.get('users')
         group = Group.objects.get(name=data.get('group'))
         user = request.user
-        task_obj =CeleryTaskProgress.objects.create(user=user, task_type=2)
+        project = get_object_or_404(Project, pk=pk, is_active=True)
+        task_obj =CeleryTaskProgress.objects.create(user=user, content_object = project, task_type=2)
         if task_obj:
             task = multiuserassignsite.delay(task_obj.pk, user, pk, sites, users, group.id)
             task_obj.task_id = task.id
@@ -1771,7 +1772,8 @@ class MultiUserAssignProjectView(OrganizationRoleMixin, TemplateView):
         group = Group.objects.get(name=data.get('group'))
         group_id = Group.objects.get(name="Project Manager").id
         user = request.user
-        task_obj = CeleryTaskProgress.objects.create(user=user, task_type=1)
+        org = get_object_or_404(Organization, pk=pk)
+        task_obj = CeleryTaskProgress.objects.create(user=user, content_object = org, task_type=1)
         if task_obj:
             task = multiuserassignproject.delay(task_obj.pk, user, pk, projects, users, group_id)
             task_obj.task_id=task.id
@@ -2201,7 +2203,8 @@ class MultiUserAssignRegionView(ProjectRoleMixin, TemplateView):
         users = data.get('users')
         group = Group.objects.get(name=data.get('group'))
         user = request.user
-        task_obj = CeleryTaskProgress.objects.create(user=user, task_type=2)
+        project = get_object_or_404(Project, pk=pk, is_active=True)
+        task_obj = CeleryTaskProgress.objects.create(user=user, content_object = project, task_type=2)
         if task_obj:
             task = multiuserassignregion.delay(task_obj.pk, user, pk, regions, users, group.id)
             task_obj.task_id = task.id
@@ -2589,7 +2592,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     stages_rows = []
     stats = {}
     head_row = ["Site ID", "Name"]
-    project = get_object_or_404(Project, pk=pk)
+    project = get_object_or_404(Project, pk=pk, is_active=True)
     
     stages = project.stages.filter(stage__isnull=True).prefetch_related('parent')
     
@@ -2825,8 +2828,9 @@ class FormlistAPI(View):
         start_date = data.get('startdate')
         end_date = data.get('enddate')
         removeNullField = data.get('removeNullField', False)
+        site = get_object_or_404(Site, pk=pk, is_active=True)
 
-        task_obj=CeleryTaskProgress.objects.create(user=request.user, task_type=9)
+        task_obj=CeleryTaskProgress.objects.create(user=request.user, content_object = site, task_type=9)
         if task_obj:
             task = generateCustomReportPdf.delay(task_obj.id, request.user, pk, base_url, fs_ids, start_date, end_date, removeNullField)
             task_obj.task_id = task.id
@@ -3135,7 +3139,7 @@ def redirectToSite(request, pk):
     identifier = request.GET.get('identifier', None)
     if not identifier:
         raise Http404()
-    site = get_object_or_404(Site, identifier=identifier, project_id=pk)
+    site = get_object_or_404(Site, identifier=identifier, project_id=pk, is_active=True)
     return HttpResponseRedirect(reverse("fieldsight:site-dashboard",  kwargs={'pk': site.id}))    
 
 
@@ -3376,8 +3380,8 @@ class UnassignUserRegionAndSites(View):
         status, data = 401, {'status':'false','message':'Error occured try again.'}
         
         if int(group_id) in [3,4]:
-            
-            task_obj=CeleryTaskProgress.objects.create(user=request.user, description="Removal of UserRoles", task_type=7)
+            user = get_object_or_404(User, pk=pk)
+            task_obj=CeleryTaskProgress.objects.create(user=request.user, description="Removal of UserRoles", content_object = user, task_type=7)
             if task_obj:
                 task = UnassignUser.delay(task_obj.id, user_id, sites, regions, projects, group_id)
                 task_obj.task_id = task.id
