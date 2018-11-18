@@ -77,11 +77,12 @@ class XFormListApi(viewsets.ReadOnlyModelViewSet):
                 # including those shared by other users
                 return super(XFormListApi, self).filter_queryset(queryset)
 
-        profile = get_object_or_404(
-            UserProfile, user__username=username.lower())
+        # profile = get_object_or_404(
+        #     UserProfile, user__username=username.lower())
         # Include only the forms belonging to the specified user
-        queryset = queryset.filter(user=profile.user)
-        if profile.require_auth:
+        queryset = queryset.filter(user__username=username)
+        return queryset
+        if True: #profile.require_auth:
             # The specified has user ticked "Require authentication to see
             # forms and submit data"; reject anonymous requests
             if self.request.user.is_anonymous():
@@ -100,7 +101,6 @@ class XFormListApi(viewsets.ReadOnlyModelViewSet):
         self.object_list = self.filter_queryset(self.get_queryset())
 
         serializer = self.get_serializer(self.object_list, many=True)
-
         return Response(serializer.data, headers=self.get_openrosa_headers())
 
     def retrieve(self, request, *args, **kwargs):
