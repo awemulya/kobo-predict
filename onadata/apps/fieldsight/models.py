@@ -19,7 +19,7 @@ from django.contrib.auth.models import Group
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.serializers import serialize
-from onadata.apps.fsforms.models import Stage
+
 from django.db.models import Q
 
 class TimeZone(models.Model):
