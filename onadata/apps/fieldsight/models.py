@@ -425,8 +425,8 @@ class Site(models.Model):
         stages = Stage.objects.filter(Q(site__id=self.id, project_stage_id=0) | Q(project__id=project_id)).count()
         approved_forms_site = self.site_instances.filter(form_status=3, site_fxf__is_staged=True).values_list('site_fxf', flat=True)
         approved_forms_project = self.site_instances.filter(form_status=3, project_fxf__is_staged=True).values_list('project_fxf', flat=True)
-        unique_forms = set(approved_forms_site + approved_forms_project)
-        approved = len(unique_forms)
+        
+        approved = len(set(approved_forms_site)) + len(set(approved_forms_project))
         if not approved:
             return 0
         if not stages:
