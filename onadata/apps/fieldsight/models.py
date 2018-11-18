@@ -424,7 +424,8 @@ class Site(models.Model):
 
     def progress(self):
         project_id =  self.project_id
-        stages = Stage.objects.filter(Q(site__id=self.id, project_stage_id=0) | Q(project__id=project_id)).count()
+        stages = self.project.stages.filter(project_stage_id=0).count() + self.stages.all().count()
+        
         approved_forms_site = self.site_instances.filter(form_status=3, site_fxf__is_staged=True).values_list('site_fxf', flat=True)
         approved_forms_project = self.site_instances.filter(form_status=3, project_fxf__is_staged=True).values_list('project_fxf', flat=True)
         
