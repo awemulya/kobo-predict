@@ -118,12 +118,12 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
 
             site_row.extend([None]*total_cols)
             for k, v in ss_index.items():
-                if Stage.objects.filter(project_stage_id=v).count() == 1:
-                    site_sub_stage = Stage.objects.get(project_stage_id=v)
-                    site_row[k] = site_sub_stage.site_submission_count(site.id)
+                if Stage.objects.filter(id=v).count() == 1:
+                    site_sub_stage = Stage.objects.get(id=v)
+                    site_row[k] = site_sub_stage.site_submission_count(v, site.id)
                     submission_count += site_row[k]
-                    flagged_count += site_sub_stage.flagged_submission_count(site.id)
-                    rejected_count += site_sub_stage.rejected_submission_count(site.id)
+                    flagged_count += site_sub_stage.flagged_submission_count(v, site.id)
+                    rejected_count += site_sub_stage.rejected_submission_count(v, site.id)
                 else:
                     site_row[k] = 0
 
