@@ -421,9 +421,11 @@ class Site(models.Model):
         self.save()
 
     def progress(self):
-        stages = self.site_forms.filter(xf__isnull=False, is_staged=True, is_deleted=False, is_deployed=True).count()
-        approved_forms = self.site_instances.filter(form_status=3, site_fxf__is_staged=True).values_list('site_fxf', flat=True)
-        unique_forms = set(approved_forms)
+        project_id =  self.project_id
+        stages = Stage.objects.filter(Q(site__id=self.id, project_stage_id=0) | Q(project__id=project_id)).count()
+        approved_forms_site = self.site_instances.filter(form_status=3, site_fxf__is_staged=True).values_list('site_fxf', flat=True)
+        approved_forms_project = self.site_instances.filter(form_status=3, project_fxf__is_staged=True).values_list('project_fxf', flat=True)
+        unique_forms = set(approved_forms_site + approved_forms_project)
         approved = len(unique_forms)
         if not approved:
             return 0
