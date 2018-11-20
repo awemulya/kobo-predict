@@ -1,8 +1,11 @@
 from django.conf.urls import url
 
 from onadata.apps.users.views import ContactViewSet, UsersListView, MyProfile, EndUserRole, web_login
-from onadata.apps.users.viewsets import UserViewSet, ProfileViewSet, UserListViewSet, SearchableUserListViewSet, MySitesViewset
+from onadata.apps.users.viewsets import UserViewSet, ProfileViewSet, UserListViewSet, SearchableUserListViewSet, \
+    MySitesViewset, MySitesOnlyViewset, MyProjectsViewset
 from . import views
+
+
 urlpatterns = [
 
     url(r'^accounts/login/', web_login, name='web_login'),
@@ -16,6 +19,8 @@ urlpatterns = [
     url(r'^me/', views.current_user, name='current_user'),
     url(r'^metwo/', views.current_usertwo, name='current_usertwo'),
     url(r'^mysites/', MySitesViewset.as_view({'get': 'list'}), name='msvs'),
+    url(r'^mysitesonly/', MySitesOnlyViewset.as_view({'get': 'list'}), name='msovs'),
+    url(r'^myprojects/', MyProjectsViewset.as_view({'get': 'list'}), name='mpvs'),
     url(r'^alter-status/(?P<pk>[0-9]+)/$', views.alter_status, name='alter_status'),
     url(r'^edit/(?P<pk>[0-9]+)/$', views.edit, name='edit'),
     url(r'^api/alter-status/(?P<pk>[0-9]+)/$', views.alter_status),
@@ -29,4 +34,3 @@ urlpatterns = [
     url(r'^profile/(?P<pk>[0-9]+)/$', MyProfile.as_view(), name='profile'),
     url(r'^endrole/(?P<pk>[0-9]+)/$', EndUserRole.as_view(), name='end_user_role'),
     ]
-
