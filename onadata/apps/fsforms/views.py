@@ -83,9 +83,14 @@ class FSFormView(object):
 
 
 class OwnListView(ListView):
+
     def get_template_names(self):
         return ['fsforms/my_form_list.html']
+
     def get_queryset(self):
+        search_xform_key = self.request.GET.get('q', None)
+        if search_xform_key is not None:
+            return XForm.objects.filter(user=self.request.user, deleted_xform=None, title__icontains=search_xform_key).order_by('-date_modified')
         return XForm.objects.filter(user=self.request.user, deleted_xform=None).order_by('-date_modified')
 
 
