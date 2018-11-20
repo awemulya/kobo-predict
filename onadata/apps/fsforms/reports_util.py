@@ -135,8 +135,12 @@ def query_mongo(username, id_string, query, fields, sort, start=0,
     if fs_project_uuid is not None:
         if site_id is None:
             query['fs_project_uuid'] = { '$in': [fs_project_uuid, str(fs_project_uuid)] } #fs_project_uuid
+        elif site_id and count:
+            query['fs_project_uuid'] = {'$in': [fs_project_uuid, str(fs_project_uuid)]}
+            #query = query.update({'fs_project_uuid': {'$in': [fs_project_uuid, str(fs_project_uuid)] }, 'fs_site': { '$in': [site_id, str(site_id)] }})
         elif site_id:
-            query = query.update({'fs_project_uuid': {'$in': [fs_project_uuid, str(fs_project_uuid)] }, 'fs_site': { '$in': [site_id, str(site_id)] }})
+            query['fs_project_uuid'] = {'$in': [fs_project_uuid, str(fs_project_uuid)]}
+
     # if hide_deleted:
     #     # display only active elements
     #     # join existing query with deleted_at_query on an $and
