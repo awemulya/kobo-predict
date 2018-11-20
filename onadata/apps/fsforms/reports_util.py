@@ -1,7 +1,8 @@
 import json
 from bson import json_util
-from onadata.libs.utils.decorators import apply_form_field_names
 from django.conf import settings
+from django.utils.translation import ugettext_lazy, ugettext as _
+from onadata.libs.utils.decorators import apply_form_field_names
 from formpack import FormPack
 from .models import FieldSightXF
 from onadata.apps.viewer.models.parsed_instance import dict_for_mongo, _encode_for_mongo, xform_instances
@@ -135,7 +136,7 @@ def query_mongo(username, id_string, query, fields, sort, start=0,
         if site_id is None:
             query['fs_project_uuid'] = { '$in': [fs_project_uuid, str(fs_project_uuid)] } #fs_project_uuid
         elif site_id:
-            query = {"fs_project_uuid": str(fs_project_uuid), "fs_site": str(site_id)}
+            query = {'fs_project_uuid': {'$in': [fs_project_uuid, str(fs_project_uuid)] }, 'fs_site': { '$in': [site_id, str(site_id)] }}
     # if hide_deleted:
     #     # display only active elements
     #     # join existing query with deleted_at_query on an $and
