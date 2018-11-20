@@ -367,7 +367,6 @@ class ReadonlyFormMixin(LoginRequiredMixin):
         if request.group.name == "Super Admin":
                 return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
 
-        user_id = request.user.id
         form = get_object_or_404(FieldSightXF, pk=fsxf_id)
 
         if form.site is not None:
@@ -382,6 +381,10 @@ class ReadonlyFormMixin(LoginRequiredMixin):
 
         user_role = request.roles.filter(project_id = project_id, group_id__in=[2,7])
         if user_role:
+            return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
+
+        #reviewer
+        if request.roles.filter(site__project__id=project_id, group__name="Reviewer").exists():
             return super(ReadonlyFormMixin, self).dispatch(request, fsxf_id, *args, **kwargs)
 
         organization_id = Project.objects.get(pk=project_id).organization.id
@@ -415,6 +418,9 @@ class ConditionalFormMixin(LoginRequiredMixin):
         user_role = request.roles.filter(project_id = project_id, group_id=2)
         if user_role:
             return super(ConditionalFormMixin, self).dispatch(request, fsxf_id, is_read_only= False, *args, **kwargs)
+
+        if request.roles.filter(project_id=project_id, group__name="Reviewer").exists():
+            return super(ConditionalFormMixin, self).dispatch(request, fsxf_id, is_read_only=False, *args, **kwargs)
 
         organization_id = Project.objects.get(pk=project_id).organization.id
         user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group_id=1)
