@@ -203,6 +203,7 @@ class Project(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     cluster_sites = models.BooleanField(default=False)
     site_meta_attributes = JSONField(default=list)
+    progress_report = models.FileField(blank=True, null=True)
     logs = GenericRelation('eventlog.FieldSightLog')
     all_objects = ProjectAllManager()
     objects = ProjectManager()

@@ -1118,6 +1118,84 @@ def multiuserassignregion(task_prog_obj_id, source_user, project_id, regions, us
                                        content_object=project, recipient=source_user,
                                        extra_message=group_name +" for "+str(users_count)+" people in "+str(sites_count)+" regions ")
 
+
+
+@shared_task(time_limit=18000, soft_time_limit=18000)
+def auto_generate_stage_status_report():
+    projects = Project.objects.filter(active=True)
+    for project in projects:
+        if Site.objects.filter(project_id=project.id).count() < 2000:
+            continue
+        else:    
+            try:
+                data = []
+                ss_index = {}
+                stages_rows = []
+                head_row = ["Site ID", "Name", "Region ID", "Latitude", "longitude", "Status"]
+                
+                stages = project.stages.filter(stage__isnull=True)
+                for stage in stages:
+                    sub_stages = stage.parent.all()
+                    if len(sub_stages):
+                        head_row.append("Stage :"+stage.name)
+                        stages_rows.append("Stage :"+stage.name)
+
+                        for ss in sub_stages:
+                            head_row.append("Sub Stage :"+ss.name)
+                            ss_index.update({head_row.index("Sub Stage :"+ss.name): ss.id})
+                head_row.extend(["Site Visits", "Submission Count", "Flagged Submission", "Rejected Submission"])
+                data.append(head_row)
+                total_cols = len(head_row) - 6 # for non stages
+                for site in project.sites.filter(is_active=True, is_survey=False):
+                    flagged_count = 0 
+                    rejected_count = 0
+                    submission_count = 0
+
+                    if site.region:
+                        site_row = [site.identifier, site.name, site.region.identifier, site.latitude, site.longitude, site.site_status]
+                    else:
+                        site_row = [site.identifier, site.name, site.region_id, site.latitude, site.longitude, site.site_status]
+
+                    site_row.extend([None]*total_cols)
+                    for k, v in ss_index.items():
+                        if Stage.objects.filter(id=v).count() == 1:
+                            site_sub_stage = Stage.objects.get(id=v)
+                            site_row[k] = site_sub_stage.site_submission_count(v, site.id)
+                            submission_count += site_row[k]
+                            flagged_count += site_sub_stage.flagged_submission_count(v, site.id)
+                            rejected_count += site_sub_stage.rejected_submission_count(v, site.id)
+                        else:
+                            site_row[k] = 0
+
+
+
+                    site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": str(site.id)}},  { "$group" : { 
+                          "_id" :  
+                            { "$substr": [ "$start", 0, 10 ] }
+                          
+                       }
+                     }])['result']
+
+                    site_row[-1] = rejected_count
+                    site_row[-2] = flagged_count
+                    site_row[-3] = submission_count
+                    site_row[-4] = len(site_visits) 
+
+                    data.append(site_row)
+
+                p.save_as(array=data, dest_file_name="media/stage-report/{}_stage_data.xls".format(project.id))
+                xl_data = open("media/stage-report/{}_stage_data.xls".format(project.id), "rb")
+                
+                #Its only quick fix for now, save it in aws bucket whenever possible.
+
+                project.progress_report = xl_data.name
+                project.save()
+                
+            except Exception as e:
+                print 'Report Gen Unsuccesfull. %s' % e
+                print e.__dict__
+                
+
 def sendNotification(notification, recipient):
     result={}
     result['id']= noti.id,
