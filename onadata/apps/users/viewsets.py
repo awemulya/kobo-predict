@@ -239,7 +239,7 @@ class MySitesViewset(viewsets.ReadOnlyModelViewSet):
 class MySitesOnlyViewset(viewsets.ReadOnlyModelViewSet):
     serializer_class = MySiteOnlyRolesSerializer
     queryset = UserRole.objects.filter(ended_at=None, group__name="Site Supervisor", site__isnull=False)
-    pagination_class = MySitesResultsSetPagination
+    pagination_class = MySitesOnlyResultsSetPagination
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user, ended_at=None, site__isnull=False, site__is_active=True, group__name="Site Supervisor").select_related( 'site', 'site__type')
