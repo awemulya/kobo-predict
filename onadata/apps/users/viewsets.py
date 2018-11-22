@@ -32,7 +32,7 @@ SAFE_METHODS = ('GET', 'POST')
 
 
 class MySitesResultsSetPagination(PageNumberPagination):
-    page_size = 25
+    page_size = 1000
     page_size_query_param = 'page_size'
     max_page_size = 1000
 
@@ -226,7 +226,7 @@ class MySitesViewset(viewsets.ReadOnlyModelViewSet):
     pagination_class = MySitesResultsSetPagination
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user, ended_at=None, site__isnull=False, site__is_active=True, group__name="Site Supervisor").select_related('project', 'site', 'site__type', 'project__organization', 'project__type')
+        return self.queryset.filter(user=self.request.user, ended_at=None, site__isnull=False, site__is_active=True, group__name="Site Supervisor").select_related('project', 'site', 'site__region', 'site__type', 'project__organization', 'project__type')
 
     def get_serializer_context(self):
         sites = UserRole.objects.filter(user=self.request.user).values_list('site', flat=True).distinct()
