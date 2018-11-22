@@ -153,7 +153,8 @@ function createTable(canEdit)
     '</ul>' +
     '</nav>' +
     '</div></div>';
-    var topPager = $(pagerStr);
+//    var topPager = $(pagerStr);
+    var topPager = $('<div class="col-md-6"> </div>');
 
     topStatusNavRows.append(topPager);
     dataContainer.append(topStatusNavRows);
