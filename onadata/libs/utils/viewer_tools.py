@@ -218,10 +218,11 @@ def enketo_url(form_url, id_string, instance_xml=None,
         'server_url': form_url
     }
     if instance_id is not None and instance_xml is not None:
-        url = settings.ENKETO_URL + '/api/v2/instance'
-        print(url)
-        print(settings.KOBOCAT_URL)
-        # url = settings.ENKETO_URL + settings.ENKETO_API_INSTANCE_PATH
+        # url = settings.ENKETO_URL + '/api/v2/instance'
+        # print(url)
+        # print(settings.KOBOCAT_URL)
+        url = settings.ENKETO_URL + settings.ENKETO_API_INSTANCE_PATH
+        print(url, "cleaned url")
         values.update({
             'instance': instance_xml,
             'instance_id': instance_id,
@@ -231,16 +232,18 @@ def enketo_url(form_url, id_string, instance_xml=None,
             values.update({
                 'instance_attachments[' + key + ']': value
             })
-
+    print(values)
     values['instance'] = clean_xml_for_enketo(
         [k for k in values.keys() if "instance_attachments" in k],
         values['instance'])
-
+    print("Tokennnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn" + settings.ENKETO_API_TOKEN, )
     req = requests.post(url, data=values,
                         auth=(settings.ENKETO_API_TOKEN, ''), verify=False)
+    print(req.status_code, "status code")
     if req.status_code in [200, 201]:
         try:
             response = req.json()
+            print("enketo response ", response)
         except ValueError:
             pass
         else:
@@ -254,6 +257,7 @@ def enketo_url(form_url, id_string, instance_xml=None,
     else:
         try:
             response = req.json()
+            print(req.json(), "*******************************")
         except ValueError:
             pass
         else:
@@ -296,7 +300,7 @@ def _get_form_url(request, username, protocol='https'):
                        settings.KOBOCAT_PUBLIC_HOSTNAME != http_host
 
     # Make sure protocol is enforced to `http` when calling `kc` internally
-    protocol = "http" #if is_call_internal else protocol
+    protocol = 'http'  #local debug
 
     return '%s://%s/%s' % (protocol, http_host, username)
 

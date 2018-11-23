@@ -2333,6 +2333,7 @@ def edit_data(request,  id_string, data_id):
                 'id_string': id_string}
         ) + "#/" + str(instance.id))
     form_url = _get_form_url(request, xform.user.username, settings.ENKETO_PROTOCOL)
+    print(form_url, "TRANSFORM FORM URLl")
 
     try:
         url = enketo_url(
@@ -2355,4 +2356,5 @@ def edit_data(request,  id_string, data_id):
     #     reverse('onadata.apps.main.views.show',
     #             kwargs={'username': xform.user.username,
     #                     'id_string': id_string}))
+    return HttpResponse("This form cannot be viewed in enketo. Please Report")
 
