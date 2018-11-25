@@ -554,13 +554,14 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.url = "{% url 'fieldsight_export:export_xls_project_level_sites' obj.pk %}";
 	configure_settings.log_url = "{% url 'eventlog:api_project_logs' obj.pk %}";
 	configure_settings.full_log_url = "{% url 'eventlog:project_logs' obj.pk %}";
-	configure_settings.genarete_excel_url = "{% url 'fieldsight:download-stages' obj.pk %}"	
+	configure_settings.genarete_excel_url = "{% url 'fieldsight:download-stages' obj.pk %}"
+	configure_settings.is_lite = true;	
 	//getlogdata();
 					
 </script>
 
 <script type="text/javascript" src="{{ STATIC_URL }}js/geo-layers.js"></script>    
-<script type="text/javascript" src="{{ STATIC_URL }}js/ajax_map.js?v=1.1"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/ajax_map.js?v=1.2"></script>
 <!--<script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>-->
 
 <script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
