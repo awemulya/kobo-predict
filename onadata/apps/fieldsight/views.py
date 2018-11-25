@@ -260,8 +260,8 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'total_submissions': flagged + approved + rejected + outstanding,
             'site_visits' : site_visits,
             'active_supervisors' : active_supervisors,
-            'new_submissions' : new_submissions,
-            'obj_sites_count' : obj.sites.filter(is_active=True).count()
+            'new_submissions' : new_submissions
+            
     }
 
         return dashboard_data
@@ -2924,8 +2924,7 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
             'total_submissions': outstanding + flagged + approved + rejected,
             'site_visits' : site_visits,
             'active_supervisors' : active_supervisors,
-            'new_submissions' : new_submissions,
-            'obj_sites_count' : obj.sites.filter(is_active=True).count()
+            'new_submissions' : new_submissions
     }
         return dashboard_data
 

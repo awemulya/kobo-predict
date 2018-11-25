@@ -164,21 +164,7 @@ assigntoken(csrf_token);
 								<!--<a class="dropdown-item" href="#"><i class="la la-clipboard"></i>{% trans 'Project Detail Report' %}</a>-->
 								<!-- <a class="dropdown-item" href="{% url 'fieldsight:download-stages' obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Excel' %} {% trans 'Report' %}</a> -->
 								
-								{% if obj_sites_count < 2000 %}
-
-								{% verbatim %}
 									<div id="export_stage_progress_button"></div>
-								{% endverbatim %}
-
-								{% else %}
-									{% if obj.progress_report %}
-										<a class="dropdown-item" href="{{ obj.progress_report.url }}"><i class="la la-clipboard"></i>{% trans ' Progress' %} {% trans 'Report' %}</a>
-								
-									{% else %}
-										<a class="dropdown-item" href="javascript:;" onclick="alert('The report is being generated. It might take time depending upon number of sites.')"><i class="la la-clipboard"></i>{% trans ' Progress' %} {% trans 'Report' %}</a>
-								
-									{% endif %}
-								{% endif %}
 								
 								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#exportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Report' %}</a>
 								
