@@ -83,9 +83,14 @@ class FSFormView(object):
 
 
 class OwnListView(ListView):
+
     def get_template_names(self):
         return ['fsforms/my_form_list.html']
+
     def get_queryset(self):
+        search_xform_key = self.request.GET.get('q', None)
+        if search_xform_key is not None:
+            return XForm.objects.filter(user=self.request.user, deleted_xform=None, title__icontains=search_xform_key).order_by('-date_modified')
         return XForm.objects.filter(user=self.request.user, deleted_xform=None).order_by('-date_modified')
 
 
@@ -1674,10 +1679,11 @@ def delete_mainstage(request, id):
 
 @api_view(['GET', 'POST'])
 def instance_status(request, instance):
-    status_changed = None
     message = None
     comment_url = None
     try:
+        if not FInstance.objects.filter(instance__id=instance).exists():
+            return Response({'error': "This Detail Data is missing in Postgres DB"}, status=status.HTTP_400_BAD_REQUEST)
         fi = FInstance.objects.get(instance__id=instance)
         if request.method == 'POST':
             with transaction.atomic():
@@ -1715,7 +1721,7 @@ def instance_status(request, instance):
                                           extra_message=extra_message
                                           )
     except Exception as e:
-        return Response({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     else:
         # org = fi.project.organization if fi.project else fi.site.project.organization
         # noti = status_changed.logs.create(source=request.user, type=17, title="form status changed",
@@ -1740,7 +1746,13 @@ def instance_status(request, instance):
             except Exception as e:
                 print(str(e))
                 # send_message(fi.site_fxf, fi.form_status, message, comment_url)
-        return Response({'formStatus': str(fi.form_status)}, status=status.HTTP_200_OK)
+        if fi.site:
+            site_name = fi.site.name
+            site_id = fi.site.id
+        else:
+            site_name = "Survey Form"
+            site_id = 0
+        return Response({'formStatus': str(fi.form_status), 'site_name': site_name, 'site_id': site_id}, status=status.HTTP_200_OK)
 
 
 class AlterStatusDetailView(DetailView):

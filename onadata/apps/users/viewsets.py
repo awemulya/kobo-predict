@@ -23,7 +23,8 @@ from onadata.apps.eventlog.models import FieldSightLog
 from onadata.apps.fieldsight.mixins import USURPERS
 from onadata.apps.fieldsight.models import BluePrints
 from onadata.apps.userrole.models import UserRole
-from onadata.apps.userrole.serializers.UserRoleSerializer import MySiteRolesSerializer
+from onadata.apps.userrole.serializers.UserRoleSerializer import MySiteRolesSerializer, MyProjectRolesSerializer, \
+    MySiteOnlyRolesSerializer
 from onadata.apps.users.models import User, UserProfile
 from onadata.apps.users.serializers import UserSerializer, UserSerializerProfile, SearchableUserSerializer
 
@@ -31,7 +32,12 @@ SAFE_METHODS = ('GET', 'POST')
 
 
 class MySitesResultsSetPagination(PageNumberPagination):
-    page_size = 25
+    page_size = 400
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+class MySitesOnlyResultsSetPagination(PageNumberPagination):
+    page_size = 1000
     page_size_query_param = 'page_size'
     max_page_size = 1000
 
@@ -220,9 +226,33 @@ class MySitesViewset(viewsets.ReadOnlyModelViewSet):
     pagination_class = MySitesResultsSetPagination
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user, ended_at=None, site__isnull=False, site__is_active=True, group__name="Site Supervisor").select_related('project', 'site', 'site__type', 'project__organization', 'project__type')
+        return self.queryset.filter(user=self.request.user, ended_at=None, site__isnull=False, site__is_active=True, group__name="Site Supervisor").select_related('project', 'site', 'site__region', 'site__type', 'project__organization', 'project__type')
 
     def get_serializer_context(self):
         sites = UserRole.objects.filter(user=self.request.user).values_list('site', flat=True).distinct()
         blue_prints = BluePrints.objects.filter(site__in=sites)
         return {'request': self.request, 'blue_prints': blue_prints}
+
+#no project info
+
+
+class MySitesOnlyViewset(viewsets.ReadOnlyModelViewSet):
+    serializer_class = MySiteOnlyRolesSerializer
+    queryset = UserRole.objects.filter(ended_at=None, group__name="Site Supervisor", site__isnull=False)
+    pagination_class = MySitesOnlyResultsSetPagination
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user, ended_at=None, site__isnull=False, site__is_active=True, group__name="Site Supervisor").select_related( 'site', 'site__type')
+
+class MyProjectsViewset(viewsets.ReadOnlyModelViewSet):
+    serializer_class = MyProjectRolesSerializer
+    queryset = UserRole.objects.filter(ended_at=None, group__name="Site Supervisor", site__isnull=False)
+    # pagination_class = MySitesResultsSetPagination
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user, ended_at=None, site__isnull=False, site__is_active=True, group__name="Site Supervisor").distinct('project').select_related( 'project', 'project__type', 'project__organization')
+
+    # def get_serializer_context(self):
+    #     # sites = UserRole.objects.filter(user=self.request.user).values_list('site', flat=True).distinct()
+    #     # blue_prints = BluePrints.objects.filter(site__in=sites)
+    #     return {'request': self.request, 'blue_prints': []}
