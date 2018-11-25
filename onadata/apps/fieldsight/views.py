@@ -2755,14 +2755,14 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     main_body = {'next_page':next_page_url,'content':content}
     return main_body
 
-class ProjectStageResponsesStatus(ProjectRoleMixin, View): 
+class ProjectStageResponsesStatus(DonorRoleMixin, View): 
     def get(self, request, pk):
         q_keyword = self.request.GET.get("q", None)
         stage_data = get_project_stage_status(request, pk, q_keyword, page_list=15)
         return HttpResponse(json.dumps(stage_data), status=200)
 
 
-class ProjectDashboardStageResponsesStatus(ProjectRoleMixin, View): 
+class ProjectDashboardStageResponsesStatus(DonorRoleMixin, View): 
     def get(self, request, pk):
         q_keyword = self.request.GET.get("q", None)
         stage_data = get_project_stage_status(request, pk, q_keyword, page_list=8)
