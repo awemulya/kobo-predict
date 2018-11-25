@@ -143,12 +143,30 @@
 
         		//reset
 
+				//VC
+				fn_login_vertically_center();
         		
 			});
 			jQuery(window).on('resize', function() {
 				vph = $(window).height();
 				$(".login-wrap").css("min-height", vph);
+				fn_login_vertically_center();
 			});
+
+			// Vertical Center
+			function fn_login_vertically_center(){
+				var svph = $(window).height();
+				var slfh = $(".login-section").height();
+				if(svph > (slfh + 60)){
+					var tempHeight = svph - slfh;
+					var tempHeight = tempHeight / 2;
+					$(".login-section").css("margin-top", tempHeight);
+					$(".login-section").css("margin-bottom", tempHeight);
+					}else{
+					$(".login-section").css("margin-top", 30);
+					$(".login-section").css("margin-bottom", 30);
+				}
+			}
 
 			 $("#help-me").click(function(){
 			 	$('#pills-login').removeClass('active show');
