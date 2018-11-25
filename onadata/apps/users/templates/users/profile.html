@@ -266,7 +266,7 @@
 											{% if sub.project_fxf %}
 											<a href="{% url 'forms:instance' sub.project_fxf.pk %}/{{ sub.site.id | unlocalize }}#/{{ sub.instance.id|stringformat:'d'}}" title="">
 											{% else %}
-												<a href="{% url 'forms:instance' sub.site_fxf.pk %}/{{ sub.site.id }}#/{{ sub.instance.id|stringformat:'d'}}" title="">
+												<a href="{% url 'forms:instance' sub.site_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}" title="">
 												{% endif %}
 										{% else %}
 										<a href="{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}" title="">
