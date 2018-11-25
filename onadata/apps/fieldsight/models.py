@@ -459,7 +459,7 @@ class Site(models.Model):
 
     @property
     def site_status(self):
-        forms = self.site_forms.filter(is_staged=True)
+        forms = self.site_forms.filter(is_staged=True, is_deleted=False, is_deployed=True)
         try:
             return self.site_instances.filter(site_fxf__in=forms).order_by('-instance_id')[0].get_abr_form_status()
         except:
