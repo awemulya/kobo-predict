@@ -91,6 +91,7 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
     try:
         data=[]
         ss_index = []
+        form_ids = []
         stages_rows = []
         head_row = ["Site ID", "Name", "Region ID", "Address", "Latitude", "longitude", "Status"]
 
@@ -106,7 +107,7 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
                 for ss in sub_stages:
                     head_row.append("Sub Stage :"+ss.name)
                     ss_index.append(str(ss.stage_forms.id))
-
+                    form_ids.append(str(ss.stage_forms.id))
                     query[str(ss.stage_forms.id)] = Sum(
                         Case(
                         When(site_instances__project_fxf_id=ss.stage_forms.id, then=1),
@@ -115,17 +116,21 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
 
         query['flagged'] = Sum(
             Case(
-                When(site_instances__form_status=2, then=1),
+                When(site_instances__form_status=2, site_instances__project_fxf_id__in=form_ids, then=1),
                 default=0, output_field=IntegerField()
             ))
 
         query['rejected'] = Sum(
             Case(
-                When(site_instances__form_status=1, then=1),
+                When(site_instances__form_status=1, site_instances__project_fxf_id__in=form_ids, then=1),
                 default=0, output_field=IntegerField()
             ))
          
-        query['submission'] = Count('site_instances')
+        query['submission'] = Sum(
+            Case(
+                When(site_instances__project_fxf_id__in=form_ids, then=1),
+                default=0, output_field=IntegerField()
+            ))
 
         head_row.extend(["Site Visits", "Submission Count", "Flagged Submission", "Rejected Submission"])
         data.append(head_row)
@@ -133,7 +138,7 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
         sites = Site.objects.filter(project_id=project.id).values('id','identifier', 'name', 'region__identifier', 'address').annotate(**query)
 
 
-        site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id}},  { "$group" : { 
+        site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": {"$in":form_ids}}},  { "$group" : { 
               "_id" :  { 
                 "fs_site": "$fs_site",
                 "date": { "$substr": [ "$start", 0, 10 ] }
