@@ -945,11 +945,13 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
         if form.is_valid():
             try:
                 sitefile = request.FILES['file']
+                sites = sitefile.get_records()
                 user = request.user
-                # print sitefile
-                task_obj=CeleryTaskProgress.objects.create(user=user, content_object = obj, task_type=0)
+                task_obj = CeleryTaskProgress.objects.create(user=user, content_object = obj, task_type=0)
                 if task_obj:
-                    task = bulkuploadsites.delay(task_obj.pk, user, sitefile, pk)
+                    # import ipdb
+                    # ipdb.set_trace()
+                    task = bulkuploadsites.delay(task_obj.pk, user, sites, pk)
                     task_obj.task_id = task.id
                     task_obj.save()
                     messages.success(request, 'Sites are being uploaded. You will be notified in notifications list as well.')

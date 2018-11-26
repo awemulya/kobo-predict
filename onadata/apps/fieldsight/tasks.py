@@ -340,17 +340,17 @@ def UnassignAllSiteRoles(task_prog_obj_id, site_id):
 
     
 @shared_task()
-def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
+def bulkuploadsites(task_prog_obj_id, source_user, sites, pk):
     time.sleep(2)
     project = Project.objects.get(pk=pk)
-    task_id = bulkuploadsites.request.id
+    # task_id = bulkuploadsites.request.id
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.content_object = project
     task.status=1
     task.save()
     count = ""
     try:
-        sites = file.get_records()
+        sites
         count = len(sites)
         task.description = "Bulk Upload of "+str(count)+" Sites."
         task.save()
@@ -361,6 +361,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
             interval = count/20
             for site in sites:
                 # time.sleep(0.7)
+                print(i)
                 site = dict((k, v) for k, v in site.iteritems() if v is not '')
 
                 lat = site.get("longitude", 85.3240)
@@ -414,7 +415,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, file, pk):
                 
                 if i > interval:
                     interval = i+interval
-                    bulkuploadsites.update_state(state='PROGRESS',meta={'current': i, 'total': count})
+                    bulkuploadsites.update_state('PROGRESS', meta={'current': i, 'total': count})
             task.status = 2
             task.save()
 
