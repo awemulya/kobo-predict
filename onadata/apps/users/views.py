@@ -357,7 +357,7 @@ def web_authenticate(username=None, password=None):
             else:
                 user = User.objects.get(username__iexact=username)
             if user.check_password(password):
-                return authenticate(username=user.username, password=password)
+                return authenticate(username=user.username, password=password), False
             else:
                 return None, True  # Email is correct
         except User.DoesNotExist:
