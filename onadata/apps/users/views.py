@@ -78,13 +78,16 @@ class ContactViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-def web_authenticate(username=None, password=None):
-        try:
-            user = User.objects.get(email__iexact=username)
-            if user.check_password(password):
-                return authenticate(username=user.username, password=password)
-        except User.DoesNotExist:
-            return None
+# def web_authenticate(username=None, password=None):
+#         # returns User , Email_correct, Password_correct
+#         try:
+#             user = User.objects.get(email__iexact=username)
+#             if user.check_password(password):
+#                 return authenticate(username=user.username, password=password)
+#             else:
+#                 return None, True, False
+#         except User.DoesNotExist:
+#             return None, False, True
 
 @api_view(['GET'])
 def current_user(request):
@@ -347,7 +350,6 @@ def all_notification(user,  message):
     })
 
 
-
 def web_authenticate(username=None, password=None):
         try:
             if "@" in username:
@@ -356,31 +358,43 @@ def web_authenticate(username=None, password=None):
                 user = User.objects.get(username__iexact=username)
             if user.check_password(password):
                 return authenticate(username=user.username, password=password)
+            else:
+                return None, True  # Email is correct
         except User.DoesNotExist:
-            return None
+            return None, False   # false Email incorrect
 
 
 def web_login(request):
     if request.user.is_authenticated():
         return redirect('/dashboard/')
     if request.method == 'POST':
-
         form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             pwd = form.cleaned_data['password']
-            user = web_authenticate(username=username, password=pwd)
+            user, valid_email = web_authenticate(username=username, password=pwd)
             if user is not None:
                 if user.is_active:
                     login(request, user)
                     return HttpResponseRedirect(reverse('dashboard'))
                 else:
-                    return render(request, 'users/login.html', {'form':form, 'inactive':True})
+                    return render(request, 'users/login.html',
+                                  {'form': form,
+                                   'email_error': "Your Account is Deactivated, Please Contact Administrator.",
+                                   'valid_email': valid_email})
             else:
-                return render(request, 'users/login.html', {'form':form, 'form_errors':True})
+                if valid_email:
+                    email_error = False
+                    password_error = True
+                else:
+                    password_error = False
+                    email_error = "Invalid Email, Please Check your Email Address."
+                return render(request, 'users/login.html',
+                              {'form': form,
+                               'valid_email': valid_email, 'email_error': email_error, 'password_error': password_error})
         else:
-            return render(request, 'users/login.html', {'form': form})
+            return render(request, 'users/login.html', {'form': form , 'valid_email': False, 'email_error': "Your Email and Password Didnot Match."})
     else:
         form = LoginForm()
 
-    return render(request, 'users/login.html', {'form': form})
+    return render(request, 'users/login.html', {'form': form, 'valid_email': True, 'email_error': False})

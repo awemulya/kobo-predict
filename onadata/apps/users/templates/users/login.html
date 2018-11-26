@@ -44,21 +44,29 @@
 											<li class="nav-item">
 											    <a class="nav-link active" id="pills-login-tab" data-toggle="pill" href="#pills-login" role="tab" aria-controls="pills-login" aria-selected="true">Login</a>
 											</li>
-											<!-- <li class="nav-item">
-											    <a class="nav-link" id="pills-signup-tab" data-toggle="pill" href="#pills-signup" role="tab" aria-controls="pills-signup" aria-selected="false">Signup</a>
-											</li> -->
 										</ul>
 										<div class="tab-content" id="pills-tabContent">
 											<div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="pills-login-tab">
 												<form method="post">
 												{% csrf_token %}
 												  	<div class="form-group">
-												    	<label for="inputEmail">Email address</label>
-												    	<input type="username" class="form-control" name="username" id="inputEmail">
+												    	<label for="inputEmail">Email address
+															{% if not valid_email %}
+															<small id="emailHelp" class="text-danger">
+														  		{{ email_error }}
+															</small>
+															{% endif %}
+														</label>
+												    	<input type="username" class="form-control {% if not valid_email %}is-invalid{% endif %}" name="username" id="inputEmail">
 												  	</div>
 												  	<div class="form-group">
 												    	<label for="inputPassword">Password</label>
-												    	<input type="password" name="password" class="form-control" id="inputPassword">
+														{% if password_error %}
+															<small id="passwordHelp" class="text-danger">
+														  		Password Incorrect, Please CHeck Your Password,
+															</small>
+															{% endif %}
+												    	<input type="password" name="password" class="form-control {% if password_error %}is-invalid{% endif %}" id="inputPassword">
 												  	</div>
 												  	<div class="row">
 												  		<div class="col-sm-6">
@@ -80,31 +88,7 @@
 												  	<button type="submit" class="btn btn-secondary"><i class="la la-key"></i> Sign In</button>
 												</form>
 											</div>
-											<!-- <div class="tab-pane fade" id="pills-signup" role="tabpanel" aria-labelledby="pills-signup-tab">
-												<form>
-													<div class="form-group">
-													    <label for="inputSignupUsername">Username</label>
-													    <input type="text" class="form-control" id="inputSignupUsername">
-													</div>
-													<div class="form-group">
-													    <label for="inputSignupFirstName">First Name</label>
-													    <input type="text" class="form-control" id="inputSignupFirstName">
-													</div>
-													<div class="form-group">
-													    <label for="inputSignupLastName">Last Name</label>
-													    <input type="text" class="form-control" id="inputSignupLastName">
-													</div>
-													<div class="form-group">
-													    <label for="inputSignupPassword">Your password</label>
-													    <input type="password" class="form-control" id="inputSignupPassword" >
-													</div>
-													<div class="form-group">
-													    <label for="inputSignupRePassword">One more time?</label>
-													    <input type="password" class="form-control" id="inputSignupRePassword" >
-													</div>
-													<button type="submit" class="btn btn-secondary"><i class="la la-user-plus"></i> Signup</button>
-												</form>
-											</div> -->
+
 											<div class="tab-pane fade" id="pills-reset" role="tabpanel" aria-labelledby="pills-reset-tab">
 												<form>
 													<div class="form-group">
