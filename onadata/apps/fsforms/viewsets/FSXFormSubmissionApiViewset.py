@@ -92,6 +92,7 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
     template_name = 'fsforms/submission.xml'
 
     def create(self, request, *args, **kwargs):
+        print("check code reached")
         if self.request.user.is_anonymous():
             self.permission_denied(self.request)
 
