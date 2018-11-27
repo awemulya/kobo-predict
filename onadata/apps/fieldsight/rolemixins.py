@@ -422,6 +422,9 @@ class ConditionalFormMixin(LoginRequiredMixin):
         if request.roles.filter(project_id=project_id, group__name="Reviewer").exists():
             return super(ConditionalFormMixin, self).dispatch(request, fsxf_id, is_read_only=False, *args, **kwargs)
 
+        if request.roles.filter(project_id=project_id, group__name="Site Supervisor").exists():
+            return super(ConditionalFormMixin, self).dispatch(request, fsxf_id, is_read_only=False, *args, **kwargs)
+
         organization_id = Project.objects.get(pk=project_id).organization.id
         user_role_asorgadmin = request.roles.filter(organization_id = organization_id, group_id=1)
         if user_role_asorgadmin:
@@ -432,7 +435,7 @@ class ConditionalFormMixin(LoginRequiredMixin):
             user_role = request.roles.filter(project_id = form.project_id, group_id=7)
         if user_role:
             return super(ConditionalFormMixin, self).dispatch(request, fsxf_id, is_read_only= True, *args, **kwargs)
-
+        return super(ConditionalFormMixin, self).dispatch(request, fsxf_id, is_read_only=True, *args, **kwargs)
         raise PermissionDenied()   
 
 
