@@ -97,6 +97,7 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
 
         fsxfid = kwargs.get('pk', None)
         siteid = kwargs.get('site_id', None)
+        print(kwargs, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
         if siteid == '0':
             siteid = None
         elif Site.objects.filter(pk=siteid).exists() == False:
@@ -129,8 +130,9 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                 site = Site.objects.get(pk=siteid)
         except Exception as e:
             return self.error_response("Site Id Or Project Form ID Not Vaild", False, request)
-
+        print("reached hered 88888888888888888888888888")
         if request.method.upper() == 'HEAD':
+            print("reached hered ######################")
             return Response(status=status.HTTP_204_NO_CONTENT,
                             headers=self.get_openrosa_headers(request),
                             template_name=self.template_name)
