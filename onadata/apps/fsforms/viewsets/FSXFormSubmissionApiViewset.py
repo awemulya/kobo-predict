@@ -38,6 +38,86 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
         try:
             fsxfid = int(fsxfid)
             fxf = get_object_or_404(FieldSightXF, pk=kwargs.get('pk'))
+            if fxf.project:
+                #     project level form hack
+                print("redirection project form to project url")
+                if self.request.user.is_anonymous():
+                    self.permission_denied(self.request)
+
+                fsxfid = kwargs.get('pk', None)
+                siteid = kwargs.get('site_id', None)
+                if siteid == '0':
+                    siteid = None
+                elif Site.objects.filter(pk=siteid).exists() == False:
+                    return self.error_response("siteid Invalid", False, request)
+                if fsxfid is None:
+                    return self.error_response("Fieldsight Form ID Not Given", False, request)
+                deleted_forms = {871066: 894803, 871067: 894804, 871068: 894805, }
+                # First tranche deleted case
+                form_pk = kwargs.get('pk')
+                form_pk = int(form_pk)
+                fs_proj_xf = None
+                if deleted_forms.get(form_pk, False):
+                    fs_proj_xf = get_object_or_404(FieldSightXF, pk=deleted_forms.get(form_pk))
+                site_or_project_form = None
+                if not fs_proj_xf and FieldSightXF.objects.filter(pk=form_pk).exists():
+                    site_or_project_form = FieldSightXF.objects.get(pk=form_pk)
+                if site_or_project_form and not site_or_project_form.site and not site_or_project_form.project and not fs_proj_xf:
+                    return self.error_response("Orphan FieldsightXForm No Site or Form ID", False, request)
+
+                if site_or_project_form and site_or_project_form.site and not site_or_project_form.project and not fs_proj_xf:
+                    # Project level form submitted by site level form
+                    fs_proj_xf = site_or_project_form.fsform
+
+                try:
+                    if not fs_proj_xf:
+                        fs_proj_xf = get_object_or_404(FieldSightXF, pk=kwargs.get('pk'))
+                    xform = fs_proj_xf.xf
+                    proj_id = fs_proj_xf.project.id
+                    if siteid:
+                        site = Site.objects.get(pk=siteid)
+                except Exception as e:
+                    return self.error_response("Site Id Or Project Form ID Not Vaild", False, request)
+                if request.method.upper() == 'HEAD':
+                    return Response(status=status.HTTP_204_NO_CONTENT,
+                                    headers=self.get_openrosa_headers(request),
+                                    template_name=self.template_name)
+                error, instance = create_instance_from_xml(request, None, siteid, fs_proj_xf.id, proj_id, xform)
+
+                if error or not instance:
+                    return self.error_response(error, False, request)
+
+                if fs_proj_xf.is_staged and siteid:
+                    site.update_current_progress()
+                elif siteid:
+                    site.update_status()
+
+                if fs_proj_xf.is_survey:
+                    instance.fieldsight_instance.logs.create(source=self.request.user, type=16,
+                                                             title="new Project level Submission",
+                                                             organization=fs_proj_xf.project.organization,
+                                                             project=fs_proj_xf.project,
+                                                             extra_object=fs_proj_xf.project,
+                                                             extra_message="project",
+                                                             content_object=instance.fieldsight_instance)
+                else:
+                    site = Site.objects.get(pk=siteid)
+                    instance.fieldsight_instance.logs.create(source=self.request.user, type=16,
+                                                             title="new Site level Submission",
+                                                             organization=fs_proj_xf.project.organization,
+                                                             project=fs_proj_xf.project, site=site,
+                                                             extra_object=site,
+                                                             content_object=instance.fieldsight_instance)
+
+                context = self.get_serializer_context()
+                serializer = FieldSightSubmissionSerializer(instance, context=context)
+                return Response(serializer.data,
+                                headers=self.get_openrosa_headers(request),
+                                status=status.HTTP_201_CREATED,
+                                template_name=self.template_name)
+
+
+            # handle of site level form
             fs_proj_xf = fxf.fsform.pk if fxf.fsform else None
             proj_id = fxf.fsform.project.pk if fxf.fsform else fxf.site.project.pk
             xform = fxf.xf
@@ -93,12 +173,12 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
 
     def create(self, request, *args, **kwargs):
         print("check code reached")
+        print(self.request.user, "usert")
         if self.request.user.is_anonymous():
             self.permission_denied(self.request)
 
         fsxfid = kwargs.get('pk', None)
         siteid = kwargs.get('site_id', None)
-        print(kwargs, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
         if siteid == '0':
             siteid = None
         elif Site.objects.filter(pk=siteid).exists() == False:
@@ -131,9 +211,7 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                 site = Site.objects.get(pk=siteid)
         except Exception as e:
             return self.error_response("Site Id Or Project Form ID Not Vaild", False, request)
-        print("reached hered 88888888888888888888888888")
         if request.method.upper() == 'HEAD':
-            print("reached hered ######################")
             return Response(status=status.HTTP_204_NO_CONTENT,
                             headers=self.get_openrosa_headers(request),
                             template_name=self.template_name)

@@ -435,7 +435,7 @@ class ConditionalFormMixin(LoginRequiredMixin):
             user_role = request.roles.filter(project_id = form.project_id, group_id=7)
         if user_role:
             return super(ConditionalFormMixin, self).dispatch(request, fsxf_id, is_read_only= True, *args, **kwargs)
-        return super(ConditionalFormMixin, self).dispatch(request, fsxf_id, is_read_only=True, *args, **kwargs)
+        # return super(ConditionalFormMixin, self).dispatch(request, fsxf_id, is_read_only=True, *args, **kwargs)
         raise PermissionDenied()   
 
 
