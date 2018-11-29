@@ -2889,11 +2889,11 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
 
         peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
         total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
-        sites = obj.sites.filter(is_active=True, is_survey=False)[:100]
+        sites = obj.sites.filter(is_active=True, is_survey=False)[:200]
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('location', 'id',))
 
-        total_sites = sites.count()
+        # total_sites = sites.count()
         total_survey_sites = obj.sites.filter(is_survey=True).count()
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
         bar_graph = BarGenerator(sites)
