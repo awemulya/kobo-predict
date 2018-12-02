@@ -631,31 +631,34 @@ def siteDetailsGenerator(project, sites, ws):
 def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id):
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
-    project=get_object_or_404(Project, pk=project_id)
+    project = get_object_or_404(Project, pk=project_id)
     task.content_object = project
     task.save()
 
     try:
-        buffer = BytesIO()
+        file_io = BytesIOBytesIO()
         wb = xlwt.Workbook(encoding='utf-8')
         ws = wb.add_sheet('Sites')
-        sites = project.sites.filter(is_active=True).order_by('identifier')
+
         if region_id:
             if region_id == "0":
                 sites = project.sites.filter(is_active=True, region_id=None).order_by('identifier')
             else:
                 sites = project.sites.filter(is_active=True, region_id=region_id).order_by('identifier')
+        else:
+            sites = project.sites.filter(is_active=True).order_by('identifier')
+
 
         status, message = siteDetailsGenerator(project, sites, ws)
 
         if not status:
             raise ValueError(message)
 
-        wb.save(buffer)
-        buffer.seek(0)
-        xls = buffer.getvalue()
+        wb.save(file_io)
+        file_io.seek(0)
+        xls = file_io.getvalue()
         xls_url = default_storage.save(project.name + '/sites/'+project.name+'-details.xls', ContentFile(xls))
-        buffer.close()
+        file_io.close()
         task.file.name = xls_url
 
         task.status = 2
@@ -673,7 +676,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         noti = task.logs.create(source=source_user, type=432, title="Xls Report generation in project",
                                    content_object=project, recipient=source_user,
                                    extra_message="@error " + u'{}'.format(e.message))
-        buffer.close()
+        file_io.close()
 
 
 @shared_task(time_limit=7200, soft_time_limit=7200)
