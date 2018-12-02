@@ -2508,7 +2508,7 @@ class SiteSearchLiteView(ListView):
     paginate_by = 90
 
     def get_context_data(self, **kwargs):
-        context = super(SiteSearchView, self).get_context_data(**kwargs)
+        context = super(SiteSearchLiteView, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
         context['region_id'] = self.kwargs.get('region_id', None)
         return context
