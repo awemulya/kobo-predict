@@ -2715,7 +2715,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     # If page is out of range (e.g. 9999), deliver last page of results.
         sites = paginator.page(paginator.num_pages)
 
-    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=sites).order_by('-pk')))
+    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=sites, project_fxf_id__in=ss_id).order_by('-pk')))
     
     site_ids = []
     for site in sites:
