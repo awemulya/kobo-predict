@@ -13,6 +13,7 @@ from django.utils.translation import ugettext as _
 from jsonfield import JSONField
 from taggit.managers import TaggableManager
 
+from onadata.apps.logger.fields import LazyDefaultBooleanField
 from onadata.apps.logger.models.survey_type import SurveyType
 from onadata.apps.logger.models.xform import XForm
 from onadata.apps.logger.xform_instance_parser import XFormInstanceParser,\
@@ -130,6 +131,7 @@ class Instance(models.Model):
 
     # store an geographic objects associated with this instance
     geom = models.GeometryCollectionField(null=True)
+    is_synced_with_mongo = LazyDefaultBooleanField(default=False)
     objects = models.GeoManager()
 
     tags = TaggableManager()

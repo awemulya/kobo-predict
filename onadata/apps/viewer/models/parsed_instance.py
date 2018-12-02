@@ -82,16 +82,20 @@ def _is_invalid_for_mongo(key):
 
 
 @task
-def update_mongo_instance(record):
+def update_mongo_instance(record, instance_id=False):
     # since our dict always has an id, save will always result in an upsert op
     # - so we dont need to worry whether its an edit or not
     # http://api.mongodb.org/python/current/api/pymongo/collection.html#pymong\
     # o.collection.Collection.save
     try:
-        return xform_instances.save(record)
-    except Exception:
-        # todo: mail admins about the exception
-        pass
+        xform_instances.save(record)
+        if instance_id:
+            Instance.objects.filter(pk=instance_id).update(is_synced_with_mongo=True)
+        return True
+    except Exception as e:
+        print("update_mongo_instance - {}".format(str(e)),)
+        print('Submission could not be saved to Mongo.',)
+    return False
 
 
 class ParsedInstance(models.Model):
@@ -268,7 +272,13 @@ class ParsedInstance(models.Model):
         if async:
             update_mongo_instance.apply_async((), {"record": d})
         else:
-            update_mongo_instance(d)
+            success = update_mongo_instance(d)
+            # Only update self.instance is `success` is different from
+            # current_value (`self.instance.is_sync_with_mongo`)
+            if success != self.instance.is_synced_with_mongo:
+                # Skip the labor-intensive stuff in Instance.save() to gain performance
+                # Use .update() instead of .save()
+                Instance.objects.filter(pk=self.instance.id).update(is_synced_with_mongo=success)
 
     def to_dict(self):
         if not hasattr(self, "_dict_cache"):
