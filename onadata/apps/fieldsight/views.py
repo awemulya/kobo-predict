@@ -1183,7 +1183,7 @@ class DonorProjSiteList(ReadonlyProjectLevelRoleMixin, ListView):
         context['is_form_proj'] = True
         context['is_donor_only'] = kwargs.get('is_donor_only', False)
         return context
-        
+
     def get_queryset(self):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
         return queryset
@@ -2478,6 +2478,33 @@ class ExcelBulkSiteSample(ProjectRoleMixin, View):
 class SiteSearchView(ListView):
     model = Site
     template_name = 'fieldsight/site_list.html'
+    paginate_by = 90
+
+    def get_context_data(self, **kwargs):
+        context = super(SiteSearchView, self).get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        context['region_id'] = self.kwargs.get('region_id', None)
+        return context
+
+    def get_queryset(self, **kwargs):
+        region_id = self.kwargs.get('region_id', None)
+        # import pdb; pdb.set_trace()
+        query = self.request.GET.get('q')
+
+        if region_id:
+            if region_id == "0":
+                filtered_objects = self.model.objects.filter(region=None, project_id=self.kwargs.get('pk'))
+
+            else:
+                filtered_objects = self.model.objects.filter(region_id=region_id, project_id=self.kwargs.get('pk'))    
+        else:
+            filtered_objects = self.model.objects.filter(project_id=self.kwargs.get('pk'))
+        # import pdb; pdb.set_trace()
+        return filtered_objects.filter(Q(name__icontains=query) | Q(identifier__icontains=query))
+
+class SiteSearchLiteView(ListView):
+    model = Site
+    template_name = 'fieldsight/donor_site_list.html'
     paginate_by = 90
 
     def get_context_data(self, **kwargs):

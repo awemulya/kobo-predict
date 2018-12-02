@@ -61,7 +61,7 @@ from .views import (
     StageStatus, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
     SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI,
     GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages,
-    SiteSearchView, ProjectDashboardStageResponsesStatus, GeoJSONContent, DonorFullMap, ProjectSiteListGeoJSON, SiteBulkEditView, site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data, FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI)
+    SiteSearchView, ProjectDashboardStageResponsesStatus, GeoJSONContent, DonorFullMap, ProjectSiteListGeoJSON, SiteBulkEditView, site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data, FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI, SiteSearchLiteView)
 
     
 
@@ -234,6 +234,9 @@ urlpatterns = [
 
     url(r'^search-site/(?P<pk>\d+)/regional/(?P<region_id>\d+)/$', SiteSearchView.as_view(), name='search-regional-site-list'),
     url(r'^search-site/(?P<pk>\d+)/$', SiteSearchView.as_view(), name='search-site-list'),
+
+    url(r'^search-site/lite/(?P<pk>\d+)/regional/(?P<region_id>\d+)/$', SiteSearchLiteView.as_view(), name='search-regional-site-list-lite'),
+    url(r'^search-site/lite/(?P<pk>\d+)/$', SiteSearchLiteView.as_view(), name='search-site-list-lite'),
 
 
 
