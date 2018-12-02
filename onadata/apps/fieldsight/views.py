@@ -945,11 +945,13 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
         if form.is_valid():
             try:
                 sitefile = request.FILES['file']
+                sites = sitefile.get_records()
                 user = request.user
-                # print sitefile
-                task_obj=CeleryTaskProgress.objects.create(user=user, content_object = obj, task_type=0)
+                task_obj = CeleryTaskProgress.objects.create(user=user, content_object = obj, task_type=0)
                 if task_obj:
-                    task = bulkuploadsites.delay(task_obj.pk, user, sitefile, pk)
+                    # import ipdb
+                    # ipdb.set_trace()
+                    task = bulkuploadsites.delay(task_obj.pk, user, sites, pk)
                     task_obj.task_id = task.id
                     task_obj.save()
                     messages.success(request, 'Sites are being uploaded. You will be notified in notifications list as well.')
@@ -2887,11 +2889,11 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
 
         peoples_involved = obj.project_roles.filter(ended_at__isnull=True).distinct('user')
         total_sites = obj.sites.filter(is_active=True, is_survey=False).count()
-        sites = obj.sites.filter(is_active=True, is_survey=False)[:100]
+        sites = obj.sites.filter(is_active=True, is_survey=False)[:200]
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('location', 'id',))
 
-        total_sites = sites.count()
+        # total_sites = sites.count()
         total_survey_sites = obj.sites.filter(is_survey=True).count()
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
         bar_graph = BarGenerator(sites)

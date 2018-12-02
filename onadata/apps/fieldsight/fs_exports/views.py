@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 import xlwt
 import json
+from django.contrib.contenttypes.models import ContentType
+
 from .. models import Project, Site
 from .. rolemixins import DonorRoleMixin, ProjectRoleMixin
 from django.views.generic import TemplateView, View
@@ -140,8 +142,13 @@ class ExportProjectSitesWithRefs(DonorRoleMixin, View):
     def get(self, *args, **kwargs):
         source_user = self.request.user   
         project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
-                 
-        task_obj=CeleryTaskProgress.objects.create(user=source_user, content_object=project, task_type=8)
+        content_type = ContentType.objects.get(model='project', app_label='fieldsight')
+        if CeleryTaskProgress.objects.filter(user=source_user, content_type=content_type, object_id=project.id, task_type=8, status__in=[0,1]).exists():
+            status, data = 200, {'status': 'true',
+                                 'message': 'The sites details xls file is already being generated. You will be notified after the file is generated.'}
+            return JsonResponse(data, status=status)
+
+        task_obj = CeleryTaskProgress.objects.create(user=source_user, content_object=project, task_type=8)
         if task_obj:
             task = generateSiteDetailsXls.delay(task_obj.pk, source_user, self.kwargs.get('pk'), self.kwargs.get('region_id', None))
             task_obj.task_id = task.id

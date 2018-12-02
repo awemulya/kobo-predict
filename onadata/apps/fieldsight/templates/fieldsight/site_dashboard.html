@@ -342,7 +342,7 @@
 							</ul>
 
 							<!-- Tab panes -->
-							<div class="tab-content tab-custom-height">
+							<div class="tab-content tab-custom-height" id="submission-status">
 								<div class="tab-pane active" id="tab001" role="tabpanel">
 									<div class="org-site-list">
 										<div class="form-list">
@@ -643,6 +643,9 @@
 
 <script type = "text/javascript">
 	$('.legend').css('display','none');
+	$(document).ready(function(){
+		$("#submission-status .tab-pane").niceScroll({cursorborder:"",cursorcolor:"#00628e", horizrailenabled:false});
+	});
 </script>
 <!--<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/d3.tip.v0.6.3.js"></script>-->
 <!--<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_bar-graph.js"></script>-->

@@ -844,13 +844,16 @@ def query_mongo(username, id_string, query=None, hide_deleted=True):
     return xform_instances.find(qry)
 
 
-
 def should_create_new_export(xform, export_type, fsxf=None, site_id=0):
+    if site_id is None:
+        site_id = 0
     if Export.objects.filter(
-            xform=xform, export_type=export_type, fsxf=fsxf, site=site_id).count() == 0\
-            or Export.exports_outdated(xform, export_type=export_type):
-        return True
-    return False
+            xform=xform, export_type=export_type, fsxf=fsxf, site=site_id).exists():
+            #\ or Export.exports_outdated(xform, export_type=export_type):
+        print("exists")
+        return False
+    print("dont exists")
+    return True
 
 
 def newset_export_for(xform, export_type):

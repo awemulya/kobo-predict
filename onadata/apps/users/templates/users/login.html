@@ -44,21 +44,31 @@
 											<li class="nav-item">
 											    <a class="nav-link active" id="pills-login-tab" data-toggle="pill" href="#pills-login" role="tab" aria-controls="pills-login" aria-selected="true">Login</a>
 											</li>
-											<!-- <li class="nav-item">
-											    <a class="nav-link" id="pills-signup-tab" data-toggle="pill" href="#pills-signup" role="tab" aria-controls="pills-signup" aria-selected="false">Signup</a>
-											</li> -->
 										</ul>
 										<div class="tab-content" id="pills-tabContent">
 											<div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="pills-login-tab">
 												<form method="post">
 												{% csrf_token %}
 												  	<div class="form-group">
-												    	<label for="inputEmail">Email address</label>
-												    	<input type="username" class="form-control" name="username" id="inputEmail">
+												    	<label for="inputEmail">Email address
+
+														</label>
+												    	<input type="username" class="form-control {% if not valid_email %}is-invalid{% endif %}" name="username" id="inputEmail">
+														{% if not valid_email %}
+															<div id="emailHelp" class="invalid-feedback">
+														  		{{ email_error }}
+															</div>
+															{% endif %}
 												  	</div>
 												  	<div class="form-group">
 												    	<label for="inputPassword">Password</label>
-												    	<input type="password" name="password" class="form-control" id="inputPassword">
+
+												    	<input type="password" name="password" class="form-control {% if password_error %}is-invalid{% endif %}" id="inputPassword">
+														{% if password_error %}
+															<div id="passwordHelp" class="invalid-feedback">
+														  		Incorrect Password ! Please Check Your Password.
+															</div>
+															{% endif %}
 												  	</div>
 												  	<div class="row">
 												  		<div class="col-sm-6">
@@ -72,7 +82,8 @@
 												  		<div class="col-sm-6">
 												  			<div class="form-group">
 														  		<p class="help">
-														  			<a href="/accounts/password/reset/" title="" id="help-me">Need help?</a>
+														  			<a data-toggle="pill" href="#pills-reset" role="tab" aria-controls="pills-reset" title="" id="help-me">Need help?</a>
+
 														  		</p>
 														  	</div> 
 												  		</div>
@@ -80,33 +91,10 @@
 												  	<button type="submit" class="btn btn-secondary"><i class="la la-key"></i> Sign In</button>
 												</form>
 											</div>
-											<!-- <div class="tab-pane fade" id="pills-signup" role="tabpanel" aria-labelledby="pills-signup-tab">
-												<form>
-													<div class="form-group">
-													    <label for="inputSignupUsername">Username</label>
-													    <input type="text" class="form-control" id="inputSignupUsername">
-													</div>
-													<div class="form-group">
-													    <label for="inputSignupFirstName">First Name</label>
-													    <input type="text" class="form-control" id="inputSignupFirstName">
-													</div>
-													<div class="form-group">
-													    <label for="inputSignupLastName">Last Name</label>
-													    <input type="text" class="form-control" id="inputSignupLastName">
-													</div>
-													<div class="form-group">
-													    <label for="inputSignupPassword">Your password</label>
-													    <input type="password" class="form-control" id="inputSignupPassword" >
-													</div>
-													<div class="form-group">
-													    <label for="inputSignupRePassword">One more time?</label>
-													    <input type="password" class="form-control" id="inputSignupRePassword" >
-													</div>
-													<button type="submit" class="btn btn-secondary"><i class="la la-user-plus"></i> Signup</button>
-												</form>
-											</div> -->
+
 											<div class="tab-pane fade" id="pills-reset" role="tabpanel" aria-labelledby="pills-reset-tab">
-												<form>
+												<form method="post" action="/accounts/password/reset/">
+													{% csrf_token %}
 													<div class="form-group">
 													    <label for="inputResetEmail">Email address</label>
 													    <input type="email" class="form-control" id="inputResetEmail">
