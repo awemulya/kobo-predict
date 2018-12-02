@@ -2649,7 +2649,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                 sub_stage_count+=1
                 head_row.append("Sub Stage :"+ss.name)
                 ss_id.append(ss.id)
-                ss_id_string.append(str(ss.id))
+                ss_id_string.append(str(ss.stage_forms.id))
                 substages.append([ss.name, str(stage_count)+"."+str(sub_stage_count)])
 
     table_head.extend([{"name":"Site Visits", "rowspan":2, "colspan":1 }, {"name":"Total Submissions", "rowspan":2, "colspan":1 }, {"name":"Flagged Submissions", "rowspan":2, "colspan":1 }, {"name":"Rejected Submissions", "rowspan":2, "colspan":1 }])
