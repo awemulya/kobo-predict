@@ -1172,7 +1172,10 @@ class ProjSiteList(ProjectRoleMixin, ListView):
         return queryset
 
 class DonorProjSiteList(ReadonlyProjectLevelRoleMixin, ListView):
-    template_name = "fieldsight/donor_site_list.html"
+    model = Site
+    template_name = 'fieldsight/donor_site_list.html'
+    paginate_by = 90
+    
     def get_context_data(self, **kwargs):
         context = super(DonorProjSiteList, self).get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
@@ -1180,6 +1183,7 @@ class DonorProjSiteList(ReadonlyProjectLevelRoleMixin, ListView):
         context['is_form_proj'] = True
         context['is_donor_only'] = kwargs.get('is_donor_only', False)
         return context
+        
     def get_queryset(self):
         queryset = Site.objects.filter(project_id=self.kwargs.get('pk'),is_survey=False, is_active=True)
         return queryset
