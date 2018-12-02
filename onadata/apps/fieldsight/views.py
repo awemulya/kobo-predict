@@ -2719,7 +2719,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     for site in sites:
         site_ids.append(str(site.id))
     
-    site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {"$in": list(site_ids) }}},  { "$group" : { 
+    site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {"$in": list(site_ids) }, "fs_project_uuid": {"$in":ss_id}}},  { "$group" : { 
                   "_id" :  { 
                     "fs_site": "$fs_site",
                     "date": { "$substr": [ "$start", 0, 10 ] }
