@@ -234,7 +234,7 @@
 											<div class="modal-dialog" role="document">
 												<div class="modal-content">
 													<div class="modal-header">
-														<h6 class="modal-title" id="moreMetaAttributeTitle">Meta Attributes</h6>
+														<h6 class="modal-title" id="moreMetaAttributeTitle">Site Details</h6>
 														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 															<span aria-hidden="true">&times;</span>
 														</button>
@@ -250,45 +250,9 @@
 									</div>
 										<div class="widget-body">
 
-											<!-- <p>
-											{{ obj.public_desc}}</p> -->
-
-											<h6><b>{% trans 'Description' %}</b></h6><br>
-											<p>{{ obj.public_desc}}</p>
-											<br>
-											<h6><b>{% trans 'Additional Information' %}</b></h6>
-											<br><p>
-											{{ obj.additional_desc}}</p>
-											<br>
-
-
-											{% if meta_data %}
-											<h6><strong>Meta Data</strong></h6>
-											<div class="row">
-											{% if meta_data|length > 4 %}
-												{% for data in meta_data|slice:":4" %}
-													{% for key, value in data.items %}
-													<div class="col-md-3">
-														<div class="meta-item">
-															<p><strong>{{ key }} :</strong> <br> {{ value }}  </p>
-														</div>
-													</div>
-													{% endfor %}
-												{% endfor %}
-											{% else %}
-												{% for data in meta_data %}
-													{% for key, value in data.items %}
-													<div class="col-md-3">
-														<div class="meta-item">
-															<p><strong>{{ key }} :</strong> <br> {{ value }}  </p>
-														</div>
-													</div>
-													{% endfor %}
-												{% endfor %}
-											{% endif %}
+											<div id="allmetas">
+												Loading ...
 											</div>
-											{% endif %}
-
 										</div>
 								</div>
 								
@@ -756,7 +720,9 @@
 	<script src="{% static 'js/fieldsight/loglist.js' %}?v=0.6"></script>
 	<script src="{% static 'js/fieldsight/site_images_zip.js' %}?v=0.6"></script>
 
-    <script type="text/babel">
+
+
+ <script type="text/babel">
      
 
         var MetaAttributes = React.createClass({
@@ -765,6 +731,8 @@
             getInitialState: function () {
                 return {}
             },         
+
+				
 
             eachMeta: function (obj, j){            
                
@@ -783,8 +751,10 @@
                     return (
                         <div>
                         <br/>
-                        <div style={style}>
-                                <b>{obj.question_text} :</b> <a href={'/fieldsight/redirect/'+obj.project_id +'/site/?identifier='+obj.answer}>{obj.answer}</a>
+                        <div className="col-md-3 padding">
+                        	<div className="meta-item">
+                                <p><strong>{obj.question_text} :</strong><br/> <a href={'/fieldsight/redirect/'+obj.project_id +'/site/?identifier='+obj.answer}>{obj.answer}</a></p>
+                        	</div>
                         </div>
                         {
                             submetas
@@ -792,17 +762,31 @@
                         </div>
                         )
                 }
+
+
+
+                else if (obj.question_type=='Media'){                  
+                    return(
+		                <div className="col-md-3 padding">
+		                	<div className="meta-item">
+		                    	<p><strong>{obj.question_text} :</strong><br/><a href="{obj.answer}">Attachment</a></p>
+		                	</div>
+		                </div>)
+                	
+                }
                 else{
                 return(
-                <div style={style}>
-                    {obj.question_text} : {obj.answer}
+                <div className = "col-md-3 padding">
+                	<div className = "meta-item">
+                    	<p><strong>{obj.question_text} :</strong><br/> {obj.answer}</p>
+                	</div>
                 </div>)
                 }
             },
                           
             renderNormal:function(){
                 
-                return (<div>
+                return (<div className="row">
                     {         
                         this.props.children.map(this.eachMeta)
                     }
@@ -850,16 +834,14 @@
             
             render: function () {
                 return (
-                		<div>
+                		
                 		<MetaAttributes children={this.state.metas} indent={0}/>
-                		</div>
+                		
                 	)
             }
         });     
   	ReactDOM.render(<LoadMetas /> , document.getElementById('allmetas'));
 
 </script>
-
-
 
 {% endblock %}

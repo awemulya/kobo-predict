@@ -103,7 +103,7 @@
 
 						<!--Search Organization-->
 						<div class="collapse margin-top" id="searchSite">
-							<form class="padding" action="{% if region_id %}{% url 'fieldsight:search-regional-site-list' pk region_id %}{% else %}{% url 'fieldsight:search-site-list' pk %}{% endif %}" method="GET">
+							<form class="padding" action="{% if region_id %}{% url 'fieldsight:search-regional-site-list-lite' pk region_id %}{% else %}{% url 'fieldsight:search-site-list-lite' pk %}{% endif %}" method="GET">
 								<div class="row">
 									<div class="col-md-6 ml-md-auto">
 										<div class="input-group">
