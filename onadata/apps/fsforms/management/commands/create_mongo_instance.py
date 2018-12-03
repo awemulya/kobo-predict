@@ -7,7 +7,7 @@ class Command(BaseCommand):
     help = 'Create mongo missing data'
 
     def handle(self, *args, **options):
-        instances = Instance.objects.filter(pk__gte=90630, pk__lte=90640)
+        instances = Instance.objects.filter(is_synced_with_mongo=False)
         for i in instances:
             d = i.parsed_instance.to_dict_for_mongo()
             x = i.fieldsight_instance
