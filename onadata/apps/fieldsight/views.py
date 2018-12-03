@@ -2622,6 +2622,7 @@ class SiteSearchLiteView(ListView):
 def get_project_stage_status(request, pk, q_keyword,page_list):
     data = []
     ss_id = []
+    ss_id_string = []
     stats = {}
     stages_rows = []
     stats = {}
@@ -2648,6 +2649,7 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
                 sub_stage_count+=1
                 head_row.append("Sub Stage :"+ss.name)
                 ss_id.append(ss.id)
+                ss_id_string.append(str(ss.stage_forms.id))
                 substages.append([ss.name, str(stage_count)+"."+str(sub_stage_count)])
 
     table_head.extend([{"name":"Site Visits", "rowspan":2, "colspan":1 }, {"name":"Total Submissions", "rowspan":2, "colspan":1 }, {"name":"Flagged Submissions", "rowspan":2, "colspan":1 }, {"name":"Rejected Submissions", "rowspan":2, "colspan":1 }])
@@ -2713,13 +2715,13 @@ def get_project_stage_status(request, pk, q_keyword,page_list):
     # If page is out of range (e.g. 9999), deliver last page of results.
         sites = paginator.page(paginator.num_pages)
 
-    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=sites).order_by('-pk')))
+    stages = Stage.objects.filter(stage__isnull=False, stage__project_id=pk).prefetch_related(Prefetch('stage_forms__project_form_instances', queryset=FInstance.objects.filter(site_id__in=sites, project_fxf_id__in=ss_id_string).order_by('-pk')))
     
     site_ids = []
     for site in sites:
         site_ids.append(str(site.id))
     
-    site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {"$in": list(site_ids) }}},  { "$group" : { 
+    site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {"$in": list(site_ids) }, "fs_project_uuid": {"$in":ss_id_string}}},  { "$group" : { 
                   "_id" :  { 
                     "fs_site": "$fs_site",
                     "date": { "$substr": [ "$start", 0, 10 ] }

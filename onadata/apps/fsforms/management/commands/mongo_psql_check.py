@@ -42,5 +42,11 @@ class Command(BaseCommand):
 
 # for x in fi:
 #     d = x.instance.parsed_instance.to_dict_for_mongo()
-#     d.update({'fs_project_uuid': str(x.project_fxf_id), 'fs_project': x.project_id, 'fs_status': 0, 'fs_site':x.site_id, 'fs_uuid':x.site_fxf_id})
+#     d.update({'fs_project_uuid': str(x.project_fxf_id), 'fs_project': x.project_id, 'fs_status': 0, 'fs_site':str(x.site_id), 'fs_uuid':str(x.site_fxf_id)})
 #     update_mongo_instance(d)
+
+
+
+.forEach( 'function(x)' {
+    db.temp.update({_id: x._id}, {$set: {name: x.name.toString()}});
+});
