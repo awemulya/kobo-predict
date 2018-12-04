@@ -20,15 +20,14 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.db.models import Prefetch
 from .generatereport import PDFReport
-import os, tempfile, zipfile
-from django.conf import settings
+import tempfile, zipfile
 from django.core.files.storage import get_storage_class
 from onadata.libs.utils.viewer_tools import get_path
 from PIL import Image
 import pyexcel as p
 from .metaAttribsGenerator import get_form_answer, get_form_sub_status, get_form_submission_count, get_form_ques_ans_status
 from django.conf import settings
-from django.db.models import Sum, Case, When, IntegerField, Count
+from django.db.models import Sum, Case, When, IntegerField
 
 def get_images_for_site_all(site_id):
     return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : site_id}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
@@ -641,7 +640,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
     task.save()
 
     try:
-        file_io = BytesIOBytesIO()
+        file_io = BytesIO()
         wb = xlwt.Workbook(encoding='utf-8')
         ws = wb.add_sheet('Sites')
 
@@ -669,18 +668,19 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         task.status = 2
         task.save()
 
-        noti = task.logs.create(source=source_user, type=32, title="Site details xls generation in project",
+        task.logs.create(source=source_user, type=32, title="Site details xls generation in project",
                                    recipient=source_user, content_object=task, extra_object=project,
-                                   extra_message=" <a href='"+ task.file.url +"'>Xls sites detail report</a> generation in project")
+                                   extra_message=" <a href='" +  task.file.url +"'>Xls sites detail report</a> generation in project")
 
     except Exception as e:
         task.description = "ERROR: " + str(e.message) 
         task.status = 3
         print e.__dict__
         task.save()
-        noti = task.logs.create(source=source_user, type=432, title="Xls Report generation in project",
+        task.logs.create(source=source_user, type=432, title="Xls Report generation in project",
                                    content_object=project, recipient=source_user,
                                    extra_message="@error " + u'{}'.format(e.message))
+    else:
         file_io.close()
 
 
