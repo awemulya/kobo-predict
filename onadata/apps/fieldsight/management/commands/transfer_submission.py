@@ -31,18 +31,12 @@ def move_submission(sheet_columns, project_id):
         print(str(e))
 
 
-
-
-
-
-
 def process_transfer_submissions(xl, to_transfer_sheet, project_id):
     df = xl.parse(to_transfer_sheet)
     columns = df.columns
     if validate_column_sequence(columns):
         for i in range(len(df.values)):
             move_submission(df.values[i], project_id)
-
 
 
 def process_delete_submission(xl, to_delete_sheet):
@@ -52,7 +46,6 @@ def process_delete_submission(xl, to_delete_sheet):
         submission_ids.append(df.values[i][0])
     result = FInstance.objects.filter(instance__id__in=submission_ids).update(is_deleted=True)
     print(result)
-
 
 
 class Command(BaseCommand):
