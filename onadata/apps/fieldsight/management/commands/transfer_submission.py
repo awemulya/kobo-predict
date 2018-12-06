@@ -17,7 +17,6 @@ def move_submission(sheet_columns, project_id):
     to_site = project.sites.get(identifier=to_site_identifier)
     print(to_site.identifier)
     if FInstance.objects.filter(instance=submission_id).exists():
-        pass
         instance = FInstance.objects.get(instance=submission_id)
         instance.site = to_site
         instance.save()
