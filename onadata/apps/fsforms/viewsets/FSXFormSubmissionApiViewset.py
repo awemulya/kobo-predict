@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from onadata.apps.api.viewsets.xform_submission_api import XFormSubmissionApi
+from onadata.apps.eventlog.models import FieldSightLog
 from onadata.apps.fieldsight.models import Site
 from onadata.apps.fsforms.models import FieldSightXF, Stage, Schedule
 from onadata.apps.fsforms.serializers.FieldSightSubmissionSerializer import FieldSightSubmissionSerializer
@@ -92,22 +93,23 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
                 elif siteid:
                     site.update_status()
 
-                if fs_proj_xf.is_survey:
-                    instance.fieldsight_instance.logs.create(source=self.request.user, type=16,
-                                                             title="new Project level Submission",
-                                                             organization=fs_proj_xf.project.organization,
-                                                             project=fs_proj_xf.project,
-                                                             extra_object=fs_proj_xf.project,
-                                                             extra_message="project",
-                                                             content_object=instance.fieldsight_instance)
-                else:
-                    site = Site.objects.get(pk=siteid)
-                    instance.fieldsight_instance.logs.create(source=self.request.user, type=16,
-                                                             title="new Site level Submission",
-                                                             organization=fs_proj_xf.project.organization,
-                                                             project=fs_proj_xf.project, site=site,
-                                                             extra_object=site,
-                                                             content_object=instance.fieldsight_instance)
+                if not FieldSightLog.objects.filter(object_id=instance.id, type=16).exists():
+                    if fs_proj_xf.is_survey:
+                        instance.fieldsight_instance.logs.create(source=self.request.user, type=16,
+                                                                 title="new Project level Submission",
+                                                                 organization=fs_proj_xf.project.organization,
+                                                                 project=fs_proj_xf.project,
+                                                                 extra_object=fs_proj_xf.project,
+                                                                 extra_message="project",
+                                                                 content_object=instance.fieldsight_instance)
+                    else:
+                        site = Site.objects.get(pk=siteid)
+                        instance.fieldsight_instance.logs.create(source=self.request.user, type=16,
+                                                                 title="new Site level Submission",
+                                                                 organization=fs_proj_xf.project.organization,
+                                                                 project=fs_proj_xf.project, site=site,
+                                                                 extra_object=site,
+                                                                 content_object=instance.fieldsight_instance)
 
                 context = self.get_serializer_context()
                 serializer = FieldSightSubmissionSerializer(instance, context=context)
@@ -139,22 +141,15 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
 
         if fxf.is_survey:
             extra_message="project"
-        
-        noti = instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Submission",
-                                       organization=instance.fieldsight_instance.site.project.organization,
-                                       project=instance.fieldsight_instance.site.project,
-                                                        site=instance.fieldsight_instance.site,
-                                                        extra_message=extra_message,
-                                                        extra_object=instance.fieldsight_instance.site,
-                                                        content_object=instance.fieldsight_instance)
-        result = {}
-        result['description'] = noti.description
-        result['url'] = noti.get_absolute_url()
-        # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
-        # ChannelGroup("project-{}".format(self.object.project.id)).send({"text": json.dumps(result)})
-        ChannelGroup("site-{}".format(instance.fieldsight_instance.site.id)).send({"text": json.dumps(result)})
+        if not FieldSightLog.objects.filter(object_id=instance.id, type=16).exists():
+            instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Submission",
+                                           organization=instance.fieldsight_instance.site.project.organization,
+                                           project=instance.fieldsight_instance.site.project,
+                                                            site=instance.fieldsight_instance.site,
+                                                            extra_message=extra_message,
+                                                            extra_object=instance.fieldsight_instance.site,
+                                                            content_object=instance.fieldsight_instance)
 
-        # modify create instance
 
         if error or not instance:
             return self.error_response(error, False, request)
@@ -225,20 +220,21 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         elif siteid:
             site.update_status()
 
-        if fs_proj_xf.is_survey:
-            instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Project level Submission",
-                                       organization=fs_proj_xf.project.organization,
-                                       project=fs_proj_xf.project,
-                                                        extra_object=fs_proj_xf.project,
-                                                        extra_message="project",
-                                                        content_object=instance.fieldsight_instance)
-        else:
-            site=Site.objects.get(pk=siteid)
-            instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Site level Submission",
-                                       organization=fs_proj_xf.project.organization,
-                                       project=fs_proj_xf.project, site=site,
-                                                        extra_object=site,
-                                                        content_object=instance.fieldsight_instance)
+        if not FieldSightLog.objects.filter(object_id=instance.id, type=16).exists():
+            if fs_proj_xf.is_survey:
+                instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Project level Submission",
+                                           organization=fs_proj_xf.project.organization,
+                                           project=fs_proj_xf.project,
+                                                            extra_object=fs_proj_xf.project,
+                                                            extra_message="project",
+                                                            content_object=instance.fieldsight_instance)
+            else:
+                site=Site.objects.get(pk=siteid)
+                instance.fieldsight_instance.logs.create(source=self.request.user, type=16, title="new Site level Submission",
+                                           organization=fs_proj_xf.project.organization,
+                                           project=fs_proj_xf.project, site=site,
+                                                            extra_object=site,
+                                                            content_object=instance.fieldsight_instance)
 
         context = self.get_serializer_context()
         serializer = FieldSightSubmissionSerializer(instance, context=context)

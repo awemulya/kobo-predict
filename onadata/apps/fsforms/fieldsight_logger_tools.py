@@ -283,14 +283,17 @@ def create_instance(fsxfid, xml_file, media_files,
                 raise DuplicateInstance()
             else:
                 # Update Mongo via the related ParsedInstance
-                print("updating Parsed Instance")
-                if proj_id:
-                    fs_poj_id = str(proj_id)
+                print("updating Parsed Instance IN project")
+                if fs_proj_xf:
+                    fs_poj_id = str(fs_proj_xf)
+                else:
+                    fs_poj_id = ""
                 pi, created = FieldSightParsedInstance.get_or_create(existing_instance,
                                                                      update_data={'fs_uuid': str(fsxfid), 'fs_status': 0,
                                                                                   'fs_site': site,
                                                                                   'fs_project': proj_id,
                                                                                   'fs_project_uuid': fs_poj_id})
+                print()
                 return existing_instance
         else:
 
