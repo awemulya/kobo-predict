@@ -48,7 +48,8 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
                 elif Site.objects.filter(pk=siteid).exists() == False:
                     if len(siteid) > 12:
                         if FieldSightXF.objects.filter(pk=fsxfid).exists():
-                            project = FieldSightXF.objects.get(pk=fsxfid).project
+                            project_form = FieldSightXF.objects.get(pk=fsxfid)
+                            project = project_form.project
                             if project:
                                 site, created = Site.objects.get_or_create(
                                     identifier="temporary_site",
@@ -59,7 +60,7 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
                                 )
                                 siteid = site.id
                                 offline_submission_site, created = SubmissionOfflineSite.objects.get_or_create(
-                                    offline_site_id=kwargs.get('site_id', None), temporary_site=site, instance=None)
+                                    offline_site_id=kwargs.get('site_id', None), temporary_site=site, instance=None,  fieldsight_form=project_form)
                             else:
                                 return self.error_response("Invalid Project in Project Form id", False, request)
 
@@ -87,9 +88,12 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
                     return self.error_response(error, False, request)
 
                 if offline_submission_site is not None:
-                    offline_submission_site.instance = instance.fieldsight_instance
-                    offline_submission_site.save()
-
+                    try:
+                        instance.fieldsight_instance.offline_submission
+                    except Exception as e:
+                        offline_submission_site.instance = instance.fieldsight_instance
+                        offline_submission_site.save()
+                        print("new submission")
 
                 if fs_proj_xf.is_staged and siteid:
                     site.update_current_progress()
@@ -182,7 +186,8 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
         elif Site.objects.filter(pk=siteid).exists() == False:
             if len(siteid) > 12:
                 if FieldSightXF.objects.filter(pk=fsxfid).exists():
-                    project = FieldSightXF.objects.get(pk=fsxfid).project
+                    project_form = FieldSightXF.objects.get(pk=fsxfid)
+                    project = project_form.project
                     if project:
                         site, created = Site.objects.get_or_create(
                             identifier="temporary_site",
@@ -192,7 +197,7 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
                             is_survey=False,
                         )
                         siteid = site.id
-                        offline_submission_site, created = SubmissionOfflineSite.objects.get_or_create(offline_site_id=kwargs.get('site_id', None), temporary_site=site, instance=None)
+                        offline_submission_site, created = SubmissionOfflineSite.objects.get_or_create(offline_site_id=kwargs.get('site_id', None), temporary_site=site, instance=None, fieldsight_form=project_form)
                     else:
                         return self.error_response("Invalid Project in Project Form id", False, request)
 
@@ -225,8 +230,12 @@ class ProjectFSXFormSubmissionApi(XFormSubmissionApi):
             site.update_status()
 
         if offline_submission_site is not None:
-            offline_submission_site.instance = instance.fieldsight_instance
-            offline_submission_site.save()
+            try:
+                instance.fieldsight_instance.offline_submission
+            except Exception as e:
+                offline_submission_site.instance = instance.fieldsight_instance
+                offline_submission_site.save()
+                print("new submission")
 
 
         if not FieldSightLog.objects.filter(object_id=instance.id, type=16).exists():

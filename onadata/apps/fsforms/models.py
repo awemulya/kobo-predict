@@ -829,7 +829,8 @@ class XformHistory(models.Model):
 class SubmissionOfflineSite(models.Model):
     offline_site_id = models.CharField(max_length=20)
     temporary_site = models.ForeignKey(Site, related_name="offline_submissions")
-    instance = models.OneToOneField(FInstance, blank=True, null=True)
+    instance = models.OneToOneField(FInstance, blank=True, null=True, related_name="offline_submission")
+    fieldsight_form = models.ForeignKey(FieldSightXF, related_name="offline_submissiob" , null=True, blank=True)
 
     def __unicode__(self):
         if self.instance:
