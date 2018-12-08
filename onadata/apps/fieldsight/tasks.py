@@ -486,15 +486,15 @@ def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs
 
 def siteDetailsGenerator(project, sites, ws):
     try:
-        header_columns = [{'id': 'identifier' ,'name':'identifier'},
-               {'id': 'name','name':'name'},
-               {'id': 'site_type_identifier','name':'type'}, 
-               {'id': 'phone','name':'phone'},
-               {'id': 'address','name':'address'},
-               {'id': 'public_desc','name':'public_desc'},
-               {'id': 'additional_desc','name':'additional_desc'},
-               {'id': 'latitude','name':'latitude'},
-               {'id': 'longitude','name':'longitude'}, ]
+        header_columns = [ {'id': 'identifier' ,'name':'identifier'},
+                           {'id': 'name','name':'name'},
+                           {'id': 'site_type_identifier','name':'type'}, 
+                           {'id': 'phone','name':'phone'},
+                           {'id': 'address','name':'address'},
+                           {'id': 'public_desc','name':'public_desc'},
+                           {'id': 'additional_desc','name':'additional_desc'},
+                           {'id': 'latitude','name':'latitude'},
+                           {'id': 'longitude','name':'longitude'}, ]
         
         if project.cluster_sites:
             header_columns += [{'id':'region_identifier', 'name':'region_id'}, ]
@@ -504,16 +504,45 @@ def siteDetailsGenerator(project, sites, ws):
             header_columns += [{'id': question['question_name'], 'name':question['question_name']}]
         
         
-
-        site_list={}
-        meta_ref_sites={}
+        get_answer_questions = []
+        get_sub_count_questions = []
+        get_sub_status_questions = []   
+        site_list = {}
+        meta_ref_sites = {}
+        site_sub_status = {}
         
+        for meta in meta_ques: 
+            if meta['question_type'] == 'FormSubStat':
+                get_sub_status_questions.append(meta)
+
+            else if meta['question_type'] == 'FormSubCountQuestion':
+                get_form_submission_count.append(meta)
+
+
+        if get_sub_count_questions:
+            query = {}
+            for meta in get_sub_count_questions:
+                query[meta['question_name']] = Sum(
+                                        Case(
+                                            When(site_instances__project_fxf_id__in=meta['form_id'], then=1),
+                                            default=0, output_field=IntegerField()
+                                        ))
+            for submission_count in sites.values('id').annotate(**query)
+                site_submission_count[submission_count['id']] = submission_count
+
+        if get_sub_status_questions:
+            query = {}
+            for meta in get_sub_status_questions:
+                for submission in FInstance.objects.filter(project_id=project.id, fs_project_id=meta['form_id']).values('site_id', 'form_status').distinct('site_id').order_by('site_id', '-instance_id')
+                    site_sub_status[meta['form_id']][submission['site_id']] = submission['form_status']
+
         #Optimized query, only one query per link type meta attribute which covers all site's answers.
 
         def generate(project_id, site_map, meta, identifiers, selected_metas):
             project_id = str(project_id)
             sub_meta_ref_sites = {}
-            sub_site_map = {}  
+            sub_site_map = {}
+            
             sitenew = Site.objects.filter(identifier__in = identifiers, project_id = project_id)
             
             for site in sitenew:
@@ -536,10 +565,10 @@ def siteDetailsGenerator(project, sites, ws):
                                 if site.identifier in sub_site_map[meta['question_name']]:
                                     sub_site_map[meta['question_name']][link_answer].append(identifier)
                                 else:
-                                    sub_site_map[meta['question_name']][link_answer] = identifier
+                                    sub_site_map[meta['question_name']][link_answer] = [identifier]
                             else:
                                 sub_site_map[meta['question_name']] = {}
-                                sub_site_map[meta['question_name']][link_answer] = identifier
+                                sub_site_map[meta['question_name']][link_answer] = [identifier]
                             
                             for idf in identifier:
                                 if meta['question_name'] in sub_meta_ref_sites:
@@ -569,17 +598,12 @@ def siteDetailsGenerator(project, sites, ws):
             meta_ques = project.site_meta_attributes
             meta_ans = site.site_meta_attributes_ans
             for question in meta_ques:
-                if question['question_type'] in ['Form','FormSubStat','FormSubCountQuestion','FormQuestionAnswerStatus']:
-                    if question['question_type'] == 'Form':
-                        columns[question['question_name']] = get_form_answer(site.id, question)
-                    elif question['question_type'] == 'FormSubStat':
-                        columns[question['question_name']] = get_form_sub_status(site.id, question)
-
-                    elif question['question_type'] == 'FormSubCountQuestion':
-                        columns[question['question_name']] = get_form_submission_count(site.id, question)
-
-                    elif question['question_type'] == 'FormQuestionAnswerStatus':
-                        columns[question['question_name']] = get_form_ques_ans_status(site.id, question)
+                if question['question_type'] == 'FormSubCountQuestion':
+                    columns[question['question_name']] = site_submission_count[site.id][question['question_name']]
+                else if question['question_type'] == 'FormSubStat':
+                    columns[question['question_name']] = site.get_submission_status(question['form_id'])
+                else if question['question_type'] in ['Form','FormQuestionAnswerStatus']:
+                    columns[question['question_name']] = ""
 
                 else:
                     if question['question_name'] in meta_ans:
@@ -594,7 +618,7 @@ def siteDetailsGenerator(project, sites, ws):
                     else:
                         columns[question['question_name']] = ''
             
-            site_list[site.identifier] = columns
+            site_list[site.id] = columns
         
 
         
@@ -611,6 +635,23 @@ def siteDetailsGenerator(project, sites, ws):
                             site_map[identifier] = [key]
                 
                 generate(meta['project_id'], site_map, meta, meta_ref_sites.get(meta['question_name'], []), meta.get('metas'))
+
+            else if meta['question_type'] == 'Form' or meta['question_type'] == 'FormQuestionAnswerStatus':
+                get_answer_questions.append(meta)
+                    
+        for meta in get_answer_questions:
+
+            query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": {"$in":[meta['form_id'], str([meta['form_id']])]}, meta['question_name']: { "$exists": "true" }}},  { "$group" : { 
+                "site_id" : "$fs_site",
+                "answer": { '$last': "$"+meta['question_name'] }
+               }
+             }])
+
+            for submission in query['relults']:
+                if meta['question_type'] == "FormQuestionAnswerStatus" and submission['answer'] != "":
+                    site_list[submission['site_id']][meta['question_name']] = "Answered"
+                else:    
+                    site_list[submission['site_id']][meta['question_name']] = submission['answer']
         
         row_num = 0
         font_style = xlwt.XFStyle()
