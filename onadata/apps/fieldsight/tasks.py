@@ -657,9 +657,11 @@ def siteDetailsGenerator(project, sites, ws):
             for submission in query['result']:
                 if meta['question_type'] == "FormQuestionAnswerStatus" and submission['answer'] != "":
                     site_list[submission['_id']][meta['question']['name']] = "Answered"
-                else:    
-                    site_list[int(submission['_id'])][meta['question']['name']] = submission['answer']
-        
+                else:
+                    try:    
+                        site_list[int(submission['_id'])][meta['question']['name']] = submission['answer']
+                    except:
+                        pass
         row_num = 0
         font_style = xlwt.XFStyle()
         font_style.font.bold = True
