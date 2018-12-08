@@ -526,7 +526,7 @@ def siteDetailsGenerator(project, sites, ws):
                                             When(site_instances__project_fxf_id__in=meta['form_id'], then=1),
                                             default=0, output_field=IntegerField()
                                         ))
-            for submission_count in sites.values('id').annotate(**query)
+            for submission_count in sites.values('id').annotate(**query):
                 site_submission_count[submission_count['id']] = submission_count
 
         if get_sub_status_questions:
