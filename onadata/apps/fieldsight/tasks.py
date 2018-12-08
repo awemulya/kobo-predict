@@ -515,7 +515,7 @@ def siteDetailsGenerator(project, sites, ws):
                 get_sub_status_questions.append(meta)
 
             elif meta['question_type'] == 'FormSubCountQuestion':
-                get_form_submission_count.append(meta)
+                get_sub_count_questions.append(meta)
 
 
         if get_sub_count_questions:
