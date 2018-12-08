@@ -659,7 +659,7 @@ def siteDetailsGenerator(project, sites, ws):
                     site_list[submission['_id']][meta['question']['name']] = "Answered"
                 else:
                     try:    
-                        site_list[int(submission['_id'])][meta['question']['name']] = submission['answer']
+                        site_list[int(submission['_id'])][meta['question_name']] = submission['answer']
                     except:
                         pass
         row_num = 0
