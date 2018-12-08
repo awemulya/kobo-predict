@@ -532,7 +532,7 @@ def siteDetailsGenerator(project, sites, ws):
         if get_sub_status_questions:
             query = {}
             for meta in get_sub_status_questions:
-                for submission in FInstance.objects.filter(project_id=project.id, fs_project_id=meta['form_id']).values('site_id', 'form_status').distinct('site_id').order_by('site_id', '-instance_id')
+                for submission in FInstance.objects.filter(project_id=project.id, fs_project_id=meta['form_id']).values('site_id', 'form_status').distinct('site_id').order_by('site_id', '-instance_id'):
                     site_sub_status[meta['form_id']][submission['site_id']] = submission['form_status']
 
         #Optimized query, only one query per link type meta attribute which covers all site's answers.
