@@ -502,7 +502,7 @@ def siteDetailsGenerator(project, sites, ws):
         for question in meta_ques:
             header_columns += [{'id': question['question_name'], 'name':question['question_name']}]
         
-        FORM_STATUS = {'0': 'Pending', '1', 'Rejected', '2', 'Flagged', '3', 'Approved', '4', 'No Submission'}
+        FORM_STATUS = {'0': 'Pending', '1': 'Rejected', '2': 'Flagged', '3': 'Approved', '4': 'No Submission'}
         get_answer_questions = []
         get_sub_count_questions = []
         get_sub_status_questions = []   
@@ -605,7 +605,7 @@ def siteDetailsGenerator(project, sites, ws):
                 if question['question_type'] == 'FormSubCountQuestion':
                     columns[question['question_name']] = site_submission_count[site.id][question['question_name']]
                 elif question['question_type'] == 'FormSubStat':
-                    columns[question['question_name']] = FORM_STATUS[str(site_sub_status[question['form_id']].get(site.id, '5'))] if question['form_id'] in site_sub_status else 'No Submission'
+                    columns[question['question_name']] = FORM_STATUS[str(site_sub_status[question['form_id']].get(site.id, '4'))] if question['form_id'] in site_sub_status else 'No Submission'
                 elif question['question_type'] in ['Form','FormQuestionAnswerStatus']:
                     columns[question['question_name']] = ""
 
