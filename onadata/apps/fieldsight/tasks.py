@@ -508,6 +508,7 @@ def siteDetailsGenerator(project, sites, ws):
         get_sub_status_questions = []   
         site_list = {}
         meta_ref_sites = {}
+        site_submission_count = {}
         site_sub_status = {}
         
         for meta in meta_ques: 
@@ -523,17 +524,21 @@ def siteDetailsGenerator(project, sites, ws):
             for meta in get_sub_count_questions:
                 query[meta['question_name']] = Sum(
                                         Case(
-                                            When(site_instances__project_fxf_id__in=meta['form_id'], then=1),
+                                            When(site_instances__project_fxf_id=meta['form_id'], then=1),
                                             default=0, output_field=IntegerField()
                                         ))
-            for submission_count in sites.values('id').annotate(**query):
+            results = sites.values('id',).annotate(**query)
+            for submission_count in results:
                 site_submission_count[submission_count['id']] = submission_count
 
         if get_sub_status_questions:
             query = {}
             for meta in get_sub_status_questions:
-                for submission in FInstance.objects.filter(project_id=project.id, fs_project_id=meta['form_id']).values('site_id', 'form_status').distinct('site_id').order_by('site_id', '-instance_id'):
-                    site_sub_status[meta['form_id']][submission['site_id']] = submission['form_status']
+                for submission in FInstance.objects.filter(project_id=project.id, project_fxf_id=meta['form_id']).values('site_id', 'form_status').distinct('site_id').order_by('site_id', '-instance_id'):
+                    try:
+                        site_sub_status[meta['form_id']][submission['site_id']] = submission['form_status']
+                    except:
+                        site_sub_status[meta['form_id']] = {submission['site_id']:submission['form_status']}
 
         #Optimized query, only one query per link type meta attribute which covers all site's answers.
 
@@ -600,7 +605,7 @@ def siteDetailsGenerator(project, sites, ws):
                 if question['question_type'] == 'FormSubCountQuestion':
                     columns[question['question_name']] = site_submission_count[site.id][question['question_name']]
                 elif question['question_type'] == 'FormSubStat':
-                    columns[question['question_name']] = site.get_submission_status(question['form_id'])
+                    columns[question['question_name']] = site_sub_status[question['form_id']].get(site.id, 'No Submission') if question['form_id'] in site_sub_status else 'No Submission'
                 elif question['question_type'] in ['Form','FormQuestionAnswerStatus']:
                     columns[question['question_name']] = ""
 
@@ -641,16 +646,16 @@ def siteDetailsGenerator(project, sites, ws):
         for meta in get_answer_questions:
 
             query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": {"$in":[meta['form_id'], str([meta['form_id']])]}, meta['question_name']: { "$exists": "true" }}},  { "$group" : { 
-                "site_id" : "$fs_site",
+                "_id" : "$fs_site",
                 "answer": { '$last': "$"+meta['question_name'] }
                }
              }])
 
-            for submission in query['relults']:
+            for submission in query['result']:
                 if meta['question_type'] == "FormQuestionAnswerStatus" and submission['answer'] != "":
-                    site_list[submission['site_id']][meta['question_name']] = "Answered"
+                    site_list[submission['_id']][meta['question_name']] = "Answered"
                 else:    
-                    site_list[submission['site_id']][meta['question_name']] = submission['answer']
+                    site_list[submission['_id']][meta['question_name']] = submission['answer']
         
         row_num = 0
         font_style = xlwt.XFStyle()
