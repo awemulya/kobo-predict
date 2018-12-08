@@ -645,17 +645,20 @@ def siteDetailsGenerator(project, sites, ws):
                     
         for meta in get_answer_questions:
 
-            query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": {"$in":[meta['form_id'], str([meta['form_id']])]}, meta['question_name']: { "$exists": "true" }}},  { "$group" : { 
+            query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": str(meta['form_id']), meta['question']['name']: { "$exists": "true" }}},  { "$group" : { 
                 "_id" : "$fs_site",
-                "answer": { '$last': "$"+meta['question_name'] }
+                "answer": { '$last': "$"+meta['question']['name'] }
                }
              }])
 
+            
+
+            print project.id, meta['form_id'], meta['question']['name']
             for submission in query['result']:
                 if meta['question_type'] == "FormQuestionAnswerStatus" and submission['answer'] != "":
-                    site_list[submission['_id']][meta['question_name']] = "Answered"
+                    site_list[submission['_id']][meta['question']['name']] = "Answered"
                 else:    
-                    site_list[submission['_id']][meta['question_name']] = submission['answer']
+                    site_list[int(submission['_id'])][meta['question']['name']] = submission['answer']
         
         row_num = 0
         font_style = xlwt.XFStyle()
@@ -676,6 +679,9 @@ def siteDetailsGenerator(project, sites, ws):
     except Exception as e:
         return False, e.message
 
+# project = Project.objects.get(pk=137)
+# sites = project.sites.all()
+# siteDetailsGenerator(project, sites, None)
 
 @shared_task(time_limit=7200, soft_time_limit=7200)
 def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id):
