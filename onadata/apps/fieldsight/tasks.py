@@ -514,7 +514,7 @@ def siteDetailsGenerator(project, sites, ws):
             if meta['question_type'] == 'FormSubStat':
                 get_sub_status_questions.append(meta)
 
-            else if meta['question_type'] == 'FormSubCountQuestion':
+            elif meta['question_type'] == 'FormSubCountQuestion':
                 get_form_submission_count.append(meta)
 
 
@@ -599,9 +599,9 @@ def siteDetailsGenerator(project, sites, ws):
             for question in meta_ques:
                 if question['question_type'] == 'FormSubCountQuestion':
                     columns[question['question_name']] = site_submission_count[site.id][question['question_name']]
-                else if question['question_type'] == 'FormSubStat':
+                elif question['question_type'] == 'FormSubStat':
                     columns[question['question_name']] = site.get_submission_status(question['form_id'])
-                else if question['question_type'] in ['Form','FormQuestionAnswerStatus']:
+                elif question['question_type'] in ['Form','FormQuestionAnswerStatus']:
                     columns[question['question_name']] = ""
 
                 else:
@@ -635,7 +635,7 @@ def siteDetailsGenerator(project, sites, ws):
                 
                 generate(meta['project_id'], site_map, meta, meta_ref_sites.get(meta['question_name'], []), meta.get('metas'))
 
-            else if meta['question_type'] == 'Form' or meta['question_type'] == 'FormQuestionAnswerStatus':
+            elif meta['question_type'] == 'Form' or meta['question_type'] == 'FormQuestionAnswerStatus':
                 get_answer_questions.append(meta)
                     
         for meta in get_answer_questions:
