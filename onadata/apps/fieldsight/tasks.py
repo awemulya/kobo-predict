@@ -680,13 +680,12 @@ def siteDetailsGenerator(project, sites, ws):
                }
              }])
 
-            print query
             for submission in query['result']:
                 try:
                     if submission['answer'] and submission['answer'] != "":
-                        site_list[submission['_id']][meta['question']['name']] = "Answered"
+                        site_list[int(submission['_id'])][meta['question_name']] = "Answered"
                     else:
-                        site_list[submission['_id']][meta['question']['name']] = "Not Answered"
+                        site_list[int(submission['_id'])][meta['question_name']] = "Not Answered"
                 except:
                     pass
                     
