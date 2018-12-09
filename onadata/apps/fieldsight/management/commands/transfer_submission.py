@@ -16,19 +16,23 @@ def move_submission(sheet_columns, project_id):
 
     to_site = project.sites.get(identifier=to_site_identifier)
     print(to_site.identifier)
+    if FInstance.objects.filter(instance=submission_id).exists():
+        instance = FInstance.objects.get(instance=submission_id)
+        instance.site = to_site
+        instance.save()
+        d = instance.instance.parsed_instance.to_dict_for_mongo()
+        d.update(
+            {'fs_project_uuid': str(instance.project_fxf_id), 'fs_project': instance.project_id, 'fs_status': 0,
+             'fs_site': instance.site_id,
+             'fs_uuid': instance.site_fxf_id})
+        try:
+            synced = update_mongo_instance(d)
+            print(synced, "updated in mongo success")
+        except Exception as e:
+            print(str(e))
+    else:
+        print("submision ", submission_id, "doesnot exists")
 
-    instance = FInstance.objects.get(instance=submission_id)
-    instance.site = to_site
-    instance.save()
-    d = instance.instance.parsed_instance.to_dict_for_mongo()
-    d.update(
-        {'fs_project_uuid': str(instance.project_fxf_id), 'fs_project': instance.project_id, 'fs_status': 0, 'fs_site': instance.site_id,
-         'fs_uuid': instance.site_fxf_id})
-    try:
-        synced = update_mongo_instance(d)
-        print(synced, "updated in mongo success")
-    except Exception as e:
-        print(str(e))
 
 
 def process_transfer_submissions(xl, to_transfer_sheet, project_id):

@@ -692,7 +692,7 @@ class EducationalImages(models.Model):
 class DeployEvent(models.Model):
     form_changed = models.BooleanField(default=True)
     data = JSONField(default={})
-    date =  models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now=True)
     site = models.ForeignKey(Site, related_name="deploy_data", null=True)
     project = models.ForeignKey(Project, related_name="deploy_data", null=True)
 
@@ -824,3 +824,15 @@ class XformHistory(models.Model):
                 self.has_start_time = True
             else:
                 self.has_start_time = False
+
+
+class SubmissionOfflineSite(models.Model):
+    offline_site_id = models.CharField(max_length=20)
+    temporary_site = models.ForeignKey(Site, related_name="offline_submissions")
+    instance = models.OneToOneField(FInstance, blank=True, null=True, related_name="offline_submission")
+    fieldsight_form = models.ForeignKey(FieldSightXF, related_name="offline_submissiob" , null=True, blank=True)
+
+    def __unicode__(self):
+        if self.instance:
+            return u"%s ---------------%s" % (str(self.instance.id) ,self.offline_site_id)
+        return u"%s" % str(self.offline_site_id)
