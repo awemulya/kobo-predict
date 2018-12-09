@@ -34,6 +34,7 @@ def get_images_for_site_all(site_id):
 
 @shared_task()
 def site_download_zipfile(task_prog_obj_id, size):
+    time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
     task.save()
@@ -83,6 +84,7 @@ def site_download_zipfile(task_prog_obj_id, size):
 
 @shared_task(time_limit=7200, soft_time_limit=7200)
 def generate_stage_status_report(task_prog_obj_id, project_id):
+    time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     project = Project.objects.get(pk=project_id)
     task.status = 1
@@ -198,8 +200,8 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
         
 @shared_task()
 def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
+    time.sleep(5)
     user = User.objects.get(pk=user_id)
-    time.sleep(2)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status=1
     task.save()
@@ -262,8 +264,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
 
 @shared_task()
 def UnassignAllProjectRolesAndSites(task_prog_obj_id, project_id):
-    time.sleep(2)
-    
+    time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status=1
     task.save()
@@ -308,7 +309,7 @@ def UnassignAllProjectRolesAndSites(task_prog_obj_id, project_id):
 
 @shared_task()
 def UnassignAllSiteRoles(task_prog_obj_id, site_id):
-    time.sleep(2)
+    time.sleep(5)
     site = Site.all_objects.get(pk=site_id)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status=1
@@ -449,6 +450,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, sites, pk):
 
 @shared_task()
 def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs_ids, start_date, end_date, removeNullField):
+    time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
     site=get_object_or_404(Site, pk=site_id)
@@ -714,6 +716,7 @@ def siteDetailsGenerator(project, sites, ws):
 
 @shared_task(time_limit=600, soft_time_limit=600)
 def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id):
+    time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
     project = get_object_or_404(Project, pk=project_id)
@@ -767,6 +770,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
 
 @shared_task(time_limit=7200, soft_time_limit=7200)
 def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_url, fs_ids, start_date, end_date, filterRegion):
+    time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
     project=get_object_or_404(Project, pk=project_id)
