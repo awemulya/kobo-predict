@@ -506,10 +506,13 @@ def siteDetailsGenerator(project, sites, ws):
         get_answer_questions = []
         get_sub_count_questions = []
         get_sub_status_questions = []   
+        get_answer_status_questions = []
+
         site_list = {}
         meta_ref_sites = {}
         site_submission_count = {}
         site_sub_status = {}
+
         
         for meta in meta_ques: 
             if meta['question_type'] == 'FormSubStat':
@@ -620,7 +623,7 @@ def siteDetailsGenerator(project, sites, ws):
                                 meta_ref_sites[question.get('question_name')] = [meta_ans[question['question_name']]]
                     
                     else:
-                        columns[question['question_name']] = 'Na'
+                        columns[question['question_name']] = '-'
             
             site_list[site.id] = columns
         
@@ -640,8 +643,11 @@ def siteDetailsGenerator(project, sites, ws):
                 
                 generate(meta['project_id'], site_map, meta, meta_ref_sites.get(meta['question_name'], []), meta.get('metas'))
 
-            elif meta['question_type'] == 'Form' or meta['question_type'] == 'FormQuestionAnswerStatus':
+            elif meta['question_type'] == 'Form':
                 get_answer_questions.append(meta)
+
+            elif meta['question_type'] == 'FormQuestionAnswerStatus':
+                get_answer_status_questions.append(meta)
                     
         for meta in get_answer_questions:
             form_owner = None
@@ -655,22 +661,32 @@ def siteDetailsGenerator(project, sites, ws):
 
             print project.id, meta['form_id'], meta['question']['name']
             for submission in query['result']:
-                if meta['question_type'] == "FormQuestionAnswerStatus":
-                    if submission['answer'] != "":
-                        site_list[submission['_id']][meta['question']['name']] = "Answered"
-                    else:
-                        site_list[submission['_id']][meta['question']['name']] = "Not Answered"
-                else:
-                    try:
-                        if meta['question']['type'] in ['photo', 'video', 'audio'] and submission['answer'] is not "":
-                            if not form_owner:
-                                form_owner = FieldSightXF.objects.select_related('xf__user').get(pk=meta['form_id']).xf.user.username
-                            site_list[int(submission['_id'])][meta['question_name']] = 'http://app.fieldsight.org/attachment/medium?media_file='+  +'/attachments/'+submission['answer']
-                        
+                try:
+                    if meta['question']['type'] in ['photo', 'video', 'audio'] and submission['answer'] is not "":
+                        if not form_owner:
+                            form_owner = FieldSightXF.objects.select_related('xf__user').get(pk=meta['form_id']).xf.user.username
+                        site_list[int(submission['_id'])][meta['question_name']] = 'http://app.fieldsight.org/attachment/medium?media_file='+  +'/attachments/'+submission['answer']
+                    
 
-                        site_list[int(submission['_id'])][meta['question_name']] = submission['answer']
-                    except:
-                        pass
+                    site_list[int(submission['_id'])][meta['question_name']] = submission['answer']
+                except:
+                    pass
+
+        for meta in get_answer_status_questions:
+        form_owner = None
+        query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": str(meta['form_id'])}},  { "$group" : { 
+            "_id" : "$fs_site",
+            "answer": { '$last': "$"+meta['question']['name'] }
+           }
+         }])
+
+        
+        for submission in query['result']:
+            if submission['answer'] and submission['answer'] != "":
+                site_list[submission['_id']][meta['question']['name']] = "Answered"
+            else:
+                site_list[submission['_id']][meta['question']['name']] = "Not Answered"
+               
         row_num = 0
         font_style = xlwt.XFStyle()
         font_style.font.bold = True
