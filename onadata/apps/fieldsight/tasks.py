@@ -620,7 +620,7 @@ def siteDetailsGenerator(project, sites, ws):
                                 meta_ref_sites[question.get('question_name')] = [meta_ans[question['question_name']]]
                     
                     else:
-                        columns[question['question_name']] = ''
+                        columns[question['question_name']] = 'Na'
             
             site_list[site.id] = columns
         
@@ -694,7 +694,7 @@ def siteDetailsGenerator(project, sites, ws):
 # sites = project.sites.all()
 # siteDetailsGenerator(project, sites, None)
 
-@shared_task(time_limit=7200, soft_time_limit=7200)
+@shared_task(time_limit=600, soft_time_limit=600)
 def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id):
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
