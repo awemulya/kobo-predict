@@ -682,11 +682,14 @@ def siteDetailsGenerator(project, sites, ws):
 
             
             for submission in query['result']:
-                if submission['answer'] and submission['answer'] != "":
-                    site_list[submission['_id']][meta['question']['name']] = "Answered"
-                else:
-                    site_list[submission['_id']][meta['question']['name']] = "Not Answered"
-               
+                try:
+                    if submission['answer'] and submission['answer'] != "":
+                        site_list[submission['_id']][meta['question']['name']] = "Answered"
+                    else:
+                        site_list[submission['_id']][meta['question']['name']] = "Not Answered"
+                except:
+                    pass
+                    
         row_num = 0
         font_style = xlwt.XFStyle()
         font_style.font.bold = True
