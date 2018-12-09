@@ -673,19 +673,19 @@ def siteDetailsGenerator(project, sites, ws):
                     pass
 
         for meta in get_answer_status_questions:
-        form_owner = None
-        query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": str(meta['form_id'])}},  { "$group" : { 
-            "_id" : "$fs_site",
-            "answer": { '$last': "$"+meta['question']['name'] }
-           }
-         }])
-
         
-        for submission in query['result']:
-            if submission['answer'] and submission['answer'] != "":
-                site_list[submission['_id']][meta['question']['name']] = "Answered"
-            else:
-                site_list[submission['_id']][meta['question']['name']] = "Not Answered"
+            query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": str(meta['form_id'])}},  { "$group" : { 
+                "_id" : "$fs_site",
+                "answer": { '$last': "$"+meta['question']['name'] }
+               }
+             }])
+
+            
+            for submission in query['result']:
+                if submission['answer'] and submission['answer'] != "":
+                    site_list[submission['_id']][meta['question']['name']] = "Answered"
+                else:
+                    site_list[submission['_id']][meta['question']['name']] = "Not Answered"
                
         row_num = 0
         font_style = xlwt.XFStyle()
