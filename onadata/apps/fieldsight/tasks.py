@@ -680,7 +680,7 @@ def siteDetailsGenerator(project, sites, ws):
                }
              }])
 
-            
+            print query
             for submission in query['result']:
                 try:
                     if submission['answer'] and submission['answer'] != "":
