@@ -502,7 +502,7 @@ def siteDetailsGenerator(project, sites, ws):
         for question in meta_ques:
             header_columns += [{'id': question['question_name'], 'name':question['question_name']}]
         
-        FORM_STATUS = {'0': 'Pending', '1': 'Rejected', '2': 'Flagged', '3': 'Approved', '4': 'No Submission'}
+        
         get_answer_questions = []
         get_sub_count_questions = []
         get_sub_status_questions = []   
@@ -534,11 +534,11 @@ def siteDetailsGenerator(project, sites, ws):
         if get_sub_status_questions:
             query = {}
             for meta in get_sub_status_questions:
-                for submission in FInstance.objects.filter(project_id=project.id, project_fxf_id=meta['form_id']).values('site_id', 'form_status').distinct('site_id').order_by('site_id', '-instance_id'):
+                for submission in FInstance.objects.filter(project_id=project.id, project_fxf_id=meta['form_id']).values('site_id', 'date').distinct('site_id').order_by('site_id', '-instance_id'):
                     try:
-                        site_sub_status[meta['form_id']][submission['site_id']] = submission['form_status']
+                        site_sub_status[meta['form_id']][submission['site_id']] = "Last submitted on " + submission['date'].strftime("%d %b %Y %I:%M %P")
                     except:
-                        site_sub_status[meta['form_id']] = {submission['site_id']:submission['form_status']}
+                        site_sub_status[meta['form_id']] = {submission['site_id']:"Last submitted on " + submission['date'].strftime("%d %b %Y %I:%M %P")}
 
         #Optimized query, only one query per link type meta attribute which covers all site's answers.
 
@@ -605,7 +605,7 @@ def siteDetailsGenerator(project, sites, ws):
                 if question['question_type'] == 'FormSubCountQuestion':
                     columns[question['question_name']] = site_submission_count[site.id][question['question_name']]
                 elif question['question_type'] == 'FormSubStat':
-                    columns[question['question_name']] = FORM_STATUS[str(site_sub_status[question['form_id']].get(site.id, '4'))] if question['form_id'] in site_sub_status else 'No Submission'
+                    columns[question['question_name']] = site_sub_status[question['form_id']].get(site.id, '') if question['form_id'] in site_sub_status else ''
                 elif question['question_type'] in ['Form','FormQuestionAnswerStatus']:
                     columns[question['question_name']] = ""
 
@@ -644,7 +644,7 @@ def siteDetailsGenerator(project, sites, ws):
                 get_answer_questions.append(meta)
                     
         for meta in get_answer_questions:
-
+            form_owner = None
             query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": str(meta['form_id']), meta['question']['name']: { "$exists": "true" }}},  { "$group" : { 
                 "_id" : "$fs_site",
                 "answer": { '$last': "$"+meta['question']['name'] }
@@ -655,10 +655,19 @@ def siteDetailsGenerator(project, sites, ws):
 
             print project.id, meta['form_id'], meta['question']['name']
             for submission in query['result']:
-                if meta['question_type'] == "FormQuestionAnswerStatus" and submission['answer'] != "":
-                    site_list[submission['_id']][meta['question']['name']] = "Answered"
+                if meta['question_type'] == "FormQuestionAnswerStatus":
+                    if submission['answer'] != "":
+                        site_list[submission['_id']][meta['question']['name']] = "Answered"
+                    else:
+                        site_list[submission['_id']][meta['question']['name']] = "Not Answered"
                 else:
-                    try:    
+                    try:
+                        if meta['question']['type'] in ['photo', 'video', 'audio'] and submission['answer'] is not "":
+                            if not form_owner:
+                                form_owner = FieldSightXF.objects.select_related('xf__user').get(pk=meta['form_id']).xf.user.username
+                            site_list[int(submission['_id'])][meta['question_name']] = 'http://app.fieldsight.org/attachment/medium?media_file='+  +'/attachments/'+submission['answer']
+                        
+
                         site_list[int(submission['_id'])][meta['question_name']] = submission['answer']
                     except:
                         pass
