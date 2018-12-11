@@ -34,6 +34,7 @@ def get_images_for_site_all(site_id):
 
 @shared_task()
 def site_download_zipfile(task_prog_obj_id, size):
+    time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
     task.save()
@@ -83,6 +84,7 @@ def site_download_zipfile(task_prog_obj_id, size):
 
 @shared_task(time_limit=7200, soft_time_limit=7200)
 def generate_stage_status_report(task_prog_obj_id, project_id):
+    time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     project = Project.objects.get(pk=project_id)
     task.status = 1
@@ -198,8 +200,8 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
         
 @shared_task()
 def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
+    time.sleep(5)
     user = User.objects.get(pk=user_id)
-    time.sleep(2)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status=1
     task.save()
@@ -262,8 +264,7 @@ def UnassignUser(task_prog_obj_id, user_id, sites, regions, projects, group_id):
 
 @shared_task()
 def UnassignAllProjectRolesAndSites(task_prog_obj_id, project_id):
-    time.sleep(2)
-    
+    time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status=1
     task.save()
@@ -308,7 +309,7 @@ def UnassignAllProjectRolesAndSites(task_prog_obj_id, project_id):
 
 @shared_task()
 def UnassignAllSiteRoles(task_prog_obj_id, site_id):
-    time.sleep(2)
+    time.sleep(5)
     site = Site.all_objects.get(pk=site_id)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status=1
@@ -449,6 +450,7 @@ def bulkuploadsites(task_prog_obj_id, source_user, sites, pk):
 
 @shared_task()
 def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs_ids, start_date, end_date, removeNullField):
+    time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
     site=get_object_or_404(Site, pk=site_id)
@@ -485,15 +487,15 @@ def generateCustomReportPdf(task_prog_obj_id, source_user, site_id, base_url, fs
 
 def siteDetailsGenerator(project, sites, ws):
     try:
-        header_columns = [{'id': 'identifier' ,'name':'identifier'},
-               {'id': 'name','name':'name'},
-               {'id': 'site_type_identifier','name':'type'}, 
-               {'id': 'phone','name':'phone'},
-               {'id': 'address','name':'address'},
-               {'id': 'public_desc','name':'public_desc'},
-               {'id': 'additional_desc','name':'additional_desc'},
-               {'id': 'latitude','name':'latitude'},
-               {'id': 'longitude','name':'longitude'}, ]
+        header_columns = [ {'id': 'identifier' ,'name':'identifier'},
+                           {'id': 'name','name':'name'},
+                           {'id': 'site_type_identifier','name':'type'}, 
+                           {'id': 'phone','name':'phone'},
+                           {'id': 'address','name':'address'},
+                           {'id': 'public_desc','name':'public_desc'},
+                           {'id': 'additional_desc','name':'additional_desc'},
+                           {'id': 'latitude','name':'latitude'},
+                           {'id': 'longitude','name':'longitude'}, ]
         
         if project.cluster_sites:
             header_columns += [{'id':'region_identifier', 'name':'region_id'}, ]
@@ -503,16 +505,53 @@ def siteDetailsGenerator(project, sites, ws):
             header_columns += [{'id': question['question_name'], 'name':question['question_name']}]
         
         
+        get_answer_questions = []
+        get_sub_count_questions = []
+        get_sub_status_questions = []   
+        get_answer_status_questions = []
 
-        site_list={}
-        meta_ref_sites={}
+        site_list = {}
+        meta_ref_sites = {}
+        site_submission_count = {}
+        site_sub_status = {}
+
         
+        for meta in meta_ques: 
+            if meta['question_type'] == 'FormSubStat':
+                get_sub_status_questions.append(meta)
+
+            elif meta['question_type'] == 'FormSubCountQuestion':
+                get_sub_count_questions.append(meta)
+
+
+        if get_sub_count_questions:
+            query = {}
+            for meta in get_sub_count_questions:
+                query[meta['question_name']] = Sum(
+                                        Case(
+                                            When(site_instances__project_fxf_id=meta['form_id'], then=1),
+                                            default=0, output_field=IntegerField()
+                                        ))
+            results = sites.values('id',).annotate(**query)
+            for submission_count in results:
+                site_submission_count[submission_count['id']] = submission_count
+
+        if get_sub_status_questions:
+            query = {}
+            for meta in get_sub_status_questions:
+                for submission in FInstance.objects.filter(project_id=project.id, project_fxf_id=meta['form_id']).values('site_id', 'date').distinct('site_id').order_by('site_id', '-instance_id'):
+                    try:
+                        site_sub_status[meta['form_id']][submission['site_id']] = "Last submitted on " + submission['date'].strftime("%d %b %Y %I:%M %P")
+                    except:
+                        site_sub_status[meta['form_id']] = {submission['site_id']:"Last submitted on " + submission['date'].strftime("%d %b %Y %I:%M %P")}
+
         #Optimized query, only one query per link type meta attribute which covers all site's answers.
 
         def generate(project_id, site_map, meta, identifiers, selected_metas):
             project_id = str(project_id)
             sub_meta_ref_sites = {}
-            sub_site_map = {}  
+            sub_site_map = {}
+            
             sitenew = Site.objects.filter(identifier__in = identifiers, project_id = project_id)
             
             for site in sitenew:
@@ -535,10 +574,10 @@ def siteDetailsGenerator(project, sites, ws):
                                 if site.identifier in sub_site_map[meta['question_name']]:
                                     sub_site_map[meta['question_name']][link_answer].append(identifier)
                                 else:
-                                    sub_site_map[meta['question_name']][link_answer] = identifier
+                                    sub_site_map[meta['question_name']][link_answer] = [identifier]
                             else:
                                 sub_site_map[meta['question_name']] = {}
-                                sub_site_map[meta['question_name']][link_answer] = identifier
+                                sub_site_map[meta['question_name']][link_answer] = [identifier]
                             
                             for idf in identifier:
                                 if meta['question_name'] in sub_meta_ref_sites:
@@ -568,17 +607,12 @@ def siteDetailsGenerator(project, sites, ws):
             meta_ques = project.site_meta_attributes
             meta_ans = site.site_meta_attributes_ans
             for question in meta_ques:
-                if question['question_type'] in ['Form','FormSubStat','FormSubCountQuestion','FormQuestionAnswerStatus']:
-                    if question['question_type'] == 'Form':
-                        columns[question['question_name']] = get_form_answer(site.id, question)
-                    elif question['question_type'] == 'FormSubStat':
-                        columns[question['question_name']] = get_form_sub_status(site.id, question)
-
-                    elif question['question_type'] == 'FormSubCountQuestion':
-                        columns[question['question_name']] = get_form_submission_count(site.id, question)
-
-                    elif question['question_type'] == 'FormQuestionAnswerStatus':
-                        columns[question['question_name']] = get_form_ques_ans_status(site.id, question)
+                if question['question_type'] == 'FormSubCountQuestion':
+                    columns[question['question_name']] = site_submission_count[site.id][question['question_name']]
+                elif question['question_type'] == 'FormSubStat':
+                    columns[question['question_name']] = site_sub_status[question['form_id']].get(site.id, '') if question['form_id'] in site_sub_status else ''
+                elif question['question_type'] in ['Form','FormQuestionAnswerStatus']:
+                    columns[question['question_name']] = ""
 
                 else:
                     if question['question_name'] in meta_ans:
@@ -591,9 +625,9 @@ def siteDetailsGenerator(project, sites, ws):
                                 meta_ref_sites[question.get('question_name')] = [meta_ans[question['question_name']]]
                     
                     else:
-                        columns[question['question_name']] = ''
+                        columns[question['question_name']] = '-'
             
-            site_list[site.identifier] = columns
+            site_list[site.id] = columns
         
 
         
@@ -610,7 +644,53 @@ def siteDetailsGenerator(project, sites, ws):
                             site_map[identifier] = [key]
                 
                 generate(meta['project_id'], site_map, meta, meta_ref_sites.get(meta['question_name'], []), meta.get('metas'))
+
+            elif meta['question_type'] == 'Form':
+                get_answer_questions.append(meta)
+
+            elif meta['question_type'] == 'FormQuestionAnswerStatus':
+                get_answer_status_questions.append(meta)
+                    
+        for meta in get_answer_questions:
+            form_owner = None
+            query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": str(meta['form_id']), meta['question']['name']: { "$exists": "true" }}},  { "$group" : { 
+                "_id" : "$fs_site",
+                "answer": { '$last': "$"+meta['question']['name'] }
+               }
+             }])
+
+            
+
+            print project.id, meta['form_id'], meta['question']['name']
+            for submission in query['result']:
+                try:
+                    if meta['question']['type'] in ['photo', 'video', 'audio'] and submission['answer'] is not "":
+                        if not form_owner:
+                            form_owner = FieldSightXF.objects.select_related('xf__user').get(pk=meta['form_id']).xf.user.username
+                        site_list[int(submission['_id'])][meta['question_name']] = 'http://app.fieldsight.org/attachment/medium?media_file='+  +'/attachments/'+submission['answer']
+                    
+
+                    site_list[int(submission['_id'])][meta['question_name']] = submission['answer']
+                except:
+                    pass
+
+        for meta in get_answer_status_questions:
         
+            query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": str(meta['form_id'])}},  { "$group" : { 
+                "_id" : "$fs_site",
+                "answer": { '$last': "$"+meta['question']['name'] }
+               }
+             }])
+
+            for submission in query['result']:
+                try:
+                    if submission['answer'] and submission['answer'] != "":
+                        site_list[int(submission['_id'])][meta['question_name']] = "Answered"
+                    else:
+                        site_list[int(submission['_id'])][meta['question_name']] = "Not Answered"
+                except:
+                    pass
+                    
         row_num = 0
         font_style = xlwt.XFStyle()
         font_style.font.bold = True
@@ -630,9 +710,13 @@ def siteDetailsGenerator(project, sites, ws):
     except Exception as e:
         return False, e.message
 
+# project = Project.objects.get(pk=137)
+# sites = project.sites.all()
+# siteDetailsGenerator(project, sites, None)
 
-@shared_task(time_limit=7200, soft_time_limit=7200)
+@shared_task(time_limit=600, soft_time_limit=600)
 def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id):
+    time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
     project = get_object_or_404(Project, pk=project_id)
@@ -686,6 +770,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
 
 @shared_task(time_limit=7200, soft_time_limit=7200)
 def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_url, fs_ids, start_date, end_date, filterRegion):
+    time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
     project=get_object_or_404(Project, pk=project_id)

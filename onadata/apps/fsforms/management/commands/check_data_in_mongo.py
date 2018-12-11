@@ -13,7 +13,7 @@ class Command(BaseCommand):
         xform_instances = settings.MONGO_DB.instances
         instances_ids = [instanceid]
         query = {"_id": {"$in": instances_ids}}
-        cursor = xform_instances.find(query, {"_id": 1})
-        mongo_ids = list(record.get("_id") for record in cursor)
+        cursor = xform_instances.find(query)
+        mongo_ids = list(record for record in cursor)
         print(mongo_ids)
         self.stdout.write('Reading instance "%s"' % str(instanceid))
