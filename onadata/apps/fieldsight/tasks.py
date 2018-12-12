@@ -779,7 +779,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
 
     try:
         buffer = BytesIO()
-        sites = project.sites.all(is_active=True)
+        sites = project.sites.filter(is_active=True)
         
         if filterRegion:
             sites = sites.filter(region_id__in=filterRegion)
