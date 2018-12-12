@@ -769,7 +769,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
 
 
 @shared_task(time_limit=7200, soft_time_limit=7200)
-def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_url, fs_ids, start_date, end_date, filterRegion):
+def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_url, fs_ids, start_date, end_date, filterRegion, filterSiteTypes):
     time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
@@ -779,14 +779,22 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
 
     try:
         buffer = BytesIO()
+        sites = project.sites.all(is_active=True)
+        
         if filterRegion:
-            sites = project.sites.filter(is_active=True, region_id__in=filterRegion).values('id')
-        else:
-            sites=project.sites.filter(is_active=True).values('id')
+            sites = sites.filter(region_id__in=filterRegion)
+        
         # fs_ids = FieldSightXF.objects.filter(project_id = project.id).values('id')
         # startdate="2016-05-01"
         # enddate= "2018-06-05"
+
+        if filterSiteTypes:
+            sites = sites.filter(type_id__in=filterSiteTypes)
+        
+        sites = sites.values('id')
+
         response_sites=[]
+        
         split_startdate = start_date.split('-')
         split_enddate = end_date.split('-')
 

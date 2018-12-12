@@ -68,11 +68,12 @@ class ExportProjectFormsForSites(View):
         start_date = data.get('startdate')
         end_date = data.get('enddate')
         filterRegion = data.get('filterRegion', None)
+        filterSiteTypes = data.get('siteTypes', None)
         project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
         
         task_obj=CeleryTaskProgress.objects.create(user=user, content_object=project, task_type=3)
         if task_obj:
-            task = exportProjectSiteResponses.delay(task_obj.pk, user, self.kwargs.get('pk'), base_url, fs_ids, start_date, end_date, filterRegion)
+            task = exportProjectSiteResponses.delay(task_obj.pk, user, self.kwargs.get('pk'), base_url, fs_ids, start_date, end_date, filterRegion, filterSiteTypes)
             task_obj.task_id = task.id
             task_obj.save()
             status, data = 200, {'status':'true','message':'Sucess, the report is being generated. You will be notified after the report is generated.'}
