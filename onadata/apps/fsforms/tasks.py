@@ -5,11 +5,12 @@ from celery import shared_task
 from django.db import transaction
 
 from onadata.apps.fieldsight.models import Site, Project
-from onadata.apps.fsforms.models import FieldSightXF, Schedule, Stage, DeployEvent
+from onadata.apps.fsforms.models import FieldSightXF, Schedule, Stage, DeployEvent, XformHistory
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer
 from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormListSerializer, StageFormSerializer
 from onadata.apps.fsforms.utils import send_sub_stage_deployed_project, send_bulk_message_stage_deployed_project, \
-    send_bulk_message_stages_deployed_project, send_message_un_deploy_project
+    send_bulk_message_stages_deployed_project, send_message_un_deploy_project, send_message_koboform_updated
+from onadata.apps.logger.models import XForm
 
 
 @shared_task(max_retries=10, soft_time_limit=4200)
@@ -108,6 +109,21 @@ def copy_schedule_to_sites(schedule, fxf_status, pk):
         # First countdown will be 1.0, then 2.0, 4.0, etc.
         raise copy_schedule_to_sites.retry(countdown=seconds_to_wait)
 
+
+@shared_task(max_retries=5)
+def post_update_xform(xform_id, request):
+    existing_xform = XForm.objects.get(pk=xform_id)
+    xf = XformHistory(xform=existing_xform, xls=existing_xform.xls, json=existing_xform.json,
+                      description=existing_xform.description, xml=existing_xform.xml,
+                      id_string=existing_xform.id_string, title=existing_xform.title, uuid=existing_xform.uuid)
+    xf.save()
+
+    existing_xform.logs.create(source=request.user, type=7, title="Kobo form Updated",
+                                 organization=request.organization,
+                                description="new kobo form {0} Updated by {1}".
+                                format(existing_xform.title, request.user.username))
+
+    send_message_koboform_updated(existing_xform, request)
 
 # @shared_task(max_retries=10)
 # def copy_to_sites(fxf):

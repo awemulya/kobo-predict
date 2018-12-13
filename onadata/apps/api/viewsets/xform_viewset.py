@@ -2,7 +2,6 @@ import os
 import json
 
 from datetime import datetime
-from channels import Group as ChannelGroup
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect
@@ -18,7 +17,7 @@ from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from rest_framework.viewsets import ModelViewSet
 
-from onadata.apps.fsforms.models import XformHistory
+from onadata.apps.fsforms.tasks import post_update_xform
 from onadata.libs import filters
 from onadata.libs.mixins.anonymous_user_public_forms_mixin import (
     AnonymousUserPublicFormsMixin)
@@ -805,21 +804,7 @@ data (instance/submission per row)
                 else:
                     # Something odd; hopefully it can be coerced into a string
                     raise exceptions.ParseError(detail=survey)
-            xf = XformHistory(xform=existing_xform, xls=existing_xform.xls, json=existing_xform.json,
-                              description=existing_xform.description, xml=existing_xform.xml,
-                              id_string=existing_xform.id_string, title=existing_xform.title, uuid=existing_xform.uuid)
-            xf.save()
-        # Let the superclass handle updates to the other fields
-        # noti = existing_xform.logs.create(source=request.user, type=7, title="Kobo form Updated",
-        #                              organization=request.organization,
-        #                             description="new kobo form {0} Updated by {1}".
-        #                             format(existing_xform.title, request.user.username))
-        # result = {}
-        # result['description'] = noti.description
-        # result['url'] = noti.get_absolute_url()
-        # ChannelGroup("notify-0").send({"text":json.dumps(result)})
-        # if noti.organization:
-        #     ChannelGroup("notify-{}".format(noti.organization.id)).send({"text":json.dumps(result)})
+            post_update_xform.apply_async({"xform_id": existing_xform.id, "request": self.request})
 
         return super(XFormViewSet, self).update(request, pk, *args, **kwargs)
 
