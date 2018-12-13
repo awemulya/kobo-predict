@@ -78,6 +78,7 @@
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
         <th>{% trans 'Edit' %}</th>
+        <th>{% trans 'Enketo View' %}</th>
         <th>{% trans 'Delete' %}</th>
       </tr>
     </thead>
@@ -92,7 +93,10 @@
           <td>{{ sub.submitted_by.user_profile.getname }}</td>
           <td>{{ sub.date }}</td>
           <td>
-            <a href="{% url 'forms:edit-submission' sub.project_fxf.pk sub.instance.id %}">Edit</a>    
+            <a href="{% url 'forms:edit-submission' sub.project_fxf.pk sub.instance.id %}">Edit</a>
+          </td>
+           <td>
+            <a href="{% url 'forms:edit_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">View</a>
           </td>
           <td>
             <a href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}">Delete</a></span>

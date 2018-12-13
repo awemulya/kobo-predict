@@ -20,6 +20,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from onadata.apps.logger.models import Instance
 from onadata.apps.main.models.user_profile import UserProfile
+from onadata.apps.viewer.models.parsed_instance import update_mongo_instance
 from onadata.libs import filters
 from onadata.libs.authentication import DigestAuthentication
 from onadata.libs.mixins.openrosa_headers_mixin import OpenRosaHeadersMixin
@@ -75,6 +76,22 @@ def create_instance_from_json(username, request):
     xml_file = StringIO.StringIO(xml_string)
 
     return safe_create_instance(username, xml_file, [], None, request)
+
+
+def update_mongo(i):
+    d = i.parsed_instance.to_dict_for_mongo()
+    try:
+        x = i.fieldsight_instance
+        d.update(
+            {'fs_project_uuid': str(x.project_fxf_id), 'fs_project': x.project_id, 'fs_status': 0, 'fs_site': x.site_id,
+             'fs_uuid': x.site_fxf_id})
+        try:
+            synced = update_mongo_instance(d)
+            print(synced, "updated in mongo success")
+        except Exception as e:
+            print(str(e))
+    except Exception as e:
+        print(str(e))
 
 
 class XFormSubmissionApi(OpenRosaHeadersMixin,
@@ -187,13 +204,12 @@ Here is some example JSON, it would replace `[the JSON]` above:
 
         is_json_request = is_json(request)
 
-
         error, instance = (create_instance_from_json if is_json_request else
                            create_instance_from_xml)(username, request)
 
         if error or not instance:
             return self.error_response(error, is_json_request, request)
-
+        update_mongo(instance)
         context = self.get_serializer_context()
         serializer = SubmissionSerializer(instance, context=context)
         return Response(serializer.data,

@@ -13,7 +13,7 @@ from django.core.mail import mail_admins
 from django.utils.translation import ugettext as _
 
 from onadata.libs.utils import common_tags
-
+from onadata.apps.fsforms.enketo_utils import clean_xml_for_enketo
 
 SLASH = u"/"
 
@@ -158,7 +158,7 @@ def get_client_ip(request):
     return ip
 
 
-def enketo_url(form_url, id_string, instance_xml=None,
+def enketo_ur_oldl(form_url, id_string, instance_xml=None,
                instance_id=None, return_url=None):
     if not hasattr(settings, 'ENKETO_URL')\
             and not hasattr(settings, 'ENKETO_API_SURVEY_PATH'):
@@ -202,6 +202,70 @@ def enketo_url(form_url, id_string, instance_xml=None,
     return False
 
 
+def enketo_url(form_url, id_string, instance_xml=None,
+               instance_id=None, return_url=None, instance_attachments=None):
+    if not hasattr(settings, 'ENKETO_URL')\
+            and not hasattr(settings, 'ENKETO_API_SURVEY_PATH'):
+        return False
+
+    if instance_attachments is None:
+        instance_attachments = {}
+
+    url = settings.ENKETO_URL + settings.ENKETO_API_SURVEY_PATH
+
+    values = {
+        'form_id': id_string,
+        'server_url': form_url
+    }
+    if instance_id is not None and instance_xml is not None:
+        # url = settings.ENKETO_URL + '/api/v2/instance'
+        # print(url)
+        # print(settings.KOBOCAT_URL)
+        url = settings.ENKETO_URL + settings.ENKETO_API_INSTANCE_PATH
+        print(url, "cleaned url")
+        values.update({
+            'instance': instance_xml,
+            'instance_id': instance_id,
+            'return_url': return_url
+        })
+        for key, value in instance_attachments.iteritems():
+            values.update({
+                'instance_attachments[' + key + ']': value
+            })
+    print(values)
+    values['instance'] = clean_xml_for_enketo(
+        [k for k in values.keys() if "instance_attachments" in k],
+        values['instance'])
+    print("Tokennnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn" + settings.ENKETO_API_TOKEN, )
+    req = requests.post(url, data=values,
+                        auth=(settings.ENKETO_API_TOKEN, ''), verify=False)
+    print(req.status_code, "status code")
+    if req.status_code in [200, 201]:
+        try:
+            response = req.json()
+            print("enketo response ", response)
+        except ValueError:
+            pass
+        else:
+            if 'edit_url' in response:
+                print(response['edit_url'])
+                return response['edit_url']
+            if settings.ENKETO_OFFLINE_SURVEYS and ('offline_url' in response):
+                return response['offline_url']
+            if 'url' in response:
+                return response['url']
+    else:
+        try:
+            response = req.json()
+            print(req.json(), "*******************************")
+        except ValueError:
+            pass
+        else:
+            if 'message' in response:
+                raise EnketoError(response['message'])
+    return False
+
+
 def create_attachments_zipfile(attachments, temporary_file=None):
     if not temporary_file:
         temporary_file = NamedTemporaryFile()
@@ -228,6 +292,15 @@ def _get_form_url(request, username, protocol='https'):
         username = settings.TEST_USERNAME
     else:
         http_host = request.META.get('HTTP_HOST', 'ona.io')
+
+    # In case INTERNAL_DOMAIN_NAME is equal to PUBLIC_DOMAIN_NAME,
+    # configuration doesn't use docker internal network.
+    # Don't overwrite `protocol.
+    is_call_internal = settings.KOBOCAT_INTERNAL_HOSTNAME == http_host and \
+                       settings.KOBOCAT_PUBLIC_HOSTNAME != http_host
+
+    # Make sure protocol is enforced to `http` when calling `kc` internally
+    protocol = 'http'  #local debug
 
     return '%s://%s/%s' % (protocol, http_host, username)
 
