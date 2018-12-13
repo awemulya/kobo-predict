@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 from celery import shared_task
+from django.contrib.auth.models import User
 
 from django.db import transaction
 
@@ -111,19 +112,18 @@ def copy_schedule_to_sites(schedule, fxf_status, pk):
 
 
 @shared_task(max_retries=5)
-def post_update_xform(xform_id, request):
+def post_update_xform(xform_id, user):
     existing_xform = XForm.objects.get(pk=xform_id)
+    user = User.objects.get(pk=user)
     xf = XformHistory(xform=existing_xform, xls=existing_xform.xls, json=existing_xform.json,
                       description=existing_xform.description, xml=existing_xform.xml,
                       id_string=existing_xform.id_string, title=existing_xform.title, uuid=existing_xform.uuid)
     xf.save()
 
-    existing_xform.logs.create(source=request.user, type=7, title="Kobo form Updated",
-                                 organization=request.organization,
-                                description="new kobo form {0} Updated by {1}".
-                                format(existing_xform.title, request.user.username))
+    existing_xform.logs.create(source=user, type=7, title="Kobo form Updated",
+                                description="update kobo form ")
 
-    send_message_koboform_updated(existing_xform, request)
+    send_message_koboform_updated(existing_xform)
 
 # @shared_task(max_retries=10)
 # def copy_to_sites(fxf):

@@ -17,7 +17,7 @@ from xml.dom import Node
 FIELDSIGHT_XFORM_ID = u"_fieldsight_xform_id"
 
 
-def send_message_koboform_updated(xform, request):
+def send_message_koboform_updated(xform):
     from onadata.apps.fsforms.models import FieldSightXF
     project_ids = FieldSightXF.objects.filter(xf=xform).values_list('project_id', flat=True).distinct().order_by()
     site_ids = FieldSightXF.objects.filter(xf=xform).values_list('site_id', flat=True).distinct().order_by()
@@ -32,7 +32,6 @@ def send_message_koboform_updated(xform, request):
     is_delete = False
     message = {'notify_type': 'Form',
                'is_delete':is_delete,
-               'user': request.user.username,
                'form_name': xform.title,
                'xfid': xform.id_string,
                'form_type':"", 'form_type_id':"",
