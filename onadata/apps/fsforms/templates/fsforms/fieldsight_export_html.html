@@ -77,26 +77,22 @@
         <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
-        <th>{% trans 'Edit' %}</th>
-        <th>{% trans 'Enketo View' %}</th>
+        <th>{% trans 'Enketo Edit' %}</th>
         <th>{% trans 'Delete' %}</th>
       </tr>
     </thead>
     <tbody>
 
     {% for sub in object_list  %}
-       <tr onclick="redirectto(`{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
+       <tr>
           <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
           <td>{{ sub.site.name }}</td>
           <td>{{ sub.site.identifier }}</td>
-          <td>{{ sub.instance.id }}</td>
+          <td><a href="{% url 'forms:instance' sub.project_fxf.pk %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.instance.id }}</a></td>
           <td>{{ sub.submitted_by.user_profile.getname }}</td>
           <td>{{ sub.date }}</td>
-          <td>
-            <a href="{% url 'forms:edit-submission' sub.project_fxf.pk sub.instance.id %}">Edit</a>
-          </td>
-           <td>
-            <a href="{% url 'forms:edit_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">View</a>
+            <td>
+            <a href="{% url 'forms:edit_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">Edit</a>
           </td>
           <td>
             <a href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}">Delete</a></span>
@@ -118,24 +114,25 @@
         <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
-        <td>{% trans 'Edit' %}</td>
+        <td>{% trans 'Enketo Edit' %}</td>
         <th>{% trans 'Delete' %}</th>
       </tr>
     </thead>
     <tbody>
 
     {% for sub in object_list  %}
-    {% if site_id %}
-      <tr onclick="redirectto(`{% url 'forms:instance' sub.fsxfid site_id %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
-          {% else %}
-          <tr onclick="redirectto(`{% url 'forms:instance' sub.fsxfid  %}#/{{ sub.instance.id|stringformat:'d'}}`)" >
-          {% endif %}
+
+      <tr>
         <td>{{ forloop.counter }}</td>
-        <td>{{ sub.instance.id }}</td>
+            {% if site_id %}
+        <td><a href="{% url 'forms:instance' sub.fsxfid site_id %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.instance.id }}</a> </td>
+        {% else %}
+            <td><a href="{% url 'forms:instance' sub.fsxfid  %}#/{{ sub.instance.id|stringformat:'d'}}">{{ sub.instance.id }}</a> </td>
+         {% endif %}
         <td>{{ sub.submitted_by.user_profile.getname }}</td>
         <td>{{ sub.date }}</td>
         <td>
-            <a href="{% url 'forms:edit-submission' sub.fsxfid sub.instance.id %}">Edit</a>
+          <a href="{% url 'forms:edit_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">Edit</a>
         </td>
         <td>
             <a href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}">Delete</a></span>
