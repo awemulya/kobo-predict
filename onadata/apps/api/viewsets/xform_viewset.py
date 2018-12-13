@@ -804,7 +804,7 @@ data (instance/submission per row)
                 else:
                     # Something odd; hopefully it can be coerced into a string
                     raise exceptions.ParseError(detail=survey)
-            post_update_xform.apply_async({"xform_id": existing_xform.id, "request": self.request})
+            post_update_xform.apply_async((),{"xform_id": existing_xform.id, "request": self.request})
 
         return super(XFormViewSet, self).update(request, pk, *args, **kwargs)
 
