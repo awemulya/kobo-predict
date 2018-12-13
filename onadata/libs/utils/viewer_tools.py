@@ -232,11 +232,11 @@ def enketo_url(form_url, id_string, instance_xml=None,
             values.update({
                 'instance_attachments[' + key + ']': value
             })
-    print(values)
-    values['instance'] = clean_xml_for_enketo(
-        [k for k in values.keys() if "instance_attachments" in k],
-        values['instance'])
-    print("Tokennnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn" + settings.ENKETO_API_TOKEN, )
+        print(values)
+        values['instance'] = clean_xml_for_enketo(
+            [k for k in values.keys() if "instance_attachments" in k],
+            values['instance'])
+        print("Tokennnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn" + settings.ENKETO_API_TOKEN, )
     req = requests.post(url, data=values,
                         auth=(settings.ENKETO_API_TOKEN, ''), verify=False)
     print(req.status_code, "status code")

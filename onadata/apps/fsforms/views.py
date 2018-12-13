@@ -1152,19 +1152,18 @@ class FormPreviewView(View):
     def get(self, request, *args, **kwargs):
         id_string = self.kwargs.get('id_string')
         xform = XForm.objects.get(id_string=id_string)
-        result = requests.post(
-            'http://localhost:8085/transform',
-            data={
-                'xform': xform.xml,
-            }
-        ).json()
+        form_url = _get_form_url(request, xform.user.username, settings.ENKETO_PROTOCOL)
 
-        return render(request, 'fsforms/form_preview.html', {
-            'xform': xform,
-            'html_form': result['form'],
-            'model_str': result['model'],
-            'existing': None,
-        })
+        try:
+            url = enketo_url(
+                form_url, xform.id_string
+            )
+        except Exception as e:
+            return HttpResponse("This form cannot be viewed in enketo. Please Report")
+        else:
+            if url:
+                return HttpResponseRedirect(url)
+        return HttpResponse("This form cannot be viewed in enketo. Please Report")
 
 class FormFillView(FormMixin, View):
     def get(self, request, *args, **kwargs):
