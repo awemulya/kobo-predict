@@ -689,6 +689,7 @@
   				configure_settings.site_id = {{ obj.pk|unlocalize }};
   				configure_settings.log_url = "{% url 'eventlog:api_site_logs' obj.pk %}";
 				configure_settings.full_log_url = "{% url 'eventlog:site_logs' obj.pk %}";
+				configure_settings.csrf_token = '{{ csrf_token }}';
 				configure_settings.start_date_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
 				configure_settings.start_date_max_value = "{% now 'Y-m-d' %}";
 				configure_settings.start_date_min_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
