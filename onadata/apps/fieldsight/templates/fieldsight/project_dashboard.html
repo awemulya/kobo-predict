@@ -3,6 +3,8 @@
 {% load i18n staticfiles %}
 {% load filters %}
 {% block extracss %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
 <style type="text/css">
 	.leaflet-bottom.leaflet-right{
 		display:none;
@@ -11,9 +13,7 @@
 		display: none;
 	}
 </style>
-    <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
-    <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
-    <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
+
  <!-- SLider css external pravin -slick  -->
     <!--<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>-->
     <!--<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>-->
@@ -557,4 +557,6 @@ var static_url ="{{ STATIC_URL }}";
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" /> -->
 
 
+
 {% endblock %}
+
