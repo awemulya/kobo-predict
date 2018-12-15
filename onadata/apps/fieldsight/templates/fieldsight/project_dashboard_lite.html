@@ -62,62 +62,12 @@ assigntoken(csrf_token);
 {% csrf_token %}
 <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg" role="document">
+		{% verbatim %}
 		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="exportModalLabel">Export Report</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-
-			<div class="modal-body" style="margin-left:15px;">
-				<div class="form-item-wrapper checkbox-listing">
-
-
-					<ul data-bind="template: { name: 'itemTmpl', foreach: allformjson }"></ul>
-
-					<script id="itemTmpl" type="text/html">
-						<li>
-
-							<input style="left:0px !important; margin-top:3px !important;" type='checkbox' data-bind="checked: selected, click: $root.setSelected" />
-							<span data-bind="text: xf_title"></span>
-
-
-							<ul data-bind="template: { name: 'itemTmpl', foreach: $data.forms }">
-								<!--  style: { 'opacity' : (selected() ? 1 : 0.5 ), 'pointer-events':(selected() ? '' : 'none' ) } -->
-							</ul>
-						</li>
-					</script>
-					{% if obj.cluster_sites %}
-					Filter by region: 
-						<select  multiple="multiple" id="filterRegion" data-bind="options: allRegions, optionsText: 'identifier', optionsValue: 'id'"></select>
-					<br>
-					{% endif %}
-					<div class="p-3 border bg-light">
-				    <div class="row">
-				      <div class="col-md-6 col-lg-4">
-				        <div class="form-group">
-				          <label for="startdate">Start Date:</label> <input type="date" class=
-				          "form-control" value="{{ obj.date_created.date|date:'Y-m-d'}}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name=
-				          "startdate" id="startdate" />
-				        </div>
-				      </div>
-
-				      <div class="col-md-6 col-lg-4">
-				        <div class="form-group">
-				          <label for="enddate">End Date:</label> <input type="date" class="form-control"
-				          value="{% now 'Y-m-d' %}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="enddate" id="enddate" />
-				        </div>
-				      </div>
-				    </div>
-				  </div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary" data-bind="click: $root.generateReport">Download</button>
+			<div id="exportSitesToProject" >
 			</div>
 		</div>
+		{% endverbatim %}
 	</div>
 </div>
 
@@ -556,6 +506,12 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.full_log_url = "{% url 'eventlog:project_logs' obj.pk %}";
 	configure_settings.genarete_excel_url = "{% url 'fieldsight:download-stages' obj.pk %}"
 	configure_settings.is_lite = true;	
+	configure_settings.start_date_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
+	configure_settings.start_date_max_value = "{% now 'Y-m-d' %}";
+	configure_settings.start_date_min_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
+	configure_settings.end_date_value = "{% now 'Y-m-d' %}";
+	configure_settings.end_date_max_value = "{% now 'Y-m-d' %}";
+	configure_settings.end_date_min_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
 	//getlogdata();
 					
 </script>
@@ -572,6 +528,10 @@ var static_url ="{{ STATIC_URL }}";
 <script src="{% static 'js/fieldsight/site_export.js' %}?v=0.4"></script>
 <script src="{% static 'js/fieldsight/loglist.js' %}?v=0.6"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.js"></script>
+<script src="{% static 'js/fieldsight/report_vue.js' %}?v=0.6"></script>
 
 
 {% endblock %}

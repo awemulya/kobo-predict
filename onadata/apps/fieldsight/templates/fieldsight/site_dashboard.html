@@ -43,67 +43,14 @@
 
 <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="exportModalLabel">Export Report</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-
-			<div class="modal-body" style="margin-left:15px;">
-				<div class="form-item-wrapper checkbox-listing">
-
-
-					<ul data-bind="template: { name: 'itemTmpl', foreach: allformjson }"></ul>
-
-					<script id="itemTmpl" type="text/html">
-						<li>
-
-							<input style="left:0px !important; margin-top:3px !important;" type='checkbox' data-bind="checked: selected, click: $root.setSelected" />
-							<span data-bind="text: xf_title"></span>
-
-
-							<ul data-bind="template: { name: 'itemTmpl', foreach: $data.forms }">
-								<!--  style: { 'opacity' : (selected() ? 1 : 0.5 ), 'pointer-events':(selected() ? '' : 'none' ) } -->
-							</ul>
-						</li>
-					</script>
-					<div class="p-3 border bg-light">
-				    <div class="row">
-				      <div class="col-md-6 col-lg-4">
-				        <div class="form-group">
-				          <label for="startdate">Start Date:</label> <input type="date" class=
-				          "form-control" value="{{ obj.date_created.date|date:'Y-m-d'}}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name=
-				          "startdate" id="startdate" />
-				        </div>
-				      </div>
-
-				      <div class="col-md-6 col-lg-4">
-				        <div class="form-group">
-				          <label for="enddate">End Date:</label> <input type="date" class="form-control"
-				          value="{% now 'Y-m-d' %}" min="{{ obj.date_created.date|date:'Y-m-d'}}" max="{% now 'Y-m-d' %}" name="enddate" id="enddate" />
-				        </div>
-				      </div>
-
-				      <div class="col-md-12 col-lg-4">
-				        <label>&nbsp;</label>
-
-				        <div class="form-group form-check" style="margin-top: 7px;">
-				          <input type="checkbox" class="form-check-input" id="removeNullField" name=
-				          "removeNullValues" /> <label class="form-check-label" for=
-				          "removeNullField">Hide Null Fields</label>
-				        </div>
-				      </div>
-				    </div>
-				  </div>
+			<div class="modal-dialog" role="document">
+				{% verbatim %}
+				<div class="modal-content">
+					<div id="exportSitesToProject" >
+					</div>
 				</div>
+				{% endverbatim %}
 			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary" data-bind="click: $root.generateReport">Download</button>
-			</div>
-		</div>
 	</div>
 </div>
 
@@ -743,7 +690,12 @@
   				configure_settings.site_id = {{ obj.pk|unlocalize }};
   				configure_settings.log_url = "{% url 'eventlog:api_site_logs' obj.pk %}";
 				configure_settings.full_log_url = "{% url 'eventlog:site_logs' obj.pk %}";
-				
+				configure_settings.start_date_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
+				configure_settings.start_date_max_value = "{% now 'Y-m-d' %}";
+				configure_settings.start_date_min_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
+				configure_settings.end_date_value = "{% now 'Y-m-d' %}";
+				configure_settings.end_date_max_value = "{% now 'Y-m-d' %}";
+				configure_settings.end_date_min_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
 					var height = 0;
 					$(".gh-col" ).each(function() {
 						height += $(this).height();
@@ -763,12 +715,16 @@
 	<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
 	<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
 	<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+	
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.js"></script>
+	<script src="{% static 'js/fieldsight/report_site_vue.js' %}?v=0.6"></script>
 	<!-- <script src="{% static 'js/fieldsight/manage_site_dashboard.js' %}?v=0.4"></script> -->
+	<script src="{% static 'js/fieldsight/loglist.js' %}?v=0.6"></script>
 
 	<script src="{% static 'js/reactjs/react.min.js' %}"></script>
 	<script src="{% static 'js/reactjs/browser.min.js' %}"></script>
 	<script src="{% static 'js/reactjs/react-dom.min.js' %}"></script>
-	<script src="{% static 'js/fieldsight/loglist.js' %}?v=0.6"></script>
 	<script src="{% static 'js/fieldsight/site_images_zip.js' %}?v=0.6"></script>
 
     <script type="text/babel">
