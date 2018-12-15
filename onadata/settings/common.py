@@ -89,7 +89,7 @@ STATIC_URL = '/static/'
 ENKETO_URL = os.environ.get('ENKETO_URL', 'https://enketo.kobotoolbox.org')
 ENKETO_URL= ENKETO_URL.rstrip('/')
 ENKETO_API_TOKEN = os.environ.get('ENKETO_API_TOKEN', 'enketorules')
-ENKETO_VERSION= os.environ.get('ENKETO_VERSION', 'Legacy').lower()
+ENKETO_VERSION= os.environ.get('ENKETO_VERSION', 'express').lower()
 assert ENKETO_VERSION in ['legacy', 'express']
 # Constants.
 ENKETO_API_ENDPOINT_ONLINE_SURVEYS = '/survey'
