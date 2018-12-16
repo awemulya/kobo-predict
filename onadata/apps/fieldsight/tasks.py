@@ -861,6 +861,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
                         response_sites.append(formresponse.site_id)
                     
                     questions, answers, r_question_answers, r_ques = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url, form.xf.user.username)
+
                     answers['identifier'] = formresponse.site.identifier
                     answers['name'] = formresponse.site.name
                     answers['status'] = formresponse.get_form_status_display()
