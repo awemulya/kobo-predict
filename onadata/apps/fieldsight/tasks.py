@@ -28,6 +28,7 @@ import pyexcel as p
 from .metaAttribsGenerator import get_form_answer, get_form_sub_status, get_form_submission_count, get_form_ques_ans_status
 from django.conf import settings
 from django.db.models import Sum, Case, When, IntegerField
+from django.core.exceptions import MultipleObjectsReturned
 
 def get_images_for_site_all(site_id):
     return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : site_id}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
@@ -769,7 +770,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
 
 
 @shared_task(time_limit=7200, soft_time_limit=7200)
-def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_url, fs_ids, start_date, end_date, filterRegion):
+def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_url, fs_ids, start_date, end_date, filterRegion, filterSiteTypes):
     time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
@@ -779,14 +780,22 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
 
     try:
         buffer = BytesIO()
+        sites = project.sites.filter(is_active=True)
+        
         if filterRegion:
-            sites = project.sites.filter(is_active=True, region_id__in=filterRegion).values('id')
-        else:
-            sites=project.sites.filter(is_active=True).values('id')
+            sites = sites.filter(region_id__in=filterRegion)
+        
         # fs_ids = FieldSightXF.objects.filter(project_id = project.id).values('id')
         # startdate="2016-05-01"
         # enddate= "2018-06-05"
+
+        if filterSiteTypes:
+            sites = sites.filter(type_id__in=filterSiteTypes)
+        
+        sites = sites.values('id')
+
         response_sites=[]
+        
         split_startdate = start_date.split('-')
         split_enddate = end_date.split('-')
 
@@ -1057,11 +1066,20 @@ def multiuserassignproject(task_prog_obj_id, source_user, org_id, projects, user
             for project_id in projects:
                     project = Project.objects.get(pk=project_id)
                     for user in users:
-                        role, created = UserRole.objects.get_or_create(user_id=user, project_id=project_id,
-                                                                       organization_id=org.id,
-                                                                       group_id=group_id, ended_at=None)
-                        if created:
-                            roles_created += 1
+                        try:
+                            role, created = UserRole.objects.get_or_create(user_id=user, project_id=project_id,
+                                                                           organization_id=org.id,
+                                                                           group_id=group_id, ended_at=None)
+                            if created:
+                                roles_created += 1
+                        
+                        except MultipleObjectsReturned:
+                            
+                            redundant_ids = UserRole.objects.filter(user_id=user, project_id=project_id,
+                            organization_id=org.id, group_id=group_id, ended_at=None).order_by('id').values('id')[1:]
+                            
+                            UserRole.objects.filter(pk__in=redundant_ids).update(ended_at=datetime.datetime.now()) 
+
                             # description = "{0} was assigned  as Project Manager in {1}".format(
                                 # role.user.get_full_name(), role.project)
                             # noti = role.logs.create(source=role.user, type=6, title=description, description=description,
@@ -1113,11 +1131,18 @@ def multiuserassignsite(task_prog_obj_id, source_user, project_id, sites, users,
             for site_id in sites:
                 site = Site.objects.get(pk=site_id)
                 for user in users:
-                  
-                    role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
+                    try:
+                        role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
                                                                    project__id=project.id, organization__id=site.project.organization_id, group_id=group_id, ended_at=None)
-                    if created:
-                        roles_created += 1
+                        if created:
+                            roles_created += 1
+
+                    except MultipleObjectsReturned:
+                        
+                        redundant_ids = UserRole.objects.filter(user_id=user, site_id=site.id, project__id=project.id, organization__id=site.project.organization_id, group_id=group_id, ended_at=None).order_by('id').values('id')[1:]
+                        
+                        UserRole.objects.filter(pk__in=redundant_ids).update(ended_at=datetime.datetime.now())
+
                    
                         # description = "{0} was assigned  as {1} in {2}".format(
                         #     role.user.get_full_name(), role.lgroup.name, role.project)
@@ -1189,12 +1214,20 @@ def multiuserassignregion(task_prog_obj_id, source_user, project_id, regions, us
                     
                     for user in users:
                         site = Site.objects.filter(pk=site_id['id']).first()
-                        if site and site.project_id == project.id: 
-                            role, created = UserRole.objects.get_or_create(user_id=user, site_id=site_id['id'],
-                                                                           project__id=project.id, organization__id=project.organization_id, group_id=group_id, ended_at=None)
-                            if created:
-                                roles_created += 1
-                           
+                        if site and site.project_id == project.id:
+                            try: 
+                                role, created = UserRole.objects.get_or_create(user_id=user, site_id=site_id['id'],
+                                                                               project__id=project.id, organization__id=project.organization_id, group_id=group_id, ended_at=None)
+                                if created:
+                                    roles_created += 1
+                            
+                            except MultipleObjectsReturned:
+                                
+                                redundant_ids = UserRole.objects.filter(user_id=user, site_id=site_id['id'],
+                                project__id=project.id, organization__id=project.organization_id, group_id=group_id, ended_at=None).order_by('id').values('id')[1:]
+                                
+                                UserRole.objects.filter(pk__in=redundant_ids).update(ended_at=datetime.datetime.now())
+   
                                 # description = "{0} was assigned  as {1} in {2}".format(
                                 #     role.user.get_full_name(), role.lgroup.name, role.project)
                                 # noti_type = 8
