@@ -120,7 +120,7 @@ def post_update_xform(xform_id, user):
                       id_string=existing_xform.id_string, title=existing_xform.title, uuid=existing_xform.uuid)
     xf.save()
 
-    existing_xform.logs.create(source=user, type=7, title="Kobo form Updated",
+    existing_xform.logs.create(source=user, type=20, title="Kobo form Updated",
                                 description="update kobo form ")
 
     send_message_koboform_updated(existing_xform)
