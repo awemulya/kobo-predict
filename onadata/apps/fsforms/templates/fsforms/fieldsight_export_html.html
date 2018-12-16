@@ -77,7 +77,7 @@
         <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
-        <th>{% trans 'Enketo Edit' %}</th>
+        <th colspan="2" class="text-center">{% trans 'Enketo' %}</th>
         <th>{% trans 'Delete' %}</th>
       </tr>
     </thead>
@@ -92,10 +92,16 @@
           <td>{{ sub.submitted_by.user_profile.getname }}</td>
           <td>{{ sub.date }}</td>
             <td>
-            <a href="{% url 'forms:edit_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">Edit</a>
+            <a class="badge badge-primary" href="{% url 'forms:view_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">View
+                <i class="la la-eye"></i></a>
+          </td>
+           <td>
+            <a class="badge badge-success" href="{% url 'forms:edit_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">Edit
+             <i class="la la-edit"></i></a>
           </td>
           <td>
-            <a href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}">Delete</a></span>
+            <a class="badge badge-danger" href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}">Delete
+             <i class="la la-close"></i></a></span>
           </td>
         </tr>        
     {% endfor %}
@@ -114,7 +120,7 @@
         <th>{% trans 'Submission' %} {% trans 'Id' %}</th>
         <th>{% trans 'Submitted' %} {% trans 'By' %}</th>
         <th>{% trans 'Submission' %} {% trans 'Date' %}</th>
-        <td>{% trans 'Enketo Edit' %}</td>
+        <td colspan="2"  class="text-center">{% trans 'Enketo' %}</td>
         <th>{% trans 'Delete' %}</th>
       </tr>
     </thead>
@@ -132,10 +138,15 @@
         <td>{{ sub.submitted_by.user_profile.getname }}</td>
         <td>{{ sub.date }}</td>
         <td>
-          <a href="{% url 'forms:edit_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">Edit</a>
+          <a class="badge badge-primary" href="{% url 'forms:edit_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">View
+           <i class="la la-eye"></i></a>
+        </td>
+          <td>
+          <a class="badge badge-success" href="{% url 'forms:edit_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">Edit
+           <i class="la la-edit"></i></a>
         </td>
         <td>
-            <a href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}">Delete</a></span>
+            <a class="badge badge-danger"href="{% url 'forms:delete-finstance' sub.instance.id %}?next={{ request.path|urlencode }}">Delete <i class="la la-close"></i></a></span>
         </td>
       </tr>
     {% endfor %}
@@ -227,30 +238,3 @@
  
 </script>
 {% endblock %}
-
-<!-- 
-<table>
-
-    <thead>
-        <tr>
-            <th>{% trans "View or Edit" %}</th>
-            {% for label in labels %}
-            <th><span class="cell-content-wrap">{{ label }}</span></th>
-            {% endfor %}
-        </tr>
-
-    </thead>
-
-    <tbody>
-    {% for submission_id, row in data  %}
-        <tr>
-            <th><a href="{% url 'forms:instance' fsxfid %}#/{{ submission_id|stringformat:'d' }}">{% trans "Open" %}</a></th>
-            {% for value in row %}
-            <td><span class="cell-content-wrap">{{ value }}</span></td>
-            {% endfor %}
-        </tr>
-    {% endfor %}
-
-    </tbody>
-
-</table> -->

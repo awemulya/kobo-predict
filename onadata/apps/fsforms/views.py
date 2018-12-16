@@ -50,7 +50,7 @@ from onadata.libs.utils.log import audit_log, Actions
 from onadata.libs.utils.logger_tools import response_with_mimetype_and_name
 from onadata.apps.fieldsight.mixins import group_required, LoginRequiredMixin, ProjectMixin, \
     CreateView, UpdateView, DeleteView, KoboFormsMixin, SiteMixin, SuperAdminMixin
-from onadata.libs.utils.viewer_tools import _get_form_url, enketo_url
+from onadata.libs.utils.viewer_tools import _get_form_url, enketo_url, enketo_view_url
 from .forms import AssignSettingsForm, FSFormForm, FormTypeForm, FormStageDetailsForm, FormScheduleDetailsForm, \
     StageForm, ScheduleForm, GroupForm, AddSubSTageForm, AssignFormToStageForm, AssignFormToScheduleForm, \
     AlterAnswerStatus, MainStageEditForm, SubStageEditForm, GeneralFSForm, GroupEditForm, GeneralForm, KoScheduleForm, \
@@ -2368,4 +2368,49 @@ def edit_data(request,  id_string, data_id):
     #             kwargs={'username': xform.user.username,
     #                     'id_string': id_string}))
     return HttpResponse("This form cannot be viewed in enketo. Please Report")
+
+
+def view_data(request,  id_string, data_id):
+    context = RequestContext(request)
+    xform = get_object_or_404(
+        XForm, id_string__exact=id_string)
+    instance = get_object_or_404(
+        Instance, pk=data_id, xform=xform)
+    instance_attachments = image_urls_dict(instance)
+    # check permission
+    # if not has_edit_permission(xform, owner, request, xform.shared):
+    #     return HttpResponseForbidden(_(u'Not shared.'))
+    if not hasattr(settings, 'ENKETO_URL'):
+        return HttpResponseRedirect(reverse(
+            'onadata.apps.main.views.show',
+            kwargs={'username': xform.user.username, 'id_string': id_string}))
+
+    url = '%sdata/edit_url' % settings.ENKETO_URL
+    # see commit 220f2dad0e for tmp file creation
+    injected_xml = inject_instanceid(instance.xml, instance.uuid)
+    form_url = _get_form_url(request, xform.user.username, settings.ENKETO_PROTOCOL)
+    print(form_url, "TRANSFORM FORM URLl")
+
+    try:
+        url = enketo_view_url(
+            form_url, xform.id_string, instance_xml=injected_xml,
+            instance_id=instance.uuid, return_url="",
+            instance_attachments=instance_attachments
+        )
+    except Exception as e:
+        context.message = {
+            'type': 'alert-error',
+            'text': u"Enketo error, reason: %s" % e}
+        messages.add_message(
+            request, messages.WARNING,
+            _("Enketo error: enketo replied %s") % e, fail_silently=True)
+    else:
+        if url:
+            context.enketo = url
+            return HttpResponseRedirect(url)
+    # return HttpResponseRedirect(
+    #     reverse('onadata.apps.main.views.show',
+    #             kwargs={'username': xform.user.username,
+    #                     'id_string': id_string}))
+    return HttpResponse("This form cannot be viewed in enketo. Please Report With submission id")
 

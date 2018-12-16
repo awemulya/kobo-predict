@@ -11,6 +11,7 @@ from onadata.apps.fsforms.viewsets.StageViewset import SiteMainStageViewSet, \
 from onadata.apps.fsforms.viewsets.ConfigureStageViewset import StageListViewSet, SubStageListViewSet, \
     SubStageDetailViewSet, EmViewSet, DeployViewset, FInstanceViewset
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
+from onadata.libs.utils.viewer_tools import enketo_view_url
 from .views import (
     LibraryFormsListView,
     XformDetailView,
@@ -51,7 +52,7 @@ from .views import (
     DeleteFInstance,
     FormFillView, CreateKoboFormView, DeleteFieldsightXF,
 
-    FormPreviewView, download_submission, download_xml_version, get_attachments_of_finstance, edit_data)
+    FormPreviewView, download_submission, download_xml_version, get_attachments_of_finstance, edit_data, view_data)
 
 
 urlpatterns = [
@@ -206,6 +207,7 @@ urlpatterns = urlpatterns + [
     url(r'^api/days/', DayViewset.as_view({'get': 'list'}), name='days'),
     url(r'^instance/status/(?P<instance>\d+)$', instance_status, name='instance_status'),
     url(r'^edit/(?P<id_string>[^/]+)/(?P<data_id>\d+)$', edit_data, name='edit_data'),
+    url(r'^view/(?P<id_string>[^/]+)/(?P<data_id>\d+)$', view_data, name='view_data'),
     url(r'^api/instance/download_submission/(?P<pk>\d+)$', download_submission, name='download_submission'),
     url(r'^api/instance/download_xml_version/(?P<pk>\d+)$', download_xml_version, name='download_xml_version'),
     url(r'^api/instance/get_attachments_of_finstance/(?P<pk>\d+)$', get_attachments_of_finstance, name='get_attachments_of_finstance'),

@@ -266,6 +266,66 @@ def enketo_url(form_url, id_string, instance_xml=None,
     return False
 
 
+def enketo_view_url(form_url, id_string, instance_xml=None,
+               instance_id=None, return_url=None, instance_attachments=None):
+    if not hasattr(settings, 'ENKETO_URL')\
+            and not hasattr(settings, 'ENKETO_API_SURVEY_PATH'):
+        return False
+
+    if instance_attachments is None:
+        instance_attachments = {}
+
+
+    values = {
+        'form_id': id_string,
+        'server_url': form_url
+    }
+    if instance_id is not None and instance_xml is not None:
+        # url = settings.ENKETO_URL + '/api/v2/instance'
+        # print(settings.KOBOCAT_URL)
+        url =  settings.ENKETO_URL + settings.ENKETO_API_INSTANCE_PATH + "/view"
+        values.update({
+            'instance': instance_xml,
+            'instance_id': instance_id,
+            'return_url': return_url
+        })
+        for key, value in instance_attachments.iteritems():
+            values.update({
+                'instance_attachments[' + key + ']': value
+            })
+        values['instance'] = clean_xml_for_enketo(
+            [k for k in values.keys() if "instance_attachments" in k],
+            values['instance'])
+        print("Tokennnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn" + settings.ENKETO_API_TOKEN, )
+    req = requests.post(url, data=values,
+                        auth=(settings.ENKETO_API_TOKEN, ''), verify=False)
+    print(req.status_code, "status code")
+    if req.status_code in [200, 201]:
+        try:
+            response = req.json()
+            print("enketo response ", response)
+        except ValueError:
+            pass
+        else:
+            if 'view_url' in response:
+                print(response['view_url'])
+                return response['view_url']
+            if settings.ENKETO_OFFLINE_SURVEYS and ('offline_url' in response):
+                return response['offline_url']
+            if 'url' in response:
+                return response['url']
+    else:
+        try:
+            response = req.json()
+            print(req.json(), "*******************************")
+        except ValueError:
+            pass
+        else:
+            if 'message' in response:
+                raise EnketoError(response['message'])
+    return False
+
+
 def create_attachments_zipfile(attachments, temporary_file=None):
     if not temporary_file:
         temporary_file = NamedTemporaryFile()
