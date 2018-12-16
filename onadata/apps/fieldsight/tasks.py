@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 import time
 import json
-import xlwt
 import datetime
 from datetime import date
 from django.db import transaction
@@ -20,10 +19,20 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.db.models import Prefetch
 from .generatereport import PDFReport
-import tempfile, zipfile
+import os, tempfile, zipfile
+from django.conf import settings
+
+from django.http import HttpResponse
+from django.core.servers.basehttp import FileWrapper
+from openpyxl import Workbook
+
+from openpyxl.styles import Font
+
 from django.core.files.storage import get_storage_class
 from onadata.libs.utils.viewer_tools import get_path
 from PIL import Image
+import tempfile, zipfile
+from onadata.libs.utils.viewer_tools import get_path
 import pyexcel as p
 from .metaAttribsGenerator import get_form_answer, get_form_sub_status, get_form_submission_count, get_form_ques_ans_status
 from django.conf import settings
@@ -693,19 +702,23 @@ def siteDetailsGenerator(project, sites, ws):
                     pass
                     
         row_num = 0
-        font_style = xlwt.XFStyle()
-        font_style.font.bold = True
-        for col_num in range(len(header_columns)):
-            ws.write(row_num, col_num, header_columns[col_num]['name'], font_style)
-        row_num += 1
-
-        font_style_unbold = xlwt.XFStyle()
-        font_style_unbold.font.bold = False
         
+        header_row=[]
+        for col_num in range(len(header_columns)):
+            # header_cell=WriteOnlyCell(ws, value=header_columns[col_num]['name'])
+            # header_cell=Font(name='Courier', size=16)
+            header_row.append(header_columns[col_num]['name'])
+            
+        ws.append(header_row)
+        
+
+
         for key,site in site_list.iteritems():
+        #    ws.append([site.get(header_columns[col_num]['id']) for col_num in range(len(header_columns))])
+            row=[]
             for col_num in range(len(header_columns)):
-                ws.write(row_num, col_num, site.get(header_columns[col_num]['id'], ""), font_style_unbold)
-            row_num += 1
+                row.append(site.get(header_columns[col_num]['id'], ""))    
+            ws.append(row)
         return True, 'success'
 
     except Exception as e:
@@ -725,10 +738,11 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
     task.save()
 
     try:
-        file_io = BytesIO()
-        wb = xlwt.Workbook(encoding='utf-8')
-        ws = wb.add_sheet('Sites')
-
+        buffer = BytesIO()
+        wb = Workbook()
+        ws = wb.active
+        ws.title='Sites Detail'
+        sites = project.sites.all().order_by('identifier')
         if region_id:
             if region_id == "0":
                 sites = project.sites.filter(is_active=True, region_id=None).order_by('identifier')
@@ -743,11 +757,11 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         if not status:
             raise ValueError(message)
 
-        wb.save(file_io)
-        file_io.seek(0)
-        xls = file_io.getvalue()
-        xls_url = default_storage.save(project.name + '/sites/'+project.name+'-details.xls', ContentFile(xls))
-        file_io.close()
+        wb.save(buffer)
+        buffer.seek(0)
+        xls = buffer.getvalue()
+        xls_url = default_storage.save(project.name + '/sites/'+project.name+'-details.xlsx', ContentFile(xls))
+        buffer.close()
         task.file.name = xls_url
 
         task.status = 2
@@ -766,7 +780,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
                                    content_object=project, recipient=source_user,
                                    extra_message="@error " + u'{}'.format(e.message))
     else:
-        file_io.close()
+        buffer.close()
 
 
 @shared_task(time_limit=7200, soft_time_limit=7200)
@@ -805,105 +819,98 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
         new_enddate = end + datetime.timedelta(days=1)
 
         forms = FieldSightXF.objects.select_related('xf').filter(pk__in=fs_ids, is_survey=False, is_deleted=False).prefetch_related(Prefetch('project_form_instances', queryset=FInstance.objects.select_related('instance').filter(site_id__in=sites, date__range=[new_startdate, new_enddate]))).order_by('-is_staged', 'is_scheduled')
-        wb = xlwt.Workbook(encoding='utf-8')
+        wb = Workbook()
+        ws_site_details = wb.active
+        ws_site_details.title = "Site Details"
         form_id = 0
         form_names=[]
         
-        for form in forms:
-            form_id += 1
-            form_names.append(form.xf.title)
-            occurance = form_names.count(form.xf.title)
+        def generate_sheet_name(form_name):
+            form_names.append(form_name)
+            occurance = form_names.count(form_name)
 
-            if occurance > 1 and len(form.xf.title) > 25:
-                sheet_name = form.xf.title[:25] + ".." + "(" +str(occurance)+ ")"
-            elif occurance > 1 and len(form.xf.title) < 25:
-                sheet_name = form.xf.title + "(" +str(occurance)+ ")"
-            elif len(form.xf.title) > 29:
-                sheet_name = form.xf.title[:29] + ".."
+            if occurance > 1 and len(form_name) > 25:
+                sheet_name = form_name[:25] + ".." + "(" +str(occurance)+ ")"
+            elif occurance > 1 and len(form_name) < 25:
+                sheet_name = form_name + "(" +str(occurance)+ ")"
+            elif len(form_name) > 29:
+                sheet_name = form_name[:29] + ".."
             else:
-                sheet_name = form.xf.title
+                sheet_name = form_name
             
             for ch in ["[", "]", "*", "?", ":", "/"]:
                 if ch in sheet_name:
                     sheet_name=sheet_name.replace(ch,"_")
+
+            return sheet_name
+
+        for form in forms:
+            form_id += 1
+            sheet_name = generate_sheet_name(form.xf.title)
+            ws=wb.create_sheet(title=sheet_name)
             
-            ws = wb.add_sheet(sheet_name)
-            row_num = 1
-            font_style = xlwt.XFStyle()
             head_columns = [{'question_name':'No Submission','question_label':'No Submission'}]
             repeat_questions = []
-            repeat_answers = {}
+            repeat_answers = []
 
+            ws.append(['Header'])
 
             for formresponse in form.project_form_instances.all():
-                
                 if formresponse.site:
                     if not formresponse.site_id in response_sites:
                         response_sites.append(formresponse.site_id)
                     
-                    questions, answers, r_questions, r_answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url, form.xf.user.username)
+                    questions, answers, r_question_answers, r_ques = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url, form.xf.user.username)
                     answers['identifier'] = formresponse.site.identifier
                     answers['name'] = formresponse.site.name
                     answers['status'] = formresponse.get_form_status_display()
                     
-                    if r_questions:
-                        if not repeat_questions:
-                            repeat_questions = r_questions
-                        repeat_answers[formresponse.site.identifier] = {'name': formresponse.site.name, 'answers':r_answers}
+                    if r_question_answers:
+
+                        repeat_answers.append({'name': formresponse.site.name, 'identifier': formresponse.site.identifier, 'repeated': r_question_answers })
 
                     if len([{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}] + questions) > len(head_columns):
                         head_columns = [{'question_name':'identifier','question_label':'identifier'}, {'question_name':'name','question_label':'name'}, {'question_name':'status','question_label':'status'}] + questions  
+                    row=[]
 
                     for col_num in range(len(head_columns)):
-                        ws.write(row_num, col_num, answers[head_columns[col_num]['question_name']], font_style)
-                    
-                    row_num += 1
-            
-
-            font_style.font.bold = True
+                        row.append(answers.get(head_columns[col_num]['question_name'], ""))    
+                    ws.append(row)
 
             for col_num in range(len(head_columns)):
-                ws.write(0, col_num, head_columns[col_num]['question_label'], font_style)
+                ws.cell(row=1, column=col_num+1).value = head_columns[col_num].get('question_label', "")
             
-            font_style.font.bold = False
-            if repeat_questions:
-                max_repeats = 0
-                wr = wb.add_sheet(str(form_id)+"repeated")
-                row_num = 1
-                font_style = xlwt.XFStyle()
-                
-                for k, site_r_answers in repeat_answers.items():
-                    col_no = 2
-                    wr.write(row_num, 1, k, font_style)
-                    wr.write(row_num, 2, site_r_answers['name'], font_style)
+            
+            if repeat_answers:
+                for group_id, group in repeat_answers[0]['repeated'].items():
                     
-                    if max_repeats < len(site_r_answers['answers']):
-                        max_repeats = len(site_r_answers['answers'])
+                    sheet_name = generate_sheet_name("rep-"+group_id)
+                    print sheet_name
+                    wr=wb.create_sheet(title=sheet_name)
+                    wr.append(['Header'])
+                    for repeat in repeat_answers:
 
-                    for answer in site_r_answers['answers']:
-                        for col_num in range(len(repeat_questions)):
-                            wr.write(row_num, col_no + col_num, answer[repeat_questions[col_num]['question_name']], font_style)
-                            col_no += 1
+                        for answer in repeat['repeated'][group_id]['answers']:
+                            row = [repeat['identifier'], repeat['name']]
+                            for question in group['questions']:
+                                row.append(answer.get(question['question_name'], ""))    
+                            wr.append(row)
+                                
 
-                row_num += 1
-            
+                    wr.cell(row=1, column=1).value = 'Identifier'
+                    wr.cell(row=1, column=2).value = 'Name'
 
-                font_style.font.bold = True
-                wr.write(row_num, 1, 'Identifier', font_style)
-                wr.write(row_num, 2, 'name', font_style)
-                col_no=2
+                    #for loop needed.
+                    for col_num in range(len(group['questions'])):
+                        wr.cell(row=1, column=col_num+3).value = group['questions'][col_num]['question_label']
+                        
 
-                #for loop needed.
-                for m_repeats in range(max_repeats):
-                    for col_num in range(len(head_columns)):
-                        wr.write(0, col_num, head_columns[col_num]['question_label'], font_style)    
-                        col_no += 1 
         if not forms:
             ws = wb.add_sheet('No Forms')
-        ws=wb.add_sheet('Site Details')
+        
 
         sites = Site.objects.filter(pk__in=response_sites)
-        status, message = siteDetailsGenerator(project, sites, ws)
+        status, message = siteDetailsGenerator(project, sites, ws_site_details)
         if not status:
             raise ValueError(message)
 
@@ -919,6 +926,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
         noti = task.logs.create(source=source_user, type=32, title="Xls Report generation in project",
                                    recipient=source_user, content_object=task, extra_object=project,
                                    extra_message=" <a href='"+ task.file.url +"'>Xls report</a> generation in project")
+        
 
     except Exception as e:
         task.description = "ERROR: " + str(e.message) 
@@ -930,6 +938,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
                                        content_object=project, recipient=source_user,
                                        extra_message="@error " + u'{}'.format(e.message))
         buffer.close()
+
         
 @shared_task()
 def importSites(task_prog_obj_id, source_user, f_project, t_project, meta_attributes, regions, ignore_region):
