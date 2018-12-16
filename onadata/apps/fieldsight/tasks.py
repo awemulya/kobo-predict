@@ -779,7 +779,6 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         task.logs.create(source=source_user, type=432, title="Xls Report generation in project",
                                    content_object=project, recipient=source_user,
                                    extra_message="@error " + u'{}'.format(e.message))
-    else:
         buffer.close()
 
 
@@ -860,7 +859,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
                     if not formresponse.site_id in response_sites:
                         response_sites.append(formresponse.site_id)
                     
-                    questions, answers, r_question_answers, r_ques = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url, form.xf.user.username)
+                    questions, answers, r_question_answers = parse_form_response(json.loads(form.xf.json)['children'], formresponse.instance.json, base_url, form.xf.user.username)
 
                     answers['identifier'] = formresponse.site.identifier
                     answers['name'] = formresponse.site.name
