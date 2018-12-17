@@ -3,6 +3,8 @@
 {% load i18n staticfiles %}
 {% load filters %}
 {% block extracss %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
 <style type="text/css">
 	.leaflet-bottom.leaflet-right{
 		display:none;
@@ -11,13 +13,12 @@
 		display: none;
 	}
 </style>
-    <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
-    <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}">
-    <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}">
+
  <!-- SLider css external pravin -slick  -->
     <!--<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>-->
     <!--<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>-->
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.css">
+<link rel="stylesheet" href="{% static 'dummy/assets/css/style.css' %}">
 {% endblock %}
 {%block kocript %}
 <link rel="stylesheet" href="{% static 'css/toastr.css' %}">
@@ -62,9 +63,11 @@ assigntoken(csrf_token);
 {% csrf_token %}
 <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg" role="document">
+		{% verbatim %}
 		<div class="modal-content" id="generateReport">
 		
 		</div>
+		{% endverbatim %}
 	</div>
 </div>
 
@@ -86,9 +89,10 @@ assigntoken(csrf_token);
 				<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
 					<div class="modal-dialog" role="document">
 						{% verbatim %}
-						<div class="modal-content">
-						<div id="exportSitesToProject" >
-						</div>
+				
+				<div class="modal-content">
+							<div id="exportSitesToProject" >
+							</div>
 						</div>
 						{% endverbatim %}
 					</div>
@@ -549,12 +553,13 @@ var static_url ="{{ STATIC_URL }}";
 <script src="{% static 'js/fieldsight/manage_project_dashboard.js' %}?v=1.1"></script>
 <script src="{% static 'js/fieldsight/site_export.js' %}?v=0.4"></script>
 <script src="{% static 'js/fieldsight/loglist.js' %}?v=0.6"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.css">
-<script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script>
-<script src="{% static 'js/forms/vue-resource.min.js' %}"></script>
+<!-- <script type="text/javascript" src="{% static 'vendor/vue.js' %}"></script> -->
+<!-- <script src="{% static 'js/forms/vue-resource.min.js' %}"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.js"></script>
 <script src="{% static 'js/fieldsight/report_vue.js' %}?v=0.6"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" /> -->
+
 
 
 {% endblock %}
+
