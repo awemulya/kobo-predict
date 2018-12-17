@@ -144,10 +144,10 @@ class ExportProjectSitesWithRefs(DonorRoleMixin, View):
         source_user = self.request.user   
         project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
         content_type = ContentType.objects.get(model='project', app_label='fieldsight')
-        if CeleryTaskProgress.objects.filter(user=source_user, content_type=content_type, object_id=project.id, task_type=8, status__in=[0,1]).exists():
-            status, data = 200, {'status': 'true',
-                                 'message': 'The sites details xls file is already being generated. You will be notified after the file is generated.'}
-            return JsonResponse(data, status=status)
+        # if CeleryTaskProgress.objects.filter(user=source_user, content_type=content_type, object_id=project.id, task_type=8, status__in=[0,1]).exists():
+        #     status, data = 200, {'status': 'true',
+        #                          'message': 'The sites details xls file is already being generated. You will be notified after the file is generated.'}
+        #     return JsonResponse(data, status=status)
 
         task_obj = CeleryTaskProgress.objects.create(user=source_user, content_object=project, task_type=8)
         if task_obj:
