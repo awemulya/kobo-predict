@@ -2306,16 +2306,10 @@ def download_xml_version(request, pk):
 
 @api_view(['GET'])
 def get_attachments_of_finstance(request,pk):
-    from django.core.files.storage import get_storage_class
-    default_storage = get_storage_class()()
-    finstance = get_object_or_404(FInstance, pk__exact=pk)
-    response_list = []
-    attachemtns = Attachment.objects.filter(instance=finstance.instance)
-    for a in attachemtns:
-        link = default_storage.url(a.media_file.url)
-        # response_list.append(link)
-        response_list.append(a.media_file.url)
-    return Response(response_list, status=status.HTTP_200_OK)
+    instance = FInstance.objects.get(pk=pk).instance
+    instance_attachments = image_urls_dict(instance)
+
+    return Response(instance_attachments, status=status.HTTP_200_OK)
 
 
 def edit_data(request,  id_string, data_id):
