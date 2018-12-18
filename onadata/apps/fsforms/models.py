@@ -15,7 +15,8 @@ from django.db.models.signals import post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 from jsonfield import JSONField
-from pyxform import create_survey_from_xls
+from pyxform import create_survey_from_xls, SurveyElementBuilder
+from pyxform.xform2json import create_survey_element_from_xml
 from xml.dom import Node
 
 from onadata.apps.fieldsight.models import Site, Project, Organization
@@ -351,6 +352,10 @@ class FieldSightXF(models.Model):
         if self.fsform:
             self.fsform.pk
         return None
+
+    @property
+    def has_versions(self):
+        return not self.xf.fshistory.exists()
 
     def __unicode__(self): 
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
@@ -824,6 +829,19 @@ class XformHistory(models.Model):
                 self.has_start_time = True
             else:
                 self.has_start_time = False
+
+        def get_survey(self):
+            if not hasattr(self, "_survey"):
+                try:
+                    builder = SurveyElementBuilder()
+                    self._survey = \
+                        builder.create_survey_element_from_json(self.json)
+                except ValueError:
+                    xml = bytes(bytearray(self.xml, encoding='utf-8'))
+                    self._survey = create_survey_element_from_xml(xml)
+            return self._survey
+
+        survey = property(get_survey)
 
 
 class SubmissionOfflineSite(models.Model):

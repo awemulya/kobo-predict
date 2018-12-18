@@ -6,6 +6,7 @@ from base64 import b64decode
 import datetime
 from bson import json_util
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
@@ -2407,4 +2408,51 @@ def view_data(request,  id_string, data_id):
     #             kwargs={'username': xform.user.username,
     #                     'id_string': id_string}))
     return HttpResponse("This form cannot be viewed in enketo. Please Report With submission id")
+
+
+class FormVersions(LoginRequiredMixin, View):
+
+    def dispatch(self, request, *args, **kwargs):
+        is_project = kwargs.get("is_project")
+        fsfid = kwargs.get("fsfid")
+        fsf = FieldSightXF.objects.get(pk=fsfid)
+        if is_project == "1":
+            project = fsf.project
+        else:
+            project = fsf.site.project
+        project_id = project.id
+        kwargs['project'] = project_id
+        kwargs['obj'] = project
+        kwargs['fsf'] = fsf
+
+        kwargs['versions'] = XformHistory.objects.filter(xform=fsf.xf)
+        kwargs['latest'] = fsf.xf
+
+
+        if request.group.name == "Super Admin":
+            return super(FormVersions, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+        user_role = request.roles.filter(project_id=project_id, group_id=2)
+
+        if user_role:
+            return super(FormVersions, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+
+        organization_id = Project.objects.get(pk=project_id).organization.id
+        user_role_asorgadmin = request.roles.filter(organization_id=organization_id, group_id=1)
+
+        if user_role_asorgadmin:
+            return super(FormVersions, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+
+        user_role_asdonor = request.roles.filter(project_id=project_id, group_id=7)
+        if user_role_asdonor:
+            return super(FormVersions, self).dispatch(request, is_donor_only=True, *args, **kwargs)
+
+        raise PermissionDenied()
+
+    def get(self,request, is_project=0, fsfid=None, **kwargs):
+        data = {'is_donor_only': kwargs.get('is_donor_only', False),
+                       }
+        data.update(**kwargs)
+        return render(request, "fsforms/form_versions.html",
+                      data)
+
 
