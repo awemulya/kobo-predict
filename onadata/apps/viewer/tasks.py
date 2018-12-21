@@ -14,7 +14,7 @@ from onadata.libs.utils.export_tools import generate_export,\
 from onadata.libs.utils.logger_tools import mongo_sync_status, report_exception
 
 
-def create_async_export(xform, export_type, query, force_xlsx, options=None, is_project=None, id=None, site_id=None):
+def create_async_export(xform, export_type, query, force_xlsx, options=None, is_project=None, id=None, site_id=None, version="0"):
     username = xform.user.username
     id_string = xform.id_string
 
@@ -22,7 +22,7 @@ def create_async_export(xform, export_type, query, force_xlsx, options=None, is_
         site_id_int = 0
         if site_id is not None:
             site_id_int = int(site_id)
-        return Export.objects.create(xform=xform, export_type=export_type, fsxf=FieldSightXF.objects.get(pk=id), site=site_id_int)
+        return Export.objects.create(xform=xform, export_type=export_type, fsxf=FieldSightXF.objects.get(pk=id), site=site_id_int, version=version)
 
     # Generate a placeholder `Export` object to be populated with the export file.
     export = _create_export(xform, export_type)

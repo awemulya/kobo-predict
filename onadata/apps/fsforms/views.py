@@ -2448,7 +2448,7 @@ class FormVersions(LoginRequiredMixin, View):
 
         raise PermissionDenied()
 
-    def get(self,request, is_project=0, fsfid=None, **kwargs):
+    def get(self,request, **kwargs):
         data = {'is_donor_only': kwargs.get('is_donor_only', False),
                        }
         data.update(**kwargs)

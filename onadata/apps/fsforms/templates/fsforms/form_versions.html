@@ -50,28 +50,27 @@
                        <td>
                           {{ latest.title }}
                       </td>
-
                   <td>
                          {% trans 'Latest' %}
                       </td>
-
                       <td>
                       {% trans 'Latest' %}
-
                       </td>
-
-
+                   {% with fsf|is_project_val:is_project|version_submission_data:latest as submission_data %}
                       <td>
-
-
-                      </td>    <td>
-
-
+                          {{ submission_data.date }}
                       </td>
                   <td>
-
-
+                       {{ submission_data.count }}
+                   </td>
+                               <td>
+                         {% if submission_data.has_submissions %}
+                           <a class="badge badge-success" target="_blank"
+                         href="{% url 'onadata.apps.viewer.views.export_list' fsf.xf.user.username fsf.xf.id_string 'xls' is_project fsf.id 0 submission_data.version %}">
+                          <i class="la la-download" aria-hidden="true"></i> Download</a>
+                         {% endif %}
                       </td>
+                           {% endwith %}
 
                   </tr>
               {% for obj in versions %}
@@ -86,18 +85,21 @@
                           {{ obj.date }}
                       </td>
 
+                     {% with fsf|is_project_val:is_project|version_submission_data:obj as submission_data %}
                       <td>
-
+                          {{ submission_data.date }}
                       </td>
-
-
-                      <td>
-
-
-                      </td>     <td>
-
-
+                  <td>
+                       {{ submission_data.count }}
+                   </td>
+                     <td>
+                         {% if submission_data.has_submissions %}
+                           <a class="badge badge-success" target="_blank"
+                         href="{% url 'onadata.apps.viewer.views.export_list' fsf.xf.user.username fsf.xf.id_string 'xls' is_project fsf.id 0 obj.version %}">
+                          <i class="la la-download" aria-hidden="true"></i> Download</a>
+                         {% endif %}
                       </td>
+                           {% endwith %}
 
                   </tr>
               {% endfor %}
@@ -109,5 +111,6 @@
 
       </div>
     </div>
+</div>
 </div>
 {% endblock %}
