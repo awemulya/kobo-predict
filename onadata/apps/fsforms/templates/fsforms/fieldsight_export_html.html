@@ -138,7 +138,7 @@
         <td>{{ sub.submitted_by.user_profile.getname }}</td>
         <td>{{ sub.date }}</td>
         <td>
-          <a class="badge badge-primary" href="{% url 'forms:edit_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">View
+          <a class="badge badge-primary" href="{% url 'forms:view_data' sub.project_fxf.xf.id_string sub.instance.id %}" target="_blank">View
            <i class="la la-eye"></i></a>
         </td>
           <td>
