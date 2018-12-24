@@ -66,7 +66,7 @@
                                <td>
                          {% if submission_data.has_submissions %}
                            <a class="badge badge-success" target="_blank"
-                         href="{% url 'onadata.apps.viewer.views.export_list' fsf.xf.user.username fsf.xf.id_string 'xls' is_project fsf.id 0 submission_data.version %}">
+                         href="{% url 'onadata.apps.viewer.views.export_list' fsf.xf.user.username fsf.xf.id_string 'xls' is_project fsf.id site submission_data.version %}">
                           <i class="la la-download" aria-hidden="true"></i> Download</a>
                          {% endif %}
                       </td>
@@ -95,7 +95,7 @@
                      <td>
                          {% if submission_data.has_submissions %}
                            <a class="badge badge-success" target="_blank"
-                         href="{% url 'onadata.apps.viewer.views.export_list' fsf.xf.user.username fsf.xf.id_string 'xls' is_project fsf.id 0 obj.version %}">
+                         href="{% url 'onadata.apps.viewer.views.export_list' fsf.xf.user.username fsf.xf.id_string 'xls' is_project fsf.id site obj.version %}">
                           <i class="la la-download" aria-hidden="true"></i> Download</a>
                          {% endif %}
                       </td>

@@ -163,6 +163,8 @@ urlpatterns = urlpatterns + [
         url(r'^forms/alter-answer-status/(?P<instance_id>\d+)/(?P<status>\d)/(?P<fsid>\d+)$', alter_answer_status, name='alter-answer-status'),
         url(r'submissions/detailed/(?P<fsxf_id>\d+)$', FullResponseTable.as_view(), name='project_html_table_export'),
         url(r'submissions/versions/(?P<is_project>\d)/(?P<fsfid>\d+)$', FormVersions.as_view(), name='form_versions'),
+        url(r'submissions/versions/(?P<is_project>\d)/(?P<fsfid>\d+)/(?P<site>\d+)$', FormVersions.as_view(), name='form_versions'),
+
 ]
 
 urlpatterns = urlpatterns + [

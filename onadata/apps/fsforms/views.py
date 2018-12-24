@@ -290,7 +290,7 @@ def stage_add(request, site_id=None):
 class ProjectResponses(ReadonlyProjectLevelRoleMixin, View): 
     def get(self,request, pk=None, **kwargs):
         obj = get_object_or_404(Project, pk=pk)
-        schedules = Schedule.objects.filter(project_id=pk, schedule_forms__is_deleted=False, site__isnull=True, schedule_forms__isnull=False)
+        schedules = Schedule.objects.filter(project_id=pk, schedule_forms__is_deleted=False, site__isnull=True, schedule_forms__isnull=False, schedule_forms__xf__isnull=False)
         stages = Stage.objects.filter(stage__isnull=True, project_id=pk, stage_forms__isnull=True).order_by('order')
         generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_deleted=False, project_id=pk, is_survey=False)
         surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_deleted=False, project_id=pk, is_survey=True)
@@ -2416,14 +2416,17 @@ class FormVersions(LoginRequiredMixin, View):
         is_project = kwargs.get("is_project")
         fsfid = kwargs.get("fsfid")
         fsf = FieldSightXF.objects.get(pk=fsfid)
+        site = self.kwargs.get('site', 0)
         if is_project == "1":
             project = fsf.project
         else:
-            project = fsf.site.project
+            site_obj = Site.objects.get(pk=site)
+            project = site_obj.project
         project_id = project.id
         kwargs['project'] = project_id
         kwargs['obj'] = project
         kwargs['fsf'] = fsf
+        kwargs['site'] = site
 
         kwargs['versions'] = XformHistory.objects.filter(xform=fsf.xf)
         kwargs['latest'] = fsf.xf
