@@ -321,7 +321,7 @@ class SiteDashboardView(SiteRoleMixin, TemplateView):
             'has_progress_chart': has_progress_chart,
             'meta_data': myanswers,
             'is_supervisor_only': is_supervisor_only,
-            'next_photos_count':total_count - 5,
+            'next_photos_count':total_count - 5 if total_count > 5 else 0,
             'total_photos': total_count,
             'total_submissions': response['flagged'] + response['approved'] + response['rejected'] + response['outstanding']
             
@@ -3010,7 +3010,7 @@ class DonorSiteDashboard(DonorSiteViewRoleMixin, TemplateView):
             'progress_chart_data_data': progress_chart_data.keys(),
             'progress_chart_data_labels': progress_chart_data.values(),
             'meta_data': myanswers,
-            'next_photos_count':total_count - 5,
+            'next_photos_count':total_count - 5 if total_count > 5 else 0,
             'total_photos': total_count,
             'total_submissions': outstanding + flagged + approved + rejected
         }
