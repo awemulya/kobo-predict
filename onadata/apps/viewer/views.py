@@ -295,7 +295,7 @@ def data_export(request, username, id_string, export_type):
 
 @login_required
 @require_POST
-def create_export(request, username, id_string, export_type, is_project=None, id=None, site_id=None):
+def create_export(request, username, id_string, export_type, is_project=None, id=None, site_id=0, version="0"):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
     if not has_forms_permission(xform, owner, request):
@@ -306,12 +306,18 @@ def create_export(request, username, id_string, export_type, is_project=None, id
         if not MetaData.external_export(xform=xform):
             return HttpResponseForbidden(_(u'No XLS Template set.'))
 
-    query = request.POST.get("query")
     if is_project == 1 or is_project == '1':
-        query = {"fs_project_uuid" : str(id)}
+        query = {"fs_project_uuid": str(id)}
     else:
-        query = {"fs_uuid": str(id)}
-    force_xlsx = request.POST.get('xls') != 'true'
+        fsxf = FieldSightXF.objects.get(pk=id)
+        if fsxf.site:
+            query = {"fs_uuid": str(id)}
+        else:
+            query = {"fs_project_uuid": str(id), "fs_site": str(site_id)}
+    force_xlsx = True
+    if version not in ["0", 0]:
+        query["__version__"] = version
+    print("query at excel generation", query)
 
     # export options
     group_delimiter = request.POST.get("options[group_delimiter]", '/')
@@ -336,7 +342,7 @@ def create_export(request, username, id_string, export_type, is_project=None, id
     }
 
     try:
-        create_async_export(xform, export_type, query, force_xlsx, options, is_project, id)
+        create_async_export(xform, export_type, query, force_xlsx, options, is_project, id, site_id, version)
     except Export.ExportTypeError:
         return HttpResponseBadRequest(
             _("%s is not a valid export type" % export_type))
@@ -358,10 +364,10 @@ def create_export(request, username, id_string, export_type, is_project=None, id
             "export_type": export_type,
             "is_project": is_project,
             "id": id,
+            "version":version
         }
 
-        if site_id is not None:
-            kwargs['site_id'] = site_id
+        kwargs['site_id'] = site_id
         return HttpResponseRedirect(reverse(
             export_list,
             kwargs=kwargs)
@@ -385,13 +391,7 @@ def _get_google_token(request, redirect_to_url):
     return token
 
 
-def export_list(request, username, id_string, export_type, is_project=None, id=None,site_id=None):
-    print("username",username)
-    print("id_string",id_string)
-    print("export_type",export_type)
-    print("is_project",is_project)
-    print(" id",  id)
-    print("site_id", site_id)
+def export_list(request, username, id_string, export_type, is_project=0, id=0, site_id=0, version="0"):
     if export_type == Export.GDOC_EXPORT:
         return HttpResponseForbidden(_(u'Not shared.'))
         token = _get_google_token(request, redirect_url)
@@ -412,7 +412,7 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
         'meta': export_meta,
         'token': export_token,
     }
-    if should_create_new_export(xform, export_type, id, site_id):
+    if should_create_new_export(xform, export_type, id, site_id, version):
 
         if is_project == 1 or is_project == '1':
             query = {"fs_project_uuid": str(id)}
@@ -423,9 +423,12 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
             else:
                 query = {"fs_project_uuid": str(id), "fs_site": str(site_id)}
         force_xlsx = True
-        print("query at view", query)
+        if version not in ["0", 0]:
+            query["__version__"] = version
+        print("query at excel generation", query)
         try:
-            create_async_export(xform, export_type, query, force_xlsx, options, is_project, id,site_id)
+            create_async_export(xform, export_type, query,
+                                force_xlsx, options, is_project, id, site_id, version)
         except Export.ExportTypeError:
             return HttpResponseBadRequest(
                 _("%s is not a valid export type" % export_type))
@@ -443,17 +446,18 @@ def export_list(request, username, id_string, export_type, is_project=None, id=N
         'export_type': export_type,
         'export_type_name': Export.EXPORT_TYPE_DICT[export_type],
         'exports': Export.objects.filter(
-            xform=xform, export_type=export_type, fsxf=id).order_by('-created_on'),
+            xform=xform, export_type=export_type, fsxf=id, site=site_id, version=version).order_by('-created_on'),
         'metas': metadata,
         'is_project': is_project,
         'id': id,
+        'version': version,
             }
-    if site_id is not None:
-        data['site_id'] = site_id
+    data['site_id'] = site_id
+
     return render(request, 'export_list.html', data)
 
 
-def export_progress(request, username, id_string, export_type):
+def export_progress(request, username, id_string, export_type, is_project=0, id=0, site_id=0, version="0"):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
     if not has_forms_permission(xform, owner, request):
@@ -557,7 +561,7 @@ def export_download(request, username, id_string, export_type, filename):
 
 @login_required
 @require_POST
-def delete_export(request, username, id_string, export_type, is_project=None, id=None, site_id=None):
+def delete_export(request, username, id_string, export_type, is_project=None, id=None, site_id=None, version="0"):
     owner = get_object_or_404(User, username__iexact=username)
     xform = get_object_or_404(XForm, id_string__exact=id_string, user=owner)
     if not has_forms_permission(xform, owner, request):
@@ -588,6 +592,7 @@ def delete_export(request, username, id_string, export_type, is_project=None, id
             "export_type": export_type,
             "is_project": is_project,
             "id": id,
+        "version":version
             }
 
     if site_id is not None:
