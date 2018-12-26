@@ -107,4 +107,5 @@ class Command(BaseCommand):
                 print('Successfully created XFORM HISTORY form  ', filename)
             
             except Exception as e:
-                print(e)
+                print('Error occured at file', filename)
+                pass
