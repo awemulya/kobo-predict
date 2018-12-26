@@ -78,6 +78,7 @@ class Command(BaseCommand):
             xls_file = open(os.path.join(xls_directory, filename))
             print("creating survey for ", xls_file)
             survey = create_survey_from_xls(xls_file)
+
             xml = survey.to_xml()
             xls_file.close()
             version = get_version(xml)

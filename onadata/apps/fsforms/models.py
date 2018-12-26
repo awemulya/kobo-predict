@@ -355,7 +355,7 @@ class FieldSightXF(models.Model):
 
     @property
     def has_versions(self):
-        return not self.xf.fshistory.exists()
+        return self.xf.fshistory.exists()
 
     def __unicode__(self): 
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
