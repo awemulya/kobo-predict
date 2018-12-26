@@ -4,6 +4,7 @@ import pandas as pd
 
 from onadata.apps.fieldsight.models import Project
 from onadata.apps.fsforms.models import FInstance
+from onadata.apps.logger.models import Instance
 from onadata.apps.viewer.models.parsed_instance import update_mongo_instance
 
 
@@ -39,7 +40,10 @@ def move_submission(sheet_columns, project_id):
         cursor = xform_instances.find(query,  { "_id": 1, "fs_project_uuid":1, "fs_project":1 , "fs_site":1,'fs_uuid':1 })
         records = list(record for record in cursor)
         for record in records:
-            print(record)
+            instance = Instance.objects.get(pk=submission_id)
+            fi = FInstance(instance=instance, site=to_site, project=to_site.project, project_fxf=record["fs_project_uuid"], form_status=0, submitted_by=instance.user)
+            fi.set_version()
+            fi.save()
 
 
 
