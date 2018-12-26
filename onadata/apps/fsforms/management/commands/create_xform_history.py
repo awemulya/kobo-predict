@@ -54,10 +54,13 @@ def get_id_string(xml):
 
 class Command(BaseCommand):
     help = 'Create xml from xls'
+    
+    def add_arguments(self, parser):
+        parser.add_argument('directory', type=str)
 
     def handle(self, *args, **options):
         # xls_directory = "/home/xls"
-        xls_directory = "/home/sanip/naxa/source/fieldsightxls_backup/xls"
+        xls_directory = options['directory']
         # csv_to_xls(xls_directory)
         for filename in os.listdir(xls_directory):
             if os.path.isfile(os.path.join(xls_directory,filename)):
