@@ -788,60 +788,60 @@ class XformHistory(models.Model):
             '<label></label>', inlineOutput)
         self.xml = inlineOutput
 
-        xform = models.ForeignKey(XForm, related_name="fshistory")
-        date = models.DateTimeField(auto_now=True)
-        xls = models.FileField(upload_to=upload_to, null=True)
-        json = models.TextField(default=u'')
-        description = models.TextField(default=u'', null=True)
-        xml = models.TextField()
-        id_string = models.CharField(editable=False, max_length=255)
-        title = models.CharField(editable=False, max_length=255)
-        uuid = models.CharField(max_length=32, default=u'')
-        version = models.CharField(max_length=255, default=u'')
+    xform = models.ForeignKey(XForm, related_name="fshistory")
+    date = models.DateTimeField(auto_now=True)
+    xls = models.FileField(upload_to=upload_to, null=True)
+    json = models.TextField(default=u'')
+    description = models.TextField(default=u'', null=True)
+    xml = models.TextField()
+    id_string = models.CharField(editable=False, max_length=255)
+    title = models.CharField(editable=False, max_length=255)
+    uuid = models.CharField(max_length=32, default=u'')
+    version = models.CharField(max_length=255, default=u'')
 
-        @property
-        def get_version(self):
-            import re
-            p = re.compile('version="(.*)">')
-            m = p.search(self.xml)
-            if m:
-                return m.group(1)
-            return None
+    @property
+    def get_version(self):
+        import re
+        p = re.compile('version="(.*)">')
+        m = p.search(self.xml)
+        if m:
+            return m.group(1)
+        return None
 
-        def save(self, *args, **kwargs):
-            if self.xls and not self.xml:
-                survey = create_survey_from_xls(self.xls)
-                self.json = survey.to_json()
-                self.xml = survey.to_xml()
-                self._mark_start_time_boolean()
-                set_uuid(self)
-                self._set_uuid_in_xml()
-            if not self.version:
-                self.version = self.get_version
-            super(XformHistory, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if self.xls and not self.xml:
+            survey = create_survey_from_xls(self.xls)
+            self.json = survey.to_json()
+            self.xml = survey.to_xml()
+            self._mark_start_time_boolean()
+            set_uuid(self)
+            self._set_uuid_in_xml()
+        if not self.version:
+            self.version = self.get_version
+        super(XformHistory, self).save(*args, **kwargs)
 
-        def file_name(self):
-            return os.path.split(self.xls.name)[-1]
+    def file_name(self):
+        return os.path.split(self.xls.name)[-1]
 
-        def _mark_start_time_boolean(self):
-            starttime_substring = 'jr:preloadParams="start"'
-            if self.xml.find(starttime_substring) != -1:
-                self.has_start_time = True
-            else:
-                self.has_start_time = False
+    def _mark_start_time_boolean(self):
+        starttime_substring = 'jr:preloadParams="start"'
+        if self.xml.find(starttime_substring) != -1:
+            self.has_start_time = True
+        else:
+            self.has_start_time = False
 
-        def get_survey(self):
-            if not hasattr(self, "_survey"):
-                try:
-                    builder = SurveyElementBuilder()
-                    self._survey = \
-                        builder.create_survey_element_from_json(self.json)
-                except ValueError:
-                    xml = bytes(bytearray(self.xml, encoding='utf-8'))
-                    self._survey = create_survey_element_from_xml(xml)
-            return self._survey
+    def get_survey(self):
+        if not hasattr(self, "_survey"):
+            try:
+                builder = SurveyElementBuilder()
+                self._survey = \
+                    builder.create_survey_element_from_json(self.json)
+            except ValueError:
+                xml = bytes(bytearray(self.xml, encoding='utf-8'))
+                self._survey = create_survey_element_from_xml(xml)
+        return self._survey
 
-        survey = property(get_survey)
+    survey = property(get_survey)
 
 
 class SubmissionOfflineSite(models.Model):
