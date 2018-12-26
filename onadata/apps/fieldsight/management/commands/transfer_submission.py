@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.management.base import BaseCommand
 import pandas as pd
 
@@ -32,6 +33,14 @@ def move_submission(sheet_columns, project_id):
             print(str(e))
     else:
         print("submision ", submission_id, "doesnot exists")
+        print("creating Finstance for  ", submission_id, ".......")
+        query = {"_id": {"$in": submission_id}}
+        xform_instances = settings.MONGO_DB.instances
+        cursor = xform_instances.find(query,  { "_id": 1, "fs_project_uuid":1, "fs_project":1 , "fs_site":1,'fs_uuid':1 })
+        records = list(record for record in cursor)
+        for record in records:
+            print(record)
+
 
 
 
