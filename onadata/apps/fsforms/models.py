@@ -709,8 +709,84 @@ def upload_to(instance, filename):
 
 
 class XformHistory(models.Model):
-        class Meta:
-            unique_together = ('xform', 'version')
+    class Meta:
+        unique_together = ('xform', 'version')
+        
+    def _set_uuid_in_xml(self, file_name=None):
+        """
+        Add bind to automatically set UUID node in XML.
+        """
+        if not file_name:
+            file_name = self.file_name()
+        file_name, file_ext = os.path.splitext(file_name)
+
+        doc = clean_and_parse_xml(self.xml)
+        model_nodes = doc.getElementsByTagName("model")
+        if len(model_nodes) != 1:
+            raise Exception(u"xml contains multiple model nodes")
+
+        model_node = model_nodes[0]
+        instance_nodes = [node for node in model_node.childNodes if
+                          node.nodeType == Node.ELEMENT_NODE and
+                          node.tagName.lower() == "instance" and
+                          not node.hasAttribute("id")]
+
+        if len(instance_nodes) != 1:
+            raise Exception(u"Multiple instance nodes without the id "
+                            u"attribute, can't tell which is the main one")
+
+        instance_node = instance_nodes[0]
+
+        # get the first child whose id attribute matches our id_string
+        survey_nodes = [node for node in instance_node.childNodes
+                        if node.nodeType == Node.ELEMENT_NODE and
+                        (node.tagName == file_name or
+                         node.attributes.get('id'))]
+
+        if len(survey_nodes) != 1:
+            raise Exception(
+                u"Multiple survey nodes with the id '%s'" % self.id_string)
+
+        survey_node = survey_nodes[0]
+        formhub_nodes = [n for n in survey_node.childNodes
+                         if n.nodeType == Node.ELEMENT_NODE and
+                         n.tagName == "formhub"]
+
+        if len(formhub_nodes) > 1:
+            raise Exception(
+                u"Multiple formhub nodes within main instance node")
+        elif len(formhub_nodes) == 1:
+            formhub_node = formhub_nodes[0]
+        else:
+            formhub_node = survey_node.insertBefore(
+                doc.createElement("formhub"), survey_node.firstChild)
+
+        uuid_nodes = [node for node in formhub_node.childNodes if
+                      node.nodeType == Node.ELEMENT_NODE and
+                      node.tagName == "uuid"]
+
+        if len(uuid_nodes) == 0:
+            formhub_node.appendChild(doc.createElement("uuid"))
+        if len(formhub_nodes) == 0:
+            # append the calculate bind node
+            calculate_node = doc.createElement("bind")
+            calculate_node.setAttribute(
+                "nodeset", "/%s/formhub/uuid" % file_name)
+            calculate_node.setAttribute("type", "string")
+            calculate_node.setAttribute("calculate", "'%s'" % self.uuid)
+            model_node.appendChild(calculate_node)
+
+        self.xml = doc.toprettyxml(indent="  ", encoding='utf-8')
+        # hack
+        # http://ronrothman.com/public/leftbraned/xml-dom-minidom-toprettyxml-\
+        # and-silly-whitespace/
+        text_re = re.compile('>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)
+        output_re = re.compile('\n.*(<output.*>)\n(  )*')
+        prettyXml = text_re.sub('>\g<1></', self.xml)
+        inlineOutput = output_re.sub('\g<1>', prettyXml)
+        inlineOutput = re.compile('<label>\s*\n*\s*\n*\s*</label>').sub(
+            '<label></label>', inlineOutput)
+        self.xml = inlineOutput
 
         xform = models.ForeignKey(XForm, related_name="fshistory")
         date = models.DateTimeField(auto_now=True)
@@ -739,6 +815,7 @@ class XformHistory(models.Model):
                 self.xml = survey.to_xml()
                 self._mark_start_time_boolean()
                 set_uuid(self)
+                self._set_uuid_in_xml()
             if not self.version:
                 self.version = self.get_version
             super(XformHistory, self).save(*args, **kwargs)
