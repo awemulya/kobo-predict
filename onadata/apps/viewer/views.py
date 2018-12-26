@@ -317,6 +317,11 @@ def create_export(request, username, id_string, export_type, is_project=None, id
     force_xlsx = True
     if version not in ["0", 0]:
         query["__version__"] = version
+    deleted_at_query = {
+        "$or": [{"_deleted_at": {"$exists": False}},
+                {"_deleted_at": None}]}
+    # join existing query with deleted_at_query on an $and
+    query = {"$and": [query, deleted_at_query]}
     print("query at excel generation", query)
 
     # export options
@@ -425,6 +430,11 @@ def export_list(request, username, id_string, export_type, is_project=0, id=0, s
         force_xlsx = True
         if version not in ["0", 0]:
             query["__version__"] = version
+        deleted_at_query = {
+            "$or": [{"_deleted_at": {"$exists": False}},
+                    {"_deleted_at": None}]}
+        # join existing query with deleted_at_query on an $and
+        query = {"$and": [query, deleted_at_query]}
         print("query at excel generation", query)
         try:
             create_async_export(xform, export_type, query,
