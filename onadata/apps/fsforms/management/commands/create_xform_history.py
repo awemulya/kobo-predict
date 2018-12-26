@@ -57,7 +57,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # xls_directory = "/home/xls"
-        xls_directory = "/home/awemulya/work/naxa/dist-kobo-devel/src/kobocat/media/Promisha/xls/testcsv"
+        xls_directory = "/home/sanip/naxa/source/fieldsightxls_backup/xls"
         # csv_to_xls(xls_directory)
         for filename in os.listdir(xls_directory):
             if os.path.isfile(os.path.join(xls_directory,filename)):
