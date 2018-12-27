@@ -80,12 +80,15 @@ class Command(BaseCommand):
             print("creating survey for ", xls_file)
             try:
                 survey = create_survey_from_xls(xls_file)
+                xml = survey.to_xml()
             
             except Exception as e:
                 error_file_list.append(filename)
                 pass
-            xml = survey.to_xml()
-            xls_file.close()
+            
+            else:
+                xls_file.close()
+            
             version = get_version(xml)
             # print("version =  ======", version)
             id_string = get_id_string(xml)
