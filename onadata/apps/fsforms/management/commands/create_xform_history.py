@@ -82,6 +82,7 @@ class Command(BaseCommand):
                 survey = create_survey_from_xls(xls_file)
                 xml = survey.to_xml()
                 version = get_version(xml)
+                id_string = get_id_string(xml)
             
             except Exception as e:
                 error_file_list.append(filename)
@@ -91,7 +92,6 @@ class Command(BaseCommand):
                 xls_file.close()
             
             # print("version =  ======", version)
-            id_string = get_id_string(xml)
             if not XForm.objects.filter(id_string=id_string).exists():
                 print("xform with id string not found ", id_string)
                 continue
