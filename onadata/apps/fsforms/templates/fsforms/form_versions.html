@@ -74,6 +74,8 @@
 
                   </tr>
               {% for obj in versions %}
+              {% with fsf|is_project_val:is_project|version_submission_data:obj as submission_data %}
+              {% if submission_data.has_submissions %}
                   <tr>
                        <td>
                           {{ obj.title }}
@@ -85,7 +87,7 @@
                           {{ obj.date }}
                       </td>
 
-                     {% with fsf|is_project_val:is_project|version_submission_data:obj as submission_data %}
+                     
                       <td>
                           {{ submission_data.date }}
                       </td>
@@ -99,9 +101,10 @@
                           <i class="la la-download" aria-hidden="true"></i> Download</a>
                          {% endif %}
                       </td>
-                           {% endwith %}
 
                   </tr>
+                  {% endif %}
+                {% endwith %}
               {% endfor %}
               </tbody>
           </table>
