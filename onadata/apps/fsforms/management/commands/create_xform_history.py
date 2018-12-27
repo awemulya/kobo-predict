@@ -61,6 +61,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # xls_directory = "/home/xls"
         xls_directory = options['directory']
+        error_file_list = []
         # csv_to_xls(xls_directory)
         for filename in os.listdir(xls_directory):
             if os.path.isfile(os.path.join(xls_directory,filename)):
@@ -79,33 +80,37 @@ class Command(BaseCommand):
             print("creating survey for ", xls_file)
             try:
                 survey = create_survey_from_xls(xls_file)
-
-                xml = survey.to_xml()
-                xls_file.close()
-                version = get_version(xml)
-                # print("version =  ======", version)
-                id_string = get_id_string(xml)
-                if not XForm.objects.filter(id_string=id_string).exists():
-                    print("xform with id string not found ", id_string)
-                    continue
-                xform = XForm.objects.get(id_string=id_string)
-                xform_version = get_version(xform.xml)
-                if version == xform_version:
-                    print("##########################")
-                    print("##########################")
-                    print("this file is current version of Xform", filename, "Ignored")
-                    print("##########################")
-                    print("##########################")
-                    continue
-                if not XformHistory.objects.filter(xform=xform, version=version).exists():
-                    print("creating history from file ", filename)
-                    file_obj = open(os.path.join(xls_directory, filename))
-                    history = XformHistory(xform=xform, xls=File(file_obj))
-                    history.save()
-                else:
-                    print('History already exists of this file  ', filename)
-                print('Successfully created XFORM HISTORY form  ', filename)
             
             except Exception as e:
-                print('Error occured at file', filename)
+                error_file_list.append(filename)
                 pass
+            xml = survey.to_xml()
+            xls_file.close()
+            version = get_version(xml)
+            # print("version =  ======", version)
+            id_string = get_id_string(xml)
+            if not XForm.objects.filter(id_string=id_string).exists():
+                print("xform with id string not found ", id_string)
+                continue
+            xform = XForm.objects.get(id_string=id_string)
+            xform_version = get_version(xform.xml)
+            if version == xform_version:
+                print("##########################")
+                print("##########################")
+                print("this file is current version of Xform", filename, "Ignored")
+                print("##########################")
+                print("##########################")
+                continue
+            if not XformHistory.objects.filter(xform=xform, version=version).exists():
+                print("creating history from file ", filename)
+                file_obj = open(os.path.join(xls_directory, filename))
+                history = XformHistory(xform=xform, xls=File(file_obj))
+                history.save()
+            else:
+                print('History already exists of this file  ', filename)
+            print('Successfully created XFORM HISTORY form  ', filename)
+        
+        if error_file_list:
+            print('Errors occured at files: ')
+            for files in error_file_list:
+                print(files)
