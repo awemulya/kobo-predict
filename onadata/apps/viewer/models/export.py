@@ -88,6 +88,7 @@ class Export(models.Model):
 
     fsxf = models.ForeignKey(FieldSightXF, null=True, blank=True, related_name="exports")
     site = models.IntegerField(default=0)
+    version = models.CharField(max_length=255, null=True, blank=True, default="0")
 
     class Meta:
         app_label = "viewer"

@@ -6,6 +6,7 @@ from base64 import b64decode
 import datetime
 from bson import json_util
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
@@ -289,7 +290,7 @@ def stage_add(request, site_id=None):
 class ProjectResponses(ReadonlyProjectLevelRoleMixin, View): 
     def get(self,request, pk=None, **kwargs):
         obj = get_object_or_404(Project, pk=pk)
-        schedules = Schedule.objects.filter(project_id=pk, schedule_forms__is_deleted=False, site__isnull=True, schedule_forms__isnull=False)
+        schedules = Schedule.objects.filter(project_id=pk, schedule_forms__is_deleted=False, site__isnull=True, schedule_forms__isnull=False, schedule_forms__xf__isnull=False)
         stages = Stage.objects.filter(stage__isnull=True, project_id=pk, stage_forms__isnull=True).order_by('order')
         generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_deleted=False, project_id=pk, is_survey=False)
         surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_deleted=False, project_id=pk, is_survey=True)
@@ -2407,4 +2408,54 @@ def view_data(request,  id_string, data_id):
     #             kwargs={'username': xform.user.username,
     #                     'id_string': id_string}))
     return HttpResponse("This form cannot be viewed in enketo. Please Report With submission id")
+
+
+class FormVersions(LoginRequiredMixin, View):
+
+    def dispatch(self, request, *args, **kwargs):
+        is_project = kwargs.get("is_project")
+        fsfid = kwargs.get("fsfid")
+        fsf = FieldSightXF.objects.get(pk=fsfid)
+        site = self.kwargs.get('site', 0)
+        if is_project == "1":
+            project = fsf.project
+        else:
+            site_obj = Site.objects.get(pk=site)
+            project = site_obj.project
+        project_id = project.id
+        kwargs['project'] = project_id
+        kwargs['obj'] = project
+        kwargs['fsf'] = fsf
+        kwargs['site'] = site
+
+        kwargs['versions'] = XformHistory.objects.filter(xform=fsf.xf)
+        kwargs['latest'] = fsf.xf
+
+
+        if request.group.name == "Super Admin":
+            return super(FormVersions, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+        user_role = request.roles.filter(project_id=project_id, group_id=2)
+
+        if user_role:
+            return super(FormVersions, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+
+        organization_id = Project.objects.get(pk=project_id).organization.id
+        user_role_asorgadmin = request.roles.filter(organization_id=organization_id, group_id=1)
+
+        if user_role_asorgadmin:
+            return super(FormVersions, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+
+        user_role_asdonor = request.roles.filter(project_id=project_id, group_id=7)
+        if user_role_asdonor:
+            return super(FormVersions, self).dispatch(request, is_donor_only=True, *args, **kwargs)
+
+        raise PermissionDenied()
+
+    def get(self,request, **kwargs):
+        data = {'is_donor_only': kwargs.get('is_donor_only', False),
+                       }
+        data.update(**kwargs)
+        return render(request, "fsforms/form_versions.html",
+                      data)
+
 

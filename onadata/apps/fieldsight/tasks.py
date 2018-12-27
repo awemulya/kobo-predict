@@ -175,18 +175,21 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
             except:
                 pass
         
-        for site in sites:
-            # import pdb; pdb.set_trace();
-            
-            site_row = [site['identifier'], site['name'], site['region__identifier'], site['address'], site_dict[site.get('id')]['latitude'], site_dict[site.get('id')]['longitude'], site_dict[site.get('id')]['site_status']]
-            
-            for stage in ss_index:
-                site_row.append(site.get(stage, ""))
+        try:
+            for site in sites:
+                # import pdb; pdb.set_trace();
+                
+                site_row = [site['identifier'], site['name'], site['region__identifier'], site['address'], site_dict[site.get('id')]['latitude'], site_dict[site.get('id')]['longitude'], site_dict[site.get('id')]['site_status']]
+                
+                for stage in ss_index:
+                    site_row.append(site.get(stage, ""))
 
-            site_row.extend([site_dict[site.get('id')]['visits'], site['submission'], site['flagged'], site['rejected']])
+                site_row.extend([site_dict[site.get('id')]['visits'], site['submission'], site['flagged'], site['rejected']])
 
-            data.append(site_row)
-        
+                data.append(site_row)
+        except:
+            pass
+
         p.save_as(array=data, dest_file_name="media/stage-report/{}_stage_data.xls".format(project.id))
         xl_data = open("media/stage-report/{}_stage_data.xls".format(project.id), "rb")
         
@@ -906,7 +909,7 @@ def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_u
                         
 
         if not forms:
-            ws = wb.add_sheet('No Forms')
+            ws = wb.create_sheet(title='No Forms')
         
 
         sites = Site.objects.filter(pk__in=response_sites)

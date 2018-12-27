@@ -63,6 +63,7 @@
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
               <th>{% trans 'Submissions' %}</th>
               <th>{% trans 'Download' %}</th>
+              <th>{% trans 'Versions' %}</th>
               <th>{% trans 'New' %}</th>
               </thead>
               <tbody>
@@ -87,18 +88,31 @@
                           
                            <a class="badge badge-light" href="{% url 'forms:html_export' obj.id site %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
-                          {% endwith %}
+                          
 
                       </td>
                       <td>
-                      <a target="_blank" href="{% url 'onadata.apps.viewer.views.export_list' obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id site %}">
-                          <i class="la la-download" aria-hidden="true"></i></a>
+                          {% if count > 0 %}
+
+                          <a class="badge badge-success" target="_blank"
+                             href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id site 0 %}">
+                              <i class="la la-download" aria-hidden="true"></i> Download</a>
+                              {% endif %}
+                              {% endwith %}
+                      </td>
+                      <td>
+                          {% if obj.has_versions %}
+                          <a class="badge badge-success" target="_blank"
+                            href="{% url 'forms:form_versions' 0 obj.id site %}">
+                            <i class="la la-eye" aria-hidden="true"></i> Versions </a>
+    
+                            {% endif %}
                       </td>
                       <td>
 
-                                  <a target="_blank" href="{% url 'forms:new-submission' obj.id site %}">
-                                      <i class="la la-plus" aria-hidden="true"></i>
-                                  </a>
+                          <a target="_blank" href="{% url 'forms:new-submission' obj.id site %}">
+                              <i class="la la-plus" aria-hidden="true"></i>
+                          </a>
                           
                       </td>
                   </tr>
@@ -123,6 +137,7 @@
                     <th>{% trans 'Created' %} {% trans 'Date' %}</th>
                     <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
                     <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
+                    <th>{% trans 'Versions' %}</th>
                   </thead>
                   <tbody>
                      {% for obj in general_deleted_forms %}
@@ -146,11 +161,23 @@
 
                            <a class="badge badge-light" href="{% url 'forms:html_export' obj.id site %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
-                          {% endwith %}
+                          
                             </td>
                             <td>
-                              <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
-                                  <i class="la la-download" aria-hidden="true"></i> Download</a>
+                                {% if count > 0 %}
+                                <a class="badge badge-success" target="_blank"
+                                   href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id site 0 %}">
+                                    <i class="la la-download" aria-hidden="true"></i> Download</a>
+                                        {% endif %}
+                                        {% endwith %}
+                            </td>
+                            <td>
+                                  {% if obj.has_versions %}
+                                    <a class="badge badge-success" target="_blank"
+                                   href="{% url 'forms:form_versions' 0 obj.id site %}">
+                                    <i class="la la-eye" aria-hidden="true"></i> Versions </a>
+          
+                                  {% endif %}
                             </td>
                           </tr>
                           
@@ -177,6 +204,7 @@
               <th>{% trans 'Created' %} {% trans 'Date' %}</th>
               <th>{% trans 'Submissions' %}</th>
               <th>{% trans 'Download' %}</th>
+              <th>{% trans 'Versions' %}</th>
               <th>{% trans 'New' %}</th>
               </thead>
               <tbody>
@@ -205,11 +233,22 @@
                            <a class="badge badge-light" href="{% url 'forms:html_export' obj.schedule_forms.pk site%}">
                               <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
                               </a>
-                          {% endwith %}
                       </td>
                       <td>
-                      <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.schedule_forms.xf.user.username obj.schedule_forms.xf.id_string 'xls' 0 obj.schedule_forms.id%}">
-                          <i class="la la-download" aria-hidden="true"></i></a>
+                          {% if count > 0 %}
+                          <a class="badge badge-success" target="_blank"
+                             href="{% url "onadata.apps.viewer.views.export_list" obj.schedule_forms.xf.user.username obj.schedule_forms.xf.id_string 'xls' 0 obj.schedule_forms.id site 0 %}">
+                              <i class="la la-download" aria-hidden="true"></i> Download</a>
+                                  {% endif %}
+                                  {% endwith %}
+                      </td>
+                      <td>
+                            {% if obj.schedule_forms.has_versions %}
+                              <a class="badge badge-success" target="_blank"
+                             href="{% url 'forms:form_versions' 0 obj.schedule_forms.id site %}">
+                              <i class="la la-eye" aria-hidden="true"></i> Versions </a>
+    
+                            {% endif %}
                       </td>
                       <td>
                           {% if obj.form %}
@@ -239,6 +278,7 @@
                     <th>{% trans 'Created' %} {% trans 'Date' %}</th>
                     <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
                     <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
+                    <th>{% trans 'Versions' %}</th>
                   </thead>
                   <tbody>
                      {% for obj in schedule_deleted_forms %}
@@ -260,11 +300,23 @@
 
                            <a class="badge badge-light" href="{% url 'forms:html_export' obj.id site %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
-                          {% endwith %}
+                          
                             </td>
                             <td>
-                              <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
-                                  <i class="la la-download" aria-hidden="true"></i> Download</a>
+                                {% if count > 0 %}
+                                <a class="badge badge-success" target="_blank"
+                                   href="{% url "onadata.apps.viewer.views.export_list" obj.schedule_forms.xf.user.username obj.schedule_forms.xf.id_string 'xls' 0 obj.schedule_forms.id site 0 %}">
+                                    <i class="la la-download" aria-hidden="true"></i> Download</a>
+                                        {% endif %}
+                                        {% endwith %}
+                            </td>
+                            <td>
+                                {% if obj.schedule_forms.has_versions %}
+                                    <a class="badge badge-success" target="_blank"
+                                   href="{% url 'forms:form_versions' 0 obj.schedule_forms.id site %}">
+                                    <i class="la la-eye" aria-hidden="true"></i> Versions </a>
+          
+                                  {% endif %}
                             </td>
                           </tr>
                           
@@ -302,6 +354,7 @@
                       <th>{% trans 'Form' %} {% trans 'Name' %}</th>
                       <th>{% trans 'Submissions' %}</th>
                       <th>{% trans 'Download' %}</th>
+                      <th>{% trans 'Versions' %}</th>
                       <th>{% trans 'New' %}</th>
                       </thead>
                       <tbody>
@@ -328,11 +381,22 @@
                                <a class="badge badge-light" href="{% url 'forms:html_export' obj.stage_forms.pk site %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}
                                </a>
-                          {% endwith %}
                               </td>
                               <td>
-                                <a target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.stage_forms.xf.user.username obj.stage_forms.xf.id_string 'xls' 0 obj.stage_forms.id%}">
-                                    <i class="la la-download" aria-hidden="true"></i></a>
+                                  {% if count > 0 %}
+                                  <a class="badge badge-success" target="_blank"
+                                     href="{% url "onadata.apps.viewer.views.export_list" obj.stage_forms.xf.user.username obj.stage_forms.xf.id_string 'xls' 0 obj.stage_forms.id site 0 %}">
+                                      <i class="la la-download" aria-hidden="true"></i> Download</a>
+                                          {% endif %}
+                                          {% endwith %}
+                              </td>
+                              <td>
+                                   {% if obj.stage_forms.has_versions %}
+                                      <a class="badge badge-success" target="_blank"
+                                     href="{% url 'forms:form_versions' 0 obj.stage_forms.id site %}">
+                                      <i class="la la-eye" aria-hidden="true"></i> Versions </a>
+            
+                                    {% endif %}
                               </td>
                                <td>
                                 {% if obj.form %}
@@ -370,6 +434,7 @@
                     <th>{% trans 'Created' %} {% trans 'Date' %}</th>
                     <th>{% trans 'View' %} {% trans 'Submissions' %}</th>
                     <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
+                    <th>{% trans 'Versions' %}</th>
                   </thead>
                   <tbody>
                      {% for obj in stage_deleted_forms %}
@@ -393,11 +458,23 @@
 
                            <a class="badge badge-light" href="{% url 'forms:html_export' obj.id site %}">
                                <i class="la la-eye"></i> {% if count == 0 %} {% trans 'No Submission' %} {% elif count == 1 %}{{ count }} {% trans 'Submission' %} {% else %}{{ count }} {% trans 'Submissions' %}{% endif %}</a>
-                          {% endwith %}
+                          
                             </td>
                             <td>
-                              <a class="badge badge-success" target="_blank" href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id %}">
-                                  <i class="la la-download" aria-hidden="true"></i> Download</a>
+                                {% if count > 0 %}
+                                <a class="badge badge-success" target="_blank"
+                                   href="{% url "onadata.apps.viewer.views.export_list" obj.xf.user.username obj.xf.id_string 'xls' 0 obj.id site 0 %}">
+                                    <i class="la la-download" aria-hidden="true"></i> Download</a>
+                                        {% endif %}
+                                        {% endwith %}
+                            </td>
+                            <td>
+                                {% if obj.has_versions %}
+                                    <a class="badge badge-success" target="_blank"
+                                   href="{% url 'forms:form_versions' 0 obj.id site %}">
+                                    <i class="la la-eye" aria-hidden="true"></i> Versions </a>
+          
+                                  {% endif %}
                             </td>
                           </tr>
                           
