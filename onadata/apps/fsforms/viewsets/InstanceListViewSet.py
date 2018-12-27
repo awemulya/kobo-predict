@@ -11,23 +11,16 @@ class ProjectManagerPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
         field_sight_form = request.query_params.get('field_sight_form', None)
-        project = Project.objects.get(project_forms__pk=field_sight_form)
-        project_roles = project.project_roles.all().values('user__username', 'group__name')
-        # try:
-        #     current_user_role = request.user.user_roles.values('user__username', 'group__name')[0]
-        #     if current_user_role['group__name'] == 'Project Manager' and current_user_role in project_roles:
-        #         return True
-        #     else:
-        #         return False
-        # except:
-        #     pass
         try:
-            current_user_role = request.user.user_roles.values('user__username', 'group__name')
+            project = Project.objects.get(project_forms__pk=field_sight_form)
+            project_roles = project.project_roles.all().values('user__username', 'group__name', 'project__name')
+            current_user_role = request.user.user_roles.values('user__username', 'group__name', 'project__name')
+
             for role in current_user_role:
-                if role['group__name'] == 'Project Manager' and role in project_roles:
+                if role in project_roles:
                     return True
                 else:
-                    return False
+                    pass
         except:
             pass
 
