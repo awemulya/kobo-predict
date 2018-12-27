@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from onadata.apps.fsforms.models import FInstance
 
+
 class Command(BaseCommand):
     help = 'Set version in FInstance for given user'
     
@@ -15,18 +16,17 @@ class Command(BaseCommand):
         offset = 0
         while stop is not True:
             limit = offset + batchsize
-            instances = FInstance.objects.filter(instance__xform__user__username=username, version='')
+            instances = FInstance.objects.filter(instance__xform__user__username=username, version='')[offset:limit]
+            inst = list(instances)
             if instances:
-                for instance in instances:
-                    instance.set_version()
+                self.stdout.write("Updating instances from #{} to #{}\n".format(
+                        inst[0].id,
+                        inst[-1].id))
                 
-                self.stdout.write(_("Updating instances from #{} to #{}\n").format(
-                    instances[0].id,
-                    instances[-1].id))
-            
+                for instance in instances:
+                    instance.save()
+
             else:
                 stop = True
                 
             offset += batchsize
-
-
