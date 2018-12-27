@@ -11,6 +11,7 @@ from onadata.apps.fsforms.viewsets.StageViewset import SiteMainStageViewSet, \
 from onadata.apps.fsforms.viewsets.ConfigureStageViewset import StageListViewSet, SubStageListViewSet, \
     SubStageDetailViewSet, EmViewSet, DeployViewset, FInstanceViewset
 from onadata.apps.fsforms.viewsets.XformsViewset import XFormViewSet
+from onadata.apps.fsforms.viewsets.InstanceListViewSet import InstanceListViewSet
 from onadata.libs.utils.viewer_tools import enketo_view_url
 from .views import (
     LibraryFormsListView,
@@ -256,6 +257,7 @@ urlpatterns = urlpatterns + [
 
     url(r'^api/get-deploy-data/(?P<pk>\d+)/$', DeployViewset.as_view({'get': 'retrieve'})),
 
+    url(r'^api/instance-list/', InstanceListViewSet.as_view({'get': 'list'}), name='instance_list'),
 
 ]
 
