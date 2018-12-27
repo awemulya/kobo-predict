@@ -81,6 +81,7 @@ class Command(BaseCommand):
             try:
                 survey = create_survey_from_xls(xls_file)
                 xml = survey.to_xml()
+                version = get_version(xml)
             
             except Exception as e:
                 error_file_list.append(filename)
@@ -89,7 +90,6 @@ class Command(BaseCommand):
             else:
                 xls_file.close()
             
-            version = get_version(xml)
             # print("version =  ======", version)
             id_string = get_id_string(xml)
             if not XForm.objects.filter(id_string=id_string).exists():
