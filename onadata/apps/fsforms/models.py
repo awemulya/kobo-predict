@@ -777,12 +777,13 @@ class XformHistory(models.Model):
             model_node.appendChild(calculate_node)
 
         self.xml = doc.toprettyxml(indent="  ", encoding='utf-8')
+        
         # hack
         # http://ronrothman.com/public/leftbraned/xml-dom-minidom-toprettyxml-\
         # and-silly-whitespace/
         text_re = re.compile('>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)
         output_re = re.compile('\n.*(<output.*>)\n(  )*')
-        prettyXml = text_re.sub('>\g<1></', self.xml)
+        prettyXml = text_re.sub('>\g<1></', self.xml.decode('utf-8'))
         inlineOutput = output_re.sub('\g<1>', prettyXml)
         inlineOutput = re.compile('<label>\s*\n*\s*\n*\s*</label>').sub(
             '<label></label>', inlineOutput)
@@ -814,8 +815,8 @@ class XformHistory(models.Model):
             self.json = survey.to_json()
             self.xml = survey.to_xml()
             self._mark_start_time_boolean()
-            set_uuid(self)
-            self._set_uuid_in_xml()
+            # set_uuid(self)
+            # self._set_uuid_in_xml()
         if not self.version:
             self.version = self.get_version
         super(XformHistory, self).save(*args, **kwargs)
