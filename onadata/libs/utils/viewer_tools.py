@@ -361,8 +361,6 @@ def _get_form_url(request, username, protocol='https'):
 
     # Make sure protocol is enforced to `http` when calling `kc` internally
     protocol = "http" if is_call_internal else protocol
-    protocol = "http"
-
     return '%s://%s/%s' % (protocol, http_host, username)
 
 
