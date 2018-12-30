@@ -54,7 +54,7 @@ class ProjectStatsticsReport(View):
         end_date = data.get('enddate')
         project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
         
-        task_obj=CeleryTaskProgress.objects.create(user=user, content_object=project, task_type=3)
+        task_obj=CeleryTaskProgress.objects.create(user=user, content_object=project, task_type=11)
         if task_obj:
             task = exportProjectstatistics.delay(task_obj.pk, user, self.kwargs.get('pk'), reportType, start_date, end_date)
             task_obj.task_id = task.id
