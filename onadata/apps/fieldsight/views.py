@@ -231,7 +231,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         active_supervisors = finstances.distinct('submitted_by').count()
 
         try:
-            site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": obj.id}, "start": { '$gte' : one_week_ago.isoformat() } },  { "$group" : { 
+            site_visits_query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": obj.id, "start": { '$gte' : one_week_ago.isoformat() } } },  { "$group" : { 
                   "_id" :  {        
                     "fs_site": "$fs_site",
                     "date": { "$substr": [ "$start", 0, 10 ] }
@@ -240,7 +240,12 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
              }, { "$group": { "_id": "$_id.fs_site", "visits": { '$sum': 1}
              }},
              {"$group": {"_id": None, "total_sum": {'$sum': '$visits'}}}
-             ])['result']['total_sum']
+             ])['result']
+
+            if not site_visits_query:
+                site_visits = 0
+            else:
+                site_visits = site_visits_query[0]['total_sum']
         except:
             site_visits = "Error occured."
         
@@ -2954,7 +2959,7 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
         # site_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
         active_supervisors = finstances.distinct('submitted_by').count()
         try:
-            site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": obj.id}, "start":{ '$gte' : one_week_ago.isoformat()}},  { "$group" : { 
+            site_visits_query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": obj.id, "start": { '$gte' : one_week_ago.isoformat() } } },  { "$group" : { 
                   "_id" :  {        
                     "fs_site": "$fs_site",
                     "date": { "$substr": [ "$start", 0, 10 ] }
@@ -2963,7 +2968,12 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
              }, { "$group": { "_id": "$_id.fs_site", "visits": { '$sum': 1}
              }},
              {"$group": {"_id": None, "total_sum": {'$sum': '$visits'}}}
-             ])['result']['total_sum']
+             ])['result']
+
+            if not site_visits_query:
+                site_visits = 0
+            else:
+                site_visits = site_visits_query[0]['total_sum']
         except:
             site_visits = "Error occured."
 
