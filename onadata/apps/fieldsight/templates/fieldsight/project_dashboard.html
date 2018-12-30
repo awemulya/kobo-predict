@@ -71,6 +71,16 @@ assigntoken(csrf_token);
 	</div>
 </div>
 
+<div class="modal fade" id="statsticsexportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		{% verbatim %}
+		<div class="modal-content" id="generateStatsticsReport">
+		
+		</div>
+		{% endverbatim %}
+	</div>
+</div>
+
 			<div id="main-content" class="padding">
 				<nav aria-label="breadcrumb" role="navigation">
 					{% block breadcrumbs %}
@@ -538,6 +548,7 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.end_date_value = "{% now 'Y-m-d' %}";
 	configure_settings.end_date_max_value = "{% now 'Y-m-d' %}";
 	configure_settings.end_date_min_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
+	configure_settings.genarete_statstics_report_url = "{% url 'fieldsight:genarete-statstics-report-url' obj.pk %}";
 	//getlogdata();
 					
 </script>
@@ -557,6 +568,11 @@ var static_url ="{{ STATIC_URL }}";
 <!-- <script src="{% static 'js/forms/vue-resource.min.js' %}"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.js"></script>
 <script src="{% static 'js/fieldsight/report_vue.js' %}?v=0.6"></script>
+
+
+<link rel="stylesheet" href="https://unpkg.com/vue-airbnb-style-datepicker@2.1.0/dist/vue-airbnb-style-datepicker.min.css">
+<script src="https://unpkg.com/vue-airbnb-style-datepicker@2.1.0/dist/vue-airbnb-style-datepicker.min.js"></script>
+<script src="{% static 'js/fieldsight/statstics_report.js' %}?v=0.1"></script>
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" /> -->
 
 
