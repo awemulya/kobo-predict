@@ -17,7 +17,7 @@
  <!-- SLider css external pravin -slick  -->
     <!--<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>-->
     <!--<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.css">
+	<link rel="stylesheet" href="{% static 'js/fieldsight/treeselect/vue-treeselect.min.css' %}">
 	<link rel="stylesheet" href="{% static 'dummy/assets/css/style.css' %}">
 {% endblock %}
 {%block kocript %}
@@ -71,6 +71,16 @@ assigntoken(csrf_token);
 	</div>
 </div>
 
+<div class="modal fade" id="statsticsexportModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		{% verbatim %}
+		<div class="modal-content" id="generateStatsticsReport">
+		
+		</div>
+		{% endverbatim %}
+	</div>
+</div>
+
 			<div id="main-content" class="padding">
 				<nav aria-label="breadcrumb" role="navigation">
 					{% block breadcrumbs %}
@@ -117,6 +127,7 @@ assigntoken(csrf_token);
 								
 								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#exportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Report' %} </a>
 								
+								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#statsticsexportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Statstics' %} {% trans 'Report' %}</a>								
 
 								<a class="dropdown-item" href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i> {% trans 'View Data' %}</a>
 
@@ -512,6 +523,7 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.end_date_value = "{% now 'Y-m-d' %}";
 	configure_settings.end_date_max_value = "{% now 'Y-m-d' %}";
 	configure_settings.end_date_min_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
+	configure_settings.genarete_statstics_report_url = "{% url 'fieldsight_export:project_stats_report' obj.pk %}";
 	//getlogdata();
 					
 </script>
@@ -529,8 +541,12 @@ var static_url ="{{ STATIC_URL }}";
 <script src="{% static 'js/fieldsight/loglist.js' %}?v=0.6"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" />
 
-<script src="https://cdn.jsdelivr.net/npm/@riophae/vue-treeselect@0.0.36/dist/vue-treeselect.min.js"></script>
+<script src="{% static 'js/fieldsight/treeselect/vue-treeselect.min.js' %}"></script>
 <script src="{% static 'js/fieldsight/report_vue.js' %}?v=0.6"></script>
+
+<link rel="stylesheet" href="{% static 'js/fieldsight/datepicker/vue-airbnb-style-datepicker.min.css' %}">
+<script src="{% static 'js/fieldsight/datepicker/vue-airbnb-style-datepicker.min.js' %}"></script>
+<script src="{% static 'js/fieldsight/statstics_report.js' %}?v=0.1"></script>
 
 
 {% endblock %}
