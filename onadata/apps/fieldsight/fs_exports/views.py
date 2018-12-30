@@ -9,7 +9,7 @@ from django.views.generic import TemplateView, View
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
-from onadata.apps.fieldsight.tasks import importSites, exportProjectSiteResponses, generateSiteDetailsXls, site_download_zipfile
+from onadata.apps.fieldsight.tasks import importSites, exportProjectSiteResponses, generateSiteDetailsXls, site_download_zipfile, exportProjectstatistics
 from django.http import HttpResponse
 from rest_framework import status
 from onadata.apps.fsforms.models import FieldSightXF, FInstance, Stage
@@ -39,6 +39,27 @@ class ImageZipSites(View):
             task_obj.task_id = task.id
             task_obj.save()
             status, data = 200, {'status':'true','message':'Sucess, the Zip file is being generated. You will be notified after the file is generated.'}
+        else:
+            status, data = 401, {'status':'false','message':'Error occured please try again.'}
+        return JsonResponse(data, status=status)
+
+
+
+class ProjectStatsticsReport(View):
+    def post(self, *args, **kwargs):
+        user = self.request.user
+        data = json.loads(self.request.body)
+        reportType = data.get('type')
+        start_date = data.get('startdate')
+        end_date = data.get('enddate')
+        project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
+        
+        task_obj=CeleryTaskProgress.objects.create(user=user, content_object=project, task_type=3)
+        if task_obj:
+            task = exportProjectstatistics.delay(task_obj.pk, user, self.kwargs.get('pk'), reportType, start_date, end_date)
+            task_obj.task_id = task.id
+            task_obj.save()
+            status, data = 200, {'status':'true','message':'Sucess, the report is being generated. You will be notified after the report is generated.'}
         else:
             status, data = 401, {'status':'false','message':'Error occured please try again.'}
         return JsonResponse(data, status=status)

@@ -548,7 +548,7 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.end_date_value = "{% now 'Y-m-d' %}";
 	configure_settings.end_date_max_value = "{% now 'Y-m-d' %}";
 	configure_settings.end_date_min_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
-	configure_settings.genarete_statstics_report_url = "{% url 'fieldsight:genarete-statstics-report-url' obj.pk %}";
+	configure_settings.genarete_statstics_report_url = "{% url 'fieldsight_export:project_stats_report' obj.pk %}";
 	//getlogdata();
 					
 </script>
