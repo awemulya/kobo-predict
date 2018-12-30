@@ -227,8 +227,22 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         one_week_ago = datetime.datetime.today() - datetime.timedelta(days=7)
         finstances = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago)
         new_submissions = finstances.count()
-        site_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
+        # site_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
         active_supervisors = finstances.distinct('submitted_by').count()
+
+        try:
+            site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": obj.id}, { '$gte' : one_week_ago.isoformat()}},  { "$group" : { 
+                  "_id" :  {        
+                    "fs_site": "$fs_site",
+                    "date": { "$substr": [ "$start", 0, 10 ] }
+                  },
+               }
+             }, { "$group": { "_id": "$_id.fs_site", "visits": { '$sum': 1}
+             }},
+             {"$group": {"_id": None, "total_sum": {'$sum': '$visits'}}}
+             ])['result']['total_sum']
+        except:
+            site_visits = "Error occured."
         
         #     data = []
         #     sites = []
