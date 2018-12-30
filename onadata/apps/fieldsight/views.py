@@ -37,7 +37,7 @@ from onadata.apps.fieldsight.management.commands.municipality_data import genera
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
     LineChartGeneratorSite, ProgressGeneratorSite, LineChartGeneratorProject
-from onadata.apps.fsforms.models import FieldSightXF, Stage, FInstance
+from onadata.apps.fsforms.models import FieldSightXF, Stage, FInstance, Instance
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from onadata.apps.geo.models import GeoLayer
@@ -225,11 +225,9 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
 
         one_week_ago = datetime.datetime.today() - datetime.timedelta(days=7)
-        finstances = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago)
-        new_submissions = finstances.count()
-        # site_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
-        active_supervisors = finstances.distinct('submitted_by').count()
-
+        instances = Instance.objects.filter(fieldsight_instance__project_id=obj.id, date_created__gte=one_week_ago)
+        new_submissions = instances.count()
+        active_supervisors = instances.distinct('user').count()
         try:
             site_visits_query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": obj.id, "start": { '$gte' : one_week_ago.isoformat() } } },  { "$group" : { 
                   "_id" :  {        
@@ -2954,10 +2952,9 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
         roles_project = UserRole.objects.filter(organization__isnull = False, project_id = self.kwargs.get('pk'), site__isnull = True, ended_at__isnull=True)
 
         one_week_ago = datetime.datetime.today() - datetime.timedelta(days=7)
-        finstances = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago)
-        new_submissions = finstances.count()
-        # site_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
-        active_supervisors = finstances.distinct('submitted_by').count()
+        instances = Instance.objects.filter(fieldsight_instance__project_id=obj.id, date_created__gte=one_week_ago)
+        new_submissions = instances.count()
+        active_supervisors = instances.distinct('user').count()
         try:
             site_visits_query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": obj.id, "start": { '$gte' : one_week_ago.isoformat() } } },  { "$group" : { 
                   "_id" :  {        
