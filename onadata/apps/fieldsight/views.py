@@ -231,7 +231,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         active_supervisors = finstances.distinct('submitted_by').count()
 
         try:
-            site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": obj.id}, { '$gte' : one_week_ago.isoformat()}},  { "$group" : { 
+            site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": obj.id}, { '$gte' : one_week_ago.isoformat() } },  { "$group" : { 
                   "_id" :  {        
                     "fs_site": "$fs_site",
                     "date": { "$substr": [ "$start", 0, 10 ] }
@@ -2966,7 +2966,7 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
              ])['result']['total_sum']
         except:
             site_visits = "Error occured."
-            
+
         dashboard_data = {
             'sites': sites,
             'obj': obj,
