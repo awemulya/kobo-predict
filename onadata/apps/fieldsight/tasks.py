@@ -1417,7 +1417,7 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, type, sta
           index[str_month] = i
           i += 1
 
-        site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project_id, "start": 
+        site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": {"$in":[project_id, int(project_id)]}, "start": 
           { '$gte' : new_startdate.isoformat(), '$lte' : new_enddate.isoformat() }}},  { "$group" : { 
                             "_id" :  { 
                               
@@ -1457,7 +1457,7 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, type, sta
           index[str_day] = i
           i += 1
 
-        site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project_id, "start": 
+        site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": {"$in":[project_id, int(project_id)]}, "start": 
           { '$gte' : new_startdate.isoformat(), '$lte' : new_enddate.isoformat() }}},  { "$group" : { 
                             "_id" :  { 
                               
