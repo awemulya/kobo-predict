@@ -18,6 +18,14 @@ class LoginForm(forms.Form):
     password = forms.CharField(label='Your Password', max_length=100)
 
 
+class SignUpForm(forms.Form):
+    username = forms.CharField(label='Your Username', max_length=100)
+    first_name = forms.CharField(label="First Name", required=True)
+    last_name = forms.CharField(label="Last Name", required=True)
+    email = forms.EmailField(label='Your Email', required=True)
+    password1 = forms.CharField(label='Your Password', max_length=100)
+    password2 = forms.CharField(label='Re-enter Your Password', max_length=100)
+
 class ProfileForm(forms.ModelForm):
     x = forms.FloatField(widget=forms.HiddenInput(), required=False)
     y = forms.FloatField(widget=forms.HiddenInput(), required=False)

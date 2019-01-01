@@ -26,7 +26,7 @@ from onadata.apps.fieldsight.models import Organization, BluePrints
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from onadata.apps.users.serializers import AuthCustomTokenSerializer, UserSerializerProfile
-from .forms import LoginForm, ProfileForm, UserEditForm
+from .forms import LoginForm, ProfileForm, UserEditForm, SignUpForm
 from rest_framework import viewsets
 from onadata.apps.fsforms.models import FInstance
 from django.db.models import Q
@@ -368,33 +368,60 @@ def web_login(request):
     if request.user.is_authenticated():
         return redirect('/dashboard/')
     if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            pwd = form.cleaned_data['password']
-            user, valid_email = web_authenticate(username=username, password=pwd)
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return HttpResponseRedirect(reverse('dashboard'))
+        if request.POST.get('submit') == 'signin':
+            form = LoginForm(request.POST)
+            if form.is_valid():
+                username = form.cleaned_data['username']
+                pwd = form.cleaned_data['password']
+                user, valid_email = web_authenticate(username=username, password=pwd)
+                if user is not None:
+                    if user.is_active:
+                        login(request, user)
+                        return HttpResponseRedirect(reverse('dashboard'))
+                    else:
+                        return render(request, 'users/login.html',
+                                    {'form': form,
+                                    'email_error': "Your Account is Deactivated, Please Contact Administrator.",
+                                    'valid_email': valid_email})
                 else:
+                    if valid_email:
+                        email_error = False
+                        password_error = True
+                    else:
+                        password_error = False
+                        email_error = "Invalid Email, Please Check your Email Address."
                     return render(request, 'users/login.html',
-                                  {'form': form,
-                                   'email_error': "Your Account is Deactivated, Please Contact Administrator.",
-                                   'valid_email': valid_email})
+                                {'form': form,
+                                'valid_email': valid_email, 'email_error': email_error, 'password_error': password_error})
             else:
-                if valid_email:
-                    email_error = False
-                    password_error = True
+                return render(request, 'users/login.html', {'form': form , 'valid_email': False, 'email_error': "Your Email and Password Didnot Match."})
+       
+        if request.POST.get('submit') == 'signup':
+            form = SignUpForm(request.POST)
+            username = request.POST.get('username')
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            email = request.POST.get('email')
+            password1 = request.POST.get('password')
+            password2 = request.POST.get('password1')  
+            user, valid_email = web_authenticate(username=username)
+            if user is None:
+                if password1 == password2:
+                    user = User()
+                    user.username = username
+                    user.first_name = first_name
+                    user.last_name = last_name
+                    user.email = email
+                    user.password = password1
+                    user.save()
                 else:
-                    password_error = False
-                    email_error = "Invalid Email, Please Check your Email Address."
-                return render(request, 'users/login.html',
-                              {'form': form,
-                               'valid_email': valid_email, 'email_error': email_error, 'password_error': password_error})
-        else:
-            return render(request, 'users/login.html', {'form': form , 'valid_email': False, 'email_error': "Your Email and Password Didnot Match."})
+                    password_error = True
+                    return render(request, 'users/login.html', {'form':form, 'password_error':password_error})
+            else:
+                user_error=True
+                return render(request, 'users/login.html', {'form':form, 'user_error':user_error})
+            return render(request, 'users/login.html', {'form':form})
+    
     else:
         form = LoginForm()
-
     return render(request, 'users/login.html', {'form': form, 'valid_email': True, 'email_error': False})
