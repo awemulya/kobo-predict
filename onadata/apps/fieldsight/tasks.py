@@ -1387,7 +1387,7 @@ def sendNotification(notification, recipient):
 
 
 @shared_task(time_limit=120, soft_time_limit=120)
-def exportProjectstatistics(task_prog_obj_id, source_user, project_id, type, start_date, end_date):
+def exportProjectstatistics(task_prog_obj_id, source_user, project_id, reportType, start_date, end_date):
     # time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
@@ -1408,7 +1408,7 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, type, sta
 
         new_enddate = end + datetime.timedelta(days=1)
 
-        if type == "Monthly":
+        if reportType == "Monthly":
             data.insert(0, ["Date", "Month", "Site Visits", "Submissions","Active Users"])
             i=1
             for month in rrule(MONTHLY, dtstart=new_startdate, until=new_enddate):
@@ -1448,7 +1448,7 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, type, sta
             for month_stat in forms_stats:
                 data[index[month_stat['date_created'].strftime("%Y-%m")]][4] = int(month_stat['dcount'])
 
-        if type in ["Daily", "Weekly"]:
+        if reportType in ["Daily", "Weekly"]:
             data.insert(0, ["Date", "Day", "Site Visits", "Submissions", "Active Users"])
             i=1
             for day in rrule(DAILY, dtstart=new_startdate, until=new_enddate):
@@ -1494,7 +1494,7 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, type, sta
         ws = wb.active
         ws.title = "Site Status"
 
-        if type == "Weekly":
+        if reportType == "Weekly":
             weekly_data = [["Week No.", "Week Start", "Week End", "Site Visits", "Submissions","Active Users"]]
 
         weekcount = 0
@@ -1544,11 +1544,11 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, type, sta
 
 
 @shared_task(time_limit=120, soft_time_limit=120)
-def exportLogs(task_prog_obj_id, source_user, pk, type, start_date, end_date):
+def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_date):
     # time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
-    if type == "Project":
+    if reportType == "Project":
         obj=get_object_or_404(Project, pk=pk)
     else:
         obj=get_object_or_404(Site, pk=pk)
@@ -1573,7 +1573,7 @@ def exportLogs(task_prog_obj_id, source_user, pk, type, start_date, end_date):
         ws = wb.active
         ws.append(["Date", "User", "Log"])
 
-        if type == "Project":
+        if reportType == "Project":
             ws.title = "Project Logs"
             logs = queryset.filter(Q(project_id=pk) | (Q(content_type=ContentType.objects.get(app_label="fieldsight", model="project")) & Q(object_id=pk)))
 
@@ -1604,16 +1604,16 @@ def exportLogs(task_prog_obj_id, source_user, pk, type, start_date, end_date):
         wb.save(buffer)
         buffer.seek(0)
         xls = buffer.getvalue()
-        base_uri = obj.name if type == "Project" else obj.project.name + '/' + obj.name
+        base_uri = obj.name if reportType == "Project" else obj.project.name + '/' + obj.name
         xls_url = default_storage.save(base_uri + '/xls/'+obj.name+'-logs.xls', ContentFile(xls))
         buffer.close()
 
         task.status = 2
         task.file.name = xls_url
         task.save()
-        noti = task.logs.create(source=source_user, type=32, title="Xls "+ type +" Logs Report generation",
+        noti = task.logs.create(source=source_user, type=32, title="Xls "+ reportType +" Logs Report generation",
                                  recipient=source_user, content_object=task, extra_object=obj,
-                                 extra_message=" <a href='"+ task.file.url +"'>Xls "+ type +" statistics report</a> generation in ")
+                                 extra_message=" <a href='"+ task.file.url +"'>Xls "+ reportType +" statistics report</a> generation in ")
 
     except Exception as e:
         task.description = "ERROR: " + str(e.message) 
@@ -1621,7 +1621,7 @@ def exportLogs(task_prog_obj_id, source_user, pk, type, start_date, end_date):
         task.save()
         print 'Report Gen Unsuccesfull. %s' % e
         print e.__dict__
-        noti = task.logs.create(source=source_user, type=432, title="Xls "+ type +" logs report generation in ",
+        noti = task.logs.create(source=source_user, type=432, title="Xls "+ reportType +" logs report generation in ",
                                        content_object=obj, recipient=source_user,
                                        extra_message="@error " + u'{}'.format(e.message))
         buffer.close()
