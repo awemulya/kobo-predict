@@ -1554,7 +1554,7 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
     else:
         obj=get_object_or_404(Site, pk=pk)
 
-    task.content_object = project
+    task.content_object = obj
     task.save()
 
     try:  
