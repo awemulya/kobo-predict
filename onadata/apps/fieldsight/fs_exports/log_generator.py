@@ -177,18 +177,18 @@ def log_type25(data):
 
 def log_type26(data):
     content =  data.source.first_name + ' ' + data.source.last_name +' was added as the Project Manager in '+ data.extra_message +' projects of ' + data.get_event_name() + ' by ' + data.get_extraobj_name() + '.'
-        return content
+    return content
 
 
 def log_type27(data):
     content = data.source.first_name + ' ' + data.source.last_name +' was added as Reviewer in '+ data.extra_message +' sites of ' + data.get_event_name() + ' by ' + data.get_extraobj_name() + '.'
-        return content
+    return content
 
 
 
 def log_type28(data):
     content = data.source.first_name + ' ' + data.source.last_name +' was added as Site Supervisor in '+ data.extra_message +' sites of ' + data.get_event_name() + ' by ' + data.get_extraobj_name() + '.'
-        return content
+    return content
 
 
 def log_type31(data):
