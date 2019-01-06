@@ -1,4 +1,4 @@
-    log_types = {
+log_types = {
         0 : log_type0,
         1 : log_type1,
         2 : log_type2,
