@@ -44,6 +44,9 @@ from django.db import connection
 from onadata.apps.fsforms.models import Instance
 from onadata.apps.fieldsight.fs_exports.log_generator import *
 
+from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
+
 def get_images_for_site_all(site_id):
     return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : site_id}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
 
