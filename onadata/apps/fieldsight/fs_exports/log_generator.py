@@ -112,7 +112,7 @@ def log_type14(data):
     return content
  
 
-def log_type15(data, detail=false):
+def log_type15(data, detail=False):
     content = data.source.first_name + ' ' + data.source.last_name +' changed the details of site named ' + data.get_event_name() + '.'
     sub_contents = []
     if (data.extra_json and detail) :
