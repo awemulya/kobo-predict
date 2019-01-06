@@ -167,7 +167,7 @@ def log_type33(data):
 
 def log_type34(data):
     formdetail = data.get_event_name().split("form")
-    content = data.source.first_name + ' ' + data.source.last_name +' deleted '+ formdetail[1] +' with '+ data.extra_json['submitted_count'] +' submissions in ' + data.get_extraobj_name() + '.'
+    content = data.source.first_name + ' ' + data.source.last_name +' deleted '+ formdetail[1] +' with '+ data.extra_json['submission_count'] +' submissions in ' + data.get_extraobj_name() + '.'
     return content
 
 

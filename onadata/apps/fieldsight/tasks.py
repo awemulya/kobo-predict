@@ -1547,7 +1547,7 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, reportTyp
         buffer.close()
 
 
-@shared_task(time_limit=120, soft_time_limit=120)
+@shared_task(time_limit=520, soft_time_limit=520)
 def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_date):
     # time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
@@ -1560,7 +1560,7 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
     task.content_object = obj
     task.save()
 
-    try:  
+    try: 
         buffer = BytesIO()
         data = []
         index = {}
@@ -1600,16 +1600,21 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
                     query |= (Q(type=15) & Q(content_type=content_site) & Q(object_id=key) & Q(extra_json__contains='"'+item +'":'))
 
             logs = queryset.filter(query)            
-
+        print logs.count()
         for log in logs:
+            print log.id
             if log.type == 15:
+                row_data = [log.date, log.source.first_name + ' ' + log.source.last_name, log_text]
                 log_text, sub_log_text  = log_types[log.type](log)    
-                ws.append(log_text.extend(sub_log_text))
-
+                if sub_log_text:
+                    row_data = row_data.extend(sub_log_text)
+                ws.append(row_data)
+            elif log.type==34:
+                print log.extra_json
             else:                
                 log_text = log_types[log.type](log)
-                ws.append(log_text)
-    
+                ws.append([log.date, log.source.first_name + ' ' + log.source.last_name, log_text])
+
         wb.save(buffer)
         buffer.seek(0)
         xls = buffer.getvalue()
@@ -1623,7 +1628,8 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
         noti = task.logs.create(source=source_user, type=32, title="Xls "+ reportType +" Logs Report generation",
                                  recipient=source_user, content_object=task, extra_object=obj,
                                  extra_message=" <a href='"+ task.file.url +"'>Xls "+ reportType +" statistics report</a> generation in ")
-
+# user = User.objects.get(username="fsadmin")
+# exportLogs( 2143, user , 137, "Project", "2018-08-11", "2018-12-12")
     except Exception as e:
         task.description = "ERROR: " + str(e.message) 
         task.status = 3
