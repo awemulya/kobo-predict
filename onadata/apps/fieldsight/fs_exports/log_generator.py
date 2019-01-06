@@ -205,7 +205,7 @@ log_types = {
         26 : log_type26,
         27 : log_type27,
         28 : log_type28,
-        29 : log_type29,
+        
         31 : log_type31,
         33 : log_type33,
         34 : log_type34,
