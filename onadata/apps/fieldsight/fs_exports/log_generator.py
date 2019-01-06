@@ -123,25 +123,25 @@ def log_type15(data, detail=false):
    
 
 def log_type16(data):
-    var formdetail = data.get_event_name().split("form")
+    formdetail = data.get_event_name().split("form")
     content = data.source.first_name + ' ' + data.source.last_name +' submitted a response for '+ formdetail[0] +'form ' + formdetail[1] + ' in ' + data.get_extraobj_name() + '.'
     return content
    
 
 def log_type17(data):
-    var formdetail = data.get_event_name().split("form")
+    formdetail = data.get_event_name().split("form")
     content = data.source.first_name + ' ' + data.source.last_name +' reviewed a response for '+ formdetail[0] +'form ' + formdetail[1]+' in ' + data.get_extraobj_name() + '.'
     return content
    
 
 def log_type18(data):
-    var formdetail = data.get_event_name().split("form")  
+    formdetail = data.get_event_name().split("form")  
     content = data.source.first_name + ' ' + data.source.last_name +' assigned a new '+ formdetail[0] +'form ' + formdetail[1]+' in project ' + data.get_extraobj_name() + '.'
     return content
    
 
 def log_type19(data):
-    var formdetail = data.get_event_name().split("form")
+    formdetail = data.get_event_name().split("form")
     content = data.source.first_name + ' ' + data.source.last_name +' assigned a new '+ formdetail[0] +'form ' + formdetail[1]+' in site ' + data.get_extraobj_name() + '.'
     return content
    
@@ -192,20 +192,20 @@ def log_type28(data):
 
 
 def log_type31(data):
-    var formdetail = data.get_event_name().split("form")
+    formdetail = data.get_event_name().split("form")
     level= "project" if data.extra_message == "project" else "site" 
     content = data.source.first_name + ' ' + data.source.last_name +' edited a response in '+ formdetail[0] +'form ' + formdetail[1] + ' in '+ level +' ' + data.get_extraobj_name()+'.'
     return content
 
 
 def log_type33(data):
-    var formdetail = data.get_event_name().split("form")
+    formdetail = data.get_event_name().split("form")
     content = data.source.first_name + ' ' + data.source.last_name +' deleted a response submitted by '+ data.extra_json['submitted_by'] +' in '+ formdetail[0] +'form ' + formdetail[1] + ' in '+ data.extra_message + data.get_extraobj_name()+'.'
     return content
 
 
 def log_type34(data):
-    var formdetail = data.get_event_name().split("form")
+    formdetail = data.get_event_name().split("form")
     content = data.source.first_name + ' ' + data.source.last_name +' deleted '+ formdetail[1] +' with '+ data.extra_json['submitted_count'] +' submissions in ' + data.get_extraobj_name() + '.'
     return content
 
