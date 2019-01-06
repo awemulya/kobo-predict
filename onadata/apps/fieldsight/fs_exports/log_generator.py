@@ -115,7 +115,7 @@ def log_type14(data):
 def log_type15(data, detail=false):
     content = data.source.first_name + ' ' + data.source.last_name +' changed the details of site named ' + data.get_event_name() + '.'
     sub_contents = []
-    if (data.extra_json && detail) :
+    if (data.extra_json and detail) :
         updated = data.extra_json
         sub_contents.append(updated[key].label + 'was updated from' + ('blank' if updated[key].data[0] == '' else updated[key].data[0]) + ' to ' + ('blank' if updated[key].data[1] == '' else updated[key].data[1]) + '.')
 
