@@ -28,7 +28,7 @@ def log_type5(data):
     return content
 
 def log_type6(data):
-    content = data.source.first_name + ' ' + data.source.last_name +' was assigned as a Project Manager in ' + data.get_event_name() + ' by ' +  data.get_extraobj_url + '">' + data.get_extraobj_name() + '.'
+    content = data.source.first_name + ' ' + data.source.last_name +' was assigned as a Project Manager in ' + data.get_event_name() + ' by ' + data.get_extraobj_name() + '.'
     return content
 
 def log_type7(data):
