@@ -42,6 +42,7 @@ from django.core.exceptions import MultipleObjectsReturned
 from dateutil.rrule import rrule, MONTHLY, DAILY
 from django.db import connection                                         
 from onadata.apps.fsforms.models import Instance
+from onadata.apps.fieldsight.fs_exports.log_generator import *
 
 def get_images_for_site_all(site_id):
     return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : site_id}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
@@ -1567,7 +1568,7 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
         end = date(int(split_enddate[0]), int(split_enddate[1]), int(split_enddate[2]))
 
         new_enddate = end + datetime.timedelta(days=1)
-        queryset = FieldSightLog.objects.select_related('source__user_profile').filter(recipient=None)
+        queryset = FieldSightLog.objects.select_related('source__user_profile').filter(recipient=None).exclude(type__in=[23, 29, 30, 32, 35])
         
         wb = Workbook()
         ws = wb.active
@@ -1598,9 +1599,14 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
             logs = queryset.filter(query)            
 
         for log in logs:
-            value = generate_log_data(log)
-            ws.append(value)
+            if log.type == 15:
+                log_text, sub_log_text  = log_types[log.type](log)    
+                ws.append(log_text.extend(sub_log_text))
 
+            else:                
+                log_text = log_types[log.type](log)
+                ws.append(log_text)
+    
         wb.save(buffer)
         buffer.seek(0)
         xls = buffer.getvalue()
