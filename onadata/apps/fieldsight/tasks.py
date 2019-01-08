@@ -1609,9 +1609,9 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
         
         for log in logs:
             if operator == '+':
-                day_time = log.date + datetime.timedelta(hours=int(hour_offset), minutes=int(minute_offset)
+                day_time = log.date + datetime.timedelta(hours=int(hour_offset), minutes=int(minute_offset))
             else:
-                day_time = log.date - datetime.timedelta(hours=int(hour_offset), minutes=int(minute_offset)
+                day_time = log.date - datetime.timedelta(hours=int(hour_offset), minutes=int(minute_offset))
 
             day_time = day_time.strftime('%A, %-I:%-M %p')
 
