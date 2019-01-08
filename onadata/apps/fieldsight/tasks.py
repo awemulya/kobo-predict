@@ -1613,6 +1613,7 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
             else:
                 day_time = log.date - timedelta(hours=hour_offset, minutes=minute_offset)
 
+            day_time = day_time.strftime('%A, %-I:%-M %p')
             
             if log.type == 15:
                 row_data = [log.date, day_time, log.source.first_name + ' ' + log.source.last_name, log_text]
