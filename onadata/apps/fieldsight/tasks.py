@@ -1571,11 +1571,17 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
         end = date(int(split_enddate[0]), int(split_enddate[1]), int(split_enddate[2]))
 
         new_enddate = end + datetime.timedelta(days=1)
-        queryset = FieldSightLog.objects.select_related('source__user_profile').filter(recipient=None).exclude(type__in=[23, 29, 30, 32, 35])
+        queryset = FieldSightLog.objects.select_related('source__user_profile').filter(recipient=None, date__range=[new_startdate, new_enddate]).exclude(type__in=[23, 29, 30, 32, 35])
         
         wb = Workbook()
         ws = wb.active
-        ws.append(["Date", "User", "Log"])
+        ws.append(["Date", "Day and Time", "User", "Log"])
+        offset_time = source_user.user_profile.timezone.offset_time if source_user.user_profile.timezone.offset_time else "UTC +05:45"
+        
+        operator = offset_time[4]
+        time_offset = offset_time[5:]
+        hour_offset = time_offset.split(':')[0]
+        minute_offset = time_offset.split(':')[1]
 
         if reportType == "Project":
             ws.title = "Project Logs"
@@ -1600,20 +1606,24 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
                     query |= (Q(type=15) & Q(content_type=content_site) & Q(object_id=key) & Q(extra_json__contains='"'+item +'":'))
 
             logs = queryset.filter(query)            
-        print logs.count()
+        
         for log in logs:
-            print log.id
+            if operator == '+':
+                day_time = log.date + timedelta(hours=hour_offset, minutes=minute_offset)
+            else:
+                day_time = log.date - timedelta(hours=hour_offset, minutes=minute_offset)
+
+            
             if log.type == 15:
-                row_data = [log.date, log.source.first_name + ' ' + log.source.last_name, log_text]
+                row_data = [log.date, day_time, log.source.first_name + ' ' + log.source.last_name, log_text]
                 log_text, sub_log_text  = log_types[log.type](log)    
                 if sub_log_text:
                     row_data = row_data.extend(sub_log_text)
                 ws.append(row_data)
-            elif log.type==34:
-                print log.extra_json
+            
             else:                
                 log_text = log_types[log.type](log)
-                ws.append([log.date, log.source.first_name + ' ' + log.source.last_name, log_text])
+                ws.append([log.date, day_time, log.source.first_name + ' ' + log.source.last_name, log_text])
 
         wb.save(buffer)
         buffer.seek(0)
