@@ -57,5 +57,6 @@ class FcmDeviceViewSet(viewsets.ModelViewSet):
             return response.Response(status=status.HTTP_404_NOT_FOUND)
 
     def perform_destroy(self, instance):
-        instance.is_active = False
-        instance.save()
+        # instance.is_active = False
+        instance.delete()
+        # instance.save()
