@@ -2428,7 +2428,7 @@ class FormVersions(LoginRequiredMixin, View):
         kwargs['fsf'] = fsf
         kwargs['site'] = site
 
-        kwargs['versions'] = XformHistory.objects.filter(xform=fsf.xf)
+        kwargs['versions'] = XformHistory.objects.filter(xform=fsf.xf).order_by('-date')
         kwargs['latest'] = fsf.xf
 
 
