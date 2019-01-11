@@ -50,8 +50,13 @@
 										</ul>
 										<div class="tab-content" id="pills-tabContent">
 											<div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="pills-login-tab">
-												<form method="post">
+												<form method="post" action="/users/accounts/login/">
 												{% csrf_token %}
+												{% if signup_username_error %}
+												<div id="emailHelp" class="invalid-feedback">
+													User with the username already exists.
+												</div>
+												{% endif %}
 												  	<div class="form-group">
 												    	<label for="inputEmail">Email address
 
@@ -59,7 +64,7 @@
 												    	<input type="username" class="form-control {% if not valid_email %}is-invalid{% endif %}" name="username" id="inputEmail">
 														{% if not valid_email %}
 															<div id="emailHelp" class="invalid-feedback">
-														  		{{ email_error }}
+																User With The Email Doesnot Exist.
 															</div>
 															{% endif %}
 												  	</div>
@@ -91,22 +96,25 @@
 														  	</div> 
 												  		</div>
 												  	</div>
-												  	<button type="submit" class="btn btn-secondary" name="submit" value="signin"><i class="la la-key"></i> Sign In</button>
+												  	<button type="submit" class="btn btn-secondary" name="login" value="signin"><i class="la la-key"></i> Sign In</button>
 												</form>
 											</div>
 											<div class="tab-pane fade" id="pills-signup" role="tabpanel" aria-labelledby="pills-signup-tab">
-												<form method="POST" action="{% url 'users:web_login' %}">
+												<form method="POST" action="/users/signup/">
 													{% csrf_token %}
-														{% if user_error %}
-														<div class="invalid-feedback">
-															User With Username Already Exists! Try Another Username
-														</div>
-														{% endif %}
+													{% if form.errors %}
+													{% for field in form %}
+														{% for error in field.errors %}
+															<div class="alert alert-danger">
+																<strong>{{ error|escape }}</strong>
+															</div>
+														{% endfor %}
+													{% endfor %}
+													{% endif %}
 													<div class="form-group">
 													    <label for="inputSignupUsername">Username</label>
 													    <input type="text" class="form-control" id="inputSignupUsername" name="username">
-													</div>
-
+													</div>							
 													<div class="form-group">
 													    <label for="inputSignupFirstName">First Name</label>
 													    <input type="text" class="form-control" id="inputSignupFirstName" name="first_name">
@@ -126,13 +134,13 @@
 													<div class="form-group">
 													    <label for="inputSignupRePassword">One more time?</label>
 													    <input type="password" class="form-control" id="inputSignupRePassword" name="password1">
-														{% if password_error %}
+														{% if signup_password_error %}
 															<div id="passwordHelp" class="invalid-feedback">
 														  		Passwords Did Not Match!
 															</div>
 															{% endif %}
 													</div>
-													<button type="submit" class="btn btn-secondary" name="submit" value="signup"><i class="la la-user-plus"></i> Signup</button>
+													<button type="submit" class="btn btn-secondary" name="signup" value="signup"><i class="la la-user-plus"></i> Signup</button>
 												</form>
 											</div>
 											<div class="tab-pane fade" id="pills-reset" role="tabpanel" aria-labelledby="pills-reset-tab">

@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from onadata.apps.users.views import ContactViewSet, UsersListView, MyProfile, EndUserRole, web_login
+from onadata.apps.users.views import ContactViewSet, UsersListView, MyProfile, EndUserRole, web_login, web_signup
 from onadata.apps.users.viewsets import UserViewSet, ProfileViewSet, UserListViewSet, SearchableUserListViewSet, \
     MySitesViewset, MySitesOnlyViewset, MyProjectsViewset
 from . import views
@@ -9,6 +9,7 @@ from . import views
 urlpatterns = [
 
     url(r'^accounts/login/', web_login, name='web_login'),
+    url(r'^signup/', web_signup, name='web_signup'),
 
     url(r'^$', UsersListView.as_view(), name='users'),
     url(r'^api/list/all(?:/(?P<level>[1-4]))?(?:/(?P<username>[^/]+))?/$', SearchableUserListViewSet.as_view({'get': 'list'})),

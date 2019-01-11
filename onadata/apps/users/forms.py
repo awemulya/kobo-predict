@@ -3,9 +3,12 @@ from django import forms
 from PIL import Image
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 
 from onadata.apps.fieldsight.models import Organization
 from .models import UserProfile
+from django.contrib.auth.models import User
 
 
 import StringIO
@@ -19,12 +22,22 @@ class LoginForm(forms.Form):
 
 
 class SignUpForm(forms.Form):
-    username = forms.CharField(label='Your Username', max_length=100)
+    username = forms.CharField(label='Username', max_length=100)
     first_name = forms.CharField(label="First Name", required=True)
     last_name = forms.CharField(label="Last Name", required=True)
-    email = forms.EmailField(label='Your Email', required=True)
-    password1 = forms.CharField(label='Your Password', max_length=100)
-    password2 = forms.CharField(label='Re-enter Your Password', max_length=100)
+    email = forms.EmailField(label='Email address', required=True)
+    password = forms.CharField(widget=forms.PasswordInput,label='Your Password', max_length=100)
+    password1 = forms.CharField(widget=forms.PasswordInput,label='One more time?', max_length=100)
+
+    def clean_password(self):
+        if self.cleaned_data.get('password') != self.cleaned_data.get('password1'):
+            raise ValidationError('The passwords did not match.')
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not validate_email(email):
+            raise ValidationError('Enter a valid Email address.')
+
 
 class ProfileForm(forms.ModelForm):
     x = forms.FloatField(widget=forms.HiddenInput(), required=False)
