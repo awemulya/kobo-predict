@@ -824,7 +824,8 @@ class SiteDeleteView(SiteDeleteRoleMixin, View):
                                project=site.project, extra_message="site", site=site, content_object=site,
                                description='{0} deleted of site named {1}'.format(
                                    self.request.user.get_full_name(), site.name))
-        return HttpResponseRedirect(self.get_success_url(reverse('fieldsight:proj-site-list', kwargs={'pk': site.project_id})))
+        return HttpResponseRedirect(reverse('fieldsight:proj-site-list', kwargs={'pk': site.project_id}))
+
     # def delete(self,*args, **kwargs):
     #     self.kwargs['pk'] = self.get_object().pk
     #     self.object = self.get_object().delete()
