@@ -445,6 +445,10 @@ class FInstance(models.Model):
         m = p.search(self.instance.xml)
         if m:
             return m.group(1)
+        p1 = re.compile('<_version_>(.*)</_version_>')
+        m1 = p1.search(self.instance.xml)
+        if m1:
+            return m1.group(1)
         return None
 
     def set_version(self):

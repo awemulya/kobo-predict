@@ -32,8 +32,7 @@ def get_instances_for_field_sight_form(fieldsight_form_id, submission=None):
     return settings.MONGO_DB.instances.find(query)
 
 def delete_form_instance(instance_id):
-    query = {'_id': instance_id}
-    return settings.MONGO_DB.instances.remove(query)
+    return settings.MONGO_DB.instances.update({'_id': instance_id}, {'$set':{'_deleted_at': True}})
 
 def get_instances_for_project_field_sight_form(project_fieldsight_form_id, submission=None):
     query = {'fs_project_uuid': { '$in': [project_fieldsight_form_id, str(project_fieldsight_form_id)]}}
