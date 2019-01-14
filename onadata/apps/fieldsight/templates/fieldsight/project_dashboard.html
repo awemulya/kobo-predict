@@ -85,13 +85,13 @@ assigntoken(csrf_token);
 									    <a class="nav-link" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab03" aria-selected="false">Form Data</a>
 									  </li>
 									  <li class="nav-item">
-									    <a class="nav-link" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab04" aria-selected="false">=Statstics</a>
+									    <a class="nav-link" id="modalTab04-tab" data-toggle="tab" href="#modalTab04" role="tab" aria-controls="modalTab04" aria-selected="false">Statstics</a>
 									  </li>
 									  <li class="nav-item">
-									    <a class="nav-link" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab05" aria-selected="false">Logs</a>
+									    <a class="nav-link" id="modalTab05-tab" data-toggle="tab" href="#modalTab05" role="tab" aria-controls="modalTab05" aria-selected="false">Logs</a>
 									  </li>
 									  <li class="nav-item">
-									    <a class="nav-link" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab05" aria-selected="false">Progress Report</a>
+									    <a class="nav-link" id="modalTab06-tab" data-toggle="tab" href="#modalTab06" role="tab" aria-controls="modalTab05" aria-selected="false">Progress Report</a>
 									  </li>
 									</ul>
 				      			</div>
@@ -192,11 +192,6 @@ assigntoken(csrf_token);
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#reportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Report' %}</a>
-								
-								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#statsticsexportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Statstics' %} {% trans 'Report' %}</a>
-
-
-								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#logsexportModal"><i class="la la-table"></i> {% trans 'Export' %} {% trans 'Logs' %} {% trans 'Report' %}</a>
 
 								<a class="dropdown-item" href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i> {% trans 'View' %} {% trans 'Data' %}</a>
 
