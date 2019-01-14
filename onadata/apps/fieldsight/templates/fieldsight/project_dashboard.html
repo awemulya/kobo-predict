@@ -61,35 +61,95 @@ assigntoken(csrf_token);
 {% endblock %}
 {% block content %}
 {% csrf_token %}
-<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		{% verbatim %}
-		<div class="modal-content" id="generateReport">
-		
-		</div>
-		{% endverbatim %}
-	</div>
-</div>
 
-<div class="modal fade" id="statsticsexportModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		{% verbatim %}
-		<div class="modal-content" id="generateStatsticsReport">
-		
-		</div>
-		{% endverbatim %}
-	</div>
-</div>
+<div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+			  	<div class="modal-dialog modal-lg modal-xl" role="document">
+				    <div class="modal-content">
+				      	<div class="modal-header">
+				        	<h5 class="modal-title" id="exportModalLabel">Export Report</h5>
+				        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          		<span aria-hidden="true">&times;</span>
+				        	</button>
+				      	</div>
+				      	<div class="modal-body bg-light">
+				      		<div class="row">
+				      			<div class="col-md-4 col-lg-3">
+				      				<ul class="nav nav-pills flex-column" id="myTab" role="tablist">
+									  <li class="nav-item">
+									    <a class="nav-link active" id="modalTab01-tab" data-toggle="tab" href="#modalTab01" role="tab" aria-controls="modalTab01" aria-selected="true">Project Summary</a>
+									  </li>
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab02-tab" data-toggle="tab" href="#modalTab02" role="tab" aria-controls="modalTab02" aria-selected="false">Sites Export</a>
+									  </li>
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab03" aria-selected="false">Form Data</a>
+									  </li>
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab04" aria-selected="false">=Statstics</a>
+									  </li>
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab05" aria-selected="false">Logs</a>
+									  </li>
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab05" aria-selected="false">Progress Report</a>
+									  </li>
+									</ul>
+				      			</div>
+				      			<div class="col-md-8 col-lg-9">
+				      				<div class="tab-content" id="myTabContent">
+										<div class="tab-pane fade show active" id="modalTab01" role="tabpanel" aria-labelledby="modalTab01-tab">
+											<a class="dropdown-item" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><button type="button" class="btn btn-primary"><i class="la la-list-alt"></i> Project Summary Report</button></a>
+											
+										</div>
+										<div class="tab-pane fade" id="modalTab02" role="tabpanel" aria-labelledby="modalTab02-tab">
+											{% verbatim %}
+											<div id="export_stage_progress_button">
+											
+											</div>
+											{% endverbatim %}
+										</div>
+										<div class="tab-pane fade" id="modalTab03" role="tabpanel" aria-labelledby="modalTab03-tab">
+											{% verbatim %}
+											<div id="generateReport">
+											</div>
+											{% endverbatim %}
+										</div>
+										<div class="tab-pane fade" id="modalTab04" role="tabpanel" aria-labelledby="modalTab04-tab">
+											{% verbatim %}
+											<div id="generateStatsticsReport">
+											
+											</div>
+											{% endverbatim %}
+										</div>
+										<div class="tab-pane fade" id="modalTab05" role="tabpanel" aria-labelledby="modalTab05-tab">
+											{% verbatim %}
+											<div id="generateLogReport">
+											
+											</div>
+											{% endverbatim %}
+										</div>
+										<div class="tab-pane fade" id="modalTab06" role="tabpanel" aria-labelledby="modalTab05-tab">
+											{% verbatim %}
+											<div id="export_button">
+											
+											</div>
+											{% endverbatim %}
+										</div>
+									</div>
+				      			</div>
+				      		</div>
+				      	</div>
+				      	<!-- <div class="modal-footer">
+				        	<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				        	<div class="btn-group" role="group" aria-label="Download">
+							  <button type="button" class="btn btn-primary">PDF</button>
+							  <button type="button" class="btn btn-primary">Excel</button>
+							</div>
+				      	</div> -->
+				    </div>
+			  	</div>
+			</div>
 
-<div class="modal fade" id="logsexportModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		{% verbatim %}
-		<div class="modal-content" id="generateLogReport">
-		
-		</div>
-		{% endverbatim %}
-	</div>
-</div>
 
 			<div id="main-content" class="padding">
 				<nav aria-label="breadcrumb" role="navigation">
@@ -131,13 +191,7 @@ assigntoken(csrf_token);
 								<i class="la la-clipboard"></i>{% trans 'Data' %}
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
-								<a class="dropdown-item" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i> {% trans ' Project' %} {% trans 'Summary' %}</a>
-								<!--<a class="dropdown-item" href="#"><i class="la la-clipboard"></i>{% trans 'Project Detail Report' %}</a>-->
-								<!-- <a class="dropdown-item" href="{% url 'fieldsight:download-stages' obj.pk %}"><i class="la la-clipboard"></i>{% trans ' Excel' %} {% trans 'Report' %}</a> -->
-								
-									<div id="export_stage_progress_button"></div>
-								
-								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#exportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Report' %}</a>
+								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#reportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Report' %}</a>
 								
 								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#statsticsexportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Statstics' %} {% trans 'Report' %}</a>
 
@@ -169,9 +223,7 @@ assigntoken(csrf_token);
 								{% endif %}
 								<a href="{% url 'fieldsight:define-site-meta' obj.pk %}" title="" class="dropdown-item"><i class="la la-info"></i>  {% trans 'Meta' %} {% trans 'Attributes' %}</a>
 								<a class="dropdown-item" href="{% url 'fieldsight:region-list' obj.pk %}"><i class="la la-map-marker"></i>{% trans 'Manage Regions' %}</a>
-								{% verbatim %}
-									<div id="export_button"></div>
-								{% endverbatim %}
+								
 								
 							</div>
 						</span>

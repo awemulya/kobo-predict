@@ -76,7 +76,7 @@ class LogsReport(View):
         else:
             obj = get_object_or_404(Site, pk=self.kwargs.get('pk'))
         
-        task_obj=CeleryTaskProgress.objects.create(user=user, content_object=obj, task_type=11)
+        task_obj=CeleryTaskProgress.objects.create(user=user, content_object=obj, task_type=12)
         if task_obj:
             task = exportLogs.delay(task_obj.pk, user, self.kwargs.get('pk'), reportType, start_date, end_date)
             task_obj.task_id = task.id

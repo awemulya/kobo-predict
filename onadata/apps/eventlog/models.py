@@ -206,6 +206,7 @@ class CeleryTaskProgress(models.Model):
         (9, 'Response Pdf Report'),
         (10, 'Site Progress Xls Report'),
         (11, 'Project Statstics Report'),
+        (12, 'Log Report'),
 
         )
     task_id = models.CharField(max_length=255, blank=True, null=True)
