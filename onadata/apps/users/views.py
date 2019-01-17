@@ -395,7 +395,13 @@ def web_login(request):
                               {'form': form,
                                'valid_email': valid_email, 'email_error': email_error, 'password_error': password_error})
         else:
-            return render(request, 'users/login.html', {'form': form , 'valid_email': False, 'email_error': "Your Email and Password Didnot Match."})
+            login_username = request.POST.get('login_username')
+            return render(request, 'users/login.html', {
+                'form': form , 
+                'valid_email': False, 
+                'email_error': "Your Email and Password Didnot Match.", 
+                'login_username':login_username
+                })
     else:
         form = LoginForm()
 
@@ -412,7 +418,6 @@ def web_signup(request):
             last_name = signup_form.cleaned_data.get('last_name')
             email = signup_form.cleaned_data.get('email')
             password = signup_form.cleaned_data.get('password')
-            password1 = signup_form.cleaned_data.get('password1')
             user, valid_email = web_authenticate(username=username, password=password)
             if user is None:
                     user = User()
@@ -428,7 +433,19 @@ def web_signup(request):
                     username_error=True
                 return render(request, 'users/login.html', {'signup_form':signup_form, 'username_error':username_error})
         else:
-            return render(request, 'users/login.html', {'signup_form':signup_form, 'username_error':True, 'valid_email': True, 'email_error':False, 'signup_password_error':True, 'signup_username_error':True})
+            username = request.POST.get('username')
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            email = request.POST.get('email')
+            return render(request, 'users/login.html', {
+                'signup_form':signup_form, 
+                'username':username, 
+                'first_name':first_name, 
+                'last_name':last_name, 
+                'email':email,
+                'valid_email': True, 
+                'email_error':False
+                })
     else:
         signup_form = SignUpForm()
         return render(request, 'users/login.html', {'signup_form':signup_form, 'valid_email':True, 'email_error': False})

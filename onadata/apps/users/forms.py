@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 
 
 import StringIO
+import re
 import mimetypes
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
@@ -29,14 +30,33 @@ class SignUpForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput,label='Your Password', max_length=100)
     password1 = forms.CharField(widget=forms.PasswordInput,label='One more time?', max_length=100)
 
-    def clean_password(self):
-        if self.cleaned_data.get('password') != self.cleaned_data.get('password1'):
-            raise ValidationError('The passwords did not match.')
+    def clean(self):
+        cleaned_data = super(SignUpForm, self).clean()
+        password = self.cleaned_data.get('password')
+        password1 = self.cleaned_data.get('password1')
+        if password != password1:
+            raise ValidationError({'password':['The passwords did not match']})
+        
+        else:
+            if len(password) < 8:
+                raise ValidationError({'password': ['Passwords must be of more than 8 characters']})
+            
+            pattern = re.compile(r"^[w\d_-]+$")
+            if not bool(pattern.search(password)):
+                raise ValidationError({'password': ['Password must contain alphabet characters, special characters and numbers']})
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if not validate_email(email):
-            raise ValidationError('Enter a valid Email address.')
+        if validate_email(email)==False:
+            raise ValidationError('Enter a valid Email address')
+        
+        if User.objects.filter(email=email):
+            raise ValidationError('User with this email already exists')
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User.objects.filter(username=username):
+            raise ValidationError('User with this username already exists')
 
 
 class ProfileForm(forms.ModelForm):

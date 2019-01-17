@@ -52,16 +52,11 @@
 											<div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="pills-login-tab">
 												<form method="post" action="/users/accounts/login/">
 												{% csrf_token %}
-												{% if signup_username_error %}
-												<div id="emailHelp" class="invalid-feedback">
-													User with the username already exists.
-												</div>
-												{% endif %}
 												  	<div class="form-group">
 												    	<label for="inputEmail">Email address
 
 														</label>
-												    	<input type="username" class="form-control {% if not valid_email %}is-invalid{% endif %}" name="username" id="inputEmail">
+												    	<input type="username" class="form-control {% if not valid_email %}is-invalid{% endif %}" name="login_username" id="inputEmail">
 														{% if not valid_email %}
 															<div id="emailHelp" class="invalid-feedback">
 																User With The Email Doesnot Exist.
@@ -102,43 +97,72 @@
 											<div class="tab-pane fade" id="pills-signup" role="tabpanel" aria-labelledby="pills-signup-tab">
 												<form method="POST" action="/users/signup/">
 													{% csrf_token %}
-													{% if form.errors %}
-													{% for field in form %}
-														{% for error in field.errors %}
-															<div class="alert alert-danger">
-																<strong>{{ error|escape }}</strong>
-															</div>
-														{% endfor %}
-													{% endfor %}
-													{% endif %}
 													<div class="form-group">
 													    <label for="inputSignupUsername">Username</label>
-													    <input type="text" class="form-control" id="inputSignupUsername" name="username">
-													</div>							
+													    <input type="text" class="form-control {% if signup_form.username.errors %}is-invalid{% endif %}" id="inputSignupUsername" name="username" value="{{username}}">
+														{% if signup_form.username.errors %}
+														{% for error in signup_form.username.errors %}
+														<div class="invalid-feedback">
+															{{ error|escape }}
+													  	</div>
+														{% endfor %}
+														{% endif %}	
+													</div>			
+																
 													<div class="form-group">
 													    <label for="inputSignupFirstName">First Name</label>
-													    <input type="text" class="form-control" id="inputSignupFirstName" name="first_name">
+													    <input type="text" class="form-control {% if signup_form.first_name.errors %}is-invalid{% endif %}" id="inputSignupFirstName" name="first_name" value="{{first_name}}">
+														{% if signup_form.first_name.errors %}
+														{% for error in signup_form.first_name.errors %}
+														<div class="invalid-feedback">
+															{{ error|escape }}
+													  	</div>
+														{% endfor %}
+														{% endif %}	
 													</div>
 													<div class="form-group">
 													    <label for="inputSignupLastName">Last Name</label>
-													    <input type="text" class="form-control" id="inputSignupLastName" name="last_name">
+													    <input type="text" class="form-control {% if signup_form.last_name.errors %}is-invalid{% endif %}" id="inputSignupLastName" name="last_name" value="{{last_name}}">
+														{% if signup_form.last_name.errors %}
+														{% for error in signup_form.last_name.errors %}
+														<div class="invalid-feedback">
+															{{ error|escape }}
+													  	</div>
+														{% endfor %}
+														{% endif %}	
 													</div>
 													<div class="form-group">
 												    	<label for="inputSignupEmail">Email address</label>
-												    	<input type="email" class="form-control" id="inputEmail" name="email">
-												  	</div>
+												    	<input type="email" class="form-control {% if signup_form.email.errors %}is-invalid{% endif %}" id="inputSignupEmail" name="email" value="">
+														{% if signup_form.email.errors %}
+														{% for error in signup_form.email.errors %}
+														<div class="invalid-feedback">
+															{{ error|escape }}
+													  	</div>
+														{% endfor %}
+														{% endif %}	
+													</div>
 													<div class="form-group">
 													    <label for="inputSignupPassword">Your password</label>
-													    <input type="password" class="form-control" id="inputSignupPassword" name="password">
+													    <input type="password" class="form-control {% if signup_form.password.errors %}is-invalid{% endif %}" id="inputSignupPassword" name="password">
+														{% if signup_form.password.errors %}
+														{% for error in signup_form.password.errors %}
+														<div class="invalid-feedback">
+															{{ error|escape }}
+													  	</div>
+														{% endfor %}
+														{% endif %}	
 													</div>
 													<div class="form-group">
 													    <label for="inputSignupRePassword">One more time?</label>
-													    <input type="password" class="form-control" id="inputSignupRePassword" name="password1">
-														{% if signup_password_error %}
-															<div id="passwordHelp" class="invalid-feedback">
-														  		Passwords Did Not Match!
-															</div>
-															{% endif %}
+													    <input type="password" class="form-control {% if signup_form.password1.errors %}is-invalid{% endif %}" id="inputSignupRePassword" name="password1">
+														{% if signup_form.password1.errors %}
+														{% for error in signup_form.password1.errors %}
+														<div class="invalid-feedback">
+															{{ error|escape }}
+													  	</div>
+														{% endfor %}
+														{% endif %}	
 													</div>
 													<button type="submit" class="btn btn-secondary" name="signup" value="signup"><i class="la la-user-plus"></i> Signup</button>
 												</form>
@@ -184,6 +208,26 @@
 
 				//VC
 				fn_login_vertically_center();
+
+				if('{{username}}'){
+					document.getElementById('inputSignupUsername').value='{{username}}';
+				}
+
+				if('{{first_name}}'){
+					document.getElementById('inputSignupFirstName').value='{{first_name}}';
+				}
+
+				if('{{last_name}}'){
+					document.getElementById('inputSignupLastName').value='{{last_name}}';
+				}
+
+				if('{{email}}'){
+					document.getElementById('inputSignupEmail').value='{{email}}';
+				}
+
+				if('{{login_username}}'){
+					document.getElementById('inputEmail').value='{{login_username}}';
+				}
         		
 			});
 			jQuery(window).on('resize', function() {
