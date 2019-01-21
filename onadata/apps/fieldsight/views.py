@@ -45,7 +45,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
-from .rolemixins import FullMapViewMixin, SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
+from .rolemixins import FullMapViewMixin, SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView, RegionalMixin
 from .models import ProjectGeoJSON, Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region, SiteType
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm,
@@ -2019,7 +2019,7 @@ class RegionCreateView(RegionView, ProjectRoleMixin, CreateView):
             )
 
 
-class RegionDeleteView(RegionView, ProjectRoleMixin, DeleteView):
+class RegionDeleteView(RegionView, RegionMixin, DeleteView):
     def dispatch(self, request, *args, **kwargs):
         site = Site.objects.filter(region_id=self.kwargs.get('pk'))
         site.update(region_id=None)
@@ -2042,7 +2042,7 @@ class RegionDeleteView(RegionView, ProjectRoleMixin, DeleteView):
 #         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk':region.project.id}))
 
 
-class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
+class RegionUpdateView(RegionView, RegionalMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(RegionUpdateView, self).get_context_data(**kwargs)

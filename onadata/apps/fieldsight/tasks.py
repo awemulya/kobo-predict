@@ -42,7 +42,7 @@ from django.core.exceptions import MultipleObjectsReturned
 from dateutil.rrule import rrule, MONTHLY, DAILY
 from django.db import connection                                         
 from onadata.apps.fsforms.models import Instance
-from onadata.apps.fieldsight.fs_exports.log_generator import *
+from onadata.apps.fieldsight.fs_exports.log_generator import log_types
 
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
@@ -682,16 +682,17 @@ def siteDetailsGenerator(project, sites, ws):
 
             
 
-            print project.id, meta['form_id'], meta['question']['name']
             for submission in query['result']:
-                try:
+                try:    
                     if meta['question']['type'] in ['photo', 'video', 'audio'] and submission['answer'] is not "":
                         if not form_owner:
                             form_owner = FieldSightXF.objects.select_related('xf__user').get(pk=meta['form_id']).xf.user.username
                         site_list[int(submission['_id'])][meta['question_name']] = 'http://app.fieldsight.org/attachment/medium?media_file='+  +'/attachments/'+submission['answer']
                     
-
-                    site_list[int(submission['_id'])][meta['question_name']] = submission['answer']
+                    if meta['question']['type'] == 'repeat':
+                        site_list[int(submission['_id'])][meta['question_name']] = ""
+                    else:
+                        site_list[int(submission['_id'])][meta['question_name']] = submission['answer']
                 except:
                     pass
 
@@ -1607,6 +1608,8 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
 
             logs = queryset.filter(query)            
         
+        local_log_types = log_types
+        print logs.count(), "COUNT++++++++++"
         for log in logs:
             if operator == '+':
                 day_time = log.date + datetime.timedelta(hours=int(hour_offset), minutes=int(minute_offset))
@@ -1616,14 +1619,15 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
             day_time = day_time.strftime('%A, %-I:%-M %p')
 
             if log.type == 15:
+                log_text, sub_log_text  = local_log_types[log.type](log)    
                 row_data = [log.date, day_time, log.source.first_name + ' ' + log.source.last_name, log_text]
-                log_text, sub_log_text  = log_types[log.type](log)    
+                
                 if sub_log_text:
                     row_data = row_data.extend(sub_log_text)
                 ws.append(row_data)
             
             else:                
-                log_text = log_types[log.type](log)
+                log_text = local_log_types[log.type](log)
                 ws.append([log.date, day_time, log.source.first_name + ' ' + log.source.last_name, log_text])
 
         wb.save(buffer)

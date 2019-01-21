@@ -73,6 +73,26 @@ class ProjectRoleMixin(LoginRequiredMixin):
             return super(ProjectRoleMixin, self).dispatch(request, *args, **kwargs)
 
         raise PermissionDenied()
+
+class RegionalMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if request.group.name == "Super Admin":
+            return super(RegionalMixin, self).dispatch(request, *args, **kwargs)
+        
+        region_id = self.kwargs.get('pk')
+        project_id = Region.objects.get(pk=region_id).project_id
+        user_id = request.user.id
+        user_role = request.roles.filter(user_id = user_id, project_id = project_id, group_id=2)
+        
+        if user_role:
+            return super(RegionalMixin, self).dispatch(request, *args, **kwargs)
+        organization_id = Project.objects.get(pk=project_id).organization.id
+        user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group_id=1)
+        
+        if user_role_asorgadmin:
+            return super(RegionalMixin, self).dispatch(request, *args, **kwargs)
+
+        raise PermissionDenied()
 #use when project role and doner role is required mostly it is like readonly because doner is only allowed to read only
 class ReadonlyProjectLevelRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):

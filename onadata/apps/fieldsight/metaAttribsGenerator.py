@@ -6,7 +6,9 @@ def get_form_answer(site_id, meta):
     if fxf:
         sub = fxf[0].project_form_instances.filter(site_id=site_id).order_by('-pk')[:1]
         if sub:
-
+            if meta['question']['type'] == 'repeat':
+                return ""
+                
             sub_answers = sub[0].instance.json
             answer = sub_answers.get(meta.get('question').get('name') ,'')
             if meta['question']['type'] in ['photo', 'video', 'audio'] and answer is not "":

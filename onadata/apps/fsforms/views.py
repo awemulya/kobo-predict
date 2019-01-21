@@ -2198,6 +2198,7 @@ class CreateKoboFormView(TemplateView, LoginRequiredMixin):
 class DeleteFInstance(FInstanceRoleMixin, View):
     def get(self, request, *args, **kwargs):
         try:
+
             finstance = FInstance.objects.get(instance_id=self.kwargs.get('instance_pk'))
             finstance.is_deleted = True
             finstance.save()
@@ -2207,7 +2208,7 @@ class DeleteFInstance(FInstanceRoleMixin, View):
             if finstance.site:
                 extra_object=finstance.site
                 site_id=extra_object.id
-                project_id = extra_object.site.project_id
+                project_id = extra_object.project_id
                 organization_id = extra_object.project.organization_id
                 extra_message="site"
             else:
