@@ -666,7 +666,7 @@ def siteDetailsGenerator(project, sites, ws):
                     
         for meta in get_answer_questions:
             form_owner = None
-            query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": str(meta['form_id']), meta['question']['name']: { "$exists": "true" }}},  { "$group" : { 
+            query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": str(meta['form_id'])}},  { "$group" : { 
                 "_id" : "$fs_site",
                 "answer": { '$last': "$"+meta['question']['name'] }
                }
