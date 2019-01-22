@@ -2202,6 +2202,9 @@ class DeleteFInstance(FInstanceRoleMixin, View):
             finstance = FInstance.objects.get(instance_id=self.kwargs.get('instance_pk'))
             finstance.is_deleted = True
             finstance.save()
+            instance = finstance.instance
+            instance.deleted_at = datetime.datetime.now()
+            instance.save()
             delete_form_instance(int(self.kwargs.get('instance_pk')))
             
 
