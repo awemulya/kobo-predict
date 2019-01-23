@@ -36,6 +36,7 @@ def replace_attachmnt_name(attachment_file_name, instance_xml, attachment_file_e
 
 
 def clean_xml_for_enketo(attachments_keys, instance_xml):
+    return instance_xml
     for attachment_key in attachments_keys:
         attachment = get_attachment(attachment_key)
         attachment_file_name = os.path.splitext(attachment)[0]
