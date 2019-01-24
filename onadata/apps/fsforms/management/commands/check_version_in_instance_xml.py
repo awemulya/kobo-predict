@@ -19,9 +19,9 @@ class Command(BaseCommand):
         username = options['username']
         stop = False
         offset = 0
-        limit = offset + batchsize
 
         while stop is not True:
+            limit = offset + batchsize
             instances = FInstance.objects.filter(instance__xform__user__username=username)[offset:limit]
             inst = list(instances)
 

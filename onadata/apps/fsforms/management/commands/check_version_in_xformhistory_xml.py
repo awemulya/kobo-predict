@@ -20,9 +20,9 @@ class Command(BaseCommand):
         username = options['username']
         stop = False
         offset = 0
-        limit = offset + batchsize
 
         while stop is not True:
+            limit = offset + batchsize
             xformhistory = XformHistory.objects.filter(xform__user__username=username)[offset:limit]
             xf_hist = list(xformhistory)
             if xformhistory:
