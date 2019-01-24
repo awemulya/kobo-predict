@@ -11,6 +11,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('username', type=str)
+        parser.add_argument('batchsize', type=int)
 
     def handle(self, *args, **options):
         n = XML_VERSION_MAX_ITER
