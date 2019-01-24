@@ -83,10 +83,10 @@ def update_mongo(i):
     try:
         x = i.fieldsight_instance
         d.update(
-            {'fs_project_uuid': str(x.project_fxf_id), 'fs_project': x.project_id, 'fs_status': 0, 'fs_site': x.site_id,
-             'fs_uuid': x.site_fxf_id})
+            {'fs_project_uuid': str(x.project_fxf_id), 'fs_project': x.project_id, 'fs_status': 0, 'fs_site': str(x.site_id),
+             'fs_uuid': str(x.site_fxf_id)})
         try:
-            synced = update_mongo_instance(d)
+            synced = update_mongo_instance(d, i.id)
             print(synced, "updated in mongo success")
         except Exception as e:
             print(str(e))
@@ -180,22 +180,22 @@ Here is some example JSON, it would replace `[the JSON]` above:
 
     def create(self, request, *args, **kwargs):
         username = self.kwargs.get('username')
-        if self.request.user.is_anonymous():
-            if username is None:
-                # raises a permission denied exception, forces authentication
-                self.permission_denied(self.request)
-            else:
-                user = get_object_or_404(User, username=username.lower())
-
-                profile, created = UserProfile.objects.get_or_create(user=user)
-
-                if profile.require_auth:
-                    # raises a permission denied exception,
-                    # forces authentication
-                    self.permission_denied(self.request)
-        elif not username:
-            # get the username from the user if not set
-            username = (request.user and request.user.username)
+        # if self.request.user.is_anonymous():
+        #     if username is None:
+        #         # raises a permission denied exception, forces authentication
+        #         self.permission_denied(self.request)
+        #     else:
+        #         user = get_object_or_404(User, username=username.lower())
+        #
+        #         profile, created = UserProfile.objects.get_or_create(user=user)
+        #
+        #         if profile.require_auth:
+        #             # raises a permission denied exception,
+        #             # forces authentication
+        #             self.permission_denied(self.request)
+        # elif not username:
+        #     # get the username from the user if not set
+        #     username = (request.user and request.user.username)
 
         if request.method.upper() == 'HEAD':
             return Response(status=status.HTTP_204_NO_CONTENT,
