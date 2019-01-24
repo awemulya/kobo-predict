@@ -19,6 +19,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from onadata.apps.fieldsight.mixins import UpdateView, ProfileView, OwnerMixin, SuperAdminMixin, group_required
+from onadata.apps.fieldsight.mixins import UpdateView, ProfileView, OwnerMixin, SuperAdminMixin, group_required
 from rest_framework import renderers
 from django.contrib import messages
 from channels import Group as ChannelGroup
@@ -407,6 +408,7 @@ def web_login(request):
 
     return render(request, 'users/login.html', {'form': form, 'valid_email': True, 'email_error': False})
 
+
 def web_signup(request):
     if request.user.is_authenticated():
         return redirect('/dashboard/')
@@ -418,20 +420,20 @@ def web_signup(request):
             last_name = signup_form.cleaned_data.get('last_name')
             email = signup_form.cleaned_data.get('email')
             password = signup_form.cleaned_data.get('password')
-            user, valid_email = web_authenticate(username=username, password=password)
-            if user is None:
-                    user = User()
-                    user.username = username
-                    user.first_name = first_name
-                    user.last_name = last_name
-                    user.email = email
-                    user.set_password(password)
-                    user.save()
-                    return HttpResponseRedirect('web_login')
-            else:
-                if user:
-                    username_error=True
-                return render(request, 'users/login.html', {'signup_form':signup_form, 'username_error':username_error})
+            user=User.objects.create(username=username, first_name=first_name, last_name=last_name, email=email,
+                                       password=password)
+            user.set_password(user.password)
+            user.save()
+            group = Group.objects.get(name="Unassigned")
+            UserRole.objects.create(user=user, group=group)
+
+            user = authenticate(username=username,
+                                    password=password,
+                                    )
+            login(request, user)
+
+            return HttpResponseRedirect('/fieldsight/myroles/')
+
         else:
             username = request.POST.get('username')
             first_name = request.POST.get('first_name')

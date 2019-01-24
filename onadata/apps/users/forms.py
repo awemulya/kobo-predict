@@ -42,7 +42,7 @@ class SignUpForm(forms.Form):
                 if len(password) < 8:
                     raise ValidationError({'password': ['Passwords must be of more than 8 characters']})
                 
-                pattern = re.compile(r"^[w\d_-]+$")
+                pattern = re.compile(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$")
                 if not bool(pattern.search(password)):
                     raise ValidationError({'password': ['Password must contain alphabet characters, special characters and numbers']})
 
@@ -53,11 +53,15 @@ class SignUpForm(forms.Form):
         
         if User.objects.filter(email=email):
             raise ValidationError('User with this email already exists')
+        else:
+            return email
 
     def clean_username(self):
         username = self.cleaned_data['username']
         if User.objects.filter(username=username):
             raise ValidationError('User with this username already exists')
+        else:
+            return username
 
 
 class ProfileForm(forms.ModelForm):
