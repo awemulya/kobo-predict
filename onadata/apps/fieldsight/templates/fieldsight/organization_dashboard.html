@@ -39,7 +39,9 @@ var org = "{{obj.pk}}";
 					<nav aria-label="breadcrumb" role="navigation">
 						{% block breadcrumbs %}
 					<ol class="breadcrumb">
+						{% if not request.group.name == 'Organization Admin' %}
 						<li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organizations' %}</a></li>
+						{% endif %}
 						<li class="breadcrumb-item active" aria-current="page">{{obj.name}}</li>
 					 </ol>
 						{% endblock %}

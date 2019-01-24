@@ -84,6 +84,7 @@ def dashboard(request):
     if current_role_count == 1:
         current_role = request.roles[0]
         role_type = request.roles[0].group.name
+
         if role_type == "Staff Project Manager":
             return HttpResponseRedirect(reverse("staff:staff-project-detail"))
         if role_type == "Unassigned":
@@ -373,7 +374,14 @@ class UserDetailView(object):
 class OrganizationListView(OrganizationView, SuperUserRoleMixin, ListView):
     pass
 
+
 class OrganizationCreateView(OrganizationView, SuperUserRoleMixin, CreateView):
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.group.name == "Super Admin" or request.group.name == "Unassigned":
+            return super(SuperUserRoleMixin, self).dispatch(request, *args, **kwargs)
+        raise PermissionDenied()
+
     def form_valid(self, form):
         self.object = form.save()
         noti = self.object.logs.create(source=self.request.user, type=9, title="new Organization",
@@ -385,6 +393,14 @@ class OrganizationCreateView(OrganizationView, SuperUserRoleMixin, CreateView):
         # result['url'] = noti.get_absolute_url()
         # ChannelGroup("notify-{}".format(self.object.id)).send({"text": json.dumps(result)})
         # ChannelGroup("notify-0").send({"text": json.dumps(result)})
+
+        if self.request.group.name == "Unassigned":
+            previous_group = UserRole.objects.get(user=self.request.user, group__name=self.request.group.name)
+            previous_group.delete()
+
+            new_group = Group.objects.get(name="Organization Admin")
+            UserRole.objects.create(user=self.request.user, group=new_group, organization=self.object)
+            return HttpResponseRedirect(reverse("fieldsight:organizations-dashboard", kwargs={'pk': self.object.pk}))
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -1121,6 +1137,8 @@ class RolesView(LoginRequiredMixin, TemplateView):
         context['site_reviewer'] = self.request.roles.select_related('site').filter(group__name = "Reviewer", site__is_active = True)
         context['site_supervisor'] = self.request.roles.select_related('site').filter(group__name = "Site Supervisor", site__is_active = True)
         context['staff_project_manager'] = self.request.roles.select_related('staff_project').filter(group__name = "Staff Project Manager", staff_project__is_deleted = False)
+        context['unassigned'] = self.request.roles.filter(group__name="Unassigned")
+
         if Team.objects.filter(leader_id = self.request.user.id).exists():
             context['staff_teams'] = Team.objects.filter(leader_id = self.request.user.id, is_deleted=False)
         else:

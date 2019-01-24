@@ -287,6 +287,31 @@
                     </div>
                     </div>
                     {% endif %}
+
+                    {% if unassigned %}
+
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+
+                            <div class="widget-info margin-top bg-white padding">
+
+                                <div class="widget-body">
+                                    <a href="{% url 'fieldsight:organization-add' %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add New Organization</a>
+                                    <div class="max-260-scroll" style="overflow-y: scroll;">
+                                        <div class="row">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                    </div>
+                    </div>
+                    {% endif %}
                     
 
                 </section>
