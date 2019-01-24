@@ -38,12 +38,13 @@ class SignUpForm(forms.Form):
             raise ValidationError({'password':['The passwords did not match']})
         
         else:
-            if len(password) < 8:
-                raise ValidationError({'password': ['Passwords must be of more than 8 characters']})
-            
-            pattern = re.compile(r"^[w\d_-]+$")
-            if not bool(pattern.search(password)):
-                raise ValidationError({'password': ['Password must contain alphabet characters, special characters and numbers']})
+            if password:
+                if len(password) < 8:
+                    raise ValidationError({'password': ['Passwords must be of more than 8 characters']})
+                
+                pattern = re.compile(r"^[w\d_-]+$")
+                if not bool(pattern.search(password)):
+                    raise ValidationError({'password': ['Password must contain alphabet characters, special characters and numbers']})
 
     def clean_email(self):
         email = self.cleaned_data['email']
