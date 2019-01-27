@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),
     url(r'^approve-organization/(?P<username>[^/]+)?/(?P<org_id>[0-9]+)/$', approve_organization, name='approve_organization'),
-    url(r'^deny-organization/', deny_organization, name='deny_organization'),
+    url(r'^deny-organization/(?P<org_id>[0-9]+)/(?P<username>[^/]+)?/$', deny_organization, name='deny_organization'),
 
     url(r'^send-request-organization/(?P<org_id>[0-9]+)/$', send_request_for_organization, name='send_request_organization'),
     url(r'^request-organization/(?P<org_id>[0-9]+)/(?P<sender>[^/]+)?/$', request_organization, name='request_organization'),

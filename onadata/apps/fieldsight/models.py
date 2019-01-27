@@ -590,6 +590,17 @@ class ProjectGeoJSON(models.Model):
             self.save()
 
 
+class RequestOrganizationStatus(models.Model):
+    by_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='request_organization_by')
+    to_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='request_organization_to')
+    is_approve = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+    organization = models.ForeignKey(Organization, related_name='request_org_status')
+    # logs = GenericRelation('eventlog.FieldSightLog')
+
+
 @receiver(post_save, sender=Organization)
 def auto_create_default_project_site(sender, instance, **kwargs):
     data = instance

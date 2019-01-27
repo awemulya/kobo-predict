@@ -7,6 +7,7 @@
 			{% block breadcrumbs %}
 			{% endblock %}
 				<section class="panel">
+                    {% if not obj %}
                     <header class="panel-heading clearfix">
                         <h3>
                             {% block page-title %}
@@ -16,7 +17,7 @@
                                 <button class="btn btn-primary" value="approve"><i class="la la-thumbs-up">Approve</i></button>
                             </form>
                             or &nbsp &nbsp
-                            <form action="{% url 'users:deny_organization' %}" method="post">{% csrf_token %}
+                            <form action="{% url 'users:deny_organization' org.id sender %}" method="post">{% csrf_token %}
                                 <button class="btn btn-danger" value="approve"><i class="la la-exclamation">Deny</i></button>
 
                             </form>
@@ -27,6 +28,9 @@
                         </h3>
 
                     </header>
+                    {% else %}
+                    <p>Already Denied to {{obj.to_user}} to access {{obj.organization}} by {{obj.by_user}}</p>
+                    {% endif %}
 
 				</section>
 

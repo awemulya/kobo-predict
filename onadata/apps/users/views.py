@@ -43,6 +43,8 @@ from django.utils.encoding import force_bytes, force_text
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 
+from onadata.apps.fieldsight.models import RequestOrganizationStatus
+
 
 class ContactSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source='user.username')
@@ -506,10 +508,15 @@ def request_organization(request, sender, org_id):
     #     return HttpResponse('Already activated')
     # else:
     user = get_object_or_404(User, username=sender)
+    obj = RequestOrganizationStatus.objects.filter(to_user=user, organization_id=organization_id, is_approve=False).exists()
+    if obj:
+        obj = RequestOrganizationStatus.objects.get(to_user=user, organization_id=organization_id)
+        return render(request, 'fieldsight/organization_activation.html', {'obj': obj})
+
     if user.user_roles.all()[0].group.name == "Organization Admin":
         return HttpResponse("Already activated")
 
-    try:
+    else:
         user_role = request.roles.filter(organization_id=organization_id, group_id=1)
         if user_role:
             if request.group.name == "Super Admin" or request.group.name == "Organization Admin":
@@ -520,9 +527,6 @@ def request_organization(request, sender, org_id):
                 return HttpResponse('Already activated')
         else:
             raise PermissionDenied()
-
-    except:
-        return HttpResponse('Please log In to continue')
 
 
 def approve_organization(request, username, org_id):
@@ -535,6 +539,8 @@ def approve_organization(request, username, org_id):
 
         new_group = Group.objects.get(name="Organization Admin")
         UserRole.objects.create(user=user, group=new_group, organization_id=org.id)
+
+        RequestOrganizationStatus.objects.create(by_user=request.user, to_user=user, organization_id=org.id, is_approve=True)
         mail_subject = 'Approved in Requesting for Organization Admin.'
 
         current_site = get_current_site(request)
@@ -552,7 +558,26 @@ def approve_organization(request, username, org_id):
         return HttpResponse('Already activated')
 
 
-def deny_organization(request):
+def deny_organization(request, org_id, username):
+    denied_to = get_object_or_404(User, username=username)
+    denied_by = request.user
+    org = get_object_or_404(Organization, id=org_id)
+    RequestOrganizationStatus.objects.create(by_user=denied_by, to_user=denied_to, organization_id=org.id)
+
+    mail_subject = 'Denied in Requesting for Organization Admin.'
+
+    current_site = get_current_site(request)
+    message = render_to_string('users/denied_requested_org_email.html', {
+        'denied_by': denied_by,
+        'denied_to': denied_to,
+        'domain': current_site.domain,
+        'org': org,
+    })
+    email = EmailMessage(
+        mail_subject, message, to=[denied_to.email]
+    )
+    email.send()
+
     return HttpResponse('Denied Successfully')
 
 
