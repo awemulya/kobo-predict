@@ -15,6 +15,7 @@ from django.utils.text import slugify
 from jsonfield import JSONField
 from .static_lists import COUNTRIES
 from django.contrib.auth.models import Group
+from django.dispatch import receiver
 
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
@@ -516,6 +517,7 @@ def get_survey_image_filename(instance, filename):
     slug = slugify(title)
     return "survey_images/%s-%s-%s" % (project, slug, filename)
 
+
 class BluePrints(models.Model):
     site = models.ForeignKey(Site, related_name="blueprints")
     image = models.FileField(upload_to=get_image_filename,
@@ -564,6 +566,7 @@ class UserInvite(models.Model):
         kwargs = {'invite_idb64': invite_idb64, 'token': self.token}
         return reverse('fieldsight:activate-role', kwargs=kwargs)
 
+
 class ProjectGeoJSON(models.Model):
     project = models.OneToOneField(Project, related_name="project_geojson")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -587,8 +590,10 @@ class ProjectGeoJSON(models.Model):
             self.save()
 
 
-
-
-
-
-    
+@receiver(post_save, sender=Organization)
+def auto_create_default_project_site(sender, instance, **kwargs):
+    data = instance
+    project_type_id = ProjectType.objects.first().id
+    project = Project.objects.create(name="Default Project", organization_id=data.pk, type_id=project_type_id)
+    site_type_id = SiteType.objects.first().id
+    Site.objects.create(name="Default Site", project_id=project.id, type_id=site_type_id)

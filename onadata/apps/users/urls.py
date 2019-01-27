@@ -10,6 +10,8 @@ urlpatterns = [
 
     url(r'^accounts/login/', web_login, name='web_login'),
     url(r'^signup/', web_signup, name='web_signup'),
+    url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        views.activate, name='activate'),
 
     url(r'^$', UsersListView.as_view(), name='users'),
     url(r'^api/list/all(?:/(?P<level>[1-4]))?(?:/(?P<username>[^/]+))?/$', SearchableUserListViewSet.as_view({'get': 'list'})),
