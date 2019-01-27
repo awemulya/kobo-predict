@@ -37,13 +37,6 @@ class Command(BaseCommand):
                     if m:
                         continue
 
-                    #check for version in tag<(id) id="" version="">
-                    xml = item.xml
-                    pattern = re.compile('version="(.*)">')
-                    m = pattern.search(xml)
-                    if m:
-                        continue
-
                     #second priority version labels
                     #_version__006 has more priority than _verison__005
                     for i in range(6, 0, -1):
