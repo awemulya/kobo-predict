@@ -3481,4 +3481,13 @@ class GeoJSONContent(View):
         return JsonResponse(json.loads(lines), status=200)
 
 
+class RequestOrganizationSearchView(TemplateView):
+    template_name = 'fieldsight/request_organization_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RequestOrganizationSearchView, self).get_context_data(**kwargs)
+        query = self.request.GET.get("q")
+        context['org'] = Organization.objects.filter(name=query).values('name', 'id')
+
+        return context
 

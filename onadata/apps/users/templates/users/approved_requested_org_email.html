@@ -1,0 +1,5 @@
+{% autoescape off %}
+Hi {{ user.username }},
+You are approved by {{sender}}, now you can access to {{org.name}}
+http://{{ domain }}{% url 'fieldsight:organizations-dashboard' pk=org.id %}
+{% endautoescape %}

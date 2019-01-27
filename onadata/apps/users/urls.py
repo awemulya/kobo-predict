@@ -1,6 +1,7 @@
 from django.conf.urls import url
 
-from onadata.apps.users.views import ContactViewSet, UsersListView, MyProfile, EndUserRole, web_login, web_signup
+from onadata.apps.users.views import ContactViewSet, UsersListView, MyProfile, EndUserRole, web_login, web_signup, \
+    send_request_for_organization, request_organization, approve_organization, deny_organization
 from onadata.apps.users.viewsets import UserViewSet, ProfileViewSet, UserListViewSet, SearchableUserListViewSet, \
     MySitesViewset, MySitesOnlyViewset, MyProjectsViewset
 from . import views
@@ -12,6 +13,11 @@ urlpatterns = [
     url(r'^signup/', web_signup, name='web_signup'),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),
+    url(r'^approve-organization/(?P<username>[^/]+)?/(?P<org_id>[0-9]+)/$', approve_organization, name='approve_organization'),
+    url(r'^deny-organization/', deny_organization, name='deny_organization'),
+
+    url(r'^send-request-organization/(?P<org_id>[0-9]+)/$', send_request_for_organization, name='send_request_organization'),
+    url(r'^request-organization/(?P<org_id>[0-9]+)/(?P<sender>[^/]+)?/$', request_organization, name='request_organization'),
 
     url(r'^$', UsersListView.as_view(), name='users'),
     url(r'^api/list/all(?:/(?P<level>[1-4]))?(?:/(?P<username>[^/]+))?/$', SearchableUserListViewSet.as_view({'get': 'list'})),

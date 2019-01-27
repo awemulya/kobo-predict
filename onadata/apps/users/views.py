@@ -41,6 +41,7 @@ from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.utils.encoding import force_bytes, force_text
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import PermissionDenied
 
 
 class ContactSerializer(serializers.ModelSerializer):
@@ -473,6 +474,86 @@ def web_signup(request):
     else:
         signup_form = SignUpForm()
         return render(request, 'users/login.html', {'signup_form':signup_form, 'valid_email':True, 'email_error': False})
+
+
+def send_request_for_organization(request, org_id):
+    org = get_object_or_404(Organization, id=org_id)
+    admin_email_list = org.organization_roles.filter(
+            group__name="Organization Admin"
+        ).values_list('user__email', flat=True)
+
+    user = request.user
+    mail_subject = 'Requesting for Organization Admin.'
+    current_site = get_current_site(request)
+    message = render_to_string('users/accept_reject_org_admin.html', {
+        'sender': user,
+        'domain': current_site.domain,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'org_id': org_id,
+        'token': account_activation_token.make_token(user),
+    })
+    email = EmailMessage(
+        mail_subject, message, to=admin_email_list
+    )
+    email.send()
+    return HttpResponse('Your request to {} has been successfully send to Admin.'.format(org.name))
+
+
+def request_organization(request, sender, org_id):
+    organization_id = get_object_or_404(Organization, id=org_id).id
+
+    # if request.roles.filter(organization_id=organization_id, group_id=1):
+    #     return HttpResponse('Already activated')
+    # else:
+    user = get_object_or_404(User, username=sender)
+    if user.user_roles.all()[0].group.name == "Organization Admin":
+        return HttpResponse("Already activated")
+
+    try:
+        user_role = request.roles.filter(organization_id=organization_id, group_id=1)
+        if user_role:
+            if request.group.name == "Super Admin" or request.group.name == "Organization Admin":
+                org = get_object_or_404(Organization, id=org_id)
+                sender = get_object_or_404(User, username=sender)
+                return render(request, 'fieldsight/organization_activation.html', {'org': org, 'sender': sender})
+            else:
+                return HttpResponse('Already activated')
+        else:
+            raise PermissionDenied()
+
+    except:
+        return HttpResponse('Please log In to continue')
+
+
+def approve_organization(request, username, org_id):
+    user = get_object_or_404(User, username=username)
+    org = get_object_or_404(Organization, id=org_id)
+
+    if user.user_roles.all()[0].group.name == "Unassigned":
+        previous_group = UserRole.objects.get(user=user, group__name="Unassigned")
+        previous_group.delete()
+
+        new_group = Group.objects.get(name="Organization Admin")
+        UserRole.objects.create(user=user, group=new_group, organization_id=org.id)
+        mail_subject = 'Approved in Requesting for Organization Admin.'
+
+        current_site = get_current_site(request)
+        message = render_to_string('users/approved_requested_org_email.html', {
+            'sender': request.user,
+            'domain': current_site.domain,
+            'org': org,
+        })
+        email = EmailMessage(
+            mail_subject, message, to=[user.email]
+        )
+        email.send()
+        return HttpResponse('Approved successfully')
+    else:
+        return HttpResponse('Already activated')
+
+
+def deny_organization(request):
+    return HttpResponse('Denied Successfully')
 
 
 def activate(request, uidb64, token):
