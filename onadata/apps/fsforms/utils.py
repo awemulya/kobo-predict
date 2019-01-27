@@ -103,7 +103,7 @@ def send_message_flagged(fi=None, comment=None, comment_url=None):
                    }
         print(message)
         if fi.site:
-            message['site'] = {'name': fi.site.name, 'id': fi.site.id}
+            message['site'] = {'name': fi.site.name, 'id': fi.site.id, 'identifier':fi.site.identifier}
         if fi.project:
             message['project'] = {'name': fi.project.name, 'id': fi.project.id}
         Device.objects.filter(name__in=emails).send_message(message)

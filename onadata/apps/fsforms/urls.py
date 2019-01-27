@@ -54,7 +54,7 @@ from .views import (
     FormFillView, CreateKoboFormView, DeleteFieldsightXF,
 
     FormPreviewView, download_submission, download_xml_version, get_attachments_of_finstance, edit_data, view_data,
-    FormVersions)
+    FormVersions, repair_mongo)
 
 
 urlpatterns = [
@@ -213,6 +213,7 @@ urlpatterns = urlpatterns + [
     url(r'^instance/status/(?P<instance>\d+)$', instance_status, name='instance_status'),
     url(r'^edit/(?P<id_string>[^/]+)/(?P<data_id>\d+)$', edit_data, name='edit_data'),
     url(r'^view/(?P<id_string>[^/]+)/(?P<data_id>\d+)$', view_data, name='view_data'),
+    url(r'^api/instance/repair_mongo/(?P<instance>\d+)$', repair_mongo, name='repair_mongo'),
     url(r'^api/instance/download_submission/(?P<pk>\d+)$', download_submission, name='download_submission'),
     url(r'^api/instance/download_xml_version/(?P<pk>\d+)$', download_xml_version, name='download_xml_version'),
     url(r'^api/instance/get_attachments_of_finstance/(?P<pk>\d+)$', get_attachments_of_finstance, name='get_attachments_of_finstance'),

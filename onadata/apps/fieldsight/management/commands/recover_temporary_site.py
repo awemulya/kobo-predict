@@ -13,11 +13,11 @@ def validate_column_sequence(columns):
 
 
 def move_submission(sheet_columns, project_id):
-    submission_id, from_site_identifier, to_site_identifier, form_name = tuple(sheet_columns)
+    sn, site_name, submission_id, site_id = tuple(sheet_columns)
+    print(submission_id,  site_id)
     project = Project.objects.get(pk=project_id)
 
-    to_site = project.sites.get(identifier=to_site_identifier)
-    print(to_site.identifier)
+    to_site = project.sites.get(pk=site_id)
     if FInstance.objects.filter(instance=submission_id).exists():
         instance = FInstance.objects.get(instance=submission_id)
         instance.site = to_site
@@ -34,35 +34,14 @@ def move_submission(sheet_columns, project_id):
             print(str(e))
     else:
         print("submision ", submission_id, "doesnot exists")
-        print("creating Finstance for  ", submission_id, ".......")
-        query = {"_id": {"$in": submission_id}}
-        xform_instances = settings.MONGO_DB.instances
-        cursor = xform_instances.find(query,  { "_id": 1, "fs_project_uuid":1, "fs_project":1 , "fs_site":1,'fs_uuid':1 })
-        records = list(record for record in cursor)
-        for record in records:
-            instance = Instance.objects.get(pk=submission_id)
-            fi = FInstance(instance=instance, site=to_site, project=to_site.project, project_fxf=record["fs_project_uuid"], form_status=0, submitted_by=instance.user)
-            fi.set_version()
-            fi.save()
 
 
-
-
-def process_transfer_submissions(xl, to_transfer_sheet, project_id):
+def process_recover_submissions(xl, to_transfer_sheet, project_id):
     df = xl.parse(to_transfer_sheet)
     columns = df.columns
     if validate_column_sequence(columns):
         for i in range(len(df.values)):
             move_submission(df.values[i], project_id)
-
-
-def process_delete_submission(xl, to_delete_sheet):
-    df = xl.parse(to_delete_sheet)
-    submission_ids = []
-    for i in range(len(df.values)):
-        submission_ids.append(df.values[i][0])
-    result = FInstance.objects.filter(instance__id__in=submission_ids).update(is_deleted=True)
-    print(result)
 
 
 class Command(BaseCommand):
@@ -77,8 +56,6 @@ class Command(BaseCommand):
         project_id = options['project_id']
         self.stdout.write('Reading file "%s"' % file_path)
         xl = pd.ExcelFile(file_path)
-        to_transfer_sheet = xl.sheet_names[0]
-        to_delete_sheet = xl.sheet_names[1]
-        process_transfer_submissions(xl, to_transfer_sheet, project_id)
-        process_delete_submission(xl, to_delete_sheet)
+        recoverr_sheet = xl.sheet_names[0]
+        process_recover_submissions(xl, recoverr_sheet, project_id)
         self.stdout.write('Reading file "%s"' % file_path)
