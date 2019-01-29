@@ -5,6 +5,8 @@ from django.template import Library
 from onadata.apps.fieldsight.templatetags.filters import get_site_level
 from onadata.apps.fsforms.models import FieldSightFormLibrary, FInstance, FieldSightXF
 from onadata.apps.logger.models import XForm
+from onadata.settings.local_settings import XML_VERSION_MAX_ITER
+
 
 FORM_STATUS = {0: 'Outstanding', 1: 'Rejected', 2: 'Flagged', 3: 'Approved'}
 register = Library()
@@ -88,12 +90,60 @@ def is_project_val(fsf, is_project):
 
 
 def get_xform_version(xform):
-        import re
-        p = re.compile('version="(.*)">')
+    n = XML_VERSION_MAX_ITER
+    import re
+    p = re.compile('version="(.*)">')
+    m = p.search(xform.xml)
+    if m:
+        return m.group(1)
+    
+    version = check_version(xform.xml, n)
+
+    if version:
+        return version
+
+    else:
+        p = re.compile("""<bind calculate="\'(.*)\'" nodeset="/(.*)/_version_" """)
         m = p.search(xform.xml)
         if m:
             return m.group(1)
-        return None
+        
+        #for old version labels
+        p1 = re.compile("""<bind calculate="(.*)" nodeset="/(.*)/_version_" """)
+        m1 = p.search(xform.xml)
+        if m1:
+            return m1.group(1)
+        
+        #next priority version label
+        #for new version labels
+        p1 = re.compile("""<bind calculate="\'(.*)\'" nodeset="/(.*)/__version__" """)
+        m1 = p1.search(xform.xml)
+        if m1:
+            return m1.group(1)
+        
+        #for new version labels
+        p1 = re.compile("""<bind calculate="(.*)" nodeset="/(.*)/__version__" """)
+        m1 = p1.search(xform.xml)
+        if m1:
+            return m1.group(1)
+
+    return None
+
+
+def check_version(xml, n):
+    import re
+    for i in range(n, 0, -1):
+        #for old version labels(containing both letters and alphabets)
+        p = re.compile("""<bind calculate="\'(.*)\'" nodeset="/(.*)/_version__00{0}" """.format(i))
+        m = p.search(xml)
+        if m:
+            return m.group(1)
+        
+        #for old version labels(containing only numbers)
+        p = re.compile("""<bind calculate="(.*)" nodeset="/(.*)/_version__00{0}" """.format(i))
+        m1 = p.search(xml)
+        if m1:
+            return m1.group(1)
 
 
 @register.filter

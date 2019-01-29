@@ -16,7 +16,7 @@ class Command(BaseCommand):
         offset = 0
         while stop is not True:
             limit = offset + batchsize
-            instances = FInstance.objects.filter(instance__xform__user__username=username, version='')[offset:limit]
+            instances = FInstance.objects.filter(instance__xform__user__username=username)[offset:limit]
             inst = list(instances)
             if instances:
                 self.stdout.write("Updating instances from #{} to #{}\n".format(

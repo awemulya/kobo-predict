@@ -45,6 +45,7 @@ from onadata.apps.fsforms.utils import send_message, send_message_stages, send_m
 from onadata.apps.logger.models import XForm, Attachment, Instance
 from onadata.apps.main.models import MetaData
 from onadata.apps.main.views import set_xform_owner_data
+from onadata.apps.viewer.models.parsed_instance import update_mongo_instance
 from onadata.libs.utils.user_auth import add_cors_headers
 from onadata.libs.utils.user_auth import helper_auth_helper
 from onadata.libs.utils.log import audit_log, Actions
@@ -2183,7 +2184,7 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     except Exception as e:
-        return HttpResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateKoboFormView(TemplateView, LoginRequiredMixin):
@@ -2282,6 +2283,22 @@ class DeleteFieldsightXF(FormMixin, View):
 
         # <a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">Remove</a>
 
+@api_view(['GET'])
+def repair_mongo(request, instance):
+    finstance = FInstance.objects.get(instance=instance)
+    i = finstance.instance
+    d = i.parsed_instance.to_dict_for_mongo()
+    try:
+        d.update(
+            {'fs_project_uuid': str(finstance.project_fxf_id), 'fs_project': finstance.project_id, 'fs_status': 0, 'fs_site': finstance.site_id,
+             'fs_uuid': finstance.site_fxf_id})
+        try:
+            synced = update_mongo_instance(d, i.id)
+        except Exception as e:
+            return Response({'error':"Failed to sync "+ str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'error': "Failed to sync mongo"}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'success': "synced mongo"}, status=status.HTTP_200_OK)
 
 def download_submission(request, pk):
     finstance = get_object_or_404(FInstance, pk__exact=pk)

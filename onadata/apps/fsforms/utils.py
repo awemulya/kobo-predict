@@ -15,6 +15,8 @@ from django.utils.translation import ugettext as _
 from xml.dom import Node
 
 FIELDSIGHT_XFORM_ID = u"_fieldsight_xform_id"
+from onadata.settings.local_settings import XML_VERSION_MAX_ITER
+
 
 
 def send_message_koboform_updated(xform):
@@ -103,7 +105,7 @@ def send_message_flagged(fi=None, comment=None, comment_url=None):
                    }
         print(message)
         if fi.site:
-            message['site'] = {'name': fi.site.name, 'id': fi.site.id}
+            message['site'] = {'name': fi.site.name, 'id': fi.site.id, 'identifier':fi.site.identifier}
         if fi.project:
             message['project'] = {'name': fi.project.name, 'id': fi.project.id}
         Device.objects.filter(name__in=emails).send_message(message)
@@ -250,10 +252,59 @@ def send_message_xf_changed(fxf=None, form_type=None, id=None):
 
 def get_version(xml):
     import re
+    n = XML_VERSION_MAX_ITER
     p = re.compile('version="(.*)">')
     m = p.search(xml)
     if m:
         return m.group(1)
+    
+    else:
+        version = check_version(xml, n)
+    
+    if version:
+        return version
+
+    else:
+        #for new version labels
+        p1 = re.compile("""<bind calculate="\'(.*)\'" nodeset="/(.*)/__version__" """)
+        m1 = p1.search(xml)
+        if m1:
+            return m1.group(1)
+        
+        p1 = re.compile("""<bind calculate="(.*)" nodeset="/(.*)/__version__" """)
+        m1 = p1.search(xml)
+        if m1:
+            return m1.group(1)
+
+        #for old version labels
+        p = re.compile("""<bind calculate="\'(.*)\'" nodeset="/(.*)/_version_" """)
+        m = p.search(xml)
+        if m:
+            return m.group(1)
+        
+        p1 = re.compile("""<bind calculate="(.*)" nodeset="/(.*)/_version_" """)
+        m1 = p.search(xml)
+        if m1:
+            return m1.group(1)
+
+    return None
+
+
+def check_version(xml, n):
+    import re
+    for i in range(n, 0, -1):
+        #for old version labels(containing only numbers)
+        p = re.compile("""<bind calculate="(.*)" nodeset="/(.*)/_version__00{0}" """.format(i))
+        m1 = p.search(xml)
+        if m1:
+            return m.group(1)
+
+        #for old version labels(containing both letters and alphabets)
+        p = re.compile("""<bind calculate="\'(.*)\'" nodeset="/(.*)/_version__00{0}" """.format(i))
+        m = p.search(xml)
+        if m:
+            return m.group(1)
+
     return None
 
 
