@@ -14,25 +14,28 @@ def validate_column_sequence(columns):
 
 
 def create_finstance_from_mongo(submission_id_list, sheet_columns, project_id):
+
     submission_id, site_identifier = tuple(sheet_columns)
     submission_id_list = submission_id_list
 
     project = Project.objects.get(pk=project_id)
 
     site = project.sites.get(identifier=site_identifier)
+    if FInstance.objects.filter(instance=submission_id).exists():
+        print("Submission Id Exist  ", submission_id)
+    else:
+        print("creating Finstance for  ", submission_id, ".......")
+        query = {"_id": {"$in": submission_id_list}}
+        xform_instances = settings.MONGO_DB.instances
+        cursor = xform_instances.find(query,  { "_id": 1, "fs_project_uuid":1, "fs_project":1 , "fs_site":1,'fs_uuid':1 })
 
-    print("creating Finstance for  ", submission_id, ".......")
-    query = {"_id": {"$in": submission_id_list}}
-    xform_instances = settings.MONGO_DB.instances
-    cursor = xform_instances.find(query,  { "_id": 1, "fs_project_uuid":1, "fs_project":1 , "fs_site":1,'fs_uuid':1 })
+        records = list(record for record in cursor)
 
-    records = list(record for record in cursor)
-
-    for record in records:
-        instance = Instance.objects.get(pk=submission_id)
-        fi = FInstance(instance=instance, site=site, project=site.project, project_fxf=record["fs_project_uuid"], form_status=0, submitted_by=instance.user)
-        fi.set_version()
-        fi.save()
+        for record in records:
+            instance = Instance.objects.get(pk=submission_id)
+            fi = FInstance(instance=instance, site=site, project=site.project, project_fxf=record["fs_project_uuid"], form_status=0, submitted_by=instance.user)
+            fi.set_version()
+            fi.save()
 
 
 def process(xl, to_transfer_sheet, project_id):
