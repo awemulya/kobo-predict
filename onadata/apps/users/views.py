@@ -471,7 +471,8 @@ def web_signup(request):
                 'last_name':last_name, 
                 'email':email,
                 'valid_email': True, 
-                'email_error':False
+                'email_error':False,
+                'signup_tab': 1
                 })
     else:
         signup_form = SignUpForm()

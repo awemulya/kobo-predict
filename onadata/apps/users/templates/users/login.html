@@ -15,6 +15,15 @@
         <script src="{{ STATIC_URL }}dummy/assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
 		<link href="https://fonts.googleapis.com/css?family=Ubuntu:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
     </head>
+<style>
+
+input,
+input::-webkit-input-placeholder {
+    font-size: 12px;
+    line-height: 3;
+}
+
+</style>
     <body>
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -42,14 +51,28 @@
 		  							<div class="sec-right">
 		  								<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
 											<li class="nav-item">
-											    <a class="nav-link active" id="pills-login-tab" data-toggle="pill" href="#pills-login" role="tab" aria-controls="pills-login" aria-selected="true">Login</a>
+												{% if signup_tab %}
+											    	<a class="nav-link" id="pills-login-tab" data-toggle="pill" href="#pills-login" role="tab" aria-controls="pills-login" aria-selected="true">Login</a>
+
+												{% else %}
+												<a class="nav-link active" id="pills-login-tab" data-toggle="pill" href="#pills-login" role="tab" aria-controls="pills-login" aria-selected="true">Login</a>
+
+												{% endif %}
 											</li>
 											<li class="nav-item">
-											    <a class="nav-link" id="pills-signup-tab" data-toggle="pill" href="#pills-signup" role="tab" aria-controls="pills-signup" aria-selected="false">Signup</a>
+
+												{% if signup_tab %}
+													<a class="nav-link active" id="pills-signup-tab" data-toggle="pill" href="#pills-signup" role="tab" aria-controls="pills-signup" aria-selected="false">Signup</a>
+												{% else %}
+												<a class="nav-link" id="pills-signup-tab" data-toggle="pill" href="#pills-signup" role="tab" aria-controls="pills-signup" aria-selected="false">Signup</a>
+
+												{% endif %}
 											</li>
+
 										</ul>
 										<div class="tab-content" id="pills-tabContent">
-											<div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="pills-login-tab">
+											{% if signup_tab %}
+											<div class="tab-pane" id="pills-login" role="tabpanel" aria-labelledby="pills-login-tab">
 												<form method="post" action="/users/accounts/login/">
 												{% csrf_token %}
 												  	<div class="form-group">
@@ -94,7 +117,61 @@
 												  	<button type="submit" class="btn btn-secondary" name="login" value="signin"><i class="la la-key"></i> Sign In</button>
 												</form>
 											</div>
-											<div class="tab-pane fade" id="pills-signup" role="tabpanel" aria-labelledby="pills-signup-tab">
+
+											{% else %}
+											<div class="tab-pane show active" id="pills-login" role="tabpanel" aria-labelledby="pills-login-tab">
+												<form method="post" action="/users/accounts/login/">
+												{% csrf_token %}
+												  	<div class="form-group">
+												    	<label for="inputEmail">Email address
+
+														</label>
+												    	<input type="username" class="form-control {% if not valid_email %}is-invalid{% endif %}" name="username" id="inputEmail">
+														{% if not valid_email %}
+															<div id="emailHelp" class="invalid-feedback">
+																User With The Email Doesnot Exist.
+															</div>
+															{% endif %}
+												  	</div>
+												  	<div class="form-group">
+												    	<label for="inputPassword">Password</label>
+
+												    	<input type="password" name="password" class="form-control {% if password_error %}is-invalid{% endif %}" id="inputPassword">
+														{% if password_error %}
+															<div id="passwordHelp" class="invalid-feedback">
+														  		Incorrect Password ! Please Check Your Password.
+															</div>
+															{% endif %}
+												  	</div>
+												  	<div class="row">
+												  		<div class="col-sm-6">
+												  			<div class="form-group">
+														  		<div class="radio">
+																  	<input class="checkbox-control" id="inputRemember" type="checkbox" value="" checked="checked">
+									    							<label for="inputRemember">Remember me</label>
+															  	</div>
+														  	</div>
+												  		</div>
+												  		<div class="col-sm-6">
+												  			<div class="form-group">
+														  		<p class="help">
+														  			<a data-toggle="pill" href="#pills-reset" role="tab" aria-controls="pills-reset" title="" id="help-me">Need help?</a>
+
+														  		</p>
+														  	</div>
+												  		</div>
+												  	</div>
+												  	<button type="submit" class="btn btn-secondary" name="login" value="signin"><i class="la la-key"></i> Sign In</button>
+												</form>
+											</div>
+											{% endif %}
+												{% if signup_tab %}
+												<div class="tab-pane fade show active" id="pills-signup" role="tabpanel" aria-labelledby="pills-signup-tab">
+													{% else %}
+													<div class="tab-pane" id="pills-signup" role="tabpanel" aria-labelledby="pills-signup-tab">
+
+												{% endif %}
+
 												<form method="POST" action="/users/signup/">
 													{% csrf_token %}
 													<div class="form-group">
@@ -133,7 +210,7 @@
 													</div>
 													<div class="form-group">
 												    	<label for="inputSignupEmail">Email address</label>
-												    	<input type="email" class="form-control {% if signup_form.email.errors %}is-invalid{% endif %}" id="inputSignupEmail" name="email" value="">
+												    	<input type="email" class="form-control {% if signup_form.email.errors %}is-invalid{% endif %}" id="inputSignupEmail" name="email" value="" placeholder="Enter a valid Email address">
 														{% if signup_form.email.errors %}
 														{% for error in signup_form.email.errors %}
 														<div class="invalid-feedback">
@@ -144,7 +221,7 @@
 													</div>
 													<div class="form-group">
 													    <label for="inputSignupPassword">Your password</label>
-													    <input type="password" class="form-control {% if signup_form.password.errors %}is-invalid{% endif %}" id="inputSignupPassword" name="password">
+													    <input type="password" class="form-control {% if signup_form.password.errors %}is-invalid{% endif %}" id="inputSignupPassword" name="password" placeholder="must contain alphabet, special characters, numbers and more than 8 characters">
 														{% if signup_form.password.errors %}
 														{% for error in signup_form.password.errors %}
 														<div class="invalid-feedback">

@@ -3487,7 +3487,7 @@ class RequestOrganizationSearchView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(RequestOrganizationSearchView, self).get_context_data(**kwargs)
         query = self.request.GET.get("q")
-        context['org'] = Organization.objects.filter(name=query).values('name', 'id')
+        context['org'] = Organization.objects.filter(name__icontains=query).values('name', 'id')
 
         return context
 
