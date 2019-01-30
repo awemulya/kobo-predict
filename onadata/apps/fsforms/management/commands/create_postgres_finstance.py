@@ -3,7 +3,7 @@ import pandas as pd
 from django.conf import settings
 
 from onadata.apps.fieldsight.models import Project
-from onadata.apps.fsforms.models import FInstance
+from onadata.apps.fsforms.models import FInstance, FieldSightXF
 from onadata.apps.logger.models import Instance
 
 from django.core.management.base import BaseCommand
@@ -29,15 +29,12 @@ def create_finstance_from_mongo(sheet_columns, project_id):
         query = {"_id": submission_id}
 
         xform_instances = settings.MONGO_DB.instances
-        cursor = xform_instances.find(query,  { "_id": 1, "fs_project_uuid":1, "fs_project":1 , "fs_site":1,'fs_uuid':1 })
-
-        # records = list(record for record in cursor)
-        record = list(cursor)
+        cursor = list(xform_instances.find(query,  { "_id": 1, "fs_project_uuid":1, "fs_project":1 , "fs_site":1,'fs_uuid':1 }))
 
         instance = Instance.objects.get(pk=submission_id)
-        fi = FInstance(instance=instance, site=site, project=site.project, project_fxf=record["fs_project_uuid"],
+        fi = FInstance(instance=instance, site=site, project=site.project, project_fxf_id=cursor[0]["fs_project_uuid"],
                        form_status=0, submitted_by=instance.user)
-        fi.set_version()
+        # fi.set_version()
         fi.save()
         instance = FInstance.objects.get(instance=instance)
         d = instance.instance.parsed_instance.to_dict_for_mongo()
