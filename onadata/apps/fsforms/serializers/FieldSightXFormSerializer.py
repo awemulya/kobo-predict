@@ -3,6 +3,7 @@ from rest_framework.reverse import reverse
 
 from onadata.apps.fsforms.models import FieldSightXF, EducationalImages, EducationMaterial, Schedule, Stage
 from onadata.apps.fsforms.serializers.InstanceStatusChangedSerializer import FInstanceResponcesSerializer
+from onadata.apps.fsforms.utils import get_version
 from onadata.apps.logger.models import XForm
 from onadata.libs.utils.decorators import check_obj
 
@@ -83,7 +84,7 @@ class FSXFormListSerializer(serializers.ModelSerializer):
                   'name', 'descriptionText','formID', 'majorMinorVersion','version', 'hash')
 
     def get_version(self, obj):
-        return None
+        return get_version(obj.xf.xml)
 
     def get_majorMinorVersion(self, obj):
         return None
