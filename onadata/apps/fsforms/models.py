@@ -441,9 +441,7 @@ class FInstance(models.Model):
 
     @property
     def get_version(self):
-        parsed_instance = ParsedInstance.objects.get(instance=self.instance)
-        instance_dict = parsed_instance.to_dict_for_mongo()
-        return instance_dict['__version__']
+        return self.instance.json['__version__']
 
     def save(self, *args, **kwargs):
         self.version = self.get_version
