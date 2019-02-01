@@ -21,7 +21,7 @@ from xml.dom import Node
 
 from onadata.apps.fieldsight.models import Site, Project, Organization
 from onadata.apps.fsforms.fieldsight_models import IntegerRangeField
-from onadata.apps.fsforms.utils import send_message, send_message_project_form
+from onadata.apps.fsforms.utils import send_message, send_message_project_form, check_version
 from onadata.apps.logger.models import XForm, Instance
 from onadata.apps.logger.xform_instance_parser import clean_and_parse_xml
 from onadata.apps.viewer.models import ParsedInstance
@@ -441,9 +441,7 @@ class FInstance(models.Model):
 
     @property
     def get_version(self):
-        parsed_instance = ParsedInstance.objects.get(instance=self.instance)
-        instance_dict = parsed_instance.to_dict_for_mongo()
-        return instance_dict['__version__']
+        return self.instance.json['__version__']
 
     def save(self, *args, **kwargs):
         self.version = self.get_version
@@ -800,7 +798,7 @@ class XformHistory(models.Model):
         if m:
             return m.group(1)
         
-        version = check_version(xml, n)
+        version = check_version(xml)
         
         if version:
             return version
