@@ -11,9 +11,8 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from onadata.apps.fieldsight.models import Site, Project, Organization
+from onadata.apps.fieldsight.models import Site, Project, Organization, Region
 from onadata.apps.staff.models import StaffProject
-
 
 
 class UserRole(models.Model):
@@ -25,6 +24,8 @@ class UserRole(models.Model):
     project = models.ForeignKey(Project, null=True, blank=True, related_name='project_roles')
     organization = models.ForeignKey(Organization, null=True, blank=True, related_name='organization_roles')
     staff_project = models.ForeignKey(StaffProject, null=True, blank=True, related_name='staff_project_roles')
+    region = models.ForeignKey(Region, null=True, blank=True, related_name='region_roles')
+
     logs = GenericRelation('eventlog.FieldSightLog')
 
     def __unicode__(self):
@@ -34,6 +35,7 @@ class UserRole(models.Model):
         return dict(
             user = self.user.get_full_name(), email = self.user.email
             )
+
     def getname(self):
         return str("role")
 

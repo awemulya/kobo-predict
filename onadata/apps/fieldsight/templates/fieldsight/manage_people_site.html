@@ -700,8 +700,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                               <i class="la la-cogs"></i> {% trans 'Assign' %} {% trans 'Selected' %} {% trans 'Users' %}
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage" x-placement="bottom-end" style="background-color: #00628E; position: absolute; transform: translate3d(74px, 24px, 0px); top: 0px; left: 0px; will-change: transform;">
-                              <a class="dropdown-item" href="#" style="color:white;" data-bind="click:assignselectedsupervisor"><i class="la la-user"></i>{% trans 'As' %} {% trans 'Site' %} {% trans 'Supervisor' %}</a>
-                              <a class="dropdown-item" href="#" style="color:white;" data-bind="click:assignselectedreviewer"><i class="la la-clipboard"></i>{% trans 'As' %} {% trans 'Reviewer' %}</a>
+                              <a class="dropdown-item" href="#"  data-bind="click:assign_selected_region_supervisor"><i class="la la-user"></i>{% trans 'As' %} {% trans 'Region' %} {% trans 'Supervisor' %}</a>
+                              <a class="dropdown-item" href="#"  data-bind="click:assign_selected_reviewer"><i class="la la-clipboard"></i>{% trans 'As' %} {% trans 'Region' %} {% trans 'Reviewer' %}</a>
                               
                             </div>
                           </span>
@@ -776,9 +776,13 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                             <p data-bind="text:name()"></p>
                           </div>
                         </div>
+
                        
                       </span>
                     </label>
+                    Regional Supervisor <p>{{regional_supervisor}}</p>
+                    Regional Viewer <p>{{regional_reviewer}}</p>
+
                   </li>
                   
                   <li class="clearfix"></li>

@@ -205,8 +205,9 @@ class CeleryTaskProgress(models.Model):
         (8, 'Site Data Export'),
         (9, 'Response Pdf Report'),
         (10, 'Site Progress Xls Report'),
+        (11, 'User Assign to Region'),
 
-        )
+    )
     task_id = models.CharField(max_length=255, blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
     date_updateded = models.DateTimeField(auto_now=True, blank=True, null=True)

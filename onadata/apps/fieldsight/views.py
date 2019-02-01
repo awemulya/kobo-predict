@@ -213,6 +213,7 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
     def get_context_data(self, **kwargs):
         # dashboard_data = super(Project_dashboard, self).get_context_data(**kwargs)
         obj = get_object_or_404(Project, pk=self.kwargs.get('pk'), is_active=True)
+        # import ipdb;ipdb.set_trace()
         # [o for o in objs]
         # obj = objs[0]
 
@@ -229,7 +230,6 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         new_submissions = finstances.count()
         site_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
         active_supervisors = finstances.distinct('submitted_by').count()
-        
         #     data = []
         #     sites = []
         # else:
@@ -1095,7 +1095,14 @@ class ManagePeopleProjectView(LoginRequiredMixin, ProjectRoleMixin, TemplateView
         obj = get_object_or_404(Project, id=self.kwargs.get('pk'), is_active=True)
         project = Project.objects.get(pk=pk)
         organization=project.organization_id
-        return render(request, 'fieldsight/manage_people_site.html', {'obj': obj, 'pk': pk, 'level': "1", 'category':"Project Manager", 'organization': organization, 'project': pk, 'type':'project', 'obj':project, })
+        regional_supervisor = UserRole.objects.filter(organization_id=organization, group__name="Regional Supervisor")
+        regional_reviewer = UserRole.objects.filter(organization_id=organization, group__name="Regional Reviewer")
+
+        return render(request, 'fieldsight/manage_people_site.html', {'obj': obj, 'pk': pk, 'level': "1",
+                                                                      'category':"Project Manager", 'organization': organization,
+                                                                      'project': pk, 'type':'project', 'obj':project,
+                                                                      'regional_supervisor': regional_supervisor,
+                                                                      'regional_reviewer': regional_reviewer})
 
 
 class ManagePeopleOrganizationView(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
@@ -2199,20 +2206,47 @@ class RegionalSiteCreateView(SiteView, ProjectRoleMixin, CreateView):
 
         return HttpResponseRedirect(self.get_success_url())
 
+#
+# class MultiUserAssignRegionView(ProjectRoleMixin, TemplateView):
+#     def get(self, request, pk):
+#         project_obj = Project.objects.get(pk=pk)
+#         return render(request, 'fieldsight/multi_user_assign.html',{'type': "site", 'pk':pk})
+#
+#     def post(self, request, pk, *args, **kwargs):
+#         data = json.loads(self.request.body)
+#         # import ipdb; ipdb.set_trace()
+#         regions = data.get('regions')
+#         users = data.get('users')
+#         group = Group.objects.get(name=data.get('group'))
+#         user = request.user
+#         project = get_object_or_404(Project, pk=pk, is_active=True)
+#         task_obj = CeleryTaskProgress.objects.create(user=user, content_object = project, task_type=2)
+#         if task_obj:
+#             task = multiuserassignregion.delay(task_obj.pk, user, pk, regions, users, group.id)
+#             task_obj.task_id = task.id
+#             task_obj.save()
+#             return HttpResponse('sucess')
+#         else:
+#             return HttpResponse('Failed')
+
 
 class MultiUserAssignRegionView(ProjectRoleMixin, TemplateView):
+
     def get(self, request, pk):
         project_obj = Project.objects.get(pk=pk)
         return render(request, 'fieldsight/multi_user_assign.html',{'type': "site", 'pk':pk})
 
     def post(self, request, pk, *args, **kwargs):
         data = json.loads(self.request.body)
+        # import ipdb; ipdb.set_trace()
+
         regions = data.get('regions')
         users = data.get('users')
         group = Group.objects.get(name=data.get('group'))
+
         user = request.user
         project = get_object_or_404(Project, pk=pk, is_active=True)
-        task_obj = CeleryTaskProgress.objects.create(user=user, content_object = project, task_type=2)
+        task_obj = CeleryTaskProgress.objects.create(user=user, content_object = project, task_type=11)
         if task_obj:
             task = multiuserassignregion.delay(task_obj.pk, user, pk, regions, users, group.id)
             task_obj.task_id = task.id
@@ -2220,6 +2254,7 @@ class MultiUserAssignRegionView(ProjectRoleMixin, TemplateView):
             return HttpResponse('sucess')
         else:
             return HttpResponse('Failed')
+
 
 
 def project_html_export(request, pk):
