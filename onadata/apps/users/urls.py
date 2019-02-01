@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from onadata.apps.users.views import ContactViewSet, UsersListView, MyProfile, EndUserRole, web_login
+from onadata.apps.users.views import ContactViewSet, UsersListView, MyProfile, EndUserRole, web_login, export_users_xls
 from onadata.apps.users.viewsets import UserViewSet, ProfileViewSet, UserListViewSet, SearchableUserListViewSet, \
     MySitesViewset, MySitesOnlyViewset, MyProjectsViewset
 from . import views
@@ -33,4 +33,6 @@ urlpatterns = [
 
     url(r'^profile/(?P<pk>[0-9]+)/$', MyProfile.as_view(), name='profile'),
     url(r'^endrole/(?P<pk>[0-9]+)/$', EndUserRole.as_view(), name='end_user_role'),
-    ]
+    url(r'^export-users/$', export_users_xls, name='export_users'),
+
+]
