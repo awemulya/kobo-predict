@@ -356,7 +356,12 @@ def UnassignAllSiteRoles(task_prog_obj_id, site_id):
                                        extra_message="@error " + u'{}'.format(e.message))
 
 
-    
+def get_site_type(value):
+    try:
+        return int(value)
+    except:
+        return 0    
+
 @shared_task()
 def bulkuploadsites(task_prog_obj_id, source_user, sites, pk):
     time.sleep(2)
@@ -392,7 +397,9 @@ def bulkuploadsites(task_prog_obj_id, source_user, sites, pk):
 
                 location = Point(round(float(lat), 6), round(float(long), 6), srid=4326)
                 region_idf = site.get("region_id", None)
-                type_identifier = int(site.get("type", "0"))
+                
+
+                type_identifier = get_site_type(site.get("type", "0"))
 
                 _site, created = Site.objects.get_or_create(identifier=str(site.get("identifier")),
                                                                 project=project)
@@ -747,10 +754,13 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         ws.title='Sites Detail'
         sites = project.sites.all().order_by('identifier')
         if region_id:
-            if region_id == "0":
-                sites = project.sites.filter(is_active=True, region_id=None).order_by('identifier')
+            if isinstance(region_id, list): 
+                sites = project.sites.filter(is_active=True, region_id__in=region_id).order_by('identifier')
             else:
-                sites = project.sites.filter(is_active=True, region_id=region_id).order_by('identifier')
+                if region_id == "0":
+                    sites = project.sites.filter(is_active=True, region_id=None).order_by('identifier')
+                else:
+                    sites = project.sites.filter(is_active=True, region_id=region_id).order_by('identifier')
         else:
             sites = project.sites.filter(is_active=True).order_by('identifier')
 
