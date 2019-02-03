@@ -54,10 +54,14 @@ def get_id_string(xml):
 
 class Command(BaseCommand):
     help = 'Create xml from xls'
+    
+    def add_arguments(self, parser):
+        parser.add_argument('directory', type=str)
 
     def handle(self, *args, **options):
         # xls_directory = "/home/xls"
-        xls_directory = "/home/awemulya/work/naxa/dist-kobo-devel/src/kobocat/media/Promisha/xls/testcsv"
+        xls_directory = options['directory']
+        error_file_list = []
         # csv_to_xls(xls_directory)
         for filename in os.listdir(xls_directory):
             if os.path.isfile(os.path.join(xls_directory,filename)):
@@ -74,12 +78,20 @@ class Command(BaseCommand):
                     continue
             xls_file = open(os.path.join(xls_directory, filename))
             print("creating survey for ", xls_file)
-            survey = create_survey_from_xls(xls_file)
-            xml = survey.to_xml()
-            xls_file.close()
-            version = get_version(xml)
+            try:
+                survey = create_survey_from_xls(xls_file)
+                xml = survey.to_xml()
+                version = get_version(xml)
+                id_string = get_id_string(xml)
+            
+            except Exception as e:
+                error_file_list.append(filename)
+                pass
+            
+            else:
+                xls_file.close()
+            
             # print("version =  ======", version)
-            id_string = get_id_string(xml)
             if not XForm.objects.filter(id_string=id_string).exists():
                 print("xform with id string not found ", id_string)
                 continue
@@ -100,3 +112,8 @@ class Command(BaseCommand):
             else:
                 print('History already exists of this file  ', filename)
             print('Successfully created XFORM HISTORY form  ', filename)
+        
+        if error_file_list:
+            print('Errors occured at files: ')
+            for files in error_file_list:
+                print(files)

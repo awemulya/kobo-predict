@@ -21,7 +21,7 @@ def get_images_for_site_all(site_id):
     return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {'$in' : [str(site_id), int(site_id)]}}}, {"$unwind":"$_attachments"},{"$match":{"_attachments.mimetype" : "image/jpeg"}}, { "$sort" : { "_id": -1 }}])
 
 def get_site_responses_coords(site_id):
-    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {'$in' : [str(site_id), site_id]}, "_geolocation":{"$not":{ "$elemMatch": { "$eq": None }}}}}, {"$project" : {"_id":0, "type": {"$literal": "Feature"}, "geometry":{ "type": {"$literal": "Point"}, "coordinates": "$_geolocation" }, "properties": {"id":"$_id", "fs_uuid":"$fs_uuid", "submitted_by":"$_submitted_by"}}}])
+    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site": {'$in' : [str(site_id), int(site_id)]}, "_geolocation":{"$not":{ "$elemMatch": { "$eq": None }}}}}, {"$project" : {"_id":0, "type": {"$literal": "Feature"}, "geometry":{ "type": {"$literal": "Point"}, "coordinates": "$_geolocation" }, "properties": {"id":"$_id", "fs_uuid":"$fs_uuid", "submitted_by":"$_submitted_by"}}}])
 
 def get_instaces_for_site_individual_form(fieldsightxf_id):
     query = {"fs_uuid":str(fieldsightxf_id)}
@@ -33,6 +33,7 @@ def get_instances_for_field_sight_form(fieldsight_form_id, submission=None):
 
 def delete_form_instance(instance_id):
     return settings.MONGO_DB.instances.update({'_id': instance_id}, { '$set': {'_deleted_at':True}})
+
 
 def get_instances_for_project_field_sight_form(project_fieldsight_form_id, submission=None):
     query = {'fs_project_uuid': { '$in': [project_fieldsight_form_id, str(project_fieldsight_form_id)]}}

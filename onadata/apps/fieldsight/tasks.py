@@ -40,7 +40,7 @@ from django.db.models import Sum, Case, When, IntegerField
 from django.core.exceptions import MultipleObjectsReturned
 
 def get_images_for_site_all(site_id):
-    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : site_id}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
+    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : {'$in' : [str(site_id), int(site_id)]}}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
 
 @shared_task()
 def site_download_zipfile(task_prog_obj_id, size):

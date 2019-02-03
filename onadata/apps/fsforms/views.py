@@ -6,6 +6,7 @@ from base64 import b64decode
 import datetime
 from bson import json_util
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
@@ -44,6 +45,7 @@ from onadata.apps.fsforms.utils import send_message, send_message_stages, send_m
 from onadata.apps.logger.models import XForm, Attachment, Instance
 from onadata.apps.main.models import MetaData
 from onadata.apps.main.views import set_xform_owner_data
+from onadata.apps.viewer.models.parsed_instance import update_mongo_instance
 from onadata.libs.utils.user_auth import add_cors_headers
 from onadata.libs.utils.user_auth import helper_auth_helper
 from onadata.libs.utils.log import audit_log, Actions
@@ -289,7 +291,7 @@ def stage_add(request, site_id=None):
 class ProjectResponses(ReadonlyProjectLevelRoleMixin, View): 
     def get(self,request, pk=None, **kwargs):
         obj = get_object_or_404(Project, pk=pk)
-        schedules = Schedule.objects.filter(project_id=pk, schedule_forms__is_deleted=False, site__isnull=True, schedule_forms__isnull=False)
+        schedules = Schedule.objects.filter(project_id=pk, schedule_forms__is_deleted=False, site__isnull=True, schedule_forms__isnull=False, schedule_forms__xf__isnull=False)
         stages = Stage.objects.filter(stage__isnull=True, project_id=pk, stage_forms__isnull=True).order_by('order')
         generals = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_deleted=False, project_id=pk, is_survey=False)
         surveys = FieldSightXF.objects.filter(is_staged=False, is_scheduled=False, is_deleted=False, project_id=pk, is_survey=True)
@@ -1580,7 +1582,15 @@ class Project_html_export(ReadonlyFormMixin, ListView):
         query = self.request.GET.get("q", None)
         queryset = FInstance.objects.filter(project_fxf=fsxf_id)
         if query:
-            new_queryset = FInstance.objects.filter(Q(site__name__icontains=query) | Q(site__identifier__icontains=query) | Q(submitted_by__first_name__icontains=query))
+            new_queryset = FInstance.objects.filter(
+                Q(project_fxf=fsxf_id) & 
+                (
+                    Q(site__name__icontains=query) | 
+                    Q(site__identifier__icontains=query) | 
+                    Q(submitted_by__first_name__icontains=query)|
+                    Q(submitted_by__last_name__icontains=query)
+                )
+                )
         else:
             new_queryset = queryset.order_by('-id') 
         return new_queryset
@@ -2182,7 +2192,7 @@ def set_deploy_sub_stage(request, is_project, pk, stage_id):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     except Exception as e:
-        return HttpResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateKoboFormView(TemplateView, LoginRequiredMixin):
@@ -2201,13 +2211,16 @@ class DeleteFInstance(FInstanceRoleMixin, View):
             finstance = FInstance.objects.get(instance_id=self.kwargs.get('instance_pk'))
             finstance.is_deleted = True
             finstance.save()
+            instance = finstance.instance
+            instance.deleted_at = datetime.datetime.now()
+            instance.save()
             delete_form_instance(int(self.kwargs.get('instance_pk')))
             
 
             if finstance.site:
                 extra_object=finstance.site
                 site_id=extra_object.id
-                project_id = extra_object.site.project_id
+                project_id = extra_object.project_id
                 organization_id = extra_object.project.organization_id
                 extra_message="site"
             else:
@@ -2278,6 +2291,22 @@ class DeleteFieldsightXF(FormMixin, View):
 
         # <a class="btn btn-xs btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}">Remove</a>
 
+@api_view(['GET'])
+def repair_mongo(request, instance):
+    finstance = FInstance.objects.get(instance=instance)
+    i = finstance.instance
+    d = i.parsed_instance.to_dict_for_mongo()
+    try:
+        d.update(
+            {'fs_project_uuid': str(finstance.project_fxf_id), 'fs_project': finstance.project_id, 'fs_status': 0, 'fs_site': finstance.site_id,
+             'fs_uuid': finstance.site_fxf_id})
+        try:
+            synced = update_mongo_instance(d, i.id)
+        except Exception as e:
+            return Response({'error':"Failed to sync "+ str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'error': "Failed to sync mongo"}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'success': "synced mongo"}, status=status.HTTP_200_OK)
 
 def download_submission(request, pk):
     finstance = get_object_or_404(FInstance, pk__exact=pk)
@@ -2407,4 +2436,54 @@ def view_data(request,  id_string, data_id):
     #             kwargs={'username': xform.user.username,
     #                     'id_string': id_string}))
     return HttpResponse("This form cannot be viewed in enketo. Please Report With submission id")
+
+
+class FormVersions(LoginRequiredMixin, View):
+
+    def dispatch(self, request, *args, **kwargs):
+        is_project = kwargs.get("is_project")
+        fsfid = kwargs.get("fsfid")
+        fsf = FieldSightXF.objects.get(pk=fsfid)
+        site = self.kwargs.get('site', 0)
+        if is_project == "1":
+            project = fsf.project
+        else:
+            site_obj = Site.objects.get(pk=site)
+            project = site_obj.project
+        project_id = project.id
+        kwargs['project'] = project_id
+        kwargs['obj'] = project
+        kwargs['fsf'] = fsf
+        kwargs['site'] = site
+
+        kwargs['versions'] = XformHistory.objects.filter(xform=fsf.xf).order_by('-date')
+        kwargs['latest'] = fsf.xf
+
+
+        if request.group.name == "Super Admin":
+            return super(FormVersions, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+        user_role = request.roles.filter(project_id=project_id, group_id=2)
+
+        if user_role:
+            return super(FormVersions, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+
+        organization_id = Project.objects.get(pk=project_id).organization.id
+        user_role_asorgadmin = request.roles.filter(organization_id=organization_id, group_id=1)
+
+        if user_role_asorgadmin:
+            return super(FormVersions, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+
+        user_role_asdonor = request.roles.filter(project_id=project_id, group_id=7)
+        if user_role_asdonor:
+            return super(FormVersions, self).dispatch(request, is_donor_only=True, *args, **kwargs)
+
+        raise PermissionDenied()
+
+    def get(self,request, **kwargs):
+        data = {'is_donor_only': kwargs.get('is_donor_only', False),
+                       }
+        data.update(**kwargs)
+        return render(request, "fsforms/form_versions.html",
+                      data)
+
 

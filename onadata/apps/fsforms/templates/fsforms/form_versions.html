@@ -1,0 +1,119 @@
+{% extends "fieldsight/fieldsight_base.html" %}
+{% load i18n staticfiles %}
+{% load filters %}
+{% load fs_filters %}
+
+{% block page-title %}{% trans 'Responses' %}{% endblock %}
+
+   {%block extracss %}
+<link rel="stylesheet" href="{% static 'css/knockout-file-bindings.css' %}">
+<link rel="stylesheet" href="{% static 'dummy/assets/css/jquery-ui.css' %}">
+
+    {% endblock %}
+
+{% block head %}
+{% endblock %}
+{% block content %}
+<div id="main-content" class="padding">
+    <nav aria-label="breadcrumb" role="navigation">
+		<ol class="breadcrumb">
+            {% block breadcrumbs %}
+			<li class="breadcrumb-item"><a href="{% if is_donor_only %}{% url 'fieldsight:donor_project_dashboard_lite' project %}{% else %}{% url 'fieldsight:project-dashboard' project %}{% endif %}">{{ obj.name }}</a></li>
+			<li class="breadcrumb-item active" aria-current="page"> {% trans 'Versions of ' %} {{fsf.xf.title}}</li>
+		    {% endblock %}
+        </ol>
+
+    </nav>
+    <div class="tabbing">
+
+
+    <div class="tab-content">
+      <div id="general1" class="tab-pane active">
+
+        <div class="widget-info">
+
+          <div class="widget-body">
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover margin-top" id="dynamic-table2">
+              <thead>
+                <tr>
+                  <th>{% trans 'Title ' %} </th>
+                  <th>{% trans 'Version ' %} </th>
+                  <th>{% trans 'Overidden Date ' %} </th>
+                  <th>{% trans 'Last' %} {% trans 'Response' %} {% trans 'On' %}</th>
+                  <th>{% trans 'No of' %} {% trans 'Submissions' %}</th>
+                  <th>{% trans 'Download' %} {% trans 'Excel' %}</th>
+                </tr>
+              </thead>
+              <tbody>
+              <tr>
+                       <td>
+                          {{ latest.title }}
+                      </td>
+                  <td>
+                         {% trans 'Latest' %}
+                      </td>
+                      <td>
+                      {% trans 'Latest' %}
+                      </td>
+                   {% with fsf|is_project_val:is_project|version_submission_data:latest as submission_data %}
+                      <td>
+                          {{ submission_data.date }}
+                      </td>
+                  <td>
+                       {{ submission_data.count }}
+                   </td>
+                               <td>
+                         {% if submission_data.has_submissions %}
+                           <a class="badge badge-success" target="_blank"
+                         href="{% url 'onadata.apps.viewer.views.export_list' fsf.xf.user.username fsf.xf.id_string 'xls' is_project fsf.id site submission_data.version %}">
+                          <i class="la la-download" aria-hidden="true"></i> Download</a>
+                         {% endif %}
+                      </td>
+                           {% endwith %}
+
+                  </tr>
+              {% for obj in versions %}
+              {% with fsf|is_project_val:is_project|version_submission_data:obj as submission_data %}
+              {% if submission_data.has_submissions %}
+                  <tr>
+                       <td>
+                          {{ obj.title }}
+                      </td>
+                      <td>
+                          {{ obj.version }}
+                      </td>
+                      <td>
+                          {{ obj.date }}
+                      </td>
+
+                     
+                      <td>
+                          {{ submission_data.date }}
+                      </td>
+                  <td>
+                       {{ submission_data.count }}
+                   </td>
+                     <td>
+                         {% if submission_data.has_submissions %}
+                           <a class="badge badge-success" target="_blank"
+                         href="{% url 'onadata.apps.viewer.views.export_list' fsf.xf.user.username fsf.xf.id_string 'xls' is_project fsf.id site obj.version %}">
+                          <i class="la la-download" aria-hidden="true"></i> Download</a>
+                         {% endif %}
+                      </td>
+
+                  </tr>
+                  {% endif %}
+                {% endwith %}
+              {% endfor %}
+              </tbody>
+          </table>
+          </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+</div>
+</div>
+{% endblock %}
