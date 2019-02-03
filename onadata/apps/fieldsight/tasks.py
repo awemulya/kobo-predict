@@ -38,9 +38,7 @@ from .metaAttribsGenerator import get_form_answer, get_form_sub_status, get_form
 from django.conf import settings
 from django.db.models import Sum, Case, When, IntegerField
 from django.core.exceptions import MultipleObjectsReturned
-
-def get_images_for_site_all(site_id):
-    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : {'$in' : [str(site_id), int(site_id)]}}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
+from onadata.apps.fsforms.reports_util import get_images_for_site_all
 
 @shared_task()
 def site_download_zipfile(task_prog_obj_id, size):
