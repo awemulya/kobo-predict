@@ -450,7 +450,7 @@
 					<!-- ko if: $index() != 5 -->
 					<div class="col-md-4">
 						<div class="photo-holder photo-item margin-top">
-							<img data-bind="attr:{src: '/attachment/small?media_file='+ _attachments().filename, submission_by: _submitted_by, submission_url:'/forms/forms/'+fs_uuid()+'#/'+_id()+''}" img-title="" alt="">
+							<img data-bind="attr:{src: '/attachment/small?media_file='+ _attachments().filename, submission_by: _submitted_by, submission_url:'/forms/forms/'+fs_project_uuid() || fs_uuid()+'#/'+_id()+''}" img-title="" alt="">
 						</div>
 					</div>
 					<!-- /ko -->
