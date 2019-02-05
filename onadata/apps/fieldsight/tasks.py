@@ -1286,6 +1286,74 @@ def multiuserassignregion(task_prog_obj_id, source_user, project_id, regions, us
                                        extra_message=group_name +" for "+str(users_count)+" people in "+str(sites_count)+" regions ")
 
 
+@shared_task()
+def multi_users_assign_regions(task_prog_obj_id, source_user, project_id, regions, users, group_id):
+
+    time.sleep(2)
+    project = Project.objects.get(pk=project_id)
+    group_name = Group.objects.get(pk=group_id).name
+    regions_count = len(regions)
+    users_count = len(users)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.content_object = project
+    task.description = "Assign " + str(users_count) + " people in " + str(regions_count) + " regions."
+    task.status = 1
+    task.save()
+
+    # import ipdb;
+    # ipdb.set_trace()
+
+    try:
+        with transaction.atomic():
+            roles_created = 0
+            for region_id in regions:
+                for user in users:
+                    try:
+                        role, created = UserRole.objects.get_or_create(user_id=user, project_id=project.id,
+                                                                       organization_id=project.organization_id,
+                                                                       region_id=region_id,
+                                                                       group_id=group_id, ended_at=None)
+                        if created:
+                            roles_created += 1
+
+                    except MultipleObjectsReturned:
+
+                        redundant_ids = UserRole.objects.filter(user_id=user, project_id=project.id,
+                                                                organization_id=project.organization_id,
+                                                                group_id=group_id, region_id=region_id, ended_at=None).order_by('id').values('id')[1:]
+
+                        UserRole.objects.filter(pk__in=redundant_ids).update(ended_at=datetime.datetime.now())
+
+        task.status = 2
+        task.save()
+        if roles_created == 0:
+            noti = FieldSightLog.objects.create(source=source_user, type=23, title="Task Completed.",
+                                                content_object=project, recipient=source_user,
+                                                extra_message="All " + str(
+                                                    users_count) + " users were already assigned as " + group_name + " in " + str(
+                                                    regions_count) + " selected regions ")
+
+        else:
+
+            noti = FieldSightLog.objects.create(source=source_user, type=22, title="Bulk Region User Assign",
+                                                content_object=project, organization=project.organization,
+                                                project=project,
+                                                extra_message=str(
+                                                    roles_created) + " new " + group_name + " Roles in " + str(
+                                                    regions_count) + " regions ")
+
+    except Exception as e:
+        print 'Bulk role assign Unsuccesfull. ------------------------------------------%s' % e
+        task.description = "Assign " + str(users_count) + " people in " + str(regions_count) + " regions. ERROR: " + str(
+            e)
+        task.status = 3
+        task.save()
+        print e.__dict__
+        noti = FieldSightLog.objects.create(source=source_user, type=422, title="Bulk Region User Assign",
+                                            content_object=project, recipient=source_user,
+                                            extra_message=group_name + " for " + str(users_count) + " people in " + str(
+                                                regions_count) + " regions ")
+
 
 @shared_task(time_limit=18000, soft_time_limit=18000)
 def auto_generate_stage_status_report():

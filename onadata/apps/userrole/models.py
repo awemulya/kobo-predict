@@ -97,9 +97,9 @@ class UserRole(models.Model):
             self.project = self.site.project
             self.organization = self.site.project.organization
 
-        elif self.group.name in ['Region Supervisor', 'Region Reviewer']:
-            self.project = self.region.project
-            self.organization = self.region.project.organization
+        # elif self.group.name in ['Region Supervisor', 'Region Reviewer']:
+        #     self.project = self.region.project
+        #     self.organization = self.region.project.organization
 
         elif self.group.name == 'Staff Project Manager':
             self.organization = None
@@ -130,9 +130,9 @@ class UserRole(models.Model):
             self.project = self.site.project
             self.organization = self.site.project.organization
 
-        elif self.group.name in ['Region Supervisor', 'Region Reviewer']:
-            self.project = self.region.project
-            self.organization = self.region.project.organization
+        # elif self.group.name in ['Region Supervisor', 'Region Reviewer']:
+        #     self.project = self.region.project
+        #     self.organization = self.region.project.organization
 
         super(UserRole, self).update(*args, **kwargs)
 

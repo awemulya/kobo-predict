@@ -45,7 +45,9 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
-from .rolemixins import FullMapViewMixin, SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
+from .rolemixins import FullMapViewMixin, SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, \
+    DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, \
+    ProjectRoleMixin, OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView
 from .models import ProjectGeoJSON, Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region, SiteType
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm,
@@ -63,7 +65,9 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from onadata.apps.fieldsight.tasks import generate_stage_status_report, UnassignAllProjectRolesAndSites, UnassignAllSiteRoles, UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
+from onadata.apps.fieldsight.tasks import generate_stage_status_report, UnassignAllProjectRolesAndSites, UnassignAllSiteRoles, \
+    UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion, \
+    multi_users_assign_regions
 from .generatereport import PDFReport
 from django.utils import translation
 from django.conf import settings
@@ -2238,15 +2242,13 @@ class MultiUserAssignRegionView(ProjectRoleMixin, TemplateView):
 
     def post(self, request, pk, *args, **kwargs):
         data = json.loads(self.request.body)
-        # import ipdb; ipdb.set_trace()
-
         regions = data.get('regions')
         users = data.get('users')
         group = Group.objects.get(name=data.get('group'))
 
         user = request.user
         project = get_object_or_404(Project, pk=pk, is_active=True)
-        task_obj = CeleryTaskProgress.objects.create(user=user, content_object = project, task_type=11)
+        task_obj = CeleryTaskProgress.objects.create(user=user, content_object=project, task_type=2)
         if task_obj:
             task = multiuserassignregion.delay(task_obj.pk, user, pk, regions, users, group.id)
             task_obj.task_id = task.id
@@ -2255,6 +2257,35 @@ class MultiUserAssignRegionView(ProjectRoleMixin, TemplateView):
         else:
             return HttpResponse('Failed')
 
+
+class AssignUsersToRegionsView(ProjectRoleMixin, TemplateView):
+    """
+    Assign multiple users to multiple regions as Region Supervisor or Region Reviewer if project has cluster_sites
+    """
+
+    def get(self, request, pk):
+        project_obj = Project.objects.get(pk=pk)
+        return render(request, 'fieldsight/multi_user_assign.html',{'type': "site", 'pk':pk})
+
+    def post(self, request, pk, *args, **kwargs):
+        data = json.loads(self.request.body)
+
+        regions = data.get('regions')
+        users = data.get('users')
+        group = Group.objects.get(name=data.get('group'))
+
+        user = request.user
+        project = get_object_or_404(Project, pk=pk, is_active=True)
+
+        task_obj = CeleryTaskProgress.objects.create(user=user, content_object=project, task_type=11)
+
+        if task_obj:
+            task = multi_users_assign_regions.delay(task_obj.pk, user, pk, regions, users, group.id)
+            task_obj.task_id = task.id
+            task_obj.save()
+            return HttpResponse('Success')
+        else:
+            return HttpResponse('Failed')
 
 
 def project_html_export(request, pk):
