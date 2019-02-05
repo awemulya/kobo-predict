@@ -60,7 +60,13 @@ class UserRole(models.Model):
             raise ValidationError({
                 'organization': ValidationError(_('Missing Organization.'), code='required'),
             })
-        if  self.user and UserRole.objects.filter(user=self.user, group=self.group, project=self.project, site=self.site).exists():
+
+        if self.group.name in ['Region Supervisor', 'Region Reviewer'] and not self.region_id:
+            raise ValidationError({
+                'region': ValidationError(_('Missing Region.'), code='required'),
+            })
+
+        if self.user and UserRole.objects.filter(user=self.user, group=self.group, project=self.project, site=self.site).exists():
             raise ValidationError({
                 'user': ValidationError(_('User Role Already Exists.')),
             })
@@ -70,26 +76,36 @@ class UserRole(models.Model):
             self.organization = None
             self.project = None
             self.site = None
+            self.region = None
+
         elif self.group.name == 'Organization Admin':
             self.project = None
             self.site = None
+            self.region = None
+
         elif self.group.name == 'Project Manager':
             self.site = None
+            self.region = None
             self.organization = self.project.organization
 
         elif self.group.name == 'Project Doner':
             self.site = None
+            self.region = None
             self.organization = self.project.organization
 
         elif self.group.name in ['Site Supervisor', 'Reviewer']:
             self.project = self.site.project
             self.organization = self.site.project.organization
 
+        elif self.group.name in ['Region Supervisor', 'Region Reviewer']:
+            self.project = self.region.project
+            self.organization = self.region.project.organization
+
         elif self.group.name == 'Staff Project Manager':
             self.organization = None
             self.project = None
             self.site = None
-
+            self.region = None
 
         super(UserRole, self).save(*args, **kwargs)
 
@@ -98,17 +114,25 @@ class UserRole(models.Model):
             self.organization = None
             self.project = None
             self.site = None
+            self.region = None
+
         elif self.group.name == 'Organization Admin':
             self.project = None
             self.site = None
+            self.region = None
+
         elif self.group.name == 'Project Manager':
             self.site = None
+            self.region = None
             self.organization = self.project.organization
 
         elif self.group.name in ['Site Supervisor', 'Reviewer']:
             self.project = self.site.project
             self.organization = self.site.project.organization
 
+        elif self.group.name in ['Region Supervisor', 'Region Reviewer']:
+            self.project = self.region.project
+            self.organization = self.region.project.organization
 
         super(UserRole, self).update(*args, **kwargs)
 
