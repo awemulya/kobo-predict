@@ -128,6 +128,91 @@
                     </div>
                     </div>
 
+                       <div class="row">
+                        <div class="col-md-12 col-lg-12">
+
+                            {% if region_supervisor %}
+                            <div class="widget-info margin-top bg-white padding">
+                                <div class="widget-head">
+                                    <h4>{% trans 'Supervise' %} {% trans 'Regions' %}</h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="max-260-scroll" style="overflow-y: scroll;">
+                                        <div class="row">
+
+                                        {% for role in region_supervisor %}
+                                            <div class="col-lg-3 col-md-12"  style="padding:10px;">
+
+                                                <a href="{% url 'fieldsight:regional-sites' role.region.project.id role.region.pk %}" title="">
+                                                <div class="project-item-wrap clearfix">
+                                                    <div class="project-logo">
+                                                        <img src="{% static 'dummy/assets/img/default_image.png' %}" alt="" width="50" height="50">
+                                                    </div>
+                                                    <div class="project-basic-info">
+                                                        <h4>{{ role.region.name }}</h4>
+                                                        <p>{{ role.region.identifier }}</p>
+                                                        <p>Total Sites: {{ role.region.get_sites_count }}</p>
+
+
+                                                    </div>
+                                                </div>
+                                                </a>
+                                            </div>
+                                        {% endfor %}
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                    </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+
+                            {% if region_reviewer %}
+                            <div class="widget-info margin-top bg-white padding">
+                                <div class="widget-head">
+                                    <h4>{% trans 'Review' %} {% trans 'Regions' %}</h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="max-260-scroll" style="overflow-y: scroll;">
+                                        <div class="row">
+
+                                        {% for role in region_reviewer %}
+                                            <div class="col-lg-3 col-md-12"  style="padding:10px;">
+                                                <a href="" title="">
+                                                <div class="project-item-wrap clearfix">
+                                                    <div class="project-logo">
+                                                        <img src="{% static 'dummy/assets/img/default_image.png' %}" alt="" width="50" height="50">
+                                                    </div>
+                                                    <div class="project-basic-info">
+                                                        <h4>{{ role.region.name }}</h4>
+                                                        <p>{{ role.region.identifier }}</p>
+                                                        <p>Total Sites: {{ role.region.get_sites_count }}</p>
+
+
+                                                    </div>
+                                                </div>
+                                                </a>
+                                            </div>
+                                        {% endfor %}
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                    </div>
+                    </div>
+
 
                     <div class="row">
                         <div class="col-md-12 col-lg-12">
@@ -249,7 +334,7 @@
                     {% endif %}
 
                     {% if staff_teams %}
-                    
+
                     <div class="row">
                         <div class="col-md-12 col-lg-12">
                            

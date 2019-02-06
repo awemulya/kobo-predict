@@ -1122,8 +1122,10 @@ def all_notification(user,  message):
         })
     })
 
+
 class RolesView(LoginRequiredMixin, TemplateView):
     template_name = "fieldsight/roles_dashboard.html"
+
     def get_context_data(self, **kwargs):
         context = super(RolesView, self).get_context_data(**kwargs)
         context['org_admin'] = self.request.roles.select_related('organization').filter(group__name="Organization Admin", organization__is_active = True)
@@ -1131,6 +1133,11 @@ class RolesView(LoginRequiredMixin, TemplateView):
         context['proj_donor'] = self.request.roles.select_related('project').filter(group__name = "Project Donor", project__is_active = True)
         context['site_reviewer'] = self.request.roles.select_related('site').filter(group__name = "Reviewer", site__is_active = True)
         context['site_supervisor'] = self.request.roles.select_related('site').filter(group__name = "Site Supervisor", site__is_active = True)
+        context['region_supervisor'] = self.request.roles.select_related('region').filter(group__name="Region Supervisor",
+                                                                                          region__is_active=True)
+        context['region_reviewer'] = self.request.roles.select_related('region').filter(group__name="Region Reviewer",
+                                                                                          region__is_active=True)
+
         context['staff_project_manager'] = self.request.roles.select_related('staff_project').filter(group__name = "Staff Project Manager", staff_project__is_deleted = False)
         if Team.objects.filter(leader_id = self.request.user.id).exists():
             context['staff_teams'] = Team.objects.filter(leader_id = self.request.user.id, is_deleted=False)
@@ -1140,7 +1147,7 @@ class RolesView(LoginRequiredMixin, TemplateView):
 
 
 class OrgProjectList(OrganizationRoleMixin, ListView):
-    model =   Project
+    model = Project
     paginate_by = 51
     def get_context_data(self, **kwargs):
         context = super(OrgProjectList, self).get_context_data(**kwargs)
@@ -1403,7 +1410,11 @@ def sendmultiroleuserinvite(request):
         region = Region.objects.get(id=levels[0]);
         project_ids = [region.project_id]
         organization_id = region.project.organization_id  
-        site_ids = Site.objects.filter(region_id__in=levels).values_list('id', flat=True)  
+        # site_ids = Site.objects.filter(region_id__in=levels).values_list('id', flat=True)
+        site_ids = Site.objects.filter(region_id__in=levels).values_list('id', flat=True)
+        region_ids = Region.objects.filter(id__in=levels).values_list('id', flat=True)
+
+        # import ipdb;ipdb.set_trace()
 
     elif leveltype == "project":
         project_ids = levels
@@ -1418,7 +1429,6 @@ def sendmultiroleuserinvite(request):
         organization_id = site.project.organization_id
 
     for email in emails:
-        # import pdb; pdb.set_trace()
         userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project__in=project_ids,  site__in=site_ids, is_used=False).exists()
         
         if userinvite:
@@ -1429,6 +1439,7 @@ def sendmultiroleuserinvite(request):
         invite.save()
         invite.project = project_ids
         invite.site = site_ids
+        invite.region = region_ids
 
         current_site = get_current_site(request)
         subject = 'Invitation for Role'

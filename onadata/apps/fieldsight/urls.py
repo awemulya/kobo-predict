@@ -171,7 +171,7 @@ urlpatterns = [
 
     url(r'^accounts/create/$', CreateUserView.as_view(form_class=RegistrationForm), name='user-create'),
     url(r'^userlist/$', UserListView.as_view(), name='user-list'),
-    url(r'^filter-users/$', FilterUserView.as_view(), name='filter-users'),
+    url(r'sendmultiusermultilevelinvite^filter-users/$', FilterUserView.as_view(), name='filter-users'),
     url(r'fcm/v1/devices/$', DeviceViewSet.as_view({'get': 'list'})),
     url(r'fcm/add/', FcmDeviceViewSet.as_view({'post': 'create'})),
     url(r'fcm/logout/', FcmDeviceViewSet.as_view({'post': 'inactivate'})),
