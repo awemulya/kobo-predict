@@ -185,7 +185,7 @@
 
                                         {% for role in region_reviewer %}
                                             <div class="col-lg-3 col-md-12"  style="padding:10px;">
-                                                <a href="" title="">
+                                                <a href="{% url 'fieldsight:regional-sites' role.region.project.id role.region.pk %}" title="">
                                                 <div class="project-item-wrap clearfix">
                                                     <div class="project-logo">
                                                         <img src="{% static 'dummy/assets/img/default_image.png' %}" alt="" width="50" height="50">
