@@ -4,7 +4,7 @@ from onadata.apps.fsforms.models import FieldSightXF
 def get_form_answer(site_id, meta):
     fxf = FieldSightXF.objects.filter(pk=int(meta.get('form_id', "0")))
     if fxf:
-        sub = fxf[0].project_form_instances.filter(site_id=site_id).order_by('-pk')[:1]
+        sub = fxf[0].project_form_instances.filter(site_id=site_id).order_by('-instance_id')[:1]
         if sub:
 
             sub_answers = sub[0].instance.json
@@ -22,7 +22,7 @@ def get_form_answer(site_id, meta):
 def get_form_sub_status(site_id, meta):
     fxf = FieldSightXF.objects.filter(pk=int(meta.get('form_id', "0")))
     if fxf:
-        sub_date = fxf[0].project_form_instances.filter(site_id=site_id).order_by('-pk').values('date')[:1]
+        sub_date = fxf[0].project_form_instances.filter(site_id=site_id).order_by('-instance_id').values('date')[:1]
         if sub_date:
             answer = "Last submitted on " + sub_date[0]['date'].strftime("%d %b %Y %I:%M %P")
         else:
@@ -36,7 +36,7 @@ def get_form_sub_status(site_id, meta):
 def get_form_ques_ans_status(site_id, meta):
     fxf = FieldSightXF.objects.filter(pk=int(meta.get('form_id', "0")))
     if fxf:
-        sub = fxf[0].project_form_instances.filter(site_id=site_id).order_by('-pk')[:1]
+        sub = fxf[0].project_form_instances.filter(site_id=site_id).order_by('-instance_id')[:1]
         if sub:
 
             sub_answers = sub[0].instance.json

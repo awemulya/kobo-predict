@@ -1,14 +1,17 @@
 from __future__ import unicode_literals
 import datetime
 import json
+import xlwt, csv
+
 from django.shortcuts import get_object_or_404
 from django.core import serializers
 from django.contrib import messages
+from django.db import models
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate
 from django.views.generic import TemplateView, View
@@ -409,3 +412,26 @@ def web_login(request):
         form = LoginForm()
 
     return render(request, 'users/login.html', {'form': form, 'valid_email': True, 'email_error': False})
+
+
+def export_users_xls(request):
+    import sys
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="FieldsightUsers.csv"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['Username', 'Email', 'Organization'])
+    users = User.objects.all()
+    for u in users:
+        org = u.user_roles.all().values('organization__name').distinct()
+        org_list = []
+        for i in org:
+            org_list.append(i['organization__name'])
+
+        writer.writerow([u.username, u.email, org_list])
+
+    return response

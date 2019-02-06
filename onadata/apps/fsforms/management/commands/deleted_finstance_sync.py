@@ -17,7 +17,7 @@ class Command(BaseCommand):
         for x in finstances:
             d = x.instance.parsed_instance.to_dict_for_mongo()
             try:
-                d.update({'fs_project_uuid': str(x.project_fxf_id), 'fs_project': x.project_id, 'fs_status': 0, 'fs_site':x.site_id, 'fs_uuid':x.site_fxf_id, '_deleted_at':True})
+                d.update({'fs_project_uuid': str(x.project_fxf_id), 'fs_project': x.project_id, 'fs_status': 0, 'fs_site':str(x.site_id), 'fs_uuid':str(x.site_fxf_id), '_deleted_at':True})
                 try:
                     synced = update_mongo_instance(d)
                     print(synced, "updated in mongo success")
