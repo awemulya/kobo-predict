@@ -456,7 +456,9 @@ class MyFormMixin(LoginRequiredMixin):
 
         raise PermissionDenied()
 
+
 class EndRoleMixin(LoginRequiredMixin):
+
     def dispatch(self, request, *args, **kwargs):
         if request.group.name == "Super Admin":
             return super(EndRoleMixin, self).dispatch(request, *args, **kwargs)
@@ -467,9 +469,19 @@ class EndRoleMixin(LoginRequiredMixin):
                 return super(EndRoleMixin, self).dispatch(request, *args, **kwargs)
         
         elif role_to_end.group_id == 3 or role_to_end.group_id == 4:
+
             user_role = request.roles.filter(Q(project_id = role_to_end.project_id, group_id=2) | Q(organization_id = role_to_end.organization_id, group_id=1))
             if user_role:
-                return super(EndRoleMixin, self).dispatch(request, *args, **kwargs)     
+                return super(EndRoleMixin, self).dispatch(request, *args, **kwargs)
+
+        elif role_to_end.group.name == "Region Supervisor" or role_to_end.group.name == "Region Reviewer":
+
+            user_role = request.roles.filter(
+                Q(project_id=role_to_end.project_id, group_id=2) | Q(organization_id=role_to_end.organization_id,
+                                                                     group_id=1))
+            if user_role:
+                return super(EndRoleMixin, self).dispatch(request, *args, **kwargs)
+
         raise PermissionDenied() 
 
 
