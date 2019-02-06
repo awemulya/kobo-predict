@@ -303,6 +303,9 @@ class MyProfile(LoginRequiredMixin, View):
             roles_project = user.user_roles.select_related('project').filter(organization__isnull = False, project__isnull = False, site__isnull = True, ended_at__isnull=True, group__name="Project Manager")
             roles_reviewer = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Reviewer", ended_at__isnull=True)
             roles_SA = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Site Supervisor", ended_at__isnull=True)
+            roles_region_supervisor = user.user_roles.select_related('region').filter(organization__isnull=False, project__isnull=False, region__isnull=False, group__name="Region Supervisor", ended_at__isnull=True)
+            roles_region_reviewer = user.user_roles.select_related('region').filter(organization__isnull=False, project__isnull=False, region__isnull=False, group__name="Region Reviewer", ended_at__isnull=True)
+
             responses = FInstance.objects.filter(submitted_by = user).order_by('-date')[:10]
             
             if request.role is not None and request.role.group.name != "Super Admin":
@@ -324,10 +327,18 @@ class MyProfile(LoginRequiredMixin, View):
                     is_super_admin = True
                 else:
                     is_super_admin = False
-            return render(request, 'users/profile.html', {'obj': profile, 'is_super_admin':is_super_admin, 'own_orgs':own_org_admin,'own_projects':own_manager_roles,'roles_org': roles_org, 'roles_project': roles_project, 'roles_site': roles_reviewer, 'roles_SA': roles_SA, 'roles_reviewer': roles_reviewer, 'responses': responses })
+            return render(request, 'users/profile.html', {'obj': profile, 'is_super_admin': is_super_admin,
+                                                          'own_orgs': own_org_admin, 'own_projects': own_manager_roles,
+                                                          'roles_org': roles_org, 'roles_project': roles_project,
+                                                          'roles_site': roles_reviewer, 'roles_SA': roles_SA,
+                                                          'roles_reviewer': roles_reviewer, 'responses': responses,
+                                                          'roles_region_reviewer': roles_region_reviewer,
+                                                          'roles_region_supervisor': roles_region_supervisor
+                                                          })
 
 
 class EndUserRole(EndRoleMixin, View):
+
     def get(self, request, pk):
         userrole=UserRole.objects.get(pk=pk)
         userrole.ended_at = datetime.datetime.now()
