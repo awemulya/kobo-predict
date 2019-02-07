@@ -687,8 +687,8 @@ def siteDetailsGenerator(project, sites, ws):
                             form_owner = FieldSightXF.objects.select_related('xf__user').get(pk=meta['form_id']).xf.user.username
                         site_list[int(submission['_id'])][meta['question_name']] = 'http://app.fieldsight.org/attachment/medium?media_file='+  +'/attachments/'+submission['answer']
                     
-
-                    site_list[int(submission['_id'])][meta['question_name']] = submission['answer']
+                    if not meta['question']['type'] == "repeat":
+                        site_list[int(submission['_id'])][meta['question_name']] = submission['answer']
                 except:
                     pass
 
