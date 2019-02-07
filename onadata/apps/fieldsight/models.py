@@ -312,8 +312,31 @@ class Region(models.Model):
         else:
             return site_count
 
+    def get_sites(self):
+        sites = list(self.regions.all().values_list('name', flat=True))
+
+        if self.children.all():
+            other_sites = []
+            for child in self.children.all():
+                other_sites += child.get_sites()
+            return other_sites+sites
+        else:
+            return sites
+
+    def get_sites_id(self):
+        sites_id = list(self.regions.all().values_list('id', flat=True))
+
+        if self.children.all():
+            other_sites_id = []
+            for child in self.children.all():
+                other_sites_id += child.get_sites_id()
+            return other_sites_id + sites_id
+        else:
+            return sites_id
+
     def get_concat_identifier(self):       
         return self.identifier + "_"
+
 
 class SiteType(models.Model):
     identifier = models.IntegerField("ID")
