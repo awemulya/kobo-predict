@@ -38,7 +38,7 @@ from .metaAttribsGenerator import get_form_answer, get_form_sub_status, get_form
 from django.conf import settings
 from django.db.models import Sum, Case, When, IntegerField, Count
 from django.core.exceptions import MultipleObjectsReturned
-<<<<<<< HEAD
+
 
 from dateutil.rrule import rrule, MONTHLY, DAILY
 from django.db import connection                                         
