@@ -769,7 +769,15 @@ def attachment_url(request, size='medium'):
     # this assumes duplicates are the same file
     result = Attachment.objects.filter(media_file=media_file)[0:1]
     if result.count() == 0:
-        return HttpResponseNotFound(_(u'Attachment not found'))
+        pattern = re.compile('(.*)-(\d+)_(\d+)_(\d+)\.(.*))')
+        m = pattern.search(media_file)
+        if m:
+            pattern = re.compile('(.*)-(.*)\.(.*)')
+            m = pattern.search(media_file)
+            media_file = media_file.replace("-"+m.group(2), "")
+            result = Attachment.objects.filter(media_file=media_file)[0:1]
+        else:
+            return HttpResponseNotFound(_(u'Attachment not found'))
     attachment = result[0]
     if not attachment.mimetype.startswith('image'):
         return redirect(attachment.media_file.url)

@@ -8,7 +8,11 @@ def get_form_answer(site_id, meta):
         if sub:
 
             sub_answers = sub[0].instance.json
-            answer = sub_answers.get(meta.get('question').get('name') ,'')
+            if meta['question']['type']  == "repeat":
+                answer = ""
+            else:
+                answer = sub_answers.get(meta.get('question').get('name') ,'')
+            
             if meta['question']['type'] in ['photo', 'video', 'audio'] and answer is not "":
                 question_type = "Media"
                 answer = 'http://app.fieldsight.org/attachment/medium?media_file='+ fxf.xf.user.username +'/attachments/'+answer
