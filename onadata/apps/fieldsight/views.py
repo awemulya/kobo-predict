@@ -2020,7 +2020,7 @@ class RegionCreateView(RegionView, ProjectRoleMixin, CreateView):
             )
 
 
-class RegionDeleteView(RegionView, RegionMixin, DeleteView):
+class RegionDeleteView(RegionView, RegionalMixin, DeleteView):
     def dispatch(self, request, *args, **kwargs):
         site = Site.objects.filter(region_id=self.kwargs.get('pk'))
         site.update(region_id=None)
