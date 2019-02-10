@@ -81,7 +81,7 @@ class Test():
             for key, value in updated.items():
                 sub_contents.append(updated[key].label + 'was updated from' + ('blank' if updated[key].data[0] == '' else updated[key].data[0]) + ' to ' + ('blank' if updated[key].data[1] == '' else updated[key].data[1]) + '.')
 
-        , sub_contents
+        sub_contents
        
 
     def log_type16(self, data):
