@@ -360,8 +360,7 @@ def _get_form_url(request, username, protocol='https'):
                        settings.KOBOCAT_PUBLIC_HOSTNAME != http_host
 
     # Make sure protocol is enforced to `http` when calling `kc` internally
-    protocol = 'http'  #local debug
-
+    protocol = "http" if is_call_internal else protocol
     return '%s://%s/%s' % (protocol, http_host, username)
 
 

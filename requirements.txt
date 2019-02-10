@@ -131,7 +131,8 @@ python-dateutil==2.6.1
 python-digest==1.7
 -e git+https://github.com/onaio/python-json2xlsclient.git@5a39387752d819cb6387f75569dbea9a5288aa6f#egg=python_json2xlsclient
 pytz==2017.2
--e git+https://github.com/kobotoolbox/pyxform.git@d46d2edfd3bc1e1d25c06c3fd8aaef8324bc4f9f#egg=pyxform
+#-e git+https://github.com/kobotoolbox/pyxform.git@d46d2edfd3bc1e1d25c06c3fd8aaef8324bc4f9f#egg=pyxform
+pyxform==0.11.5
 recaptcha-client==1.0.6
 redis==2.10.5
 reportlab==3.4.0

@@ -63,7 +63,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
-from onadata.apps.fieldsight.tasks import generate_stage_status_report, UnassignAllProjectRolesAndSites, UnassignAllSiteRoles, UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
+from onadata.apps.fieldsight.tasks import generate_stage_status_report, generateSiteDetailsXls, UnassignAllProjectRolesAndSites, UnassignAllSiteRoles, UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion
 from .generatereport import PDFReport
 from django.utils import translation
 from django.conf import settings
@@ -505,7 +505,7 @@ def alter_proj_status(request, pk):
     return HttpResponseRedirect(reverse('fieldsight:projects-list'))
 
 
-class StageStatus(LoginRequiredMixin, ProjectRoleMixin, View):
+class StageStatus(LoginRequiredMixin, DonorRoleMixin, View):
     def get(self, request, *args, **kwargs):
         obj = get_object_or_404(Project, pk=self.kwargs.get('pk'), is_active=True)
         user = request.user
@@ -841,7 +841,8 @@ class SiteDeleteView(SiteDeleteRoleMixin, View):
                                project=site.project, extra_message="site", site=site, content_object=site,
                                description='{0} deleted of site named {1}'.format(
                                    self.request.user.get_full_name(), site.name))
-        return HttpResponseRedirect(self.get_success_url(reverse('fieldsight:proj-site-list', kwargs={'pk': site.project_id})))
+        return HttpResponseRedirect(reverse('fieldsight:proj-site-list', kwargs={'pk': site.project_id}))
+
     # def delete(self,*args, **kwargs):
     #     self.kwargs['pk'] = self.get_object().pk
     #     self.object = self.get_object().delete()
@@ -939,7 +940,7 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
         obj = get_object_or_404(Project, pk=pk, is_active=True)
         form = UploadFileForm()
-        regions = SiteBulkEditView.get_regions_filter(obj)
+        regions = obj.regions.filter(is_active=True)
 
         selected_regions = request.GET.get('regions')
         if selected_regions:
@@ -2421,44 +2422,50 @@ class MultiSiteAssignRegionView(ProjectRoleMixin, TemplateView):
 
 class ExcelBulkSiteSample(ProjectRoleMixin, View):
     def get(self, request, pk, edit=0):
-        project = Project.objects.get(pk=pk)
-        response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="bulk_upload_sites.xls"'
+        source_user = self.request.user   
+        project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
+        content_type = ContentType.objects.get(model='project', app_label='fieldsight')
+        regions = request.GET.get('regions', None)
 
-        wb = xlwt.Workbook(encoding='utf-8')
-        ws = wb.add_sheet('Sites')
+        if edit == 0:
+            response = HttpResponse(content_type='application/ms-excel')
+            response['Content-Disposition'] = 'attachment; filename="bulk_upload_sites.xls"'
 
-        # Sheet header, first row
-        row_num = 0
+            wb = xlwt.Workbook(encoding='utf-8')
+            ws = wb.add_sheet('Sites')
 
-        font_style = xlwt.XFStyle()
-        font_style.font.bold = True
+            # Sheet header, first row
+            row_num = 0
 
-        columns = ['identifier', 'name', 'type', 'phone', 'address', 'public_desc', 'additional_desc', 'latitude', 'longitude',]
-        if project.cluster_sites:
-            columns += ['region_id',]
-        meta_ques = project.site_meta_attributes
-        for question in meta_ques:
-            columns += [question['question_name']]
-        for col_num in range(len(columns)):
-            ws.write(row_num, col_num, columns[col_num], font_style)
+            font_style = xlwt.XFStyle()
+            font_style.font.bold = True
 
-        if edit:
-            sites = Site.objects.filter(project=project)
-            regions = request.GET.get('regions')
-            if regions:
-                regions = regions.split(',')
-                if len(regions) > 0:
-                    sites = sites.filter(region__in=regions)
+            columns = ['identifier', 'name', 'type', 'phone', 'address', 'public_desc', 'additional_desc', 'latitude', 'longitude',]
+            if project.cluster_sites:
+                columns += ['region_id',]
+            meta_ques = project.site_meta_attributes
+            for question in meta_ques:
+                columns += [question['question_name']]
+            for col_num in range(len(columns)):
+                ws.write(row_num, col_num, columns[col_num], font_style)
 
-            for i, site in enumerate(sites):
-                self.write_site(i + 1, site, ws)
+            # Sheet body, remaining rows
+            font_style = xlwt.XFStyle()
 
-        # Sheet body, remaining rows
-        font_style = xlwt.XFStyle()
+            wb.save(response)
+            return response
 
-        wb.save(response)
-        return response
+        if regions:
+            regions = regions.split(',')
+        task_obj = CeleryTaskProgress.objects.create(user=source_user, content_object=project, task_type=8)
+        if task_obj:
+            task = generateSiteDetailsXls.delay(task_obj.pk, source_user, self.kwargs.get('pk'), regions)
+            task_obj.task_id = task.id
+            task_obj.save()
+            status, data = 200, {'status':'true','message':'The sites details xls file is being generated. You will be notified after the file is generated.'}
+        else:
+            status, data = 401, {'status':'false','message':'Error occured please try again.'}
+        return JsonResponse(data, status=status)
 
 
     def write_site(self, row, site, ws):

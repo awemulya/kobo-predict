@@ -38,6 +38,7 @@ from .metaAttribsGenerator import get_form_answer, get_form_sub_status, get_form
 from django.conf import settings
 from django.db.models import Sum, Case, When, IntegerField, Count
 from django.core.exceptions import MultipleObjectsReturned
+<<<<<<< HEAD
 
 from dateutil.rrule import rrule, MONTHLY, DAILY
 from django.db import connection                                         
@@ -47,8 +48,7 @@ from onadata.apps.fieldsight.fs_exports.log_generator import log_types
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 
-def get_images_for_site_all(site_id):
-    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : site_id}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
+from onadata.apps.fsforms.reports_util import get_images_for_site_all
 
 @shared_task()
 def site_download_zipfile(task_prog_obj_id, size):
@@ -364,7 +364,12 @@ def UnassignAllSiteRoles(task_prog_obj_id, site_id):
                                        extra_message="@error " + u'{}'.format(e.message))
 
 
-    
+def get_site_type(value):
+    try:
+        return int(value)
+    except:
+        return 0    
+
 @shared_task()
 def bulkuploadsites(task_prog_obj_id, source_user, sites, pk):
     time.sleep(2)
@@ -400,7 +405,9 @@ def bulkuploadsites(task_prog_obj_id, source_user, sites, pk):
 
                 location = Point(round(float(lat), 6), round(float(long), 6), srid=4326)
                 region_idf = site.get("region_id", None)
-                type_identifier = int(site.get("type", "0"))
+                
+
+                type_identifier = get_site_type(site.get("type", "0"))
 
                 _site, created = Site.objects.get_or_create(identifier=str(site.get("identifier")),
                                                                 project=project)
@@ -674,7 +681,7 @@ def siteDetailsGenerator(project, sites, ws):
                     
         for meta in get_answer_questions:
             form_owner = None
-            query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": str(meta['form_id']), meta['question']['name']: { "$exists": "true" }}},  { "$group" : { 
+            query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": str(meta['form_id'])}},  { "$group" : { 
                 "_id" : "$fs_site",
                 "answer": { '$last': "$"+meta['question']['name'] }
                }
@@ -691,8 +698,8 @@ def siteDetailsGenerator(project, sites, ws):
                     
                     if meta['question']['type'] == 'repeat':
                         site_list[int(submission['_id'])][meta['question_name']] = ""
-                    else:
-                        site_list[int(submission['_id'])][meta['question_name']] = submission['answer']
+
+                    site_list[int(submission['_id'])][meta['question_name']] = submission['answer']
                 except:
                     pass
 
@@ -756,10 +763,13 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         ws.title='Sites Detail'
         sites = project.sites.all().order_by('identifier')
         if region_id:
-            if region_id == "0":
-                sites = project.sites.filter(is_active=True, region_id=None).order_by('identifier')
+            if isinstance(region_id, list): 
+                sites = project.sites.filter(is_active=True, region_id__in=region_id).order_by('identifier')
             else:
-                sites = project.sites.filter(is_active=True, region_id=region_id).order_by('identifier')
+                if region_id == "0":
+                    sites = project.sites.filter(is_active=True, region_id=None).order_by('identifier')
+                else:
+                    sites = project.sites.filter(is_active=True, region_id=region_id).order_by('identifier')
         else:
             sites = project.sites.filter(is_active=True).order_by('identifier')
 

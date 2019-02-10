@@ -15,16 +15,18 @@ from django.db.models.signals import post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 from jsonfield import JSONField
-from pyxform import create_survey_from_xls
+from pyxform import create_survey_from_xls, SurveyElementBuilder
+from pyxform.xform2json import create_survey_element_from_xml
 from xml.dom import Node
 
 from onadata.apps.fieldsight.models import Site, Project, Organization
 from onadata.apps.fsforms.fieldsight_models import IntegerRangeField
-from onadata.apps.fsforms.utils import send_message, send_message_project_form
+from onadata.apps.fsforms.utils import send_message, send_message_project_form, check_version
 from onadata.apps.logger.models import XForm, Instance
 from onadata.apps.logger.xform_instance_parser import clean_and_parse_xml
 from onadata.apps.viewer.models import ParsedInstance
 from onadata.apps.fsforms.fsxform_responses import get_instances_for_field_sight_form
+from onadata.settings.local_settings import XML_VERSION_MAX_ITER
 
 #To get domain to give complete url for app devs to make them easier.
 from django.contrib.sites.models import Site as DjangoSite
@@ -352,6 +354,10 @@ class FieldSightXF(models.Model):
             self.fsform.pk
         return None
 
+    @property
+    def has_versions(self):
+        return self.xf.fshistory.exists()
+
     def __unicode__(self): 
         return u'{}- {}- {}'.format(self.xf, self.site, self.is_staged)
 
@@ -435,20 +441,7 @@ class FInstance(models.Model):
 
     @property
     def get_version(self):
-        import re
-        p = re.compile('<__version__>(.*)</__version__>')
-        m = p.search(self.instance.xml)
-        if m:
-            return m.group(1)
-        return None
-
-    def set_version(self):
-        import re
-        p = re.compile('<__version__>(.*)</__version__>')
-        m = p.search(self.instance.xml)
-        if m:
-            self.version = m.group(1)
-            self.save()
+        return self.instance.json['__version__']
 
     def save(self, *args, **kwargs):
         self.version = self.get_version
@@ -704,126 +697,181 @@ def upload_to(instance, filename):
 
 
 class XformHistory(models.Model):
-        class Meta:
-            unique_together = ('xform', 'version')
+    class Meta:
+        unique_together = ('xform', 'version')
+        
+    def _set_uuid_in_xml(self, file_name=None):
+        """
+        Add bind to automatically set UUID node in XML.
+        """
+        if not file_name:
+            file_name = self.file_name()
+        file_name, file_ext = os.path.splitext(file_name)
 
-        def _set_uuid_in_xml(self, file_name=None):
-            """
-            Add bind to automatically set UUID node in XML.
-            """
-            if not file_name:
-                file_name = self.file_name()
-            file_name, file_ext = os.path.splitext(file_name)
+        doc = clean_and_parse_xml(self.xml)
+        model_nodes = doc.getElementsByTagName("model")
+        if len(model_nodes) != 1:
+            raise Exception(u"xml contains multiple model nodes")
 
-            doc = clean_and_parse_xml(self.xml)
-            model_nodes = doc.getElementsByTagName("model")
-            if len(model_nodes) != 1:
-                raise Exception(u"xml contains multiple model nodes")
-
-            model_node = model_nodes[0]
-            instance_nodes = [node for node in model_node.childNodes if
-                              node.nodeType == Node.ELEMENT_NODE and
-                              node.tagName.lower() == "instance" and
-                              not node.hasAttribute("id")]
-
-            if len(instance_nodes) != 1:
-                raise Exception(u"Multiple instance nodes without the id "
-                                u"attribute, can't tell which is the main one")
-
-            instance_node = instance_nodes[0]
-
-            # get the first child whose id attribute matches our id_string
-            survey_nodes = [node for node in instance_node.childNodes
-                            if node.nodeType == Node.ELEMENT_NODE and
-                            (node.tagName == file_name or
-                             node.attributes.get('id'))]
-
-            if len(survey_nodes) != 1:
-                raise Exception(
-                    u"Multiple survey nodes with the id '%s'" % self.id_string)
-
-            survey_node = survey_nodes[0]
-            formhub_nodes = [n for n in survey_node.childNodes
-                             if n.nodeType == Node.ELEMENT_NODE and
-                             n.tagName == "formhub"]
-
-            if len(formhub_nodes) > 1:
-                raise Exception(
-                    u"Multiple formhub nodes within main instance node")
-            elif len(formhub_nodes) == 1:
-                formhub_node = formhub_nodes[0]
-            else:
-                formhub_node = survey_node.insertBefore(
-                    doc.createElement("formhub"), survey_node.firstChild)
-
-            uuid_nodes = [node for node in formhub_node.childNodes if
+        model_node = model_nodes[0]
+        instance_nodes = [node for node in model_node.childNodes if
                           node.nodeType == Node.ELEMENT_NODE and
-                          node.tagName == "uuid"]
+                          node.tagName.lower() == "instance" and
+                          not node.hasAttribute("id")]
 
-            if len(uuid_nodes) == 0:
-                formhub_node.appendChild(doc.createElement("uuid"))
-            if len(formhub_nodes) == 0:
-                # append the calculate bind node
-                calculate_node = doc.createElement("bind")
-                calculate_node.setAttribute(
-                    "nodeset", "/%s/formhub/uuid" % file_name)
-                calculate_node.setAttribute("type", "string")
-                calculate_node.setAttribute("calculate", "'%s'" % self.uuid)
-                model_node.appendChild(calculate_node)
+        if len(instance_nodes) != 1:
+            raise Exception(u"Multiple instance nodes without the id "
+                            u"attribute, can't tell which is the main one")
 
-            self.xml = doc.toprettyxml(indent="  ", encoding='utf-8')
-            # hack
-            # http://ronrothman.com/public/leftbraned/xml-dom-minidom-toprettyxml-\
-            # and-silly-whitespace/
-            text_re = re.compile('>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)
-            output_re = re.compile('\n.*(<output.*>)\n(  )*')
-            prettyXml = text_re.sub('>\g<1></', self.xml)
-            inlineOutput = output_re.sub('\g<1>', prettyXml)
-            inlineOutput = re.compile('<label>\s*\n*\s*\n*\s*</label>').sub(
-                '<label></label>', inlineOutput)
-            self.xml = inlineOutput
+        instance_node = instance_nodes[0]
 
-        xform = models.ForeignKey(XForm, related_name="fshistory")
-        date = models.DateTimeField(auto_now=True)
-        xls = models.FileField(upload_to=upload_to, null=True)
-        json = models.TextField(default=u'')
-        description = models.TextField(default=u'', null=True)
-        xml = models.TextField()
-        id_string = models.CharField(editable=False, max_length=255)
-        title = models.CharField(editable=False, max_length=255)
-        uuid = models.CharField(max_length=32, default=u'')
-        version = models.CharField(max_length=255, default=u'')
+        # get the first child whose id attribute matches our id_string
+        survey_nodes = [node for node in instance_node.childNodes
+                        if node.nodeType == Node.ELEMENT_NODE and
+                        (node.tagName == file_name or
+                         node.attributes.get('id'))]
 
-        @property
-        def get_version(self):
-            import re
-            p = re.compile('version="(.*)">')
-            m = p.search(self.xml)
+        if len(survey_nodes) != 1:
+            raise Exception(
+                u"Multiple survey nodes with the id '%s'" % self.id_string)
+
+        survey_node = survey_nodes[0]
+        formhub_nodes = [n for n in survey_node.childNodes
+                         if n.nodeType == Node.ELEMENT_NODE and
+                         n.tagName == "formhub"]
+
+        if len(formhub_nodes) > 1:
+            raise Exception(
+                u"Multiple formhub nodes within main instance node")
+        elif len(formhub_nodes) == 1:
+            formhub_node = formhub_nodes[0]
+        else:
+            formhub_node = survey_node.insertBefore(
+                doc.createElement("formhub"), survey_node.firstChild)
+
+        uuid_nodes = [node for node in formhub_node.childNodes if
+                      node.nodeType == Node.ELEMENT_NODE and
+                      node.tagName == "uuid"]
+
+        if len(uuid_nodes) == 0:
+            formhub_node.appendChild(doc.createElement("uuid"))
+        if len(formhub_nodes) == 0:
+            # append the calculate bind node
+            calculate_node = doc.createElement("bind")
+            calculate_node.setAttribute(
+                "nodeset", "/%s/formhub/uuid" % file_name)
+            calculate_node.setAttribute("type", "string")
+            calculate_node.setAttribute("calculate", "'%s'" % self.uuid)
+            model_node.appendChild(calculate_node)
+
+        self.xml = doc.toprettyxml(indent="  ", encoding='utf-8')
+        
+        # hack
+        # http://ronrothman.com/public/leftbraned/xml-dom-minidom-toprettyxml-\
+        # and-silly-whitespace/
+        text_re = re.compile('>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)
+        output_re = re.compile('\n.*(<output.*>)\n(  )*')
+        prettyXml = text_re.sub('>\g<1></', self.xml.decode('utf-8'))
+        inlineOutput = output_re.sub('\g<1>', prettyXml)
+        inlineOutput = re.compile('<label>\s*\n*\s*\n*\s*</label>').sub(
+            '<label></label>', inlineOutput)
+        self.xml = inlineOutput
+
+    xform = models.ForeignKey(XForm, related_name="fshistory")
+    date = models.DateTimeField(auto_now=True)
+    xls = models.FileField(upload_to=upload_to, null=True)
+    json = models.TextField(default=u'')
+    description = models.TextField(default=u'', null=True)
+    xml = models.TextField()
+    id_string = models.CharField(editable=False, max_length=255)
+    title = models.CharField(editable=False, max_length=255)
+    uuid = models.CharField(max_length=32, default=u'')
+    version = models.CharField(max_length=255, default=u'')
+
+    @property
+    def get_version(self):
+        import re
+        n = XML_VERSION_MAX_ITER
+        xml = self.xml
+        p = re.compile('version="(.*)">')
+        m = p.search(xml)
+        if m:
+            return m.group(1)
+        
+        version = check_version(xml)
+        
+        if version:
+            return version
+        
+        else:
+            p = re.compile("""<bind calculate="\'(.*)\'" nodeset="/(.*)/_version_" """)
+            m = p.search(xml)
             if m:
                 return m.group(1)
-            return None
+            
+            p1 = re.compile("""<bind calculate="(.*)" nodeset="/(.*)/_version_" """)
+            m1 = p.search(xml)
+            if m1:
+                return m1.group(1)
+            
+            p1 = re.compile("""<bind calculate="\'(.*)\'" nodeset="/(.*)/__version__" """)
+            m1 = p1.search(xml)
+            if m1:
+                return m1.group(1)
+            
+            p1 = re.compile("""<bind calculate="(.*)" nodeset="/(.*)/__version__" """)
+            m1 = p1.search(xml)
+            if m1:
+                return m1.group(1)
+        return None
 
-        def save(self, *args, **kwargs):
-            if self.xls and not self.xml:
-                survey = create_survey_from_xls(self.xls)
-                self.json = survey.to_json()
-                self.xml = survey.to_xml()
-                self._mark_start_time_boolean()
-                set_uuid(self)
-                self._set_uuid_in_xml()
-            if not self.version:
-                self.version = self.get_version
-            super(XformHistory, self).save(*args, **kwargs)
+    def check_version(xml, n):
+        for i in range(n, 0, -1):
+            p = re.compile("""<bind calculate="\'(.*)\'" nodeset="/(.*)/_version__00{0}" """.format(i))
+            m = p.search(xml)
+            if m:
+                return m.group(1)
+            
+            p = re.compile("""<bind calculate="(.*)" nodeset="/(.*)/_version__00{0}" """.format(i))
+            m1 = p.search(xml)
+            if m1:
+                return m1.group(1)
+        return None
 
-        def file_name(self):
-            return os.path.split(self.xls.name)[-1]
+    def save(self, *args, **kwargs):
+        if self.xls and not self.xml:
+            survey = create_survey_from_xls(self.xls)
+            self.json = survey.to_json()
+            self.xml = survey.to_xml()
+            self._mark_start_time_boolean()
+            # set_uuid(self)
+            # self._set_uuid_in_xml()
+        if not self.version:
+            self.version = self.get_version
+        super(XformHistory, self).save(*args, **kwargs)
 
-        def _mark_start_time_boolean(self):
-            starttime_substring = 'jr:preloadParams="start"'
-            if self.xml.find(starttime_substring) != -1:
-                self.has_start_time = True
-            else:
-                self.has_start_time = False
+    def file_name(self):
+        return os.path.split(self.xls.name)[-1]
+
+    def _mark_start_time_boolean(self):
+        starttime_substring = 'jr:preloadParams="start"'
+        if self.xml.find(starttime_substring) != -1:
+            self.has_start_time = True
+        else:
+            self.has_start_time = False
+
+    def get_survey(self):
+        if not hasattr(self, "_survey"):
+            try:
+                builder = SurveyElementBuilder()
+                self._survey = \
+                    builder.create_survey_element_from_json(self.json)
+            except ValueError:
+                xml = bytes(bytearray(self.xml, encoding='utf-8'))
+                self._survey = create_survey_element_from_xml(xml)
+        return self._survey
+
+    survey = property(get_survey)
 
 
 class SubmissionOfflineSite(models.Model):

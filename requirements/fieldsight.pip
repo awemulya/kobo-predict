@@ -6,10 +6,12 @@
 
 #celery==3.1.20
 
-#pyexcel==0.5.3
-#pyexcel-io==0.5.3
-#pyexcel-webio==0.1.2
-#pyexcel-xls==0.5.4
+pyexcel==0.5.3
+pyexcel-io==0.5.3
+pyexcel-webio==0.1.2
+pyexcel-xls==0.5.4
+pyexcel-xlsx==0.5.6
+XlsxWriter==1.1.2
 
 numpy==1.11.1
 pandas==0.18.1
