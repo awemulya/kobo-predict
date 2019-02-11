@@ -222,11 +222,11 @@ class SearchableUserListViewSet(viewsets.ModelViewSet):
 
 class MySitesViewset(viewsets.ReadOnlyModelViewSet):
     serializer_class = MySiteRolesSerializer
-    queryset = UserRole.objects.filter(ended_at=None, group__name="Site Supervisor", site__isnull=False)
+    queryset = UserRole.objects.filter(ended_at=None, group__name__in=["Site Supervisor", "Region Supervisor"])
     pagination_class = MySitesResultsSetPagination
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user, ended_at=None, site__isnull=False, site__is_active=True, group__name="Site Supervisor").select_related('project', 'site', 'site__region', 'site__type', 'project__organization', 'project__type')
+        return self.queryset.filter(user=self.request.user, ended_at=None).filter(Q(site__isnull=False, site__is_active=True, group__name="Site Supervisor")|Q(region__isnull=False, region__is_active=True, group__name="Region Supervisor")).select_related('project', 'site', 'region', 'site__region', 'site__type', 'project__organization', 'project__type')
 
     def get_serializer_context(self):
         sites = UserRole.objects.filter(user=self.request.user).values_list('site', flat=True).distinct()

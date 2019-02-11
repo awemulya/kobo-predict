@@ -142,6 +142,7 @@ class FInstanceViewset(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         sites = list(UserRole.objects.filter(user=self.request.user, group__name="Site Supervisor", ended_at__isnull=False).distinct('site').values_list('site', flat=True))
+        # print('before', sites)
         if UserRole.objects.filter(user=self.request.user, group__name="Region Supervisor", ended_at__isnull=False).exists():
             regions_id = UserRole.objects.filter(user=self.request.user, group__name="Region Supervisor", ended_at__isnull=False).distinct('region').values_list('region', flat=True)
             for r in regions_id:
