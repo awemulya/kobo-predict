@@ -25,6 +25,8 @@ class Command(BaseCommand):
                 new_fs_uuid = None
             elif fs_uuid == 'NoneType':
                 new_fs_uuid = None
+            elif fs_uuid == None:
+                new_fs_uuid = fs_uuid
             else:
                 new_fs_uuid = int(fs_uuid)
             xform_instances.update({'_id':record['_id']},{'$set':{'fs_site':new_fs_site, 'fs_uuid':new_fs_uuid}})
