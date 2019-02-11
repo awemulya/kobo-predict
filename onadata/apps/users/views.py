@@ -450,7 +450,13 @@ def web_signup(request):
                 mail_subject, message, to=[to_email]
             )
             email.send()
-            return HttpResponse('Please confirm your email address to complete the registration')
+            return render(request, 'users/login.html', {
+                'signup_form':signup_form, 
+                'valid_email':True, 
+                'email_error':False, 
+                'success_signup':1, 
+                'email':to_email,
+                })
 
             # user = authenticate(username=username,
             #                         password=password,
@@ -472,11 +478,12 @@ def web_signup(request):
                 'email':email,
                 'valid_email': True, 
                 'email_error':False,
-                'signup_tab': 1
+                'signup_tab': 1,
+                'success_signup':0
                 })
     else:
         signup_form = SignUpForm()
-        return render(request, 'users/login.html', {'signup_form':signup_form, 'valid_email':True, 'email_error': False})
+        return render(request, 'users/login.html', {'signup_form':signup_form, 'valid_email':True, 'email_error': False, 'success_signup':0})
 
 
 def send_request_for_organization(request, org_id):
