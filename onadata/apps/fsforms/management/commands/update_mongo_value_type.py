@@ -9,7 +9,7 @@ class Command(BaseCommand):
         xform_instances = settings.MONGO_DB.instances
         
         #type 2 is for string type
-        query = {'$and':[{'fs_site':{'$type':2}}, {'fs_uuid':{'$type':2}}]}
+        query = {'$or':[{'fs_site':{'$type':2}}, {'fs_uuid':{'$type':2}}]}
         
         cursor = xform_instances.find(query)
         for record in cursor:
