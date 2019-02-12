@@ -142,12 +142,13 @@ class FInstanceViewset(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         sites = list(UserRole.objects.filter(user=self.request.user, group__name="Site Supervisor", ended_at__isnull=False).distinct('site').values_list('site', flat=True))
-        # print('before', sites)
         if UserRole.objects.filter(user=self.request.user, group__name="Region Supervisor", ended_at__isnull=False).exists():
             regions_id = UserRole.objects.filter(user=self.request.user, group__name="Region Supervisor", ended_at__isnull=False).distinct('region').values_list('region', flat=True)
             for r in regions_id:
-                region_obj = get_object_or_404(Region, id=r)
-                region_sites = region_obj.get_sites_id()
+                r = Region.objects.get(id=r)
+                # assume maximum recursion depth is 3
+                region_sites = Site.objects.filter(Q(region_id=r) | Q(region_id__parent=r) | Q(region_id__parent__parent=r)).values_list('id',
+                                                                                                          flat=True)
                 sites += region_sites
 
         return self.queryset.filter(site__in=sites).select_related('submitted_by', 'site_fxf',  'project_fxf').order_by("-date")

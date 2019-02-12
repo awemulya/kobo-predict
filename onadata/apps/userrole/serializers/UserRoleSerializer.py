@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from rest_framework import serializers
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.serializers import UserSerializer
+from onadata.apps.fieldsight.models import Site, Project
 
 
 class UserRoleSerializer(serializers.ModelSerializer):
@@ -22,7 +23,8 @@ class MySiteRolesSerializer(serializers.ModelSerializer):
         fields = ('site', 'project')
 
     def get_site(self, obj):
-        site = obj.site
+        site = obj
+
         site_type = 0
         site_type_level = ""
         region_id = ""
@@ -44,6 +46,7 @@ class MySiteRolesSerializer(serializers.ModelSerializer):
                 'site_meta_attributes_ans': site.site_meta_attributes_ans, 'region':region_id   }
 
     def get_project(self, obj):
+
         project = obj.project
         return {'name': project.name, 'id': project.id, 'description': project.public_desc,
                                      'address':project.address, 'type_id':project.type.id,

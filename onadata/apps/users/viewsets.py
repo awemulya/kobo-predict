@@ -21,7 +21,7 @@ from rest_framework.response import Response
 from onadata.apps.api.viewsets.xform_viewset import CsrfExemptSessionAuthentication
 from onadata.apps.eventlog.models import FieldSightLog
 from onadata.apps.fieldsight.mixins import USURPERS
-from onadata.apps.fieldsight.models import BluePrints
+from onadata.apps.fieldsight.models import BluePrints, Region, Site
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.userrole.serializers.UserRoleSerializer import MySiteRolesSerializer, MyProjectRolesSerializer, \
     MySiteOnlyRolesSerializer
@@ -29,6 +29,8 @@ from onadata.apps.users.models import User, UserProfile
 from onadata.apps.users.serializers import UserSerializer, UserSerializerProfile, SearchableUserSerializer
 
 SAFE_METHODS = ('GET', 'POST')
+
+from itertools import chain
 
 
 class MySitesResultsSetPagination(PageNumberPagination):
@@ -226,10 +228,35 @@ class MySitesViewset(viewsets.ReadOnlyModelViewSet):
     pagination_class = MySitesResultsSetPagination
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user, ended_at=None).filter(Q(site__isnull=False, site__is_active=True, group__name="Site Supervisor")|Q(region__isnull=False, region__is_active=True, group__name="Region Supervisor")).select_related('project', 'site', 'region', 'site__region', 'site__type', 'project__organization', 'project__type')
+        sites = Site.objects.filter(site_roles__user=self.request.user, site_roles__ended_at=None, id__isnull=False, is_active=True, site_roles__group__name="Site Supervisor")\
+            .select_related('region', 'project', 'type', 'project__type', 'project__organization')
+        if self.queryset.filter(user=self.request.user, ended_at=None, region__isnull=False, region__is_active=True,
+                             group__name="Region Supervisor").values_list('region', flat=True).exists():
+            regions_id = self.queryset.filter(user=self.request.user, ended_at=None, region__isnull=False, region__is_active=True,
+                                 group__name="Region Supervisor").values_list('region', flat=True)
+            for r in regions_id:
+                r = Region.objects.get(id=r)
+                # assume maximum recursion depth is 3
+                region_sites = Site.objects.filter(
+                    Q(region_id=r) | Q(region_id__parent=r) | Q(region_id__parent__parent=r)).select_related('region', 'project', 'type', 'project__type', 'project__organization')
+                sites = list(chain(sites, region_sites))
+
+        return sites
 
     def get_serializer_context(self):
+
         sites = UserRole.objects.filter(user=self.request.user).values_list('site', flat=True).distinct()
+        if self.queryset.filter(user=self.request.user, ended_at=None, region__isnull=False, region__is_active=True,
+                             group__name="Region Supervisor").values_list('region', flat=True).exists():
+            regions_id = self.queryset.filter(user=self.request.user, ended_at=None, region__isnull=False, region__is_active=True,
+                                 group__name="Region Supervisor").values_list('region', flat=True)
+            for r in regions_id:
+                r = Region.objects.get(id=r)
+                # assume maximum recursion depth is 3
+                region_sites = Site.objects.filter(
+                    Q(region_id=r) | Q(region_id__parent=r) | Q(region_id__parent__parent=r)).select_related('region', 'project', 'type', 'project__type', 'project__organization')
+                sites = list(chain(sites, region_sites))
+
         blue_prints = BluePrints.objects.filter(site__in=sites)
         return {'request': self.request, 'blue_prints': blue_prints}
 
