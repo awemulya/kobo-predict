@@ -230,8 +230,9 @@ class MySitesViewset(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         sites = Site.objects.filter(site_roles__user=self.request.user, site_roles__ended_at=None, id__isnull=False, is_active=True, site_roles__group__name="Site Supervisor")\
             .select_related('region', 'project', 'type', 'project__type', 'project__organization')
-        if self.queryset.filter(user=self.request.user, ended_at=None, region__isnull=False, region__is_active=True,
-                             group__name="Region Supervisor").values_list('region', flat=True).exists():
+        # if self.queryset.filter(user=self.request.user, ended_at=None, region__isnull=False, region__is_active=True,
+        #                      group__name="Region Supervisor").values_list('region', flat=True).exists():
+        try:
             regions_id = self.queryset.filter(user=self.request.user, ended_at=None, region__isnull=False, region__is_active=True,
                                  group__name="Region Supervisor").values_list('region', flat=True)
             for r in regions_id:
@@ -240,6 +241,8 @@ class MySitesViewset(viewsets.ReadOnlyModelViewSet):
                 region_sites = Site.objects.filter(
                     Q(region_id=r) | Q(region_id__parent=r) | Q(region_id__parent__parent=r)).select_related('region', 'project', 'type', 'project__type', 'project__organization')
                 sites = list(chain(sites, region_sites))
+        except:
+            pass
 
         return sites
 

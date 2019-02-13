@@ -142,7 +142,8 @@ class FInstanceViewset(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         sites = list(UserRole.objects.filter(user=self.request.user, group__name="Site Supervisor", ended_at__isnull=False).distinct('site').values_list('site', flat=True))
-        if UserRole.objects.filter(user=self.request.user, group__name="Region Supervisor", ended_at__isnull=False).exists():
+        # if UserRole.objects.filter(user=self.request.user, group__name="Region Supervisor", ended_at__isnull=False).exists():
+        try:
             regions_id = UserRole.objects.filter(user=self.request.user, group__name="Region Supervisor", ended_at__isnull=False).distinct('region').values_list('region', flat=True)
             for r in regions_id:
                 r = Region.objects.get(id=r)
@@ -150,5 +151,7 @@ class FInstanceViewset(viewsets.ReadOnlyModelViewSet):
                 region_sites = Site.objects.filter(Q(region_id=r) | Q(region_id__parent=r) | Q(region_id__parent__parent=r)).values_list('id',
                                                                                                           flat=True)
                 sites += region_sites
+        except:
+            pass
 
         return self.queryset.filter(site__in=sites).select_related('submitted_by', 'site_fxf',  'project_fxf').order_by("-date")
