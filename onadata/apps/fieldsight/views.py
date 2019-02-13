@@ -1412,9 +1412,12 @@ def sendmultiroleuserinvite(request):
         project_ids = [region.project_id]
         organization_id = region.project.organization_id  
         # site_ids = Site.objects.filter(region_id__in=levels).values_list('id', flat=True)
-        site_ids = Site.objects.filter(region_id__in=levels).values_list('id', flat=True)
-        region_ids = Region.objects.filter(id__in=levels).values_list('id', flat=True)
 
+        # site_ids = Site.objects.filter(region_id__in=levels).values_list('id', flat=True)
+        site_ids = Site.objects.filter(Q(region_id__in=levels) | Q(region_id__parent__in=levels) | Q(region_id__parent__parent__in=levels)).values_list('id',
+                                                                                                                  flat=True)
+
+        region_ids = Region.objects.filter(id__in=levels).values_list('id', flat=True)
 
     elif leveltype == "project":
         project_ids = levels
@@ -1497,6 +1500,7 @@ class ActivateRole(TemplateView):
         if invite.is_used==True:
             return HttpResponseRedirect(reverse('login'))
         user = User.objects.filter(email__iexact=invite.email)
+
         if user:
             return render(request, 'fieldsight/invite_action.html',{'invite':invite, 'is_used': False, 'status':'',})
         else:
@@ -1505,7 +1509,7 @@ class ActivateRole(TemplateView):
 
     def post(self, request, invite, *args, **kwargs):
         user_exists = User.objects.filter(email__iexact=invite.email)
-        if user_exists: 
+        if user_exists:
             if request.POST.get('response') != "accept":
                 invite.is_declined = True
                 invite.is_used = True

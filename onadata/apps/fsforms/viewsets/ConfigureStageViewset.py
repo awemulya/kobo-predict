@@ -145,12 +145,11 @@ class FInstanceViewset(viewsets.ReadOnlyModelViewSet):
         # if UserRole.objects.filter(user=self.request.user, group__name="Region Supervisor", ended_at__isnull=False).exists():
         try:
             regions_id = UserRole.objects.filter(user=self.request.user, group__name="Region Supervisor", ended_at__isnull=False).distinct('region').values_list('region', flat=True)
-            for r in regions_id:
-                r = Region.objects.get(id=r)
-                # assume maximum recursion depth is 3
-                region_sites = Site.objects.filter(Q(region_id=r) | Q(region_id__parent=r) | Q(region_id__parent__parent=r)).values_list('id',
-                                                                                                          flat=True)
-                sites += region_sites
+
+            # assume maximum recursion depth is 3
+            region_sites = Site.objects.filter(Q(region_id__in=regions_id) | Q(region_id__parent__in=regions_id) | Q(region_id__parent__parent__in=regions_id)).values_list('id',
+                                                                                                      flat=True)
+            sites += region_sites
         except:
             pass
 
