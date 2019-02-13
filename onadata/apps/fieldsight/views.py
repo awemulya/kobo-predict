@@ -3,6 +3,7 @@ import datetime
 import json
 import redis
 import xlwt
+from django.contrib.contenttypes.models import ContentType
 from io import BytesIO
 from django.conf import settings
 from django.contrib import messages
