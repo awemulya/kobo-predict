@@ -45,9 +45,9 @@
                         <option value="{{ region.id }}">{{ region.name }}</option>
                         {% endfor %}
                     </select>
-                    <!--<a id="download-for-edit" href="{% url 'fieldsight:excel_bulk_site_sample' project 1 %}" target="_blank">-->
-                        <!--{% trans 'Download' %} {% trans 'Excel' %} {% trans 'File' %}-->
-                    <!--</a>-->
+                    <a id="download-for-edit" href="{% url 'fieldsight:excel_bulk_site_sample' project 1 %}" target="_blank">
+                        {% trans 'Download' %} {% trans 'Excel' %} {% trans 'File' %}
+                    </a>
                 </fieldset>
             </div>
 
