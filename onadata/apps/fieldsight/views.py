@@ -1415,19 +1415,21 @@ def sendmultiroleuserinvite(request):
         site_ids = Site.objects.filter(region_id__in=levels).values_list('id', flat=True)
         region_ids = Region.objects.filter(id__in=levels).values_list('id', flat=True)
 
-        # import ipdb;ipdb.set_trace()
 
     elif leveltype == "project":
         project_ids = levels
         organization_id = Project.objects.get(pk=project_ids[0]).organization_id
         site_ids = []
+        region_ids = []
         print organization_id
 
     elif leveltype == "site":
         site_ids = levels
         site = Site.objects.get(pk=site_ids[0])
         project_ids = [site.project_id]
+        region_ids = []
         organization_id = site.project.organization_id
+
 
     for email in emails:
         userinvite = UserInvite.objects.filter(email__iexact=email, organization_id=organization_id, group=group, project__in=project_ids,  site__in=site_ids, is_used=False).exists()
@@ -1440,7 +1442,7 @@ def sendmultiroleuserinvite(request):
         invite.save()
         invite.project = project_ids
         invite.site = site_ids
-        invite.region = region_ids
+        invite.regions = region_ids
 
         current_site = get_current_site(request)
         subject = 'Invitation for Role'

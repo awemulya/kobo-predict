@@ -573,6 +573,7 @@ class UserInvite(models.Model):
     group = models.ForeignKey(Group)
     site = models.ManyToManyField(Site, related_name='invite_site_roles')
     project = models.ManyToManyField(Project, related_name='invite_project_roles')
+    regions = models.ManyToManyField(Region, related_name='invite_region_roles')
     organization = models.ForeignKey(Organization, related_name='invite_organization_roles')
     logs = GenericRelation('eventlog.FieldSightLog')
 
