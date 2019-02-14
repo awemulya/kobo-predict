@@ -1558,23 +1558,33 @@ class ActivateRole(TemplateView):
         site_ids = invite.site.all().values_list('pk', flat=True)
         project_ids = invite.project.all().values_list('pk', flat=True)
 
-        for project_id in project_ids:
-            for site_id in site_ids:
-                userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project_id=project_id, site_id=site_id)
-            if not site_ids:
-                userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project_id=project_id, site=None)
+        if invite.regions.all().values_list('pk', flat=True).exists():
+            regions_id = invite.regions.all().values_list('pk', flat=True)
+            for region_id in regions_id:
+                project_id = Region.objects.get(id=region_id).project.id
+                userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group,
+                                                               organization=invite.organization, project_id=project_id,
+                                                               site_id=None, region_id=region_id)
+
+        else:
+            for project_id in project_ids:
+                for site_id in site_ids:
+                    userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project_id=project_id, site_id=site_id)
+                if not site_ids:
+                    userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project_id=project_id, site=None)
+
         if not project_ids:
-            userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=None, site=None)
+            userrole, created = UserRole.objects.get_or_create(user=user, group=invite.group, organization=invite.organization, project=None, site=None, region=None)
             if invite.group_id == 1:
                 permission = Permission.objects.filter(codename='change_finstance')
                 user.user_permissions.add(permission[0])
-                
-        
+
         invite.is_used = True
         invite.save()
         extra_msg = ""
         site=None
         project=None
+        region=None
         if invite.group.name == "Organization Admin":
             noti_type = 1
             content = invite.organization
@@ -1609,6 +1619,26 @@ class ActivateRole(TemplateView):
                 content = invite.project.all()[0]
             project=invite.project.all()[0]
 
+        elif invite.group.name == "Region Reviewer":
+            if invite.regions.all().count() == 1:
+                noti_type = 37
+                content = invite.regions.all()[0]
+            else:
+                noti_type = 39
+                extra_msg = invite.regions.all().count()
+                content = invite.project.all()[0]
+            project = invite.project.all()[0]
+
+        elif invite.group.name == "Region Supervisor":
+            if invite.regions.all().count() == 1:
+                noti_type = 38
+                content = invite.regions.all()[0]
+            else:
+                noti_type = 40
+                extra_msg = invite.regions.all().count()
+                content = invite.project.all()[0]
+            project = invite.project.all()[0]
+
         elif invite.group.name == "Unassigned":
             noti_type = 24
             # if invite.site.all():
@@ -1625,18 +1655,17 @@ class ActivateRole(TemplateView):
             noti_type = 25
             content = invite.project.all()[0]
 
-
-        
         noti = invite.logs.create(source=user, type=noti_type, title="new Role", organization=invite.organization, extra_message=extra_msg, project=project, site=site, content_object=content, extra_object=invite.by_user,
                                        description="{0} was added as the {1} of {2} by {3}.".
-                                       format(user.username, invite.group.name, content.name, invite.by_user ))
+                                       format(user.username, invite.group.name, content.name, invite.by_user))
         # result = {}
         # result['description'] = 'new site {0} deleted by {1}'.format(self.object.name, self.request.user.username)
         # result['url'] = noti.get_absolute_url()
         # ChannelGroup("notify-{}".format(self.object.project.organization.id)).send({"text": json.dumps(result)})
         # ChannelGroup("notify-0").send({"text": json.dumps(result)})
         return HttpResponseRedirect(reverse('login'))
-            
+
+
 @login_required()
 def checkemailforinvite(request):
     user = User.objects.select_related('user_profile').filter(email__icontains=request.POST.get('email'))

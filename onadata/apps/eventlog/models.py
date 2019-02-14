@@ -14,7 +14,7 @@ from django.dispatch import receiver
 from jsonfield import JSONField
 
 
-from onadata.apps.fieldsight.models import Organization, Project, Site
+from onadata.apps.fieldsight.models import Organization, Project, Site, Region
 from onadata.apps.users.models import UserProfile
 from django.http import JsonResponse
 from celery.result import AsyncResult
@@ -62,6 +62,10 @@ class FieldSightLog(models.Model):
         (34, 'Delete form sucessful.'),
         (35, 'Remove roles.'),
         (36, 'Delete project/site/org/ .. etc.'),
+        (37, 'User was added as Region Reviewer of Region Name by Invitor Full Name.'),
+        (38, 'User was added as Region Supervisor of Region Name by Invitor Full Name.'),
+        (39, 'User was added as Region Reviewer in count regions of project by Invitor Full Name.'),
+        (40, 'User was added as Region Supervisor in count regions of project by Invitor Full Name.'),
         (412, 'Bulk upload of number + sites in Project Name failed.'),
         (421, 'User assign unsuccessful in organization.'),
         (422, 'User assign unsucessfull in project.'),

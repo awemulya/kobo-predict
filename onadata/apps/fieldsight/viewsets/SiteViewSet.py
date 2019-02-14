@@ -305,7 +305,7 @@ class SiteTypeViewset(viewsets.ModelViewSet):
             return self.queryset.filter(project__id=project)
         else:
             user = self.request.user
-            projects = UserRole.objects.filter(project__isnull=False,user=user, ended_at=None, group__name__in=["Site Supervisor", "Region Reviewer"]).\
+            projects = UserRole.objects.filter(project__isnull=False,user=user, ended_at=None, group__name__in=["Site Supervisor", "Region Supervisor"]).\
                 values_list('project', flat=True)
             return self.queryset.filter(project__id__in=projects)
 

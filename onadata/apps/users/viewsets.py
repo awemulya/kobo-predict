@@ -252,12 +252,11 @@ class MySitesViewset(viewsets.ReadOnlyModelViewSet):
                              group__name="Region Supervisor").values_list('region', flat=True).exists():
             regions_id = self.queryset.filter(user=self.request.user, ended_at=None, region__isnull=False, region__is_active=True,
                                  group__name="Region Supervisor").values_list('region', flat=True)
-            for r in regions_id:
-                r = Region.objects.get(id=r)
-                # assume maximum recursion depth is 3
-                region_sites = Site.objects.filter(
-                    Q(region_id=r) | Q(region_id__parent=r) | Q(region_id__parent__parent=r)).select_related('region', 'project', 'type', 'project__type', 'project__organization')
-                sites = list(chain(sites, region_sites))
+
+            # assume maximum recursion depth is 3
+            region_sites = Site.objects.filter(
+                Q(region_id__in=regions_id) | Q(region_id__parent__in=regions_id) | Q(region_id__parent__parent__in=regions_id)).select_related('region', 'project', 'type', 'project__type', 'project__organization')
+            sites = list(chain(sites, region_sites))
 
         blue_prints = BluePrints.objects.filter(site__in=sites)
         return {'request': self.request, 'blue_prints': blue_prints}
