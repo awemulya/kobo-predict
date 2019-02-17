@@ -1558,7 +1558,7 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, reportTyp
         buffer.close()
 
 
-@shared_task(time_limit=520, soft_time_limit=520)
+@shared_task(time_limit=120, soft_time_limit=120)
 def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_date):
     # time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
@@ -1619,7 +1619,7 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
             logs = queryset.filter(query)            
         
         local_log_types = log_types
-        print logs.count(), "COUNT++++++++++"
+
         for log in logs:
             if operator == '+':
                 day_time = log.date + datetime.timedelta(hours=int(hour_offset), minutes=int(minute_offset))

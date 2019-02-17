@@ -88,11 +88,14 @@ class FieldSightLog(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
+    event_name = models.CharField(max_length=255, blank=True)
+    event_url = models.CharField(max_length=500, blank=True)
 
     extra_content_type = models.ForeignKey(ContentType, related_name='notify_object', blank=True, null=True)
     extra_object_id = models.CharField(max_length=255, blank=True, null=True)
     extra_object = GenericForeignKey('extra_content_type', 'extra_object_id')
-    
+    extra_obj_name = models.CharField(max_length=255, blank=True)    
+    extra_obj_url = models.CharField(max_length=500, blank=True)
 
     class Meta:
         get_latest_by = "-date"
@@ -163,6 +166,14 @@ class FieldSightLog(models.Model):
     def __str__(self):
         return str(self.get_type_display())
 
+    def save(self, *args, **kwargs):
+        self.event_name = self.get_event_name()
+        self.event_url = self.get_event_url()
+        if self.extra_object:
+            self.extra_obj_name = self.get_extraobj_name()
+            self.extra_obj_url = self.get_extraobj_url()
+
+        super(FieldSightLog, self).save(*args, **kwargs)  # Call the "real" save() method.
 
 class FieldSightMessage(models.Model):
     sender = models.ForeignKey(User, related_name="sender")
