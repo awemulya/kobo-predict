@@ -302,37 +302,35 @@ class Region(models.Model):
     class Meta:
         unique_together = [('identifier', 'project'), ]
 
+    # def get_sites_count(self):
+    #
+    #     site_count = self.regions.all().count()
+    #     if self.children.all().count() > 0:
+    #         sub_site_count = 0
+    #         for child in self.children.all():
+    #             sub_site_count += child.get_sites_count()
+    #         return sub_site_count + site_count
+    #     else:
+    #         return site_count
+
     def get_sites_count(self):
-        site_count = self.regions.all().count()
-        if self.children.all().count() > 0:
-            sub_site_count = 0
-            for child in self.children.all():
-                sub_site_count += child.get_sites_count()
-            return sub_site_count + site_count
-        else:
-            return site_count
+        return Site.objects.filter(
+            Q(region_id=self.id) | Q(region_id__parent=self.id) | Q(
+                region_id__parent__parent=self.id)).select_related('region', 'project', 'type', 'project__type',
+                                                                          'project__organization').count()
 
     def get_sites(self):
-        sites = list(self.regions.all().values_list('name', flat=True))
-
-        if self.children.all():
-            other_sites = []
-            for child in self.children.all():
-                other_sites += child.get_sites()
-            return other_sites+sites
-        else:
-            return sites
+        return Site.objects.filter(
+            Q(region_id=self.id) | Q(region_id__parent=self.id) | Q(
+                region_id__parent__parent=self.id)).select_related('region', 'project', 'type', 'project__type',
+                                                                   'project__organization').values_list('name', flat=True)
 
     def get_sites_id(self):
-        sites_id = list(self.regions.all().values_list('id', flat=True))
-
-        if self.children.all():
-            other_sites_id = []
-            for child in self.children.all():
-                other_sites_id += child.get_sites_id()
-            return other_sites_id + sites_id
-        else:
-            return sites_id
+        return Site.objects.filter(
+            Q(region_id=self.id) | Q(region_id__parent=self.id) | Q(
+                region_id__parent__parent=self.id)).select_related('region', 'project', 'type', 'project__type',
+                                                                   'project__organization').values_list('id',
+                                                                                                        flat=True)
 
     def get_concat_identifier(self):       
         return self.identifier + "_"
