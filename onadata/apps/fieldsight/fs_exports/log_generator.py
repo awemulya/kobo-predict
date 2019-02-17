@@ -72,12 +72,12 @@ def log_type14(data):
     
  
 
-def log_type15(data, detail=False):
+def log_type15(data):
     sub_contents = []
-    if (data.extra_json and detail) :
+    if data.extra_json:
         updated = data.extra_json
         for key, value in updated.items():
-            sub_contents.append(updated[key].label + 'was updated from' + ('blank' if updated[key].data[0] == '' else updated[key].data[0]) + ' to ' + ('blank' if updated[key].data[1] == '' else updated[key].data[1]) + '.')
+            sub_contents.append(['','','', updated[key]['label'] + 'was updated from' + ('blank' if updated[key]['data'][0] == '' else updated[key]['data'][0]) + ' to ' + ('blank' if updated[key]['data'][1] == '' else updated[key]['data'][1]) + '.'])
     return data.source.first_name + ' ' + data.source.last_name +' changed the details of site named ' + data.event_name + '.', sub_contents
    
 
