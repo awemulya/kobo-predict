@@ -4,14 +4,18 @@ from onadata.apps.eventlog.models import *
 class Command(BaseCommand):
     help = 'Migrate log data.'
 
-    def handle(self, *args, **options):
-        _input = raw_input('Enter comma-delimited list of ids: ').split(',')
+    def add_arguments(self, parser):
+        parser.add_argument('ids', type=str)
 
+    def handle(self, *args, **options):
+        ids = options['ids']
+        _input = ids.split(',')
         if len(_input) > 2:
             return
 
         start = _input[0]
         end = _input[1]
+        print start, end, "+++++++++++++++++++++++++++=="
         logs = FieldSightLog.objects.all()[start:end]
 
         for log in logs:
