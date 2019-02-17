@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.views.generic import TemplateView
 
-from onadata.apps.fieldsight.models import Organization, Project, Site
+from onadata.apps.fieldsight.models import Organization, Project, Site, Region
 from onadata.apps.fsforms.models import FieldSightXF, FInstance 
 from onadata.apps.users.models import UserProfile
 from .helpers import json_from_object
@@ -545,6 +545,29 @@ class FullMapViewMixin(LoginRequiredMixin):
         
         raise PermissionDenied()
 
+
+class RegionRoleMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+
+        if request.group.name == "Super Admin":
+            return super(RegionRoleMixin, self).dispatch(request, *args, **kwargs)
+        
+        region_id = self.kwargs.get('pk')
+        user_id = request.user.id
+        
+        project = Region.objects.get(pk=region_id).project
+        user_role_aspadmin = request.roles.filter(user_id = user_id, project_id = project.id, group_id=2)
+        
+        if user_role_aspadmin:
+            return super(RegionRoleMixin, self).dispatch(request, *args, **kwargs)
+
+        organization_id = project.organization.id
+        user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group_id=1)
+        
+        if user_role_asorgadmin:
+            return super(RegionRoleMixin, self).dispatch(request, *args, **kwargs)
+
+        raise PermissionDenied()
 # for api mixins/permissions
 
 # class ProjectPermission(BasePermission):
