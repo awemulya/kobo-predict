@@ -174,6 +174,7 @@ def log_type36(data):
     
 
 
+
 log_types = {
         0 : log_type0,
         1 : log_type1,
@@ -208,12 +209,6 @@ log_types = {
         34 : log_type34,
         36 : log_type36,
     }
-
-
-
-  
-
-
 
 
 
