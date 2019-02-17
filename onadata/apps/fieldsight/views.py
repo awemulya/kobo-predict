@@ -2048,7 +2048,7 @@ class RegionDeleteView(RegionView, RegionRoleMixin, DeleteView):
 #         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk':region.project.id}))
 
 
-class RegionUpdateView(RegionView, RegionalMixin, UpdateView):
+class RegionUpdateView(RegionView, RegionRoleMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(RegionUpdateView, self).get_context_data(**kwargs)
