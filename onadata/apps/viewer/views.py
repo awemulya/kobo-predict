@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from datetime import datetime
 from tempfile import NamedTemporaryFile
 from time import strftime, strptime
@@ -769,7 +770,7 @@ def attachment_url(request, size='medium'):
     # this assumes duplicates are the same file
     result = Attachment.objects.filter(media_file=media_file)[0:1]
     if result.count() == 0:
-        pattern = re.compile('(.*)-(\d+)_(\d+)_(\d+)\.(.*))')
+        pattern = re.compile('(.*)-(\d+)_(\d+)_(\d+)\.(.*)')
         m = pattern.search(media_file)
         if m:
             pattern = re.compile('(.*)-(.*)\.(.*)')
