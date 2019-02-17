@@ -36,14 +36,14 @@ input::-webkit-input-placeholder {
 		  		<div class="row justify-content-center">
 		  			<div class="col-xl-6 col-lg-8">
 		  				<div class="login-section">	
-		  					<div class="row">
+		  					<div class="row no-gutters bg-primary">
 		  						<div class="col-lg-5">
-		  							<div class="sec-left text-center">
+		  							<div class="sec-left text-center bg-white">
 		  								<a href="#" title="" target="">
 		  									<img src="{{ STATIC_URL }}dummy/assets/img/fieldsight.png" alt="fieldsight" height="100">
 		  								</a>
 		  								<p class="margin-top d-none d-md-block">
-		  								FieldSight is the first humanitarian digital platform designed for project monitoring and infrastructure quality assurance. The platform is now being used to monitor more than 50,000 houses.
+		  								FieldSight is the first humanitarian digital platform designed for project monitoring and infrastructure quality assurance. The platform is now being used to monitor more than {{ site_count }} sites.
 		  								</p>
 		  							</div>
 		  						</div>
@@ -51,7 +51,7 @@ input::-webkit-input-placeholder {
 		  							<div class="sec-right">
 										<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
 											<li class="nav-item">
-												<a class="nav-link active" id="pills-login-tab" data-toggle="tab" href="#pills-login" role="tab" aria-controls="pills-login" aria-selected="true">Login</a>
+												<a class="nav-link active" id="pills-login-tab" data-toggle="pill" href="#pills-login" role="tab" aria-controls="pills-login" aria-selected="true">Login</a>
 											</li>
 											<li class="nav-item">
 												<a class="nav-link" id="pills-signup-tab" data-toggle="pill" href="#pills-signup" role="tab" aria-controls="pills-signup" aria-selected="false">Signup</a>
@@ -63,20 +63,27 @@ input::-webkit-input-placeholder {
 												{% csrf_token %}
 												  	<div class="form-group">
 												    	<label for="inputEmail">Email address
-
 														</label>
-												    	<input type="username" class="form-control {% if not valid_email %}is-invalid{% endif %}" name="username" id="inputEmail" placeholder="Username or email">
-														{% if not valid_email %}
+												    	<input type="username" class="form-control {% if not valid_email %}is-invalid{% endif %}" name="username" id="inputEmail" placeholder="Username or email" required>
+														{% if email_error %}
+														<div id="emailHelp" class="invalid-feedback">
+															{{ email_error }}
+														</div>
+														{% elif not valid_email %}
 															<div id="emailHelp" class="invalid-feedback">
-																User With The Email Doesnot Exist.
+																User With The Email/Username Doesnot Exist.
 															</div>
-															{% endif %}
+														{% endif %}
 												  	</div>
 												  	<div class="form-group">
 												    	<label for="inputPassword">Password</label>
 
-												    	<input type="password" name="password" class="form-control {% if password_error %}is-invalid{% endif %}" id="inputPassword" placeholder="e.g., ********">
-														{% if password_error %}
+												    	<div class="input-group input-pass-showhide"> <input type="password" name="password" class="form-control {% if password_error %}is-invalid{% endif %}" id="inputPassword" placeholder="e.g., ********" required>
+															<div class="input-group-append" data-placement="right" data-toggle="tooltip" title="Show Password">
+														    	<span class="input-group-text" ><i class="la la-eye-slash"></i></span>
+															  </div>
+															</div>
+															{% if password_error %}
 															<div id="passwordHelp" class="invalid-feedback">
 														  		Incorrect Password ! Please Check Your Password.
 															</div>
@@ -103,22 +110,22 @@ input::-webkit-input-placeholder {
 														<li class="list-inline-item">
 															<button type="submit" class="btn btn-secondary" name="login" value="signin"><i class="la la-key"></i> Sign In</button>
 														</li>
-														<li class="list-inline-item">or use</li>
+														<li class="list-inline-item">or</li>
+														<!-- <li class="list-inline-item">
+															<button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Facebook"><i class="la la-facebook"></i></button>
+														</li> -->
 														<li class="list-inline-item">
-															<button type="submit" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Facebook"><i class="la la-facebook"></i></button>
-														</li>
-														<li class="list-inline-item">
-															<button type="submit" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Google"><i class="la la-google"></i></button>
+															<a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-secondary"><i class="la la-google"></i>Signin with Google</a>
 														</li>
 													</ul>
 												</form>
 											</div>
-												<div class="tab-pane" id="pills-signup" role="tabpanel" aria-labelledby="pills-signup-tab">
+												<div class="tab-pane fade" id="pills-signup" role="tabpanel" aria-labelledby="pills-signup-tab">
 												<form method="POST" action="/users/signup/">
 													{% csrf_token %}
 													<div class="form-group">
 													    <label for="inputSignupUsername">Username</label>
-													    <input type="text" class="form-control {% if signup_form.username.errors %}is-invalid{% endif %}" id="inputSignupUsername" placeholder="e.g., bikrant" name="username" value="{{username}}">
+													    <input type="text" class="form-control {% if signup_form.username.errors %}is-invalid{% endif %}" id="inputSignupUsername" placeholder="e.g., bikrant" name="username" value="{{username}}" required>
 														{% if signup_form.username.errors %}
 														{% for error in signup_form.username.errors %}
 														<div class="invalid-feedback">
@@ -127,32 +134,9 @@ input::-webkit-input-placeholder {
 														{% endfor %}
 														{% endif %}	
 													</div>			
-																
-													<div class="form-group">
-													    <label for="inputSignupFirstName">First Name</label>
-													    <input type="text" class="form-control {% if signup_form.first_name.errors %}is-invalid{% endif %}" id="inputSignupFirstName" name="first_name" value="{{first_name}}" placeholder="e.g., John">
-														{% if signup_form.first_name.errors %}
-														{% for error in signup_form.first_name.errors %}
-														<div class="invalid-feedback">
-															{{ error|escape }}
-													  	</div>
-														{% endfor %}
-														{% endif %}	
-													</div>
-													<div class="form-group">
-													    <label for="inputSignupLastName">Last Name</label>
-													    <input type="text" class="form-control {% if signup_form.last_name.errors %}is-invalid{% endif %}" id="inputSignupLastName" name="last_name" value="{{last_name}}" placeholder="e.g., Doe">
-														{% if signup_form.last_name.errors %}
-														{% for error in signup_form.last_name.errors %}
-														<div class="invalid-feedback">
-															{{ error|escape }}
-													  	</div>
-														{% endfor %}
-														{% endif %}	
-													</div>
 													<div class="form-group">
 												    	<label for="inputSignupEmail">Email address</label>
-												    	<input type="email" class="form-control {% if signup_form.email.errors %}is-invalid{% endif %}" id="inputSignupEmail" name="email" value="" placeholder="e.g., john@example.com">
+												    	<input type="email" class="form-control {% if signup_form.email.errors %}is-invalid{% endif %}" id="inputSignupEmail" name="email" value="" placeholder="e.g., john@example.com" required>
 														{% if signup_form.email.errors %}
 														{% for error in signup_form.email.errors %}
 														<div class="invalid-feedback">
@@ -162,19 +146,29 @@ input::-webkit-input-placeholder {
 														{% endif %}	
 													</div>
 													<div class="form-group">
-													    <label for="inputSignupPassword">Your password</label>
-													    <input type="password" class="form-control {% if signup_form.password.errors %}is-invalid{% endif %}" id="inputSignupPassword" name="password" placeholder="e.g., **********">
+														<label for="inputSignupPassword">Your password</label>
+														<div class="input-group input-pass-showhide">
+															<input type="password" class="form-control {% if signup_form.password.errors %}is-invalid{% endif %}" id="inputSignupPassword" name="password" placeholder="e.g., **********" required>
+															<div class="input-group-append" data-toggle="tooltip" data-placement="right" title="Hide Password">
+														    	<span class="input-group-text"><i class="la la-eye"></i></span>
+															</div>
+														</div>
 														{% if signup_form.password.errors %}
 														{% for error in signup_form.password.errors %}
 														<div class="invalid-feedback">
 															{{ error|escape }}
-													  	</div>
+														</div>
 														{% endfor %}
 														{% endif %}	
 													</div>
-													<div class="form-group">
-													    <label for="inputSignupRePassword">One more time?</label>
-													    <input type="password" class="form-control {% if signup_form.password1.errors %}is-invalid{% endif %}" id="inputSignupRePassword" name="password1" placeholder="e.g., **********">
+													<!-- <div class="form-group">
+														<label for="inputSignupRePassword">One More Time?</label>
+														<div class="input-group input-pass-showhide">
+															<input type="password" class="form-control {% if signup_form.password1.errors %}is-invalid{% endif %}" id="inputSignupRePassword" name="password1" placeholder="e.g., **********" required>
+															<div class="input-group-append" data-toggle="tooltip" data-placement="right" title="Hide Password">
+																<span class="input-group-text"><i class="la la-eye"></i></span>
+															</div>
+														</div>
 														{% if signup_form.password1.errors %}
 														{% for error in signup_form.password1.errors %}
 														<div class="invalid-feedback">
@@ -182,7 +176,7 @@ input::-webkit-input-placeholder {
 													  	</div>
 														{% endfor %}
 														{% endif %}	
-													</div>
+													</div> -->
 													<!-- <button type="submit" class="btn btn-secondary" name="signup" value="signup"><i class="la la-user-plus"></i> Signup</button> -->
 													<p class="mt-3 additional-info">
 														By signing up, you’re agreeing with FieldSight’s <a href="#" title="" target="_blank">Terms and Conditions Agreement</a> | <a href="#" title="" target="_blank">Privacy Policy</a>.
@@ -191,36 +185,43 @@ input::-webkit-input-placeholder {
 														<li class="list-inline-item">
 															<button type="submit" class="btn btn-secondary" id="btn-signup" name="signup" value="signup"><i class="la la-user-plus"></i> Signup</button>
 														</li>
-														<li class="list-inline-item">or use</li>
-														<li class="list-inline-item">
+														<li class="list-inline-item">or</li>
+														<!-- <li class="list-inline-item">
 															<button type="button" class="btn btn-secondary"><i class="la la-facebook"></i></button>
-														</li>
+														</li> -->
 														<li class="list-inline-item">
-															<button type="button" class="btn btn-secondary"><i class="la la-google"></i></button>
+															<a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-secondary"><i class="la la-google"></i>Signup with Google</a>
 														</li>
 													</ul>
 												</form>
 											</div>
 											<div class="tab-pane fade" id="pills-thankyou" role="tabpanel" aria-labelledby="pills-thankyou-tab">
+												<h5 class="mb-3">
+													Success!
+												</h5>
+												<p>
+													We have sent you an email with reset instructions.
+												</p>
+												<p>
+													If the email does not arrive soon, check your spam folder. It was sent from <strong>support@fieldsight.org</strong>.
+												</p>
+												<button type="button" id="btn-backtologin" class="btn btn-secondary"><i class="la la-long-arrow-left"></i> Back to Login</button>
+											</div>
+												<div class="tab-pane fade" id="pills-reset" role="tabpanel" aria-labelledby="pills-reset-tab">
 													<h5 class="mb-3">
-														Thank you for joining Fieldsight!
+														Forgot your password?
 													</h5>
 													<p>
-														An email has been sent to <strong>{{ email }}</strong>
+														Don't worry. Resetting your password is easy, just tell us the email address you registered with <strong>Fieldsight</strong>.
 													</p>
-													<p>
-														Please click on the link in the email to activate your account.
-													</p>
-													<button type="button" id="btn-backtologin" class="btn btn-secondary"><i class="la la-long-arrow-left"></i> Back to Login</button>
-												</div>
-												<div class="tab-pane fade" id="pills-reset" role="tabpanel" aria-labelledby="pills-reset-tab">
 													<form method="post" action="/accounts/password/reset/">
 														{% csrf_token %}
 														<div class="form-group">
 													    	<label for="inputResetEmail">Email address</label>
-													    	<input type="email" name="email" class="form-control" id="inputResetEmail">
+													    	<input type="email" name="email" class="form-control" id="inputResetEmail" required>
 													</div>
-													<button type="submit" class="btn btn-secondary"><i class="la la-refresh"></i> Reset</button>
+													<button type="submit" class="btn btn-secondary" id="btn-resetpassword"><i class="la la-send" ></i> Submit</button>
+													<button type="button" id="btn-backtologinfromreset" class="btn btn-secondary"><i class="la la-long-arrow-left"></i> Back to Login</button>
 												</form>
 											</div>
 										</div>
@@ -237,34 +238,227 @@ input::-webkit-input-placeholder {
         <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}dummy/assets/js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 		<script src="{{ STATIC_URL }}dummy/assets/js/vendor/popper.min.js"></script>
         <script src="{{ STATIC_URL }}dummy/assets/js/vendor/bootstrap.min.js"></script>
-        <script src="{{ STATIC_URL }}dummy/assets/js/plugins.js"></script>
+		<script src="{{ STATIC_URL }}dummy/assets/js/plugins.js"></script>
 		<script>
-
-			
 			$(document).ready(function(){
+				//
+				fn_login_vertically_center();
+
+				//
 				vph = $(window).height();
 				$(".login-wrap").css("min-height", vph);
 				//Converting img tag to parent div bg
 				var imgSrc = $(".login-bg>img").attr("src");
-        		$('.login-bg').css({"background" : "url("+imgSrc+")", "background-position": "center", "background-size": "cover"});
-        		$(".login-bg>img").remove();
+	        	$('.login-bg').css({"background" : "url("+imgSrc+")", "background-position": "center", "background-size": "cover"});
+	        	$(".login-bg>img").remove();
 
+			    //reset
+	        	fn_login_eqheight();
 
-        		//reset
+			    $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+					fn_login_eqheight();
+					fn_login_vertically_center();
+				});
 
-				//VC
-				fn_login_vertically_center();
+				fn_movebackground();
 
+				//Hide/Show Password;
+				$(".input-pass-showhide .input-group-append").click(function(){
+					if($(this).find('.input-group-text .la').hasClass('la-eye')){
+						//Change Icon
+						$(this).find('.input-group-text .la').removeClass('la-eye');
+						$(this).find('.input-group-text .la').addClass('la-eye-slash');
+						
+						//Change Tooltip text
+						$(this).tooltip('hide');
+						$(this).attr('data-original-title','Show Password');
+						$(this).tooltip('update');
+						
+						//Change Input Type
+						$(this).siblings('.form-control').attr( "type", "password");
+					}else{
+						//Change Icon
+						$(this).find('.input-group-text .la').removeClass('la-eye-slash');
+						$(this).find('.input-group-text .la').addClass('la-eye');
+
+						//Change Tooltip text
+						$(this).tooltip('hide');
+						$(this).attr('data-original-title','Hide Password');
+						$(this).tooltip('update');
+
+						//Change Input Type
+						$(this).siblings('.form-control').attr( "type", "text");
+					}
+				});
+				
 				if('{{username}}'){
 					document.getElementById('inputSignupUsername').value='{{username}}';
 				}
 
-				if('{{first_name}}'){
-					document.getElementById('inputSignupFirstName').value='{{first_name}}';
+				if('{{email}}'){
+					document.getElementById('inputSignupEmail').value='{{email}}';
 				}
 
-				if('{{last_name}}'){
-					document.getElementById('inputSignupLastName').value='{{last_name}}';
+				if('{{login_username}}'){
+					document.getElementById('inputEmail').value='{{login_username}}';
+				}
+
+				//after successful signup
+				if('{{success_signup}}'=='1'){
+					$('#pills-signup').removeClass('active show');
+					$("#pills-signup-tab").removeClass('active');
+					$('#pills-login').removeClass('active show');
+					$('#pills-login-tab').removeClass('active');
+					$('#pills-thankyou').addClass('active show');
+
+					fn_login_eqheight();
+					fn_login_vertically_center();
+				};
+
+				//error in signup
+				if('{{signup_tab}}'=='1'){
+					$('#pills-login').removeClass('active show');
+					$('#pills-login-tab').removeClass('active');
+					$('#pills-signup').addClass('active show');
+					$("#pills-signup-tab").addClass('active');
+					//reset
+					fn_login_eqheight();
+					fn_login_vertically_center();
+				}
+
+				// if('{{reset}}'=='1'){
+				// 	$('#pills-reset').removeClass('active show');
+				// 	$('#pills-thankyou').tab('show');
+
+				// 	fn_login_eqheight();
+				// 	fn_login_vertically_center();
+				// }
+	        		
+			});
+			jQuery(window).on('resize', function() {
+				//
+				vph = $(window).height();
+				$(".login-wrap").css("min-height", vph);
+
+				//
+				fn_login_eqheight();
+				fn_login_vertically_center();
+			});
+
+			$("#help-me").click(function(){
+			 	$('#pills-login').removeClass('active show');
+			 	$('#pills-signup').removeClass('active show');
+			 	$("#pills-login-tab").removeClass('active');
+			 	$('#pills-reset').tab('show');
+
+			 	fn_login_eqheight();
+			 	fn_login_vertically_center();
+			});
+
+			$("#btn-backtologin").click(function(){
+			 	$('#pills-thankyou').removeClass('active show');
+			 	$('#pills-login').tab('show');
+			 	$('#pills-login-tab').addClass('active');
+
+			 	fn_login_eqheight();
+			 	fn_login_vertically_center();
+			});
+
+			$("#btn-backtologinfromreset").click(function(){
+			 	$('#pills-reset').removeClass('active show');
+			 	$('#pills-login').tab('show');
+			 	$('#pills-login-tab').addClass('active');
+
+			 	fn_login_eqheight();
+			 	fn_login_vertically_center();
+			});
+
+			function fn_login_vertically_center(){
+			 	var svph = $(window).height();
+			 	var slfh = $(".login-section").height();
+			 	if(svph > (slfh + 60)){
+			 		var tempHeight = svph - slfh;
+			 		var tempHeight = tempHeight / 2;
+			 		$(".login-section").css("margin-top", tempHeight);
+			 		$(".login-section").css("margin-bottom", tempHeight);
+			 	}else{
+			 		$(".login-section").css("margin-top", 30);
+			 		$(".login-section").css("margin-bottom", 30);
+			 	}
+			}
+
+			function fn_movebackground(){
+			 	//Background Scrolling Effect
+				var lFollowX = 0,
+			    lFollowY = 0,
+			    x = 0,
+			    y = 0,
+			    friction = 1 / 30;
+
+				function moveBackground() {
+					x += (lFollowX - x) * friction;
+					y += (lFollowY - y) * friction;
+					
+					translate = 'translate(' + x + 'px, ' + y + 'px) scale(1.1)';
+
+					$('.login-bg').css({
+					    '-webit-transform': translate,
+					    '-moz-transform': translate,
+					    'transform': translate
+					});
+
+					window.requestAnimationFrame(moveBackground);
+				}
+
+				$(window).on('mousemove click', function(e) {
+					var lMouseX = Math.max(-100, Math.min(100, $(window).width() / 2 - e.clientX));
+					var lMouseY = Math.max(-100, Math.min(100, $(window).height() / 2 - e.clientY));
+					lFollowX = (20 * lMouseX) / 100; // 100 : 12 = lMouxeX : lFollow
+					lFollowY = (10 * lMouseY) / 100;
+				});
+
+				moveBackground();
+			}
+
+			//Equal Height
+			function fn_login_eqheight(){
+				if(jQuery(document).width() > 479) {
+			    	var lHeight, rHeight;
+					lHeight = $(".sec-left").outerHeight();
+					rHeight = $(".sec-right").outerHeight();
+					$(".sec-left" ).css("min-height", rHeight);
+				}
+			}
+		</script>
+		<!-- <script>
+
+			
+			$(document).ready(function(){
+				//
+				fn_login_vertically_center();
+
+				vph = $(window).height();
+				$(".login-wrap").css("min-height", vph);
+				//Converting img tag to parent div bg
+				var imgSrc = $(".login-bg>img").attr("src");
+	        	$('.login-bg').css({"background" : "url("+imgSrc+")", "background-position": "center", "background-size": "cover"});
+	        	$(".login-bg>img").remove();
+
+	        	//reset
+	        	fn_login_eqheight();
+			    
+			    $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+					fn_login_eqheight();
+					fn_login_vertically_center();
+				});
+
+				fn_movebackground();
+
+
+        		//reset
+
+				if('{{username}}'){
+					document.getElementById('inputSignupUsername').value='{{username}}';
 				}
 
 				if('{{email}}'){
@@ -294,45 +488,45 @@ input::-webkit-input-placeholder {
 					$('#pills-login-tab').removeClass('active');
 					$('#pills-signup').addClass('active show');
 					$("#pills-signup-tab").addClass('active');
-					
+
 					//
-					var lHeight, rHeight;
-					lHeight = $(".sec-left").outerHeight();
-					$(".sec-right" ).css("min-height", lHeight);
+					fn_login_eqheight();
 				}
         		
 			});
 			jQuery(window).on('resize', function() {
+				//
 				vph = $(window).height();
 				$(".login-wrap").css("min-height", vph);
+
+				//
+				fn_login_eqheight();
 				fn_login_vertically_center();
 			});
 
 			// Vertical Center
 			function fn_login_vertically_center(){
-				var svph = $(window).height();
-				var slfh = $(".login-section").height();
-				if(svph > (slfh + 60)){
-					var tempHeight = svph - slfh;
-					var tempHeight = tempHeight / 2;
-					$(".login-section").css("margin-top", tempHeight);
-					$(".login-section").css("margin-bottom", tempHeight);
-					}else{
-					$(".login-section").css("margin-top", 30);
-					$(".login-section").css("margin-bottom", 30);
-				}
+			 	var svph = $(window).height();
+			 	var slfh = $(".login-section").height();
+			 	if(svph > (slfh + 60)){
+			 		var tempHeight = svph - slfh;
+			 		var tempHeight = tempHeight / 2;
+			 		$(".login-section").css("margin-top", tempHeight);
+			 		$(".login-section").css("margin-bottom", tempHeight);
+			 	}else{
+			 		$(".login-section").css("margin-top", 30);
+			 		$(".login-section").css("margin-bottom", 30);
+			 	}
 			}
 
 			$("#help-me").click(function(){
 			 	$('#pills-login').removeClass('active show');
 			 	$('#pills-signup').removeClass('active show');
 			 	$("#pills-login-tab").removeClass('active');
-			 	$('#pills-reset').addClass('active show');
+			 	$('#pills-reset').tab('show');
 
-			 	//
-			 	var lHeight, rHeight;
-				lHeight = $(".sec-left").outerHeight();
-				$(".sec-right" ).css("min-height", lHeight);
+			 	fn_login_eqheight();
+			 	fn_login_vertically_center();
 			});
 
 			$("#btn-backtologin").click(function(){
@@ -341,9 +535,8 @@ input::-webkit-input-placeholder {
 			 	$('#pills-login').addClass('active show');
 
 			 	//
-			 	var lHeight, rHeight;
-				lHeight = $(".sec-left").outerHeight();
-				$(".sec-right" ).css("min-height", lHeight);
+			 	fn_login_eqheight();
+			 	fn_login_vertically_center();
 			});
 
 			$("#btn-backtologinfromreset").click(function(){
@@ -352,9 +545,8 @@ input::-webkit-input-placeholder {
 			 	$('#pills-login').addClass('active show');
 
 			 	//
-			 	var lHeight, rHeight;
-				lHeight = $(".sec-left").outerHeight();
-				$(".sec-right" ).css("min-height", lHeight);
+			 	fn_login_eqheight();
+			 	fn_login_vertically_center();
 			});
 
 
@@ -410,8 +602,9 @@ input::-webkit-input-placeholder {
 
 				moveBackground();
 		            }
-		        }).trigger('resize'); // Trigger resize handlers.       
+		        }).trigger('resize'); // Trigger resize handlers. 
+				     
 		    });
-		</script>
+		</script> -->
     </body>
 </html>

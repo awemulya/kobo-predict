@@ -18,6 +18,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.views.generic import CreateView
 from onadata.apps.fieldsight.mixins import UpdateView, ProfileView, OwnerMixin, SuperAdminMixin, group_required
 from onadata.apps.fieldsight.mixins import UpdateView, ProfileView, OwnerMixin, SuperAdminMixin, group_required
 from rest_framework import renderers
@@ -42,8 +43,10 @@ from django.core.mail import EmailMessage
 from django.utils.encoding import force_bytes, force_text
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth.views import password_reset
 
-from onadata.apps.fieldsight.models import RequestOrganizationStatus
+
+from onadata.apps.fieldsight.models import RequestOrganizationStatus, Site
 
 
 class ContactSerializer(serializers.ModelSerializer):
@@ -286,6 +289,17 @@ class MyProfileView(ProfileView):
     form_class = ProfileForm
 
 
+class ProfileCreateView(MyProfileView, CreateView):
+    def form_valid(self, form):
+        user = self.request.user
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+        user.save()
+        form.instance.user = self.request.user
+        self.object = form.save()
+        return HttpResponseRedirect(self.success_url)
+
+
 class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
     # pass
     #
@@ -296,7 +310,6 @@ class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
         user.save()
         self.object = form.save()
         return HttpResponseRedirect(self.success_url)
-
 
 
 class MyProfile(LoginRequiredMixin, View):
@@ -377,8 +390,9 @@ def web_authenticate(username=None, password=None):
 
 
 def web_login(request):
+    sites_count = Site.objects.count()
     if request.user.is_authenticated():
-        return redirect('/dashboard/')
+        return redirect('/')
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -393,7 +407,9 @@ def web_login(request):
                     return render(request, 'users/login.html',
                                   {'form': form,
                                    'email_error': "Your Account is Deactivated, Please Contact Administrator.",
-                                   'valid_email': valid_email})
+                                   'valid_email': valid_email, 
+                                   'login_username':username, 
+                                   'site_count':sites_count})
             else:
                 if valid_email:
                     email_error = False
@@ -403,34 +419,43 @@ def web_login(request):
                     email_error = "Invalid Email, Please Check your Email Address."
                 return render(request, 'users/login.html',
                               {'form': form,
-                               'valid_email': valid_email, 'email_error': email_error, 'password_error': password_error})
+                               'valid_email': valid_email, 
+                               'email_error': email_error, 
+                               'password_error': password_error, 
+                               'login_username':username,
+                               'site_count':sites_count})
         else:
-            login_username = request.POST.get('login_username')
+            if request.POST.get('login_username') != None:
+                login_username = request.POST.get('login_username')
+            else:
+                login_username = ''
             return render(request, 'users/login.html', {
                 'form': form , 
                 'valid_email': False, 
                 'email_error': "Your Email and Password Didnot Match.", 
-                'login_username':login_username
+                'login_username':login_username,
+                'site_count':sites_count
                 })
     else:
         form = LoginForm()
 
-    return render(request, 'users/login.html', {'form': form, 'valid_email': True, 'email_error': False})
+    return render(request, 'users/login.html', {'form': form, 
+    'valid_email': True, 
+    'email_error': False,
+    'site_count':sites_count})
 
 
 def web_signup(request):
+    sites_count = Site.objects.count()
     if request.user.is_authenticated():
-        return redirect('/dashboard/')
+        return redirect('/')
     if request.method == 'POST':
         signup_form = SignUpForm(request.POST)
         if signup_form.is_valid():
             username = signup_form.cleaned_data.get('username')
-            first_name = signup_form.cleaned_data.get('first_name')
-            last_name = signup_form.cleaned_data.get('last_name')
             email = signup_form.cleaned_data.get('email')
             password = signup_form.cleaned_data.get('password')
-            user = User.objects.create(username=username, first_name=first_name, last_name=last_name, email=email,
-                                       password=password)
+            user = User.objects.create(username=username, email=email, password=password)
             user.set_password(user.password)
             user.is_active = False
             user.save()
@@ -456,6 +481,7 @@ def web_signup(request):
                 'email_error':False, 
                 'success_signup':1, 
                 'email':to_email,
+                'site_count':sites_count
                 })
 
             # user = authenticate(username=username,
@@ -472,18 +498,32 @@ def web_signup(request):
             email = request.POST.get('email')
             return render(request, 'users/login.html', {
                 'signup_form':signup_form, 
-                'username':username, 
-                'first_name':first_name, 
-                'last_name':last_name, 
+                'username':username,
                 'email':email,
                 'valid_email': True, 
                 'email_error':False,
                 'signup_tab': 1,
-                'success_signup':0
+                'success_signup':0,
+                'site_count':sites_count
                 })
     else:
         signup_form = SignUpForm()
-        return render(request, 'users/login.html', {'signup_form':signup_form, 'valid_email':True, 'email_error': False, 'success_signup':0})
+        return render(request, 'users/login.html', {'signup_form':signup_form, 
+        'valid_email':True, 
+        'email_error': False, 
+        'success_signup':0,
+        'site_count':sites_count})
+
+
+def create_role(request):
+    user = User.objects.latest('date_joined')
+    group = Group.objects.get(name="Unassigned")
+    try:
+        UserRole.objects.get(user=user)
+    except UserRole.DoesNotExist:
+        UserRole.objects.create(user=user, group=group)
+
+    return HttpResponseRedirect('/fieldsight/myroles/')
 
 
 def send_request_for_organization(request, org_id):
@@ -598,9 +638,9 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-
-        # login(request, user)
-        # return redirect('home')
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
+        login(request, user)
+                
+        return redirect(reverse_lazy('users:create_profile'))
     else:
         return HttpResponse('Activation link is invalid!')

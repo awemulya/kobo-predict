@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from onadata.apps.users.views import ContactViewSet, UsersListView, MyProfile, EndUserRole, web_login, web_signup, \
-    send_request_for_organization, request_organization, approve_organization, deny_organization
+    send_request_for_organization, request_organization, approve_organization, deny_organization, create_role, ProfileCreateView
 from onadata.apps.users.viewsets import UserViewSet, ProfileViewSet, UserListViewSet, SearchableUserListViewSet, \
     MySitesViewset, MySitesOnlyViewset, MyProjectsViewset
 from . import views
@@ -11,6 +11,7 @@ urlpatterns = [
 
     url(r'^accounts/login/', web_login, name='web_login'),
     url(r'^signup/', web_signup, name='web_signup'),
+    url(r'^create_role/', create_role, name='create_role'),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),
     url(r'^approve-organization/(?P<username>[^/]+)?/(?P<org_id>[0-9]+)/$', approve_organization, name='approve_organization'),
@@ -40,6 +41,7 @@ urlpatterns = [
     url(r'^api/profile(?:/(?P<pk>[0-9]+))?/$',
         ProfileViewSet.as_view({'get':'retrieve'}), name='profile_get_api'),
 
+    url(r'^create-profile/', ProfileCreateView.as_view(), name='create_profile'),
     url(r'^profile/(?P<pk>[0-9]+)/$', MyProfile.as_view(), name='profile'),
     url(r'^endrole/(?P<pk>[0-9]+)/$', EndUserRole.as_view(), name='end_user_role'),
     ]
