@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
         start = _input[0]
         end = _input[1]
-        logs = FieldSightLogs.objects.all()[start:end]
+        logs = FieldSightLog.objects.all()[start:end]
 
         for log in logs:
             log.save()
@@ -26,24 +26,24 @@ class Command(BaseCommand):
 
 
 
-    def save(self, *args, **kwargs):
-        try:
-            self.event_name = self.content_object.getname()
-        except:
-            self.event_name = ""
-        try:
-            if self.extra_object is None:
-                self.extra_obj_name = ""
+    # def save(self, *args, **kwargs):
+    #     try:
+    #         self.event_name = self.content_object.getname()
+    #     except:
+    #         self.event_name = ""
+    #     try:
+    #         if self.extra_object is None:
+    #             self.extra_obj_name = ""
 
-            elif self.extra_content_type.model == "user":
-                if self.extra_object.user_profile:
-                    self.extra_obj_name =  self.extra_object.user_profile.getname()
-                else:
-                    self.extra_obj_name =  self.extra_object.email
-            elif:
-                self.extra_obj_name =  self.extra_object.getname()
-        except:
-            self.extra_obj_name = ""
+    #         elif self.extra_content_type.model == "user":
+    #             if self.extra_object.user_profile:
+    #                 self.extra_obj_name =  self.extra_object.user_profile.getname()
+    #             else:
+    #                 self.extra_obj_name =  self.extra_object.email
+    #         elif:
+    #             self.extra_obj_name =  self.extra_object.getname()
+    #     except:
+    #         self.extra_obj_name = ""
         
-        super(FieldSightLog, self).save(*args, **kwargs)
-        
+    #     super(FieldSightLog, self).save(*args, **kwargs)
+    #     
