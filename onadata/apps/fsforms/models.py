@@ -445,6 +445,12 @@ class FInstance(models.Model):
 
     def save(self, *args, **kwargs):
         self.version = self.get_version
+        if self.project_fxf is not None and self.project_fxf.is_staged and self.site is not None:
+            self.site.update_current_progress()
+        
+        elif self.site is not None:
+            self.site.update_status()
+
         if self.form_status is None:
             if self.site_fxf:
                 self.form_status = self.site_fxf.default_submission_status

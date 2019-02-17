@@ -34,6 +34,7 @@ class ImageZipSites(View):
         elif size_code == '2':
             size = "-large"
         task_obj=CeleryTaskProgress.objects.create(user=user, content_object=site, task_type=6)
+        
         if task_obj:
             task = site_download_zipfile.delay(task_obj.pk, size)
             task_obj.task_id = task.id
