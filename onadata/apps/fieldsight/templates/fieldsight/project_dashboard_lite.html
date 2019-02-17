@@ -61,34 +61,97 @@ assigntoken(csrf_token);
 {% endblock %}
 {% block content %}
 {% csrf_token %}
-<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		{% verbatim %}
-		<div class="modal-content" id="generateReport">
-		
-		</div>
-		{% endverbatim %}
-	</div>
-</div>
 
-<div class="modal fade" id="statsticsexportModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		{% verbatim %}
-		<div class="modal-content" id="generateStatsticsReport">
-		
-		</div>
-		{% endverbatim %}
-	</div>
-</div>
-
-<div class="modal fade" id="logsexportModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		{% verbatim %}
-		<div class="modal-content" id="generateLogReport">
-		
-		</div>
-		{% endverbatim %}
-	</div>
+<div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+			  	<div class="modal-dialog modal-lg modal-xl" role="document">
+				    <div class="modal-content">
+				      	<div class="modal-header">
+				        	<h5 class="modal-title" id="exportModalLabel">Export Report</h5>
+				        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          		<span aria-hidden="true">&times;</span>
+				        	</button>
+				      	</div>
+				      	<div class="modal-body bg-light">
+				      		<div class="row">
+				      			<div class="col-md-4 col-lg-3">
+				      				<ul class="nav nav-pills flex-column" id="myTab" role="tablist">
+									  <!-- <li class="nav-item">
+									    <a class="nav-link active" id="modalTab01-tab" data-toggle="tab" href="#modalTab01" role="tab" aria-controls="modalTab01" aria-selected="true"></a>
+									  </li> -->
+									  <!-- <li class="nav-item">
+									    <a class="nav-link" id="modalTab02-tab" data-toggle="tab" href="#modalTab02" role="tab" aria-controls="modalTab02" aria-selected="false">Sites Export</a>
+									  </li> -->
+									  <li class="nav-item">
+									    <a class="nav-link active" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab03" aria-selected="false">Form Data</a>
+									  </li>
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab04-tab" data-toggle="tab" href="#modalTab04" role="tab" aria-controls="modalTab04" aria-selected="false">Statstics</a>
+									  </li>
+									  <!-- <li class="nav-item">
+									    <a class="nav-link" id="modalTab05-tab" data-toggle="tab" href="#modalTab05" role="tab" aria-controls="modalTab05" aria-selected="false">Logs</a>
+									  </li> -->
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab06-tab" data-toggle="tab" href="#modalTab06" role="tab" aria-controls="modalTab05" aria-selected="false">Other Reports</a>
+									  </li>
+									</ul>
+				      			</div>
+				      			<div class="col-md-8 col-lg-9">
+				      				<div class="tab-content" id="myTabContent">
+										<!-- <div class="tab-pane fade show active" id="modalTab01" role="tabpanel" aria-labelledby="modalTab01-tab">
+											
+										</div> -->
+										<!-- <div class="tab-pane fade" id="modalTab02" role="tabpanel" aria-labelledby="modalTab02-tab">
+																					
+																				</div> -->
+										<div class="tab-pane fade" id="modalTab03" role="tabpanel" aria-labelledby="modalTab03-tab">
+											{% verbatim %}
+											<div id="generateReport">
+											</div>
+											{% endverbatim %}
+										</div>
+										<div class="tab-pane fade" id="modalTab04" role="tabpanel" aria-labelledby="modalTab04-tab">
+											{% verbatim %}
+											<div id="generateStatsticsReport">
+											
+											</div>
+											{% endverbatim %}
+										</div>
+										<div class="tab-pane fade" id="modalTab05" role="tabpanel" aria-labelledby="modalTab05-tab">
+											{% verbatim %}
+											<div id="generateLogReport">
+											
+											</div>
+											{% endverbatim %}
+										</div>
+										<div class="tab-pane fade" id="modalTab06" role="tabpanel" aria-labelledby="modalTab05-tab">
+											<a class="btn btn-primary" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i> Project Summary Report</a>
+											
+											<br>
+											{% verbatim %}
+											<div id="export_stage_progress_button">
+											
+											</div>
+											{% endverbatim %}
+											<br>
+											{% verbatim %}
+											<div id="export_button">
+											
+											</div>
+											{% endverbatim %}
+										</div>
+									</div>
+				      			</div>
+				      		</div>
+				      	</div>
+				      	<!-- <div class="modal-footer">
+				        	<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				        	<div class="btn-group" role="group" aria-label="Download">
+							  <button type="button" class="btn btn-primary">PDF</button>
+							  <button type="button" class="btn btn-primary">Excel</button>
+							</div>
+				      	</div> -->
+				    </div>
+			  	</div>
 </div>
 
 			<div id="main-content" class="padding">
@@ -130,16 +193,9 @@ assigntoken(csrf_token);
 								<i class="la la-clipboard"></i>{% trans 'Data' %}
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
-								<a class="dropdown-item" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i> {% trans ' Project' %} {% trans 'Summary' %} {% trans 'Report' %}</a>
-								<!--<a class="dropdown-item" href="#"><i class="la la-clipboard"></i>{% trans 'Project Detail Report' %}</a>-->
 								
-									<div id="export_stage_progress_button"></div>
+								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#reportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Report' %} </a>
 								
-								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#exportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Report' %} </a>
-								
-								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#statsticsexportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Statstics' %} {% trans 'Report' %}</a>								
-								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#logsexportModal"><i class="la la-table"></i> {% trans 'Export' %} {% trans 'Logs' %} {% trans 'Report' %}</a>
-
 								<a class="dropdown-item" href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i> {% trans 'View Data' %}</a>
 
 							</div>
@@ -539,7 +595,29 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.genarete_logs_report_url = "{% url 'fieldsight_export:logs_report' obj.pk %}";
 	configure_settings.log_report_type = "Project";
 	//getlogdata();
-					
+		
+			
+	$('#exportModal').on('shown.bs.modal', function(){
+		fn_generate_report_modal_height();
+	});
+
+	jQuery(window).on('resize', function() {
+		fn_generate_report_modal_height();
+		$("#myTabContent .tab-pane").getNiceScroll().resize();
+	});
+
+	function fn_generate_report_modal_height(){
+	 	var svph = $(window).height();
+	 	var modal_header_height = $("#exportModal .modal-header").outerHeight();
+	 	var modal_footer_height = $("#exportModal .modal-footer").outerHeight();
+	 	var modal_body_padding =  $("#exportModal .modal-body").innerHeight() - $("#exportModal .modal-body").height();
+	 	var modal_outer_gap = $(window).width() - $('.modal-xl').width();
+	 	var temp_height = svph - (modal_header_height + modal_footer_height + modal_body_padding + modal_outer_gap);
+
+	 	if($(window).width() > 480){
+	 		$("#myTabContent .tab-pane").css("height", temp_height);
+	 	}
+	 }			
 </script>
 
 <script type="text/javascript" src="{{ STATIC_URL }}js/geo-layers.js"></script>    
