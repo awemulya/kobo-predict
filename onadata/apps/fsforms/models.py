@@ -445,7 +445,6 @@ class FInstance(models.Model):
 
     def save(self, *args, **kwargs):
         self.version = self.get_version
-        
         if self.project_fxf is not None and self.project_fxf.is_staged and self.site is not None:
             self.site.update_current_progress()
         
