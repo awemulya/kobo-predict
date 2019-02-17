@@ -87,9 +87,9 @@ assigntoken(csrf_token);
 									  <li class="nav-item">
 									    <a class="nav-link" id="modalTab04-tab" data-toggle="tab" href="#modalTab04" role="tab" aria-controls="modalTab04" aria-selected="false">Statstics</a>
 									  </li>
-									  <!-- <li class="nav-item">
+									  <li class="nav-item">
 									    <a class="nav-link" id="modalTab05-tab" data-toggle="tab" href="#modalTab05" role="tab" aria-controls="modalTab05" aria-selected="false">Logs</a>
-									  </li> -->
+									  </li>
 									  <li class="nav-item">
 									    <a class="nav-link" id="modalTab06-tab" data-toggle="tab" href="#modalTab06" role="tab" aria-controls="modalTab05" aria-selected="false">Other Reports</a>
 									  </li>
@@ -124,8 +124,6 @@ assigntoken(csrf_token);
 											{% endverbatim %}
 										</div>
 										<div class="tab-pane fade" id="modalTab06" role="tabpanel" aria-labelledby="modalTab05-tab">
-											<br>
-											<br>
 											
 											<a class="btn btn-primary" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i> Project Summary Report</a>
 											
