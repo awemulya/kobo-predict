@@ -3,6 +3,7 @@ import datetime
 import json
 import redis
 import xlwt
+from django.contrib.contenttypes.models import ContentType
 from io import BytesIO
 from django.conf import settings
 from django.contrib import messages
@@ -926,8 +927,7 @@ class UploadSitesView(ProjectRoleMixin, TemplateView):
     def get(self, request, pk):
         obj = get_object_or_404(Project, pk=pk, is_active=True)
         form = UploadFileForm()
-        regions = obj.regions.filter(is_active=True)
-
+        regions = obj.project_region.filter(is_active=True)
         selected_regions = request.GET.get('regions')
         if selected_regions:
             selected_regions = selected_regions.split(',')

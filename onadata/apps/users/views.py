@@ -424,7 +424,7 @@ def export_users_xls(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['Username', 'Email', 'Organization'])
+    writer.writerow(['First Name', 'Last Name', 'Username', 'Email', 'Organization'])
     users = User.objects.all()
     for u in users:
         org = u.user_roles.all().values('organization__name').distinct()
@@ -432,6 +432,6 @@ def export_users_xls(request):
         for i in org:
             org_list.append(i['organization__name'])
 
-        writer.writerow([u.username, u.email, org_list])
+        writer.writerow([u.first_name, u.last_name, u.username, u.email, org_list])
 
     return response

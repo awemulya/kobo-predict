@@ -147,7 +147,7 @@
 									
 									<div class="progress">
 
-										{% with progress=obj.current_progress %}
+										{% with progress=obj.site_progress %}
 										<div class="progress progress-striped active progress-sm" style="width:100%;">
 										{% if progress = 0 %}
 										<div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ progress  }}%;" aria-valuenow="{{progress}}" aria-valuemax="100">
