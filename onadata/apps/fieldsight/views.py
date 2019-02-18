@@ -2170,7 +2170,7 @@ class RegionalSitelist(ProjectRoleMixin, ListView):
             context['obj'] = get_object_or_404(Region, id=self.kwargs.get('region_id'))
         return context
     def get_queryset(self, **kwargs):
-        queryset = Site.objects.filter(project_id=self.kwargs.get('pk'), is_survey=False, is_active=True)
+        queryset = Site.objects.filter(project_id=self.kwargs.get('pk'), is_survey=False, is_active=True).select_related('project')
         
         if self.kwargs.get('region_id') == "0":
             object_list = queryset.filter(region=None)
