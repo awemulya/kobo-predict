@@ -38,7 +38,7 @@ from onadata.apps.fieldsight.management.commands.municipality_data import genera
 from onadata.apps.fsforms.Submission import Submission
 from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChartGeneratorOrganization, \
     LineChartGeneratorSite, ProgressGeneratorSite, LineChartGeneratorProject
-from onadata.apps.fsforms.models import FieldSightXF, Stage, FInstance
+from onadata.apps.fsforms.models import FieldSightXF, Stage, FInstance, Instance
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from onadata.apps.geo.models import GeoLayer
@@ -46,9 +46,11 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
                      group_required, OrganizationViewFromProfile, ReviewerMixin, MyOwnOrganizationMixin,
                      MyOwnProjectMixin, ProjectMixin)
+
 from .rolemixins import FullMapViewMixin, SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, \
     DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin,\
     OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView, RegionRoleMixin
+
 from .models import ProjectGeoJSON, Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region, SiteType
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm,
@@ -230,10 +232,32 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
         outstanding, flagged, approved, rejected = obj.get_submissions_count()
 
         one_week_ago = datetime.datetime.today() - datetime.timedelta(days=7)
-        finstances = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago)
-        new_submissions = finstances.count()
-        site_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
-        active_supervisors = finstances.distinct('submitted_by').count()
+        # finstances = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago)
+        # new_submissions = finstances.count()
+        # site_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
+        # active_supervisors = finstances.distinct('submitted_by').count()
+        instances = Instance.objects.filter(fieldsight_instance__project_id=obj.id, date_created__gte=one_week_ago)
+        new_submissions = instances.count()
+        active_supervisors = instances.distinct('user').count()
+        try:
+            site_visits_query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": obj.id, "start": { '$gte' : one_week_ago.isoformat() } } },  { "$group" : { 
+                  "_id" :  {        
+                    "fs_site": "$fs_site",
+                    "date": { "$substr": [ "$start", 0, 10 ] }
+                  },
+               }
+             }, { "$group": { "_id": "$_id.fs_site", "visits": { '$sum': 1}
+             }},
+             {"$group": {"_id": None, "total_sum": {'$sum': '$visits'}}}
+             ])['result']
+
+            if not site_visits_query:
+                site_visits = 0
+            else:
+                site_visits = site_visits_query[0]['total_sum']
+        except:
+            site_visits = "Error occured."
+        
         #     data = []
         #     sites = []
         # else:
@@ -2061,6 +2085,7 @@ class RegionCreateView(RegionView, ProjectRoleMixin, CreateView):
             )
 
 
+
 class RegionDeleteView(RegionView, RegionRoleMixin, DeleteView):
     def dispatch(self, request, *args, **kwargs):
         site = Site.objects.filter(region_id=self.kwargs.get('pk'))
@@ -2084,7 +2109,7 @@ class RegionDeleteView(RegionView, RegionRoleMixin, DeleteView):
 #         return HttpResponseRedirect(reverse('fieldsight:project-dashboard', kwargs={'pk':region.project.id}))
 
 
-class RegionUpdateView(RegionView, LoginRequiredMixin, UpdateView):
+class RegionUpdateView(RegionView, RegionRoleMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(RegionUpdateView, self).get_context_data(**kwargs)
@@ -2324,7 +2349,7 @@ class AssignUsersToRegionsView(ProjectRoleMixin, TemplateView):
         user = request.user
         project = get_object_or_404(Project, pk=pk, is_active=True)
 
-        task_obj = CeleryTaskProgress.objects.create(user=user, content_object=project, task_type=11)
+        task_obj = CeleryTaskProgress.objects.create(user=user, content_object=project, task_type=13)
 
         if task_obj:
             task = multi_users_assign_regions.delay(task_obj.pk, user, pk, regions, users, group.id)
@@ -3055,11 +3080,28 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
         roles_project = UserRole.objects.filter(organization__isnull = False, project_id = self.kwargs.get('pk'), site__isnull = True, ended_at__isnull=True)
 
         one_week_ago = datetime.datetime.today() - datetime.timedelta(days=7)
-        finstances = FInstance.objects.filter(project_id=obj.id, date__gte=one_week_ago)
-        new_submissions = finstances.count()
-        site_visits = finstances.filter(site_id__isnull=False).distinct('site_id').count()
-        active_supervisors = finstances.distinct('submitted_by').count()
-        
+        instances = Instance.objects.filter(fieldsight_instance__project_id=obj.id, date_created__gte=one_week_ago)
+        new_submissions = instances.count()
+        active_supervisors = instances.distinct('user').count()
+        try:
+            site_visits_query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": obj.id, "start": { '$gte' : one_week_ago.isoformat() } } },  { "$group" : { 
+                  "_id" :  {        
+                    "fs_site": "$fs_site",
+                    "date": { "$substr": [ "$start", 0, 10 ] }
+                  },
+               }
+             }, { "$group": { "_id": "$_id.fs_site", "visits": { '$sum': 1}
+             }},
+             {"$group": {"_id": None, "total_sum": {'$sum': '$visits'}}}
+             ])['result']
+
+            if not site_visits_query:
+                site_visits = 0
+            else:
+                site_visits = site_visits_query[0]['total_sum']
+        except:
+            site_visits = "Error occured."
+
         dashboard_data = {
             'sites': sites,
             'obj': obj,

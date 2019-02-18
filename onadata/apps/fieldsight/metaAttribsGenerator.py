@@ -6,7 +6,9 @@ def get_form_answer(site_id, meta):
     if fxf:
         sub = fxf[0].project_form_instances.filter(site_id=site_id).order_by('-instance_id')[:1]
         if sub:
-
+            if meta['question']['type'] == 'repeat':
+                return ""
+                
             sub_answers = sub[0].instance.json
             if meta['question']['type']  == "repeat":
                 answer = ""

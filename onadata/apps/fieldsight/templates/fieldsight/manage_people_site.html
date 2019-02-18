@@ -1151,7 +1151,7 @@ vm = new ManagePeopleViewModel(pk, level, organization);
                 <input type="text" class="form-control" data-bind="value:search_key, valueUpdate:'afterkeydown'" placeholder="Search..." aria-label="Search...">
                   <input type="button" value="Select All" class="btn btn-primary margin-top" data-bind="click:setAllAssignAsSelected">
                  <input type="button" value="Unselect All" class="btn btn-primary margin-top" data-bind="click:setAllUnSelected">
-                 <button type="submit" class="btn btn-primary margin-top" data-bind="click:$root.assignPM"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Managers' %}</button>
+                 <button type="submit" class="btn btn-primary margin-top" data-bind="click:doAssign"><i class="la la-user-plus"></i> {% trans 'Assign' %} {% trans 'as' %} {% trans 'Project' %} {% trans 'Managers' %}</button>
   
 
                 <ul class="row" data-bind="foreach:projects">
