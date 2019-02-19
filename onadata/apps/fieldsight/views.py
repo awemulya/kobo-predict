@@ -1345,7 +1345,8 @@ def senduserinvite(request):
         subject = 'Invitation for Role'
         data ={
             'email': invite.email,
-            'domain': current_site.domain,
+            # 'domain': current_site.domain,
+            'domain': settings.SITE_URL,
             'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
             'token': invite.token,
             'invite': invite,
@@ -1475,7 +1476,8 @@ def sendmultiroleuserinvite(request):
         subject = 'Invitation for Role'
         data = {
             'email': invite.email,
-            'domain': current_site.domain,
+            # 'domain': current_site.domain,
+            'domain': settings.SITE_URL,
             'invite_id': urlsafe_base64_encode(force_bytes(invite.pk)),
             'token': invite.token,
             'invite': invite,
