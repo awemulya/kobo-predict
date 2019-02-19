@@ -237,7 +237,7 @@ class ReviewerRoleMixin(LoginRequiredMixin):
         if user_role_aspadmin:
             return super(ReviewerRoleMixin, self).dispatch(request, *args, **kwargs)
 
-        if Site.objects.get(pk=site_id):
+        if Site.objects.get(pk=site_id).region:
             region = Site.objects.get(pk=site_id).region
             user_role_region_reviewer = request.roles.filter(user_id=user_id, project_id=project.id, region_id=region.id, group__name="Region Reviewer")
             if user_role_region_reviewer:

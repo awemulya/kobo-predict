@@ -1156,7 +1156,7 @@ class RolesView(LoginRequiredMixin, TemplateView):
         context['proj_donor'] = self.request.roles.select_related('project').filter(group__name = "Project Donor", project__is_active = True)
         context['site_reviewer'] = self.request.roles.select_related('site').filter(group__name = "Reviewer", site__is_active = True)
         context['site_supervisor'] = self.request.roles.select_related('site').filter(group__name="Site Supervisor",
-                                                                                      site__is_active=True, site__region__isnull=True)
+                                                                                      site__is_active=True)
 
         context['region_supervisor'] = self.request.roles.select_related('region').filter(group__name="Region Supervisor",
                                                                                           region__is_active=True)
