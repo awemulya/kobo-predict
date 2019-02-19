@@ -49,7 +49,7 @@ from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, Pro
 
 from .rolemixins import FullMapViewMixin, SuperUserRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin, \
     DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin,\
-    OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView, RegionRoleMixin
+    OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView, RegionRoleMixin, RegionSupervisorReviewerMixin
 
 from .models import ProjectGeoJSON, Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region, SiteType
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
@@ -2178,10 +2178,11 @@ class RegionUpdateView(RegionView, RegionRoleMixin, UpdateView):
             ))
 
 
-class RegionalSitelist(ProjectRoleMixin, ListView):
+class RegionalSitelist(RegionSupervisorReviewerMixin, ListView):
     model = Site
     template_name = 'fieldsight/site_list.html'
     paginate_by = 90
+
 
     def get_context_data(self, **kwargs):
         context = super(RegionalSitelist, self).get_context_data(**kwargs)
@@ -2254,7 +2255,8 @@ class DonorRegionalSitelist(ReadonlyProjectLevelRoleMixin, ListView):
 #         return render(request, 'fieldsight/site_list.html',{'all_sites':sites, 'obj':obj, 'type':"region",'pk':self.kwargs.get('region_pk'),})
 
 
-class RegionalSiteCreateView(SiteView, ProjectRoleMixin, CreateView):
+class RegionalSiteCreateView(SiteView, RegionSupervisorReviewerMixin, CreateView):
+
     def get_context_data(self, **kwargs):
         context = super(RegionalSiteCreateView, self).get_context_data(**kwargs)
         project =Project.objects.get(pk=self.kwargs.get('pk'))
@@ -2467,7 +2469,7 @@ class SiteUserSearchView(ListView):
         return self.model.objects.select_related('user').filter(user__username__icontains=query, site_id=self.kwargs.get('pk'),
                                                                   ended_at__isnull=True).distinct('user_id')
 
-class DefineProjectSiteMeta(ProjectRoleMixin, TemplateView):
+class DefineProjectSiteMeta(RegionSupervisorReviewerMixin, TemplateView):
     def get(self, request, pk):
         project_obj = Project.objects.get(pk=pk)
         json_questions = json.dumps(project_obj.site_meta_attributes)

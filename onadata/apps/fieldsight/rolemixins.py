@@ -74,6 +74,32 @@ class ProjectRoleMixin(LoginRequiredMixin):
 
         raise PermissionDenied()
 
+
+class RegionSupervisorReviewerMixin(LoginRequiredMixin):
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.group.name == "Super Admin":
+            return super(RegionSupervisorReviewerMixin, self).dispatch(request, *args, **kwargs)
+
+        project_id = self.kwargs.get('pk')
+        user_id = request.user.id
+        user_role = request.roles.filter(user_id=user_id, project_id=project_id, group_id=2)
+
+        if user_role:
+            return super(RegionSupervisorReviewerMixin, self).dispatch(request, *args, **kwargs)
+
+        elif request.roles.filter(user_id=user_id, project_id=project_id,
+                                  group__name__in=["Region Supervisor", "Region Reviewer"]):
+            return super(RegionSupervisorReviewerMixin, self).dispatch(request, *args, **kwargs)
+
+        organization_id = Project.objects.get(pk=project_id).organization.id
+        user_role_asorgadmin = request.roles.filter(user_id=user_id, organization_id=organization_id, group_id=1)
+
+        if user_role_asorgadmin:
+            return super(RegionSupervisorReviewerMixin, self).dispatch(request, *args, **kwargs)
+
+        raise PermissionDenied()
+
 class RegionalMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         if request.group.name == "Super Admin":
@@ -136,6 +162,11 @@ class ReadonlySiteLevelRoleMixin(LoginRequiredMixin):
         if user_role_aspadmin:
             return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, is_donor_only=False, *args, **kwargs)
 
+        region = Site.objects.get(pk=site_id).region
+        user_role_as_region_user = request.roles.filter(user_id=user_id, project_id=project.id, region_id=region.id, group__name__in=["Region Supervisor", "Region Reviewer"])
+        if user_role_as_region_user:
+            return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+
         organization_id = project.organization.id
         user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group_id=1)
         if user_role_asorgadmin:
@@ -187,6 +218,7 @@ class DonorRoleMixin(LoginRequiredMixin):
 
         raise PermissionDenied()
 
+
 class ReviewerRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
 
@@ -204,6 +236,12 @@ class ReviewerRoleMixin(LoginRequiredMixin):
         user_role_aspadmin = request.roles.filter(user_id = user_id, project_id = project.id, group_id=2)
         if user_role_aspadmin:
             return super(ReviewerRoleMixin, self).dispatch(request, *args, **kwargs)
+
+        if Site.objects.get(pk=site_id):
+            region = Site.objects.get(pk=site_id).region
+            user_role_region_reviewer = request.roles.filter(user_id=user_id, project_id=project.id, region_id=region.id, group__name="Region Reviewer")
+            if user_role_region_reviewer:
+                return super(ReviewerRoleMixin, self).dispatch(request, *args, **kwargs)
 
         organization_id = project.organization.id
         user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group_id=1)
@@ -232,6 +270,10 @@ class SiteRoleMixin(LoginRequiredMixin):
         project = Site.objects.get(pk=site_id).project
         user_role_aspadmin = request.roles.filter(project_id = project.id, group_id=2)
         if user_role_aspadmin:
+            return super(SiteRoleMixin, self).dispatch(request, is_supervisor_only=False, *args, **kwargs)
+
+        user_role_as_region = request.roles.filter(project_id=project.id, group__name__in=["Region Supervisor", "Region Reviewer"])
+        if user_role_as_region:
             return super(SiteRoleMixin, self).dispatch(request, is_supervisor_only=False, *args, **kwargs)
 
         organization_id = project.organization.id
