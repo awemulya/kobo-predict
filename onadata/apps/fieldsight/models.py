@@ -313,6 +313,12 @@ class Region(models.Model):
     #     else:
     #         return site_count
 
+    def getname(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('fieldsight:regional-sites', kwargs={'pk': self.project.pk, 'region_id': self.pk})
+
     def get_sites_count(self):
         return Site.objects.filter(
             Q(region_id=self.id) | Q(region_id__parent=self.id) | Q(
