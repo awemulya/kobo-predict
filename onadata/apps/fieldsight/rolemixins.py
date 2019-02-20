@@ -144,6 +144,7 @@ class ReadonlyProjectLevelRoleMixin(LoginRequiredMixin):
 
         raise PermissionDenied()
 
+
 class ReadonlySiteLevelRoleMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
 
@@ -162,10 +163,11 @@ class ReadonlySiteLevelRoleMixin(LoginRequiredMixin):
         if user_role_aspadmin:
             return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, is_donor_only=False, *args, **kwargs)
 
-        region = Site.objects.get(pk=site_id).region
-        user_role_as_region_user = request.roles.filter(user_id=user_id, project_id=project.id, region_id=region.id, group__name__in=["Region Supervisor", "Region Reviewer"])
-        if user_role_as_region_user:
-            return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, is_donor_only=False, *args, **kwargs)
+        if Site.objects.filter(pk=site_id, region__isnull=False).values('region').exists():
+            region = Site.objects.get(pk=site_id).region
+            user_role_as_region_user = request.roles.filter(user_id=user_id, project_id=project.id, region_id=region.id, group__name__in=["Region Supervisor", "Region Reviewer"])
+            if user_role_as_region_user:
+                return super(ReadonlySiteLevelRoleMixin, self).dispatch(request, is_donor_only=False, *args, **kwargs)
 
         organization_id = project.organization.id
         user_role_asorgadmin = request.roles.filter(user_id = user_id, organization_id = organization_id, group_id=1)
@@ -237,7 +239,7 @@ class ReviewerRoleMixin(LoginRequiredMixin):
         if user_role_aspadmin:
             return super(ReviewerRoleMixin, self).dispatch(request, *args, **kwargs)
 
-        if Site.objects.get(pk=site_id).region:
+        if Site.objects.filter(pk=site_id, region__isnull=False).values('region').exists():
             region = Site.objects.get(pk=site_id).region
             user_role_region_reviewer = request.roles.filter(user_id=user_id, project_id=project.id, region_id=region.id, group__name="Region Reviewer")
             if user_role_region_reviewer:
