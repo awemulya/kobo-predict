@@ -380,7 +380,7 @@ def web_authenticate(username=None, password=None):
 
 def web_login(request):
     if request.user.is_authenticated():
-        return redirect('/dashboard/')
+        return redirect('dashboard')
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
