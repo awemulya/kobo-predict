@@ -27,6 +27,7 @@ class LargeResultsSetPagination(PageNumberPagination):
 class InstanceResponseViewSet(viewsets.ModelViewSet):
     queryset = FInstance.objects.all()
     pagination_class = LargeResultsSetPagination
+    serializer_class = FInstanceResponcesSerializer
 
     def filter_queryset(self, queryset):
         try:
@@ -40,6 +41,8 @@ class InstanceResponseViewSet(viewsets.ModelViewSet):
 
 class SiteInstanceResponseViewSet(viewsets.ModelViewSet):
     queryset = FInstance.objects.all()
+    serializer_class = FInstanceResponcesSerializer
+    pagination_class = LargeResultsSetPagination
 
     def filter_queryset(self, queryset):
         try:
