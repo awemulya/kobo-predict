@@ -841,12 +841,25 @@ class SiteDeleteView(SiteDeleteRoleMixin, View):
         site = get_object_or_404(Site, pk=self.kwargs.get('pk'), is_active=True)
         site.is_active = False
         site.save()
+
+        instances = site.site_instances.all().values_list('instance', flat=True)
+
+        Instance.objects.filter(id__in=instances).update(deleted_at=datetime.datetime.now())
+
+        # update in mongo
+
+        result = settings.MONGO_DB.instances.update({"_id": {"$in": list(instances)}},
+                                                    {"$set": {'_deleted_at': datetime.datetime.now()}}, multi=True)
+
+        FInstance.objects.filter(instance_id__in=instances).update(is_deleted=True)
+
         task_obj=CeleryTaskProgress.objects.create(user=self.request.user, description="Removal of UserRoles After Site delete", task_type=7, content_object = site)
+
         if task_obj:
             task = UnassignAllSiteRoles.delay(task_obj.id, site.id)
             task_obj.task_id = task.id
             task_obj.save()
-        
+
         noti = task_obj.logs.create(source=self.request.user, type=36, title="Delete Site",
                                organization=site.project.organization, extra_object=site.project,
                                project=site.project, extra_message="site", site=site, content_object=site,
