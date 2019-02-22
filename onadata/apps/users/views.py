@@ -390,7 +390,7 @@ def web_authenticate(username=None, password=None):
 
 
 def web_login(request):
-    sites_count = Site.objects.count()
+    reset = request.GET.get('reset')
     if request.user.is_authenticated():
         return redirect('/')
     if request.method == 'POST':
@@ -408,8 +408,8 @@ def web_login(request):
                                   {'form': form,
                                    'email_error': "Your Account is Deactivated, Please Contact Administrator.",
                                    'valid_email': valid_email, 
-                                   'login_username':username, 
-                                   'site_count':sites_count})
+                                   'login_username':username
+                                   })
             else:
                 if valid_email:
                     email_error = False
@@ -422,8 +422,8 @@ def web_login(request):
                                'valid_email': valid_email, 
                                'email_error': email_error, 
                                'password_error': password_error, 
-                               'login_username':username,
-                               'site_count':sites_count})
+                               'login_username':username
+                               })
         else:
             if request.POST.get('login_username') != None:
                 login_username = request.POST.get('login_username')
@@ -431,10 +431,9 @@ def web_login(request):
                 login_username = ''
             return render(request, 'users/login.html', {
                 'form': form , 
-                'valid_email': False, 
+                'valid_email': False,
                 'email_error': "Your Email and Password Didnot Match.", 
                 'login_username':login_username,
-                'site_count':sites_count
                 })
     else:
         form = LoginForm()
@@ -442,11 +441,11 @@ def web_login(request):
     return render(request, 'users/login.html', {'form': form, 
     'valid_email': True, 
     'email_error': False,
-    'site_count':sites_count})
+    'reset':reset
+    })
 
 
 def web_signup(request):
-    sites_count = Site.objects.count()
     if request.user.is_authenticated():
         return redirect('/')
     if request.method == 'POST':
@@ -481,7 +480,6 @@ def web_signup(request):
                 'email_error':False, 
                 'success_signup':1, 
                 'email':to_email,
-                'site_count':sites_count
                 })
 
             # user = authenticate(username=username,
@@ -504,15 +502,13 @@ def web_signup(request):
                 'email_error':False,
                 'signup_tab': 1,
                 'success_signup':0,
-                'site_count':sites_count
                 })
     else:
         signup_form = SignUpForm()
         return render(request, 'users/login.html', {'signup_form':signup_form, 
         'valid_email':True, 
         'email_error': False, 
-        'success_signup':0,
-        'site_count':sites_count})
+        'success_signup':0})
 
 
 def create_role(request):

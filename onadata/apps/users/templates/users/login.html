@@ -43,7 +43,7 @@ input::-webkit-input-placeholder {
 		  									<img src="{{ STATIC_URL }}dummy/assets/img/fieldsight.png" alt="fieldsight" height="100">
 		  								</a>
 		  								<p class="margin-top d-none d-md-block">
-		  								FieldSight is the first humanitarian digital platform designed for project monitoring and infrastructure quality assurance. The platform is now being used to monitor more than {{ site_count }} sites.
+		  								FieldSight is the first humanitarian digital platform designed for project monitoring and infrastructure quality assurance. The platform is now being used to monitor more than 50,000 houses.
 		  								</p>
 		  							</div>
 		  						</div>
@@ -78,15 +78,18 @@ input::-webkit-input-placeholder {
 												  	<div class="form-group">
 												    	<label for="inputPassword">Password</label>
 
-												    	<div class="input-group input-pass-showhide"> <input type="password" name="password" class="form-control {% if password_error %}is-invalid{% endif %}" id="inputPassword" placeholder="e.g., ********" required>
+														<div class="input-group input-pass-showhide {% if password_error %}is-invalid{% endif %}"> 
+															<input type="password" name="password" class="form-control {% if password_error %}is-invalid{% endif %}" id="inputPassword" placeholder="e.g., ********" required>
+															
 															<div class="input-group-append" data-placement="right" data-toggle="tooltip" title="Show Password">
 														    	<span class="input-group-text" ><i class="la la-eye-slash"></i></span>
 															  </div>
-															</div>
+															  
+														</div>
 															{% if password_error %}
-															<div id="passwordHelp" class="invalid-feedback">
-														  		Incorrect Password ! Please Check Your Password.
-															</div>
+																<div id="passwordHelp" class="invalid-feedback">
+																	Incorrect Password ! Please Check Your Password.
+																</div>
 															{% endif %}
 												  	</div>
 												  	<div class="row">
@@ -147,11 +150,12 @@ input::-webkit-input-placeholder {
 													</div>
 													<div class="form-group">
 														<label for="inputSignupPassword">Your password</label>
-														<div class="input-group input-pass-showhide">
-															<input type="password" class="form-control {% if signup_form.password.errors %}is-invalid{% endif %}" id="inputSignupPassword" name="password" placeholder="e.g., **********" required>
+														<div class="input-group input-pass-showhide {% if signup_form.password.errors %}is-invalid{% endif %}">
+															<input type="text" class="form-control {% if signup_form.password.errors %}is-invalid{% endif %}" id="inputSignupPassword" name="password" placeholder="e.g., **********" required>
 															<div class="input-group-append" data-toggle="tooltip" data-placement="right" title="Hide Password">
 														    	<span class="input-group-text"><i class="la la-eye"></i></span>
 															</div>
+															
 														</div>
 														{% if signup_form.password.errors %}
 														{% for error in signup_form.password.errors %}
@@ -160,23 +164,25 @@ input::-webkit-input-placeholder {
 														</div>
 														{% endfor %}
 														{% endif %}	
+														
 													</div>
-													<!-- <div class="form-group">
+													<div class="form-group">
 														<label for="inputSignupRePassword">One More Time?</label>
-														<div class="input-group input-pass-showhide">
-															<input type="password" class="form-control {% if signup_form.password1.errors %}is-invalid{% endif %}" id="inputSignupRePassword" name="password1" placeholder="e.g., **********" required>
+														<div class="input-group input-pass-showhide {% if signup_form.password1.errors %}is-invalid{% endif %}">
+															<input type="text" class="form-control {% if signup_form.password1.errors %}is-invalid{% endif %}" id="inputSignupRePassword" name="password1" placeholder="e.g., **********" required>
 															<div class="input-group-append" data-toggle="tooltip" data-placement="right" title="Hide Password">
 																<span class="input-group-text"><i class="la la-eye"></i></span>
 															</div>
+															
 														</div>
 														{% if signup_form.password1.errors %}
 														{% for error in signup_form.password1.errors %}
 														<div class="invalid-feedback">
 															{{ error|escape }}
-													  	</div>
+														</div>
 														{% endfor %}
 														{% endif %}	
-													</div> -->
+													</div>
 													<!-- <button type="submit" class="btn btn-secondary" name="signup" value="signup"><i class="la la-user-plus"></i> Signup</button> -->
 													<p class="mt-3 additional-info">
 														By signing up, you’re agreeing with FieldSight’s <a href="#" title="" target="_blank">Terms and Conditions Agreement</a> | <a href="#" title="" target="_blank">Privacy Policy</a>.
@@ -214,7 +220,7 @@ input::-webkit-input-placeholder {
 													<p>
 														Don't worry. Resetting your password is easy, just tell us the email address you registered with <strong>Fieldsight</strong>.
 													</p>
-													<form method="post" action="/accounts/password/reset/">
+													<form method="post" action="/users/accounts/password/reset/">
 														{% csrf_token %}
 														<div class="form-group">
 													    	<label for="inputResetEmail">Email address</label>
@@ -233,6 +239,7 @@ input::-webkit-input-placeholder {
 		  		</div>
 		  	</div>
 		</div>
+		
 		<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="assets/js/vendor/jquery-3.2.1.min.js"><\/script>')</script>-->
         <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}dummy/assets/js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
@@ -325,16 +332,18 @@ input::-webkit-input-placeholder {
 					fn_login_eqheight();
 					fn_login_vertically_center();
 				}
+				
+				if('{{reset}}'=='1'){
+					$('#pills-login').removeClass('active show');
+					$('#pills-login-tab').removeClass('active');
+					$('#pills-reset').removeClass('active show');
+					$('#pills-thankyou').tab('show');
 
-				// if('{{reset}}'=='1'){
-				// 	$('#pills-reset').removeClass('active show');
-				// 	$('#pills-thankyou').tab('show');
-
-				// 	fn_login_eqheight();
-				// 	fn_login_vertically_center();
-				// }
-	        		
+					fn_login_eqheight();
+					fn_login_vertically_center();
+				}
 			});
+	
 			jQuery(window).on('resize', function() {
 				//
 				vph = $(window).height();
@@ -430,181 +439,5 @@ input::-webkit-input-placeholder {
 				}
 			}
 		</script>
-		<!-- <script>
-
-			
-			$(document).ready(function(){
-				//
-				fn_login_vertically_center();
-
-				vph = $(window).height();
-				$(".login-wrap").css("min-height", vph);
-				//Converting img tag to parent div bg
-				var imgSrc = $(".login-bg>img").attr("src");
-	        	$('.login-bg').css({"background" : "url("+imgSrc+")", "background-position": "center", "background-size": "cover"});
-	        	$(".login-bg>img").remove();
-
-	        	//reset
-	        	fn_login_eqheight();
-			    
-			    $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
-					fn_login_eqheight();
-					fn_login_vertically_center();
-				});
-
-				fn_movebackground();
-
-
-        		//reset
-
-				if('{{username}}'){
-					document.getElementById('inputSignupUsername').value='{{username}}';
-				}
-
-				if('{{email}}'){
-					document.getElementById('inputSignupEmail').value='{{email}}';
-				}
-
-				if('{{login_username}}'){
-					document.getElementById('inputEmail').value='{{login_username}}';
-				}
-
-				//after successful signup
-				if('{{success_signup}}'=='1'){
-					$('#pills-signup').removeClass('active show');
-					$("#pills-signup-tab").removeClass('active');
-					$('#pills-login').removeClass('active show');
-					$('#pills-login-tab').removeClass('active');
-					$('#pills-thankyou').addClass('active show');
-
-					//
-					var lHeight, rHeight;
-					lHeight = $(".sec-left").outerHeight();
-					$(".sec-right" ).css("min-height", lHeight);
-				};
-
-				if('{{signup_tab}}'=='1'){
-					$('#pills-login').removeClass('active show');
-					$('#pills-login-tab').removeClass('active');
-					$('#pills-signup').addClass('active show');
-					$("#pills-signup-tab").addClass('active');
-
-					//
-					fn_login_eqheight();
-				}
-        		
-			});
-			jQuery(window).on('resize', function() {
-				//
-				vph = $(window).height();
-				$(".login-wrap").css("min-height", vph);
-
-				//
-				fn_login_eqheight();
-				fn_login_vertically_center();
-			});
-
-			// Vertical Center
-			function fn_login_vertically_center(){
-			 	var svph = $(window).height();
-			 	var slfh = $(".login-section").height();
-			 	if(svph > (slfh + 60)){
-			 		var tempHeight = svph - slfh;
-			 		var tempHeight = tempHeight / 2;
-			 		$(".login-section").css("margin-top", tempHeight);
-			 		$(".login-section").css("margin-bottom", tempHeight);
-			 	}else{
-			 		$(".login-section").css("margin-top", 30);
-			 		$(".login-section").css("margin-bottom", 30);
-			 	}
-			}
-
-			$("#help-me").click(function(){
-			 	$('#pills-login').removeClass('active show');
-			 	$('#pills-signup').removeClass('active show');
-			 	$("#pills-login-tab").removeClass('active');
-			 	$('#pills-reset').tab('show');
-
-			 	fn_login_eqheight();
-			 	fn_login_vertically_center();
-			});
-
-			$("#btn-backtologin").click(function(){
-			 	$('#pills-thankyou').removeClass('active show');
-			 	$('#pills-login-tab').addClass('active');
-			 	$('#pills-login').addClass('active show');
-
-			 	//
-			 	fn_login_eqheight();
-			 	fn_login_vertically_center();
-			});
-
-			$("#btn-backtologinfromreset").click(function(){
-			 	$('#pills-reset').removeClass('active show');
-			 	$('#pills-login-tab').addClass('active');
-			 	$('#pills-login').addClass('active show');
-
-			 	//
-			 	fn_login_eqheight();
-			 	fn_login_vertically_center();
-			});
-
-
-			jQuery(document).on('ready', function() {
-		        jQuery(window).on('resize', function() {
-		            if(jQuery(document).width() > 479) {
-		              
-
-        		//Equal Height
-        		function fn_login_eqheight(){
-        			var lHeight, rHeight;
-					lHeight = $(".sec-left").outerHeight();
-					rHeight = $(".sec-right").outerHeight();
-					$(".sec-left" ).css("min-height", rHeight);
-        		}
-
-        		fn_login_eqheight();
-        		
-				$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-				  fn_login_eqheight();
-				})
-				
-				//Background Scrolling Effect
-				var lFollowX = 0,
-			    lFollowY = 0,
-			    x = 0,
-			    y = 0,
-			    friction = 1 / 30;
-
-				function moveBackground() {
-				  x += (lFollowX - x) * friction;
-				  y += (lFollowY - y) * friction;
-				  
-				  translate = 'translate(' + x + 'px, ' + y + 'px) scale(1.1)';
-
-				  $('.login-bg').css({
-				    '-webit-transform': translate,
-				    '-moz-transform': translate,
-				    'transform': translate
-				  });
-
-				  window.requestAnimationFrame(moveBackground);
-				}
-
-				$(window).on('mousemove click', function(e) {
-
-				  var lMouseX = Math.max(-100, Math.min(100, $(window).width() / 2 - e.clientX));
-				  var lMouseY = Math.max(-100, Math.min(100, $(window).height() / 2 - e.clientY));
-				  lFollowX = (20 * lMouseX) / 100; // 100 : 12 = lMouxeX : lFollow
-				  lFollowY = (10 * lMouseY) / 100;
-
-				});
-
-				moveBackground();
-		            }
-		        }).trigger('resize'); // Trigger resize handlers. 
-				     
-		    });
-		</script> -->
     </body>
 </html>
