@@ -101,7 +101,7 @@ def site_download_zipfile(task_prog_obj_id, size):
         buffer.close()                                                                      
 
 @shared_task(time_limit=7200, soft_time_limit=7200)
-def generate_stage_status_report(task_prog_obj_id, project_id):
+def generate_stage_status_report(task_prog_obj_id, project_id, site_type_ids, region_ids):
     time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     project = Project.objects.get(pk=project_id)
@@ -154,7 +154,15 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
         head_row.extend(["Site Visits", "Submission Count", "Flagged Submission", "Rejected Submission"])
         data.append(head_row)
         
-        sites = Site.objects.filter(project_id=project.id).values('id','identifier', 'name', 'region__identifier', 'address').annotate(**query)
+        sites = Site.objects.filter(project_id=project.id)
+
+        if site_type_ids:
+            sites = sites.filter(type_id__in=site_type_ids)
+
+        if region_ids:
+            sites = sites.filter(region_id__in=region_ids)
+
+        sites = sites.values('id','identifier', 'name', 'region__identifier', 'address').annotate(**query)
 
 
         site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": {"$in":form_ids}}},  { "$group" : { 
@@ -172,8 +180,18 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
 
         site_dict = {}
 
+        # Redoing query because annotate and lat long did not go well in single query.
+        # Probable only an issue because of old django version.
+
         site_objs = Site.objects.filter(project_id=project_id)
         
+        if site_type_ids:
+            site_objs = site_objs.filter(type_id__in=site_type_ids)
+
+        if region_ids:
+            site_objs = site_objs.filter(region_id__in=region_ids)
+
+
         for site_obj in site_objs:
             site_dict[site_obj.id] = {'visits':0,'site_status':site_obj.site_status, 'latitude':site_obj.latitude,'longitude':site_obj.longitude}
         
@@ -747,7 +765,7 @@ def siteDetailsGenerator(project, sites, ws):
 # sites = project.sites.all()
 # siteDetailsGenerator(project, sites, None)
 
-@shared_task(time_limit=600, soft_time_limit=600)
+@shared_task(time_limit=300, soft_time_limit=300)
 def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id):
     time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
@@ -804,7 +822,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         buffer.close()
 
 
-@shared_task(time_limit=7200, soft_time_limit=7200)
+@shared_task(time_limit=300, soft_time_limit=300)
 def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_url, fs_ids, start_date, end_date, filterRegion, filterSiteTypes):
     time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)

@@ -78,9 +78,9 @@ assigntoken(csrf_token);
 									  <!-- <li class="nav-item">
 									    <a class="nav-link active" id="modalTab01-tab" data-toggle="tab" href="#modalTab01" role="tab" aria-controls="modalTab01" aria-selected="true"></a>
 									  </li> -->
-									  <!-- <li class="nav-item">
-									    <a class="nav-link" id="modalTab02-tab" data-toggle="tab" href="#modalTab02" role="tab" aria-controls="modalTab02" aria-selected="false">Sites Export</a>
-									  </li> -->
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab02-tab" data-toggle="tab" href="#modalTab02" role="tab" aria-controls="modalTab02" aria-selected="false">Progress Report</a>
+									  </li>
 									  <li class="nav-item">
 									    <a class="nav-link active" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab03" aria-selected="false">Form Data</a>
 									  </li>
@@ -100,9 +100,13 @@ assigntoken(csrf_token);
 										<!-- <div class="tab-pane fade show active" id="modalTab01" role="tabpanel" aria-labelledby="modalTab01-tab">
 											
 										</div> -->
-										<!-- <div class="tab-pane fade" id="modalTab02" role="tabpanel" aria-labelledby="modalTab02-tab">
-																					
-																				</div> -->
+										<div class="tab-pane fade" id="modalTab02" role="tabpanel" aria-labelledby="modalTab02-tab">
+											{% verbatim %}
+												<div id="generateProgressReport">
+												
+												</div>
+											{% endverbatim %}								
+										</div>
 										<div class="tab-pane fade show active" id="modalTab03" role="tabpanel" aria-labelledby="modalTab03-tab">
 											{% verbatim %}
 											<div id="generateReport">
@@ -129,13 +133,7 @@ assigntoken(csrf_token);
 											
 											<br>
 											<br>
-											{% verbatim %}
-											<div id="export_stage_progress_button">
 											
-											</div>
-											{% endverbatim %}
-											<br>
-											<br>
 											{% verbatim %}
 											<div id="export_button">
 											
