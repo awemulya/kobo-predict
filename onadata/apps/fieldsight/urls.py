@@ -58,7 +58,7 @@ from .views import (
     ManagePeopleProjectView, ManagePeopleOrganizationView, SiteSurveyListView, ajax_upload_sites, ajax_save_site,
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList,
     SitesTypeView, AddSitesTypeView, senduserinvite, ActivateRole, checkemailforinvite, ProjectSummaryReport,
-    SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView, StageStatus, sendmultiroleuserinvite,
+    SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView, sendmultiroleuserinvite,
     project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
     SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView,
     DonorProjSiteList, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates,
