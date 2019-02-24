@@ -620,7 +620,7 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.genarete_logs_report_url = "{% url 'fieldsight_export:logs_report' obj.pk %}";
 	configure_settings.genarete_sites_export_url = "{% url 'fieldsight_export:export_xls_region_sites_post' obj.pk %}";
 	configure_settings.progress_report_url = "{% url 'fieldsight_export:download-stages' obj.pk %}";
-	configure_settings.regions_url = "{% url 'fieldsigh:project_regions_api' obj.pk %}";
+	configure_settings.regions_url = "{% url 'fieldsight:project_regions_api' obj.pk %}";
 	configure_settings.site_types_url = "{% url 'fieldsight:project_site_types_api' obj.pk %}";
 	configure_settings.log_report_type = "Project";
 	//getlogdata();
