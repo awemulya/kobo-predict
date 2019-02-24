@@ -9,9 +9,8 @@ from django.views.generic import TemplateView, View
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
-from onadata.apps.fieldsight.tasks import importSites, exportProjectSiteResponses, generateSiteDetailsXls, site_download_zipfile, exportProjectstatistics, exportLogs,
-    generate_stage_status_report
-    
+from onadata.apps.fieldsight.tasks import importSites, exportProjectSiteResponses, generateSiteDetailsXls, site_download_zipfile, exportProjectstatistics, exportLogs, generate_stage_status_report
+
 from django.http import HttpResponse
 from rest_framework import status
 from onadata.apps.fsforms.models import FieldSightXF, FInstance, Stage
