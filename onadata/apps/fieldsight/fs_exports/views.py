@@ -204,7 +204,7 @@ class ExportProjectSitesWithRefs(DonorRoleMixin, View):
         return JsonResponse(data, status=status)
 
 class StageStatus(DonorRoleMixin, View):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         obj = get_object_or_404(Project, pk=self.kwargs.get('pk'), is_active=True)
         user = request.user
         data = json.loads(self.request.body)
