@@ -204,13 +204,32 @@ class ExportProjectSitesWithRefs(DonorRoleMixin, View):
             status, data = 401, {'status':'false','message':'Error occured please try again.'}
         return JsonResponse(data, status=status)
 
+
+    def post(self, *args, **kwargs):
+        source_user = self.request.user   
+        project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
+        content_type = ContentType.objects.get(model='project', app_label='fieldsight')
+        data = json.loads(self.request.body)
+        site_type_ids = data.get('siteTypes', None)
+        region_ids = data.get('regions', None)
+
+        task_obj = CeleryTaskProgress.objects.create(user=source_user, content_object=project, task_type=8)
+        if task_obj:
+            task = generateSiteDetailsXls.delay(task_obj.pk, source_user, self.kwargs.get('pk'), region_ids, site_type_ids)
+            task_obj.task_id = task.id
+            task_obj.save()
+            status, data = 200, {'status':'true','message':'The sites details xls file is being generated. You will be notified after the file is generated.'}
+        else:
+            status, data = 401, {'status':'false','message':'Error occured please try again.'}
+        return JsonResponse(data, status=status)
+
 class StageStatus(DonorRoleMixin, View):
     def post(self, request, *args, **kwargs):
         obj = get_object_or_404(Project, pk=self.kwargs.get('pk'), is_active=True)
         user = request.user
         data = json.loads(self.request.body)
-        site_type_ids = data.get('siteTypes')
-        region_ids = data.get('regions')
+        site_type_ids = data.get('siteTypes', None)
+        region_ids = data.get('regions', None)
 
         task_obj=CeleryTaskProgress.objects.create(user=user, task_type=10, content_object = obj)
         if task_obj:
