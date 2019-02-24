@@ -84,7 +84,7 @@ assigntoken(csrf_token);
 									    <a class="nav-link" id="modalTab02-tab" data-toggle="tab" href="#modalTab02" role="tab" aria-controls="modalTab02" aria-selected="false">Progress Report</a>
 									  </li>
 									  <li class="nav-item">
-									    <a class="nav-link active" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab03" aria-selected="false">Data Export</a>
+									    <a class="nav-link" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab03" aria-selected="false">Data Export</a>
 									  </li>
 									  <li class="nav-item">
 									    <a class="nav-link" id="modalTab04-tab" data-toggle="tab" href="#modalTab04" role="tab" aria-controls="modalTab04" aria-selected="false">Statstics</a>
@@ -118,7 +118,7 @@ assigntoken(csrf_token);
 												</div>
 											{% endverbatim %}								
 										</div>
-										<div class="tab-pane fade show active" id="modalTab03" role="tabpanel" aria-labelledby="modalTab03-tab">
+										<div class="tab-pane fade show" id="modalTab03" role="tabpanel" aria-labelledby="modalTab03-tab">
 											{% verbatim %}
 											<div id="generateReport">
 											</div>
@@ -671,6 +671,7 @@ var static_url ="{{ STATIC_URL }}";
 <script src="{% static 'js/fieldsight/statstics_report.js' %}?v=0.1"></script>
 <script src="{% static 'js/fieldsight/logs_xls_report.js' %}?v=0.1"></script>
 <script src="{% static 'js/fieldsight/progress_report.js' %}?v=0.1"></script>
+<script src="{% static 'js/fieldsight/site_export-report.js' %}?v=0.1"></script>
 
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" /> -->
 
