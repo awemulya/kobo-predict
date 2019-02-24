@@ -78,9 +78,9 @@ assigntoken(csrf_token);
 									  <!-- <li class="nav-item">
 									    <a class="nav-link active" id="modalTab01-tab" data-toggle="tab" href="#modalTab01" role="tab" aria-controls="modalTab01" aria-selected="true"></a>
 									  </li> -->
-									  <!-- <li class="nav-item">
-									    <a class="nav-link" id="modalTab02-tab" data-toggle="tab" href="#modalTab02" role="tab" aria-controls="modalTab02" aria-selected="false">Sites Export</a>
-									  </li> -->
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab02-tab" data-toggle="tab" href="#modalTab02" role="tab" aria-controls="modalTab02" aria-selected="false">Progress Report</a>
+									  </li>
 									  <li class="nav-item">
 									    <a class="nav-link active" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab03" aria-selected="false">Form Data</a>
 									  </li>
@@ -100,9 +100,13 @@ assigntoken(csrf_token);
 										<!-- <div class="tab-pane fade show active" id="modalTab01" role="tabpanel" aria-labelledby="modalTab01-tab">
 											
 										</div> -->
-										<!-- <div class="tab-pane fade" id="modalTab02" role="tabpanel" aria-labelledby="modalTab02-tab">
-																					
-																				</div> -->
+										<div class="tab-pane fade" id="modalTab02" role="tabpanel" aria-labelledby="modalTab02-tab">
+											{% verbatim %}
+												<div id="generateProgressReport">
+												
+												</div>
+											{% endverbatim %}								
+										</div>
 										<div class="tab-pane fade show active" id="modalTab03" role="tabpanel" aria-labelledby="modalTab03-tab">
 											{% verbatim %}
 											<div id="generateReport">
@@ -129,13 +133,7 @@ assigntoken(csrf_token);
 											
 											<br>
 											<br>
-											{% verbatim %}
-											<div id="export_stage_progress_button">
 											
-											</div>
-											{% endverbatim %}
-											<br>
-											<br>
 											{% verbatim %}
 											<div id="export_button">
 											
@@ -609,7 +607,7 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.url = "{% url 'fieldsight_export:export_xls_project_level_sites' obj.pk %}";
 	configure_settings.log_url = "{% url 'eventlog:api_project_logs' obj.pk %}";
 	configure_settings.full_log_url = "{% url 'eventlog:project_logs' obj.pk %}";
-	configure_settings.genarete_excel_url = "{% url 'fieldsight:download-stages' obj.pk %}";
+	configure_settings.genarete_excel_url = "{% url 'fieldsight_export:download-stages' obj.pk %}";
 	configure_settings.start_date_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
 	configure_settings.start_date_max_value = "{% now 'Y-m-d' %}";
 	configure_settings.start_date_min_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
@@ -666,6 +664,7 @@ var static_url ="{{ STATIC_URL }}";
 <script src="{% static 'js/fieldsight/datepicker/vue-airbnb-style-datepicker.min.js' %}"></script>
 <script src="{% static 'js/fieldsight/statstics_report.js' %}?v=0.1"></script>
 <script src="{% static 'js/fieldsight/logs_xls_report.js' %}?v=0.1"></script>
+<script src="{% static 'js/fieldsight/progress_report.js' %}?v=0.1"></script>
 
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.bootstrap3.min.css" /> -->
 

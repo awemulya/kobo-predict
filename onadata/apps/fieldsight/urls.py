@@ -68,6 +68,7 @@ from .views import (
     FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI, SiteSearchLiteView, AssignUsersToRegionsView)
 
 
+
 from onadata.apps.geo.views import (
     GeoLayersView,
     GeoLayerCreateView,
@@ -127,7 +128,6 @@ urlpatterns = [
     url(r'^api/async_save_site/$', csrf_exempt(ajax_save_site)),
     url(r'^project/delete/(?P<pk>\d+)/$', ProjectDeleteView.as_view(), name='project-delete'),
     url(r'^project/alter-status/(?P<pk>\d+)/$', alter_proj_status, name='alter_proj_status'),
-    url(r'^project/stages_status_report/(?P<pk>\d+)/$', StageStatus.as_view(), name='download-stages'),
     url(r'^project/add-proj-manager/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
     url(r'^project/add-role/(?P<pk>\d+)/$', add_project_role, name='add_project_staffs'),
     url(r'^api/project-sites/(?P<pk>\d+)/$', SiteViewSet.as_view({'get': 'list'}), name='project_sites'),
