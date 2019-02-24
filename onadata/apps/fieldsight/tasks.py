@@ -766,7 +766,7 @@ def siteDetailsGenerator(project, sites, ws):
 # siteDetailsGenerator(project, sites, None)
 
 @shared_task(time_limit=300, soft_time_limit=300)
-def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id):
+def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_ids, type_ids=None):
     time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
@@ -782,15 +782,17 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         sites = project.sites.all().order_by('identifier')
         if region_id:
             if isinstance(region_id, list): 
-                sites = project.sites.filter(is_active=True, region_id__in=region_id).order_by('identifier')
+                sites = project.sites.filter(is_active=True, region_id__in=region_ids).order_by('identifier')
             else:
                 if region_id == "0":
                     sites = project.sites.filter(is_active=True, region_id=None).order_by('identifier')
                 else:
-                    sites = project.sites.filter(is_active=True, region_id=region_id).order_by('identifier')
+                    sites = project.sites.filter(is_active=True, region_id=region_ids).order_by('identifier')
         else:
             sites = project.sites.filter(is_active=True).order_by('identifier')
 
+        if type_ids:
+            sites = sites.filter(type_id__in=type_ids)
 
         status, message = siteDetailsGenerator(project, sites, ws)
 
