@@ -518,22 +518,7 @@ def alter_proj_status(request, pk):
     except:
         messages.info(request, 'Project {0} not found.'.format(obj.name))
     return HttpResponseRedirect(reverse('fieldsight:projects-list'))
-
-
-class StageStatus(LoginRequiredMixin, DonorRoleMixin, View):
-    def get(self, request, *args, **kwargs):
-        obj = get_object_or_404(Project, pk=self.kwargs.get('pk'), is_active=True)
-        user = request.user
-        task_obj=CeleryTaskProgress.objects.create(user=user, task_type=10, content_object = obj)
-        if task_obj:
-            task = generate_stage_status_report.delay(task_obj.pk, obj.id)
-            task_obj.task_id = task.id
-            task_obj.save()
-            data = {'status':'true','message':'Progress report is being generated. You will be notified upon completion. (It may take more time depending upon number of sites and submissions.)'}
-        else:
-            data = {'status':'false','message':'Report cannot be generated a the moment.'}
-        return JsonResponse(data, status=200)
-
+    
 
 @login_required
 @group_required('Project')

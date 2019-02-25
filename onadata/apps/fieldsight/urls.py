@@ -58,7 +58,7 @@ from .views import (
     ManagePeopleProjectView, ManagePeopleOrganizationView, SiteSurveyListView, ajax_upload_sites, ajax_save_site,
     ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList,
     SitesTypeView, AddSitesTypeView, senduserinvite, ActivateRole, checkemailforinvite, ProjectSummaryReport,
-    SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView, StageStatus, sendmultiroleuserinvite,
+    SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView, sendmultiroleuserinvite,
     project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
     SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView,
     DonorProjSiteList, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates,
@@ -66,6 +66,7 @@ from .views import (
     ProjectDashboardStageResponsesStatus, GeoJSONContent, DonorFullMap, ProjectSiteListGeoJSON, SiteBulkEditView,
     site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data,
     FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI, SiteSearchLiteView, AssignUsersToRegionsView)
+
 
 
 from onadata.apps.geo.views import (
@@ -127,7 +128,6 @@ urlpatterns = [
     url(r'^api/async_save_site/$', csrf_exempt(ajax_save_site)),
     url(r'^project/delete/(?P<pk>\d+)/$', ProjectDeleteView.as_view(), name='project-delete'),
     url(r'^project/alter-status/(?P<pk>\d+)/$', alter_proj_status, name='alter_proj_status'),
-    url(r'^project/stages_status_report/(?P<pk>\d+)/$', StageStatus.as_view(), name='download-stages'),
     url(r'^project/add-proj-manager/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
     url(r'^project/add-role/(?P<pk>\d+)/$', add_project_role, name='add_project_staffs'),
     url(r'^api/project-sites/(?P<pk>\d+)/$', SiteViewSet.as_view({'get': 'list'}), name='project_sites'),
@@ -139,7 +139,7 @@ urlpatterns = [
     url(r'^api/sites/$', AllSiteViewSet.as_view({'get': 'list'}), name='sites-list'),
     url(r'^api/project-types/$', ProjectTypeViewset.as_view({'get': 'list'})),
 
-    url(r'^api/site-types/(?P<pk>\d+)/$', SiteTypeViewset.as_view({'get': 'list'})),
+    url(r'^api/site-types/(?P<pk>\d+)/$', SiteTypeViewset.as_view({'get': 'list'}), name='project_site_types_api'),
     url(r'^api/site-types/$', SiteTypeViewset.as_view({'get': 'list', 'post':'create'})),
 
     url(r'^api/survey-sites/(?P<pk>\d+)/$', SiteCreationSurveyViewSet.as_view({'get': 'list'}), name='sites-list'),

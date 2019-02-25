@@ -75,35 +75,50 @@ assigntoken(csrf_token);
 				      		<div class="row">
 				      			<div class="col-md-4 col-lg-3">
 				      				<ul class="nav nav-pills flex-column" id="myTab" role="tablist">
-									  <!-- <li class="nav-item">
-									    <a class="nav-link active" id="modalTab01-tab" data-toggle="tab" href="#modalTab01" role="tab" aria-controls="modalTab01" aria-selected="true"></a>
-									  </li> -->
-									  <!-- <li class="nav-item">
-									    <a class="nav-link" id="modalTab02-tab" data-toggle="tab" href="#modalTab02" role="tab" aria-controls="modalTab02" aria-selected="false">Sites Export</a>
-									  </li> -->
 									  <li class="nav-item">
-									    <a class="nav-link active" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab03" aria-selected="false">Form Data</a>
+									    <a class="nav-link active" id="modalTab01-tab" data-toggle="tab" href="#modalTab01" role="tab" aria-controls="modalTab01" aria-selected="true">
+									    	Standard Reports
+									    </a>
+									  </li>
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab02-tab" data-toggle="tab" href="#modalTab02" role="tab" aria-controls="modalTab02" aria-selected="false">Progress Report</a>
+									  </li>
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab03" aria-selected="false">Data Export</a>
 									  </li>
 									  <li class="nav-item">
 									    <a class="nav-link" id="modalTab04-tab" data-toggle="tab" href="#modalTab04" role="tab" aria-controls="modalTab04" aria-selected="false">Statstics</a>
 									  </li>
-									  <!-- <li class="nav-item">
-									    <a class="nav-link" id="modalTab05-tab" data-toggle="tab" href="#modalTab05" role="tab" aria-controls="modalTab05" aria-selected="false">Logs</a>
-									  </li> -->
 									  <li class="nav-item">
-									    <a class="nav-link" id="modalTab06-tab" data-toggle="tab" href="#modalTab06" role="tab" aria-controls="modalTab05" aria-selected="false">Other Reports</a>
+									    <a class="nav-link" id="modalTab05-tab" data-toggle="tab" href="#modalTab05" role="tab" aria-controls="modalTab05" aria-selected="false">Project Logs</a>
 									  </li>
+									  <!-- <li class="nav-item">
+									    <a class="nav-link" id="modalTab06-tab" data-toggle="tab" href="#modalTab06" role="tab" aria-controls="" aria-selected="false">Standard Reports</a>
+									  </li> -->
 									</ul>
 				      			</div>
 				      			<div class="col-md-8 col-lg-9">
 				      				<div class="tab-content" id="myTabContent">
-										<!-- <div class="tab-pane fade show active" id="modalTab01" role="tabpanel" aria-labelledby="modalTab01-tab">
+										<div class="tab-pane fade show active" id="modalTab01" role="tabpanel" aria-labelledby="modalTab01-tab">
+											<a class="btn btn-primary" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i> Project Summary Report</a>
 											
-										</div> -->
-										<!-- <div class="tab-pane fade" id="modalTab02" role="tabpanel" aria-labelledby="modalTab02-tab">
-																					
-																				</div> -->
-										<div class="tab-pane fade" id="modalTab03" role="tabpanel" aria-labelledby="modalTab03-tab">
+											<br>
+											<br>
+											<hr>
+											{% verbatim %}
+											<div id="generateSiteExportReport">
+											
+											</div>
+											{% endverbatim %}
+										</div>
+										<div class="tab-pane fade" id="modalTab02" role="tabpanel" aria-labelledby="modalTab02-tab">
+											{% verbatim %}
+												<div id="generateProgressReport">
+												
+												</div>
+											{% endverbatim %}								
+										</div>
+										<div class="tab-pane fade show" id="modalTab03" role="tabpanel" aria-labelledby="modalTab03-tab">
 											{% verbatim %}
 											<div id="generateReport">
 											</div>
@@ -123,22 +138,10 @@ assigntoken(csrf_token);
 											</div>
 											{% endverbatim %}
 										</div>
-										<div class="tab-pane fade" id="modalTab06" role="tabpanel" aria-labelledby="modalTab05-tab">
-											<a class="btn btn-primary" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i> Project Summary Report</a>
+										<!-- <div class="tab-pane fade" id="modalTab06" role="tabpanel" aria-labelledby="modalTab05-tab">
 											
-											<br>
-											{% verbatim %}
-											<div id="export_stage_progress_button">
 											
-											</div>
-											{% endverbatim %}
-											<br>
-											{% verbatim %}
-											<div id="export_button">
-											
-											</div>
-											{% endverbatim %}
-										</div>
+										</div> -->
 									</div>
 				      			</div>
 				      		</div>
@@ -591,8 +594,11 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.end_date_max_value = "{% now 'Y-m-d' %}";
 	configure_settings.end_date_min_value = "{{ obj.date_created.date|date:'Y-m-d'}}";
 	configure_settings.genarete_statstics_report_url = "{% url 'fieldsight_export:project_stats_report' obj.pk %}";
-	configure_settings.genarete_statstics_report_url = "{% url 'fieldsight_export:project_stats_report' obj.pk %}";
 	configure_settings.genarete_logs_report_url = "{% url 'fieldsight_export:logs_report' obj.pk %}";
+	configure_settings.genarete_sites_export_url = "{% url 'fieldsight_export:export_xls_region_sites_post' obj.pk %}";
+	configure_settings.progress_report_url = "{% url 'fieldsight_export:download-stages' obj.pk %}";
+	configure_settings.regions_url = "{% url 'fieldsigh:project_regions_api' obj.pk %}";
+	configure_settings.site_types_url = "{% url 'fieldsight:project_site_types_api' obj.pk %}";
 	configure_settings.log_report_type = "Project";
 	//getlogdata();
 		
@@ -640,5 +646,6 @@ var static_url ="{{ STATIC_URL }}";
 <script src="{% static 'js/fieldsight/datepicker/vue-airbnb-style-datepicker.min.js' %}"></script>
 <script src="{% static 'js/fieldsight/statstics_report.js' %}?v=0.1"></script>
 <script src="{% static 'js/fieldsight/logs_xls_report.js' %}?v=0.1"></script>
+<script src="{% static 'js/fieldsight/site_export-report.js' %}?v=0.1"></script>
 
 {% endblock %}
