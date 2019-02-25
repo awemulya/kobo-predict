@@ -454,7 +454,7 @@ class SiteBulkEditForm(forms.Form):
 
         self.fields['sites'] = forms.ModelMultipleChoiceField(
             widget=forms.CheckboxSelectMultiple,
-            queryset=project.sites.all(),
+            queryset=project.sites.filter(is_active=True),
         )
 
         for attr in project.site_meta_attributes:
