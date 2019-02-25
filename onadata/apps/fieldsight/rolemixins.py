@@ -274,8 +274,12 @@ class SiteRoleMixin(LoginRequiredMixin):
         if user_role_aspadmin:
             return super(SiteRoleMixin, self).dispatch(request, is_supervisor_only=False, *args, **kwargs)
 
-        user_role_as_region = request.roles.filter(project_id=project.id, group__name__in=["Region Supervisor", "Region Reviewer"])
-        if user_role_as_region:
+        user_role_as_region_supervisor = request.roles.filter(project_id=project.id, group__name="Region Supervisor")
+        if user_role_as_region_supervisor:
+            return super(SiteRoleMixin, self).dispatch(request, is_supervisor_only=True, *args, **kwargs)
+
+        user_role_as_region_reviewer = request.roles.filter(project_id=project.id, group__name="Region Reviewer")
+        if user_role_as_region_reviewer:
             return super(SiteRoleMixin, self).dispatch(request, is_supervisor_only=False, *args, **kwargs)
 
         organization_id = project.organization.id
