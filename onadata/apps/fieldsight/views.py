@@ -98,6 +98,10 @@ def dashboard(request):
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard",  kwargs={'pk': current_role.site.pk}))
         if role_type == "Reviewer":
             return HttpResponseRedirect(reverse("fieldsight:site-dashboard", kwargs={'pk': current_role.site.pk}))
+        if role_type == "Region Supervisor":
+            return HttpResponseRedirect(reverse("fieldsight:regional-sites",  kwargs={'pk': current_role.project.pk, 'region_id': current_role.region.pk}))
+        if role_type == "Region Reviewer":
+            return HttpResponseRedirect(reverse("fieldsight:regional-sites", kwargs={'pk': current_role.project.pk, 'region_id': current_role.region.pk}))
         if role_type == "Project Donor":
             return HttpResponseRedirect(reverse("fieldsight:donor_project_dashboard_lite", kwargs={'pk': current_role.project.pk}))
         if role_type == "Project Manager":
