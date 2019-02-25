@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from onadata.apps.users.views import ContactViewSet, UsersListView, MyProfile, EndUserRole, web_login, web_signup, \
-    send_request_for_organization, request_organization, approve_organization, deny_organization, create_role, ProfileCreateView
+    send_request_for_organization, request_organization, approve_organization, deny_organization, create_role, ProfileCreateView, export_users_xls
 from onadata.apps.users.viewsets import UserViewSet, ProfileViewSet, UserListViewSet, SearchableUserListViewSet, \
     MySitesViewset, MySitesOnlyViewset, MyProjectsViewset
 from . import views
@@ -45,4 +45,6 @@ urlpatterns = [
     url(r'^create-profile/', ProfileCreateView.as_view(), name='create_profile'),
     url(r'^profile/(?P<pk>[0-9]+)/$', MyProfile.as_view(), name='profile'),
     url(r'^endrole/(?P<pk>[0-9]+)/$', EndUserRole.as_view(), name='end_user_role'),
-    ]
+    url(r'^export-users/$', export_users_xls, name='export_users'),
+
+]

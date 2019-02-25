@@ -36,11 +36,19 @@ from onadata.libs.utils.viewer_tools import get_path
 import pyexcel as p
 from .metaAttribsGenerator import get_form_answer, get_form_sub_status, get_form_submission_count, get_form_ques_ans_status
 from django.conf import settings
-from django.db.models import Sum, Case, When, IntegerField
+from django.db.models import Sum, Case, When, IntegerField, Count
 from django.core.exceptions import MultipleObjectsReturned
 
-def get_images_for_site_all(site_id):
-    return settings.MONGO_DB.instances.aggregate([{"$match":{"fs_site" : site_id}}, {"$unwind":"$_attachments"}, {"$project" : {"_attachments":1}},{ "$sort" : { "_id": -1 }}])
+
+from dateutil.rrule import rrule, MONTHLY, DAILY
+from django.db import connection                                         
+from onadata.apps.fsforms.models import Instance
+from onadata.apps.fieldsight.fs_exports.log_generator import log_types
+
+from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
+
+from onadata.apps.fsforms.reports_util import get_images_for_site_all
 
 @shared_task()
 def site_download_zipfile(task_prog_obj_id, size):
@@ -93,7 +101,7 @@ def site_download_zipfile(task_prog_obj_id, size):
         buffer.close()                                                                      
 
 @shared_task(time_limit=7200, soft_time_limit=7200)
-def generate_stage_status_report(task_prog_obj_id, project_id):
+def generate_stage_status_report(task_prog_obj_id, project_id, site_type_ids, region_ids):
     time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     project = Project.objects.get(pk=project_id)
@@ -146,7 +154,15 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
         head_row.extend(["Site Visits", "Submission Count", "Flagged Submission", "Rejected Submission"])
         data.append(head_row)
         
-        sites = Site.objects.filter(project_id=project.id).values('id','identifier', 'name', 'region__identifier', 'address').annotate(**query)
+        sites = Site.objects.filter(project_id=project.id)
+
+        if site_type_ids:
+            sites = sites.filter(type_id__in=site_type_ids)
+
+        if region_ids:
+            sites = sites.filter(region_id__in=region_ids)
+
+        sites = sites.values('id','identifier', 'name', 'region__identifier', 'address').annotate(**query)
 
 
         site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": {"$in":form_ids}}},  { "$group" : { 
@@ -164,8 +180,18 @@ def generate_stage_status_report(task_prog_obj_id, project_id):
 
         site_dict = {}
 
+        # Redoing query because annotate and lat long did not go well in single query.
+        # Probable only an issue because of old django version.
+
         site_objs = Site.objects.filter(project_id=project_id)
         
+        if site_type_ids:
+            site_objs = site_objs.filter(type_id__in=site_type_ids)
+
+        if region_ids:
+            site_objs = site_objs.filter(region_id__in=region_ids)
+
+
         for site_obj in site_objs:
             site_dict[site_obj.id] = {'visits':0,'site_status':site_obj.site_status, 'latitude':site_obj.latitude,'longitude':site_obj.longitude}
         
@@ -356,7 +382,12 @@ def UnassignAllSiteRoles(task_prog_obj_id, site_id):
                                        extra_message="@error " + u'{}'.format(e.message))
 
 
-    
+def get_site_type(value):
+    try:
+        return int(value)
+    except:
+        return 0    
+
 @shared_task()
 def bulkuploadsites(task_prog_obj_id, source_user, sites, pk):
     time.sleep(2)
@@ -392,7 +423,9 @@ def bulkuploadsites(task_prog_obj_id, source_user, sites, pk):
 
                 location = Point(round(float(lat), 6), round(float(long), 6), srid=4326)
                 region_idf = site.get("region_id", None)
-                type_identifier = int(site.get("type", "0"))
+                
+
+                type_identifier = get_site_type(site.get("type", "0"))
 
                 _site, created = Site.objects.get_or_create(identifier=str(site.get("identifier")),
                                                                 project=project)
@@ -666,7 +699,7 @@ def siteDetailsGenerator(project, sites, ws):
                     
         for meta in get_answer_questions:
             form_owner = None
-            query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": str(meta['form_id']), meta['question']['name']: { "$exists": "true" }}},  { "$group" : { 
+            query = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": project.id, "fs_project_uuid": str(meta['form_id'])}},  { "$group" : { 
                 "_id" : "$fs_site",
                 "answer": { '$last': "$"+meta['question']['name'] }
                }
@@ -674,14 +707,15 @@ def siteDetailsGenerator(project, sites, ws):
 
             
 
-            print project.id, meta['form_id'], meta['question']['name']
             for submission in query['result']:
-                try:
+                try:    
                     if meta['question']['type'] in ['photo', 'video', 'audio'] and submission['answer'] is not "":
                         if not form_owner:
                             form_owner = FieldSightXF.objects.select_related('xf__user').get(pk=meta['form_id']).xf.user.username
                         site_list[int(submission['_id'])][meta['question_name']] = 'http://app.fieldsight.org/attachment/medium?media_file='+  +'/attachments/'+submission['answer']
                     
+                    if meta['question']['type'] == 'repeat':
+                        site_list[int(submission['_id'])][meta['question_name']] = ""
 
                     site_list[int(submission['_id'])][meta['question_name']] = submission['answer']
                 except:
@@ -731,8 +765,8 @@ def siteDetailsGenerator(project, sites, ws):
 # sites = project.sites.all()
 # siteDetailsGenerator(project, sites, None)
 
-@shared_task(time_limit=600, soft_time_limit=600)
-def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id):
+@shared_task(time_limit=300, soft_time_limit=300)
+def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_ids, type_ids=None):
     time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
     task.status = 1
@@ -747,13 +781,18 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         ws.title='Sites Detail'
         sites = project.sites.all().order_by('identifier')
         if region_id:
-            if region_id == "0":
-                sites = project.sites.filter(is_active=True, region_id=None).order_by('identifier')
+            if isinstance(region_id, list): 
+                sites = project.sites.filter(is_active=True, region_id__in=region_ids).order_by('identifier')
             else:
-                sites = project.sites.filter(is_active=True, region_id=region_id).order_by('identifier')
+                if region_id == "0":
+                    sites = project.sites.filter(is_active=True, region_id=None).order_by('identifier')
+                else:
+                    sites = project.sites.filter(is_active=True, region_id=region_ids).order_by('identifier')
         else:
             sites = project.sites.filter(is_active=True).order_by('identifier')
 
+        if type_ids:
+            sites = sites.filter(type_id__in=type_ids)
 
         status, message = siteDetailsGenerator(project, sites, ws)
 
@@ -785,7 +824,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_id)
         buffer.close()
 
 
-@shared_task(time_limit=7200, soft_time_limit=7200)
+@shared_task(time_limit=300, soft_time_limit=300)
 def exportProjectSiteResponses(task_prog_obj_id, source_user, project_id, base_url, fs_ids, start_date, end_date, filterRegion, filterSiteTypes):
     time.sleep(5)
     task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
@@ -1286,6 +1325,74 @@ def multiuserassignregion(task_prog_obj_id, source_user, project_id, regions, us
                                        extra_message=group_name +" for "+str(users_count)+" people in "+str(sites_count)+" regions ")
 
 
+@shared_task()
+def multi_users_assign_regions(task_prog_obj_id, source_user, project_id, regions, users, group_id):
+
+    time.sleep(2)
+    project = Project.objects.get(pk=project_id)
+    group_name = Group.objects.get(pk=group_id).name
+    regions_count = len(regions)
+    users_count = len(users)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.content_object = project
+    task.description = "Assign " + str(users_count) + " people in " + str(regions_count) + " regions."
+    task.status = 1
+    task.save()
+
+    # import ipdb;
+    # ipdb.set_trace()
+
+    try:
+        with transaction.atomic():
+            roles_created = 0
+            for region_id in regions:
+                for user in users:
+                    try:
+                        role, created = UserRole.objects.get_or_create(user_id=user, project_id=project.id,
+                                                                       organization_id=project.organization_id,
+                                                                       region_id=region_id,
+                                                                       group_id=group_id, ended_at=None)
+                        if created:
+                            roles_created += 1
+
+                    except MultipleObjectsReturned:
+
+                        redundant_ids = UserRole.objects.filter(user_id=user, project_id=project.id,
+                                                                organization_id=project.organization_id,
+                                                                group_id=group_id, region_id=region_id, ended_at=None).order_by('id').values('id')[1:]
+
+                        UserRole.objects.filter(pk__in=redundant_ids).update(ended_at=datetime.datetime.now())
+
+        task.status = 2
+        task.save()
+        if roles_created == 0:
+            noti = FieldSightLog.objects.create(source=source_user, type=23, title="Task Completed.",
+                                                content_object=project, recipient=source_user,
+                                                extra_message="All " + str(
+                                                    users_count) + " users were already assigned as " + group_name + " in " + str(
+                                                    regions_count) + " selected regions ")
+
+        else:
+
+            noti = FieldSightLog.objects.create(source=source_user, type=22, title="Bulk Region User Assign",
+                                                content_object=project, organization=project.organization,
+                                                project=project,
+                                                extra_message=str(
+                                                    roles_created) + " new " + group_name + " Roles in " + str(
+                                                    regions_count) + " regions ")
+
+    except Exception as e:
+        print 'Bulk role assign Unsuccesfull. ------------------------------------------%s' % e
+        task.description = "Assign " + str(users_count) + " people in " + str(regions_count) + " regions. ERROR: " + str(
+            e)
+        task.status = 3
+        task.save()
+        print e.__dict__
+        noti = FieldSightLog.objects.create(source=source_user, type=422, title="Bulk Region User Assign",
+                                            content_object=project, recipient=source_user,
+                                            extra_message=group_name + " for " + str(users_count) + " people in " + str(
+                                                regions_count) + " regions ")
+
 
 @shared_task(time_limit=18000, soft_time_limit=18000)
 def auto_generate_stage_status_report():
@@ -1380,3 +1487,272 @@ def sendNotification(notification, recipient):
     result['extra_message']= str(count) + " Sites @error " + u'{}'.format(e.message),
     result['seen_by']= [],
     ChannelGroup("notif-user-{}".format(recipient.id)).send({"text": json.dumps(result)})
+
+
+@shared_task(time_limit=120, soft_time_limit=120)
+def exportProjectstatistics(task_prog_obj_id, source_user, project_id, reportType, start_date, end_date):
+    # time.sleep(5)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.status = 1
+    project=get_object_or_404(Project, pk=project_id)
+    task.content_object = project
+    task.save()
+
+    try:  
+        buffer = BytesIO()
+        sites = project.sites.filter(is_active=True)
+        data = []
+        index = {}
+        split_startdate = start_date.split('-')
+        split_enddate = end_date.split('-')
+
+        new_startdate = date(int(split_startdate[0]), int(split_startdate[1]), int(split_startdate[2]))
+        end = date(int(split_enddate[0]), int(split_enddate[1]), int(split_enddate[2]))
+
+        new_enddate = end + datetime.timedelta(days=1)
+
+        if reportType == "Monthly":
+            data.insert(0, ["Date", "Month", "Site Visits", "Submissions","Active Users"])
+            i=1
+            for month in rrule(MONTHLY, dtstart=new_startdate, until=new_enddate):
+                str_month = month.strftime("%Y-%m")
+                data.insert(i, [str_month, month.strftime("%B"), 0, 0, 0])
+                index[str_month] = i
+                i += 1
+
+            site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": {"$in":[project_id, int(project_id)]}, "start": 
+              { '$gte' : new_startdate.isoformat(), '$lte' : new_enddate.isoformat() }}},  { "$group" : { 
+                                "_id" :  { 
+                                  
+                                  "fs_site": "$fs_site",
+                                  "date": { "$substr": [ "$start", 0, 10 ] }
+                                },
+                             }
+                           }, { "$group": { "_id": "$_id.date", "visits": { '$sum': 1}
+                           }},
+                           {"$group": {"_id": { "$substr": [ "$_id", 0, 7 ] }, "total_sum": {'$sum': '$visits'}}}
+                           ])['result']
+
+            for visit in site_visits:
+                if visit['_id'] != "":
+                    data[index[visit['_id']]][2] = int(visit['total_sum'])
+
+            truncate_date = connection.ops.date_trunc_sql('month', 'date_created')
+            forms=Instance.objects.filter(fieldsight_instance__project_id=project_id, date_created__range=[new_startdate, new_enddate]).extra({'date_created':truncate_date})
+            forms_stats=forms.values('date_created').annotate(dcount=Count('date_created'))
+
+            for month_stat in forms_stats:
+                data[index[month_stat['date_created'].strftime("%Y-%m")]][3] = int(month_stat['dcount'])
+
+
+            forms=Instance.objects.filter(fieldsight_instance__project_id=project_id, date_created__range=[new_startdate, new_enddate]).extra({'date_created':truncate_date})
+            forms_stats=forms.values('date_created').annotate(dcount=Count('user_id', distinct=True))
+
+            for month_stat in forms_stats:
+                data[index[month_stat['date_created'].strftime("%Y-%m")]][4] = int(month_stat['dcount'])
+
+        if reportType in ["Daily", "Weekly"]:
+            data.insert(0, ["Date", "Day", "Site Visits", "Submissions", "Active Users"])
+            i=1
+            for day in rrule(DAILY, dtstart=new_startdate, until=new_enddate):
+                str_day = day.strftime("%Y-%m-%d")
+                data.insert(i, [str_day, day.strftime("%A"), 0, 0, 0])
+                index[str_day] = i
+                i += 1
+
+            site_visits = settings.MONGO_DB.instances.aggregate([{"$match":{"fs_project": {"$in":[project_id, int(project_id)]}, "start": 
+              { '$gte' : new_startdate.isoformat(), '$lte' : new_enddate.isoformat() }}},  { "$group" : { 
+                                "_id" :  { 
+                                  
+                                  "fs_site": "$fs_site",
+                                  "date": { "$substr": [ "$start", 0, 10 ] }
+                                },
+                             }
+                           }, { "$group": { "_id": "$_id.date", "visits": { '$sum': 1}
+                           }},
+                           {"$group": {"_id": { "$substr": [ "$_id", 0, 10 ] }, "total_sum": {'$sum': '$visits'}}}
+                           ])['result']
+
+            for visit in site_visits:
+                if visit['_id'] != "":
+                    data[index[visit['_id']]][2] = int(visit['total_sum'])
+
+            truncate_date = connection.ops.date_trunc_sql('day', 'date_created')
+            forms=Instance.objects.filter(fieldsight_instance__project_id=project_id, date_created__range=[new_startdate, new_enddate]).extra({'date_created':truncate_date})
+            forms_stats=forms.values('date_created').annotate(dcount=Count('date_created'))
+
+            for day_stat in forms_stats:
+                data[index[day_stat['date_created'].strftime("%Y-%m-%d")]][3] = int(day_stat['dcount'])
+
+
+            forms=Instance.objects.filter(fieldsight_instance__project_id=project_id, date_created__range=[new_startdate, new_enddate]).extra({'date_created':truncate_date})
+            forms_stats=forms.values('date_created').annotate(dcount=Count('user_id', distinct=True))
+
+            for day_stat in forms_stats:
+                data[index[day_stat['date_created'].strftime("%Y-%m-%d")]][4] = int(day_stat['dcount'])
+
+
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Site Status"
+
+        if reportType == "Weekly":
+            weekly_data = [["Week No.", "Week Start", "Week End", "Site Visits", "Submissions","Active Users"]]
+
+        weekcount = 0
+        for value in data[1:]:
+            day = datetime.datetime.strptime(value[0], "%Y-%m-%d").weekday() + 1
+            # Since start day is Monday And in Nepa we Calculate from Saturday for now.
+            if day == 7 or weekcount == 0:
+                weekcount += 1
+                weekly_data.insert(weekcount, ["Week "+ str(weekcount),"","",0,0,0])
+
+                weekly_data[weekcount][1] = value[0]
+            weekly_data[weekcount][2] = value[0]
+            weekly_data[weekcount][3] += value[2]
+            weekly_data[weekcount][4] += value[3]
+            weekly_data[weekcount][5] += value[4] 
+
+        for value in weekly_data:
+            ws.append(value)
+
+        else:
+            for value in data:
+                ws.append(value)
+
+        wb.save(buffer)
+        buffer.seek(0)
+        xls = buffer.getvalue()
+        xls_url = default_storage.save(project.name + '/xls/'+project.name+'-statistics.xls', ContentFile(xls))
+        buffer.close()
+
+        task.status = 2
+        task.file.name = xls_url
+        task.save()
+        noti = task.logs.create(source=source_user, type=32, title="Xls Project stastics Report generation in project",
+                                 recipient=source_user, content_object=task, extra_object=project,
+                                 extra_message=" <a href='"+ task.file.url +"'>Xls project statistics report</a> generation in project")
+
+    except Exception as e:
+        task.description = "ERROR: " + str(e.message) 
+        task.status = 3
+        task.save()
+        print 'Report Gen Unsuccesfull. %s' % e
+        print e.__dict__
+        noti = task.logs.create(source=source_user, type=432, title="Xls project statistics report generation in project",
+                                       content_object=project, recipient=source_user,
+                                       extra_message="@error " + u'{}'.format(e.message))
+        buffer.close()
+
+
+@shared_task(time_limit=120, soft_time_limit=120)
+def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_date):
+    # time.sleep(5)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.status = 1
+    if reportType == "Project":
+        obj=get_object_or_404(Project, pk=pk)
+    else:
+        obj=get_object_or_404(Site, pk=pk)
+
+    task.content_object = obj
+    task.save()
+
+    try: 
+        buffer = BytesIO()
+        data = []
+        index = {}
+        split_startdate = start_date.split('-')
+        split_enddate = end_date.split('-')
+
+        new_startdate = date(int(split_startdate[0]), int(split_startdate[1]), int(split_startdate[2]))
+        end = date(int(split_enddate[0]), int(split_enddate[1]), int(split_enddate[2]))
+
+        new_enddate = end + datetime.timedelta(days=1)
+        queryset = FieldSightLog.objects.select_related('source__user_profile').filter(recipient=None, date__range=[new_startdate, new_enddate]).exclude(type__in=[23, 29, 30, 32, 35])
+        
+        wb = Workbook()
+        ws = wb.active
+        ws.append(["Date", "Day and Time", "User", "Log"])
+        offset_time = source_user.user_profile.timezone.offset_time if source_user.user_profile.timezone.offset_time else "UTC +05:45"
+        
+        operator = offset_time[4]
+        time_offset = offset_time[5:]
+        hour_offset = time_offset.split(':')[0]
+        minute_offset = time_offset.split(':')[1]
+
+        if reportType == "Project":
+            ws.title = "Project Logs"
+            logs = queryset.filter(Q(project_id=pk) | (Q(content_type=ContentType.objects.get(app_label="fieldsight", model="project")) & Q(object_id=pk)))
+
+        else:
+            ws.title = "Site Logs"
+            site = Site.objects.get(pk=pk)
+            content_site = ContentType.objects.get(app_label="fieldsight", model="site")
+            project = site.project
+            query = Q(site_id=pk) | (Q(content_type=content_site) & Q(object_id=pk)) | (Q(extra_content_type=content_site) & Q(extra_object_id=pk))
+            meta_dict = {}
+            for meta in project.site_meta_attributes:
+                if meta['question_type'] == "Link" and meta['question_name'] in site.site_meta_attributes_ans:
+                    meta_site_id = Site.objects.filter(identifier=site.site_meta_attributes_ans[meta['question_name']], project_id=meta['project_id'])
+                    if meta_site_id:
+                        selected_metas = [sub_meta['question_name'] for sub_meta in meta['metas'][str(meta['project_id'])]]
+                        meta_dict[meta_site_id[0].id] = selected_metas
+
+            for key, value in meta_dict.items():
+                for item in value:
+                    query |= (Q(type=15) & Q(content_type=content_site) & Q(object_id=key) & Q(extra_json__contains='"'+item +'":'))
+
+            logs = queryset.filter(query)            
+        
+        local_log_types = log_types
+
+        for log in logs:
+            if operator == '+':
+                day_time = log.date + datetime.timedelta(hours=int(hour_offset), minutes=int(minute_offset))
+            else:
+                day_time = log.date - datetime.timedelta(hours=int(hour_offset), minutes=int(minute_offset))
+
+            day_time = day_time.strftime('%A, %-I:%-M %p')
+
+            if log.type == 15:
+                log_text, sub_log_text  = local_log_types[log.type](log)    
+                row_data = [log.date, day_time, log.source.first_name + ' ' + log.source.last_name, log_text]
+                
+                ws.append(row_data)
+                if sub_log_text:
+                    for sub_log in sub_log_text:
+                        ws.append(sub_log)
+            
+            else:                
+                log_text = local_log_types[log.type](log)
+                ws.append([log.date, day_time, log.source.first_name + ' ' + log.source.last_name, log_text])
+
+        wb.save(buffer)
+        buffer.seek(0)
+        xls = buffer.getvalue()
+        base_uri = obj.name if reportType == "Project" else obj.project.name + '/' + obj.name
+        xls_url = default_storage.save(base_uri + '/xls/'+obj.name+'-logs.xls', ContentFile(xls))
+        buffer.close()
+
+        task.status = 2
+        task.file.name = xls_url
+        task.save()
+        noti = task.logs.create(source=source_user, type=32, title="Xls "+ reportType +" Logs Report generation",
+                                 recipient=source_user, content_object=task, extra_object=obj,
+                                 extra_message=" <a href='"+ task.file.url +"'>Xls "+ reportType +" statistics report</a> generation in ")
+# user = User.objects.get(username="fsadmin")
+# exportLogs( 2143, user , 137, "Project", "2018-08-11", "2018-12-12")
+    except Exception as e:
+        task.description = "ERROR: " + str(e.message) 
+        task.status = 3
+        task.save()
+        print 'Report Gen Unsuccesfull. %s' % e
+        print e.__dict__
+        noti = task.logs.create(source=source_user, type=432, title="Xls "+ reportType +" logs report generation in ",
+                                       content_object=obj, recipient=source_user,
+                                       extra_message="@error " + u'{}'.format(e.message))
+        buffer.close()
+
+

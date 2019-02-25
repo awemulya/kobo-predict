@@ -95,10 +95,6 @@ class FSXFormSubmissionApi(XFormSubmissionApi):
                         offline_submission_site.save()
                         print("new submission")
 
-                if fs_proj_xf.is_staged and siteid:
-                    site.update_current_progress()
-                elif siteid:
-                    site.update_status()
 
                 if not FieldSightLog.objects.filter(object_id=instance.id, type=16).exists():
                     if fs_proj_xf.is_survey:

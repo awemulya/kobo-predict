@@ -1,9 +1,12 @@
 from __future__ import unicode_literals
 import datetime
 import json
+import xlwt, csv
+
 from django.shortcuts import get_object_or_404
 from django.core import serializers
 from django.contrib import messages
+from django.db import models
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -313,6 +316,7 @@ class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
 
 
 class MyProfile(LoginRequiredMixin, View):
+
     def get(self, request, pk=None):
         if not pk or pk =='0':
             profile, created = UserProfile.objects.get_or_create(user=request.user)
@@ -328,6 +332,9 @@ class MyProfile(LoginRequiredMixin, View):
             roles_project = user.user_roles.select_related('project').filter(organization__isnull = False, project__isnull = False, site__isnull = True, ended_at__isnull=True, group__name="Project Manager")
             roles_reviewer = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Reviewer", ended_at__isnull=True)
             roles_SA = user.user_roles.select_related('site').filter(organization__isnull = False, project__isnull = False, site__isnull = False, group__name="Site Supervisor", ended_at__isnull=True)
+            roles_region_supervisor = user.user_roles.select_related('region').filter(organization__isnull=False, project__isnull=False, region__isnull=False, group__name="Region Supervisor", ended_at__isnull=True)
+            roles_region_reviewer = user.user_roles.select_related('region').filter(organization__isnull=False, project__isnull=False, region__isnull=False, group__name="Region Reviewer", ended_at__isnull=True)
+
             responses = FInstance.objects.filter(submitted_by = user).order_by('-date')[:10]
             
             if request.role is not None and request.role.group.name != "Super Admin":
@@ -349,10 +356,18 @@ class MyProfile(LoginRequiredMixin, View):
                     is_super_admin = True
                 else:
                     is_super_admin = False
-            return render(request, 'users/profile.html', {'obj': profile, 'is_super_admin':is_super_admin, 'own_orgs':own_org_admin,'own_projects':own_manager_roles,'roles_org': roles_org, 'roles_project': roles_project, 'roles_site': roles_reviewer, 'roles_SA': roles_SA, 'roles_reviewer': roles_reviewer, 'responses': responses })
+            return render(request, 'users/profile.html', {'obj': profile, 'is_super_admin': is_super_admin,
+                                                          'own_orgs': own_org_admin, 'own_projects': own_manager_roles,
+                                                          'roles_org': roles_org, 'roles_project': roles_project,
+                                                          'roles_site': roles_reviewer, 'roles_SA': roles_SA,
+                                                          'roles_reviewer': roles_reviewer, 'responses': responses,
+                                                          'roles_region_reviewer': roles_region_reviewer,
+                                                          'roles_region_supervisor': roles_region_supervisor
+                                                          })
 
 
 class EndUserRole(EndRoleMixin, View):
+
     def get(self, request, pk):
         userrole=UserRole.objects.get(pk=pk)
         userrole.ended_at = datetime.datetime.now()
@@ -392,7 +407,7 @@ def web_authenticate(username=None, password=None):
 def web_login(request):
     reset = request.GET.get('reset')
     if request.user.is_authenticated():
-        return redirect('/')
+        return redirect('dashboard')
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -407,7 +422,7 @@ def web_login(request):
                     return render(request, 'users/login.html',
                                   {'form': form,
                                    'email_error': "Your Account is Deactivated, Please Contact Administrator.",
-                                   'valid_email': valid_email, 
+                                   'valid_email': valid_email,
                                    'login_username':username
                                    })
             else:
@@ -419,9 +434,9 @@ def web_login(request):
                     email_error = "Invalid Email, Please Check your Email Address."
                 return render(request, 'users/login.html',
                               {'form': form,
-                               'valid_email': valid_email, 
-                               'email_error': email_error, 
-                               'password_error': password_error, 
+                               'valid_email': valid_email,
+                               'email_error': email_error,
+                               'password_error': password_error,
                                'login_username':username
                                })
         else:
@@ -430,16 +445,16 @@ def web_login(request):
             else:
                 login_username = ''
             return render(request, 'users/login.html', {
-                'form': form , 
+                'form': form ,
                 'valid_email': False,
-                'email_error': "Your Email and Password Didnot Match.", 
+                'email_error': "Your Email and Password Didnot Match.",
                 'login_username':login_username,
                 })
     else:
         form = LoginForm()
 
-    return render(request, 'users/login.html', {'form': form, 
-    'valid_email': True, 
+    return render(request, 'users/login.html', {'form': form,
+    'valid_email': True,
     'email_error': False,
     'reset':reset
     })
@@ -475,10 +490,10 @@ def web_signup(request):
             )
             email.send()
             return render(request, 'users/login.html', {
-                'signup_form':signup_form, 
-                'valid_email':True, 
-                'email_error':False, 
-                'success_signup':1, 
+                'signup_form':signup_form,
+                'valid_email':True,
+                'email_error':False,
+                'success_signup':1,
                 'email':to_email,
                 })
 
@@ -495,19 +510,19 @@ def web_signup(request):
             last_name = request.POST.get('last_name')
             email = request.POST.get('email')
             return render(request, 'users/login.html', {
-                'signup_form':signup_form, 
+                'signup_form':signup_form,
                 'username':username,
                 'email':email,
-                'valid_email': True, 
+                'valid_email': True,
                 'email_error':False,
                 'signup_tab': 1,
                 'success_signup':0,
                 })
     else:
         signup_form = SignUpForm()
-        return render(request, 'users/login.html', {'signup_form':signup_form, 
-        'valid_email':True, 
-        'email_error': False, 
+        return render(request, 'users/login.html', {'signup_form':signup_form,
+        'valid_email':True,
+        'email_error': False,
         'success_signup':0})
 
 
@@ -521,110 +536,6 @@ def create_role(request):
 
     return HttpResponseRedirect('/fieldsight/myroles/')
 
-
-def send_request_for_organization(request, org_id):
-    org = get_object_or_404(Organization, id=org_id)
-    admin_email_list = org.organization_roles.filter(
-            group__name="Organization Admin"
-        ).values_list('user__email', flat=True)
-
-    user = request.user
-    mail_subject = 'Requesting for Organization Admin.'
-    current_site = get_current_site(request)
-    message = render_to_string('users/accept_reject_org_admin.html', {
-        'sender': user,
-        'domain': current_site.domain,
-        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-        'org_id': org_id,
-        'token': account_activation_token.make_token(user),
-    })
-    email = EmailMessage(
-        mail_subject, message, to=admin_email_list
-    )
-    email.send()
-    return HttpResponse('Your request to {} has been successfully send to Admin.'.format(org.name))
-
-
-def request_organization(request, sender, org_id):
-    organization_id = get_object_or_404(Organization, id=org_id).id
-
-    # if request.roles.filter(organization_id=organization_id, group_id=1):
-    #     return HttpResponse('Already activated')
-    # else:
-    user = get_object_or_404(User, username=sender)
-    obj = RequestOrganizationStatus.objects.filter(to_user=user, organization_id=organization_id, is_approve=False).exists()
-    if obj:
-        obj = RequestOrganizationStatus.objects.get(to_user=user, organization_id=organization_id)
-        return render(request, 'fieldsight/organization_activation.html', {'obj': obj})
-
-    if user.user_roles.all()[0].group.name == "Organization Admin":
-        return HttpResponse("Already activated")
-
-    else:
-        user_role = request.roles.filter(organization_id=organization_id, group_id=1)
-        if user_role:
-            if request.group.name == "Super Admin" or request.group.name == "Organization Admin":
-                org = get_object_or_404(Organization, id=org_id)
-                sender = get_object_or_404(User, username=sender)
-                return render(request, 'fieldsight/organization_activation.html', {'org': org, 'sender': sender})
-            else:
-                return HttpResponse('Already activated')
-        else:
-            raise PermissionDenied()
-
-
-def approve_organization(request, username, org_id):
-    user = get_object_or_404(User, username=username)
-    org = get_object_or_404(Organization, id=org_id)
-
-    if user.user_roles.all()[0].group.name == "Unassigned":
-        previous_group = UserRole.objects.get(user=user, group__name="Unassigned")
-        previous_group.delete()
-
-        new_group = Group.objects.get(name="Organization Admin")
-        UserRole.objects.create(user=user, group=new_group, organization_id=org.id)
-
-        RequestOrganizationStatus.objects.create(by_user=request.user, to_user=user, organization_id=org.id, is_approve=True)
-        mail_subject = 'Approved in Requesting for Organization Admin.'
-
-        current_site = get_current_site(request)
-        message = render_to_string('users/approved_requested_org_email.html', {
-            'sender': request.user,
-            'domain': current_site.domain,
-            'org': org,
-        })
-        email = EmailMessage(
-            mail_subject, message, to=[user.email]
-        )
-        email.send()
-        return HttpResponse('Approved successfully')
-    else:
-        return HttpResponse('Already activated')
-
-
-def deny_organization(request, org_id, username):
-    denied_to = get_object_or_404(User, username=username)
-    denied_by = request.user
-    org = get_object_or_404(Organization, id=org_id)
-    RequestOrganizationStatus.objects.create(by_user=denied_by, to_user=denied_to, organization_id=org.id)
-
-    mail_subject = 'Denied in Requesting for Organization Admin.'
-
-    current_site = get_current_site(request)
-    message = render_to_string('users/denied_requested_org_email.html', {
-        'denied_by': denied_by,
-        'denied_to': denied_to,
-        'domain': current_site.domain,
-        'org': org,
-    })
-    email = EmailMessage(
-        mail_subject, message, to=[denied_to.email]
-    )
-    email.send()
-
-    return HttpResponse('Denied Successfully')
-
-
 def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
@@ -636,7 +547,30 @@ def activate(request, uidb64, token):
         user.save()
         user.backend = 'django.contrib.auth.backends.ModelBackend'
         login(request, user)
-                
+
         return redirect(reverse_lazy('users:create_profile'))
     else:
         return HttpResponse('Activation link is invalid!')
+
+
+def export_users_xls(request):
+    import sys
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="FieldsightUsers.csv"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['First Name', 'Last Name', 'Username', 'Email', 'Organization'])
+    users = User.objects.all()
+    for u in users:
+        org = u.user_roles.all().values('organization__name').distinct()
+        org_list = []
+        for i in org:
+            org_list.append(i['organization__name'])
+
+        writer.writerow([u.first_name, u.last_name, u.username, u.email, org_list])
+
+    return response

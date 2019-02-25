@@ -21,11 +21,12 @@ from xml.dom import Node
 
 from onadata.apps.fieldsight.models import Site, Project, Organization
 from onadata.apps.fsforms.fieldsight_models import IntegerRangeField
-from onadata.apps.fsforms.utils import send_message, send_message_project_form
+from onadata.apps.fsforms.utils import send_message, send_message_project_form, check_version
 from onadata.apps.logger.models import XForm, Instance
 from onadata.apps.logger.xform_instance_parser import clean_and_parse_xml
 from onadata.apps.viewer.models import ParsedInstance
 from onadata.apps.fsforms.fsxform_responses import get_instances_for_field_sight_form
+from onadata.settings.local_settings import XML_VERSION_MAX_ITER
 
 #To get domain to give complete url for app devs to make them easier.
 from django.contrib.sites.models import Site as DjangoSite
@@ -440,27 +441,16 @@ class FInstance(models.Model):
 
     @property
     def get_version(self):
-        import re
-        p = re.compile('<__version__>(.*)</__version__>')
-        m = p.search(self.instance.xml)
-        if m:
-            return m.group(1)
-        p1 = re.compile('<_version_>(.*)</_version_>')
-        m1 = p1.search(self.instance.xml)
-        if m1:
-            return m1.group(1)
-        return None
-
-    def set_version(self):
-        import re
-        p = re.compile('<__version__>(.*)</__version__>')
-        m = p.search(self.instance.xml)
-        if m:
-            self.version = m.group(1)
-            self.save()
+        return self.instance.json['__version__']
 
     def save(self, *args, **kwargs):
         self.version = self.get_version
+        if self.project_fxf is not None and self.project_fxf.is_staged and self.site is not None:
+            self.site.update_current_progress()
+        
+        elif self.site is not None:
+            self.site.update_status()
+
         if self.form_status is None:
             if self.site_fxf:
                 self.form_status = self.site_fxf.default_submission_status
@@ -807,10 +797,51 @@ class XformHistory(models.Model):
     @property
     def get_version(self):
         import re
+        n = XML_VERSION_MAX_ITER
+        xml = self.xml
         p = re.compile('version="(.*)">')
-        m = p.search(self.xml)
+        m = p.search(xml)
         if m:
             return m.group(1)
+        
+        version = check_version(xml)
+        
+        if version:
+            return version
+        
+        else:
+            p = re.compile("""<bind calculate="\'(.*)\'" nodeset="/(.*)/_version_" """)
+            m = p.search(xml)
+            if m:
+                return m.group(1)
+            
+            p1 = re.compile("""<bind calculate="(.*)" nodeset="/(.*)/_version_" """)
+            m1 = p.search(xml)
+            if m1:
+                return m1.group(1)
+            
+            p1 = re.compile("""<bind calculate="\'(.*)\'" nodeset="/(.*)/__version__" """)
+            m1 = p1.search(xml)
+            if m1:
+                return m1.group(1)
+            
+            p1 = re.compile("""<bind calculate="(.*)" nodeset="/(.*)/__version__" """)
+            m1 = p1.search(xml)
+            if m1:
+                return m1.group(1)
+        return None
+
+    def check_version(xml, n):
+        for i in range(n, 0, -1):
+            p = re.compile("""<bind calculate="\'(.*)\'" nodeset="/(.*)/_version__00{0}" """.format(i))
+            m = p.search(xml)
+            if m:
+                return m.group(1)
+            
+            p = re.compile("""<bind calculate="(.*)" nodeset="/(.*)/_version__00{0}" """.format(i))
+            m1 = p.search(xml)
+            if m1:
+                return m1.group(1)
         return None
 
     def save(self, *args, **kwargs):

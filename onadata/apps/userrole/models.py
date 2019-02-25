@@ -6,14 +6,14 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from onadata.apps.fieldsight.models import Site, Project, Organization
+from onadata.apps.fieldsight.models import Site, Project, Organization, Region
 from onadata.apps.staff.models import StaffProject
-
 
 
 class UserRole(models.Model):
@@ -25,6 +25,8 @@ class UserRole(models.Model):
     project = models.ForeignKey(Project, null=True, blank=True, related_name='project_roles')
     organization = models.ForeignKey(Organization, null=True, blank=True, related_name='organization_roles')
     staff_project = models.ForeignKey(StaffProject, null=True, blank=True, related_name='staff_project_roles')
+    region = models.ForeignKey(Region, null=True, blank=True, related_name='region_roles')
+
     logs = GenericRelation('eventlog.FieldSightLog')
 
     def __unicode__(self):
@@ -34,6 +36,7 @@ class UserRole(models.Model):
         return dict(
             user = self.user.get_full_name(), email = self.user.email
             )
+
     def getname(self):
         return str("role")
 
@@ -58,7 +61,13 @@ class UserRole(models.Model):
             raise ValidationError({
                 'organization': ValidationError(_('Missing Organization.'), code='required'),
             })
-        if  self.user and UserRole.objects.filter(user=self.user, group=self.group, project=self.project, site=self.site).exists():
+
+        if self.group.name in ['Region Supervisor', 'Region Reviewer'] and not self.region_id:
+            raise ValidationError({
+                'region': ValidationError(_('Missing Region.'), code='required'),
+            })
+
+        if self.user and UserRole.objects.filter(user=self.user, group=self.group, project=self.project, site=self.site).exists():
             raise ValidationError({
                 'user': ValidationError(_('User Role Already Exists.')),
             })
@@ -68,26 +77,36 @@ class UserRole(models.Model):
             self.organization = None
             self.project = None
             self.site = None
+            self.region = None
+
         elif self.group.name == 'Organization Admin':
             self.project = None
             self.site = None
+            self.region = None
+
         elif self.group.name == 'Project Manager':
             self.site = None
+            self.region = None
             self.organization = self.project.organization
 
         elif self.group.name == 'Project Doner':
             self.site = None
+            self.region = None
             self.organization = self.project.organization
 
         elif self.group.name in ['Site Supervisor', 'Reviewer']:
             self.project = self.site.project
             self.organization = self.site.project.organization
 
+        # elif self.group.name in ['Region Supervisor', 'Region Reviewer']:
+        #     self.project = self.region.project
+        #     self.organization = self.region.project.organization
+
         elif self.group.name == 'Staff Project Manager':
             self.organization = None
             self.project = None
             self.site = None
-
+            self.region = None
 
         super(UserRole, self).save(*args, **kwargs)
 
@@ -96,17 +115,25 @@ class UserRole(models.Model):
             self.organization = None
             self.project = None
             self.site = None
+            self.region = None
+
         elif self.group.name == 'Organization Admin':
             self.project = None
             self.site = None
+            self.region = None
+
         elif self.group.name == 'Project Manager':
             self.site = None
+            self.region = None
             self.organization = self.project.organization
 
         elif self.group.name in ['Site Supervisor', 'Reviewer']:
             self.project = self.site.project
             self.organization = self.site.project.organization
 
+        # elif self.group.name in ['Region Supervisor', 'Region Reviewer']:
+        #     self.project = self.region.project
+        #     self.organization = self.region.project.organization
 
         super(UserRole, self).update(*args, **kwargs)
 
@@ -129,7 +156,8 @@ class UserRole(models.Model):
 
     @staticmethod
     def get_active_site_roles_exists(user):
-        return UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor", site__isnull=False, site__is_active=True).exists()
+        return UserRole.objects.filter(user=user, ended_at=None).filter(Q(group__name="Site Supervisor", site__isnull=False, site__is_active=True)|
+                                                                        Q(group__name="Region Supervisor", region__is_active=True)).exists()
 
     @staticmethod
     def get_roles_supervisor(user, project_id):

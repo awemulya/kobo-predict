@@ -56,18 +56,18 @@ from .views import (
     RegionListView,
     UserListView, site_images, FilterUserView, UploadSitesView, BluePrintsView, add_project_role, ManagePeopleSiteView,
     ManagePeopleProjectView, ManagePeopleOrganizationView, SiteSurveyListView, ajax_upload_sites, ajax_save_site,
-    ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList, SitesTypeView, AddSitesTypeView,
-    senduserinvite, ActivateRole, checkemailforinvite, ProjectSummaryReport, SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView,
-    StageStatus, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
-    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView, DonorProjSiteList, response_export, FormlistAPI,
-    GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages,
-    SiteSearchView, ProjectDashboardStageResponsesStatus, GeoJSONContent, DonorFullMap, ProjectSiteListGeoJSON,
-    SiteBulkEditView, site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite,
-    municipality_data, FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI, SiteSearchLiteView, RequestOrganizationSearchView
+    ajax_save_project, RolesView, OrgProjectList, OrgUserList, ProjUserList, SiteUserList, ProjSiteList, OrgSiteList,
+    SitesTypeView, AddSitesTypeView, senduserinvite, ActivateRole, checkemailforinvite, ProjectSummaryReport,
+    SiteSummaryReport, MultiUserAssignSiteView, MultiUserAssignProjectView, sendmultiroleuserinvite,
+    project_html_export, RegionalSitelist, RegionalSiteCreateView, MultiUserAssignRegionView, DefineProjectSiteMeta,
+    SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView,
+    DonorProjSiteList, response_export, FormlistAPI, GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates,
+    DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages, SiteSearchView,
+    ProjectDashboardStageResponsesStatus, GeoJSONContent, DonorFullMap, ProjectSiteListGeoJSON, SiteBulkEditView,
+    site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data,
+    FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI, SiteSearchLiteView, AssignUsersToRegionsView)
 
-)
 
-    
 
 from onadata.apps.geo.views import (
     GeoLayersView,
@@ -128,7 +128,6 @@ urlpatterns = [
     url(r'^api/async_save_site/$', csrf_exempt(ajax_save_site)),
     url(r'^project/delete/(?P<pk>\d+)/$', ProjectDeleteView.as_view(), name='project-delete'),
     url(r'^project/alter-status/(?P<pk>\d+)/$', alter_proj_status, name='alter_proj_status'),
-    url(r'^project/stages_status_report/(?P<pk>\d+)/$', StageStatus.as_view(), name='download-stages'),
     url(r'^project/add-proj-manager/(?P<pk>\d+)/$', add_proj_manager, name='add_proj_manager'),
     url(r'^project/add-role/(?P<pk>\d+)/$', add_project_role, name='add_project_staffs'),
     url(r'^api/project-sites/(?P<pk>\d+)/$', SiteViewSet.as_view({'get': 'list'}), name='project_sites'),
@@ -140,7 +139,7 @@ urlpatterns = [
     url(r'^api/sites/$', AllSiteViewSet.as_view({'get': 'list'}), name='sites-list'),
     url(r'^api/project-types/$', ProjectTypeViewset.as_view({'get': 'list'})),
 
-    url(r'^api/site-types/(?P<pk>\d+)/$', SiteTypeViewset.as_view({'get': 'list'})),
+    url(r'^api/site-types/(?P<pk>\d+)/$', SiteTypeViewset.as_view({'get': 'list'}), name='project_site_types_api'),
     url(r'^api/site-types/$', SiteTypeViewset.as_view({'get': 'list', 'post':'create'})),
 
     url(r'^api/survey-sites/(?P<pk>\d+)/$', SiteCreationSurveyViewSet.as_view({'get': 'list'}), name='sites-list'),
@@ -172,7 +171,7 @@ urlpatterns = [
 
     url(r'^accounts/create/$', CreateUserView.as_view(form_class=RegistrationForm), name='user-create'),
     url(r'^userlist/$', UserListView.as_view(), name='user-list'),
-    url(r'^filter-users/$', FilterUserView.as_view(), name='filter-users'),
+    url(r'sendmultiusermultilevelinvite^filter-users/$', FilterUserView.as_view(), name='filter-users'),
     url(r'fcm/v1/devices/$', DeviceViewSet.as_view({'get': 'list'})),
     url(r'fcm/add/', FcmDeviceViewSet.as_view({'post': 'create'})),
     url(r'fcm/logout/', FcmDeviceViewSet.as_view({'post': 'inactivate'})),
@@ -227,6 +226,7 @@ urlpatterns = [
     url(r'^site/add/(?P<pk>[0-9]+)/(?P<region_pk>[0-9]+)/', RegionalSiteCreateView.as_view(), name='regional-site-add'),
 
     url(r'^multi-user-assign-region/(?P<pk>\d+)/$', MultiUserAssignRegionView.as_view(), name='multi_user_region_assign'),
+    url(r'^assign-users-to-regions/(?P<pk>\d+)/$', AssignUsersToRegionsView.as_view(), name='assign_regional_users'),
 
     url(r'^search-org-user/(?P<pk>\d+)/$', OrganizationUserSearchView.as_view(), name='search-org-user'),
     url(r'^search-proj-user/(?P<pk>\d+)/$', ProjectUserSearchView.as_view(), name='search-proj-user'),

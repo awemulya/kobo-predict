@@ -77,7 +77,10 @@ class UserRoleViewSet(viewsets.ModelViewSet):
             group = Group.objects.get(name=data.get('group'))
             for user in data.get('users'):
                 if level == "0":
+
+
                     site = Site.objects.get(pk=self.kwargs.get('pk'))
+
                     role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
                                                                    project__id=site.project.id, organization__id=site.project.organization_id, group=group, ended_at=None)
 
@@ -107,6 +110,7 @@ class UserRoleViewSet(viewsets.ModelViewSet):
                     #     except:
                     #         pass
                 elif level == "1":
+
                     project = Project.objects.get(pk=self.kwargs.get('pk'))
                     role, created = UserRole.objects.get_or_create(user_id=user, organization_id=project.organization_id,
                                                                    project_id=self.kwargs.get('pk'), site_id=None,

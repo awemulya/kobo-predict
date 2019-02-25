@@ -1,12 +1,12 @@
-About
------
-FieldSight is the first humanitarian digital platform designed for project monitoring and infrastructure quality assurance. Developed iteratively over 2 years, the platform is now being used to monitor more than 50,000 houses, WASH sites, schools, police stations, and other infrastructure. Built to work on mobile devices and in remote and difficult-to-access locations, FieldSight creates actionable data and interfaces that help partners deliver higher-quality, lower-risk projects.
------
+*****
+FieldSight
+*****
+FieldSight is a platform, built on top of  `KoBoToolbox <https://fieldsight.org>`_.It enables field-based staff to collect information and communicate directly with project managers and engineers to track construction progress in real-time and identify and fix errors as they occur. Designed to work off-line and at scale, FieldSight is specifically targeted for humanitarian and development projects.
 
-fieldsight is the data collection platform used in Fieldsight which is a branch-development of the Kobocat.
-It is based on the excellent `onadata <http://github.com/onaio/onadata>`_ platform developed by Ona LLC, which in itself is a redevelopment of the `formhub <http://github.com/SEL-Columbia/formhub>`_ platform developed by the Sustainable Engineering Lab at Columbia University.
-
-
+*****
+Learn more about FieldSight
+*****
+FieldSight website: `https://fieldsight.org <https://fieldsight.org>`_
 
 Code Structure
 --------------

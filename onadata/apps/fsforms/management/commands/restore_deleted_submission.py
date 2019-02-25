@@ -20,7 +20,7 @@ class Command(BaseCommand):
             FInstance.deleted_objects.filter(instance_id__in=submission_id).update(is_deleted=False)
             Instance.objects.filter(id__in=submission_id).update(deleted_at=None)
 
-            # Also update in mongo from mongo shell ' db.instances.update( {_id: {$in: <submission_id_lis>}},{$unset:{'_deleted_at':1}})'
+            # Also update in mongo from mongo shell ' db.instances.update( {_id: {$in: <submission_id_list>}},{$unset:{'_deleted_at':1}}, {multi:true})'
 
             self.stdout.write('Successfully restore deleted submission "%s"' % submission_id)
 

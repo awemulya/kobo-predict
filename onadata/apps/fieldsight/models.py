@@ -303,18 +303,45 @@ class Region(models.Model):
     class Meta:
         unique_together = [('identifier', 'project'), ]
 
+    # def get_sites_count(self):
+    #
+    #     site_count = self.regions.all().count()
+    #     if self.children.all().count() > 0:
+    #         sub_site_count = 0
+    #         for child in self.children.all():
+    #             sub_site_count += child.get_sites_count()
+    #         return sub_site_count + site_count
+    #     else:
+    #         return site_count
+
+    def getname(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('fieldsight:regional-sites', kwargs={'pk': self.project.pk, 'region_id': self.pk})
+
     def get_sites_count(self):
-        site_count = self.regions.all().count()
-        if self.children.all().count() > 0:
-            sub_site_count = 0
-            for child in self.children.all():
-                sub_site_count += child.get_sites_count()
-            return sub_site_count + site_count
-        else:
-            return site_count
+        return Site.objects.filter(
+            Q(region_id=self.id) | Q(region_id__parent=self.id) | Q(
+                region_id__parent__parent=self.id)).select_related('region', 'project', 'type', 'project__type',
+                                                                          'project__organization').count()
+
+    def get_sites(self):
+        return Site.objects.filter(
+            Q(region_id=self.id) | Q(region_id__parent=self.id) | Q(
+                region_id__parent__parent=self.id)).select_related('region', 'project', 'type', 'project__type',
+                                                                   'project__organization').values_list('name', flat=True)
+
+    def get_sites_id(self):
+        return Site.objects.filter(
+            Q(region_id=self.id) | Q(region_id__parent=self.id) | Q(
+                region_id__parent__parent=self.id)).select_related('region', 'project', 'type', 'project__type',
+                                                                   'project__organization').values_list('id',
+                                                                                                        flat=True)
 
     def get_concat_identifier(self):       
         return self.identifier + "_"
+
 
 class SiteType(models.Model):
     identifier = models.IntegerField("ID")
@@ -366,7 +393,7 @@ class Site(models.Model):
 
     class Meta:
         ordering = ['-is_active', '-id']
-        unique_together = [('identifier', 'project'), ]
+        unique_together = [('identifier', 'project', 'is_active'), ]
 
     @property
     def latitude(self):
@@ -552,6 +579,7 @@ class UserInvite(models.Model):
     group = models.ForeignKey(Group)
     site = models.ManyToManyField(Site, related_name='invite_site_roles')
     project = models.ManyToManyField(Project, related_name='invite_project_roles')
+    regions = models.ManyToManyField(Region, related_name='invite_region_roles')
     organization = models.ForeignKey(Organization, related_name='invite_organization_roles')
     logs = GenericRelation('eventlog.FieldSightLog')
 

@@ -144,6 +144,85 @@
 								</div>
 							</div>
 							{% endif %}
+
+							{% if roles_region_supervisor %}
+							<div class="widget-info margin-top bg-white padding">
+								<div class="widget-head">
+									<h4>{% trans 'Region Supervisor At :' %}</h4>
+								</div>
+								<div class="widget-body">
+									<div class="max-260-scroll">
+										<div class="row">
+											{% for role in roles_region_supervisor %}
+
+											<div class="col-lg-12 col-md-12 margin-top">
+												<a href="{% url 'fieldsight:regional-sites' role.region.project.id role.region.pk %}" title="">
+												<div class="project-item-wrap clearfix">
+													<div class="project-logo">
+														<img src="{% static 'dummy/assets/img/default_image.png' %}" alt="" width="50" height="50">
+													</div>
+													<div class="project-basic-info">
+														<h4>{{ role.region.name }}</h4>
+														<p>{{ role.region.identifier }}</p>
+														<p>Total Sites: {{ role.region.get_sites_count }}</p>
+
+
+													</div>
+														{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
+
+														<a class="btn btn-xs btn-sm btn-action btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}"><i class="la la-close"></i> Remove</a>
+
+														{% endif %}
+												</div>
+												</a>
+											</div>
+
+											{% endfor %}
+										</div>
+									</div>
+								</div>
+							</div>
+							{% endif %}
+
+							{% if roles_region_reviewer %}
+							<div class="widget-info margin-top bg-white padding">
+								<div class="widget-head">
+									<h4>{% trans 'Region Reviewer At :' %}</h4>
+								</div>
+								<div class="widget-body">
+									<div class="max-260-scroll">
+										<div class="row">
+											{% for role in roles_region_reviewer %}
+
+											<div class="col-lg-12 col-md-12 margin-top">
+												<a href="{% url 'fieldsight:regional-sites' role.region.project.id role.region.pk %}" title="">
+												<div class="project-item-wrap clearfix">
+													<div class="project-logo">
+														<img src="{% static 'dummy/assets/img/default_image.png' %}" alt="" width="50" height="50">
+													</div>
+													<div class="project-basic-info">
+														<h4>{{ role.region.name }}</h4>
+														<p>{{ role.region.identifier }}</p>
+														<p>Total Sites: {{ role.region.get_sites_count }}</p>
+
+
+													</div>
+														{% if role.organization_id in own_orgs or role.project_id in own_projects or is_super_admin %}
+
+														<a class="btn btn-xs btn-sm btn-action btn-danger" href="{% url 'users:end_user_role' role.pk %}?next={{ request.path|urlencode }}"><i class="la la-close"></i> Remove</a>
+
+														{% endif %}
+												</div>
+												</a>
+											</div>
+
+											{% endfor %}
+										</div>
+									</div>
+								</div>
+							</div>
+							{% endif %}
+
 							{% if roles_reviewer %}
 							<div class="widget-info margin-top bg-white padding">
 								<div class="widget-head">

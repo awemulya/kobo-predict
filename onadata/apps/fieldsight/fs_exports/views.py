@@ -9,7 +9,8 @@ from django.views.generic import TemplateView, View
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
-from onadata.apps.fieldsight.tasks import importSites, exportProjectSiteResponses, generateSiteDetailsXls, site_download_zipfile
+from onadata.apps.fieldsight.tasks import importSites, exportProjectSiteResponses, generateSiteDetailsXls, site_download_zipfile, exportProjectstatistics, exportLogs, generate_stage_status_report
+
 from django.http import HttpResponse
 from rest_framework import status
 from onadata.apps.fsforms.models import FieldSightXF, FInstance, Stage
@@ -34,11 +35,55 @@ class ImageZipSites(View):
         elif size_code == '2':
             size = "-large"
         task_obj=CeleryTaskProgress.objects.create(user=user, content_object=site, task_type=6)
+        
         if task_obj:
             task = site_download_zipfile.delay(task_obj.pk, size)
             task_obj.task_id = task.id
             task_obj.save()
             status, data = 200, {'status':'true','message':'Sucess, the Zip file is being generated. You will be notified after the file is generated.'}
+        else:
+            status, data = 401, {'status':'false','message':'Error occured please try again.'}
+        return JsonResponse(data, status=status)
+
+
+
+class ProjectStatsticsReport(View):
+    def post(self, *args, **kwargs):
+        user = self.request.user
+        data = json.loads(self.request.body)
+        reportType = data.get('type')
+        start_date = data.get('startdate')
+        end_date = data.get('enddate')
+        project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
+        
+        task_obj=CeleryTaskProgress.objects.create(user=user, content_object=project, task_type=11)
+        if task_obj:
+            task = exportProjectstatistics.delay(task_obj.pk, user, self.kwargs.get('pk'), reportType, start_date, end_date)
+            task_obj.task_id = task.id
+            task_obj.save()
+            status, data = 200, {'status':'true','message':'Sucess, the report is being generated. You will be notified after the report is generated.'}
+        else:
+            status, data = 401, {'status':'false','message':'Error occured please try again.'}
+        return JsonResponse(data, status=status)
+
+class LogsReport(View):
+    def post(self, *args, **kwargs):
+        user = self.request.user
+        data = json.loads(self.request.body)
+        reportType = data.get('type')
+        start_date = data.get('startdate')
+        end_date = data.get('enddate')
+        if reportType == "Project":
+            obj = get_object_or_404(Project, pk=self.kwargs.get('pk'))
+        else:
+            obj = get_object_or_404(Site, pk=self.kwargs.get('pk'))
+        
+        task_obj=CeleryTaskProgress.objects.create(user=user, content_object=obj, task_type=12)
+        if task_obj:
+            task = exportLogs.delay(task_obj.pk, user, self.kwargs.get('pk'), reportType, start_date, end_date)
+            task_obj.task_id = task.id
+            task_obj.save()
+            status, data = 200, {'status':'true','message':'Sucess, the report is being generated. You will be notified after the report is generated.'}
         else:
             status, data = 401, {'status':'false','message':'Error occured please try again.'}
         return JsonResponse(data, status=status)
@@ -159,6 +204,42 @@ class ExportProjectSitesWithRefs(DonorRoleMixin, View):
             status, data = 401, {'status':'false','message':'Error occured please try again.'}
         return JsonResponse(data, status=status)
 
+
+    def post(self, *args, **kwargs):
+        source_user = self.request.user   
+        project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
+        content_type = ContentType.objects.get(model='project', app_label='fieldsight')
+        data = json.loads(self.request.body)
+        site_type_ids = data.get('siteTypes', None)
+        region_ids = data.get('regions', None)
+
+        task_obj = CeleryTaskProgress.objects.create(user=source_user, content_object=project, task_type=8)
+        if task_obj:
+            task = generateSiteDetailsXls.delay(task_obj.pk, source_user, self.kwargs.get('pk'), region_ids, site_type_ids)
+            task_obj.task_id = task.id
+            task_obj.save()
+            status, data = 200, {'status':'true','message':'The sites details xls file is being generated. You will be notified after the file is generated.'}
+        else:
+            status, data = 401, {'status':'false','message':'Error occured please try again.'}
+        return JsonResponse(data, status=status)
+
+class StageStatus(DonorRoleMixin, View):
+    def post(self, request, *args, **kwargs):
+        obj = get_object_or_404(Project, pk=self.kwargs.get('pk'), is_active=True)
+        user = request.user
+        data = json.loads(self.request.body)
+        site_type_ids = data.get('siteTypes', None)
+        region_ids = data.get('regions', None)
+
+        task_obj=CeleryTaskProgress.objects.create(user=user, task_type=10, content_object = obj)
+        if task_obj:
+            task = generate_stage_status_report.delay(task_obj.pk, obj.id, site_type_ids, region_ids)
+            task_obj.task_id = task.id
+            task_obj.save()
+            data = {'status':'true','message':'Progress report is being generated. You will be notified upon completion. (It may take more time depending upon number of sites and submissions.)'}
+        else:
+            data = {'status':'false','message':'Report cannot be generated a the moment.'}
+        return JsonResponse(data, status=200)
 
 class CloneProjectSites(ProjectRoleMixin, View):
     def post(self, *args, **kwargs):

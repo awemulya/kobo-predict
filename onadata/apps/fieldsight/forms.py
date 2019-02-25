@@ -243,9 +243,14 @@ class ProjectForm(forms.ModelForm):
         super(ProjectForm, self).__init__(*args, **kwargs)
 
         if not self.fields['location'].initial:
-            self.fields['location'].initial = Point(85.3240, 27.7172,srid=4326)
+            self.fields['location'].initial = Point(85.3240, 27.7172, srid=4326)
         self.fields['type'].empty_label = None
-        self.fields['cluster_sites'].label = "Do you want to cluster sites in this Project?"
+        if self.instance.cluster_sites:
+            self.fields.pop('cluster_sites')
+
+        else:
+            self.fields['cluster_sites'].label = "Do you want to cluster sites in this Project?"
+
         #self.fields['organization'].empty_label = None
 
         if not is_new:
@@ -449,7 +454,7 @@ class SiteBulkEditForm(forms.Form):
 
         self.fields['sites'] = forms.ModelMultipleChoiceField(
             widget=forms.CheckboxSelectMultiple,
-            queryset=project.sites.all(),
+            queryset=project.sites.filter(is_active=True),
         )
 
         for attr in project.site_meta_attributes:

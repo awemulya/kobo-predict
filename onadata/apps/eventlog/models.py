@@ -14,7 +14,7 @@ from django.dispatch import receiver
 from jsonfield import JSONField
 
 
-from onadata.apps.fieldsight.models import Organization, Project, Site
+from onadata.apps.fieldsight.models import Organization, Project, Site, Region
 from onadata.apps.users.models import UserProfile
 from django.http import JsonResponse
 from celery.result import AsyncResult
@@ -62,6 +62,10 @@ class FieldSightLog(models.Model):
         (34, 'Delete form sucessful.'),
         (35, 'Remove roles.'),
         (36, 'Delete project/site/org/ .. etc.'),
+        (37, 'User was added as Region Reviewer of Region Name by Invitor Full Name.'),
+        (38, 'User was added as Region Supervisor of Region Name by Invitor Full Name.'),
+        (39, 'User was added as Region Reviewer in count regions of project by Invitor Full Name.'),
+        (40, 'User was added as Region Supervisor in count regions of project by Invitor Full Name.'),
         (412, 'Bulk upload of number + sites in Project Name failed.'),
         (421, 'User assign unsuccessful in organization.'),
         (422, 'User assign unsucessfull in project.'),
@@ -88,11 +92,14 @@ class FieldSightLog(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
+    event_name = models.CharField(max_length=255, blank=True)
+    event_url = models.CharField(max_length=500, blank=True)
 
     extra_content_type = models.ForeignKey(ContentType, related_name='notify_object', blank=True, null=True)
     extra_object_id = models.CharField(max_length=255, blank=True, null=True)
     extra_object = GenericForeignKey('extra_content_type', 'extra_object_id')
-    
+    extra_obj_name = models.CharField(max_length=255, blank=True)    
+    extra_obj_url = models.CharField(max_length=500, blank=True)
 
     class Meta:
         get_latest_by = "-date"
@@ -163,6 +170,14 @@ class FieldSightLog(models.Model):
     def __str__(self):
         return str(self.get_type_display())
 
+    def save(self, *args, **kwargs):
+        self.event_name = self.get_event_name()
+        self.event_url = self.get_event_url()
+        if self.extra_object:
+            self.extra_obj_name = self.get_extraobj_name()
+            self.extra_obj_url = self.get_extraobj_url()
+
+        super(FieldSightLog, self).save(*args, **kwargs)  # Call the "real" save() method.
 
 class FieldSightMessage(models.Model):
     sender = models.ForeignKey(User, related_name="sender")
@@ -205,8 +220,11 @@ class CeleryTaskProgress(models.Model):
         (8, 'Site Data Export'),
         (9, 'Response Pdf Report'),
         (10, 'Site Progress Xls Report'),
+        (11, 'Project Statstics Report'),
+        (12, 'Log Report'),
+        (13, 'User Assign to Region'),
 
-        )
+    )
     task_id = models.CharField(max_length=255, blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
     date_updateded = models.DateTimeField(auto_now=True, blank=True, null=True)

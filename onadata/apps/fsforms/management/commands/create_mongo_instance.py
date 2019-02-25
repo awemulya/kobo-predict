@@ -19,7 +19,7 @@ class Command(BaseCommand):
                 x = i.fieldsight_instance
                 d.update({'fs_project_uuid': str(x.project_fxf_id), 'fs_project': x.project_id, 'fs_status': 0, 'fs_site':x.site_id, 'fs_uuid':x.site_fxf_id})
                 try:
-                    synced = update_mongo_instance(d, i,id)
+                    synced = update_mongo_instance(d, i.id)
                     print(synced, "updated in mongo success")
                 except Exception as e:
                     print(str(e))

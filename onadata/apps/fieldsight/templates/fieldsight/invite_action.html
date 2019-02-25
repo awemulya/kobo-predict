@@ -24,32 +24,49 @@
 <form class="panel-body text-center" id="action-form" method="POST">
 {% csrf_token %}
   
-<font face="ubuntu" size="3">You have been invited to join FieldSight by {{ invite.by_user.email }} as {{ invite.group.name }}  for  
-{% with invite.site.all as sites %}
- {% if sites %} 
-  {% if sites|length == 1%}
-  {{ sites.first.name }}
-  
-  {% else %}
-  {{ sites|length }} sites
-  {% endif %}
-   in {{ invite.project.all.0.name }} of {{ invite.organization.name }}
-  
+<font face="ubuntu" size="3">You have been invited to join FieldSight by {{ invite.by_user.email }} as {{ invite.group.name }}  for
+  {% if invite.regions.all %}
+    {% with invite.regions.all as regions %}
+         {% if regions %}
+          {% if regions|length == 1%}
+          {{ regions.first.name }}
 
-  
-{% elif invite.project.all %}
-  {% if invite.project.all|length == 1%}
-  {{ invite.project.all.first.name }}
-  
-  {% else %}
-  {{ invite.project.all|length }} projects
-  {% endif %}
-   of {{ invite.organization.name }}
+          {% else %}
+          {{ regions|length }} regions
+          {% endif %}
+        in {{ invite.project.all.0.name }} of {{ invite.organization.name }}
+        {% endif %}
 
-{% elif invite.organization %}
-  {{ invite.organization.name }}
-{% endif %}
-{% endwith %}.</font>
+    {% endwith %}
+
+ {% else %}
+        {% with invite.site.all as sites %}
+             {% if sites %}
+              {% if sites|length == 1%}
+              {{ sites.first.name }}
+
+              {% else %}
+              {{ sites|length }} sites
+              {% endif %}
+               in {{ invite.project.all.0.name }} of {{ invite.organization.name }}
+
+
+
+              {% elif invite.project.all %}
+              {% if invite.project.all|length == 1%}
+              {{ invite.project.all.first.name }}
+
+              {% else %}
+              {{ invite.project.all|length }} projects
+              {% endif %}
+               of {{ invite.organization.name }}
+
+            {% elif invite.organization %}
+              {{ invite.organization.name }}
+            {% endif %}
+        {% endwith %}
+ {% endif %}.
+</font>
 	<input type="hidden" name="response" id="response">
 	          <div class="form-group">        
       <div class="col-sm-offset-3 col-sm-7">
@@ -59,7 +76,7 @@
           <button type="button" onclick="setvalue('decline')" class="btn btn-danger navbar-btn"><span class="glyphicon glyphicon-remove"></span> Decline</button>
  
 
-        </ul
+        </ul>
       </div>
     </div>
   
@@ -75,6 +92,7 @@
 <script type="text/javascript">
 	function setvalue(status){
 		document.getElementById('response').value = status;
+		console.log('statussss'+ status);
 		document.getElementById('action-form').submit();
 		
 	}

@@ -12,6 +12,7 @@ from onadata.apps.fsforms.models import Stage, EducationMaterial, DeployEvent, F
 from onadata.apps.fsforms.serializers.ConfigureStagesSerializer import StageSerializer, SubStageSerializer, \
     SubStageDetailSerializer, EMSerializer, DeploySerializer, FinstanceSerializer, FinstanceDataOnlySerializer
 from onadata.apps.userrole.models import UserRole
+from onadata.apps.fieldsight.models import Region
 
 
 class StageListViewSet(viewsets.ModelViewSet):
@@ -140,5 +141,16 @@ class FInstanceViewset(viewsets.ReadOnlyModelViewSet):
     pagination_class = LargeResultsSetPagination
 
     def get_queryset(self):
-        sites = UserRole.objects.filter(user=self.request.user, group__name="Site Supervisor", ended_at__isnull=False).distinct('site').values_list('site', flat=True)
-        return self.queryset.filter(site___in=sites).select_related('submitted_by', 'site_fxf',  'project_fxf').order_by("-date")
+        sites = list(UserRole.objects.filter(user=self.request.user, group__name="Site Supervisor", ended_at__isnull=False).distinct('site').values_list('site', flat=True))
+        # if UserRole.objects.filter(user=self.request.user, group__name="Region Supervisor", ended_at__isnull=False).exists():
+        try:
+            regions_id = UserRole.objects.filter(user=self.request.user, group__name="Region Supervisor", ended_at__isnull=False).distinct('region').values_list('region', flat=True)
+
+            # assume maximum recursion depth is 3
+            region_sites = Site.objects.filter(Q(region_id__in=regions_id) | Q(region_id__parent__in=regions_id) | Q(region_id__parent__parent__in=regions_id)).values_list('id',
+                                                                                                      flat=True)
+            sites += region_sites
+        except:
+            pass
+
+        return self.queryset.filter(site__in=sites).select_related('submitted_by', 'site_fxf',  'project_fxf').order_by("-date")
