@@ -719,13 +719,21 @@
 					height = height + 14;
 					$(".ah-col" ).height(height);
 
-					var rpHeight = $("#recentPicutres").height();
-					var tbHeight = $(".tab-custom-height>.active").height();
-					if(rpHeight > tbHeight){
-						$(".tab-custom-height>.tab-pane" ).each(function() {
-							$(this).height(rpHeight - 51);
-						});
-					}
+					//height of submission and recent pictures fix
+                    function recent_pic_sub_height_fix(){
+                        var rpHeight = $("#recentPicutres").height();
+                        var tbHeight = $(".tab-custom-height>.active").height();
+                        if(rpHeight > tbHeight){
+                            $(".tab-custom-height>.tab-pane" ).each(function() {
+                                $(this).height(rpHeight - 51);
+                            });
+                        }
+                    }
+                    recent_pic_sub_height_fix();
+
+                    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+                        recent_pic_sub_height_fix();
+                    });
 				</script>
 
 	<script type="text/javascript" src="{{ STATIC_URL }}js/fieldsight/project_dashboard_line_chart.js"></script>
