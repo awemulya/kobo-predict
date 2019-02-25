@@ -829,6 +829,7 @@ class SiteDeleteView(SiteDeleteRoleMixin, View):
     def get(self, *args, **kwargs):
         site = get_object_or_404(Site, pk=self.kwargs.get('pk'), is_active=True)
         site.is_active = False
+        site.identifier = site.identifier+str('_'+ self.kwargs.get('pk'))
         site.save()
 
         instances = site.site_instances.all().values_list('instance', flat=True)
