@@ -6,6 +6,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
@@ -155,7 +156,8 @@ class UserRole(models.Model):
 
     @staticmethod
     def get_active_site_roles_exists(user):
-        return UserRole.objects.filter(user=user, ended_at=None, group__name="Site Supervisor", site__isnull=False, site__is_active=True).exists()
+        return UserRole.objects.filter(user=user, ended_at=None).filter(Q(group__name="Site Supervisor", site__isnull=False, site__is_active=True)|
+                                                                        Q(group__name="Region Supervisor", region__is_active=True)).exists()
 
     @staticmethod
     def get_roles_supervisor(user, project_id):
