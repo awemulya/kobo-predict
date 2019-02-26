@@ -315,10 +315,12 @@ class Region(models.Model):
     def get_concat_identifier(self):       
         return self.identifier + "_"
 
+
 class SiteType(models.Model):
     identifier = models.IntegerField("ID")
     name = models.CharField("Type", max_length=256)
     project = models.ForeignKey(Project, related_name="types")
+    deleted = models.BooleanField(default=False)
 
     def __unicode__(self):
         return u'{}'.format(self.name)
@@ -340,7 +342,7 @@ class SiteManager(GeoManager):
 class Site(models.Model):
     identifier = models.CharField("ID", max_length=255)
     name = models.CharField(max_length=255)
-    type = models.ForeignKey(SiteType, verbose_name='Type of Site', related_name="sites", null=True, blank=True)
+    type = models.ForeignKey(SiteType, verbose_name='Type of Site', related_name="sites", null=True, blank=True, on_delete=models.SET_NULL)
     phone = models.CharField(max_length=255, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     public_desc = models.TextField("Public Description", blank=True, null=True)

@@ -23,23 +23,31 @@
             </ol>
             {% endblock %}
         </nav>
-        <div class="col-sm-12">
-        <a href="{% url 'fieldsight:project-type-add' obj.pk %}">Add Types</a>
-        </div>
 
-        <div class="col-sm-12">
-            {% if types %}
-            <table class="table">
+        <section class="panel">
+            <header class="panel-heading clearfix">
+                <h3><i class="la la-building"></i>Site Types</h3>
+                <div class="panel-heading-right">
+                    <a href="{% url 'fieldsight:project-type-add' obj.pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add Types </a>
+                </div>
+            </header>
+             <div class="panel-body">
+                 {% if types %}
+            <table class="table table-striped">
                 <thead>
                 <tr>
                     <th>ID</th>
                     <th>Type</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
             {% for type in types %}
                 <tr>
                     <td>{{type.identifier}}</td>
                     <td>{{type.name}}</td>
+                    <td><a class="btn btn-primary btn-sm btn-xs" href="{% url 'fieldsight:project-type-edit' type.pk %}" ><i class="la la-pencil-square-o"></i> Edit</a>
+                    <a class="btn btn-danger btn-sm btn-xs" href="{% url 'fieldsight:project-type-delete' type.pk %}" ><i class="la la-trash"></i> Delete</a>
+                    </td>
                 </tr>
 
 
@@ -48,8 +56,8 @@
             {% else %}
             <h1>No Site Types In this Project</h1>
             {% endif %}
-        </div>
-
+             </div>
+        </section>
 
     </div>
 {% endblock %}
