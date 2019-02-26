@@ -160,11 +160,7 @@
 
 										{% with progress=obj.site_progress %}
 										<div class="progress progress-striped active progress-sm" style="width:100%;">
-										{% if progress = 0 %}
-										<div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ progress  }}%;" aria-valuenow="{{progress}}" aria-valuemax="100">
-											<span class="progress-bar-value" style="color:maroon;">{{ progress }}% </span>
-
-										{% elif progress <= 10 %}
+										{% if progress <= 10 %}
 										<div class="progress-bar progress-bar" role="progressbar" style="width: {{ progress  }}%;" aria-valuenow="{{progress}}" aria-valuemax="100">
 											<span class="progress-bar-value" style="color:white;">{{ progress }}% </span>
 
@@ -180,8 +176,9 @@
 										</div>
 										</div>
 
-									{% endwith %}
 									</div>
+								{% endwith %}
+
 								<div class="widget-info widget-scrolling-list margin-top bg-white padding gh-col">
 									<div class="widget-head">
 										<h6><strong>Site Details</strong></h6>
