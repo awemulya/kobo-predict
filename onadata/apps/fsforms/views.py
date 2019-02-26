@@ -1141,13 +1141,15 @@ class AssignFormDefaultStatus(FormMixin, View):
 
 class Setup_forms(SPFmixin, View):
     def get(self, request, *args, **kwargs):
+        is_project = False
         if self.kwargs.get('is_project') == '1':
+            is_project = True
             obj = Project.objects.get(pk=self.kwargs.get('pk'))
         else:
             obj = Site.objects.get(pk=self.kwargs.get('pk'))
         return render(request, "fsforms/manage_forms.html",
-                  {'obj': obj, 'is_project': self.kwargs.get('is_project'), 'pk': self.kwargs.get('pk'), 'form': GeneralForm(request=request),
-                   'schedule_form': KoScheduleForm(request=request)})
+                  {'obj': obj, 'is_project': self.kwargs.get('is_project'), 'pk': self.kwargs.get('pk'), 'form': GeneralForm(request=request,  project_or_site=obj, is_project=is_project),
+                   'schedule_form': KoScheduleForm(request=request,  project_or_site=obj, is_project=is_project)})
 
 
 class FormPreviewView(View):
