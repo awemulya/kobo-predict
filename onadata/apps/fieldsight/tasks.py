@@ -1394,6 +1394,125 @@ def multi_users_assign_regions(task_prog_obj_id, source_user, project_id, region
                                                 regions_count) + " regions ")
 
 
+@shared_task()
+def multi_users_assign_to_entire_project(task_prog_obj_id, source_user, project_id, regions, users, unassigned_sites):
+
+    time.sleep(2)
+    project = Project.objects.get(pk=project_id)
+    regions_count = len(regions)
+    users_count = len(users)
+    unassigned_sites_count = len(unassigned_sites)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.content_object = project
+    task.description = "Assign " + str(users_count) + " people in " + str(regions_count) + " regions and " + str(unassigned_sites_count)
+    task.status = 1
+    task.save()
+    region_supervisor = Group.objects.get(name="Region Supervisor")
+    site_supervisor = Group.objects.get(name="Site Supervisor")
+
+    try:
+        with transaction.atomic():
+            roles_created = 0
+            for region_id in regions:
+                for user in users:
+                    try:
+                        role, created = UserRole.objects.get_or_create(user_id=user, project_id=project.id,
+                                                                       organization_id=project.organization_id,
+                                                                       region_id=region_id,
+                                                                       group_id=region_supervisor.id, ended_at=None)
+                        if created:
+                            roles_created += 1
+
+                    except MultipleObjectsReturned:
+
+                        redundant_ids = UserRole.objects.filter(user_id=user, project_id=project.id,
+                                                                organization_id=project.organization_id,
+                                                                group_id=region_supervisor.id, region_id=region_id, ended_at=None).order_by('id').values('id')[1:]
+
+                        UserRole.objects.filter(pk__in=redundant_ids).update(ended_at=datetime.datetime.now())
+
+        task.status = 2
+        task.save()
+        if roles_created == 0:
+            noti = FieldSightLog.objects.create(source=source_user, type=23, title="Task Completed.",
+                                                content_object=project, recipient=source_user,
+                                                extra_message="All " + str(
+                                                    users_count) + " users were already assigned as " + region_supervisor.name + " in " + str(
+                                                    regions_count) + " selected regions ")
+
+        else:
+
+            noti = FieldSightLog.objects.create(source=source_user, type=22, title="Bulk Region User Assign",
+                                                content_object=project, organization=project.organization,
+                                                project=project,
+                                                extra_message=str(
+                                                    roles_created) + " new " + region_supervisor.name + " Roles in " + str(
+                                                    regions_count) + " regions ")
+
+    except Exception as e:
+        print 'Bulk role assign Unsuccesfull. ------------------------------------------%s' % e
+        task.description = "Assign " + str(users_count) + " people in " + str(regions_count) + " regions. ERROR: " + str(
+            e)
+        task.status = 3
+        task.save()
+        print e.__dict__
+        noti = FieldSightLog.objects.create(source=source_user, type=422, title="Bulk Region User Assign",
+                                            content_object=project, recipient=source_user,
+                                            extra_message=region_supervisor.name + " for " + str(users_count) + " people in " + str(
+                                                regions_count) + " regions ")
+
+    try:
+        with transaction.atomic():
+            site_roles_created = 0
+            for site_id in unassigned_sites:
+                site = Site.objects.get(pk=site_id)
+                for user in users:
+                    try:
+                        role, created = UserRole.objects.get_or_create(user_id=user, site_id=site.id,
+                                                                       project__id=project.id,
+                                                                       organization__id=site.project.organization_id,
+                                                                       group_id=site_supervisor.id, ended_at=None)
+                        if created:
+                            site_roles_created += 1
+
+                    except MultipleObjectsReturned:
+
+                        redundant_ids = UserRole.objects.filter(user_id=user, site_id=site.id, project__id=project.id,
+                                                                organization__id=site.project.organization_id,
+                                                                group_id=site_supervisor.id, ended_at=None).order_by('id').values(
+                            'id')[1:]
+
+                        UserRole.objects.filter(pk__in=redundant_ids).update(ended_at=datetime.datetime.now())
+
+        task.status = 2
+        task.save()
+        if site_roles_created == 0:
+            noti = FieldSightLog.objects.create(source=source_user, type=23, title="Task Completed.",
+                                                content_object=project, recipient=source_user,
+                                                extra_message="All " + str(
+                                                    users_count) + " users were already assigned as " + site_supervisor.name + " in " + str(
+                                                    unassigned_sites_count) + " selected sites ")
+
+        else:
+
+            noti = FieldSightLog.objects.create(source=source_user, type=22, title="Bulk site User Assign",
+                                                content_object=project, organization=project.organization,
+                                                project=project,
+                                                extra_message=str(
+                                                    site_roles_created) + " new " + site_supervisor.name + " Roles in " + str(
+                                                    unassigned_sites_count) + " sites ")
+
+    except Exception as e:
+        task.status = 3
+        task.description = "ERROR: " + str(e.message)
+        print e.__dict__
+        task.save()
+        noti = FieldSightLog.objects.create(source=source_user, type=422, title="Bulk Sites User Assign",
+                                            content_object=project, recipient=source_user,
+                                            extra_message=site_supervisor.name + " for " + str(users_count) + " people in " + str(
+                                                unassigned_sites_count) + " sites ")
+
+
 @shared_task(time_limit=18000, soft_time_limit=18000)
 def auto_generate_stage_status_report():
     projects = Project.objects.filter(active=True)
