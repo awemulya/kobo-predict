@@ -277,6 +277,7 @@ class MyProfileView(ProfileView):
     form_class = ProfileForm
 
 
+
 class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
     # pass
     #
@@ -286,7 +287,7 @@ class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
         user.last_name = form.cleaned_data['last_name']
         user.save()
         self.object = form.save()
-        return HttpResponseRedirect(self.success_url)
+        return HttpResponseRedirect(reverse_lazy('users:profile', kwargs={'pk': self.object.user.pk}))
 
 
 
