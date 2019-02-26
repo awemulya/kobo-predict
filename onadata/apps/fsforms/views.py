@@ -2273,6 +2273,11 @@ class DeleteFieldsightXF(FormMixin, View):
 
             extra_json = {}
             if fsform.site:
+                if fsform.site_form_instances.count():
+                    messages.warning(request, 'Form deleted unsuccessfull. Form have submissions' )
+                    next_url = request.GET.get('next', '/')
+                    return HttpResponseRedirect(next_url)
+
                 extra_object=fsform.site
                 site_id=extra_object.id
                 project_id = extra_object.project_id
@@ -2281,6 +2286,10 @@ class DeleteFieldsightXF(FormMixin, View):
                 extra_json['submission_count'] = fsform.site_form_instances.all().count() 
             
             else:
+                if fsform.project_form_instances.count():
+                    messages.warning(request, 'Form deleted unsuccessfull. Form have submissions' )
+                    next_url = request.GET.get('next', '/')
+                    return HttpResponseRedirect(next_url)
                 extra_object=fsform.project
                 extra_message="project"
                 site_id=None
