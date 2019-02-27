@@ -58,48 +58,49 @@ class DriveException(Exception):
     pass
 
 def upload_to_drive(file_path, title, folder, project):
-    try:
-        drive = GoogleDrive(gauth)
+    pass
+    # try:
+    #     drive = GoogleDrive(gauth)
 
-        folder_id = drive.ListFile({'q':"title = '"+ folder +"'"}).GetList()[0]['id']
-        file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()
+    #     folder_id = drive.ListFile({'q':"title = '"+ folder +"'"}).GetList()[0]['id']
+    #     file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()
 
-        if not file:    
-            file = drive.CreateFile({'title' : title, "parents": [{"kind": "drive#fileLink", "id": folder_id}]})
-        else:
-            file = file[0]
+    #     if not file:    
+    #         file = drive.CreateFile({'title' : title, "parents": [{"kind": "drive#fileLink", "id": folder_id}]})
+    #     else:
+    #         file = file[0]
 
-        file.SetContentFile(file_path)
-        file.Upoad({'convert':True})    
+    #     file.SetContentFile(file_path)
+    #     file.Upload({'convert':True})    
 
-        permissions = file.GetPermissions()
+    #     permissions = file.GetPermissions()
 
-        users_emails = project.user_roles.filter(is_ended__isnull = True, site=None).values_list(user__email, flat=True)
+    #     user_emails = project.project_roles.filter(ended_at__isnull = True, site=None).distinct('user').values_list('user__email', flat=True)
         
-        all_users = set(users_email)
+    #     all_users = set(user_emails)
 
-        existing_perms = []
+    #     existing_perms = []
 
-        for permission in permissions:
-            existing_perms.append(permission['email'])
+    #     for permission in permissions:
+    #         existing_perms.append(permission['emailAddress'])
 
-        perms = set(existing_perms)
+    #     perms = set(existing_perms)
 
-        perm_to_rm = perms - all_users
-        perm_to_add = all_user - perms
+    #     perm_to_rm = perms - all_users
+    #     perm_to_add = all_users - perms
 
-        for permission in permissions:
-            if permission['emailAddress'] in perm_to_rm:
-                file.DeletePermission(permission['id'])
+    #     for permission in permissions:
+    #         if permission['emailAddress'] in perm_to_rm and permission['emailAddress'] != "fieldsighthero@gmail.com":
+    #             file.DeletePermission(permission['id'])
 
-        for perm in perm_to_add:
-            file.InsertPermission({
-                        'type':'user',
-                        'value':perm,
-                        'role': 'writer'
-                    })
-    except Exception as e:
-        raise DriveException({"message":e})
+    #     for perm in perm_to_add:
+    #         file.InsertPermission({
+    #                     'type':'user',
+    #                     'value':perm,
+    #                     'role': 'writer'
+    #                 })
+    # except Exception as e:
+    #     raise DriveException({"message":e})
 
 
 @shared_task()
@@ -280,8 +281,8 @@ def generate_stage_status_report(task_prog_obj_id, project_id, site_type_ids, re
                                    recipient=task.user, content_object=project, extra_object=project,
                                    extra_message=" <a href='/"+ "media/stage-report/{}_stage_data.xls".format(project.id) +"'>Site Stage Progress report </a> generation in project")
         
-        if not site_type_ids and region_ids:
-            upload_to_drive("media/stage-report/{}_stage_data.xls".format(project.id), "progress_report-".format(project.id), "Site Progress", project)
+        if not site_type_ids and not region_ids:
+            upload_to_drive("media/stage-report/{}_stage_data.xls".format(project.id), "progress_report-{}".format(project.id), "Site Progress", project)
 
     except DriveException as e:
         task.description = "ERROR: " + str(e.message) 
@@ -880,7 +881,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_ids
                                    extra_message=" <a href='" +  task.file.url +"'>Xls sites detail report</a> generation in project")
 
         if not type_ids and not region_ids:
-            upload_to_drive("media/stage-report/{}_stage_data.xls".format(project.id), "site_details-".format(project.id), "Site Details", project)
+            upload_to_drive("media/stage-report/{}_stage_data.xls".format(project.id), "site_details-{}".format(project.id), "Site Details", project)
 
     except DriveException as e:
         task.description = "ERROR: " + str(e.message) 
