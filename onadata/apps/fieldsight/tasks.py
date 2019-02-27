@@ -58,48 +58,49 @@ class DriveException(Exception):
     pass
 
 def upload_to_drive(file_path, title, folder, project):
-    try:
-        drive = GoogleDrive(gauth)
+    pass
+    # try:
+    #     drive = GoogleDrive(gauth)
 
-        folder_id = drive.ListFile({'q':"title = '"+ folder +"'"}).GetList()[0]['id']
-        file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()
+    #     folder_id = drive.ListFile({'q':"title = '"+ folder +"'"}).GetList()[0]['id']
+    #     file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()
 
-        if not file:    
-            file = drive.CreateFile({'title' : title, "parents": [{"kind": "drive#fileLink", "id": folder_id}]})
-        else:
-            file = file[0]
+    #     if not file:    
+    #         file = drive.CreateFile({'title' : title, "parents": [{"kind": "drive#fileLink", "id": folder_id}]})
+    #     else:
+    #         file = file[0]
 
-        file.SetContentFile(file_path)
-        file.Upoad({'convert':True})    
+    #     file.SetContentFile(file_path)
+    #     file.Upload({'convert':True})    
 
-        permissions = file.GetPermissions()
+    #     permissions = file.GetPermissions()
 
-        users_emails = project.user_roles.filter(is_ended__isnull = True, site=None).values_list(user__email, flat=True)
+    #     user_emails = project.project_roles.filter(ended_at__isnull = True, site=None).distinct('user').values_list('user__email', flat=True)
         
-        all_users = set(users_email)
+    #     all_users = set(user_emails)
 
-        existing_perms = []
+    #     existing_perms = []
 
-        for permission in permissions:
-            existing_perms.append(permission['email'])
+    #     for permission in permissions:
+    #         existing_perms.append(permission['emailAddress'])
 
-        perms = set(existing_perms)
+    #     perms = set(existing_perms)
 
-        perm_to_rm = perms - all_users
-        perm_to_add = all_user - perms
+    #     perm_to_rm = perms - all_users
+    #     perm_to_add = all_users - perms
 
-        for permission in permissions:
-            if permission['emailAddress'] in perm_to_rm:
-                file.DeletePermission(permission['id'])
+    #     for permission in permissions:
+    #         if permission['emailAddress'] in perm_to_rm and permission['emailAddress'] != "fieldsighthero@gmail.com":
+    #             file.DeletePermission(permission['id'])
 
-        for perm in perm_to_add:
-            file.InsertPermission({
-                        'type':'user',
-                        'value':perm,
-                        'role': 'writer'
-                    })
-    except Exception as e:
-        raise DriveException({"message":e})
+    #     for perm in perm_to_add:
+    #         file.InsertPermission({
+    #                     'type':'user',
+    #                     'value':perm,
+    #                     'role': 'writer'
+    #                 })
+    # except Exception as e:
+    #     raise DriveException({"message":e})
 
 
 @shared_task()
@@ -280,8 +281,8 @@ def generate_stage_status_report(task_prog_obj_id, project_id, site_type_ids, re
                                    recipient=task.user, content_object=project, extra_object=project,
                                    extra_message=" <a href='/"+ "media/stage-report/{}_stage_data.xls".format(project.id) +"'>Site Stage Progress report </a> generation in project")
         
-        if not site_type_ids and region_ids:
-            upload_to_drive("media/stage-report/{}_stage_data.xls".format(project.id), "progress_report-".format(project.id), "Site Progress", project)
+        if not site_type_ids and not region_ids:
+            upload_to_drive("media/stage-report/{}_stage_data.xls".format(project.id), "progress_report-{}".format(project.id), "Site Progress", project)
 
     except DriveException as e:
         task.description = "ERROR: " + str(e.message) 
@@ -880,7 +881,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_ids
                                    extra_message=" <a href='" +  task.file.url +"'>Xls sites detail report</a> generation in project")
 
         if not type_ids and not region_ids:
-            upload_to_drive("media/stage-report/{}_stage_data.xls".format(project.id), "site_details-".format(project.id), "Site Details", project)
+            upload_to_drive("media/stage-report/{}_stage_data.xls".format(project.id), "site_details-{}".format(project.id), "Site Details", project)
 
     except DriveException as e:
         task.description = "ERROR: " + str(e.message) 
@@ -1470,6 +1471,74 @@ def multi_users_assign_regions(task_prog_obj_id, source_user, project_id, region
         noti = FieldSightLog.objects.create(source=source_user, type=422, title="Bulk Region User Assign",
                                             content_object=project, recipient=source_user,
                                             extra_message=group_name + " for " + str(users_count) + " people in " + str(
+                                                regions_count) + " regions ")
+
+
+@shared_task()
+def multi_users_assign_to_entire_project(task_prog_obj_id, source_user, project_id, regions, users, unassigned_sites):
+
+    time.sleep(2)
+    project = Project.objects.get(pk=project_id)
+    regions_count = len(regions)
+    users_count = len(users)
+    unassigned_sites_count = len(unassigned_sites)
+    task = CeleryTaskProgress.objects.get(pk=task_prog_obj_id)
+    task.content_object = project
+    task.description = "Assign " + str(users_count) + " people in " + str(regions_count) + " regions and " + str(unassigned_sites_count)
+    task.status = 1
+    task.save()
+    region_supervisor = Group.objects.get(name="Region Supervisor")
+    site_supervisor = Group.objects.get(name="Site Supervisor")
+
+    try:
+        with transaction.atomic():
+            roles_created = 0
+            for region_id in regions:
+                for user in users:
+                    try:
+                        role, created = UserRole.objects.get_or_create(user_id=user, project_id=project.id,
+                                                                       organization_id=project.organization_id,
+                                                                       region_id=region_id,
+                                                                       group_id=region_supervisor.id, ended_at=None)
+                        if created:
+                            roles_created += 1
+
+                    except MultipleObjectsReturned:
+
+                        redundant_ids = UserRole.objects.filter(user_id=user, project_id=project.id,
+                                                                organization_id=project.organization_id,
+                                                                group_id=region_supervisor.id, region_id=region_id, ended_at=None).order_by('id').values('id')[1:]
+
+                        UserRole.objects.filter(pk__in=redundant_ids).update(ended_at=datetime.datetime.now())
+
+        task.status = 2
+        task.save()
+        if roles_created == 0:
+            noti = FieldSightLog.objects.create(source=source_user, type=23, title="Task Completed.",
+                                                content_object=project, recipient=source_user,
+                                                extra_message="All " + str(
+                                                    users_count) + " users were already assigned as " + region_supervisor.name + " in " + str(
+                                                    regions_count) + " selected regions ")
+
+        else:
+
+            noti = FieldSightLog.objects.create(source=source_user, type=22, title="Bulk Region User Assign",
+                                                content_object=project, organization=project.organization,
+                                                project=project,
+                                                extra_message=str(
+                                                    roles_created) + " new " + region_supervisor.name + " Roles in " + str(
+                                                    regions_count) + " regions ")
+
+    except Exception as e:
+        print 'Bulk role assign Unsuccesfull. ------------------------------------------%s' % e
+        task.description = "Assign " + str(users_count) + " people in " + str(regions_count) + " regions. ERROR: " + str(
+            e)
+        task.status = 3
+        task.save()
+        print e.__dict__
+        noti = FieldSightLog.objects.create(source=source_user, type=422, title="Bulk Region User Assign",
+                                            content_object=project, recipient=source_user,
+                                            extra_message=region_supervisor.name + " for " + str(users_count) + " people in " + str(
                                                 regions_count) + " regions ")
 
 
