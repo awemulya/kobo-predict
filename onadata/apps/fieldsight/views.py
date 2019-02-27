@@ -69,7 +69,9 @@ from django.db.models import Prefetch
 from django.core.files.storage import FileSystemStorage
 import pyexcel as p
 
-from onadata.apps.fieldsight.tasks import generate_stage_status_report, generateSiteDetailsXls, UnassignAllProjectRolesAndSites, UnassignAllSiteRoles, UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, multiuserassignregion, multi_users_assign_regions
+from onadata.apps.fieldsight.tasks import generate_stage_status_report, generateSiteDetailsXls, UnassignAllProjectRolesAndSites, \
+    UnassignAllSiteRoles, UnassignUser, generateCustomReportPdf, multiuserassignproject, bulkuploadsites, multiuserassignsite, \
+    multiuserassignregion, multi_users_assign_regions, multi_users_assign_to_entire_project
 from .generatereport import PDFReport
 from django.utils import translation
 from django.conf import settings
@@ -2360,6 +2362,36 @@ class AssignUsersToRegionsView(ProjectRoleMixin, TemplateView):
 
         if task_obj:
             task = multi_users_assign_regions.delay(task_obj.pk, user, pk, regions, users, group.id)
+            task_obj.task_id = task.id
+            task_obj.save()
+            return HttpResponse('Success')
+        else:
+            return HttpResponse('Failed')
+
+
+class AssignUsersToEntireProjectView(ProjectRoleMixin, TemplateView):
+    """
+    Assign multiple users to entire project, if project has cluster_sites
+    """
+
+    def get(self, request, pk):
+        project_obj = Project.objects.get(pk=pk)
+        return render(request, 'fieldsight/multi_user_assign.html',{'type': "site", 'pk':pk})
+
+    def post(self, request, pk, *args, **kwargs):
+        data = json.loads(self.request.body)
+
+        users = data.get('users')
+
+        user = request.user
+        project = get_object_or_404(Project, pk=pk, is_active=True)
+        regions = project.project_region.all().values_list('id', flat=True)
+        unassigned_sites = project.sites.filter(region=None).values_list('id', flat=True)
+
+        task_obj = CeleryTaskProgress.objects.create(user=user, content_object=project, task_type=14)
+
+        if task_obj:
+            task = multi_users_assign_to_entire_project.delay(task_obj.pk, user, pk, regions, users, unassigned_sites)
             task_obj.task_id = task.id
             task_obj.save()
             return HttpResponse('Success')
