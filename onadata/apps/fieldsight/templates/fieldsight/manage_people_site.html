@@ -222,6 +222,7 @@ var CSRF_TOKEN = '{{ csrf_token }}';
     var proj_region_url = '{% url 'fieldsight:project_regions_list' pk %}';
     //assignurl = '{% url 'fieldsight:multi_user_region_assign' pk %}';
     assignurl = '{% url 'fieldsight:assign_regional_users' pk %}';
+    assign_users_to_entire_project_url = '{% url 'fieldsight:assign_users_to_entire_project' pk %}';
 
     // assignurl = '{% url 'fieldsight:multi_user_site_assign' pk %}';
     
@@ -752,6 +753,8 @@ vm = new ManagePeopleViewModel(pk, level, organization);
               <div class="widget-head">
                 <h4>
                   {% if obj.cluster_sites %}
+                  <p><input type="button" value="Assign selected users to an entire Project" class="btn btn-primary margin-top" data-bind="click:assign_selected_to_project"></p>
+                  <br>
                   {% trans 'Select' %} {% trans 'Regions' %}
                   {% else %}
                   {% trans 'Select' %} {% trans 'Sites' %}

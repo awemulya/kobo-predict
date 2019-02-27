@@ -65,8 +65,8 @@ from .views import (
     DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages, SiteSearchView,
     ProjectDashboardStageResponsesStatus, GeoJSONContent, DonorFullMap, ProjectSiteListGeoJSON, SiteBulkEditView,
     site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data,
-    FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI, SiteSearchLiteView, AssignUsersToRegionsView)
-
+    FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI, SiteSearchLiteView, AssignUsersToRegionsView,
+    AssignUsersToEntireProjectView)
 
 
 from onadata.apps.geo.views import (
@@ -227,6 +227,7 @@ urlpatterns = [
 
     url(r'^multi-user-assign-region/(?P<pk>\d+)/$', MultiUserAssignRegionView.as_view(), name='multi_user_region_assign'),
     url(r'^assign-users-to-regions/(?P<pk>\d+)/$', AssignUsersToRegionsView.as_view(), name='assign_regional_users'),
+    url(r'^assign-users-to-entire-project/(?P<pk>\d+)/$', AssignUsersToEntireProjectView.as_view(), name='assign_users_to_entire_project'),
 
     url(r'^search-org-user/(?P<pk>\d+)/$', OrganizationUserSearchView.as_view(), name='search-org-user'),
     url(r'^search-proj-user/(?P<pk>\d+)/$', ProjectUserSearchView.as_view(), name='search-proj-user'),
