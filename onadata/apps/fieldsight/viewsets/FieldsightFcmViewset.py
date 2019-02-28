@@ -54,7 +54,9 @@ class FcmDeviceViewSet(viewsets.ModelViewSet):
             self.perform_destroy(instance)
             return response.Response(status=status.HTTP_200_OK)
         except Device.DoesNotExist:
-            return response.Response(status=status.HTTP_404_NOT_FOUND)
+            # return response.Response(status=status.HTTP_404_NOT_FOUND)
+            return response.Response(status=status.HTTP_200_OK)
+
 
     def perform_destroy(self, instance):
         # instance.is_active = False

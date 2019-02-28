@@ -70,7 +70,7 @@ class ProjectType(models.Model):
 class Organization(models.Model):
     name = models.CharField("Organization Name", max_length=255)
     type = models.ForeignKey(
-        OrganizationType, verbose_name='Type of Organization')
+        OrganizationType, verbose_name='Type of Organization', on_delete=models.SET_NULL, blank=True, null=True)
     phone = models.CharField(
         "Contact Number", max_length=255, blank=True, null=True)
     fax = models.CharField(max_length=255, blank=True, null=True)
@@ -346,6 +346,7 @@ class SiteType(models.Model):
     identifier = models.IntegerField("ID")
     name = models.CharField("Type", max_length=256)
     project = models.ForeignKey(Project, related_name="types")
+    deleted = models.BooleanField(default=False)
 
     def __unicode__(self):
         return u'{}'.format(self.name)
@@ -367,7 +368,7 @@ class SiteManager(GeoManager):
 class Site(models.Model):
     identifier = models.CharField("ID", max_length=255)
     name = models.CharField(max_length=255)
-    type = models.ForeignKey(SiteType, verbose_name='Type of Site', related_name="sites", null=True, blank=True)
+    type = models.ForeignKey(SiteType, verbose_name='Type of Site', related_name="sites", null=True, blank=True, on_delete=models.SET_NULL)
     phone = models.CharField(max_length=255, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     public_desc = models.TextField("Public Description", blank=True, null=True)

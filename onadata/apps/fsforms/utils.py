@@ -103,11 +103,14 @@ def send_message_flagged(fi=None, comment=None, comment_url=None):
                    'submission_id': fi.id,
                    'version':fi.version
                    }
-        print(message)
         if fi.site:
             message['site'] = {'name': fi.site.name, 'id': fi.site.id, 'identifier':fi.site.identifier}
         if fi.project:
             message['project'] = {'name': fi.project.name, 'id': fi.project.id}
+        if fi.fsxf.site:
+            message['site_level_form'] = True
+        else:
+            message['site_level_form'] = False
         Device.objects.filter(name__in=emails).send_message(message)
 
 def send_bulk_message_stages(site_ids):

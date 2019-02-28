@@ -168,10 +168,9 @@
 									</ul>
 									{% endwith %}
 
-
+							{% if site.site_progress %}
 							<div class="progress margin-top">
 							<div class="progress progress-striped active progress-sm" style="width:100%;">
-
 							<div class="progress-bar progress-bar-success" role="progressbar" style="width:{{ site.site_progress }}%;}">
 							<span class="progress-bar-value" style="color:grey;">{{ site.site_progress }}% Complete'"</span>
 
@@ -179,6 +178,7 @@
 							</div>
 							</div>
 							</div>
+								{% endif %}
 
 							</a>
 							</div>

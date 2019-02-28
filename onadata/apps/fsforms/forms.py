@@ -102,21 +102,37 @@ class GeneralForm(HTML5BootstrapModelForm, KOModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+        self.project_or_site = kwargs.pop('project_or_site', None)
+        self.is_project = kwargs.pop('is_project', None)
         super(GeneralForm, self).__init__(*args, **kwargs)
-        # if hasattr(self.request, "project") and self.request.project is not None:
-        #     xform = XForm.objects.filter(
-        #         Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
-        #         Q(fieldsightformlibrary__project=self.request.project) |
-        #         Q(fieldsightformlibrary__organization=self.request.organization))
-
-        if hasattr(self.request, "organization") and self.request.organization is not None:
-            xform = XForm.objects.filter(
-                Q(user=self.request.user) |
-                Q(user__user_profile__organization=self.request.organization), deleted_xform=None)
+        exclude_id = []
+        if self.is_project:
+            exclude_id = FieldSightXF.objects.filter(project=self.project_or_site).values_list('xf', flat=True).order_by('xf').distinct()
         else:
-            xform = XForm.objects.filter(
-                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True), deleted_xform=None)
-        self.fields['xf'].choices = [(obj.id, obj.title) for obj in xform]
+            exclude_id = FieldSightXF.objects.filter(project=self.project_or_site.project, site=self.project_or_site).values_list('xf',
+                                                                                               flat=True).order_by('xf').distinct()
+        if hasattr(self.request, "organization") and self.request.organization is not None:
+            if self.is_project:
+                xforms = XForm.objects.filter(
+                            Q(user=self.request.user) |\
+                            Q(user__user_profile__organization=self.request.organization), deleted_xform=None)\
+                    .exclude(pk__in=exclude_id)
+            else:
+                xforms = XForm.objects.filter(
+                        Q(user=self.request.user) |
+                        Q(user__user_profile__organization=self.request.organization),
+                    deleted_xform=None).exclude(pk__in=exclude_id)
+        else:
+            if self.is_project:
+                xforms = XForm.objects.filter(
+                    Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True),
+                    deleted_xform=None).exclude(pk__in=exclude_id)
+            else:
+                xforms = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True),
+                    deleted_xform=None).exclude(pk__in=exclude_id)
+        xforms = xforms.order_by('title')
+        self.fields['xf'].choices = [(obj.id, obj.title) for obj in xforms]
         self.fields['xf'].empty_label = None
         self.fields['xf'].label = "Form"
         self.fields['default_submission_status'].choices = [(0, 'Pending'), (3, 'Approved'), ]
@@ -282,21 +298,37 @@ class KoScheduleForm(HTML5BootstrapModelForm, KOModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+        self.project_or_site = kwargs.pop('project_or_site', None)
+        self.is_project = kwargs.pop('is_project', None)
         super(KoScheduleForm, self).__init__(*args, **kwargs)
-        # if hasattr(self.request, "project") and self.request.project is not None:
-        #     xform = XForm.objects.filter(
-        #         Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True) |
-        #         Q(fieldsightformlibrary__project=self.request.project) |
-        #         Q(fieldsightformlibrary__organization=self.request.organization))
-
-        if hasattr(self.request, "organization") and self.request.organization is not None:
-            xform = XForm.objects.filter(
-                Q(user=self.request.user) |
-                Q(user__user_profile__organization=self.request.organization), deleted_xform=None)
+        exclude_id = []
+        if self.is_project:
+            exclude_id = FieldSightXF.objects.filter(project=self.project_or_site).values_list('xf', flat=True).order_by('xf').distinct()
         else:
-            xform = XForm.objects.filter(
-                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True), deleted_xform=None)
-        self.fields['form'].choices = [(obj.id, obj.title) for obj in xform]
+            exclude_id = FieldSightXF.objects.filter(project=self.project_or_site.project, site=self.project_or_site).values_list('xf',
+                                                                                               flat=True).order_by('xf').distinct()
+        if hasattr(self.request, "organization") and self.request.organization is not None:
+            if self.is_project:
+                xforms = XForm.objects.filter(
+                            Q(user=self.request.user) |\
+                            Q(user__user_profile__organization=self.request.organization), deleted_xform=None)\
+                    .exclude(pk__in=exclude_id)
+            else:
+                xforms = XForm.objects.filter(
+                        Q(user=self.request.user) |
+                        Q(user__user_profile__organization=self.request.organization),
+                    deleted_xform=None).exclude(pk__in=exclude_id)
+        else:
+            if self.is_project:
+                xforms = XForm.objects.filter(
+                    Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True),
+                    deleted_xform=None).exclude(pk__in=exclude_id)
+            else:
+                xforms = XForm.objects.filter(
+                Q(user=self.request.user) | Q(fieldsightformlibrary__is_global=True),
+                    deleted_xform=None).exclude(pk__in=exclude_id)
+        xforms = xforms.order_by('title')
+        self.fields['form'].choices = [(obj.id, obj.title) for obj in xforms]
         self.fields['form'].empty_label = None
         self.fields['form'].label = "Select Form"
 

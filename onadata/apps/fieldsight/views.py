@@ -761,7 +761,7 @@ class SiteCreateView(SiteView, ProjectRoleMixin, CreateView):
         form.project = Project.objects.get(pk=self.kwargs.get('pk'))
         if hasattr(form.Meta, 'project_filters'):
             for field in form.Meta.project_filters:
-                form.fields[field].queryset = form.fields[field].queryset.filter(project=form.project)
+                form.fields[field].queryset = form.fields[field].queryset.filter(project=form.project, deleted=False)
         return form
 
 
@@ -823,7 +823,7 @@ class SiteUpdateView(SiteView, ReviewerRoleMixin, UpdateView):
         project = form.instance.project
         if hasattr(form.Meta, 'project_filters'):
             for field in form.Meta.project_filters:
-                form.fields[field].queryset = form.fields[field].queryset.filter(project=project)
+                form.fields[field].queryset = form.fields[field].queryset.filter(project=project, deleted=False)
         return form
 
 
@@ -3245,7 +3245,7 @@ class SitesTypeView(ProjectRoleMixin, TemplateView):
     def get_context_data(self, **kwargs):
         data = super(SitesTypeView, self).get_context_data(**kwargs)
         project = Project.objects.get(pk=kwargs.get('pk'))
-        types = project.types.all()
+        types = project.types.filter(deleted=False)
         data['types'] = types
         data['obj'] = project
         return data
@@ -3267,7 +3267,90 @@ class AddSitesTypeView(ProjectRoleMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.project = Project.objects.get(pk=self.kwargs.get('pk'))
-        self.object.save()
+        if not SiteType.objects.filter(project=self.object.project, identifier=self.object.identifier).exists():
+            self.object.save()
+        else:
+            form.add_error(None, "ID duplicate, please try again by adding new one.")
+            return self.render_to_response(self.get_context_data(form=form))
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class DeleteSitesTypeView(DeleteView):
+    model = SiteType
+    form_class = SiteTypeForm
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Calls the delete() method on the fetched object and then
+        redirects to the success URL.
+        """
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        obj = self.object
+        obj.deleted = True
+        obj.save()
+        return HttpResponseRedirect(success_url)
+
+    def get_success_url(self):
+        project = self.object.project
+        return reverse('fieldsight:site-types', kwargs={'pk': project.pk})
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.group.name == "Super Admin":
+            return super(DeleteSitesTypeView, self).dispatch(request, *args, **kwargs)
+
+        type_id = self.kwargs.get('pk')
+        type = SiteType.objects.get(pk=type_id)
+        project_id = type.project.id
+        user_id = request.user.id
+        user_role = request.roles.filter(user_id=user_id, project_id=project_id, group_id=2)
+
+        if user_role:
+            return super(DeleteSitesTypeView, self).dispatch(request, *args, **kwargs)
+        organization_id = Project.objects.get(pk=project_id).organization.id
+        user_role_asorgadmin = request.roles.filter(user_id=user_id, organization_id=organization_id, group_id=1)
+
+        if user_role_asorgadmin:
+            return super(DeleteSitesTypeView, self).dispatch(request, *args, **kwargs)
+
+        raise PermissionDenied()
+
+
+class EditSitesTypeView(UpdateView):
+    model = SiteType
+    form_class = SiteTypeForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.group.name == "Super Admin":
+            return super(EditSitesTypeView, self).dispatch(request, *args, **kwargs)
+
+        type_id = self.kwargs.get('pk')
+        type = SiteType.objects.get(pk=type_id)
+        project_id = type.project.id
+        user_id = request.user.id
+        user_role = request.roles.filter(user_id=user_id, project_id=project_id, group_id=2)
+
+        if user_role:
+            return super(EditSitesTypeView, self).dispatch(request, *args, **kwargs)
+        organization_id = Project.objects.get(pk=project_id).organization.id
+        user_role_asorgadmin = request.roles.filter(user_id=user_id, organization_id=organization_id, group_id=1)
+
+        if user_role_asorgadmin:
+            return super(EditSitesTypeView, self).dispatch(request, *args, **kwargs)
+
+        raise PermissionDenied()
+
+    def get_success_url(self):
+        project = self.object.project
+        return reverse('fieldsight:site-types', kwargs={'pk': project.pk})
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        if not SiteType.objects.filter(project=self.object.project, identifier=self.object.identifier).exclude(pk=self.object.pk).exists():
+            self.object.save()
+        else:
+            form.add_error(None, "ID duplicate, please try again by adding new one.")
+            return self.render_to_response(self.get_context_data(form=form))
         return HttpResponseRedirect(self.get_success_url())
 
 
