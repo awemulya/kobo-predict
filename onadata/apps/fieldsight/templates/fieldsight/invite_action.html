@@ -9,7 +9,9 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
-<body background="bgw.png">
+<!--<body background="bgw.png">-->
+<body>
+
 <br>
 <br>
 <br>
@@ -19,7 +21,7 @@
 <div class="container">
   <div class="col-md-6 col-md-offset-3 ">
   <div class="panel panel-primary class" >
-    <div class="panel-heading "><img src="logo1.png" class="img-responsive center-block" height="210px" width="210pxs"></div>
+    <div class="panel-heading "><img src="{{STATIC_URL}}/images/logo1.png" class="img-responsive center-block" height="210px" width="210pxs"></div>
 
 <form class="panel-body text-center" id="action-form" method="POST">
 {% csrf_token %}
