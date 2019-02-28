@@ -25,7 +25,7 @@ class ExportOptions(ProjectRoleMixin, View):
 
 
 class ImageZipSites(ReadonlyProjectLevelRoleMixin, View):
-    def get(self, request, pk, size_code):
+    def get(self, request, pk, size_code, *args, **kwargs):
         user = self.request.user
         site=get_object_or_404(Site, pk=pk)
         size="-small"
@@ -45,7 +45,7 @@ class ImageZipSites(ReadonlyProjectLevelRoleMixin, View):
         return JsonResponse(data, status=status)
 
 class ExportProjectFormsForSites(ReadonlyProjectLevelRoleMixin, View):
-    def get(self, request, pk):
+    def get(self, request, pk, *args, **kwargs):
         mainstage=[]
         schedule = FieldSightXF.objects.filter(project_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','schedule__name')
         stages = Stage.objects.filter(project_id=pk)
