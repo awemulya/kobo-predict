@@ -66,6 +66,8 @@ class SiteUpdateSerializer(serializers.ModelSerializer):
         lat = self.context['request'].data.get('latitude', False)
         long = self.context['request'].data.get('longitude', False)
         type_id = self.context['request'].data.get('type', False)
+        if not SiteType.objects.get(pk=type_id , deleted=False).exists():
+            type_id = False
         site = super(SiteUpdateSerializer, self).update(instance, validated_data)
         if lat and long:
             lat = float(lat)
@@ -116,6 +118,15 @@ class SiteCreationSurveySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')),srid=4326)
         validated_data.update({'is_survey': False,'is_active':True,'location':p,})
+        region = validated_data.get('region', False)
+        site_type = validated_data.get('type', False)
+        if region and isinstance(region, int):
+            if not Region.objects.filter(pk=region, is_active=True).exists():
+                validated_data.pop('region')
+
+        if type and isinstance(type, int):
+            if not SiteType.objects.filter(pk=site_type, deleted=False).exists():
+                validated_data.pop('site_type')
         site = Site.objects.create(**validated_data)
         image = self.context['request'].FILES.values()
         for img in image:

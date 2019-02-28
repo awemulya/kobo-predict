@@ -6,6 +6,7 @@ from django.core.files import File
 from django.contrib.auth.models import User, Group
 from django.contrib.gis.geos import Point
 from django.core.urlresolvers import reverse_lazy
+from django.forms import TextInput
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
@@ -308,6 +309,7 @@ class SiteForm(HTML5BootstrapModelForm, KOModelForm):
     width = forms.FloatField(widget=forms.HiddenInput(), required=False)
     height = forms.FloatField(widget=forms.HiddenInput(), required=False)
     site_meta_attributes_ans = forms.CharField(widget=forms.HiddenInput(), required=False)
+
     def __init__(self, *args, **kwargs):
         super(SiteForm, self).__init__(*args, **kwargs)
         if not self.fields['location'].initial:
@@ -438,7 +440,11 @@ class RegionForm(forms.ModelForm):
 class SiteTypeForm(forms.ModelForm):
     class Meta:
         model = SiteType
-        exclude = ('project',)
+        exclude = ('project','deleted')
+        widgets = {
+            'name': TextInput(attrs={'placeholder': 'name','id':'id_name', 'class':'form-control', }),
+            'identifier': TextInput(attrs={'placeholder': 'ID', 'id':'id_identifier', 'class':'form-control', }),
+        }
 
 
 

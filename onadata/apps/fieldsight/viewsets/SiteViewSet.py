@@ -292,7 +292,7 @@ class ProjectTypeViewset(viewsets.ModelViewSet):
         return {'request': self.request}
 
 class SiteTypeViewset(viewsets.ModelViewSet):
-    queryset = SiteType.objects.all()
+    queryset = SiteType.objects.filter(deleted=False)
     serializer_class = SiteTypeSerializer
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     permission_classes = (ProjectViewPermission,)
