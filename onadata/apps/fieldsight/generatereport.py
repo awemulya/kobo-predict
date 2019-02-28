@@ -437,8 +437,35 @@ class PDFReport:
         styBackground = ParagraphStyle('background', parent=styNormal, backColor=colors.white)
         if instance.site:
             elements.append(Paragraph("Site Identifier : " + instance.site.identifier, self.h3))
-            elements.append(Paragraph("Site Name : " + instance.site.name, self.h3))
+            elements.append(Paragraph(instance.site.name, styles['Normal']))
+
+            if instance.site.address:
+                elements.append(Paragraph(instance.site.address, styles['Normal']))
+            if instance.site.phone:
+                elements.append(Paragraph(instance.site.phone, styles['Normal']))
+            if instance.site.region:
+                elements.append(Paragraph("Region ID: " + instance.site.region.identifier, styles['Normal']))
+            
             elements.append(Spacer(0,10))
+
+            elements.append(Paragraph("Site Information", self.h3))
+            metas = generateSiteMetaAttribs(instance.site.id)
+
+            styBackground = ParagraphStyle('background', parent=self.bodystyle, backColor=colors.white)
+            
+            meta_data=[]
+            if metas:
+                for meta in metas:
+                    row=[Paragraph(str(meta['question_text']), styBackground), Paragraph(str(meta['answer']), styBackground)]
+                    meta_data.append(row)
+                
+                metat1 = Table(meta_data, colWidths=(60*mm, None))
+                metat1.setStyle(self.ts1)
+                elements.append(metat1)
+
+
+            elements.append(PageBreak())
+            
         
         elements.append(Paragraph(form.xf.title, self.h3))
         elements.append(Paragraph(form.form_type() + " Form", styles['Heading4']))
