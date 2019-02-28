@@ -70,7 +70,7 @@ class ProjectType(models.Model):
 class Organization(models.Model):
     name = models.CharField("Organization Name", max_length=255)
     type = models.ForeignKey(
-        OrganizationType, verbose_name='Type of Organization')
+        OrganizationType, verbose_name='Type of Organization', on_delete=models.SET_NULL, blank=True, null=True)
     phone = models.CharField(
         "Contact Number", max_length=255, blank=True, null=True)
     fax = models.CharField(max_length=255, blank=True, null=True)
