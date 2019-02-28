@@ -3087,17 +3087,17 @@ class DeleteSitesTypeView(DeleteView):
     model = SiteType
     form_class = SiteTypeForm
 
-    def delete(self, request, *args, **kwargs):
-        """
-        Calls the delete() method on the fetched object and then
-        redirects to the success URL.
-        """
-        self.object = self.get_object()
-        success_url = self.get_success_url()
-        obj = self.object
-        obj.deleted = True
-        obj.save()
-        return HttpResponseRedirect(success_url)
+    # def delete(self, request, *args, **kwargs):
+    #     """
+    #     Calls the delete() method on the fetched object and then
+    #     redirects to the success URL.
+    #     """
+    #     self.object = self.get_object()
+    #     success_url = self.get_success_url()
+    #     obj = self.object
+    #     obj.deleted = True
+    #     obj.save()
+    #     return HttpResponseRedirect(success_url)
 
     def get_success_url(self):
         project = self.object.project
