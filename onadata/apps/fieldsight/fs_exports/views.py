@@ -4,7 +4,7 @@ import json
 from django.contrib.contenttypes.models import ContentType
 
 from .. models import Project, Site
-from .. rolemixins import DonorRoleMixin, ProjectRoleMixin
+from .. rolemixins import DonorRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin
 from django.views.generic import TemplateView, View
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -24,7 +24,7 @@ class ExportOptions(ProjectRoleMixin, View):
         return render(request, "fieldsight/fs_export/xls_export.html")
 
 
-class ImageZipSites(View):
+class ImageZipSites(ReadonlyProjectLevelRoleMixin, View):
     def get(self, request, pk, size_code):
         user = self.request.user
         site=get_object_or_404(Site, pk=pk)
@@ -44,7 +44,7 @@ class ImageZipSites(View):
             status, data = 401, {'status':'false','message':'Error occured please try again.'}
         return JsonResponse(data, status=status)
 
-class ExportProjectFormsForSites(View):
+class ExportProjectFormsForSites(ReadonlyProjectLevelRoleMixin, View):
     def get(self, request, pk):
         mainstage=[]
         schedule = FieldSightXF.objects.filter(project_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','schedule__name')
@@ -82,7 +82,7 @@ class ExportProjectFormsForSites(View):
             status, data = 401, {'status':'false','message':'Error occured please try again.'}
         return JsonResponse(data, status=status)
 
-class ExportProjectSites(DonorRoleMixin, View):
+class ExportProjectSites(ReadonlyProjectLevelRoleMixin, View):
     def get(self, *args, **kwargs):
         project=get_object_or_404(Project, pk=self.kwargs.get('pk'))
         response = HttpResponse(content_type='application/ms-excel')
@@ -140,7 +140,7 @@ class ExportProjectSites(DonorRoleMixin, View):
 
 
 
-class ExportProjectSitesWithRefs(DonorRoleMixin, View):
+class ExportProjectSitesWithRefs(ReadonlyProjectLevelRoleMixin, View):
     def get(self, *args, **kwargs):
         source_user = self.request.user   
         project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
