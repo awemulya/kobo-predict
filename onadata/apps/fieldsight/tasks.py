@@ -847,11 +847,11 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_ids
         ws = wb.active
         ws.title='Sites Detail'
         sites = project.sites.all().order_by('identifier')
-        if region_id:
-            if isinstance(region_id, list): 
+        if region_ids:
+            if isinstance(region_ids, list):
                 sites = project.sites.filter(is_active=True, region_id__in=region_ids).order_by('identifier')
             else:
-                if region_id == "0":
+                if region_ids == "0":
                     sites = project.sites.filter(is_active=True, region_id=None).order_by('identifier')
                 else:
                     sites = project.sites.filter(is_active=True, region_id=region_ids).order_by('identifier')
