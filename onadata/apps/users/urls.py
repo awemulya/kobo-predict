@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from onadata.apps.users.views import ContactViewSet, UsersListView, MyProfile, EndUserRole, web_login, web_signup, \
-    send_request_for_organization, request_organization, approve_organization, deny_organization, create_role, ProfileCreateView, export_users_xls
+create_role, ProfileCreateView, export_users_xls, ViewInvitations, decline_invitation, accept_invitation, accept_all_invitations
 from onadata.apps.users.viewsets import UserViewSet, ProfileViewSet, UserListViewSet, SearchableUserListViewSet, \
     MySitesViewset, MySitesOnlyViewset, MyProjectsViewset
 from . import views
@@ -15,11 +15,6 @@ urlpatterns = [
     url(r'^create_role/', create_role, name='create_role'),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),
-    url(r'^approve-organization/(?P<username>[^/]+)?/(?P<org_id>[0-9]+)/$', approve_organization, name='approve_organization'),
-    url(r'^deny-organization/(?P<org_id>[0-9]+)/(?P<username>[^/]+)?/$', deny_organization, name='deny_organization'),
-
-    url(r'^send-request-organization/(?P<org_id>[0-9]+)/$', send_request_for_organization, name='send_request_organization'),
-    url(r'^request-organization/(?P<org_id>[0-9]+)/(?P<sender>[^/]+)?/$', request_organization, name='request_organization'),
 
     url(r'^$', UsersListView.as_view(), name='users'),
     url(r'^api/list/all(?:/(?P<level>[1-4]))?(?:/(?P<username>[^/]+))?/$', SearchableUserListViewSet.as_view({'get': 'list'})),
@@ -46,5 +41,10 @@ urlpatterns = [
     url(r'^profile/(?P<pk>[0-9]+)/$', MyProfile.as_view(), name='profile'),
     url(r'^endrole/(?P<pk>[0-9]+)/$', EndUserRole.as_view(), name='end_user_role'),
     url(r'^export-users/$', export_users_xls, name='export_users'),
+
+    url(r'^invitations/(?P<pk>[0-9]+)/$', ViewInvitations.as_view(), name='view_invitations'),
+    url(r'^accept-invitations/(?P<pk>[0-9]+)/(?P<username>[^/]+)/$', accept_invitation, name='accept_invitation'),
+    url(r'^deny-invitations/(?P<pk>[0-9]+)/(?P<username>[^/]+)/$', decline_invitation, name='decline_invitation'),
+    url(r'^accept-all/(?P<username>[^/]+)/$', accept_all_invitations, name='accept_all'),
 
 ]

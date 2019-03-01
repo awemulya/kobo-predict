@@ -7,10 +7,11 @@ from django.shortcuts import get_object_or_404
 from django.core import serializers
 from django.contrib import messages
 from django.db import models
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth import login
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db.models import Q
+from django.db import transaction
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate
@@ -23,14 +24,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.views.generic import CreateView
 from onadata.apps.fieldsight.mixins import UpdateView, ProfileView, OwnerMixin, SuperAdminMixin, group_required
-from onadata.apps.fieldsight.mixins import UpdateView, ProfileView, OwnerMixin, SuperAdminMixin, group_required
 from rest_framework import renderers
 from django.contrib import messages
 from channels import Group as ChannelGroup
-from onadata.apps.fieldsight.models import Organization, BluePrints
+from onadata.apps.fieldsight.models import Organization, BluePrints, UserInvite, Site, Project, RequestOrganizationStatus, Region
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
 from onadata.apps.users.serializers import AuthCustomTokenSerializer, UserSerializerProfile
+
 from .forms import LoginForm, ProfileForm, UserEditForm, SignUpForm
 from rest_framework import viewsets
 from onadata.apps.fsforms.models import FInstance
@@ -48,8 +49,6 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.views import password_reset
 
-
-from onadata.apps.fieldsight.models import RequestOrganizationStatus, Site
 
 
 class ContactSerializer(serializers.ModelSerializer):
@@ -300,7 +299,7 @@ class ProfileCreateView(MyProfileView, CreateView):
         user.save()
         form.instance.user = self.request.user
         self.object = form.save()
-        return HttpResponseRedirect(self.success_url)
+        return HttpResponseRedirect(reverse_lazy('users:view_invitations', kwargs={'pk':user.pk}))
 
 
 class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
@@ -382,13 +381,29 @@ class UsersListView(TemplateView, SuperAdminMixin):
     template_name = "users/list.html"
 
 
-def all_notification(user,  message):
+class ViewInvitations(LoginRequiredMixin, TemplateView):
+    template_name = "users/invitations.html"
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            user = User.objects.get(pk=kwargs.get('pk'))
+            if request.user == user:
+                return super(ViewInvitations, self).dispatch(request, *args, **kwargs)
+        raise PermissionDenied()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ViewInvitations, self).get_context_data(*args, **kwargs)
+
+        email = User.objects.values('email').get(pk=kwargs.get('pk'))
+        context['invitations'] = UserInvite.objects.filter(email=email['email'], is_used=False, is_declied=False)
+        return context
+
+
+def all_notification(user, message):
     ChannelGroup("%s" % user).send({
         "text": json.dumps({
             "msg": message
         })
     })
-
 
 def web_authenticate(username=None, password=None):
         try:
@@ -536,6 +551,7 @@ def create_role(request):
 
     return HttpResponseRedirect('/fieldsight/myroles/')
 
+
 def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
@@ -551,6 +567,270 @@ def activate(request, uidb64, token):
         return redirect(reverse_lazy('users:create_profile'))
     else:
         return HttpResponse('Activation link is invalid!')
+
+
+def decline_invitation(request, pk, username):
+    user = get_object_or_404(User, username=username)
+    invitation = get_object_or_404(UserInvite, pk=pk)
+    invitation.is_used = True
+    invitation.is_declined = True
+    invitation.save()
+
+    return redirect(reverse_lazy('users:view_invitations', kwargs={'pk': user.pk}))
+
+
+@transaction.atomic
+def accept_invitation(request, pk, username):
+    user = get_object_or_404(User, username=username)
+    invitation = get_object_or_404(UserInvite, pk=pk)
+
+    if user.user_roles.all()[0].group.name == "Unassigned":
+        previous_group = UserRole.objects.get(user=user, group__name="Unassigned")
+        previous_group.delete()
+
+    site_ids = invitation.site.all().values_list('pk', flat=True)
+    project_ids = invitation.project.all().values_list('pk', flat=True)
+
+    if invitation.regions.all().values_list('pk', flat=True).exists():
+        regions_id = invitation.regions.all().values_list('pk', flat=True)
+        for region_id in regions_id:
+            project_id = Region.objects.get(id=region_id).project.id
+            userrole, created = UserRole.objects.get_or_create(user=user, group=invitation.group,
+                                                               organization=invitation.organization,
+                                                               project_id=project_id,
+                                                               site_id=None, region_id=region_id)
+
+    else:
+        for project_id in project_ids:
+            for site_id in site_ids:
+                userrole, created = UserRole.objects.get_or_create(user=user, group=invitation.group,
+                                                                   organization=invitation.organization,
+                                                                   project_id=project_id, site_id=site_id)
+            if not site_ids:
+                userrole, created = UserRole.objects.get_or_create(user=user, group=invitation.group,
+                                                                   organization=invitation.organization,
+                                                                   project_id=project_id, site=None)
+
+    if not project_ids:
+        userrole, created = UserRole.objects.get_or_create(user=user, group=invitation.group,
+                                                           organization=invitation.organization, project=None,
+                                                           site=None, region=None)
+        if invitation.group_id == 1:
+            permission = Permission.objects.filter(codename='change_finstance')
+            user.user_permissions.add(permission[0])
+
+    invitation.is_used = True
+    invitation.save()
+    extra_msg = ""
+    site = None
+    project = None
+    region = None
+    if invitation.group.name == "Organization Admin":
+        noti_type = 1
+        content = invitation.organization
+
+    elif invitation.group.name == "Project Manager":
+        if invitation.project.all().count() == 1:
+            noti_type = 2
+            content = invitation.project.all()[0]
+        else:
+            noti_type = 26
+            extra_msg = invitation.project.all().count()
+            content = invitation.organization
+        project = invitation.project.all()[0]
+
+    elif invitation.group.name == "Reviewer":
+        if invitation.site.all().count() == 1:
+            noti_type = 3
+            content = invitation.site.all()[0]
+        else:
+            noti_type = 27
+            extra_msg = invitation.site.all().count()
+            content = invitation.project.all()[0]
+        project = invitation.project.all()[0]
+
+    elif invitation.group.name == "Site Supervisor":
+        if invitation.site.all().count() == 1:
+            noti_type = 4
+            content = invitation.site.all()[0]
+        else:
+            noti_type = 28
+            extra_msg = invitation.site.all().count()
+            content = invitation.project.all()[0]
+        project = invitation.project.all()[0]
+
+    elif invitation.group.name == "Region Reviewer":
+        if invitation.regions.all().count() == 1:
+            noti_type = 37
+            content = invitation.regions.all()[0]
+        else:
+            noti_type = 39
+            extra_msg = invitation.regions.all().count()
+            content = invitation.project.all()[0]
+        project = invitation.project.all()[0]
+
+    elif invitation.group.name == "Region Supervisor":
+        if invitation.regions.all().count() == 1:
+            noti_type = 38
+            content = invitation.regions.all()[0]
+        else:
+            noti_type = 40
+            extra_msg = invitation.regions.all().count()
+            content = invitation.project.all()[0]
+        project = invitation.project.all()[0]
+
+    elif invitation.group.name == "Unassigned":
+        noti_type = 24
+        # if invitation.site.all():
+        #     content = invitation.site.all()[0]
+        #     project = invitation.project.all()[0]
+        #     site = invitation,project.all()[0]
+        # elif invitation.project.all().count():
+        #     content = invitation.project.all()[0]
+        #     project = invitation.project.all()[0]
+        # else:
+        content = invitation.organization
+
+    elif invitation.group.name == "Project Donor":
+        noti_type = 25
+        content = invitation.project.all()[0]
+
+    noti = invitation.logs.create(source=user, type=noti_type, title="new Role",
+                                  organization=invitation.organization,
+                                  extra_message=extra_msg, project=project, site=site, content_object=content,
+                                  extra_object=invitation.by_user,
+                                  description="{0} was added as the {1} of {2} by {3}.".
+                                  format(user.username, invitation.group.name, content.name, invitation.by_user))
+
+
+    return redirect(reverse_lazy('users:view_invitations', kwargs={'pk': user.pk}))
+
+
+@transaction.atomic
+def accept_all_invitations(request, username):
+    user = get_object_or_404(User, username=username)
+    invitations = UserInvite.objects.filter(email=user.email, is_used=False, is_declied=False)
+
+
+    if user.user_roles.all()[0].group.name == "Unassigned":
+        previous_group = UserRole.objects.get(user=user, group__name="Unassigned")
+        previous_group.delete()
+
+    for invitation in invitations:
+        site_ids = invitation.site.all().values_list('pk', flat=True)
+        project_ids = invitation.project.all().values_list('pk', flat=True)
+        if invitation.regions.all().values_list('pk', flat=True).exists():
+            regions_id = invitation.regions.all().values_list('pk', flat=True)
+            for region_id in regions_id:
+                project_id = Region.objects.get(id=region_id).project.id
+                userrole, created = UserRole.objects.get_or_create(user=user, group=invitation.group,
+                                                                   organization=invitation.organization,
+                                                                   project_id=project_id,
+                                                                   site_id=None, region_id=region_id)
+
+        else:
+            for project_id in project_ids:
+                for site_id in site_ids:
+                    userrole, created = UserRole.objects.get_or_create(user=user, group=invitation.group,
+                                                                       organization=invitation.organization,
+                                                                       project_id=project_id, site_id=site_id)
+                if not site_ids:
+                    userrole, created = UserRole.objects.get_or_create(user=user, group=invitation.group,
+                                                                       organization=invitation.organization,
+                                                                       project_id=project_id, site=None)
+
+        if not project_ids:
+            userrole, created = UserRole.objects.get_or_create(user=user, group=invitation.group,
+                                                               organization=invitation.organization, project=None,
+                                                               site=None, region=None)
+            if invitation.group_id == 1:
+                permission = Permission.objects.filter(codename='change_finstance')
+                user.user_permissions.add(permission[0])
+
+        invitation.is_used = True
+        invitation.save()
+        extra_msg = ""
+        site = None
+        project = None
+        region = None
+        if invitation.group.name == "Organization Admin":
+            noti_type = 1
+            content = invitation.organization
+
+        elif invitation.group.name == "Project Manager":
+            if invitation.project.all().count() == 1:
+                noti_type = 2
+                content = invitation.project.all()[0]
+            else:
+                noti_type = 26
+                extra_msg = invitation.project.all().count()
+                content = invitation.organization
+            project = invitation.project.all()[0]
+
+        elif invitation.group.name == "Reviewer":
+            if invitation.site.all().count() == 1:
+                noti_type = 3
+                content = invitation.site.all()[0]
+            else:
+                noti_type = 27
+                extra_msg = invitation.site.all().count()
+                content = invitation.project.all()[0]
+            project = invitation.project.all()[0]
+
+        elif invitation.group.name == "Site Supervisor":
+            if invitation.site.all().count() == 1:
+                noti_type = 4
+                content = invitation.site.all()[0]
+            else:
+                noti_type = 28
+                extra_msg = invitation.site.all().count()
+                content = invitation.project.all()[0]
+            project = invitation.project.all()[0]
+
+        elif invitation.group.name == "Region Reviewer":
+            if invitation.regions.all().count() == 1:
+                noti_type = 37
+                content = invitation.regions.all()[0]
+            else:
+                noti_type = 39
+                extra_msg = invitation.regions.all().count()
+                content = invitation.project.all()[0]
+            project = invitation.project.all()[0]
+
+        elif invitation.group.name == "Region Supervisor":
+            if invitation.regions.all().count() == 1:
+                noti_type = 38
+                content = invitation.regions.all()[0]
+            else:
+                noti_type = 40
+                extra_msg = invitation.regions.all().count()
+                content = invitation.project.all()[0]
+            project = invitation.project.all()[0]
+
+        elif invitation.group.name == "Unassigned":
+            noti_type = 24
+            # if invitation.site.all():
+            #     content = invitation.site.all()[0]
+            #     project = invitation.project.all()[0]
+            #     site = invitation,project.all()[0]
+            # elif invitation.project.all().count():
+            #     content = invitation.project.all()[0]
+            #     project = invitation.project.all()[0]
+            # else:
+            content = invitation.organization
+
+        elif invitation.group.name == "Project Donor":
+            noti_type = 25
+            content = invitation.project.all()[0]
+
+        noti = invitation.logs.create(source=user, type=noti_type, title="new Role",
+                                      organization=invitation.organization,
+                                      extra_message=extra_msg, project=project, site=site, content_object=content,
+                                      extra_object=invitation.by_user,
+                                      description="{0} was added as the {1} of {2} by {3}.".
+                                      format(user.username, invitation.group.name, content.name, invitation.by_user))
+
+    return redirect(reverse_lazy('users:view_invitations', kwargs={'pk': user.pk}))
 
 
 def export_users_xls(request):
