@@ -1943,9 +1943,26 @@ def show(request, fsxf_id):
 
 
 # @group_required('KoboForms')
-def download_jsonform(request, fsxf_id):
-    fs_xform = FieldSightXF.objects.get(pk=fsxf_id)
-    xform = fs_xform.xf
+def download_jsonform(request,  fsxf_id):
+    json = None
+    try:
+        instance_id = request.get_full_path().split("/")[-1]
+        instance_id = int(instance_id)
+        finstance = FInstance.objects.get(pk=instance_id)
+        fs_xform = finstance.fsxf
+        version = finstance.version
+        xform = fs_xform.xform
+        try:
+            history = XformHistory.objects.get(xform=xform, version=version)
+            json = history.json
+        except Exception as e:
+            # no history
+            pass
+    except Exception as e:
+        # no instance id in url
+        fs_xform = FieldSightXF.objects.get(pk=fsxf_id)
+        xform = fs_xform.xf
+        json = xform.json
 
     if request.method == "OPTIONS":
         response = HttpResponse()
@@ -1956,10 +1973,10 @@ def download_jsonform(request, fsxf_id):
                                                show_date=False)
     if 'callback' in request.GET and request.GET.get('callback') != '':
         callback = request.GET.get('callback')
-        response.content = "%s(%s)" % (callback, xform.json)
+        response.content = "%s(%s)" % (callback, json)
     else:
         add_cors_headers(response)
-        response.content = xform.json
+        response.content = json
     return response
 
 
