@@ -100,10 +100,18 @@ assigntoken(csrf_token);
 				      			<div class="col-md-8 col-lg-9">
 				      				<div class="tab-content" id="myTabContent">
 										<div class="tab-pane fade show active" id="modalTab01" role="tabpanel" aria-labelledby="modalTab01-tab">
-											<a class="btn btn-primary" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i> Project Summary Report</a>
+											<div class="modal-body">
+												<div class="form-group">
+													<label for="startdate">Project Summary Report</label>
+													  <p>
+													  		Report
+													  </p>
+												</div>
+												<button type="button" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank" class="btn btn-danger"><i class="la la-file-pdf-o"></i> Generate PDF </button>	
+
+											</div>
 											
-											<br>
-											<br>
+											
 											<hr>
 											{% verbatim %}
 											<div id="generateSiteExportReport">
