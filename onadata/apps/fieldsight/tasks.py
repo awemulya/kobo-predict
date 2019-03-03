@@ -1665,7 +1665,7 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, reportTyp
         if reportType == "Monthly":
             data.insert(0, ["Date", "Month", "Site Visits", "Submissions","Active Users"])
             i=1
-            for month in rrule(MONTHLY, dtstart=new_startdate, until=new_enddate):
+            for month in rrule(MONTHLY, dtstart=new_startdate, until=end):
                 str_month = month.strftime("%Y-%m")
                 data.insert(i, [str_month, month.strftime("%B"), 0, 0, 0])
                 index[str_month] = i
@@ -1705,7 +1705,7 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, reportTyp
         if reportType in ["Daily", "Weekly"]:
             data.insert(0, ["Date", "Day", "Site Visits", "Submissions", "Active Users"])
             i=1
-            for day in rrule(DAILY, dtstart=new_startdate, until=new_enddate):
+            for day in rrule(DAILY, dtstart=new_startdate, until=end):
                 str_day = day.strftime("%Y-%m-%d")
                 data.insert(i, [str_day, day.strftime("%A"), 0, 0, 0])
                 index[str_day] = i
