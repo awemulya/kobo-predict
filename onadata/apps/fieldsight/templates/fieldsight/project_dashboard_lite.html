@@ -62,7 +62,7 @@ assigntoken(csrf_token);
 {% block content %}
 {% csrf_token %}
 
-<div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
 			  	<div class="modal-dialog modal-lg modal-xl" role="document">
 				    <div class="modal-content">
 				      	<div class="modal-header">
@@ -211,7 +211,7 @@ assigntoken(csrf_token);
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								
-								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#reportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Report' %} </a>
+								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#exportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Report' %} </a>
 								
 								<a class="dropdown-item" href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i> {% trans 'View Data' %}</a>
 
@@ -621,11 +621,6 @@ var static_url ="{{ STATIC_URL }}";
 		fn_generate_report_modal_height();
 	});
 
-	jQuery(window).on('load', function() {
-		fn_generate_report_modal_height();
-		$("#myTabContent .tab-pane").getNiceScroll().resize();
-	});
-	
 	jQuery(window).on('resize', function() {
 		fn_generate_report_modal_height();
 		$("#myTabContent .tab-pane").getNiceScroll().resize();
