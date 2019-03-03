@@ -40,8 +40,6 @@ assigntoken(csrf_token);
  ko.applyBindings(vm);
 
 });
-fn_generate_report_modal_height();
-	$("#myTabContent .tab-pane").getNiceScroll().resize();
 </script>
 
 {% else %}
@@ -56,8 +54,7 @@ fn_generate_report_modal_height();
 	 vm = new SitesViewModel(project, "{% url 'fieldsight_export:export_xls_project_sites' obj.pk %}");
 	 ko.applyBindings(vm);
 	});
-	fn_generate_report_modal_height();
-	$("#myTabContent .tab-pane").getNiceScroll().resize();
+	
 	 </script>
 {% endif %}
    
@@ -645,6 +642,11 @@ var static_url ="{{ STATIC_URL }}";
 			
 	$('#exportModal').on('shown.bs.modal', function(){
 		fn_generate_report_modal_height();
+	});
+
+	jQuery(window).on('load', function() {
+		fn_generate_report_modal_height();
+		$("#myTabContent .tab-pane").getNiceScroll().resize();
 	});
 
 	jQuery(window).on('resize', function() {
