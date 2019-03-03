@@ -62,7 +62,7 @@ assigntoken(csrf_token);
 {% block content %}
 {% csrf_token %}
 
-<div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
 			  	<div class="modal-dialog modal-lg modal-xl" role="document">
 				    <div class="modal-content">
 				      	<div class="modal-header">
@@ -87,7 +87,7 @@ assigntoken(csrf_token);
 									    <a class="nav-link" id="modalTab03-tab" data-toggle="tab" href="#modalTab03" role="tab" aria-controls="modalTab03" aria-selected="false">Data Export</a>
 									  </li>
 									  <li class="nav-item">
-									    <a class="nav-link" id="modalTab04-tab" data-toggle="tab" href="#modalTab04" role="tab" aria-controls="modalTab04" aria-selected="false">Statstics</a>
+									    <a class="nav-link" id="modalTab04-tab" data-toggle="tab" href="#modalTab04" role="tab" aria-controls="modalTab04" aria-selected="false">Activity Report</a>
 									  </li>
 									  <li class="nav-item">
 									    <a class="nav-link" id="modalTab05-tab" data-toggle="tab" href="#modalTab05" role="tab" aria-controls="modalTab05" aria-selected="false">Project Logs</a>
@@ -99,39 +99,53 @@ assigntoken(csrf_token);
 				      			</div>
 				      			<div class="col-md-8 col-lg-9">
 				      				<div class="tab-content" id="myTabContent">
-										<div class="tab-pane fade show active" id="modalTab01" role="tabpanel" aria-labelledby="modalTab01-tab">
-											<a class="btn btn-primary" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank"><i class="la la-list-alt"></i> Project Summary Report</a>
+										<div class="tab-pane fade show active text-center" id="modalTab01" role="tabpanel" aria-labelledby="modalTab01-tab">
+											<div class="modal-body">
+												<div class="form-group">
+													<h5>Project Summary Report</h5>
+													  <div class="text-center">
+											              <div class="rounded-circle p-4 bg-light" style="height: 150px;width: 150px;margin: 32px auto;">
+											                <i style="font-size: 52px;" class="la la-file-pdf-o ml-2 text-danger m-4"></i>
+											              </div>
+											              <p>
+											                    Contains high level overview of the project in form of numbers, graphs and map.
+											              </p>
+											            </div>
+												</div>
+												<button type="button" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank" class="btn btn-success pull-right"> Generate </button>	
+
+											</div>
 											
 											<br>
-											<br>
 											<hr>
+
 											{% verbatim %}
 											<div id="generateSiteExportReport">
 											
 											</div>
 											{% endverbatim %}
 										</div>
-										<div class="tab-pane fade" id="modalTab02" role="tabpanel" aria-labelledby="modalTab02-tab">
+										<div class="tab-pane fade text-center" id="modalTab02" role="tabpanel" aria-labelledby="modalTab02-tab">
 											{% verbatim %}
 												<div id="generateProgressReport">
 												
 												</div>
 											{% endverbatim %}								
 										</div>
-										<div class="tab-pane fade show" id="modalTab03" role="tabpanel" aria-labelledby="modalTab03-tab">
+										<div class="tab-pane fade show text-center" id="modalTab03" role="tabpanel" aria-labelledby="modalTab03-tab">
 											{% verbatim %}
 											<div id="generateReport">
 											</div>
 											{% endverbatim %}
 										</div>
-										<div class="tab-pane fade" id="modalTab04" role="tabpanel" aria-labelledby="modalTab04-tab">
+										<div class="tab-pane fade text-center" id="modalTab04" role="tabpanel" aria-labelledby="modalTab04-tab">
 											{% verbatim %}
 											<div id="generateStatsticsReport">
 											
 											</div>
 											{% endverbatim %}
 										</div>
-										<div class="tab-pane fade" id="modalTab05" role="tabpanel" aria-labelledby="modalTab05-tab">
+										<div class="tab-pane fade text-center" id="modalTab05" role="tabpanel" aria-labelledby="modalTab05-tab">
 											{% verbatim %}
 											<div id="generateLogReport">
 											
@@ -197,7 +211,7 @@ assigntoken(csrf_token);
 							</a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButtonManage">
 								
-								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#reportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Report' %} </a>
+								<a class="dropdown-item" target="_blank" href="#" data-toggle="modal" data-target="#exportModal"><i class="la la-table"></i> {% trans 'Generate' %} {% trans 'Report' %} </a>
 								
 								<a class="dropdown-item" href="{% url 'forms:project-responses' obj.pk %}" title="" class="btn btn-sm btn-xs btn-primary"><i class="la la-reply"></i> {% trans 'View Data' %}</a>
 
@@ -605,6 +619,7 @@ var static_url ="{{ STATIC_URL }}";
 			
 	$('#exportModal').on('shown.bs.modal', function(){
 		fn_generate_report_modal_height();
+		$("#myTabContent .tab-pane").niceScroll({cursorborder:"",cursorcolor:"#00628e"});
 	});
 
 	jQuery(window).on('resize', function() {
