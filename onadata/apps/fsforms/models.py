@@ -512,8 +512,7 @@ class FInstance(models.Model):
         media_folder = self.instance.xform.user.username
         def parse_repeat(r_object):
             r_question = r_object['name']
-            data.append(r_question)
-
+            
             if r_question in json_answer:
                 for gnr_answer in json_answer[r_question]:
                     for first_children in r_object['children']:

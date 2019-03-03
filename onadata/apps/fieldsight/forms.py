@@ -448,7 +448,7 @@ class SiteTypeForm(forms.ModelForm):
         exclude = ('project','deleted')
         widgets = {
             'name': TextInput(attrs={'placeholder': 'name','id':'id_name', 'class':'form-control', }),
-            'identifier': TextInput(attrs={'placeholder': 'ID', 'id':'id_identifier', 'class':'form-control', }),
+            'identifier': TextInput(attrs={'placeholder': 'ID', 'id':'id_identifier', 'class':'form-control', 'autocomplete': 'off','pattern':'[0-9]+', 'title':'Enter Positive numbers Only ', }),
         }
 
 
