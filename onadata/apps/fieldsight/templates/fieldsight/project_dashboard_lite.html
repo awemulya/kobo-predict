@@ -55,6 +55,8 @@ $("#myTabContent .tab-pane").getNiceScroll().resize();
 	 vm = new SitesViewModel(project, "{% url 'fieldsight_export:export_xls_project_sites' obj.pk %}");
 	 ko.applyBindings(vm);
 	});
+	fn_generate_report_modal_height();
+	$("#myTabContent .tab-pane").getNiceScroll().resize();
 	 </script>
 {% endif %}
    
