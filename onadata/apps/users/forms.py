@@ -9,6 +9,7 @@ from django.core.validators import validate_email
 from onadata.apps.fieldsight.models import Organization
 from .models import UserProfile
 from django.contrib.auth.models import User
+from django.contrib import auth
 
 
 import StringIO
@@ -143,3 +144,21 @@ class UserEditForm(forms.Form):
     google_talk = forms.CharField(required=False)
     twitter = forms.CharField(required=False)
 
+
+class ValidatingPasswordChangeForm(auth.forms.PasswordChangeForm):
+    MIN_LENGTH = 8
+
+    def clean_new_password1(self):
+        password1 = self.cleaned_data.get('new_password1')
+
+        # At least MIN_LENGTH long
+        if len(password1) < self.MIN_LENGTH:
+            raise forms.ValidationError("The new password must be at least %d characters long." % self.MIN_LENGTH)
+
+        # At least one letter and one non-letter
+        first_isalpha = password1[0].isalpha()
+        if all(c.isalpha() == first_isalpha for c in password1):
+            raise forms.ValidationError("The new password must contain at least one letter and at least one digit or" \
+                                        " punctuation character.")
+
+        return password1

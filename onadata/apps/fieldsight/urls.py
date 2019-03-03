@@ -65,7 +65,7 @@ from .views import (
     DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages, SiteSearchView,
     ProjectDashboardStageResponsesStatus, GeoJSONContent, DonorFullMap, ProjectSiteListGeoJSON, SiteBulkEditView,
     site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data,
-    FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI, SiteSearchLiteView, AssignUsersToRegionsView,
+    FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI, SiteSearchLiteView, AssignUsersToRegionsView, RequestOrganizationSearchView,
     AssignUsersToEntireProjectView)
 
 

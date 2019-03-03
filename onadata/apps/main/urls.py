@@ -6,6 +6,7 @@ from onadata.apps.api.urls import router
 from onadata.apps.api.urls import XFormListApi
 from onadata.apps.api.urls import XFormSubmissionApi
 from onadata.apps.api.urls import BriefcaseApi
+from onadata.apps.users.forms import ValidatingPasswordChangeForm
 from .views import (Error_404)
 from django.contrib import admin
 # admin.autodiscover()
@@ -39,6 +40,9 @@ urlpatterns = patterns(
     url(r'^accounts/login/', RedirectView.as_view(url='/users/accounts/login/'), name='login'),
     url(r'^accounts/logout/', 'django.contrib.auth.views.logout',
         {'next_page': '/'}, name='auth_logout'),
+    url(r'^accounts/password/change/$', 'django.contrib.auth.views.password_change',
+        {'password_change_form': ValidatingPasswordChangeForm,
+         'post_change_redirect': '/accounts/password/change/done'}),
     url(r'^accounts/', include('onadata.apps.main.registration_urls')),
 
     # url(r'^admin/', include(admin.site.urls)),
@@ -46,6 +50,7 @@ urlpatterns = patterns(
 
     # oath2_provider
     url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    url(r'^oauth/', include('social_django.urls', namespace='social')),
 
     # google urls
     url(r'^gauthtest/$',
