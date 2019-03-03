@@ -1751,22 +1751,22 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, reportTyp
         if reportType == "Weekly":
             weekly_data = [["Week No.", "Week Start", "Week End", "Site Visits", "Submissions","Active Users"]]
 
-        weekcount = 0
-        for value in data[1:]:
-            day = datetime.datetime.strptime(value[0], "%Y-%m-%d").weekday() + 1
-            # Since start day is Monday And in Nepa we Calculate from Saturday for now.
-            if day == 7 or weekcount == 0:
-                weekcount += 1
-                weekly_data.insert(weekcount, ["Week "+ str(weekcount),"","",0,0,0])
+            weekcount = 0
+            for value in data[1:]:
+                day = datetime.datetime.strptime(value[0], "%Y-%m-%d").weekday() + 1
+                # Since start day is Monday And in Nepa we Calculate from Saturday for now.
+                if day == 7 or weekcount == 0:
+                    weekcount += 1
+                    weekly_data.insert(weekcount, ["Week "+ str(weekcount),"","",0,0,0])
 
-                weekly_data[weekcount][1] = value[0]
-            weekly_data[weekcount][2] = value[0]
-            weekly_data[weekcount][3] += value[2]
-            weekly_data[weekcount][4] += value[3]
-            weekly_data[weekcount][5] += value[4] 
+                    weekly_data[weekcount][1] = value[0]
+                weekly_data[weekcount][2] = value[0]
+                weekly_data[weekcount][3] += value[2]
+                weekly_data[weekcount][4] += value[3]
+                weekly_data[weekcount][5] += value[4] 
 
-        for value in weekly_data:
-            ws.append(value)
+            for value in weekly_data:
+                ws.append(value)
 
         else:
             for value in data:
