@@ -49,7 +49,7 @@ def site_download_zipfile(task_prog_obj_id, size):
     try:
         default_storage = get_storage_class()() 
         buffer = BytesIO()
-        datas = get_images_for_site_all(str(task.object_id))
+        datas = get_images_for_site_all(task.object_id)
         urls = list(datas["result"])
         archive = zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED)
         index=0
