@@ -38,7 +38,8 @@ var project = "{{obj.pk}}";
 assigntoken(csrf_token);
  vm = new RegionViewModel(project, "{% url 'fieldsight_export:export_xls_project_sites' obj.pk %}");
  ko.applyBindings(vm);
-
+ fn_generate_report_modal_height();
+$("#myTabContent .tab-pane").getNiceScroll().resize();
 });
 </script>
 
@@ -116,8 +117,9 @@ assigntoken(csrf_token);
 
 											</div>
 											
-											
+											<br>
 											<hr>
+
 											{% verbatim %}
 											<div id="generateSiteExportReport">
 											

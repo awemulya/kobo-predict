@@ -54,6 +54,8 @@ assigntoken(csrf_token);
 	 vm = new SitesViewModel(project, "{% url 'fieldsight_export:export_xls_project_sites' obj.pk %}");
 	 ko.applyBindings(vm);
 	});
+	fn_generate_report_modal_height();
+	$("#myTabContent .tab-pane").getNiceScroll().resize();
 	 </script>
 {% endif %}
    
@@ -116,7 +118,7 @@ assigntoken(csrf_token);
 												<button type="button" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank" class="btn btn-success pull-right"> Generate </button>	
 
 											</div>
-											
+											<br>
 											
 											<hr>
 											{% verbatim %}
