@@ -3706,7 +3706,7 @@ class TestStripe(TemplateView):
 def charge(request):
     if request.method == 'POST':
         charge = stripe.Charge.create(
-            amount=500,
+            amount=1500,
             currency='usd',
             description='A Django Test charge',
             source=request.POST['stripeToken']

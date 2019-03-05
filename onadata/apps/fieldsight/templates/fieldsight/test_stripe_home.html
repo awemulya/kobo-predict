@@ -1,10 +1,10 @@
-<h2>Pay $5.00 using Stripe.</h2>
+<h2>Pay $15 using Stripe.</h2>
 <form action="{% url 'fieldsight:charge' %}" method="post">
       {% csrf_token %}
-    <script src="http://checkout.stripe.com/checkout.js" class="stripe-button"
+    <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
         data-key="{{ key }}"
         data-description="A Django Test Charge"
-        data-amount="500"
+        data-amount="1500"
         data-locale="auto">
     </script>
 </form>
