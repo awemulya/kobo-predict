@@ -15,7 +15,7 @@
         <script src="{{ STATIC_URL }}dummy/assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
 		<link href="https://fonts.googleapis.com/css?family=Ubuntu:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
     </head>
-    <body>
+    <body class="login-body">
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -27,9 +27,9 @@
 		  		<div class="row justify-content-center">
 		  			<div class="col-xl-6 col-lg-8">
 		  				<div class="login-section">	
-		  					<div class="row">
+		  					<div class="row no-gutters bg-primary">
 		  						<div class="col-lg-5">
-		  							<div class="sec-left text-center">
+		  							<div class="sec-left text-center bg-white">
 		  								<a href="#" title="" target="">
 		  									<img src="{{ STATIC_URL }}dummy/assets/img/fieldsight.png" alt="fieldsight" height="100">
 		  								</a>
@@ -121,74 +121,129 @@
 
 			
 			$(document).ready(function(){
+				//
+				fn_login_vertically_center();
+
+				//
 				vph = $(window).height();
 				$(".login-wrap").css("min-height", vph);
 				//Converting img tag to parent div bg
 				var imgSrc = $(".login-bg>img").attr("src");
-        		$('.login-bg').css({"background" : "url("+imgSrc+")", "background-position": "center", "background-size": "cover"});
-        		$(".login-bg>img").remove();
+	        	$('.login-bg').css({"background" : "url("+imgSrc+")", "background-position": "center", "background-size": "cover"});
+	        	$(".login-bg>img").remove();
+
+	        	//reset
+	        	fn_login_eqheight();
+
+			    $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+					fn_login_eqheight();
+					fn_login_vertically_center();
+				});
+
+				fn_movebackground();
 
 
-        		//reset
+				//Hide/Show Password;
+				$(".input-pass-showhide .input-group-append").click(function(){
+					if($(this).find('.input-group-text .la').hasClass('la-eye')){
+						//Change Icon
+						$(this).find('.input-group-text .la').removeClass('la-eye');
+						$(this).find('.input-group-text .la').addClass('la-eye-slash');
 
-				//VC
-				fn_login_vertically_center();
-        		
+						//Change Tooltip text
+						$(this).tooltip('hide');
+						$(this).attr('data-original-title','Show Password');
+						$(this).tooltip('update');
+
+						//Change Input Type
+						$(this).siblings('.form-control').attr( "type", "password");
+					}else{
+						//Change Icon
+						$(this).find('.input-group-text .la').removeClass('la-eye-slash');
+						$(this).find('.input-group-text .la').addClass('la-eye');
+
+						//Change Tooltip text
+						$(this).tooltip('hide');
+						$(this).attr('data-original-title','Hide Password');
+						$(this).tooltip('update');
+
+						//Change Input Type
+						$(this).siblings('.form-control').attr( "type", "text");
+					}
+				});
+
 			});
 			jQuery(window).on('resize', function() {
+				//
 				vph = $(window).height();
 				$(".login-wrap").css("min-height", vph);
+
+				//
+				fn_login_eqheight();
 				fn_login_vertically_center();
 			});
 
-			// Vertical Center
-			function fn_login_vertically_center(){
-				var svph = $(window).height();
-				var slfh = $(".login-section").height();
-				if(svph > (slfh + 60)){
-					var tempHeight = svph - slfh;
-					var tempHeight = tempHeight / 2;
-					$(".login-section").css("margin-top", tempHeight);
-					$(".login-section").css("margin-bottom", tempHeight);
-					}else{
-					$(".login-section").css("margin-top", 30);
-					$(".login-section").css("margin-bottom", 30);
-				}
-			}
-
-			 $("#help-me").click(function(){
+			$("#help-me").click(function(){
 			 	$('#pills-login').removeClass('active show');
 			 	$('#pills-signup').removeClass('active show');
 			 	$("#pills-login-tab").removeClass('active');
-			 	$('#pills-reset').addClass('active show');
+			 	$('#pills-reset').tab('show');
 
-			 	//
-			 	var lHeight, rHeight;
-				lHeight = $(".sec-left").outerHeight();
-				$(".sec-right" ).css("min-height", lHeight);
+			 	fn_login_eqheight();
+			 	fn_login_vertically_center();
 			});
 
+			$("#btn-signup").click(function(){
+			 	$('#pills-signup').removeClass('active show');
+			 	$("#pills-signup-tab").removeClass('active');
+			 	$('#pills-thankyou').tab('show');
 
-			jQuery(document).on('ready', function() {
-		        jQuery(window).on('resize', function() {
-		            if(jQuery(document).width() > 479) {
-		              
+			 	fn_login_eqheight();
+			 	fn_login_vertically_center();
+			});
 
-        		//Equal Height
-        		function fn_login_eqheight(){
-        			var lHeight, rHeight;
-					lHeight = $(".sec-left").outerHeight();
-					rHeight = $(".sec-right").outerHeight();
-					$(".sec-left" ).css("min-height", rHeight);
-        		}
+			$("#btn-resetpassword").click(function(){
+			 	$('#pills-reset').removeClass('active show');
+			 	$('#pills-thankyou').tab('show');
 
-        		fn_login_eqheight();
-        		
-				$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-				  fn_login_eqheight();
-				})
-				
-				//Background Scrolling Effect
+			 	fn_login_eqheight();
+			 	fn_login_vertically_center();
+			});
+
+			$("#btn-backtologin").click(function(){
+			 	$('#pills-thankyou').removeClass('active show');
+			 	$('#pills-login').tab('show');
+			 	$('#pills-login-tab').addClass('active');
+
+			 	fn_login_eqheight();
+			 	fn_login_vertically_center();
+			});
+
+			$("#btn-backtologinfromreset").click(function(){
+			 	$('#pills-reset').removeClass('active show');
+			 	$('#pills-login').tab('show');
+			 	$('#pills-login-tab').addClass('active');
+
+			 	fn_login_eqheight();
+			 	fn_login_vertically_center();
+			});
+
+			function fn_login_vertically_center(){
+			 	var svph = $(window).height();
+			 	var slfh = $(".login-section").height();
+			 	if(svph > (slfh + 60)){
+			 		var tempHeight = svph - slfh;
+			 		var tempHeight = tempHeight / 2;
+			 		$(".login-section").css("margin-top", tempHeight);
+			 		$(".login-section").css("margin-bottom", tempHeight);
+			 	}else{
+			 		$(".login-section").css("margin-top", 30);
+			 		$(".login-section").css("margin-bottom", 30);
+			 	}
+			}
+
+			function fn_movebackground(){
+			 	//Background Scrolling Effect
 				var lFollowX = 0,
 			    lFollowY = 0,
 			    x = 0,
@@ -196,33 +251,39 @@
 			    friction = 1 / 30;
 
 				function moveBackground() {
-				  x += (lFollowX - x) * friction;
-				  y += (lFollowY - y) * friction;
-				  
-				  translate = 'translate(' + x + 'px, ' + y + 'px) scale(1.1)';
+					x += (lFollowX - x) * friction;
+					y += (lFollowY - y) * friction;
 
-				  $('.login-bg').css({
-				    '-webit-transform': translate,
-				    '-moz-transform': translate,
-				    'transform': translate
-				  });
+					translate = 'translate(' + x + 'px, ' + y + 'px) scale(1.1)';
 
-				  window.requestAnimationFrame(moveBackground);
+					$('.login-bg').css({
+					    '-webit-transform': translate,
+					    '-moz-transform': translate,
+					    'transform': translate
+					});
+
+					window.requestAnimationFrame(moveBackground);
 				}
 
 				$(window).on('mousemove click', function(e) {
-
-				  var lMouseX = Math.max(-100, Math.min(100, $(window).width() / 2 - e.clientX));
-				  var lMouseY = Math.max(-100, Math.min(100, $(window).height() / 2 - e.clientY));
-				  lFollowX = (20 * lMouseX) / 100; // 100 : 12 = lMouxeX : lFollow
-				  lFollowY = (10 * lMouseY) / 100;
-
+					var lMouseX = Math.max(-100, Math.min(100, $(window).width() / 2 - e.clientX));
+					var lMouseY = Math.max(-100, Math.min(100, $(window).height() / 2 - e.clientY));
+					lFollowX = (20 * lMouseX) / 100; // 100 : 12 = lMouxeX : lFollow
+					lFollowY = (10 * lMouseY) / 100;
 				});
 
 				moveBackground();
-		            }
-		        }).trigger('resize'); // Trigger resize handlers.       
-		    });
+			}
+
+			//Equal Height
+			function fn_login_eqheight(){
+				if(jQuery(document).width() > 479) {
+			    	var lHeight, rHeight;
+					lHeight = $(".sec-left").outerHeight();
+					rHeight = $(".sec-right").outerHeight();
+					$(".sec-left" ).css("min-height", rHeight);
+				}
+			}
 		</script>
     </body>
 </html>
