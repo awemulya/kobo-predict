@@ -3,6 +3,7 @@ import datetime
 import json
 import redis
 import xlwt
+import stripe
 from django.contrib.contenttypes.models import ContentType
 from io import BytesIO
 from django.conf import settings
@@ -85,6 +86,7 @@ from onadata.apps.fsforms.reports_util import get_images_for_site, get_images_fo
 from onadata.apps.staff.models import Team
 from .metaAttribsGenerator import generateSiteMetaAttribs
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 @login_required
 def dashboard(request):
@@ -3691,3 +3693,22 @@ class RequestOrganizationSearchView(TemplateView):
 
         return context
 
+
+class TestStripe(TemplateView):
+    template_name = 'fieldsight/test_stripe_home.html'
+
+    def get_context_data(self, **kwargs):  # new
+        context = super(TestStripe, self).get_context_data(**kwargs)
+        context['key'] = settings.STRIPE_PUBLISHABLE_KEY
+        return context
+
+
+def charge(request):
+    if request.method == 'POST':
+        charge = stripe.Charge.create(
+            amount=500,
+            currency='usd',
+            description='A Django Test charge',
+            source=request.POST['stripeToken']
+        )
+        return render(request, 'fieldsight/test_stripe_charge.html')

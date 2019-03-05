@@ -16,3 +16,4 @@ XlsxWriter==1.1.2
 numpy==1.11.1
 pandas==0.18.1
 social-auth-app-django==3.1.0
+stripe==2.21.0
