@@ -11,6 +11,7 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth import login
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db.models import Q
+from django.conf import settings
 from django.db import transaction
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect, render
@@ -495,7 +496,7 @@ def web_signup(request):
             current_site = get_current_site(request)
             message = render_to_string('users/acc_active_email.html', {
                 'user': user,
-                'domain': current_site.domain,
+                'domain': settings.SITE_URL,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             })
