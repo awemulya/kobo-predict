@@ -21,7 +21,7 @@
         <![endif]-->
         <div class="login-wrap">
 		  	<div class="login-bg">
-		  		<img src="{{ STATIC_URL }}dummy/assets/img/bg-login.png">
+		  		<img src="{{ STATIC_URL }}dummy/assets/img/bg-login.png" webp-src="{{ STATIC_URL }}dummy/assets/img/bg-login.webp">
 		  	</div>
 		  	<div class="container-fluid">
 		  		<div class="row justify-content-center">
@@ -128,7 +128,22 @@
 				vph = $(window).height();
 				$(".login-wrap").css("min-height", vph);
 				//Converting img tag to parent div bg
-				var imgSrc = $(".login-bg>img").attr("src");
+				var pngImgSrc = $(".login-bg>img").attr("src");
+				var webpImgSrc = $(".login-bg>img").attr("webp-src");
+				var imgSrc = pngImgSrc;
+
+
+				var webPsupport = (function() {
+				  var webP = new Image();
+				  webP.onload = WebP.onerror = function () {
+				  };
+				  webP.src = webpImgSrc;
+				});
+
+				if (webPsupport) {
+				  	imgSrc = webpImgSrc;
+				  }
+
 	        	$('.login-bg').css({"background" : "url("+imgSrc+")", "background-position": "center", "background-size": "cover"});
 	        	$(".login-bg>img").remove();
 
