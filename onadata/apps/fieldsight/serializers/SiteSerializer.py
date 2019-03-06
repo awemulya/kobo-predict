@@ -66,7 +66,7 @@ class SiteUpdateSerializer(serializers.ModelSerializer):
         lat = self.context['request'].data.get('latitude', False)
         long = self.context['request'].data.get('longitude', False)
         type_id = self.context['request'].data.get('type', False)
-        if not SiteType.objects.get(pk=type_id , deleted=False).exists():
+        if not SiteType.objects.filter(pk=type_id , deleted=False).exists():
             type_id = False
         site = super(SiteUpdateSerializer, self).update(instance, validated_data)
         if lat and long:
