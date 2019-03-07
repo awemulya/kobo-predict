@@ -40,7 +40,7 @@ def deploy_kpi_form(id_string, headers):
         return False
 
 
-def clone_kpi_form(id_string, token, , name="Default Form"):
+def clone_kpi_form(id_string, token, name="Default Form"):
     if not hasattr(settings, 'KPI_ASSET_URL'):
         return False
 
