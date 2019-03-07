@@ -322,7 +322,9 @@ urlpatterns = [
 
     # stripe test
     url(r'^test-stripe', TestStripe.as_view(), name="test_stripe"),
-    url(r'^charge/', views.charge, name='charge')
+    url(r'^charge/', views.charge, name='charge'),
+    url(r'^subscribe/', views.subscribe_view, name='subscribe'),
+    url(r'^retrieve/', views.retrieve, name='retrieve')
 
 ]
 

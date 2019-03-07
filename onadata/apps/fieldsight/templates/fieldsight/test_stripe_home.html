@@ -1,5 +1,4 @@
-<h2>Pay $15 using Stripe.</h2>
-<form action="{% url 'fieldsight:charge' %}" method="post">
+<form action="{% url 'fieldsight:subscribe' %}" method="post">
       {% csrf_token %}
     <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
         data-key="{{ key }}"

@@ -16,12 +16,13 @@ from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect, JsonResponse, Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template.response import TemplateResponse
-from django.views.generic import ListView, TemplateView, View
+from django.views.generic import ListView, TemplateView, View, FormView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
 from django.forms.forms import NON_FIELD_ERRORS
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required
 
 from fcm.utils import get_device_model
 
@@ -3694,7 +3695,7 @@ class RequestOrganizationSearchView(TemplateView):
         return context
 
 
-class TestStripe(TemplateView):
+class TestStripe(LoginRequiredMixin, TemplateView):
     template_name = 'fieldsight/test_stripe_home.html'
 
     def get_context_data(self, **kwargs):  # new
@@ -3712,3 +3713,27 @@ def charge(request):
             source=request.POST['stripeToken']
         )
         return render(request, 'fieldsight/test_stripe_charge.html')
+
+
+@login_required()
+def subscribe_view(request):
+    if request.method == 'POST':
+        customer_data = {
+            'email': request.POST['stripeEmail'],
+            'description': 'Some Customer Data',
+            'card': request.POST['stripeToken'],
+            'metadata': {'username': request.user.username}
+        }
+        customer = stripe.Customer.create(**customer_data)
+
+        customer.subscriptions.create(plan="quantity_plan")
+
+    return render(request, 'fieldsight/test_stripe_charge.html')
+
+
+
+def retrieve(request):
+
+    customer=stripe.Customer.retrieve('cus_EeY9RVpB8EuCOB')
+    return HttpResponse(customer)
+
