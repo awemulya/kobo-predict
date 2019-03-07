@@ -19,15 +19,7 @@ def deploy_kpi_form(id_string, headers):
     req = requests.post(url, data=json.dumps(values),
                         headers=headers, verify=False)
     if req.status_code in [200, 201]:
-        try:
-            response = req.json()
-            print("kpi response to deploy ", response)
-        except ValueError:
-            pass
-        else:
-            print("try catch else ", response)
         return True
-
     else:
         try:
             response = req.json()
@@ -40,7 +32,7 @@ def deploy_kpi_form(id_string, headers):
         return False
 
 
-def clone_kpi_form(id_string, token, name="Default Form"):
+def clone_kpi_form(id_string, token, name="Default Form Mahabharat"):
     if not hasattr(settings, 'KPI_ASSET_URL'):
         return False
 
@@ -59,10 +51,10 @@ def clone_kpi_form(id_string, token, name="Default Form"):
         try:
             id_string = req.__dict__['headers']['location'].split("/")[-2]
             print("kpi response  to clone")
-        except ValueError:
-            pass
+        except Exception as e:
+            print(str(e), "error occured")
         else:
-            print("id string from kpi clone", )
+            print("id string from kpi clone", id_string)
             deploy_kpi_form(id_string, headers)
             return True
     else:

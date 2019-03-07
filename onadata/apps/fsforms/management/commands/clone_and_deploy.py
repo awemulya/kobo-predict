@@ -8,4 +8,4 @@ class Command(BaseCommand):
     help = 'Create default groups'
 
     def handle(self, *args, **options):
-        clone_kpi_form('aRdfT8EeirMt8RZjCc779J', 'aaa192b3394953f24c21fcec865ae794dcf5d4b2', "hello World")
+        clone_kpi_form('KPI_ID_STRING', 'USER_TOKEN', "FORM NAME")
