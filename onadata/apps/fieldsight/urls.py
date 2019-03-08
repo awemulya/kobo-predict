@@ -66,7 +66,7 @@ from .views import (
     ProjectDashboardStageResponsesStatus, GeoJSONContent, DonorFullMap, ProjectSiteListGeoJSON, SiteBulkEditView,
     site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite, municipality_data,
     FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI, SiteSearchLiteView, AssignUsersToRegionsView, RequestOrganizationSearchView,
-    AssignUsersToEntireProjectView, TestStripe)
+    AssignUsersToEntireProjectView)
 
 
 from onadata.apps.geo.views import (
@@ -321,10 +321,9 @@ urlpatterns = [
     url(r'^getGeoJson/(?P<pk>\d+)/$', GeoJSONContent.as_view(), name="geojsoncontent"),
 
     # stripe test
-    url(r'^test-stripe', TestStripe.as_view(), name="test_stripe"),
     url(r'^charge/', views.charge, name='charge'),
     url(r'^subscribe/', views.subscribe_view, name='subscribe'),
-    url(r'^retrieve/', views.retrieve, name='retrieve')
+    url(r'^pricing-and-features/', views.PricingAndFeatures.as_view(), name='pricing_and_features')
 
 ]
 

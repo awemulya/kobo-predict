@@ -3695,15 +3695,6 @@ class RequestOrganizationSearchView(TemplateView):
         return context
 
 
-class TestStripe(LoginRequiredMixin, TemplateView):
-    template_name = 'fieldsight/test_stripe_home.html'
-
-    def get_context_data(self, **kwargs):  # new
-        context = super(TestStripe, self).get_context_data(**kwargs)
-        context['key'] = settings.STRIPE_PUBLISHABLE_KEY
-        return context
-
-
 def charge(request):
     if request.method == 'POST':
         charge = stripe.Charge.create(
@@ -3726,14 +3717,27 @@ def subscribe_view(request):
         }
         customer = stripe.Customer.create(**customer_data)
 
-        customer.subscriptions.create(plan="quantity_plan")
+        # customer.subscriptions.create(
+        #     items=[
+        #             {
+        #                'plan': 'basic_plan',
+        #                 'quantity': 319,
+        #
+        #             },
+        #             {
+        #               'plan': 'basic_plan_overrage',
+        #             },
+        #           ],
+        # )
 
     return render(request, 'fieldsight/test_stripe_charge.html')
 
 
+class PricingAndFeatures(LoginRequiredMixin, TemplateView):
 
-def retrieve(request):
+    template_name = 'fieldsight/pricing.html'
 
-    customer=stripe.Customer.retrieve('cus_EeY9RVpB8EuCOB')
-    return HttpResponse(customer)
-
+    def get_context_data(self, **kwargs):  # new
+        context = super(PricingAndFeatures, self).get_context_data(**kwargs)
+        context['key'] = settings.STRIPE_PUBLISHABLE_KEY
+        return context
