@@ -124,7 +124,7 @@ class SiteCreationSurveySerializer(serializers.ModelSerializer):
             if not Region.objects.filter(pk=region, is_active=True).exists():
                 validated_data.pop('region')
 
-        if type and isinstance(type, int):
+        if site_type and isinstance(site_type, int):
             if not SiteType.objects.filter(pk=site_type, deleted=False).exists():
                 validated_data.pop('site_type')
         site = Site.objects.create(**validated_data)
