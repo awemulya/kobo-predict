@@ -94,7 +94,7 @@ assigntoken(csrf_token);
 									    <a class="nav-link" id="modalTab05-tab" data-toggle="tab" href="#modalTab05" role="tab" aria-controls="modalTab05" aria-selected="false">Project Logs</a>
 									  </li>
 									  <li class="nav-item">
-									    <a class="nav-link" id="modalTab06-tab" data-toggle="tab" href="#modalTab06" role="tab" aria-controls="" aria-selected="false">Google Reports</a>
+									    <a class="nav-link" id="modalTab06-tab" data-toggle="tab" href="#modalTab06" role="tab" aria-controls="" aria-selected="false"> G-Sheet Reports</a>
 									  </li>
 									</ul>
 				      			</div>
@@ -114,7 +114,7 @@ assigntoken(csrf_token);
 											            </div>
 
 												</div>
-												<button type="button" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank" class="btn btn-success"> Generate </button>	
+												<button type="button" href="{% url 'fieldsight:project-summary-report' obj.pk %}" target="_blank" class="btn btn-success"> Preview PDF</button>	
 
 											</div>
 											<br>
