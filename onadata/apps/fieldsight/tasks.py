@@ -909,14 +909,14 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_ids
             with open(temporarylocation,'wb') as out: ## Open temporary file as bytes
                 out.write(xls)                ## Read bytes into file
 
-            upload_to_drive(temporarylocation, "{} - Site Details".format(project.id), "Site Details", project)
+            upload_to_drive(temporarylocation, "{} - Site Information".format(project.id), "Site Information", project)
 
             os.remove(temporarylocation)
 
     except DriveException as e:
         print 'Report upload to drive  Unsuccesfull. %s' % e
         print e.__dict__
-        noti = task.logs.create(source=task.user, type=432, title="Xls Site Details report upload to Google Drive in Project",
+        noti = task.logs.create(source=task.user, type=432, title="Xls Site Information report upload to Google Drive in Project",
                                        content_object=project, recipient=task.user,
                                        extra_message="@error " + u'{}'.format(e.message))
         os.remove(temporarylocation)
@@ -927,7 +927,7 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_ids
         task.status = 3
         print e.__dict__
         task.save()
-        task.logs.create(source=source_user, type=432, title="Xls Site Details Report generation in project",
+        task.logs.create(source=source_user, type=432, title="Xls Site Information Report generation in project",
                                    content_object=project, recipient=source_user,
                                    extra_message="@error " + u'{}'.format(e.message))
         buffer.close()
