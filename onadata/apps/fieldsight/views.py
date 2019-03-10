@@ -294,7 +294,8 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'total_submissions': flagged + approved + rejected + outstanding,
             'site_visits' : site_visits,
             'active_supervisors' : active_supervisors,
-            'new_submissions' : new_submissions
+            'new_submissions' : new_submissions,
+            'gsuit_meta_json': json.dumps(obj.gsuit_meta),
             
     }
 
@@ -3160,7 +3161,8 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
             'total_submissions': outstanding + flagged + approved + rejected,
             'site_visits' : site_visits,
             'active_supervisors' : active_supervisors,
-            'new_submissions' : new_submissions
+            'new_submissions' : new_submissions,
+            'gsuit_meta_json': json.dumps(obj.gsuit_meta),
     }
         return dashboard_data
 

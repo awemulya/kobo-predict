@@ -619,7 +619,7 @@ var static_url ="{{ STATIC_URL }}";
 	configure_settings.regions_url = "{% url 'fieldsight:project_regions_api' obj.pk %}";
 	configure_settings.site_types_url = "{% url 'fieldsight:project_site_types_api' obj.pk %}";
 	configure_settings.log_report_type = "Project";
-	configure_settings.gsuit_params = {{ obj.gsuit_params }};
+	configure_settings.gsuit_params = {{ obj.gsuit_meta_json|safe }};
 	//getlogdata();
 		
 			
