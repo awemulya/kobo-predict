@@ -84,7 +84,7 @@ def upload_to_drive(file_path, title, folder, project):
         file.SetContentFile(file_path)
         file.Upload({'convert':True})    
         gsuit_meta = project.gsuit_meta
-        gsuit_meta[folder] = {'link':file['alternateLink'], 'updated_at':datetime.datetime.utcnow().isoformat()}
+        gsuit_meta[folder] = {'link':file['alternateLink'], 'updated_at':datetime.datetime.now().isoformat()}
         project.gsuit_meta = gsuit_meta
         project.save()
         permissions = file.GetPermissions()
