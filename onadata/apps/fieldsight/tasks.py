@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import time
+import os
 import json
 import datetime
 from datetime import date
@@ -60,53 +61,69 @@ class DriveException(Exception):
 def upload_to_drive(file_path, title, folder, project):
     pass
     """ TODO: folder names of 'Site Details' and 'Site Progress' must be in google drive."""
-    # try:
-    #     drive = GoogleDrive(gauth)
+    try:
+        drive = GoogleDrive(gauth)
 
-    #     folder_id = drive.ListFile({'q':"title = '"+ folder +"'"}).GetList()[0]['id']
-    #     file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()
-
-    #     if not file:    
-    #         file = drive.CreateFile({'title' : title, "parents": [{"kind": "drive#fileLink", "id": folder_id}]})
-    #     else:
-    #         file = file[0]
-
-    #     file.SetContentFile(file_path)
-    #     file.Upload({'convert':True})    
-    #     gsuit_meta = project.gsuit_meta
-    #     gsuit_meta[file_path] = {'link':file.['alternateLink'], 'updated_at':datetime.datetime.now().isoformat()}
-    #     project.gsuit_meta = gsuit_meta
-    #     project.save()
-    #     permissions = file.GetPermissions()
-
-    #     user_emails = project.project_roles.filter(ended_at__isnull = True, site=None).distinct('user').values_list('user__email', flat=True)
+        folders = drive.ListFile({'q':"title = '"+ folder +"'"}).GetList()
         
-    #     all_users = set(user_emails)
+        if folders:
+            folder_id = folders[0]['id']
+        else:
+            folder_metadata = {'title' : folder, 'mimeType' : 'application/vnd.google-apps.folder'}
+            folder = drive.CreateFile(folder_metadata)
+            folder.Upload()            
+            folder_id = folder['id']
+        
+        file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()
 
-    #     existing_perms = []
+        if not file:    
+            file = drive.CreateFile({'title' : title, "parents": [{"kind": "drive#fileLink", "id": folder_id}]})
+        else:
+            file = file[0]
 
-    #     for permission in permissions:
-    #         existing_perms.append(permission['emailAddress'])
+        file.SetContentFile(file_path)
+        file.Upload({'convert':True})    
+        gsuit_meta = project.gsuit_meta
+        gsuit_meta[folder] = {'link':file['alternateLink'], 'updated_at':datetime.datetime.utcnow().isoformat()}
+        project.gsuit_meta = gsuit_meta
+        project.save()
+        permissions = file.GetPermissions()
 
-    #     perms = set(existing_perms)
+        user_emails = project.project_roles.filter(ended_at__isnull = True, site=None).distinct('user').values_list('user__email', flat=True)
+        
+        all_users = set(user_emails)
 
-    #     perm_to_rm = perms - all_users
-    #     perm_to_add = all_users - perms
+        existing_perms = []
 
-    #     for permission in permissions:
-    #         if permission['emailAddress'] in perm_to_rm and permission['emailAddress'] != "fieldsighthero@gmail.com":
-    #             file.DeletePermission(permission['id'])
+        for permission in permissions:
+            existing_perms.append(permission['emailAddress'])
 
-    #     for perm in perm_to_add:
-    #         file.InsertPermission({
-    #                     'type':'user',
-    #                     'value':perm,
-    #                     'role': 'writer'
-    #                 })
+        perms = set(existing_perms)
+
+        perm_to_rm = perms - all_users
+        perm_to_add = all_users - perms
+
+        for permission in permissions:
+            if permission['emailAddress'] in perm_to_rm and permission['emailAddress'] != "fieldsighthero@gmail.com":
+                file.DeletePermission(permission['id'])
+
+        file.InsertPermission({
+                    'type':'user',
+                    'value':'aashish.baidya.c3@gmail.com',
+                    'role': 'writer'
+                })
 
 
-    # except Exception as e:
-    #     raise DriveException({"message":e})
+        # for perm in perm_to_add:
+        #     file.InsertPermission({
+        #                 'type':'user',
+        #                 'value':perm,
+        #                 'role': 'writer'
+        #             })
+
+
+    except Exception as e:
+        raise DriveException({"message":e})
 
 
 @shared_task()
@@ -288,7 +305,7 @@ def generate_stage_status_report(task_prog_obj_id, project_id, site_type_ids, re
                                    extra_message=" <a href='/"+ "media/stage-report/{}_stage_data.xls".format(project.id) +"'>Site Stage Progress report </a> generation in project")
         
         if not site_type_ids and not region_ids:
-            upload_to_drive("media/stage-report/{}_stage_data.xls".format(project.id), "progress_report-{}".format(project.id), "Site Progress", project)
+            upload_to_drive("media/stage-report/{}_stage_data.xls".format(project.id), "{} - Progress Report".format(project.id), "Site Progress", project)
 
     except DriveException as e:
         print 'Report upload to drive  Unsuccesfull. %s' % e
@@ -884,11 +901,15 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_ids
                                    extra_message=" <a href='" +  task.file.url +"'>Xls sites detail report</a> generation in project")
 
         if not type_ids and not region_ids:
-            temporarylocation="media/site-details-report/{}_site_details.xls".format(project.id)
+            
+            if not os.path.exists("media/site-details-report/"):
+                os.makedirs("media/site-details-report/")
+
+            temporarylocation="media/site-details-report/site_details_{}.xls".format(project.id)
             with open(temporarylocation,'wb') as out: ## Open temporary file as bytes
                 out.write(xls)                ## Read bytes into file
 
-            upload_to_drive(temporarylocation, "{}_site_details".format(project.id), "Site Details", project)
+            upload_to_drive(temporarylocation, "{} - Site Details".format(project.id), "Site Details", project)
 
             os.remove(temporarylocation)
 
