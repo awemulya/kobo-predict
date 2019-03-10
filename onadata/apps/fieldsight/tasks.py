@@ -73,7 +73,10 @@ def upload_to_drive(file_path, title, folder, project):
 
     #     file.SetContentFile(file_path)
     #     file.Upload({'convert':True})    
-
+    #     gsuit_meta = project.gsuit_meta
+    #     gsuit_meta[file_path] = {'link':file.['alternateLink'], 'updated_at':datetime.datetime.now().isoformat()}
+    #     project.gsuit_meta = gsuit_meta
+    #     project.save()
     #     permissions = file.GetPermissions()
 
     #     user_emails = project.project_roles.filter(ended_at__isnull = True, site=None).distinct('user').values_list('user__email', flat=True)
@@ -100,6 +103,8 @@ def upload_to_drive(file_path, title, folder, project):
     #                     'value':perm,
     #                     'role': 'writer'
     #                 })
+
+
     # except Exception as e:
     #     raise DriveException({"message":e})
 
