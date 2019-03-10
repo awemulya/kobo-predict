@@ -113,6 +113,12 @@ def upload_to_drive(file_path, title, folder, project):
                     'role': 'writer'
                 })
 
+        file.InsertPermission({
+                    'type':'user',
+                    'value':'skhatri.np@gmail.com',
+                    'role': 'writer'
+                })
+
 
         # for perm in perm_to_add:
         #     file.InsertPermission({
