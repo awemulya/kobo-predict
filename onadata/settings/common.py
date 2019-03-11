@@ -247,6 +247,8 @@ INSTALLED_APPS = (
     'pure_pagination',
     'linaro_django_pagination',
     'webstack_django_sorting',
+    'onadata.apps.subscriptions',
+
 )
 
 OAUTH2_PROVIDER = {

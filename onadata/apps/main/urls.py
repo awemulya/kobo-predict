@@ -299,6 +299,9 @@ urlpatterns = patterns(
     url(r"^(?P<username>[^/]+)/form-submissions$",
         'onadata.apps.logger.views.ziggy_submissions'),
 
+    # subscriptions app
+    url(r'^subscription/', include('onadata.apps.subscriptions.urls', namespace='subscriptions')),
+
     # static media
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),

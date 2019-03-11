@@ -35,6 +35,26 @@ var org = "{{obj.pk}}";
 
 {% endblock %}
 {% block content %}
+<!-- choose package popup -->
+<!-- Modal -->
+<div class="modal fade" id="pricingModal" tabindex="-1" role="dialog" aria-labelledby="pricingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="pricingModalLabel">Choose Package</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+		{% include 'fieldsight/pricing.html' %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- end choose package !-->
+
 				<div id="main-content" class="padding">
 					<nav aria-label="breadcrumb" role="navigation">
 						{% block breadcrumbs %}
@@ -396,8 +416,61 @@ var org = "{{obj.pk}}";
     <script src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyC8uXN1u5FYIaGOUnVK90Rh3wR2Gmyw1uU"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/demofile.js"></script>
   <script type="text/javascript">
+
      var static_url ="{{ STATIC_URL }}";
      var data = {{ data|safe}};
+
+
+			$(document).ready(function(){
+			$("#select_interval").change(function(){
+				if($(this).val()== 1){
+					fn_yearly_tier();
+				}else if($(this).val()== 2){
+					fn_monthly_tier();
+				}
+			});
+
+
+
+			$("#select_interval").on('change',function(){
+				var getValue=$("#select_interval option:selected").text();
+				$('input[name="interval"]').val(getValue);
+			  });
+
+			});
+
+
+
+			function fn_yearly_tier(){
+				//Price Change
+				$("#pk_basic").find('span').text('USD 1,000');
+				$("#pk_extended").find('span').text('USD 5,000');
+				$("#pk_pro").find('span').text('USD 10,000');
+				$("#pk_scale").find('span').text('USD 30,000');
+
+				//Label change
+				$(".pt-head").find('sub').text('/Year');
+
+			}
+
+			function fn_monthly_tier(){
+				$("#pk_basic").find('span').text('USD 100');
+				$("#pk_extended").find('span').text('USD 500');
+				$("#pk_pro").find('span').text('USD 1,000');
+				$("#pk_scale").find('span').text('USD 3,000');
+
+				//Label change
+				$(".pt-head").find('sub').text('/Month');
+			}
+
+			var totalSItems = document.getElementsByClassName("stripe-button-el");
+
+			for(i = 0; i<totalSItems.length; i++){
+				totalSItems[i].style.display = 'none';
+			}
+
+ 	$('#pricingModal').modal('show');
+
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/map.js"></script>
 {% endblock %}

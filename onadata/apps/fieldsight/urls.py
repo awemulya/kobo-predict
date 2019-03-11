@@ -320,10 +320,5 @@ urlpatterns = [
     url(r'^api/project/(?P<pk>\d+)/sites/geoJSON/$', ProjectSiteListGeoJSON.as_view(), name="ProjectSiteListGeoJSON"),    
     url(r'^getGeoJson/(?P<pk>\d+)/$', GeoJSONContent.as_view(), name="geojsoncontent"),
 
-    # stripe test
-    url(r'^charge/', views.charge, name='charge'),
-    url(r'^subscribe/', views.subscribe_view, name='subscribe'),
-    url(r'^pricing-and-features/', views.PricingAndFeatures.as_view(), name='pricing_and_features')
-
 ]
 
