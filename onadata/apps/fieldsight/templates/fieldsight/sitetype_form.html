@@ -15,25 +15,38 @@
             {% block breadcrumbs %}
             <ol class="breadcrumb">
                 {% ifrole "Organization" %}
+                {% if scenario == 'Add' %}
                 <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization' %} {% trans 'List' %}</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' obj.organization.pk %}">{{obj.organization.name}}</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' obj.pk %}">{{obj.name}}</a></li>
+                {% else %}
+                 <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-list' %}">{% trans 'Organization' %} {% trans 'List' %}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'fieldsight:organizations-dashboard' form.instance.project.organization.pk %}">{{form.instance.project.organization.name}}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'fieldsight:project-dashboard' form.instance.project.pk %}">{{form.instance.project.name}}</a></li>
+                {% endif %}
                 {% endrole %}
                 <li class="breadcrumb-item active" aria-current="page">Site Types</li>
             </ol>
             {% endblock %}
         </nav>
+        <section class="panel">
+            <header class="panel-heading clearfix">
+                        <h3><i class="la la-building"></i> {{scenario}} Site Type</h3>
+            </header>
+            <div class="panel-body">
+                {% for error in form.non_field_errors %}
+              <div class="alert alert-danger" role="alert">
+                  {{error }}
+                </div>
+            {% endfor %}
+                <form method="post">
+                    {% csrf_token %}
+                  {{form.as_p}}
 
-        <div class="col-sm-12">
-            <legend>New Type Name</legend>
-            <form method="post">
-            {% csrf_token %}
-                {{form.as_p}}
-                <button type="submit">Save</button>
+                <button type="submit" class="btn btn-primary">Save <i class="la la-save"></i></button>
             </form>
-        </div>
-
-
+            </div>
+        </section>
     </div>
 {% endblock %}
 {%block extrascript %}

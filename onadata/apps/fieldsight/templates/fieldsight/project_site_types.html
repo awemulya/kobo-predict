@@ -23,24 +23,58 @@
             </ol>
             {% endblock %}
         </nav>
-        <div class="col-sm-12">
-        <a href="{% url 'fieldsight:project-type-add' obj.pk %}">Add Types</a>
-        </div>
 
-        <div class="col-sm-12">
-            {% if types %}
-            <table class="table">
+        <section class="panel">
+            <header class="panel-heading clearfix">
+                <h3><i class="la la-building"></i>Site Types</h3>
+                <div class="panel-heading-right">
+                    <a href="{% url 'fieldsight:project-type-add' obj.pk %}" title="" class="btn btn-sm btn-primary"><i class="la la-plus"></i> Add Types </a>
+                </div>
+            </header>
+             <div class="panel-body">
+                 {% if types %}
+            <table class="table table-striped">
                 <thead>
                 <tr>
                     <th>ID</th>
                     <th>Type</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
             {% for type in types %}
                 <tr>
                     <td>{{type.identifier}}</td>
                     <td>{{type.name}}</td>
+                    <td><a class="btn btn-primary btn-sm btn-xs" href="{% url 'fieldsight:project-type-edit' type.pk %}" ><i class="la la-pencil-square-o"></i> Edit</a>
+                    <a class="btn btn-danger btn-sm btn-xs" href="" data-toggle="modal" data-target="#modal-delete{{ forloop.counter }}"> {% trans 'Delete' %}<i class="la la-trash"></i></a>
+                    </td>
                 </tr>
+
+                <div class="modal fade" id="modal-delete{{ forloop.counter }}" role="dialog">
+            <div class="modal-dialog">
+
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h6 class="modal-title">{% trans 'Are you sure you want to delete ' %} <strong> {{type.name}} !!?</strong></h6>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <h4 style="color:red; text-align: center;">{% trans 'Warning' %}</h4>
+                    <p>{% trans '"All the Sites / Stage forms within this type will be type less. Do you still want to continue?"' %}</p>
+                  </div>
+                <div class="modal-footer">
+                    {% if type.id %}
+                    <a href="{% url 'fieldsight:project-type-delete' type.pk %}" >
+                        <button type="button" class="btn btn-danger " data-toggle="modal" data-target="#modal-delete{{ type.id }}"><i class="la la-trash"></i>{% trans 'Delete' %}</button></a>
+                    {% endif %}
+                  <button type="button" class="btn btn-default" data-dismiss="modal"><i class="la la-times"></i>{% trans 'Cancel' %}</button>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
 
 
             {% endfor %}
@@ -48,8 +82,8 @@
             {% else %}
             <h1>No Site Types In this Project</h1>
             {% endif %}
-        </div>
-
+             </div>
+        </section>
 
     </div>
 {% endblock %}

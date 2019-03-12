@@ -59,6 +59,7 @@ class DriveException(Exception):
 
 def upload_to_drive(file_path, title, folder, project):
     pass
+    """ TODO: folder names of 'Site Details' and 'Site Progress' must be in google drive."""
     # try:
     #     drive = GoogleDrive(gauth)
 
@@ -112,7 +113,7 @@ def site_download_zipfile(task_prog_obj_id, size):
     try:
         default_storage = get_storage_class()() 
         buffer = BytesIO()
-        datas = get_images_for_site_all(str(task.object_id))
+        datas = get_images_for_site_all(task.object_id)
         urls = list(datas["result"])
         archive = zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED)
         index=0
@@ -285,9 +286,6 @@ def generate_stage_status_report(task_prog_obj_id, project_id, site_type_ids, re
             upload_to_drive("media/stage-report/{}_stage_data.xls".format(project.id), "progress_report-{}".format(project.id), "Site Progress", project)
 
     except DriveException as e:
-        task.description = "ERROR: " + str(e.message) 
-        task.status = 3
-        task.save()
         print 'Report upload to drive  Unsuccesfull. %s' % e
         print e.__dict__
         noti = task.logs.create(source=task.user, type=432, title="Site Stage Progress report upload to Google Drive in Project",
@@ -847,11 +845,11 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_ids
         ws = wb.active
         ws.title='Sites Detail'
         sites = project.sites.all().order_by('identifier')
-        if region_id:
-            if isinstance(region_id, list): 
+        if region_ids:
+            if isinstance(region_ids, list):
                 sites = project.sites.filter(is_active=True, region_id__in=region_ids).order_by('identifier')
             else:
-                if region_id == "0":
+                if region_ids == "0":
                     sites = project.sites.filter(is_active=True, region_id=None).order_by('identifier')
                 else:
                     sites = project.sites.filter(is_active=True, region_id=region_ids).order_by('identifier')
@@ -881,24 +879,29 @@ def generateSiteDetailsXls(task_prog_obj_id, source_user, project_id, region_ids
                                    extra_message=" <a href='" +  task.file.url +"'>Xls sites detail report</a> generation in project")
 
         if not type_ids and not region_ids:
-            upload_to_drive("media/stage-report/{}_stage_data.xls".format(project.id), "site_details-{}".format(project.id), "Site Details", project)
+            temporarylocation="media/site-details-report/{}_site_details.xls".format(project.id)
+            with open(temporarylocation,'wb') as out: ## Open temporary file as bytes
+                out.write(xls)                ## Read bytes into file
+
+            upload_to_drive(temporarylocation, "{}_site_details".format(project.id), "Site Details", project)
+
+            os.remove(temporarylocation)
 
     except DriveException as e:
-        task.description = "ERROR: " + str(e.message) 
-        task.status = 3
-        task.save()
         print 'Report upload to drive  Unsuccesfull. %s' % e
         print e.__dict__
-        noti = task.logs.create(source=task.user, type=432, title="Xls Details report upload to Google Drive in Project",
+        noti = task.logs.create(source=task.user, type=432, title="Xls Site Details report upload to Google Drive in Project",
                                        content_object=project, recipient=task.user,
                                        extra_message="@error " + u'{}'.format(e.message))
+        os.remove(temporarylocation)
+
 
     except Exception as e:
         task.description = "ERROR: " + str(e.message) 
         task.status = 3
         print e.__dict__
         task.save()
-        task.logs.create(source=source_user, type=432, title="Xls Details Report generation in project",
+        task.logs.create(source=source_user, type=432, title="Xls Site Details Report generation in project",
                                    content_object=project, recipient=source_user,
                                    extra_message="@error " + u'{}'.format(e.message))
         buffer.close()
@@ -1662,7 +1665,7 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, reportTyp
         if reportType == "Monthly":
             data.insert(0, ["Date", "Month", "Site Visits", "Submissions","Active Users"])
             i=1
-            for month in rrule(MONTHLY, dtstart=new_startdate, until=new_enddate):
+            for month in rrule(MONTHLY, dtstart=new_startdate, until=end):
                 str_month = month.strftime("%Y-%m")
                 data.insert(i, [str_month, month.strftime("%B"), 0, 0, 0])
                 index[str_month] = i
@@ -1702,7 +1705,7 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, reportTyp
         if reportType in ["Daily", "Weekly"]:
             data.insert(0, ["Date", "Day", "Site Visits", "Submissions", "Active Users"])
             i=1
-            for day in rrule(DAILY, dtstart=new_startdate, until=new_enddate):
+            for day in rrule(DAILY, dtstart=new_startdate, until=end):
                 str_day = day.strftime("%Y-%m-%d")
                 data.insert(i, [str_day, day.strftime("%A"), 0, 0, 0])
                 index[str_day] = i
@@ -1748,22 +1751,22 @@ def exportProjectstatistics(task_prog_obj_id, source_user, project_id, reportTyp
         if reportType == "Weekly":
             weekly_data = [["Week No.", "Week Start", "Week End", "Site Visits", "Submissions","Active Users"]]
 
-        weekcount = 0
-        for value in data[1:]:
-            day = datetime.datetime.strptime(value[0], "%Y-%m-%d").weekday() + 1
-            # Since start day is Monday And in Nepa we Calculate from Saturday for now.
-            if day == 7 or weekcount == 0:
-                weekcount += 1
-                weekly_data.insert(weekcount, ["Week "+ str(weekcount),"","",0,0,0])
+            weekcount = 0
+            for value in data[1:]:
+                day = datetime.datetime.strptime(value[0], "%Y-%m-%d").weekday() + 1
+                # Since start day is Monday And in Nepa we Calculate from Saturday for now.
+                if day == 7 or weekcount == 0:
+                    weekcount += 1
+                    weekly_data.insert(weekcount, ["Week "+ str(weekcount),"","",0,0,0])
 
-                weekly_data[weekcount][1] = value[0]
-            weekly_data[weekcount][2] = value[0]
-            weekly_data[weekcount][3] += value[2]
-            weekly_data[weekcount][4] += value[3]
-            weekly_data[weekcount][5] += value[4] 
+                    weekly_data[weekcount][1] = value[0]
+                weekly_data[weekcount][2] = value[0]
+                weekly_data[weekcount][3] += value[2]
+                weekly_data[weekcount][4] += value[3]
+                weekly_data[weekcount][5] += value[4] 
 
-        for value in weekly_data:
-            ws.append(value)
+            for value in weekly_data:
+                ws.append(value)
 
         else:
             for value in data:

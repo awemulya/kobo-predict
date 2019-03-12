@@ -312,7 +312,7 @@ class ProfileUpdateView(MyProfileView, OwnerMixin, UpdateView):
         user.last_name = form.cleaned_data['last_name']
         user.save()
         self.object = form.save()
-        return HttpResponseRedirect(self.success_url)
+        return HttpResponseRedirect(reverse_lazy('users:profile', kwargs={'pk': self.object.user.pk}))
 
 
 class MyProfile(LoginRequiredMixin, View):

@@ -17,3 +17,5 @@ numpy==1.11.1
 pandas==0.18.1
 social-auth-app-django==3.1.0
 stripe==2.21.0
+PyDrive==1.3.1
+drfdocs==0.0.11

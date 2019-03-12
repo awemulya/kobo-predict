@@ -66,6 +66,8 @@ class SiteUpdateSerializer(serializers.ModelSerializer):
         lat = self.context['request'].data.get('latitude', False)
         long = self.context['request'].data.get('longitude', False)
         type_id = self.context['request'].data.get('type', False)
+        if not SiteType.objects.filter(pk=type_id , deleted=False).exists():
+            type_id = False
         site = super(SiteUpdateSerializer, self).update(instance, validated_data)
         if lat and long:
             lat = float(lat)
@@ -111,12 +113,32 @@ class SiteCreationSurveySerializer(serializers.ModelSerializer):
     class Meta:
         model = Site
         read_only_fields = ('logo', 'location')
-        exclude = ('current_progress', 'current_status')
+        exclude = ('current_progress', 'current_status', 'type', 'region')
 
     def create(self, validated_data):
         p = Point(float(validated_data.pop('longitude')), float(validated_data.pop('latitude')),srid=4326)
-        validated_data.update({'is_survey': False,'is_active':True,'location':p,})
+        validated_data.update({'is_survey': False,'is_active':True,'location':p})
+
         site = Site.objects.create(**validated_data)
+
+        region = self.context['request'].data.get('region', False)
+        site_type = self.context['request'].data.get('type', False)
+        try:
+            site_type = int(site_type)
+        except Exception as e:
+            site_type = False
+        if site_type and isinstance(site_type, int):
+            if SiteType.objects.filter(pk=site_type, deleted=False).exists():
+                site.type = SiteType.objects.get(pk=site_type)
+                site.save()
+        try:
+            region = int(region)
+        except Exception as e:
+            region = False
+        if region and isinstance(region, int):
+            if Region.objects.filter(pk=region, is_active=True).exists():
+                site.region = Region.objects.get(pk=region)
+
         image = self.context['request'].FILES.values()
         for img in image:
             SiteCreateSurveyImages.objects.create(image=img, site=site)
