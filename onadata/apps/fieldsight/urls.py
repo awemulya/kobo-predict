@@ -63,14 +63,13 @@ from .views import (
     MultiUserAssignProjectView, sendmultiroleuserinvite, project_html_export, RegionalSitelist, RegionalSiteCreateView,
     MultiUserAssignRegionView, DefineProjectSiteMeta,
     SiteMetaForm, MultiSiteAssignRegionView, ExcelBulkSiteSample, ProjectStageResponsesStatus, StageTemplateView,
-
-    DonorProjSiteList, response_export, FormlistAPI,
-    GenerateCustomReport, RecentResponseImages, SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard,
-    DefineProjectSiteCriteria, AllResponseImages,
+    AssignUsersToRegionsView, RequestOrganizationSearchView,
+    AssignUsersToEntireProjectView, DonorProjSiteList, response_export, FormlistAPI, RecentResponseImages,
+    SiteResponseCoordinates, DonorProjectDashboard, DonorSiteDashboard, DefineProjectSiteCriteria, AllResponseImages,
     SiteSearchView, ProjectDashboardStageResponsesStatus, GeoJSONContent, DonorFullMap, ProjectSiteListGeoJSON,
     SiteBulkEditView, site_refrenced_metas, UnassignUserRegionAndSites, MainRegionsAndSitesAPI, redirectToSite,
     municipality_data, FormResponseSite, DonorRegionalSitelist, SubRegionAndSitesAPI, SiteSearchLiteView,
-    EditSitesTypeView, DeleteSitesTypeView, RequestOrganizationSearchView)
+    EditSitesTypeView, DeleteSitesTypeView)
 
 
 from onadata.apps.geo.views import (
@@ -324,11 +323,6 @@ urlpatterns = [
 
     url(r'^api/project/(?P<pk>\d+)/sites/geoJSON/$', ProjectSiteListGeoJSON.as_view(), name="ProjectSiteListGeoJSON"),    
     url(r'^getGeoJson/(?P<pk>\d+)/$', GeoJSONContent.as_view(), name="geojsoncontent"),
-
-    # stripe test
-    url(r'^charge/', views.charge, name='charge'),
-    url(r'^subscribe/', views.subscribe_view, name='subscribe'),
-    url(r'^pricing-and-features/', views.PricingAndFeatures.as_view(), name='pricing_and_features')
 
 ]
 

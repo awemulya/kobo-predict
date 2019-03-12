@@ -65,7 +65,7 @@ class StageSerializer1(serializers.ModelSerializer):
         exclude = ('shared_level', 'group', 'ready', 'stage',)
 
     def get_substages(self, stage):
-        stages = Stage.objects.filter(stage=stage, stage_forms__is_deleted=False).select_related( 'stage_forms', 'stage_forms__xf', 'em').order_by('order', 'date_created')
+        stages = Stage.objects.filter(stage=stage, stage_forms__is_deleted=False, stage_forms__is_deployed=True).select_related( 'stage_forms', 'stage_forms__xf', 'em').order_by('order', 'date_created')
         serializer = SubStageSerializer1(instance=stages, context=self.context, many=True)
         return serializer.data
 

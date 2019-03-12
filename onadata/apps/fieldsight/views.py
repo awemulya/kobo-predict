@@ -68,6 +68,7 @@ from django.template.loader import render_to_string, get_template
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes, smart_str
 from django.utils.crypto import get_random_string
+from django.views.decorators.csrf import csrf_exempt
 
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
@@ -186,8 +187,10 @@ def FormResponseSite(request, pk):
 
     return JsonResponse(data)
 
+
 class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, TemplateView):
     template_name = "fieldsight/organization_dashboard.html"
+
     def get_context_data(self, **kwargs):
         # dashboard_data = super(Organization_dashboard, self).get_context_data(**kwargs)
         obj = Organization.objects.get(pk=self.kwargs.get('pk'))
@@ -206,6 +209,7 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
         roles_org = UserRole.objects.filter(organization_id = self.kwargs.get('pk'), project__isnull=True,
                                             site__isnull = True,
                                             ended_at__isnull=True)
+        key = settings.STRIPE_PUBLISHABLE_KEY
 
         dashboard_data = {
             'obj': obj,
@@ -225,8 +229,10 @@ class Organization_dashboard(LoginRequiredMixin, OrganizationRoleMixin, Template
             'progress_labels': [] , #bar_graph.data.keys(),
             'roles_org': roles_org,
             'total_submissions': flagged + approved + rejected + outstanding,
+            'key': key,
         }
         return dashboard_data
+
 
 class Project_dashboard(ProjectRoleMixin, TemplateView):
     template_name = "fieldsight/project_dashboard.html"
@@ -3792,52 +3798,4 @@ class RequestOrganizationSearchView(TemplateView):
         query = self.request.GET.get("q")
         context['org'] = Organization.objects.filter(name__icontains=query).values('name', 'id')
 
-        return context
-
-
-def charge(request):
-    if request.method == 'POST':
-        charge = stripe.Charge.create(
-            amount=1500,
-            currency='usd',
-            description='A Django Test charge',
-            source=request.POST['stripeToken']
-        )
-        return render(request, 'fieldsight/test_stripe_charge.html')
-
-
-@login_required()
-def subscribe_view(request):
-    if request.method == 'POST':
-        customer_data = {
-            'email': request.POST['stripeEmail'],
-            'description': 'Some Customer Data',
-            'card': request.POST['stripeToken'],
-            'metadata': {'username': request.user.username}
-        }
-        customer = stripe.Customer.create(**customer_data)
-
-        # customer.subscriptions.create(
-        #     items=[
-        #             {
-        #                'plan': 'basic_plan',
-        #                 'quantity': 319,
-        #
-        #             },
-        #             {
-        #               'plan': 'basic_plan_overrage',
-        #             },
-        #           ],
-        # )
-
-    return render(request, 'fieldsight/test_stripe_charge.html')
-
-
-class PricingAndFeatures(LoginRequiredMixin, TemplateView):
-
-    template_name = 'fieldsight/pricing.html'
-
-    def get_context_data(self, **kwargs):  # new
-        context = super(PricingAndFeatures, self).get_context_data(**kwargs)
-        context['key'] = settings.STRIPE_PUBLISHABLE_KEY
         return context
