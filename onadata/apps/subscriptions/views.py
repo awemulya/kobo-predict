@@ -47,7 +47,9 @@ def subscribe_view(request):
             'stripe_sub_id': sub.id,
             'stripe_customer': cust,
             'is_active': True,
-            'initiated_on': datetime.now()
+            'initiated_on': datetime.now(),
+            'plan': settings.PLANS[selected_plan]
+
 
         }
         Subscription.objects.create(**sub_data)

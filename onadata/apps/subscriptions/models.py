@@ -27,4 +27,4 @@ class Subscription(models.Model):
     is_active = models.BooleanField(default=False)
     initiated_on = models.DateTimeField()
     terminated_on = models.DateTimeField(null=True, blank=True)
-    plan = models.CharField(choices=PLAN_CHOICES, max_length=300, default=0)
+    plan = models.IntegerField(choices=PLAN_CHOICES, default=0)
