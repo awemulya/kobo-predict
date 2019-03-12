@@ -143,7 +143,10 @@ class SiteLog(viewsets.ModelViewSet):
 
 class NotificationCountnSeen(View):
     def get(self, request):
-        queryset = FieldSightLog.objects.filter(date__gt=request.user.user_profile.notification_seen_date).prefetch_related('seen_by')
+        if request.user.is_authenticated():
+            queryset = FieldSightLog.objects.filter(date__gt=request.user.user_profile.notification_seen_date).prefetch_related('seen_by')
+        else:
+            return JsonResponse({'error': 'Please log In'})
         if request.group.name == "Super Admin":
             count = queryset.filter().exclude(seen_by__id=request.user.id).count()       
             task_count = CeleryTaskProgress.objects.filter(status__in=[2,3], date_updateded__gte = request.user.user_profile.task_last_view_date).count()

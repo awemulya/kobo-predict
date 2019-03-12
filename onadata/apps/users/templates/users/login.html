@@ -30,7 +30,7 @@ input::-webkit-input-placeholder {
         <![endif]-->
         <div class="login-wrap">
 		  	<div class="login-bg">
-		  		<img src="{{ STATIC_URL }}dummy/assets/img/bg-login.png">
+		  		<img src="{{ STATIC_URL }}dummy/assets/img/bg-login.png" webp-src="{{ STATIC_URL }}dummy/assets/img/bg-login.webp">
 		  	</div>
 		  	<div class="container-fluid">
 		  		<div class="row justify-content-center">
@@ -313,7 +313,7 @@ input::-webkit-input-placeholder {
 				//after successful signup
 				if('{{success_signup}}'=='1'){
 					$('#pills-signup').removeClass('active show');
-					$("#pills-signup-tab").removeClass('active');
+					$("#pills-sigipts nup-tab").removeClass('active');
 					$('#pills-login').removeClass('active show');
 					$('#pills-login-tab').removeClass('active');
 					$('#pills-thankyou').addClass('active show');

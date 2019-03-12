@@ -764,7 +764,7 @@ else if (tab == "4"){ vm.setSelectedVm('survey')}
                                             <a href="javascript:void(0);" role="button" class="badge badge-success" data-bind="click:deploy, visible:((is_deployed() == false) && (($root.is_project == '1') || (($root.is_project == '0') && site()) ))" >
                                                 <i class="la la-rocket"></i> {% trans 'Deploy ' %}</a>
                                             <!-- ko if: ((is_deployed() == false) && (($root.is_project == '1') || (($root.is_project == '0') && site()) ))-->
-                                                        <a data-bind="attr: { href:'/forms/delete-fieldsightxf/'+  id() +'/?next='+ next_url +'?tab=2'}" class="badge badge-danger">
+                                                        <a data-bind="attr: { href:'/forms/delete-fieldsightxf/'+  form() +'/?next='+ next_url +'?tab=2'}" class="badge badge-danger">
                                                             <i class="la la-close"></i>
                                                             <span>Delete</span>
                                                         </a>                                                    

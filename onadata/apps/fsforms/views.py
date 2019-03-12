@@ -1141,13 +1141,15 @@ class AssignFormDefaultStatus(FormMixin, View):
 
 class Setup_forms(SPFmixin, View):
     def get(self, request, *args, **kwargs):
+        is_project = False
         if self.kwargs.get('is_project') == '1':
+            is_project = True
             obj = Project.objects.get(pk=self.kwargs.get('pk'))
         else:
             obj = Site.objects.get(pk=self.kwargs.get('pk'))
         return render(request, "fsforms/manage_forms.html",
-                  {'obj': obj, 'is_project': self.kwargs.get('is_project'), 'pk': self.kwargs.get('pk'), 'form': GeneralForm(request=request),
-                   'schedule_form': KoScheduleForm(request=request)})
+                  {'obj': obj, 'is_project': self.kwargs.get('is_project'), 'pk': self.kwargs.get('pk'), 'form': GeneralForm(request=request,  project_or_site=obj, is_project=is_project),
+                   'schedule_form': KoScheduleForm(request=request,  project_or_site=obj, is_project=is_project)})
 
 
 class FormPreviewView(View):
@@ -1941,9 +1943,26 @@ def show(request, fsxf_id):
 
 
 # @group_required('KoboForms')
-def download_jsonform(request, fsxf_id):
-    fs_xform = FieldSightXF.objects.get(pk=fsxf_id)
-    xform = fs_xform.xf
+def download_jsonform(request,  fsxf_id):
+    json = None
+    try:
+        instance_id = request.get_full_path().split("/")[-1]
+        instance_id = int(instance_id)
+        finstance = FInstance.objects.get(pk=instance_id)
+        fs_xform = finstance.fsxf
+        version = finstance.version
+        xform = fs_xform.xform
+        try:
+            history = XformHistory.objects.get(xform=xform, version=version)
+            json = history.json
+        except Exception as e:
+            # no history
+            pass
+    except Exception as e:
+        # no instance id in url
+        fs_xform = FieldSightXF.objects.get(pk=fsxf_id)
+        xform = fs_xform.xf
+        json = xform.json
 
     if request.method == "OPTIONS":
         response = HttpResponse()
@@ -1954,10 +1973,10 @@ def download_jsonform(request, fsxf_id):
                                                show_date=False)
     if 'callback' in request.GET and request.GET.get('callback') != '':
         callback = request.GET.get('callback')
-        response.content = "%s(%s)" % (callback, xform.json)
+        response.content = "%s(%s)" % (callback, json)
     else:
         add_cors_headers(response)
-        response.content = xform.json
+        response.content = json
     return response
 
 
@@ -2274,6 +2293,11 @@ class DeleteFieldsightXF(FormMixin, View):
 
             extra_json = {}
             if fsform.site:
+                if fsform.site_form_instances.count():
+                    messages.warning(request, 'Form deleted unsuccessfull. Form have submissions' )
+                    next_url = request.GET.get('next', '/')
+                    return HttpResponseRedirect(next_url)
+
                 extra_object=fsform.site
                 site_id=extra_object.id
                 project_id = extra_object.project_id
@@ -2282,6 +2306,10 @@ class DeleteFieldsightXF(FormMixin, View):
                 extra_json['submission_count'] = fsform.site_form_instances.all().count() 
             
             else:
+                if fsform.project_form_instances.count():
+                    messages.warning(request, 'Form deleted unsuccessfull. Form have submissions' )
+                    next_url = request.GET.get('next', '/')
+                    return HttpResponseRedirect(next_url)
                 extra_object=fsform.project
                 extra_message="project"
                 site_id=None
