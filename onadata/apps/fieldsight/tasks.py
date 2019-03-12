@@ -6,7 +6,7 @@ from datetime import date
 from django.db import transaction
 from django.contrib.gis.geos import Point
 from celery import shared_task
-from onadata.apps.fieldsight.models import Organization, Project, Site, Region, SiteType
+from onadata.apps.fieldsight.models import Organization, Project, Site, Region, SiteType, ProjectType
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from channels import Group as ChannelGroup
@@ -1907,3 +1907,11 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
         buffer.close()
 
 
+@shared_task(max_retries=5)
+def auto_create_default_project_site(organization_id):
+    project_type_id = ProjectType.objects.first().id
+    project = Project.objects.create(name="Demo Project", organization_id=organization_id, type_id=project_type_id)
+    print('project createed')
+    Site.objects.create(name="Demo Site", project=project)
+    print('site createed')
+    return project
