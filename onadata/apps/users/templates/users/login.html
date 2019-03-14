@@ -254,29 +254,9 @@ input::-webkit-input-placeholder {
 				//
 				vph = $(window).height();
 				$(".login-wrap").css("min-height", vph);
-				//Converting img tag to parent div bg
-				//var imgSrc = $(".login-bg>img").attr("src");
-	        	//$('.login-bg').css({"background" : "url("+imgSrc+")", "background-position": "center", "background-size": "cover"});
-	        	//$(".login-bg>img").remove();
 
-				var pngImgSrc = $(".login-bg>img").attr("src");
-				var webpImgSrc = $(".login-bg>img").attr("webp-src");
-				var imgSrc = pngImgSrc;
-
-
-
-
-				var webPsupport = (function() {
-				  var webP = new Image();
-				  webP.onload = WebP.onerror = function () {
-				  };
-				  webP.src = webpImgSrc;
-				});
-
-				if (webPsupport) {
-				  	imgSrc = webpImgSrc;
-				  }
-
+	        	//Converting img tag to parent div bg
+				var imgSrc = $(".login-bg>img").attr("src");
 	        	$('.login-bg').css({"background" : "url("+imgSrc+")", "background-position": "center", "background-size": "cover"});
 	        	$(".login-bg>img").remove();
 

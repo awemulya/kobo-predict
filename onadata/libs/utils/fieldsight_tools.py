@@ -25,9 +25,11 @@ def deploy_kpi_form(id_string, headers):
             response = req.json()
             print(req.json(), "*NOt 200 code*")
         except ValueError:
+            print('Not deployed', req.status_code)
             pass
         else:
             if 'error' in response:
+                print('Not deployed again!!!!', req.status_code)
                 raise KPIError(response['message'])
         return False
 
@@ -56,7 +58,7 @@ def clone_kpi_form(id_string, token, name="Default Form Mahabharat"):
         else:
             print("id string from kpi clone", id_string)
             deploy_kpi_form(id_string, headers)
-            return True
+            return True, id_string
     else:
         try:
             # import ipdb
@@ -68,4 +70,4 @@ def clone_kpi_form(id_string, token, name="Default Form Mahabharat"):
         else:
             if 'error' in response:
                 raise KPIError(response['message'])
-    return False
+    return False, None

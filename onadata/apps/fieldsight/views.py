@@ -449,16 +449,15 @@ class OrganizationCreateView(OrganizationView, CreateView):
             new_group = Group.objects.get(name="Organization Admin")
             UserRole.objects.create(user=self.request.user, group=new_group, organization=self.object)
 
-            user = self.request.user
-            token = user.auth_token.key
-            project = auto_create_default_project_site.delay(self.object.id)
-            form_cloned = clone_form(token)
+            username = self.request.user.username
+            user = User.objects.get(username=username)
 
-            if form_cloned:
-                xf = XForm.objects.get(id_string=settings.KPI_DEFAULT_FORM1_STRING, user=user)
-                fxf, created = FieldSightXF.objects.get_or_create(xf=xf, user=user, project=project)
-            else:
-                print("Can't create a form. Please contact the administrator.")
+            task_obj = CeleryTaskProgress.objects.create(user=user,
+                                                         description="Auto Creation of Demo Project, Site and Forms",
+                                                         task_type=15, content_object=self.object)
+
+            if task_obj:
+                auto_create_default_project_site.delay(user, self.object.id)
 
             return HttpResponseRedirect(reverse("fieldsight:organizations-dashboard", kwargs={'pk': self.object.pk}))
 

@@ -4,7 +4,7 @@ from celery import shared_task
 from django.contrib.auth.models import User
 
 from django.db import transaction
-from onadata.settings.local_settings import KPI_DEFAULT_FORM1_STRING
+from django.conf import settings
 
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.models import FieldSightXF, Schedule, Stage, DeployEvent, XformHistory
@@ -129,13 +129,14 @@ def post_update_xform(xform_id, user):
 
 
 @shared_task(max_retries=5)
-def clone_form(token):
+def clone_form(user, token, project):
     name = "Test Form"
-    clone = clone_kpi_form(KPI_DEFAULT_FORM1_STRING, token, name)
+    clone, id_string = clone_kpi_form(settings.KPI_DEFAULT_FORM1_STRING, token, name)
     if clone:
-        return True
+        xf = XForm.objects.get(id_string=id_string)
+        fxf, created = FieldSightXF.objects.get_or_create(xf=xf, project=project)
     else:
-        return False
+        print("Can't create a form. Please contact the administrator.")
 
 
 # @shared_task(max_retries=10)
