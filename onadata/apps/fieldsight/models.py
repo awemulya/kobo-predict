@@ -628,12 +628,3 @@ class RequestOrganizationStatus(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     organization = models.ForeignKey(Organization, related_name='request_org_status')
     # logs = GenericRelation('eventlog.FieldSightLog')
-
-
-@receiver(post_save, sender=Organization)
-def auto_create_default_project_site(sender, instance, **kwargs):
-    data = instance
-    project_type_id = ProjectType.objects.first().id
-    project = Project.objects.create(name="Default Project", organization_id=data.pk, type_id=project_type_id)
-    site_type_id = SiteType.objects.first().id
-    Site.objects.create(name="Default Site", project_id=project.id, type_id=site_type_id)

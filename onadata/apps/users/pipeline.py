@@ -41,9 +41,8 @@ def create_role(backend, uid, user, response, social=None, *args, **kwargs):
    
     u = User.objects.get(email=email)
     group = Group.objects.get(name="Unassigned")
-    try:
-        UserRole.objects.filter(user=u)
-    except UserRole.DoesNotExist:
+    userrole = UserRole.objects.filter(user=u)
+    if not userrole:
         UserRole.objects.create(user=u, group=group)
     
     return {

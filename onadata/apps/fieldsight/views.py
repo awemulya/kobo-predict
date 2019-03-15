@@ -43,6 +43,8 @@ from onadata.apps.fsforms.line_data_project import LineChartGenerator, LineChart
 from onadata.apps.fsforms.models import FieldSightXF, Stage, FInstance, Instance
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.users.models import UserProfile
+from onadata.apps.fsforms.tasks import clone_form
+from onadata.apps.logger.models import XForm
 from onadata.apps.geo.models import GeoLayer
 from .mixins import (LoginRequiredMixin, SuperAdminMixin, OrganizationMixin, ProjectMixin, SiteView,
                      CreateView, UpdateView, DeleteView, OrganizationView as OView, ProjectView as PView,
@@ -57,6 +59,8 @@ from .models import ProjectGeoJSON, Organization, Project, Site, ExtraUserDetail
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm,
                     SiteBulkEditForm, SiteTypeForm)
+from .tasks import auto_create_default_project_site
+
 from django.views.generic import TemplateView
 from django.core.mail import send_mail, EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
@@ -87,6 +91,7 @@ from django.core.files.base import ContentFile
 from onadata.apps.fsforms.reports_util import get_images_for_site, get_images_for_site_all, get_site_responses_coords, get_images_for_sites_count
 from onadata.apps.staff.models import Team
 from .metaAttribsGenerator import generateSiteMetaAttribs
+
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -443,6 +448,17 @@ class OrganizationCreateView(OrganizationView, CreateView):
 
             new_group = Group.objects.get(name="Organization Admin")
             UserRole.objects.create(user=self.request.user, group=new_group, organization=self.object)
+
+            username = self.request.user.username
+            user = User.objects.get(username=username)
+
+            task_obj = CeleryTaskProgress.objects.create(user=user,
+                                                         description="Auto Creation of Demo Project, Site and Forms",
+                                                         task_type=15, content_object=self.object)
+
+            if task_obj:
+                auto_create_default_project_site.delay(user, self.object.id)
+
             return HttpResponseRedirect(reverse("fieldsight:organizations-dashboard", kwargs={'pk': self.object.pk}))
 
         return HttpResponseRedirect(self.get_success_url())

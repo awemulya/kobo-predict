@@ -6,7 +6,7 @@ from datetime import date
 from django.db import transaction
 from django.contrib.gis.geos import Point
 from celery import shared_task
-from onadata.apps.fieldsight.models import Organization, Project, Site, Region, SiteType
+from onadata.apps.fieldsight.models import Organization, Project, Site, Region, SiteType, ProjectType
 from onadata.apps.userrole.models import UserRole
 from onadata.apps.eventlog.models import FieldSightLog, CeleryTaskProgress
 from channels import Group as ChannelGroup
@@ -49,6 +49,7 @@ from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 
 from onadata.apps.fsforms.reports_util import get_images_for_site_all
+from onadata.apps.fsforms.tasks import clone_form
 
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
@@ -1907,3 +1908,12 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
         buffer.close()
 
 
+@shared_task(max_retries=5)
+def auto_create_default_project_site(user, organization_id):
+    project_type_id = ProjectType.objects.first().id
+    project = Project.objects.create(name="Demo Project", organization_id=organization_id, type_id=project_type_id)
+    print('project createed')
+    Site.objects.create(name="Demo Site", project=project)
+    print('site createed')
+    token = user.auth_token.key
+    clone_form.delay(user, token, project)

@@ -4,6 +4,7 @@ from celery import shared_task
 from django.contrib.auth.models import User
 
 from django.db import transaction
+from django.conf import settings
 
 from onadata.apps.fieldsight.models import Site, Project
 from onadata.apps.fsforms.models import FieldSightXF, Schedule, Stage, DeployEvent, XformHistory
@@ -12,6 +13,7 @@ from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormLi
 from onadata.apps.fsforms.utils import send_sub_stage_deployed_project, send_bulk_message_stage_deployed_project, \
     send_bulk_message_stages_deployed_project, send_message_un_deploy_project, send_message_koboform_updated
 from onadata.apps.logger.models import XForm
+from onadata.libs.utils.fieldsight_tools import clone_kpi_form
 
 
 @shared_task(max_retries=10, soft_time_limit=4200)
@@ -124,6 +126,18 @@ def post_update_xform(xform_id, user):
                                 description="update kobo form ")
 
     send_message_koboform_updated(existing_xform)
+
+
+@shared_task(max_retries=5)
+def clone_form(user, token, project):
+    name = "Test Form"
+    clone, id_string = clone_kpi_form(settings.KPI_DEFAULT_FORM1_STRING, token, name)
+    if clone:
+        xf = XForm.objects.get(id_string=id_string)
+        fxf, created = FieldSightXF.objects.get_or_create(xf=xf, project=project)
+    else:
+        print("Can't create a form. Please contact the administrator.")
+
 
 # @shared_task(max_retries=10)
 # def copy_to_sites(fxf):
