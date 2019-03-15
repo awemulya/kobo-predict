@@ -26,7 +26,7 @@
 						    				<h5><strong>Free Tier</strong></h5>
 						    				Free
 						    				<p>Free features for your team and organization.</p>
-											<form action="{% url 'subscriptions:subscribe' %}" method="post">
+											<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
 												<input type="hidden" name="plan_name" value="free_plan"/>
 												<input type="hidden" name="interval" value="Yearly"/>
 
@@ -43,7 +43,7 @@
 						    				<h5><strong>Basic</strong></h5>
 											<span>USD 1,000</span> <sub>/Year</sub>
 						    				<p>All the basics for organization and team.</p>
-												<form action="{% url 'subscriptions:subscribe' %}" method="post">
+												<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
 													<input type="hidden" name="plan_name" value="basic_plan"/>
 														<input type="hidden" name="interval" value="Yearly"/>
 
@@ -61,7 +61,7 @@
 						    				<h5>Extended</h5>
 											<span>USD 5,000</span> <sub>/Year</sub>
 						    				<p>Quick and easy online fieldsight application.</p>
-											<form action="{% url 'subscriptions:subscribe' %}" method="post">
+											<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
 												<input type="hidden" name="plan_name" value="extended_plan"/>
 												<input type="hidden" name="interval" value="Yearly"/>
 
@@ -78,7 +78,7 @@
 						    				<h5>Pro</h5>
 											<span>USD 10,000</span> <sub>/Year</sub>
 						    				<p>Everything you need to grow your organization.</p>
-											<form action="{% url 'subscriptions:subscribe' %}" method="post">
+											<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
 												<input type="hidden" name="plan_name" value="pro_plan"/>
 												<input type="hidden" name="interval" value="Yearly"/>
 												  {% csrf_token %}
@@ -93,7 +93,7 @@
 						    				<h5>Scale</h5>
 											<span>USD 30,000</span> <sub>/Year</sub>
 						    				<p>Advanced features for scaling your organization.</p>
-											<form action="{% url 'subscriptions:subscribe' %}" method="post">
+											<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
 												<input type="hidden" name="plan_name" value="scale_plan"/>
 												<input type="hidden" name="interval" value="Yearly"/>
 
@@ -430,7 +430,7 @@
 							    	<tr>
 							    		<th class="border-top"></th>
 							    		<td class="border-left border-top border-bottom text-center pt-4 pb-4">
-											<form action="{% url 'subscriptions:subscribe' %}" method="post">
+											<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
 												<input type="hidden" name="plan_name" value="free_plan"/>
 												<input type="hidden" name="interval" value="Yearly"/>
 
@@ -441,7 +441,7 @@
 											</form>
 							    		</td>
 							    		<td class="border-left border-top border-bottom text-center pt-4 pb-4">
-												<form action="{% url 'subscriptions:subscribe' %}" method="post">
+												<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
 													<input type="hidden" name="plan_name" value="basic_plan"/>
 														<input type="hidden" name="interval" value="Yearly"/>
 
@@ -456,7 +456,7 @@
 												 </form>
 							    		</td>
 							    		<td class="border-left border-top border-bottom text-center pt-4 pb-4">
-							    			<form action="{% url 'subscriptions:subscribe' %}" method="post">
+							    			<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
 												<input type="hidden" name="plan_name" value="extended_plan"/>
 												<input type="hidden" name="interval" value="Yearly"/>
 
@@ -467,7 +467,7 @@
 											</form>
 							    		</td>
 							    		<td class="border-left border-top border-bottom text-center pt-4 pb-4">
-							    			<form action="{% url 'subscriptions:subscribe' %}" method="post">
+							    			<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
 												<input type="hidden" name="plan_name" value="pro_plan"/>
 												<input type="hidden" name="interval" value="Yearly"/>
 												  {% csrf_token %}
@@ -477,7 +477,7 @@
 											</form>
 							    		</td>
 							    		<td class="border-left border-top border-bottom text-center pt-4 pb-4">
-							    			<form action="{% url 'subscriptions:subscribe' %}" method="post">
+							    			<form action="{% url 'subscriptions:subscribe' obj.pk %}" method="post">
 												<input type="hidden" name="plan_name" value="scale_plan"/>
 												<input type="hidden" name="interval" value="Yearly"/>
 
