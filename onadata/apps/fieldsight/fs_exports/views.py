@@ -91,7 +91,7 @@ class LogsReport(View):
 class ExportProjectFormsForSites(ReadonlyProjectLevelRoleMixin, View):
     def get(self, request, pk, *args, **kwargs):
         mainstage=[]
-        schedule = FieldSightXF.objects.filter(project_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','schedule__name')
+        schedule = FieldSightXF.objects.select_related('xf').filter(project_id=pk, is_scheduled = True, is_staged=False, is_survey=False).values('id','schedule__name', 'xf__id_string', 'xf__user__username')
         stages = Stage.objects.filter(project_id=pk)
         for stage in stages:
             if stage.stage_id is None:
@@ -100,8 +100,8 @@ class ExportProjectFormsForSites(ReadonlyProjectLevelRoleMixin, View):
                 # stagegroup = {'main_stage':main_stage,}
                 mainstage.append(main_stage)
 
-        survey = FieldSightXF.objects.filter(project_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title')
-        general = FieldSightXF.objects.filter(project_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title')
+        survey = FieldSightXF.objects.select_related('xf').filter(project_id=pk, is_scheduled = False, is_staged=False, is_survey=True).values('id','xf__title', 'xf__id_string', 'xf__user__username')
+        general = FieldSightXF.objects.select_related('xf').filter(project_id=pk, is_scheduled = False, is_staged=False, is_survey=False).values('id','xf__title', 'xf__id_string', 'xf__user__username')
         content={'general':list(general), 'schedule':list(schedule), 'stage':list(mainstage), 'survey':list(survey)}
         return JsonResponse(content, status=200)
 

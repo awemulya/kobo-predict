@@ -820,6 +820,8 @@ def generate_export(export_type, extension, username, id_string,
     export.filename = basename
     export.internal_status = Export.SUCCESSFUL
     # dont persist exports that have a filter
+    print 'file_url--------->', temp_file, filter_query
+     
     if filter_query is None:
         export.save()
     export.save()
