@@ -40,7 +40,7 @@ from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
 from onadata.apps.fsforms.XFormMediaAttributes import get_questions_and_media_attributes
 from onadata.apps.fsforms.models import FInstance
-from onadata.apps.fieldsight.models import Project
+from onadata.apps.fsforms.models import FieldSightXF
 from onadata.apps.fieldsight.tasks import upload_to_drive
 # this is Mongo Collection where we will store the parsed submissions
 xform_instances = settings.MONGO_DB.instances
@@ -810,14 +810,22 @@ def generate_export(export_type, extension, username, id_string,
     print 'file_url--------->', temp_file, filter_query
 
     try:
-        if '__version__' not in filter_query:
-            upload_to_drive(file_path, id_string, id_string, Project.objects.get(pk=filter_query['fs_project_uuid']))
-        
+        if '__version__' not in filter_query['$and'][0]:
+            if not os.path.exists("media/forms/"):
+                os.makedirs("media/forms/")
 
-        dir_name, basename = os.path.split(export_filename)
+            temporarylocation="media/forms/submissions_{}.xls".format(id_string)
+            with open(temporarylocation,'wb') as out: ## Open temporary file as bytes
+                out.write(xls)                ## Read bytes into file
+
+            upload_to_drive(temporarylocation, id_string, id_string, FieldSightXF.objects.get(pk=filter_query['$and'][0]['fs_project_uuid']).project)
+        
+            os.remove(temporarylocation)
+        
     except Exception as e:
         print e.__dict__
     # get or create export object
+    dir_name, basename = os.path.split(export_filename)
     temp_file.close()
     if export_id:
         export = Export.objects.get(id=export_id)

@@ -53,15 +53,15 @@ from onadata.apps.fsforms.reports_util import get_images_for_site_all
 
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-gauth = GoogleAuth()
 
 class DriveException(Exception):
     pass
 
 def upload_to_drive(file_path, title, folder, project):
-    pass
+    # pass
     """ TODO: folder names of 'Site Details' and 'Site Progress' must be in google drive."""
     try:
+        gauth = GoogleAuth()
         drive = GoogleDrive(gauth)
 
         folders = drive.ListFile({'q':"title = '"+ folder +"'"}).GetList()
