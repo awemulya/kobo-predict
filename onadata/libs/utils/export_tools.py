@@ -40,7 +40,8 @@ from onadata.libs.exceptions import J2XException
 from .analyser_export import generate_analyser
 from onadata.apps.fsforms.XFormMediaAttributes import get_questions_and_media_attributes
 from onadata.apps.fsforms.models import FInstance
-
+from onadata.apps.fieldsight.models import Project
+from onadata.apps.fieldsight.tasks import upload_to_drive
 # this is Mongo Collection where we will store the parsed submissions
 xform_instances = settings.MONGO_DB.instances
 
@@ -805,11 +806,19 @@ def generate_export(export_type, extension, username, id_string,
     export_filename = storage.save(
         file_path,
         File(temp_file, file_path))
-    temp_file.close()
+    
+    print 'file_url--------->', temp_file, filter_query
 
-    dir_name, basename = os.path.split(export_filename)
+    try:
+        if '__version__' not in filter_query:
+            upload_to_drive(file_path, id_string, id_string, Project.objects.get(pk=filter_query['fs_project_uuid']))
+        
 
+        dir_name, basename = os.path.split(export_filename)
+    except Exception as e:
+        print e.__dict__
     # get or create export object
+    temp_file.close()
     if export_id:
         export = Export.objects.get(id=export_id)
     else:
@@ -820,8 +829,6 @@ def generate_export(export_type, extension, username, id_string,
     export.filename = basename
     export.internal_status = Export.SUCCESSFUL
     # dont persist exports that have a filter
-    print 'file_url--------->', temp_file, filter_query
-     
     if filter_query is None:
         export.save()
     export.save()
