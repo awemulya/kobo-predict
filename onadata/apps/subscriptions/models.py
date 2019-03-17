@@ -16,16 +16,27 @@ PLAN_CHOICES = (
 
 )
 
+PERIOD_TYPE = (
+    (0, 'Free'),
+    (1, 'Month'),
+    (2, 'Year'),
+
+)
+
 
 class Package(models.Model):
     plan = models.IntegerField(choices=PLAN_CHOICES, default=0)
     submissions = models.IntegerField()
+    total_charge = models.FloatField(null=True, blank=True)
     extra_submissions_charge = models.FloatField(default=0)
+    period_type = models.IntegerField(choices=PERIOD_TYPE, default=0)
 
 
 class Customer(models.Model):
     user = models.OneToOneField(User, related_name="customer")
     stripe_cust_id = models.CharField(max_length=300)
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
 
 class Subscription(models.Model):
@@ -45,5 +56,5 @@ class Invoice(models.Model):
     quantity = models.IntegerField()
     overage = models.IntegerField(default=0)
     roll_over = models.IntegerField(default=0)
-
-
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
