@@ -13,7 +13,7 @@
 		display: none;
 	}
 	.table-sync tbody tr td{
-   		vertical-align: middle;
+	   vertical-align: middle;
 	}
 
 
@@ -87,8 +87,11 @@ assigntoken(csrf_token);
 				      				<ul class="nav nav-pills flex-column" id="myTab" role="tablist">
 									  <li class="nav-item">
 									    <a class="nav-link active" id="modalTab01-tab" data-toggle="tab" href="#modalTab01" role="tab" aria-controls="modalTab01" aria-selected="true">
-									    	Standard Reports
+									    	Project Summary
 									    </a>
+									  </li>
+									  <li class="nav-item">
+									    <a class="nav-link" id="modalTab07-tab" data-toggle="tab" href="#modalTab07" role="tab" aria-controls="modalTab07" aria-selected="false">Site Information</a>
 									  </li>
 									  <li class="nav-item">
 									    <a class="nav-link" id="modalTab02-tab" data-toggle="tab" href="#modalTab02" role="tab" aria-controls="modalTab02" aria-selected="false">Progress Report</a>
@@ -127,13 +130,6 @@ assigntoken(csrf_token);
 
 											</div>
 											<br>
-											
-											<hr>
-											{% verbatim %}
-											<div id="generateSiteExportReport">
-											
-											</div>
-											{% endverbatim %}
 										</div>
 										<div class="tab-pane fade text-center" id="modalTab02" role="tabpanel" aria-labelledby="modalTab02-tab">
 											{% verbatim %}
@@ -165,6 +161,15 @@ assigntoken(csrf_token);
 										<div class="tab-pane fade" id="modalTab06" role="tabpanel" aria-labelledby="modalTab05-tab">
 											{% verbatim %}
 											<div id="driveLink">
+											
+											</div>
+											{% endverbatim %}
+											
+											
+										</div>
+										<div class="tab-pane fade" id="modalTab07" role="tabpanel" aria-labelledby="modalTab07-tab">
+											{% verbatim %}
+											<div id="generateSiteExportReport">
 											
 											</div>
 											{% endverbatim %}
