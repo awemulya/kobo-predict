@@ -815,10 +815,9 @@ def generate_export(export_type, extension, username, id_string,
                 os.makedirs("media/forms/")
 
             temporarylocation="media/forms/submissions_{}.xls".format(id_string)
-            with open(temporarylocation,'wb') as out: ## Open temporary file as bytes
-                out.write(xls)                ## Read bytes into file
-
-            upload_to_drive(temporarylocation, id_string, id_string, FieldSightXF.objects.get(pk=filter_query['$and'][0]['fs_project_uuid']).project)
+            import shutil
+            shutil.copy(temp_file.name, temporarylocation)
+            upload_to_drive(temporarylocation, 'report_'+id_string, id_string, FieldSightXF.objects.get(pk=filter_query['$and'][0]['fs_project_uuid']).project)
         
             os.remove(temporarylocation)
         
