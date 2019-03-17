@@ -802,10 +802,6 @@ def generate_export(export_type, extension, username, id_string,
     # TODO: if s3 storage, make private - how will we protect local storage??
     storage = get_storage_class()()
     # seek to the beginning as required by storage classes
-    temp_file.seek(0)
-    export_filename = storage.save(
-        file_path,
-        File(temp_file, file_path))
     
     print 'file_url--------->', temp_file, filter_query
 
@@ -824,6 +820,11 @@ def generate_export(export_type, extension, username, id_string,
     except Exception as e:
         print e.__dict__
     # get or create export object
+    temp_file.seek(0)
+    export_filename = storage.save(
+        file_path,
+        File(temp_file, file_path))
+    
     dir_name, basename = os.path.split(export_filename)
     temp_file.close()
     if export_id:
