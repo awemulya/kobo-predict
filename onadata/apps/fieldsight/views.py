@@ -1742,7 +1742,7 @@ class ProjectSummaryReport(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
             'flagged': flagged,
             'approved': approved,
             'rejected': rejected,
-            'data': data,
+            # 'data': data,
             'cumulative_data': line_chart_data.values(),
             'cumulative_labels': line_chart_data.keys(),
             'progress_data': bar_graph.data.values(),
