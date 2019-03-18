@@ -5,6 +5,7 @@ import redis
 import xlwt
 import stripe
 from django.contrib.contenttypes.models import ContentType
+from django.utils.decorators import method_decorator
 from io import BytesIO
 from django.conf import settings
 from django.contrib import messages
@@ -425,10 +426,14 @@ class OrganizationListView(OrganizationView, SuperUserRoleMixin, ListView):
 
 class OrganizationCreateView(OrganizationView, CreateView):
 
-    # def dispatch(self, request, *args, **kwargs):
-    #     if request.group.name == "Super Admin" or request.group.name == "Unassigned":
-    #         return super(SuperUserRoleMixin, self).dispatch(request, *args, **kwargs)
-    #     raise PermissionDenied()
+    @method_decorator(login_required(login_url='/users/accounts/login/?next=/'))
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated():
+            if request.group.name == "Super Admin" or request.group.name == "Unassigned":
+                return super(OrganizationCreateView, self).dispatch(request, *args, **kwargs)
+        raise PermissionDenied()
+
+
 
     def form_valid(self, form):
         self.object = form.save()
