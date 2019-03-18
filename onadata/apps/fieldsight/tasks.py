@@ -77,12 +77,16 @@ def upload_to_drive(file_path, title, folder, project):
         file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()
 
         if not file:    
-            file = drive.CreateFile({'title' : title, "parents": [{"kind": "drive#fileLink", "id": folder_id}]})
+            new_file = drive.CreateFile({'title' : title, "parents": [{"kind": "drive#fileLink", "id": folder_id}]})
+            new_file.SetContentFile(file_path)
+            new_file.Upload({'convert':True})
+            file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()
+
         else:
             file = file[0]
-
-        file.SetContentFile(file_path)
-        file.Upload({'convert':True})    
+            file.SetContentFile(file_path)
+            file.Upload({'convert':True})
+         
         gsuit_meta = project.gsuit_meta
         gsuit_meta[folder] = {'link':file['alternateLink'], 'updated_at':datetime.datetime.now().isoformat()}
         project.gsuit_meta = gsuit_meta
