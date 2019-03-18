@@ -141,7 +141,7 @@ def stripe_webhook(request):
             if package_period == 1:
                 start_date = datetime.now()+dateutil.relativedelta.relativedelta(days=-1)
             elif package_period == 2:
-                start_date = datetime.now()+dateutil.relativedelta.relativedelta(months=-1)
+                start_date = datetime.now()+dateutil.relativedelta.relativedelta(days=-2)
 
             outstanding, flagged, approved, rejected = org.get_submissions_count_by_date(date=start_date)
 

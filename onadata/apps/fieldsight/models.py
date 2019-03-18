@@ -152,16 +152,16 @@ class Organization(models.Model):
 
         return outstanding, flagged, approved, rejected
 
-    def get_submissions_count_by_date(self, date):
+    def get_submissions_count_by_date(self, start_date):
         from onadata.apps.fsforms.models import FInstance
         outstanding = FInstance.objects.filter(
-            project__organization=self, project__is_active=True, form_status=0, date__range=[date, datetime.datetime.now()]).count()
+            project__organization=self, project__is_active=True, form_status=0, date__range=[start_date, datetime.datetime.now()]).count()
         rejected = FInstance.objects.filter(
-            project__organization=self, project__is_active=True, form_status=1, date__range=[date, datetime.datetime.now()]).count()
+            project__organization=self, project__is_active=True, form_status=1, date__range=[start_date, datetime.datetime.now()]).count()
         flagged = FInstance.objects.filter(
-            project__organization=self, project__is_active=True, form_status=2, date__range=[date, datetime.datetime.now()]).count()
+            project__organization=self, project__is_active=True, form_status=2, date__range=[start_date, datetime.datetime.now()]).count()
         approved = FInstance.objects.filter(
-            project__organization=self, project__is_active=True, form_status=3, date__range=[date, datetime.datetime.now()]).count()
+            project__organization=self, project__is_active=True, form_status=3, date__range=[start_date, datetime.datetime.now()]).count()
 
         return outstanding, flagged, approved, rejected
 

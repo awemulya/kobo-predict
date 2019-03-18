@@ -10,47 +10,47 @@ class Command(BaseCommand):
         PLAN_CHOICES = {
             0:
                  {'Free':
-                      {'submission': 1000, 'extra_submissions_charge': 0, 'total_charge': 0, 'period_type': 0}
+                      {'submission': 3, 'extra_submissions_charge': 0, 'total_charge': 0, 'period_type': 0}
                   }
              ,
             1:
                  {'Basic Monthly':
-                      {'submission': 5000, 'extra_submissions_charge': 0.25, 'total_charge': 100, 'period_type': 1}
+                      {'submission': 5, 'extra_submissions_charge': 0.25, 'total_charge': 100, 'period_type': 1}
                   }
              ,
             2:
                  {'Basic Yearly':
-                      {'submission': 5000, 'extra_submissions_charge': 0.25, 'total_charge': 1000, 'period_type': 2}
+                      {'submission': 10, 'extra_submissions_charge': 0.25, 'total_charge': 200, 'period_type': 2}
                   }
              ,
             3:
                  {'Extended Monthly':
-                      {'submission': 20000, 'extra_submissions_charge': 0.22, 'total_charge': 500, 'period_type': 1}
+                      {'submission': 15, 'extra_submissions_charge': 0.22, 'total_charge': 300, 'period_type': 1}
                   }
              ,
             4:
                  {'Extended Yearly':
-                      {'submission': 20000, 'extra_submissions_charge': 0.22, 'total_charge': 5000, 'period_type': 2}
+                      {'submission': 20, 'extra_submissions_charge': 0.22, 'total_charge': 400, 'period_type': 2}
                   }
              ,
             5:
                  {'Pro Monthly':
-                      {'submission': 50000, 'extra_submissions_charge': 0.2, 'total_charge': 1000, 'period_type': 1}
+                      {'submission': 25, 'extra_submissions_charge': 0.2, 'total_charge': 500, 'period_type': 1}
                   }
              ,
             6:
                  {'Pro Yearly':
-                      {'submission': 50000, 'extra_submissions_charge': 0.2, 'total_charge': 10000, 'period_type': 2}
+                      {'submission': 30, 'extra_submissions_charge': 0.2, 'total_charge': 600, 'period_type': 2}
                   }
              ,
             7:
                  {'Scale Monthly':
-                      {'submission': 150000, 'extra_submissions_charge': 0.15, 'total_charge': 3000, 'period_type': 1}
+                      {'submission': 35, 'extra_submissions_charge': 0.15, 'total_charge': 700, 'period_type': 1}
                   }
              ,
             8:
                  {'Scale Yearly':
-                      {'submission': 150000, 'extra_submissions_charge': 0.15, 'total_charge': 30000, 'period_type': 2}
+                      {'submission': 40, 'extra_submissions_charge': 0.15, 'total_charge': 800, 'period_type': 2}
                   }
 
 
