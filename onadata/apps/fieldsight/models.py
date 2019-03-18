@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import json
+import datetime
 import os, tempfile
 from django.contrib.gis.db.models import PointField
 from django.contrib.gis.db.models import GeoManager
@@ -22,6 +23,7 @@ from django.utils.encoding import force_bytes
 from django.core.serializers import serialize
 
 from django.db.models import Q
+
 
 class TimeZone(models.Model):
     time_zone = models.CharField(max_length=255, blank=True, null=True)
@@ -147,6 +149,19 @@ class Organization(models.Model):
             project__organization=self, project__is_active=True, form_status=2).count()
         approved = FInstance.objects.filter(
             project__organization=self, project__is_active=True, form_status=3).count()
+
+        return outstanding, flagged, approved, rejected
+
+    def get_submissions_count_by_date(self, date):
+        from onadata.apps.fsforms.models import FInstance
+        outstanding = FInstance.objects.filter(
+            project__organization=self, project__is_active=True, form_status=0, date__range=[date, datetime.datetime.now()]).count()
+        rejected = FInstance.objects.filter(
+            project__organization=self, project__is_active=True, form_status=1, date__range=[date, datetime.datetime.now()]).count()
+        flagged = FInstance.objects.filter(
+            project__organization=self, project__is_active=True, form_status=2, date__range=[date, datetime.datetime.now()]).count()
+        approved = FInstance.objects.filter(
+            project__organization=self, project__is_active=True, form_status=3, date__range=[date, datetime.datetime.now()]).count()
 
         return outstanding, flagged, approved, rejected
 
