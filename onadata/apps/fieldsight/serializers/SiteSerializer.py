@@ -59,23 +59,35 @@ class SiteSerializer(serializers.ModelSerializer):
 class SiteUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Site
-        exclude = ('project',)
+        exclude = ('project', 'type', 'region')
         read_only_fields = ('is_active',)
 
     def update(self, instance, validated_data):
         lat = self.context['request'].data.get('latitude', False)
         long = self.context['request'].data.get('longitude', False)
-        type_id = self.context['request'].data.get('type', False)
-        if not SiteType.objects.filter(pk=type_id , deleted=False).exists():
-            type_id = False
         site = super(SiteUpdateSerializer, self).update(instance, validated_data)
         if lat and long:
             lat = float(lat)
             long = float(long)
             location = Point(round(long, 6), round(lat, 6), srid=4326)
             site.location = location
-        if type_id:
-            site.type = SiteType.objects.get(pk=type_id)
+        region = self.context['request'].data.get('region', False)
+        site_type = self.context['request'].data.get('type', False)
+        try:
+            site_type = int(site_type)
+        except Exception as e:
+            site_type = False
+        if site_type and isinstance(site_type, int):
+            if SiteType.objects.filter(pk=site_type, deleted=False).exists():
+                site.type = SiteType.objects.get(pk=site_type)
+                site.save()
+        try:
+            region = int(region)
+        except Exception as e:
+            region = False
+        if region and isinstance(region, int):
+            if Region.objects.filter(pk=region, is_active=True).exists():
+                site.region = Region.objects.get(pk=region)
         site.save()
         return site
 
