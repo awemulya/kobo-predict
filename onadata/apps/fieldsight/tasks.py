@@ -86,7 +86,8 @@ def upload_to_drive(file_path, title, folder_title, project):
             file = file[0]
             file.SetContentFile(file_path)
             file.Upload({'convert':True})
-         
+        
+        project.refresh_from_db() 
         gsuit_meta = project.gsuit_meta
         gsuit_meta[folder_title] = {'link':file['alternateLink'], 'updated_at':datetime.datetime.now().isoformat()}
         project.gsuit_meta = gsuit_meta
