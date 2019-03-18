@@ -151,9 +151,9 @@ input::-webkit-input-placeholder {
 													<div class="form-group">
 														<label for="inputSignupPassword">Your password</label>
 														<div class="input-group input-pass-showhide {% if signup_form.password.errors %}is-invalid{% endif %}">
-															<input type="text" class="form-control {% if signup_form.password.errors %}is-invalid{% endif %}" id="inputSignupPassword" name="password" placeholder="e.g., **********" required>
-															<div class="input-group-append" data-toggle="tooltip" data-placement="right" title="Hide Password">
-														    	<span class="input-group-text"><i class="la la-eye"></i></span>
+															<input type="password" class="form-control {% if signup_form.password.errors %}is-invalid{% endif %}" id="inputSignupPassword" name="password" placeholder="e.g., **********" required>
+															<div class="input-group-append" data-toggle="tooltip" data-placement="right" title="Show Password">
+														    	<span class="input-group-text"><i class="la la-eye-slash"></i></span>
 															</div>
 															
 														</div>
@@ -169,9 +169,9 @@ input::-webkit-input-placeholder {
 													<div class="form-group">
 														<label for="inputSignupRePassword">One More Time?</label>
 														<div class="input-group input-pass-showhide {% if signup_form.password1.errors %}is-invalid{% endif %}">
-															<input type="text" class="form-control {% if signup_form.password1.errors %}is-invalid{% endif %}" id="inputSignupRePassword" name="password1" placeholder="e.g., **********" required>
-															<div class="input-group-append" data-toggle="tooltip" data-placement="right" title="Hide Password">
-																<span class="input-group-text"><i class="la la-eye"></i></span>
+															<input type="password" class="form-control {% if signup_form.password1.errors %}is-invalid{% endif %}" id="inputSignupRePassword" name="password1" placeholder="e.g., **********" required>
+															<div class="input-group-append" data-toggle="tooltip" data-placement="right" title="Show Password">
+																<span class="input-group-text"><i class="la la-eye-slash"></i></span>
 															</div>
 															
 														</div>
