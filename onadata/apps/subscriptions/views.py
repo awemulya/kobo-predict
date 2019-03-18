@@ -133,11 +133,15 @@ def stripe_webhook(request):
                     overage=overage,
                     roll_over=roll_over
                 )
-
-            org = Subscription.objects.get(stripe_customer__stripe_cust_id=event_json['data']['object']['customer']).organization
+            subscriber = Subscription.objects.get(stripe_customer__stripe_cust_id=event_json['data']['object']['customer'])
+            org = subscriber.organization
             stripe_cust_id = Customer.objects.get(stripe_cust_id=event_json['data']['object']['customer'])
 
-            start_date = datetime.now()+dateutil.relativedelta.relativedelta(days=-1)
+            package_period = subscriber.package.period_type
+            if package_period == 1:
+                start_date = datetime.now()+dateutil.relativedelta.relativedelta(days=-1)
+            elif package_period == 2:
+                start_date = datetime.now()+dateutil.relativedelta.relativedelta(months=-1)
 
             outstanding, flagged, approved, rejected = org.get_submissions_count_by_date(date=start_date)
 
