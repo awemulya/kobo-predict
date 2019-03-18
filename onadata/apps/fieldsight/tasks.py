@@ -125,7 +125,7 @@ def upload_to_drive(file_path, title, folder, project):
                     'role': 'writer'
                 })
 
-
+        print "final -- here -------------"
         # for perm in perm_to_add:
         #     file.InsertPermission({
         #                 'type':'user',
@@ -135,6 +135,7 @@ def upload_to_drive(file_path, title, folder, project):
 
 
     except Exception as e:
+        print e, "EEEEEEEEEEEE"
         raise DriveException({"message":e})
 
 
