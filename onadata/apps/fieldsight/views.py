@@ -311,7 +311,8 @@ class Project_dashboard(ProjectRoleMixin, TemplateView):
             'total_submissions': flagged + approved + rejected + outstanding,
             'site_visits' : site_visits,
             'active_supervisors' : active_supervisors,
-            'new_submissions' : new_submissions
+            'new_submissions' : new_submissions,
+            'gsuit_meta_json': json.dumps(obj.gsuit_meta),
             
     }
 
@@ -1775,7 +1776,7 @@ class ProjectSummaryReport(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
         peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
         project_managers = obj.project_roles.select_related('user').filter(group__name__in=["Project Manager"]).distinct('user')
 
-        sites = obj.sites.filter(is_active=True, is_survey=False)[:50]
+        sites = obj.sites.filter(is_active=True, is_survey=False)[:100]
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
@@ -1804,7 +1805,6 @@ class ProjectSummaryReport(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
             'project_managers':project_managers,
             'organization': organization,
             'total_submissions': line_chart_data.values()[-1],
-    
         }
         return render(request, 'fieldsight/project_individual_submission_report.html', dashboard_data)
 
@@ -3215,7 +3215,8 @@ class DonorProjectDashboard(DonorRoleMixin, TemplateView):
             'total_submissions': outstanding + flagged + approved + rejected,
             'site_visits' : site_visits,
             'active_supervisors' : active_supervisors,
-            'new_submissions' : new_submissions
+            'new_submissions' : new_submissions,
+            'gsuit_meta_json': json.dumps(obj.gsuit_meta),
     }
         return dashboard_data
 

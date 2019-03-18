@@ -35,24 +35,27 @@ var org = "{{obj.pk}}";
 
 {% endblock %}
 {% block content %}
+
+
 <!-- choose package popup -->
 <!-- Modal -->
-
-<div class="modal fade" id="pricingModal" tabindex="-1" role="dialog" aria-labelledby="pricingModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="pricingModalLabel">Choose Package</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-		{% include 'fieldsight/pricing.html' %}
-      </div>
-    </div>
-  </div>
-</div>
+{% if not request.user.is_superuser %}
+	<div class="modal fade" id="pricingModal" tabindex="-1" role="dialog" aria-labelledby="pricingModalLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="pricingModalLabel">Choose Package</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+			{% include 'fieldsight/pricing.html' %}
+		  </div>
+		</div>
+	  </div>
+	</div>
+{% endif %}
 
 <!-- end choose package !-->
 
