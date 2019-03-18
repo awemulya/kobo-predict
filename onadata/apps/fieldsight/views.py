@@ -56,11 +56,10 @@ from .rolemixins import FullMapViewMixin, SuperUserRoleMixin, ReadonlyProjectLev
     DonorRoleMixin, DonorSiteViewRoleMixin, SiteDeleteRoleMixin, SiteRoleMixin, ProjectRoleView, ReviewerRoleMixin, ProjectRoleMixin,\
     OrganizationRoleMixin, ReviewerRoleMixinDeleteView, ProjectRoleMixinDeleteView, RegionRoleMixin, RegionSupervisorReviewerMixin
 
-from .models import ProjectGeoJSON, Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region, SiteType
+from .models import ProjectGeoJSON, Organization, Project, Site, ExtraUserDetail, BluePrints, UserInvite, Region, SiteType, ProjectType
 from .forms import (OrganizationForm, ProjectForm, SiteForm, RegistrationForm, SetProjectManagerForm, SetSupervisorForm,
                     SetProjectRoleForm, AssignOrgAdmin, UploadFileForm, BluePrintForm, ProjectFormKo, RegionForm,
                     SiteBulkEditForm, SiteTypeForm)
-from .tasks import auto_create_default_project_site
 
 from django.views.generic import TemplateView
 from django.core.mail import send_mail, EmailMessage
@@ -92,6 +91,8 @@ from django.core.files.base import ContentFile
 from onadata.apps.fsforms.reports_util import get_images_for_site, get_images_for_site_all, get_site_responses_coords, get_images_for_sites_count
 from onadata.apps.staff.models import Team
 from .metaAttribsGenerator import generateSiteMetaAttribs
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -441,6 +442,17 @@ class OrganizationCreateView(OrganizationView, CreateView):
                                        organization=self.object, content_object=self.object,
                                        description="{0} created a new organization named {1}".
                                        format(self.request.user, self.object.name))
+
+        user = self.request.user
+
+        project = Project.objects.get(name="Demo Project", organization_id=self.object.id)
+        sites = Site.objects.filter(project=project)
+
+        task_obj = CeleryTaskProgress.objects.create(user=user,
+                                                     description="Auto Clone and Deployment of Forms",
+                                                     task_type=15, content_object=self.object)
+        if task_obj:
+            clone_form.delay(user, project, task_obj.id)
         # result = {}
         # result['description'] = '{0} created a new organization named {1} '.format(noti.source.get_full_name(), self.object.name)
         # result['url'] = noti.get_absolute_url()
@@ -454,15 +466,10 @@ class OrganizationCreateView(OrganizationView, CreateView):
             new_group = Group.objects.get(name="Organization Admin")
             UserRole.objects.create(user=self.request.user, group=new_group, organization=self.object)
 
-            username = self.request.user.username
-            user = User.objects.get(username=username)
-
-            task_obj = CeleryTaskProgress.objects.create(user=user,
-                                                         description="Auto Creation of Demo Project, Site and Forms",
-                                                         task_type=15, content_object=self.object)
-
-            if task_obj:
-                auto_create_default_project_site.delay(user, self.object.id)
+            group = Group.objects.get(name='Site Supervisor')
+            for site in sites:
+                UserRole.objects.get_or_create(user=user, group=group, organization=self.object, project_id=project.id,
+                                           site_id=site.id)
 
             return HttpResponseRedirect(reverse("fieldsight:organizations-dashboard", kwargs={'pk': self.object.pk}))
 
@@ -3803,3 +3810,12 @@ class RequestOrganizationSearchView(TemplateView):
         context['org'] = Organization.objects.filter(name__icontains=query).values('name', 'id')
 
         return context
+
+
+@receiver(post_save,sender=Organization)
+def auto_create_project_site(instance, created, **kwargs):
+    if created:
+        project_type_id = ProjectType.objects.first().id
+        project = Project.objects.create(name="Demo Project", organization_id=instance.id, type_id=project_type_id)
+        print('project createed')
+        Site.objects.create(name="Demo Site", project=project)

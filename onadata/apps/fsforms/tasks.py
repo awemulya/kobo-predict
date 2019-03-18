@@ -13,7 +13,9 @@ from onadata.apps.fsforms.serializers.FieldSightXFormSerializer import FSXFormLi
 from onadata.apps.fsforms.utils import send_sub_stage_deployed_project, send_bulk_message_stage_deployed_project, \
     send_bulk_message_stages_deployed_project, send_message_un_deploy_project, send_message_koboform_updated
 from onadata.apps.logger.models import XForm
+from onadata.apps.eventlog.models import CeleryTaskProgress
 from onadata.libs.utils.fieldsight_tools import clone_kpi_form
+from django.core.mail import EmailMessage
 
 
 @shared_task(max_retries=10, soft_time_limit=4200)
@@ -129,14 +131,25 @@ def post_update_xform(xform_id, user):
 
 
 @shared_task(max_retries=5)
-def clone_form(user, token, project):
+def clone_form(user, project, task_id):
     name = "Test Form"
-    clone, id_string = clone_kpi_form(settings.KPI_DEFAULT_FORM1_STRING, token, name)
+    token = user.auth_token.key
+    clone, id_string = clone_kpi_form(settings.KPI_DEFAULT_FORM1_STRING, token, task_id, name)
     if clone:
-        xf = XForm.objects.get(id_string=id_string)
+        xf = XForm.objects.get(id_string=id_string, user=user)
         fxf, created = FieldSightXF.objects.get_or_create(xf=xf, project=project)
     else:
-        print("Can't create a form. Please contact the administrator.")
+        # send email to admins for unsuccessful form clone or deployment
+        # task_obj = CeleryTaskProgress.objects.get(id=task_id)
+        # to_email = ''
+        # mail_subject = 'Error in deploying and cloning form'
+        # for key, value in task_obj.other_fields.items():
+        #     message = 'Task '+ key + ' failed for user ' + user.username + ' with status code: ' + str(value)
+        # email = EmailMessage(
+        #     mail_subject, message, to=[to_email]
+        # )
+        # email.send()
+        pass
 
 
 # @shared_task(max_retries=10)

@@ -1,6 +1,7 @@
 import requests
 import json
 from django.conf import settings
+from onadata.apps.eventlog.models import CeleryTaskProgress
 
 
 class KPIError(Exception):
@@ -29,12 +30,11 @@ def deploy_kpi_form(id_string, headers):
             pass
         else:
             if 'error' in response:
-                print('Not deployed again!!!!', req.status_code)
                 raise KPIError(response['message'])
         return False
 
 
-def clone_kpi_form(id_string, token, name="Default Form Mahabharat"):
+def clone_kpi_form(id_string, token, task_id, name="Default Form Mahabharat"):
     if not hasattr(settings, 'KPI_ASSET_URL'):
         return False
 
@@ -57,9 +57,17 @@ def clone_kpi_form(id_string, token, name="Default Form Mahabharat"):
             print(str(e), "error occured")
         else:
             print("id string from kpi clone", id_string)
-            deploy_kpi_form(id_string, headers)
-            return True, id_string
+            deploy = deploy_kpi_form(id_string, headers)
+            if not deploy:
+                task_obj = CeleryTaskProgress.objects.get(id=task_id)
+                task_obj.other_fields.update({'Deploy Default Form': req.status_code})
+                task_obj.save()
+            else:
+                return True, id_string
     else:
+        task_obj = CeleryTaskProgress.objects.get(id=task_id)
+        task_obj.other_fields.update({'Clone Defualt Form': req.status_code})
+        task_obj.save()
         try:
             # import ipdb
             # ipdb.set_trace()

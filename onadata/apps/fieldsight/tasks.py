@@ -1907,13 +1907,13 @@ def exportLogs(task_prog_obj_id, source_user, pk, reportType, start_date, end_da
                                        extra_message="@error " + u'{}'.format(e.message))
         buffer.close()
 
-
-@shared_task(max_retries=5)
-def auto_create_default_project_site(user, organization_id):
-    project_type_id = ProjectType.objects.first().id
-    project = Project.objects.create(name="Demo Project", organization_id=organization_id, type_id=project_type_id)
-    print('project createed')
-    Site.objects.create(name="Demo Site", project=project)
-    print('site createed')
-    token = user.auth_token.key
-    clone_form.delay(user, token, project)
+#
+# @shared_task(max_retries=5)
+# def auto_create_default_project_site(user, organization_id):
+#     project_type_id = ProjectType.objects.first().id
+#     project = Project.objects.create(name="Demo Project", organization_id=organization_id, type_id=project_type_id)
+#     print('project createed')
+#     Site.objects.create(name="Demo Site", project=project)
+#     print('site createed')
+#     token = user.auth_token.key
+#     clone_form.delay(user, token, project)
