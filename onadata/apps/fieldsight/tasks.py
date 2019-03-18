@@ -90,8 +90,9 @@ def upload_to_drive(file_path, title, folder, project):
             file.Upload({'convert':True})
          
         gsuit_meta = project.gsuit_meta
-
-        gsuit_meta[folder] = {'link':file['alternateLink'], 'updated_at':datetime.datetime.now().isoformat()}
+        file_link = file['alternateLink']
+        print file_link, "2---", file.GetPermissions()
+        gsuit_meta[folder] = {'link':file_link, 'updated_at':datetime.datetime.now().isoformat()}
         print gsuit_meta[folder], "-------------"
         project.gsuit_meta = gsuit_meta
         project.save()
