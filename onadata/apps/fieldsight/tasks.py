@@ -80,7 +80,7 @@ def upload_to_drive(file_path, title, folder, project):
             new_file = drive.CreateFile({'title' : title, "parents": [{"kind": "drive#fileLink", "id": folder_id}]})
             new_file.SetContentFile(file_path)
             new_file.Upload({'convert':True})
-            file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()
+            file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()[0]
 
         else:
             file = file[0]
