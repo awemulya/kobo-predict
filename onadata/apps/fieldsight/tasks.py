@@ -57,22 +57,22 @@ from pydrive.drive import GoogleDrive
 class DriveException(Exception):
     pass
 
-def upload_to_drive(file_path, title, folder, project):
+def upload_to_drive(file_path, title, folder_title, project):
     # pass
     """ TODO: folder names of 'Site Details' and 'Site Progress' must be in google drive."""
     try:
         gauth = GoogleAuth()
         drive = GoogleDrive(gauth)
 
-        folders = drive.ListFile({'q':"title = '"+ folder +"'"}).GetList()
+        folders = drive.ListFile({'q':"title = '"+ folder_title +"'"}).GetList()
         
         if folders:
             folder_id = folders[0]['id']
         else:
-            folder_metadata = {'title' : folder, 'mimeType' : 'application/vnd.google-apps.folder'}
-            folder = drive.CreateFile(folder_metadata)
-            folder.Upload()            
-            folder_id = folder['id']
+            folder_metadata = {'title' : folder_title, 'mimeType' : 'application/vnd.google-apps.folder'}
+            new_folder = drive.CreateFile(folder_metadata)
+            new_folder.Upload()            
+            folder_id = new_folder['id']
         
         file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()
 
@@ -80,9 +80,7 @@ def upload_to_drive(file_path, title, folder, project):
             new_file = drive.CreateFile({'title' : title, "parents": [{"kind": "drive#fileLink", "id": folder_id}]})
             new_file.SetContentFile(file_path)
             new_file.Upload({'convert':True})
-            get_file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()
-            file = get_file[0]
-            print file['alternateLink']
+            file = drive.ListFile({'q':"title = '"+ title +"' and trashed=false"}).GetList()[0]
 
         else:
             file = file[0]
@@ -90,10 +88,7 @@ def upload_to_drive(file_path, title, folder, project):
             file.Upload({'convert':True})
          
         gsuit_meta = project.gsuit_meta
-        file_link = file['alternateLink']
-        print file_link, "2---", file.GetPermissions()
-        gsuit_meta[folder] = {'link':file_link, 'updated_at':datetime.datetime.now().isoformat()}
-        print gsuit_meta[folder], "-------------"
+        gsuit_meta[folder_title] = {'link':file['alternateLink'], 'updated_at':datetime.datetime.now().isoformat()}
         project.gsuit_meta = gsuit_meta
         project.save()
         permissions = file.GetPermissions()
@@ -128,7 +123,7 @@ def upload_to_drive(file_path, title, folder, project):
                     'role': 'writer'
                 })
 
-        print "final -- here -------------"
+
         # for perm in perm_to_add:
         #     file.InsertPermission({
         #                 'type':'user',
@@ -138,7 +133,6 @@ def upload_to_drive(file_path, title, folder, project):
 
 
     except Exception as e:
-        print e, "EEEEEEEEEEEE"
         raise DriveException({"message":e})
 
 
