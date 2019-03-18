@@ -820,7 +820,7 @@ def generate_export(export_type, extension, username, id_string,
                 name = fxf_form.stage.name
             else:
                 name = fxf_form.xf.title
-            upload_to_drive(temporarylocation, name+'_'+id_string, name+'_'+id_string, fxf_form.project)
+            upload_to_drive(temporarylocation, name+'_'+id_string, fxf.id+'_'+name+'_'+id_string, fxf_form.project)
         
             os.remove(temporarylocation)
         
