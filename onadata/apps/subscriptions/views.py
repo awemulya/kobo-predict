@@ -6,9 +6,11 @@ import dateutil.relativedelta
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.conf import settings
 from django.shortcuts import get_object_or_404
+from django.core.urlresolvers import reverse
+from django.contrib import messages
 
 from .models import Customer, Subscription, Invoice, Package
 from onadata.apps.fieldsight.models import Organization
@@ -77,7 +79,9 @@ def subscribe_view(request, org_id):
         except Exception as e:
             return JsonResponse({'error': str(e)})
 
-    return render(request, 'fieldsight/test_stripe_charge.html')
+    messages.add_message(request, messages.SUCCESS, 'You are subscribed to selected plan')
+
+    return HttpResponseRedirect(reverse("users:profile", kwargs={'pk': request.user.pk}))
 
 
 @csrf_exempt
