@@ -241,7 +241,7 @@ def stripe_webhook(request):
             invoice_data = {
                 'customer': stripe_cust_id,
                 'created': datetime.utcfromtimestamp(int(event_json['data']['object']['date'])),
-                'amount': event_json['data']['object']['amount_paid'],
+                'amount': event_json['data']['object']['amount_paid']/100,
                 'quantity': package.submissions,
                 'overage': 0,
                 'roll_over': 0

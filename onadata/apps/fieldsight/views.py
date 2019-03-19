@@ -446,8 +446,12 @@ class OrganizationCreateView(OrganizationView, CreateView):
                                        format(self.request.user, self.object.name))
 
         user = self.request.user
+        profile = user.user_profile
+        if not profile.organization:
+            profile.organization = self.object
+            profile.save()
 
-        project = Project.objects.get(name="Demo Project", organization_id=self.object.id)
+        project = Project.objects.get(name="Example Project", organization_id=self.object.id)
         sites = Site.objects.filter(project=project)
 
         task_obj = CeleryTaskProgress.objects.create(user=user,
@@ -3818,6 +3822,5 @@ class RequestOrganizationSearchView(TemplateView):
 def auto_create_project_site(instance, created, **kwargs):
     if created:
         project_type_id = ProjectType.objects.first().id
-        project = Project.objects.create(name="Demo Project", organization_id=instance.id, type_id=project_type_id)
-        print('project createed')
-        Site.objects.create(name="Demo Site", project=project)
+        project = Project.objects.create(name="Example Project", organization_id=instance.id, type_id=project_type_id)
+        Site.objects.create(name="Example Site", project=project, identifier="example site")
