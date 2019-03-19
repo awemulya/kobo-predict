@@ -83,7 +83,7 @@ class OrganizationForm(forms.ModelForm):
 
     class Meta:
         model = Organization
-        exclude = ['is_active']
+        exclude = ['is_active', 'team_owner']
         # exclude = ['organizaton']
         widgets = {
         'is_active': forms.HiddenInput(),

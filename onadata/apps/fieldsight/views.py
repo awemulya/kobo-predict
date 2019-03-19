@@ -435,10 +435,11 @@ class OrganizationCreateView(OrganizationView, CreateView):
                 return super(OrganizationCreateView, self).dispatch(request, *args, **kwargs)
         raise PermissionDenied()
 
-
-
     def form_valid(self, form):
+
         self.object = form.save()
+        self.object.owner = self.request.user
+        self.object.save()
         noti = self.object.logs.create(source=self.request.user, type=9, title="new Organization",
                                        organization=self.object, content_object=self.object,
                                        description="{0} created a new organization named {1}".

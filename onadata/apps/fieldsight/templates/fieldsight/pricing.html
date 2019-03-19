@@ -446,11 +446,8 @@
 														<input type="hidden" name="interval" value="Yearly"/>
 
 													  {% csrf_token %}
-													<script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-														data-key="{{ key }}"
-														data-description="Fieldsight Pricing and Features"
-														data-locale="auto" data-label="Select" data-panel-label="Select">
-													</script>
+													{% include 'subscriptions/stripe_checkout.html' %}
+
 														<button type="submit"  class="btn btn-sm btn-xs btn-block btn-primary">Select</button>
 
 												 </form>

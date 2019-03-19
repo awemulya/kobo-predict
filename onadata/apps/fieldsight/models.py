@@ -90,6 +90,7 @@ class Organization(models.Model):
     location = PointField(geography=True, srid=4326, blank=True, null=True,)
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
     logs = GenericRelation('eventlog.FieldSightLog')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="organizations", null=True, blank=True)
 
     class Meta:
         ordering = ['-is_active', 'name', ]
