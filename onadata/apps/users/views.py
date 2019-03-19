@@ -489,6 +489,13 @@ def web_signup(request):
             user.set_password(user.password)
             user.is_active = False
             user.save()
+
+            codenames = ['add_asset', 'change_asset', 'delete_asset', 'view_asset', 'share_asset', 'add_finstance',
+                         'change_finstance', 'add_instance', 'change_instance']
+            permissions = Permission.objects.filter(codename__in=codenames)
+            for permission in permissions:
+                user.user_permissions.add(permission)
+
             group = Group.objects.get(name="Unassigned")
             UserRole.objects.create(user=user, group=group)
 
