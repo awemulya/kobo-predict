@@ -1720,8 +1720,11 @@ class ProjectSummaryReport(LoginRequiredMixin, ProjectRoleMixin, TemplateView):
         organization = Organization.objects.get(pk=obj.organization_id)
         peoples_involved = obj.project_roles.filter(group__name__in=["Project Manager", "Reviewer"]).distinct('user')
         project_managers = obj.project_roles.select_related('user').filter(group__name__in=["Project Manager"]).distinct('user')
-
-        sites = obj.sites.filter(is_active=True, is_survey=False)[:100]
+        if obj.sites.filter(is_active=True, is_survey=False).count() <= 1000:
+            sites = obj.sites.filter(is_active=True, is_survey=False)    
+        else:
+            sites = obj.sites.filter(is_active=True, is_survey=False)[:100]
+        
         data = serialize('custom_geojson', sites, geometry_field='location',
                          fields=('name', 'public_desc', 'additional_desc', 'address', 'location', 'phone','id',))
 
