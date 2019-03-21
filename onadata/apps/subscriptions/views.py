@@ -96,8 +96,9 @@ def stripe_webhook(request):
         event_json = json.loads(request.body)
         print('...........Event occurs..................', event_json['type'])
 
-        timestamp = int(event_json['data']['object']['period_start'])
-        timestamp_to_date = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d')
+        # timestamp = int(event_json['data']['object']['period_start'])
+        sub_obj = Subscription.objects.get(stripe_customer__stripe_cust_id=event_json['data']['object']['customer'])
+        subscription_date = sub_obj.initiated_on.strftime('%Y-%m-%d')
 
         if event_json['type'] == 'invoice.created':
 
@@ -142,7 +143,7 @@ def stripe_webhook(request):
             elif package_period == 2:
                 start_date = datetime.now()+dateutil.relativedelta.relativedelta(days=-2)
 
-            if timestamp_to_date == datetime.now().strftime('%Y-%m-%d'):
+            if subscription_date == datetime.now().strftime('%Y-%m-%d'):
                 """
 
                 First Payment after subscribed to plans in stripe, create invoice object
@@ -161,7 +162,7 @@ def stripe_webhook(request):
                 }
                 Invoice.objects.create(**invoice_data)
 
-            else:
+            elif subscription_date != datetime.now().strftime('%Y-%m-%d'):
                 """
 
                 Executed in last day of subscribed period(month/year), updating Invoice in stripe for the next month/year 
