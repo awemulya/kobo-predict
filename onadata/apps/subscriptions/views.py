@@ -169,7 +169,7 @@ def stripe_webhook(request):
 
                 print('...........Execute from the first month/year/day last day '
                       '(creating invoice object from second month)............')
-                outstanding, flagged, approved, rejected = org.get_submissions_count_by_date(date=start_date)
+                outstanding, flagged, approved, rejected = org.get_submissions_count_by_date(start_date=start_date)
 
                 submission_count = outstanding+flagged+approved+rejected
 

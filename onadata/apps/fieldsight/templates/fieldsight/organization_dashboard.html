@@ -39,7 +39,8 @@ var org = "{{obj.pk}}";
 
 <!-- choose package popup -->
 <!-- Modal -->
-{% if not request.user.is_superuser %}
+{% if not request.user.is_superuser%}
+	{% if not has_user_package %}
 	<div class="modal fade" id="pricingModal" tabindex="-1" role="dialog" aria-labelledby="pricingModalLabel" aria-hidden="true">
 	  <div class="modal-dialog modal-xl" role="document">
 		<div class="modal-content">
@@ -50,11 +51,13 @@ var org = "{{obj.pk}}";
 			</button>
 		  </div>
 		  <div class="modal-body">
+
 			{% include 'fieldsight/pricing.html' %}
 		  </div>
 		</div>
 	  </div>
 	</div>
+{% endif %}
 {% endif %}
 
 <!-- end choose package !-->
