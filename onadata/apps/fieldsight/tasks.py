@@ -87,14 +87,14 @@ def upload_to_drive(file_path, title, folder_title, project):
             file.SetContentFile(file_path)
             file.Upload({'convert':True})
         
-        project.refresh_from_db() 
-        gsuit_meta = project.gsuit_meta
+        _project = Project.objects.get(pk=project.id) 
+        gsuit_meta = _project.gsuit_meta
         gsuit_meta[folder_title] = {'link':file['alternateLink'], 'updated_at':datetime.datetime.now().isoformat()}
-        project.gsuit_meta = gsuit_meta
-        project.save()
+        _project.gsuit_meta = gsuit_meta
+        _project.save()
         permissions = file.GetPermissions()
 
-        user_emails = project.project_roles.filter(ended_at__isnull = True, site=None).distinct('user').values_list('user__email', flat=True)
+        user_emails = _project.project_roles.filter(ended_at__isnull = True, site=None).distinct('user').values_list('user__email', flat=True)
         
         all_users = set(user_emails)
 
