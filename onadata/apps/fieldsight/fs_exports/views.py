@@ -4,7 +4,7 @@ import json
 from django.contrib.contenttypes.models import ContentType
 
 from .. models import Project, Site
-from .. rolemixins import DonorRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin
+from .. rolemixins import DonorRoleMixin, ProjectRoleMixin, ReadonlyProjectLevelRoleMixin, ReadonlySiteLevelRoleMixin
 from django.views.generic import TemplateView, View
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -25,7 +25,7 @@ class ExportOptions(ProjectRoleMixin, View):
         return render(request, "fieldsight/fs_export/xls_export.html")
 
 
-class ImageZipSites(ReadonlyProjectLevelRoleMixin, View):
+class ImageZipSites(ReadonlySiteLevelRoleMixin, View):
     def get(self, request, pk, size_code, *args, **kwargs):
         user = self.request.user
         site=get_object_or_404(Site, pk=pk)
